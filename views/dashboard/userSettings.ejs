@@ -1,0 +1,50 @@
+<%- include('../_header'); -%>
+
+<nav class="breadcrumb">
+  <ul>
+    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+    <li class="is-active">
+      <a href="#" aria-current="page">
+        <span class="icon is-small"><i class="fa-solid fa-cog"></i></span>
+        <span>User Settings</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<h1 class="title is-1">
+  User Settings
+</h1>
+
+<div class="panel">
+  <h2 class="panel-heading">API Key Reset</h2>
+  <div class="panel-block is-block">
+    <div class="message is-warning">
+      <div class="message-body">
+        <p>
+          API keys are used to authenticate API requests without using your username and password.
+          If you have set up your calendar application to automatically refresh milestone updates,
+          you are using your API key.
+        </p>
+        <p>
+          If you believe your API key has been compromised, you can reset it here.
+          This will invalidate your current API key and generate a new one.
+        </p>
+      </div>
+    </div>
+    <div class="has-text-right">
+      <button class="button is-warning" id="button--resetApiKey" type="button">
+        <span class="icon is-small">
+          <i class="fa-solid fa-rotate"></i>
+        </span>
+        <span>Reset API Key</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<%- include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/userSettings.js"></script>
+
+<%- include('../_footerB'); -%>

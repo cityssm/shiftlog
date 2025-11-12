@@ -1,0 +1,47 @@
+<%- include('../_header'); -%>
+
+<nav class="breadcrumb">
+  <ul>
+    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+    <li>
+      <a href="#">
+        <span class="icon is-small"><i class="fa-solid fa-cog"></i></span>
+        <span>Administrator Tools</span>
+      </a>
+    </li>
+    <li class="is-active">
+      <a href="#" aria-current="page">
+        User Management
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div class="columns is-vcentered">
+  <div class="column">
+    <h1 class="title is-1">
+      User Management
+    </h1>
+  </div>
+  <div class="column is-narrow">
+    <button class="button is-primary" id="button--addUser" type="button">
+      <span class="icon">
+        <i class="fa-solid fa-plus"></i>
+      </span>
+      <span>Add User</span>
+    </button>
+  </div>
+</div>
+
+<div id="container--users"></div>
+
+<%- include('../_footerA'); -%>
+
+<script>
+  exports.users = <%- JSON.stringify(users) %>;
+  exports.domain = <%- JSON.stringify(domain) %>;
+  exports.userSettingKeys = <%- JSON.stringify(userSettingKeys) %>;
+</script>
+<script src="<%= urlPrefix %>/javascripts/users.admin.js"></script>
+
+<%- include('../_footerB'); -%>

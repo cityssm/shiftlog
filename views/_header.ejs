@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!-- eslint-disable-next-line html/require-closing-tags -->
+<html class="has-navbar-fixed-top is-fullwidth" data-theme="light" lang="en">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+
+    <title>
+      <%= headTitle %>:
+      <%= configFunctions.getConfigProperty("application.applicationName") %>
+    </title>
+
+    <link href="<%= urlPrefix %>/images/logo.png" rel="icon" />
+
+    <link href="<%= urlPrefix %>/lib/cityssm-bulma-sticky-table/bulma-with-sticky-table.css" rel="stylesheet" />
+    <link href="<%= urlPrefix %>/lib/cityssm-fa-glow/fa-glow.min.css" rel="stylesheet" />
+    <link href="<%= urlPrefix %>/stylesheets/style.css" rel="stylesheet" />
+  </head>
+
+  <!-- eslint-disable-next-line html/require-closing-tags -->
+  <body>
+    <nav
+      class="navbar is-light is-fixed-top"
+      id="cityssm-theme--navbar"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <div class="container">
+        <div class="navbar-brand">
+          <a class="navbar-item"
+            href="<%= urlPrefix %>/dashboard"
+          >
+            <img
+              src="<%= urlPrefix %>/images/logo.png"
+              alt=""
+              height="28"
+              width="28"
+            />
+            <strong><%= configFunctions.getConfigProperty("application.applicationName") %></strong>
+          </a>
+          <a
+            class="navbar-burger burger is-hidden-print"
+            role="button"
+            aria-label="menu"
+            aria-expanded="false"
+          >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <div class="navbar-menu">
+          <div class="navbar-end">
+            <div class="navbar-item has-dropdown">
+              <a class="navbar-link" href="#">
+                <span class="icon">
+                  <i class="fa-solid fa-user"></i>
+                </span>
+                <span><%=user.userName %></span>
+              </a>
+              <div class="navbar-dropdown is-right">
+                <a
+                  class="navbar-item"
+                  id="cityssm-theme--logout-button"
+                  href="#"
+                  role="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                  </span>
+                  <span>Log Out</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- eslint-disable-next-line html/require-closing-tags -->
+    <main
+      class="container pt-2 px-3 mr-auto"
+      data-session-keep-alive-millis="<%= configFunctions.keepAliveMillis %>"
+      data-url-prefix="<%= urlPrefix %>"
+      data-is-admin="<%= user.userProperties.isAdmin ? 'true' : 'false' %>"
+      data-shifts-are-enabled="<%= configFunctions.getConfigProperty('shifts.isEnabled') %>"
+      data-work-orders-are-enabled="<%= configFunctions.getConfigProperty('workOrders.isEnabled') %>"
+      data-timesheets-are-enabled="<%= configFunctions.getConfigProperty('timesheets.isEnabled') %>"
+      data-api-key="<%= user.userSettings.apiKey %>"
+      style="min-height: calc(100vh - var(--bulma-navbar-height));"
+    >

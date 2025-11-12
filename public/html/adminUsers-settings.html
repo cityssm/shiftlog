@@ -1,0 +1,42 @@
+<div
+  class="modal"
+  id="modal--editUserSettings"
+  role="dialog"
+  aria-label="Edit User Settings"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit User Settings</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editUserSettings">
+        <input type="hidden" name="userName" />
+        
+        <div class="field">
+          <label class="label">User Name</label>
+          <div class="control">
+            <span class="tag is-medium" id="span--userName"></span>
+          </div>
+        </div>
+
+        <div id="container--userSettings"></div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editUserSettings">
+          Save Settings
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
