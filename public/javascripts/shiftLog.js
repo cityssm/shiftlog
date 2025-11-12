@@ -1,5 +1,4 @@
 (() => {
-    const urlPrefix = document.querySelector('main')?.dataset.urlPrefix ?? '';
     /*
      * Unsaved Changes
      */
@@ -18,14 +17,12 @@
         return _hasUnsavedChanges;
     }
     /*
-     * Declare sunrise
+     * Declare shiftLog
      */
-    const shiftLog = {
-        apiKey: document.querySelector('main')?.dataset.apiKey ?? '',
-        urlPrefix,
+    exports.shiftLog = {
+        ...exports.shiftLog,
         clearUnsavedChanges,
         hasUnsavedChanges,
         setUnsavedChanges
     };
-    exports.shiftLog = shiftLog;
 })();

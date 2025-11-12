@@ -1,18 +1,23 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { ShiftLogGlobal } from './types.js'
+
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const shiftLog: ShiftLogGlobal
+
+declare const exports: {
+    sessionKeepAliveMillis: number
+  }
 
   /*
    * LOGOUT MODAL
    */
 ;(() => {
   function doLogout(): void {
-    const urlPrefix = document.querySelector('main')?.dataset.urlPrefix ?? ''
-
     globalThis.localStorage.clear()
-    globalThis.location.href = `${urlPrefix}/logout`
+    globalThis.location.href = `${shiftLog.urlPrefix}/logout`
   }
 
   document
@@ -38,16 +43,13 @@ declare const bulmaJS: BulmaJS
  * KEEP ALIVE
  */
 ;(() => {
-  const urlPrefix = document.querySelector('main')?.dataset.urlPrefix ?? ''
-
-  const keepAliveMillis =
-    document.querySelector('main')?.dataset.sessionKeepAliveMillis
+  const keepAliveMillis = shiftLog.sessionKeepAliveMillis
 
   let keepAliveInterval: NodeJS.Timeout | undefined
 
   function doKeepAlive(): void {
     cityssm.postJSON(
-      `${urlPrefix}/keepAlive`,
+      `${shiftLog.urlPrefix}/keepAlive`,
       {
         t: Date.now()
       },
@@ -77,10 +79,7 @@ declare const bulmaJS: BulmaJS
     )
   }
 
-  if (keepAliveMillis !== undefined && keepAliveMillis !== '0') {
-    keepAliveInterval = globalThis.setInterval(
-      doKeepAlive,
-      Number.parseInt(keepAliveMillis, 10)
-    )
+  if (keepAliveMillis !== 0) {
+    keepAliveInterval = globalThis.setInterval(doKeepAlive, keepAliveMillis)
   }
 })()

@@ -5,11 +5,9 @@ import type { ShiftLogGlobal } from './types.js'
 declare const cityssm: cityssmGlobal
 
 declare const exports: {
-  shiftLog?: ShiftLogGlobal
+  shiftLog: Partial<ShiftLogGlobal>
 }
 ;(() => {
-  const urlPrefix = document.querySelector('main')?.dataset.urlPrefix ?? ''
-
   /*
    * Unsaved Changes
    */
@@ -33,17 +31,14 @@ declare const exports: {
   }
 
   /*
-   * Declare sunrise
+   * Declare shiftLog
    */
 
-  const shiftLog: ShiftLogGlobal = {
-    apiKey: document.querySelector('main')?.dataset.apiKey ?? '',
-    urlPrefix,
+  exports.shiftLog = {
+    ...exports.shiftLog,
 
     clearUnsavedChanges,
     hasUnsavedChanges,
     setUnsavedChanges
   }
-
-  exports.shiftLog = shiftLog
 })()

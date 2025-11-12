@@ -32,7 +32,16 @@ export declare const configDefaultValues: {
     'connectors.pearl': MSSQLConfig;
     'connectors.shiftLog': MSSQLConfig;
     'shifts.isEnabled': boolean;
+    'shifts.router': string;
+    'shifts.sectionName': string;
+    'shifts.iconClass': string;
     'workOrders.isEnabled': boolean;
+    'workOrders.router': string;
+    'workOrders.sectionName': string;
+    'workOrders.iconClass': string;
     'timesheets.isEnabled': boolean;
+    'timesheets.router': string;
+    'timesheets.sectionName': string;
+    'timesheets.iconClass': string;
 };
 export default configDefaultValues;

@@ -19,7 +19,16 @@ export const configDefaultValues = {
     'connectors.pearl': undefined,
     'connectors.shiftLog': undefined,
     'shifts.isEnabled': false,
+    'shifts.router': 'shifts',
+    'shifts.sectionName': 'Shifts',
+    'shifts.iconClass': 'fa-calendar-day',
     'workOrders.isEnabled': false,
-    'timesheets.isEnabled': false
+    'workOrders.router': 'workOrders',
+    'workOrders.sectionName': 'Work Orders',
+    'workOrders.iconClass': 'fa-hard-hat',
+    'timesheets.isEnabled': false,
+    'timesheets.router': 'timesheets',
+    'timesheets.sectionName': 'Timesheets',
+    'timesheets.iconClass': 'fa-clock'
 };
 export default configDefaultValues;

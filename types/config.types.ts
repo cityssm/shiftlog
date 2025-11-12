@@ -57,17 +57,18 @@ export interface Config {
     pearl?: MSSQLConfig
   }
 
-  shifts?: {
-    isEnabled?: boolean
-  }
+  shifts?: ConfigSection
 
-  workOrders?: {
-    isEnabled?: boolean
-  }
+  workOrders?: ConfigSection
 
-  timesheets?: {
-    isEnabled?: boolean
-  }
+  timesheets?: ConfigSection
+}
+
+interface ConfigSection {
+  isEnabled?: boolean
+  router?: string
+  sectionName?: string
+  iconClass?: `fa-${string}`
 }
 
 interface ConfigApplication {

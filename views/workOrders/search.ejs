@@ -1,0 +1,21 @@
+<%- include('../_header'); -%>
+
+<nav class="breadcrumb">
+  <ul>
+    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+    <li class="is-active">
+      <a href="#" aria-current="page">
+        <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
+        <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<h1 class="title is-1">
+  <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
+</h1>
+
+<%- include('../_footerA'); -%>
+
+<%- include('../_footerB'); -%>

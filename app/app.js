@@ -198,7 +198,7 @@ app.get(`${urlPrefix}/`, sessionCheckHandler, (_request, response) => {
 });
 app.use(`${urlPrefix}/dashboard`, sessionCheckHandler, routerDashboard);
 if (configFunctions.getConfigProperty('shifts.isEnabled')) {
-    app.use(`${urlPrefix}/shifts`, sessionCheckHandler, (request, response, next) => {
+    app.use(`${urlPrefix}/${configFunctions.getConfigProperty('shifts.router')}`, sessionCheckHandler, (request, response, next) => {
         if (request.session.user?.userProperties.shifts.canView ?? false) {
             next();
         }
@@ -208,7 +208,7 @@ if (configFunctions.getConfigProperty('shifts.isEnabled')) {
     }, routerShifts);
 }
 if (configFunctions.getConfigProperty('workOrders.isEnabled')) {
-    app.use(`${urlPrefix}/workOrders`, sessionCheckHandler, (request, response, next) => {
+    app.use(`${urlPrefix}/${configFunctions.getConfigProperty('workOrders.router')}`, sessionCheckHandler, (request, response, next) => {
         if (request.session.user?.userProperties.workOrders.canView ?? false) {
             next();
         }
@@ -218,7 +218,7 @@ if (configFunctions.getConfigProperty('workOrders.isEnabled')) {
     }, routerWorkOrders);
 }
 if (configFunctions.getConfigProperty('timesheets.isEnabled')) {
-    app.use(`${urlPrefix}/timesheets`, sessionCheckHandler, (request, response, next) => {
+    app.use(`${urlPrefix}/${configFunctions.getConfigProperty('timesheets.router')}`, sessionCheckHandler, (request, response, next) => {
         if (request.session.user?.userProperties.timesheets.canView ?? false) {
             next();
         }

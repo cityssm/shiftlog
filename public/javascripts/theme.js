@@ -1,8 +1,7 @@
 (() => {
     function doLogout() {
-        const urlPrefix = document.querySelector('main')?.dataset.urlPrefix ?? '';
         globalThis.localStorage.clear();
-        globalThis.location.href = `${urlPrefix}/logout`;
+        globalThis.location.href = `${shiftLog.urlPrefix}/logout`;
     }
     document
         .querySelector('#cityssm-theme--logout-button')
@@ -20,11 +19,10 @@
     });
 })();
 (() => {
-    const urlPrefix = document.querySelector('main')?.dataset.urlPrefix ?? '';
-    const keepAliveMillis = document.querySelector('main')?.dataset.sessionKeepAliveMillis;
+    const keepAliveMillis = shiftLog.sessionKeepAliveMillis;
     let keepAliveInterval;
     function doKeepAlive() {
-        cityssm.postJSON(`${urlPrefix}/keepAlive`, {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/keepAlive`, {
             t: Date.now()
         }, (rawResponseJson) => {
             const responseJson = rawResponseJson;
@@ -44,7 +42,7 @@
             }
         });
     }
-    if (keepAliveMillis !== undefined && keepAliveMillis !== '0') {
-        keepAliveInterval = globalThis.setInterval(doKeepAlive, Number.parseInt(keepAliveMillis, 10));
+    if (keepAliveMillis !== 0) {
+        keepAliveInterval = globalThis.setInterval(doKeepAlive, keepAliveMillis);
     }
 })();

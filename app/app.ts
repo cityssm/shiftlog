@@ -305,7 +305,7 @@ app.use(`${urlPrefix}/dashboard`, sessionCheckHandler, routerDashboard)
 
 if (configFunctions.getConfigProperty('shifts.isEnabled')) {
   app.use(
-    `${urlPrefix}/shifts`,
+    `${urlPrefix}/${configFunctions.getConfigProperty('shifts.router')}`,
     sessionCheckHandler,
     (request, response, next) => {
       if (request.session.user?.userProperties.shifts.canView ?? false) {
@@ -320,7 +320,7 @@ if (configFunctions.getConfigProperty('shifts.isEnabled')) {
 
 if (configFunctions.getConfigProperty('workOrders.isEnabled')) {
   app.use(
-    `${urlPrefix}/workOrders`,
+    `${urlPrefix}/${configFunctions.getConfigProperty('workOrders.router')}`,
     sessionCheckHandler,
     (request, response, next) => {
       if (request.session.user?.userProperties.workOrders.canView ?? false) {
@@ -335,7 +335,7 @@ if (configFunctions.getConfigProperty('workOrders.isEnabled')) {
 
 if (configFunctions.getConfigProperty('timesheets.isEnabled')) {
   app.use(
-    `${urlPrefix}/timesheets`,
+    `${urlPrefix}/${configFunctions.getConfigProperty('timesheets.router')}`,
     sessionCheckHandler,
     (request, response, next) => {
       if (request.session.user?.userProperties.timesheets.canView ?? false) {
