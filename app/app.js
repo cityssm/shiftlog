@@ -94,7 +94,8 @@ app
     .use(`${urlPrefix}/lib/cityssm-bulma-sticky-table`, express.static('node_modules/@cityssm/bulma-sticky-table'))
     .use(`${urlPrefix}/lib/cityssm-bulma-webapp-js`, express.static('node_modules/@cityssm/bulma-webapp-js/dist'))
     .use(`${urlPrefix}/lib/fa`, express.static('node_modules/@fortawesome/fontawesome-free'))
-    .use(`${urlPrefix}/lib/leaflet`, express.static('node_modules/leaflet/dist'));
+    .use(`${urlPrefix}/lib/leaflet`, express.static('node_modules/leaflet/dist'))
+    .use(`${urlPrefix}/lib/sortablejs`, express.static('node_modules/sortablejs'));
 /*
  * SESSION MANAGEMENT
  */
