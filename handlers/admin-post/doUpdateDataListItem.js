@@ -4,7 +4,8 @@ export default async function handler(request, response) {
     const form = {
         dataListItemId: request.body.dataListItemId,
         dataListItem: request.body.dataListItem,
-        userName: request.session.user?.userName ?? ''
+        userName: request.session.user?.userName ?? '',
+        userGroupId: request.body.userGroupId
     };
     const success = await updateDataListItem(form);
     let items;

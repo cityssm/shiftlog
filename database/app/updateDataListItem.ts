@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
+
 import mssqlPool from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
