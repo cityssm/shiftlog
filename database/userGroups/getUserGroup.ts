@@ -34,6 +34,7 @@ export default async function getUserGroup(userGroupId: number): Promise<UserGro
     `)
 
   userGroup.members = membersResult.recordset.map((row: { userName: string }) => row.userName)
+  userGroup.memberCount = userGroup.members.length
 
   return userGroup
 }

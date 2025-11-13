@@ -1,5 +1,8 @@
-import { hoursToMillis } from '@cityssm/to-millis';
-export const configDefaultValues = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.configDefaultValues = void 0;
+var to_millis_1 = require("@cityssm/to-millis");
+exports.configDefaultValues = {
     'application.applicationName': 'ShiftLog',
     'application.applicationUrl': undefined,
     'application.httpPort': 9000,
@@ -14,7 +17,7 @@ export const configDefaultValues = {
     'reverseProxy.urlPrefix': '',
     'session.cookieName': 'shiftlog-user-sid',
     'session.doKeepAlive': false,
-    'session.maxAgeMillis': hoursToMillis(1),
+    'session.maxAgeMillis': (0, to_millis_1.hoursToMillis)(1),
     'session.secret': 'cityssm/shiftlog',
     'connectors.pearl': undefined,
     'connectors.shiftLog': undefined,
@@ -37,4 +40,4 @@ export const configDefaultValues = {
     'timesheets.sectionNameSingular': 'Timesheet',
     'timesheets.iconClass': 'fa-clock'
 };
-export default configDefaultValues;
+exports.default = exports.configDefaultValues;

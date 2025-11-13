@@ -259,6 +259,15 @@ declare const exports: {
             if (responseJSON.userGroup !== undefined) {
               currentMembers = responseJSON.userGroup.members ?? []
               renderMembersList()
+              
+              // Update the user group in the main list and re-render
+              const groupIndex = exports.userGroups.findIndex(
+                (ug) => ug.userGroupId.toString() === userGroupId
+              )
+              if (groupIndex !== -1 && responseJSON.userGroup.memberCount !== undefined) {
+                exports.userGroups[groupIndex].memberCount = responseJSON.userGroup.memberCount
+                renderUserGroups(exports.userGroups)
+              }
             }
 
             // Reset the form
@@ -306,6 +315,15 @@ declare const exports: {
             if (responseJSON.userGroup !== undefined) {
               currentMembers = responseJSON.userGroup.members ?? []
               renderMembersList()
+              
+              // Update the user group in the main list and re-render
+              const groupIndex = exports.userGroups.findIndex(
+                (ug) => ug.userGroupId.toString() === userGroupId
+              )
+              if (groupIndex !== -1 && responseJSON.userGroup.memberCount !== undefined) {
+                exports.userGroups[groupIndex].memberCount = responseJSON.userGroup.memberCount
+                renderUserGroups(exports.userGroups)
+              }
             }
 
             bulmaJS.alert({
