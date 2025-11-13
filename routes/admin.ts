@@ -1,6 +1,7 @@
 import { Router } from 'express'
 
 import handler_settings from '../handlers/admin-get/settings.js'
+import handler_userGroup from '../handlers/admin-get/userGroup.js'
 import handler_userGroups from '../handlers/admin-get/userGroups.js'
 import handler_users from '../handlers/admin-get/users.js'
 import handler_doAddUser from '../handlers/admin-post/doAddUser.js'
@@ -35,6 +36,7 @@ router
 
 router
   .get('/userGroups', handler_userGroups)
+  .get('/userGroup/:userGroupId', handler_userGroup)
   .post('/doAddUserGroup', handler_doAddUserGroup)
   .post('/doUpdateUserGroup', handler_doUpdateUserGroup)
   .post('/doDeleteUserGroup', handler_doDeleteUserGroup)

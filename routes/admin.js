@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 var express_1 = require("express");
 var settings_js_1 = require("../handlers/admin-get/settings.js");
+var userGroup_js_1 = require("../handlers/admin-get/userGroup.js");
 var userGroups_js_1 = require("../handlers/admin-get/userGroups.js");
 var users_js_1 = require("../handlers/admin-get/users.js");
 var doAddUser_js_1 = require("../handlers/admin-post/doAddUser.js");
@@ -32,6 +33,7 @@ exports.router
  */
 exports.router
     .get('/userGroups', userGroups_js_1.default)
+    .get('/userGroup/:userGroupId', userGroup_js_1.default)
     .post('/doAddUserGroup', doAddUserGroup_js_1.default)
     .post('/doUpdateUserGroup', doUpdateUserGroup_js_1.default)
     .post('/doDeleteUserGroup', doDeleteUserGroup_js_1.default)

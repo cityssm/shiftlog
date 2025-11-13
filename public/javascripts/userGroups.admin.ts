@@ -176,24 +176,17 @@ declare const exports: {
     let currentMembers: string[] = []
 
     function refreshMembers(): void {
-      cityssm.postJSON(
-        `${shiftLog.urlPrefix}/admin/doAddUserGroupMember`,
-        {
-          userGroupId,
-          userName: '' // Empty to just get current state
-        },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            userGroup?: UserGroup
-          }
-
+      fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
+        .then(async (response) => await response.json())
+        .then((responseJSON: { userGroup?: UserGroup }) => {
           if (responseJSON.userGroup !== undefined) {
             currentMembers = responseJSON.userGroup.members ?? []
             renderMembersList()
           }
-        }
-      )
+        })
+        .catch(() => {
+          // Error handling
+        })
     }
 
     function renderMembersList(): void {
@@ -351,23 +344,17 @@ declare const exports: {
             .join('')
 
         // Get current members
-        cityssm.postJSON(
-          `${shiftLog.urlPrefix}/admin/doAddUserGroupMember`,
-          {
-            userGroupId,
-            userName: '' // Empty to just get current state
-          },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as {
-              userGroup?: UserGroup
-            }
-
+        fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
+          .then(async (response) => await response.json())
+          .then((responseJSON: { userGroup?: UserGroup }) => {
             if (responseJSON.userGroup !== undefined) {
               currentMembers = responseJSON.userGroup.members ?? []
               renderMembersList()
             }
-          }
-        )
+          })
+          .catch(() => {
+            // Error handling
+          })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
