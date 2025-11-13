@@ -1,0 +1,47 @@
+<%- include('../_header'); -%>
+
+<nav class="breadcrumb">
+  <ul>
+    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+    <li>
+      <a href="#">
+        <span class="icon is-small"><i class="fa-solid fa-cog"></i></span>
+        <span>Administrator Tools</span>
+      </a>
+    </li>
+    <li class="is-active">
+      <a href="#" aria-current="page">
+        Equipment Maintenance
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div class="columns is-vcentered">
+  <div class="column">
+    <h1 class="title is-1">
+      Equipment Maintenance
+    </h1>
+  </div>
+  <div class="column is-narrow">
+    <button class="button is-primary" id="button--addEquipment" type="button">
+      <span class="icon">
+        <i class="fa-solid fa-plus"></i>
+      </span>
+      <span>Add Equipment</span>
+    </button>
+  </div>
+</div>
+
+<div id="container--equipment"></div>
+
+<%- include('../_footerA'); -%>
+
+<script>
+  exports.equipment = <%- JSON.stringify(equipment) %>;
+  exports.userGroups = <%- JSON.stringify(userGroups) %>;
+  exports.equipmentTypes = <%- JSON.stringify(equipmentTypes) %>;
+</script>
+<script src="<%= urlPrefix %>/javascripts/equipment.admin.js"></script>
+
+<%- include('../_footerB'); -%>

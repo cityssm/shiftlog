@@ -56,3 +56,12 @@ export interface DataListItem extends BaseRecord {
 
   dataListItem: string
 }
+
+export interface Equipment extends BaseRecord {
+  equipmentNumber: string
+  equipmentName: string
+  equipmentDescription: string
+  equipmentTypeDataListItemId: number
+  userGroupId?: number
+  userGroupName?: string
+}

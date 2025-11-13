@@ -1,0 +1,97 @@
+<div
+  class="modal"
+  id="modal--editEquipment"
+  role="dialog"
+  aria-label="Edit Equipment"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Equipment</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editEquipment">
+        <div class="field">
+          <label class="label" for="edit-equipmentNumber">Equipment Number</label>
+          <div class="control">
+            <input
+              class="input"
+              id="edit-equipmentNumber"
+              name="equipmentNumber"
+              type="text"
+              maxlength="20"
+              required
+              readonly
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="edit-equipmentName">Equipment Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="edit-equipmentName"
+              name="equipmentName"
+              type="text"
+              maxlength="100"
+              required
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="edit-equipmentDescription">Description</label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="edit-equipmentDescription"
+              name="equipmentDescription"
+              maxlength="200"
+            ></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="edit-equipmentTypeDataListItemId">Equipment Type</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="edit-equipmentTypeDataListItemId"
+                name="equipmentTypeDataListItemId"
+                required
+              >
+                <option value="">Select Equipment Type</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="edit-userGroupId">User Group (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="edit-userGroupId"
+                name="userGroupId"
+              >
+                <option value="">No User Group</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editEquipment">
+          Update Equipment
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
