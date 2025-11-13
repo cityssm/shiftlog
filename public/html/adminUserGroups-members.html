@@ -1,0 +1,54 @@
+<div
+  class="modal"
+  id="modal--manageMembersUserGroup"
+  role="dialog"
+  aria-label="Manage User Group Members"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">
+        Manage Members: <span id="span--groupName"></span>
+      </p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addMember">
+        <div class="field">
+          <label class="label" for="userName">Add Member</label>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <div class="select is-fullwidth">
+                <select name="userName" id="userName" required>
+                  <option value="">Select a user...</option>
+                </select>
+              </div>
+            </div>
+            <div class="control">
+              <button class="button is-primary" type="submit">
+                <span class="icon">
+                  <i class="fa-solid fa-plus"></i>
+                </span>
+                <span>Add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <hr />
+
+      <h3 class="title is-5">Current Members</h3>
+      <div id="container--members"></div>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <button class="button is-close-modal-button" type="button">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

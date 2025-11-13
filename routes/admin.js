@@ -1,27 +1,46 @@
-import { Router } from 'express';
-import handler_settings from '../handlers/admin-get/settings.js';
-import handler_users from '../handlers/admin-get/users.js';
-import handler_doAddUser from '../handlers/admin-post/doAddUser.js';
-import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js';
-import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js';
-import handler_doUpdateSetting from '../handlers/admin-post/doUpdateSetting.js';
-import handler_doUpdateUser from '../handlers/admin-post/doUpdateUser.js';
-import handler_doUpdateUserSettings from '../handlers/admin-post/doUpdateUserSettings.js';
-export const router = Router();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.router = void 0;
+var express_1 = require("express");
+var settings_js_1 = require("../handlers/admin-get/settings.js");
+var userGroups_js_1 = require("../handlers/admin-get/userGroups.js");
+var users_js_1 = require("../handlers/admin-get/users.js");
+var doAddUser_js_1 = require("../handlers/admin-post/doAddUser.js");
+var doAddUserGroup_js_1 = require("../handlers/admin-post/doAddUserGroup.js");
+var doAddUserGroupMember_js_1 = require("../handlers/admin-post/doAddUserGroupMember.js");
+var doDeleteUser_js_1 = require("../handlers/admin-post/doDeleteUser.js");
+var doDeleteUserGroup_js_1 = require("../handlers/admin-post/doDeleteUserGroup.js");
+var doDeleteUserGroupMember_js_1 = require("../handlers/admin-post/doDeleteUserGroupMember.js");
+var doToggleUserPermission_js_1 = require("../handlers/admin-post/doToggleUserPermission.js");
+var doUpdateSetting_js_1 = require("../handlers/admin-post/doUpdateSetting.js");
+var doUpdateUser_js_1 = require("../handlers/admin-post/doUpdateUser.js");
+var doUpdateUserGroup_js_1 = require("../handlers/admin-post/doUpdateUserGroup.js");
+var doUpdateUserSettings_js_1 = require("../handlers/admin-post/doUpdateUserSettings.js");
+exports.router = (0, express_1.Router)();
 /*
  * Users
  */
-router
-    .get('/users', handler_users)
-    .post('/doAddUser', handler_doAddUser)
-    .post('/doUpdateUser', handler_doUpdateUser)
-    .post('/doUpdateUserSettings', handler_doUpdateUserSettings)
-    .post('/doToggleUserPermission', handler_doToggleUserPermission)
-    .post('/doDeleteUser', handler_doDeleteUser);
+exports.router
+    .get('/users', users_js_1.default)
+    .post('/doAddUser', doAddUser_js_1.default)
+    .post('/doUpdateUser', doUpdateUser_js_1.default)
+    .post('/doUpdateUserSettings', doUpdateUserSettings_js_1.default)
+    .post('/doToggleUserPermission', doToggleUserPermission_js_1.default)
+    .post('/doDeleteUser', doDeleteUser_js_1.default);
+/*
+ * User Groups
+ */
+exports.router
+    .get('/userGroups', userGroups_js_1.default)
+    .post('/doAddUserGroup', doAddUserGroup_js_1.default)
+    .post('/doUpdateUserGroup', doUpdateUserGroup_js_1.default)
+    .post('/doDeleteUserGroup', doDeleteUserGroup_js_1.default)
+    .post('/doAddUserGroupMember', doAddUserGroupMember_js_1.default)
+    .post('/doDeleteUserGroupMember', doDeleteUserGroupMember_js_1.default);
 /*
  * Settings Management
  */
-router
-    .get('/settings', handler_settings)
-    .post('/doUpdateSetting', handler_doUpdateSetting);
-export default router;
+exports.router
+    .get('/settings', settings_js_1.default)
+    .post('/doUpdateSetting', doUpdateSetting_js_1.default);
+exports.default = exports.router;
