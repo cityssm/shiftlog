@@ -11,7 +11,6 @@ import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js';
 import handler_doReorderDataListItems from '../handlers/admin-post/doReorderDataListItems.js';
 import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js';
 import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupMember.js';
-import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js';
 import handler_doDeleteUserGroup from '../handlers/admin-post/doDeleteUserGroup.js';
 import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUserGroupMember.js';
 import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js';
