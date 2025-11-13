@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import deleteUserGroupMember from '../../database/userGroups/deleteUserGroupMember.js'
-import getUserGroup from '../../database/userGroups/getUserGroup.js'
+import deleteUserGroupMember from '../../database/users/deleteUserGroupMember.js'
+import getUserGroup from '../../database/users/getUserGroup.js'
 
 export default async function handler(
   request: Request<unknown, unknown, { userGroupId: string; userName: string }>,

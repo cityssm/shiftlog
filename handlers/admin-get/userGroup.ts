@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 
-import getUserGroup from '../../database/userGroups/getUserGroup.js'
+import getUserGroup from '../../database/users/getUserGroup.js'
 
 export default async function handler(
   request: Request<{ userGroupId: string }>,

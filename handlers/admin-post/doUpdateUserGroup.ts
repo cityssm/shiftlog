@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import getUserGroups from '../../database/userGroups/getUserGroups.js'
-import updateUserGroup from '../../database/userGroups/updateUserGroup.js'
+import getUserGroups from '../../database/users/getUserGroups.js'
+import updateUserGroup from '../../database/users/updateUserGroup.js'
 
 export default async function handler(
   request: Request<
