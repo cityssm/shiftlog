@@ -40,6 +40,15 @@ export interface DataListItem extends BaseRecord {
     dataListKey: string;
     dataListItem: string;
 }
+export interface Equipment extends BaseRecord {
+    equipmentNumber: string;
+    equipmentName: string;
+    equipmentDescription: string;
+    equipmentTypeDataListItemId: number;
+    userGroupId?: number;
+    userGroupName?: string;
+}
+
 export interface Employee extends BaseRecord {
     employeeNumber: string;
     firstName: string;

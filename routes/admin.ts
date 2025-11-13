@@ -1,11 +1,17 @@
 import { Router } from 'express'
 
+import handler_equipment from '../handlers/admin-get/equipment.js'
 import handler_employees from '../handlers/admin-get/employees.js'
 import handler_dataLists from '../handlers/admin-get/dataLists.js'
 import handler_settings from '../handlers/admin-get/settings.js'
 import handler_userGroup from '../handlers/admin-get/userGroup.js'
 import handler_userGroups from '../handlers/admin-get/userGroups.js'
 import handler_users from '../handlers/admin-get/users.js'
+import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js'
+import handler_doAddUser from '../handlers/admin-post/doAddUser.js'
+import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js'
+import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupMember.js'
+import handler_doDeleteEquipment from '../handlers/admin-post/doDeleteEquipment.js'
 import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js'
 import handler_doAddUser from '../handlers/admin-post/doAddUser.js'
 import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js'
@@ -21,6 +27,7 @@ import handler_doDeleteUserGroup from '../handlers/admin-post/doDeleteUserGroup.
 import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUserGroupMember.js'
 import handler_doReorderDataListItems from '../handlers/admin-post/doReorderDataListItems.js'
 import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js'
+import handler_doUpdateEquipment from '../handlers/admin-post/doUpdateEquipment.js'
 import handler_doUpdateEmployee from '../handlers/admin-post/doUpdateEmployee.js'
 import handler_doUpdateDataListItem from '../handlers/admin-post/doUpdateDataListItem.js'
 import handler_doUpdateSetting from '../handlers/admin-post/doUpdateSetting.js'
@@ -74,6 +81,14 @@ router
   .post('/doUpdateSetting', handler_doUpdateSetting)
 
 /*
+ * Equipment Management
+ */
+
+router
+  .get('/equipment', handler_equipment)
+  .post('/doAddEquipment', handler_doAddEquipment)
+  .post('/doUpdateEquipment', handler_doUpdateEquipment)
+  .post('/doDeleteEquipment', handler_doDeleteEquipment)
  * Data List Management
  */
 
