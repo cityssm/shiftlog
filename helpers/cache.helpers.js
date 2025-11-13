@@ -1,67 +1,60 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.cacheTableNames = void 0;
-exports.preloadCaches = preloadCaches;
-exports.clearCacheByTableName = clearCacheByTableName;
-exports.clearCaches = clearCaches;
-var node_cluster_1 = require("node:cluster");
-var debug_1 = require("debug");
-var debug_config_js_1 = require("../debug.config.js");
-var apiKeys_cache_js_1 = require("./cache/apiKeys.cache.js");
-var settings_cache_js_1 = require("./cache/settings.cache.js");
-var debug = (0, debug_1.default)("".concat(debug_config_js_1.DEBUG_NAMESPACE, ":helpers.cache:").concat(process.pid.toString().padEnd(debug_config_js_1.PROCESS_ID_MAX_DIGITS)));
+import cluster from 'node:cluster';
+import Debug from 'debug';
+import { DEBUG_NAMESPACE, PROCESS_ID_MAX_DIGITS } from '../debug.config.js';
+import { clearApiKeysCache, getCachedApiKeys } from './cache/apiKeys.cache.js';
+import { clearSettingsCache } from './cache/settings.cache.js';
+const debug = Debug(`${DEBUG_NAMESPACE}:helpers.cache:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`);
 /*
  * Cache Management
  */
-function preloadCaches() {
+export function preloadCaches() {
     debug('Preloading caches');
-    (0, apiKeys_cache_js_1.getCachedApiKeys)();
+    getCachedApiKeys();
     debug('Caches preloaded');
 }
-exports.cacheTableNames = ['ApplicationSettings', 'UserSettings'];
-function clearCacheByTableName(tableName, relayMessage) {
-    if (relayMessage === void 0) { relayMessage = true; }
+export const cacheTableNames = ['ApplicationSettings', 'UserSettings'];
+export function clearCacheByTableName(tableName, relayMessage = true) {
     switch (tableName) {
         case 'ApplicationSettings': {
-            (0, settings_cache_js_1.clearSettingsCache)();
+            clearSettingsCache();
             break;
         }
         case 'UserSettings': {
-            (0, apiKeys_cache_js_1.clearApiKeysCache)();
+            clearApiKeysCache();
             break;
         }
         // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         default: {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            debug("No cache clearing action for table: ".concat(tableName));
+            debug(`No cache clearing action for table: ${tableName}`);
             return;
         }
     }
     try {
-        if (relayMessage && node_cluster_1.default.isWorker) {
-            var workerMessage = {
+        if (relayMessage && cluster.isWorker) {
+            const workerMessage = {
                 messageType: 'clearCache',
-                tableName: tableName,
+                tableName,
                 timeMillis: Date.now(),
                 pid: process.pid
             };
-            debug("Sending clear cache from worker: ".concat(tableName));
+            debug(`Sending clear cache from worker: ${tableName}`);
             if (process.send !== undefined) {
                 process.send(workerMessage);
             }
         }
     }
-    catch (_a) {
+    catch {
         // ignore
     }
 }
-function clearCaches() {
-    (0, apiKeys_cache_js_1.clearApiKeysCache)();
+export function clearCaches() {
+    clearApiKeysCache();
     debug('Caches cleared');
 }
-process.on('message', function (message) {
+process.on('message', (message) => {
     if (message.messageType === 'clearCache' && message.pid !== process.pid) {
-        debug("Clearing cache: ".concat(message.tableName));
+        debug(`Clearing cache: ${message.tableName}`);
         clearCacheByTableName(message.tableName, false);
     }
 });
