@@ -35,7 +35,6 @@ export interface UserGroup extends BaseRecord {
     memberCount?: number;
     members?: string[];
 }
-
 export interface DataListItem extends BaseRecord {
     dataListItemId: number;
     dataListKey: string;
