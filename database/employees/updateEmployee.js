@@ -8,12 +8,12 @@ export default async function updateEmployee(employeeFields, user) {
         .input('employeeNumber', employeeFields.employeeNumber)
         .input('firstName', employeeFields.firstName)
         .input('lastName', employeeFields.lastName)
-        .input('userName', employeeFields.userName ?? null)
+        .input('userName', employeeFields.userName ?? undefined)
         .input('isSupervisor', employeeFields.isSupervisor ?? false)
-        .input('phoneNumber', employeeFields.phoneNumber ?? null)
-        .input('phoneNumberAlternate', employeeFields.phoneNumberAlternate ?? null)
-        .input('emailAddress', employeeFields.emailAddress ?? null)
-        .input('userGroupId', employeeFields.userGroupId ?? null)
+        .input('phoneNumber', employeeFields.phoneNumber ?? undefined)
+        .input('phoneNumberAlternate', employeeFields.phoneNumberAlternate ?? undefined)
+        .input('emailAddress', employeeFields.emailAddress ?? undefined)
+        .input('userGroupId', employeeFields.userGroupId ?? undefined)
         .input('recordUpdate_userName', user.userName)
         .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
       update ShiftLog.Employees

@@ -7,43 +7,43 @@ export default async function handler(
   response: Response
 ): Promise<void> {
   const {
+    emailAddress,
     employeeNumber,
     firstName,
-    lastName,
-    userName,
     isSupervisor = '0',
+    lastName,
     phoneNumber,
     phoneNumberAlternate,
-    emailAddress,
-    userGroupId
+    userGroupId,
+    userName
   } = request.body as {
+    emailAddress?: string
     employeeNumber: string
     firstName: string
-    lastName: string
-    userName?: string
     isSupervisor?: string
+    lastName: string
     phoneNumber?: string
     phoneNumberAlternate?: string
-    emailAddress?: string
     userGroupId?: string
+    userName?: string
   }
 
   try {
     const success = await updateEmployee(
       {
+        emailAddress: emailAddress === '' ? undefined : emailAddress,
         employeeNumber,
         firstName,
-        lastName,
-        userName: userName === '' ? null : userName,
         isSupervisor: isSupervisor === '1',
-        phoneNumber: phoneNumber === '' ? null : phoneNumber,
+        lastName,
+        phoneNumber: phoneNumber === '' ? undefined : phoneNumber,
         phoneNumberAlternate:
-          phoneNumberAlternate === '' ? null : phoneNumberAlternate,
-        emailAddress: emailAddress === '' ? null : emailAddress,
+          phoneNumberAlternate === '' ? undefined : phoneNumberAlternate,
         userGroupId:
           userGroupId === undefined || userGroupId === ''
-            ? null
-            : Number.parseInt(userGroupId, 10)
+            ? undefined
+            : Number.parseInt(userGroupId, 10),
+        userName: userName === '' ? undefined : userName
       },
       request.session.user as User
     )

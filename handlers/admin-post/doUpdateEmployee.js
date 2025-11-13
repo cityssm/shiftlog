@@ -1,19 +1,19 @@
 import updateEmployee from '../../database/employees/updateEmployee.js';
 export default async function handler(request, response) {
-    const { employeeNumber, firstName, lastName, userName, isSupervisor = '0', phoneNumber, phoneNumberAlternate, emailAddress, userGroupId } = request.body;
+    const { emailAddress, employeeNumber, firstName, isSupervisor = '0', lastName, phoneNumber, phoneNumberAlternate, userGroupId, userName } = request.body;
     try {
         const success = await updateEmployee({
+            emailAddress: emailAddress === '' ? undefined : emailAddress,
             employeeNumber,
             firstName,
-            lastName,
-            userName: userName === '' ? null : userName,
             isSupervisor: isSupervisor === '1',
-            phoneNumber: phoneNumber === '' ? null : phoneNumber,
-            phoneNumberAlternate: phoneNumberAlternate === '' ? null : phoneNumberAlternate,
-            emailAddress: emailAddress === '' ? null : emailAddress,
+            lastName,
+            phoneNumber: phoneNumber === '' ? undefined : phoneNumber,
+            phoneNumberAlternate: phoneNumberAlternate === '' ? undefined : phoneNumberAlternate,
             userGroupId: userGroupId === undefined || userGroupId === ''
-                ? null
-                : Number.parseInt(userGroupId, 10)
+                ? undefined
+                : Number.parseInt(userGroupId, 10),
+            userName: userName === '' ? undefined : userName
         }, request.session.user);
         if (success) {
             response.json({

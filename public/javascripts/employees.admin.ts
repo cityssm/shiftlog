@@ -9,8 +9,8 @@ declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
 
 declare const exports: {
-  shiftLog: ShiftLogGlobal
   employees: Employee[]
+  shiftLog: ShiftLogGlobal
   userGroups: UserGroup[]
 }
 ;(() => {
@@ -30,7 +30,7 @@ declare const exports: {
     }
 
     const employee = exports.employees.find(
-      (e) => e.employeeNumber === employeeNumber
+      (employee) => employee.employeeNumber === employeeNumber
     )
 
     bulmaJS.confirm({
@@ -95,7 +95,7 @@ declare const exports: {
 
     // Find the employee in the current employees list
     const employee = exports.employees.find(
-      (e) => e.employeeNumber === employeeNumber
+      (employee) => employee.employeeNumber === employeeNumber
     )
 
     if (employee === undefined) {
@@ -273,7 +273,6 @@ declare const exports: {
     const tableElement = document.createElement('table')
     tableElement.className = 'table is-fullwidth is-striped is-hoverable'
 
-    // eslint-disable-next-line no-unsanitized/property
     tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
@@ -374,7 +373,7 @@ declare const exports: {
             modalElement.querySelector(
               '#addEmployee--employeeNumber'
             ) as HTMLInputElement
-          )?.focus()
+          ).focus()
         },
 
         onremoved() {

@@ -6,9 +6,9 @@ export default async function handler(request, response) {
         if (success) {
             const employees = await getEmployees();
             response.json({
+                employees,
                 message: 'Employee deleted successfully',
-                success: true,
-                employees
+                success: true
             });
         }
         else {

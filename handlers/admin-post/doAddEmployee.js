@@ -4,7 +4,7 @@ export default async function handler(request, response) {
     const success = await addEmployee(request.body.employeeNumber, request.body.firstName, request.body.lastName, request.session.user);
     const employees = await getEmployees();
     response.json({
-        success,
-        employees
+        employees,
+        success
     });
 }

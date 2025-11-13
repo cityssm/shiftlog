@@ -21,7 +21,7 @@ export default async function handler(
   const employees = await getEmployees()
 
   response.json({
-    success,
-    employees
+    employees,
+    success
   })
 }

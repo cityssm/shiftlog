@@ -3,18 +3,15 @@ import mssqlPool from '@cityssm/mssql-multi-pool'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 export interface EmployeeUpdateFields {
+  emailAddress?: string | null
   employeeNumber: string
   firstName: string
-  lastName: string
-
-  userName?: string | null
   isSupervisor?: boolean
-
+  lastName: string
   phoneNumber?: string | null
   phoneNumberAlternate?: string | null
-  emailAddress?: string | null
-
   userGroupId?: number | null
+  userName?: string | null
 }
 
 export default async function updateEmployee(
@@ -30,12 +27,12 @@ export default async function updateEmployee(
     .input('employeeNumber', employeeFields.employeeNumber)
     .input('firstName', employeeFields.firstName)
     .input('lastName', employeeFields.lastName)
-    .input('userName', employeeFields.userName ?? null)
+    .input('userName', employeeFields.userName ?? undefined)
     .input('isSupervisor', employeeFields.isSupervisor ?? false)
-    .input('phoneNumber', employeeFields.phoneNumber ?? null)
-    .input('phoneNumberAlternate', employeeFields.phoneNumberAlternate ?? null)
-    .input('emailAddress', employeeFields.emailAddress ?? null)
-    .input('userGroupId', employeeFields.userGroupId ?? null)
+    .input('phoneNumber', employeeFields.phoneNumber ?? undefined)
+    .input('phoneNumberAlternate', employeeFields.phoneNumberAlternate ?? undefined)
+    .input('emailAddress', employeeFields.emailAddress ?? undefined)
+    .input('userGroupId', employeeFields.userGroupId ?? undefined)
     .input('recordUpdate_userName', user.userName)
     .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
       update ShiftLog.Employees

@@ -7,7 +7,7 @@
         if (employeeNumber === undefined) {
             return;
         }
-        const employee = exports.employees.find((e) => e.employeeNumber === employeeNumber);
+        const employee = exports.employees.find((employee) => employee.employeeNumber === employeeNumber);
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Employee',
@@ -51,7 +51,7 @@
             return;
         }
         // Find the employee in the current employees list
-        const employee = exports.employees.find((e) => e.employeeNumber === employeeNumber);
+        const employee = exports.employees.find((employee) => employee.employeeNumber === employeeNumber);
         if (employee === undefined) {
             return;
         }
@@ -157,7 +157,6 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
         tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
@@ -228,7 +227,7 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddEmployee);
-                modalElement.querySelector('#addEmployee--employeeNumber')?.focus();
+                modalElement.querySelector('#addEmployee--employeeNumber').focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();

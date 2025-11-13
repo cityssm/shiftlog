@@ -1,12 +1,12 @@
 export interface EmployeeUpdateFields {
+    emailAddress?: string | null;
     employeeNumber: string;
     firstName: string;
-    lastName: string;
-    userName?: string | null;
     isSupervisor?: boolean;
+    lastName: string;
     phoneNumber?: string | null;
     phoneNumberAlternate?: string | null;
-    emailAddress?: string | null;
     userGroupId?: number | null;
+    userName?: string | null;
 }
 export default function updateEmployee(employeeFields: EmployeeUpdateFields, user: User): Promise<boolean>;

@@ -11,8 +11,8 @@ export default async function handler(
   const userGroups = await getUserGroups()
 
   response.render('admin/employees', {
-    headTitle: 'Employee Management',
     employees,
+    headTitle: 'Employee Management',
     userGroups
   })
 }
