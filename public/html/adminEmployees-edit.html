@@ -1,0 +1,144 @@
+<div
+  class="modal"
+  id="modal--editEmployee"
+  role="dialog"
+  aria-label="Edit Employee"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Employee</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editEmployee">
+        <input type="hidden" name="employeeNumber" id="editEmployee--employeeNumber" />
+        <div class="field">
+          <label class="label">Employee Number</label>
+          <div class="control">
+            <span id="span--employeeNumber" class="has-text-weight-bold"></span>
+          </div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="editEmployee--firstName">First Name</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="editEmployee--firstName"
+                  name="firstName"
+                  type="text"
+                  maxlength="50"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="editEmployee--lastName">Last Name</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="editEmployee--lastName"
+                  name="lastName"
+                  type="text"
+                  maxlength="50"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="editEmployee--userName">User Name (Optional)</label>
+          <div class="control">
+            <input
+              class="input"
+              id="editEmployee--userName"
+              name="userName"
+              type="text"
+              maxlength="30"
+            />
+          </div>
+          <p class="help">Link this employee to a system user account</p>
+        </div>
+        <div class="field">
+          <div class="control">
+            <label class="checkbox">
+              <input
+                id="editEmployee--isSupervisor"
+                name="isSupervisor"
+                type="checkbox"
+                value="1"
+              />
+              Is Supervisor
+            </label>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="editEmployee--phoneNumber">Phone Number</label>
+          <div class="control">
+            <input
+              class="input"
+              id="editEmployee--phoneNumber"
+              name="phoneNumber"
+              type="text"
+              maxlength="20"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="editEmployee--phoneNumberAlternate">Alternate Phone Number</label>
+          <div class="control">
+            <input
+              class="input"
+              id="editEmployee--phoneNumberAlternate"
+              name="phoneNumberAlternate"
+              type="text"
+              maxlength="20"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="editEmployee--emailAddress">Email Address</label>
+          <div class="control">
+            <input
+              class="input"
+              id="editEmployee--emailAddress"
+              name="emailAddress"
+              type="email"
+              maxlength="100"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="editEmployee--userGroupId">User Group (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="editEmployee--userGroupId" name="userGroupId">
+                <option value="">(No User Group)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">Indicates who will have the ability to see the employee</p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editEmployee">
+          Update Employee
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

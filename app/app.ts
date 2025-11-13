@@ -153,6 +153,7 @@ app
     express.static('node_modules/@fortawesome/fontawesome-free')
   )
   .use(`${urlPrefix}/lib/leaflet`, express.static('node_modules/leaflet/dist'))
+  .use(`${urlPrefix}/lib/sortablejs`, express.static('node_modules/sortablejs'))
 
 /*
  * SESSION MANAGEMENT

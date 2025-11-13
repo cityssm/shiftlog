@@ -27,76 +27,97 @@
   Administrator Tools
 </h2>
 
-<div class="panel">
-  <a class="panel-block" href="<%= urlPrefix %>/admin/users">
-    <div class="media">
-      <div class="media-left">
-        <span class="fa-layers fa-4x">
-          <i class="fa-solid fa-users"></i>
-          <i class="fa-solid fa-cog" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
-        </span>
-      </div>
-      <div class="media-content">
-        <h2 class="title is-4 mb-0 has-text-link">
-          User Management
-        </h2>
-        <p>
-          Manage user accounts and permissions.
-        </p>
-      </div>
+<div class="columns">
+  <div class="column">
+    <div class="panel">
+      <a class="panel-block" href="<%= urlPrefix %>/admin/dataLists">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-list"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Data List Management
+            </h2>
+            <p>
+              Manage equipment types, shift types, and other data lists.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/employees">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-address-card"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Employee Management
+            </h2>
+            <p>
+              Manage employee records and information.
+            </p>
+          </div>
+        </div>
+      </a>
     </div>
-  </a>
-  <a class="panel-block" href="<%= urlPrefix %>/admin/userGroups">
-    <div class="media">
-      <div class="media-left">
-        <span class="fa-layers fa-4x">
-          <i class="fa-solid fa-user-group"></i>
-          <i class="fa-solid fa-cog" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
-        </span>
-      </div>
-      <div class="media-content">
-        <h2 class="title is-4 mb-0 has-text-link">
-          User Group Management
-        </h2>
-        <p>
-          Create and manage user groups and group members.
-        </p>
-      </div>
+  </div>
+  <div class="column">
+    <div class="panel">
+      <a class="panel-block" href="<%= urlPrefix %>/admin/users">
+        <div class="media">
+          <div class="media-left">
+            <span class="fa-layers fa-4x">
+              <i class="fa-solid fa-users"></i>
+              <i class="fa-solid fa-cog" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
+            </span>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              User Management
+            </h2>
+            <p>
+              Manage user accounts and permissions.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/userGroups">
+        <div class="media">
+          <div class="media-left">
+            <span class="fa-layers fa-4x">
+              <i class="fa-solid fa-user-group"></i>
+              <i class="fa-solid fa-cog" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
+            </span>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              User Group Management
+            </h2>
+            <p>
+              Create and manage user groups and group members.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/settings">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-sliders"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Settings Management
+            </h2>
+            <p>
+              Manage application settings.
+            </p>
+          </div>
+        </div>
+      </a>
+      
     </div>
-  </a>
-  <a class="panel-block" href="<%= urlPrefix %>/admin/equipment">
-    <div class="media">
-      <div class="media-left">
-        <span class="fa-layers fa-4x">
-          <i class="fa-solid fa-wrench"></i>
-          <i class="fa-solid fa-cog" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
-        </span>
-      </div>
-      <div class="media-content">
-        <h2 class="title is-4 mb-0 has-text-link">
-          Equipment Maintenance
-        </h2>
-        <p>
-          Add, update, and remove equipment records.
-        </p>
-      </div>
-    </div>
-  </a>
-  <a class="panel-block" href="<%= urlPrefix %>/admin/settings">
-    <div class="media">
-      <div class="media-left">
-        <i class="fa-solid fa-4x fa-sliders"></i>
-      </div>
-      <div class="media-content">
-        <h2 class="title is-4 mb-0 has-text-link">
-          Settings Management
-        </h2>
-        <p>
-          Manage application settings.
-        </p>
-      </div>
-    </div>
-  </a>
+  </div>
 </div>
 <% } %>
 

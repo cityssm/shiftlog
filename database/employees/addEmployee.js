@@ -1,0 +1,69 @@
+import mssqlPool from '@cityssm/mssql-multi-pool';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
+async function insertNewEmployee(employeeNumber, firstName, lastName, user) {
+    const currentDate = new Date();
+    try {
+        const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+        await pool
+            .request()
+            .input('employeeNumber', employeeNumber)
+            .input('firstName', firstName)
+            .input('lastName', lastName)
+            .input('recordCreate_userName', user.userName)
+            .input('recordCreate_dateTime', currentDate)
+            .input('recordUpdate_userName', user.userName)
+            .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
+        insert into ShiftLog.Employees (
+          employeeNumber, firstName, lastName,
+          recordCreate_userName, recordCreate_dateTime,
+          recordUpdate_userName, recordUpdate_dateTime
+        ) values (
+          @employeeNumber, @firstName, @lastName,
+          @recordCreate_userName, @recordCreate_dateTime,
+          @recordUpdate_userName, @recordUpdate_dateTime
+        )
+      `);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user) {
+    const currentDate = new Date();
+    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const result = await pool
+        .request()
+        .input('employeeNumber', employeeNumber)
+        .input('firstName', firstName)
+        .input('lastName', lastName)
+        .input('recordUpdate_userName', user.userName)
+        .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
+      update ShiftLog.Employees
+        set firstName = @firstName,
+        lastName = @lastName,
+        recordUpdate_userName = @recordUpdate_userName,
+        recordUpdate_dateTime = @recordUpdate_dateTime,
+        recordDelete_userName = null,
+        recordDelete_dateTime = null
+      where employeeNumber = @employeeNumber
+    `);
+    return result.rowsAffected.length > 0;
+}
+export default async function addEmployee(employeeNumber, firstName, lastName, user) {
+    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    // Check if an employee with the same number already exists
+    const recordDeleteResult = (await pool
+        .request()
+        .input('employeeNumber', employeeNumber).query(/* sql */ `
+      select recordDelete_dateTime from ShiftLog.Employees where employeeNumber = @employeeNumber
+    `));
+    let success = false;
+    if (recordDeleteResult.recordset.length === 0) {
+        success = await insertNewEmployee(employeeNumber, firstName, lastName, user);
+    }
+    else if (recordDeleteResult.recordset[0].recordDelete_dateTime !== null) {
+        success = await restoreDeletedEmployee(employeeNumber, firstName, lastName, user);
+    }
+    return success;
+}
