@@ -1,0 +1,42 @@
+<%- include('../_header'); -%>
+
+<nav class="breadcrumb">
+  <ul>
+    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+    <li>
+      <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
+        <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i></span>
+        <span><%= configFunctions.getConfigProperty('shifts.sectionName') %></span>
+      </a>
+    </li>
+    <li class="is-active">
+      <a href="#" aria-current="page">
+        <span>
+          <% if (isCreate) { %>
+          Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
+          <% } else { %>
+          <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> #<%= shift.shiftId %>
+          <% } %>
+        </span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<h1 class="title is-1">
+  <% if (isCreate) { %>
+  Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
+  <% } else { %>
+  <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> #<%= shift.shiftId %>
+  <% } %>
+</h1>
+
+<% if (shiftTypes.length === 0) { %>
+  <div class="notification is-danger">
+    No shift types available.
+  </div>
+<% } %>
+
+<%- include('../_footerA'); -%>
+
+<%- include('../_footerB'); -%>

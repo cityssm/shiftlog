@@ -1,5 +1,5 @@
-import type { SettingKey } from "./setting.types.js"
-import type { UserSettingKey } from "./user.types.js"
+import type { SettingKey } from './setting.types.js'
+import type { UserSettingKey } from './user.types.js'
 
 export interface BaseRecord {
   recordCreate_dateTime?: Date
@@ -21,7 +21,6 @@ export interface Setting {
   recordUpdate_timeMillis: number
 }
 
-
 export interface DatabaseUser extends BaseRecord {
   userName: string
 
@@ -42,4 +41,11 @@ export interface DatabaseUser extends BaseRecord {
   isAdmin: boolean
 
   userSettings?: Partial<Record<UserSettingKey, string>>
+}
+
+export interface DataListItem extends BaseRecord {
+  dataListItemId: number
+  dataListKey: string
+
+  dataListItem: string
 }
