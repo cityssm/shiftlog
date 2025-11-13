@@ -43,6 +43,13 @@ export interface DatabaseUser extends BaseRecord {
   userSettings?: Partial<Record<UserSettingKey, string>>
 }
 
+export interface UserGroup extends BaseRecord {
+  userGroupId: number
+  userGroupName: string
+  memberCount?: number
+  members?: string[]
+}
+
 export interface DataListItem extends BaseRecord {
   dataListItemId: number
   dataListKey: string

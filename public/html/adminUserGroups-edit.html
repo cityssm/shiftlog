@@ -1,0 +1,47 @@
+<div
+  class="modal"
+  id="modal--editUserGroup"
+  role="dialog"
+  aria-label="Edit User Group"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit User Group</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editUserGroup">
+        <input name="userGroupId" type="hidden" />
+        <div class="field">
+          <label class="label" for="userGroupName">Group Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="userGroupName"
+              name="userGroupName"
+              type="text"
+              maxlength="50"
+              autofocus
+              required
+            />
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editUserGroup">
+          Update User Group
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
