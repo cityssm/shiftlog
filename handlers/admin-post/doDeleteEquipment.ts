@@ -15,7 +15,7 @@ export default async function handler(
   const equipment = await getEquipment()
 
   response.json({
-    success,
-    equipment
+    equipment,
+    success
   })
 }

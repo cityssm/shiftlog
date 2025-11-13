@@ -6,9 +6,9 @@ export default async function handler(request, response) {
     const userGroups = await getUserGroups();
     const equipmentTypes = await getDataListItems('equipmentTypes', request.session.user.userName);
     response.render('admin/equipment', {
-        headTitle: 'Equipment Maintenance',
         equipment,
-        userGroups,
-        equipmentTypes
+        equipmentTypes,
+        headTitle: 'Equipment Maintenance',
+        userGroups
     });
 }

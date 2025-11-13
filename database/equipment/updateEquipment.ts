@@ -2,6 +2,7 @@ import mssqlPool from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
+// eslint-disable-next-line @typescript-eslint/max-params
 export default async function updateEquipment(
   equipmentNumber: string,
   equipmentName: string,
@@ -21,7 +22,7 @@ export default async function updateEquipment(
       .input('equipmentName', equipmentName)
       .input('equipmentDescription', equipmentDescription)
       .input('equipmentTypeDataListItemId', equipmentTypeDataListItemId)
-      .input('userGroupId', userGroupId ?? null)
+      .input('userGroupId', userGroupId ?? undefined)
       .input('recordUpdate_userName', user.userName)
       .input('recordUpdate_dateTime', currentDate)
       .query(/* sql */ `

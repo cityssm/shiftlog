@@ -4,7 +4,7 @@ export default async function handler(request, response) {
     const success = await deleteEquipment(request.body.equipmentNumber, request.session.user);
     const equipment = await getEquipment();
     response.json({
-        success,
-        equipment
+        equipment,
+        success
     });
 }

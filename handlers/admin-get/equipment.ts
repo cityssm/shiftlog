@@ -16,9 +16,9 @@ export default async function handler(
   )
 
   response.render('admin/equipment', {
-    headTitle: 'Equipment Maintenance',
     equipment,
-    userGroups,
-    equipmentTypes
+    equipmentTypes,
+    headTitle: 'Equipment Maintenance',
+    userGroups
   })
 }

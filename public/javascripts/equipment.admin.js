@@ -179,13 +179,14 @@
         </tbody>
       </table>
     `;
+        // eslint-disable-next-line no-unsanitized/property
         equipmentContainerElement.innerHTML = tableHtml;
         const editButtons = equipmentContainerElement.querySelectorAll('.edit-equipment');
-        for (const button of Array.from(editButtons)) {
+        for (const button of [...editButtons]) {
             button.addEventListener('click', editEquipment);
         }
         const deleteButtons = equipmentContainerElement.querySelectorAll('.delete-equipment');
-        for (const button of Array.from(deleteButtons)) {
+        for (const button of [...deleteButtons]) {
             button.addEventListener('click', deleteEquipment);
         }
     }

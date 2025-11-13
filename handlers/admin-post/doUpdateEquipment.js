@@ -6,7 +6,7 @@ export default async function handler(request, response) {
         : Number.parseInt(request.body.userGroupId, 10), request.session.user);
     const equipment = await getEquipment();
     response.json({
-        success,
-        equipment
+        equipment,
+        success
     });
 }

@@ -8,9 +8,9 @@ export default async function handler(
     unknown,
     unknown,
     {
-      equipmentNumber: string
-      equipmentName: string
       equipmentDescription: string
+      equipmentName: string
+      equipmentNumber: string
       equipmentTypeDataListItemId: string
       userGroupId: string
     }
@@ -31,7 +31,7 @@ export default async function handler(
   const equipment = await getEquipment()
 
   response.json({
-    success,
-    equipment
+    equipment,
+    success
   })
 }
