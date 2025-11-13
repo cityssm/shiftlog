@@ -28,9 +28,16 @@ interface DataListWithItems {
   items: DataListItemWithDetails[]
 }
 
+interface UserGroup {
+  userGroupId: number
+  userGroupName: string
+  memberCount?: number
+}
+
 declare const exports: {
   shiftLog: ShiftLogGlobal
   dataLists: DataListWithItems[]
+  userGroups: UserGroup[]
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -49,7 +56,7 @@ declare const exports: {
 
     if (items.length === 0) {
       tbodyElement.innerHTML = `<tr>
-        <td colspan="3" class="has-text-centered has-text-grey">
+        <td colspan="4" class="has-text-centered has-text-grey">
           No items in this list. Click "Add Item" to create one.
         </td>
       </tr>`
@@ -59,6 +66,14 @@ declare const exports: {
     let html = ''
 
     for (const item of items) {
+      const userGroup = item.userGroupId 
+        ? exports.userGroups.find(ug => ug.userGroupId === item.userGroupId)
+        : null
+      
+      const userGroupDisplay = userGroup
+        ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
+        : '<span class="has-text-grey-light">-</span>'
+
       html += `<tr data-data-list-item-id="${item.dataListItemId}">
         <td class="has-text-centered">
           <span class="icon is-small has-text-grey handle" style="cursor: move;">
@@ -69,12 +84,16 @@ declare const exports: {
           <span class="item-text">${cityssm.escapeHTML(item.dataListItem)}</span>
         </td>
         <td>
+          ${userGroupDisplay}
+        </td>
+        <td>
           <div class="buttons are-small">
             <button class="button is-info button--editItem" 
                     type="button"
                     data-data-list-key="${dataListKey}"
                     data-data-list-item-id="${item.dataListItemId}"
-                    data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}">
+                    data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+                    data-user-group-id="${item.userGroupId ?? ''}">
               <span class="icon">
                 <i class="fa-solid fa-pencil"></i>
               </span>
@@ -118,6 +137,13 @@ declare const exports: {
     }
 
     let itemInputElement: HTMLInputElement
+    let userGroupSelectElement: HTMLSelectElement
+
+    // Build user group options
+    let userGroupOptions = '<option value="">None (Available to All)</option>'
+    for (const userGroup of exports.userGroups) {
+      userGroupOptions += `<option value="${userGroup.userGroupId}">${cityssm.escapeHTML(userGroup.userGroupName)}</option>`
+    }
 
     bulmaJS.confirm({
       title: `Add ${dataList.dataListName} Item`,
@@ -126,6 +152,17 @@ declare const exports: {
         <div class="control">
           <input class="input" id="input--newItem" type="text" required />
         </div>
+      </div>
+      <div class="field">
+        <label class="label">User Group (Optional)</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="select--userGroup">
+              ${userGroupOptions}
+            </select>
+          </div>
+        </div>
+        <p class="help">If specified, only members of this user group will see this item.</p>
       </div>`,
       messageIsHtml: true,
       contextualColorName: 'primary',
@@ -143,11 +180,15 @@ declare const exports: {
             return
           }
 
+          const userGroupIdValue = userGroupSelectElement.value
+          const userGroupId = userGroupIdValue ? Number.parseInt(userGroupIdValue) : null
+
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doAddDataListItem`,
             {
               dataListKey,
-              dataListItem
+              dataListItem,
+              userGroupId
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
@@ -178,6 +219,9 @@ declare const exports: {
     itemInputElement = document.querySelector(
       '#input--newItem'
     ) as HTMLInputElement
+    userGroupSelectElement = document.querySelector(
+      '#select--userGroup'
+    ) as HTMLSelectElement
     itemInputElement.focus()
   }
 
@@ -186,6 +230,7 @@ declare const exports: {
     const dataListKey = buttonElement.dataset.dataListKey
     const dataListItemId = buttonElement.dataset.dataListItemId
     const dataListItem = buttonElement.dataset.dataListItem
+    const userGroupId = buttonElement.dataset.userGroupId
 
     if (
       dataListKey === undefined ||
@@ -204,6 +249,14 @@ declare const exports: {
     }
 
     let itemInputElement: HTMLInputElement
+    let userGroupSelectElement: HTMLSelectElement
+
+    // Build user group options
+    let userGroupOptions = '<option value="">None (Available to All)</option>'
+    for (const userGroup of exports.userGroups) {
+      const selected = userGroupId && Number.parseInt(userGroupId) === userGroup.userGroupId ? 'selected' : ''
+      userGroupOptions += `<option value="${userGroup.userGroupId}" ${selected}>${cityssm.escapeHTML(userGroup.userGroupName)}</option>`
+    }
 
     bulmaJS.confirm({
       title: `Edit ${dataList.dataListName} Item`,
@@ -212,6 +265,17 @@ declare const exports: {
         <div class="control">
           <input class="input" id="input--editItem" type="text" value="${cityssm.escapeHTML(dataListItem)}" required />
         </div>
+      </div>
+      <div class="field">
+        <label class="label">User Group (Optional)</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="select--editUserGroup">
+              ${userGroupOptions}
+            </select>
+          </div>
+        </div>
+        <p class="help">If specified, only members of this user group will see this item.</p>
       </div>`,
       messageIsHtml: true,
       contextualColorName: 'info',
@@ -229,12 +293,16 @@ declare const exports: {
             return
           }
 
+          const userGroupIdValue = userGroupSelectElement.value
+          const newUserGroupId = userGroupIdValue ? Number.parseInt(userGroupIdValue) : null
+
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doUpdateDataListItem`,
             {
               dataListKey,
               dataListItemId: Number.parseInt(dataListItemId),
-              dataListItem: newDataListItem
+              dataListItem: newDataListItem,
+              userGroupId: newUserGroupId
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
@@ -265,6 +333,9 @@ declare const exports: {
     itemInputElement = document.querySelector(
       '#input--editItem'
     ) as HTMLInputElement
+    userGroupSelectElement = document.querySelector(
+      '#select--editUserGroup'
+    ) as HTMLSelectElement
     itemInputElement.focus()
     itemInputElement.select()
   }

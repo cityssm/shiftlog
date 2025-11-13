@@ -7,9 +7,11 @@ export default async function updateDataListItem(form) {
             .request()
             .input('dataListItemId', form.dataListItemId)
             .input('dataListItem', form.dataListItem)
+            .input('userGroupId', form.userGroupId ?? null)
             .input('userName', form.userName).query(/* sql */ `
         update ShiftLog.DataListItems
         set dataListItem = @dataListItem,
+            userGroupId = @userGroupId,
             recordUpdate_userName = @userName,
             recordUpdate_dateTime = getdate()
         where dataListItemId = @dataListItemId

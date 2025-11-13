@@ -51,13 +51,14 @@
           <tr>
             <th style="width: 60px;">Order</th>
             <th>Item</th>
+            <th style="width: 180px;">User Group</th>
             <th style="width: 200px;">Actions</th>
           </tr>
         </thead>
         <tbody id="dataListItems--<%= dataList.dataListKey %>" class="is-sortable">
           <% if (dataList.items.length === 0) { %>
             <tr>
-              <td colspan="3" class="has-text-centered has-text-grey">
+              <td colspan="4" class="has-text-centered has-text-grey">
                 No items in this list. Click "Add Item" to create one.
               </td>
             </tr>
@@ -73,12 +74,25 @@
                   <span class="item-text"><%= item.dataListItem %></span>
                 </td>
                 <td>
+                  <% if (item.userGroupId) { %>
+                    <% const userGroup = userGroups.find(ug => ug.userGroupId === item.userGroupId) %>
+                    <% if (userGroup) { %>
+                      <span class="tag is-info"><%= userGroup.userGroupName %></span>
+                    <% } else { %>
+                      <span class="has-text-grey-light">-</span>
+                    <% } %>
+                  <% } else { %>
+                    <span class="has-text-grey-light">-</span>
+                  <% } %>
+                </td>
+                <td>
                   <div class="buttons are-small">
                     <button class="button is-info button--editItem" 
                             type="button"
                             data-data-list-key="<%= dataList.dataListKey %>"
                             data-data-list-item-id="<%= item.dataListItemId %>"
-                            data-data-list-item="<%= item.dataListItem %>">
+                            data-data-list-item="<%= item.dataListItem %>"
+                            data-user-group-id="<%= item.userGroupId || '' %>">
                       <span class="icon">
                         <i class="fa-solid fa-pencil"></i>
                       </span>
@@ -110,6 +124,7 @@
 <script src="<%= urlPrefix %>/lib/sortablejs/Sortable.min.js"></script>
 <script>
   exports.dataLists = <%- JSON.stringify(dataLists) %>;
+  exports.userGroups = <%- JSON.stringify(userGroups) %>;
 </script>
 <script src="<%= urlPrefix %>/javascripts/dataLists.admin.js"></script>
 

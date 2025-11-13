@@ -7,13 +7,14 @@ export default async function addDataListItem(form) {
             .request()
             .input('dataListKey', form.dataListKey)
             .input('dataListItem', form.dataListItem)
+            .input('userGroupId', form.userGroupId ?? null)
             .input('userName', form.userName).query(/* sql */ `
         insert into ShiftLog.DataListItems (
-          dataListKey, dataListItem, orderNumber,
+          dataListKey, dataListItem, userGroupId, orderNumber,
           recordCreate_userName, recordUpdate_userName
         )
         select 
-          @dataListKey, @dataListItem,
+          @dataListKey, @dataListItem, @userGroupId,
           coalesce(max(orderNumber) + 1, 0),
           @userName, @userName
         from ShiftLog.DataListItems
