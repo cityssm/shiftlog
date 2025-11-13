@@ -145,6 +145,7 @@ CREATE TABLE ShiftLog.DataListItems (
   dataListItemId int not null primary key identity(1,1),
   dataListKey varchar(20) not null,
   dataListItem varchar(200) not null,
+  orderNumber smallint not null default 0,
   userGroupId int,
 
   recordCreate_userName varchar(30) not null,

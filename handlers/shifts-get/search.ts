@@ -7,6 +7,6 @@ export default function handler(
   response: Response
 ): void {
   response.render('shifts/search', {
-    headTitle: `${getConfigProperty('shifts.sectionName')} - Search`
+    headTitle: `${getConfigProperty('shifts.sectionNameSingular')} Search`
   })
 }
