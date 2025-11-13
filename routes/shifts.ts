@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response, Router } from 'express'
 
-import newHandler from '../handlers/shifts-get/new.js'
-import searchHandler from '../handlers/shifts-get/search.js'
+import handler_new from '../handlers/shifts-get/new.js'
+import handler_search from '../handlers/shifts-get/search.js'
 
 function updateHandler(
   request: Request<unknown, unknown, unknown, { error?: string }>,
@@ -17,8 +17,8 @@ function updateHandler(
 
 export const router = Router()
 
-router.get('/', searchHandler)
+router.get('/', handler_search)
 
-router.get('/new', updateHandler, newHandler)
+router.get('/new', updateHandler, handler_new)
 
 export default router
