@@ -28,6 +28,7 @@ export const config = defineConfig(configWebApp, {
                         'onhidden',
                         'javascripts',
                         'radiusless',
+                        'rowspan',
                         'shiftlog',
                         // SQL
                         'datediff',

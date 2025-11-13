@@ -8,6 +8,7 @@ config.workOrders = {
     isEnabled: true,
     router: 'accessibilityReports',
     sectionName: 'Accessibility Reports',
+    sectionNameSingular: 'Accessibility Report',
     iconClass: 'fa-wheelchair'
 };
 config.timesheets = {

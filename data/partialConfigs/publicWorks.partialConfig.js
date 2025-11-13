@@ -3,13 +3,15 @@ export const config = { ...baseConfig };
 config.session.doKeepAlive = true;
 config.shifts = {
     isEnabled: true,
-    sectionName: 'Shifts'
+    sectionName: 'SHifts',
+    sectionNameSingular: 'Shift'
 };
 config.workOrders = {
     isEnabled: false
 };
 config.timesheets = {
     isEnabled: true,
-    sectionName: 'Timesheets'
+    sectionName: 'TiMesheets',
+    sectionNameSingular: 'Timesheet'
 };
 export default config;

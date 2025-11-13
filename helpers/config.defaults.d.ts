@@ -34,14 +34,17 @@ export declare const configDefaultValues: {
     'shifts.isEnabled': boolean;
     'shifts.router': string;
     'shifts.sectionName': string;
+    'shifts.sectionNameSingular': string;
     'shifts.iconClass': string;
     'workOrders.isEnabled': boolean;
     'workOrders.router': string;
     'workOrders.sectionName': string;
+    'workOrders.sectionNameSingular': string;
     'workOrders.iconClass': string;
     'timesheets.isEnabled': boolean;
     'timesheets.router': string;
     'timesheets.sectionName': string;
+    'timesheets.sectionNameSingular': string;
     'timesheets.iconClass': string;
 };
 export default configDefaultValues;

@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
@@ -249,7 +252,7 @@ declare const exports: {
     // eslint-disable-next-line no-unsanitized/property
     rowElement.innerHTML = /*html*/ `
       <th>${cityssm.escapeHTML(user.userName)}</th>
-      <td class="has-text-centered">
+      <td class="has-text-centered has-border-left">
         <button
           class="button is-small permission-toggle ${user.isActive ? activePermissionClass : inactivePermissionClass}"
           data-permission="isActive"
@@ -259,97 +262,128 @@ declare const exports: {
           ${user.isActive ? 'Yes' : 'No'}
         </button>
       </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.shifts_canView ? activePermissionClass : inactivePermissionClass}"
-          data-permission="shifts_canView"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Shifts Can View"
-        >
-          <i class="fa-solid fa-${user.shifts_canView ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.shifts_canUpdate ? activePermissionClass : inactivePermissionClass}"
-          data-permission="shifts_canUpdate"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Shifts Can Update"
-        >
-          <i class="fa-solid fa-${user.shifts_canUpdate ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.shifts_canManage ? activePermissionClass : inactivePermissionClass}"
-          data-permission="shifts_canManage"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Shifts Can Manage"
-        >
-          <i class="fa-solid fa-${user.shifts_canManage ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.workOrders_canView ? activePermissionClass : inactivePermissionClass}"
-          data-permission="workOrders_canView"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Work Orders Can View"
-        >
-          <i class="fa-solid fa-${user.workOrders_canView ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.workOrders_canUpdate ? activePermissionClass : inactivePermissionClass}"
-          data-permission="workOrders_canUpdate"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Work Orders Can Update"
-        >
-          <i class="fa-solid fa-${user.workOrders_canUpdate ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.workOrders_canManage ? activePermissionClass : inactivePermissionClass}"
-          data-permission="workOrders_canManage"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Work Orders Can Manage"
-        >
-          <i class="fa-solid fa-${user.workOrders_canManage ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.timesheets_canView ? activePermissionClass : inactivePermissionClass}"
-          data-permission="timesheets_canView"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Timesheets Can View"
-        >
-          <i class="fa-solid fa-${user.timesheets_canView ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.timesheets_canUpdate ? activePermissionClass : inactivePermissionClass}"
-          data-permission="timesheets_canUpdate"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Timesheets Can Update"
-        >
-          <i class="fa-solid fa-${user.timesheets_canUpdate ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
-        <button
-          class="button is-small permission-toggle ${user.timesheets_canManage ? activePermissionClass : inactivePermissionClass}"
-          data-permission="timesheets_canManage"
-          data-user-name="${cityssm.escapeHTML(user.userName)}"
-          title="Toggle Timesheets Can Manage"
-        >
-          <i class="fa-solid fa-${user.timesheets_canManage ? 'check' : 'times'}"></i>
-        </button>
-      </td>
-      <td class="has-text-centered">
+    `
+
+    if (shiftLog.shiftsAreEnabled) {
+      // eslint-disable-next-line no-unsanitized/method
+      rowElement.insertAdjacentHTML(
+        'beforeend',
+        /*html*/ `
+          <td class="has-text-centered has-border-left">
+            <button
+              class="button is-small permission-toggle ${user.shifts_canView ? activePermissionClass : inactivePermissionClass}"
+              data-permission="shifts_canView"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.shiftsSectionName)} Can View"
+            >
+              <i class="fa-solid fa-${user.shifts_canView ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+          <td class="has-text-centered">
+            <button
+              class="button is-small permission-toggle ${user.shifts_canUpdate ? activePermissionClass : inactivePermissionClass}"
+              data-permission="shifts_canUpdate"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.shiftsSectionName)} Can Update"
+            >
+              <i class="fa-solid fa-${user.shifts_canUpdate ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+          <td class="has-text-centered">
+            <button
+              class="button is-small permission-toggle ${user.shifts_canManage ? activePermissionClass : inactivePermissionClass}"
+              data-permission="shifts_canManage"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.shiftsSectionName)} Can Manage"
+            >
+              <i class="fa-solid fa-${user.shifts_canManage ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+        `
+      )
+    }
+
+    if (shiftLog.workOrdersAreEnabled) {
+      // eslint-disable-next-line no-unsanitized/method
+      rowElement.insertAdjacentHTML(
+        'beforeend',
+        /*html*/ `
+          <td class="has-text-centered has-border-left">
+            <button
+              class="button is-small permission-toggle ${user.workOrders_canView ? activePermissionClass : inactivePermissionClass}"
+              data-permission="workOrders_canView"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} Can View"
+            >
+              <i class="fa-solid fa-${user.workOrders_canView ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+          <td class="has-text-centered">
+            <button
+              class="button is-small permission-toggle ${user.workOrders_canUpdate ? activePermissionClass : inactivePermissionClass}"
+              data-permission="workOrders_canUpdate"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} Can Update"
+            >
+              <i class="fa-solid fa-${user.workOrders_canUpdate ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+          <td class="has-text-centered">
+            <button
+              class="button is-small permission-toggle ${user.workOrders_canManage ? activePermissionClass : inactivePermissionClass}"
+              data-permission="workOrders_canManage"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} Can Manage"
+            >
+              <i class="fa-solid fa-${user.workOrders_canManage ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+        `
+      )
+    }
+
+    if (shiftLog.timesheetsAreEnabled) {
+      // eslint-disable-next-line no-unsanitized/method
+      rowElement.insertAdjacentHTML(
+        'beforeend',
+        /*html*/ `
+          <td class="has-text-centered has-border-left">
+            <button
+              class="button is-small permission-toggle ${user.timesheets_canView ? activePermissionClass : inactivePermissionClass}"
+              data-permission="timesheets_canView"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.timesheetsSectionName)} Can View"
+            >
+              <i class="fa-solid fa-${user.timesheets_canView ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+          <td class="has-text-centered">
+            <button
+              class="button is-small permission-toggle ${user.timesheets_canUpdate ? activePermissionClass : inactivePermissionClass}"
+              data-permission="timesheets_canUpdate"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.timesheetsSectionName)} Can Update"
+            >
+              <i class="fa-solid fa-${user.timesheets_canUpdate ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+          <td class="has-text-centered">
+            <button
+              class="button is-small permission-toggle ${user.timesheets_canManage ? activePermissionClass : inactivePermissionClass}"
+              data-permission="timesheets_canManage"
+              data-user-name="${cityssm.escapeHTML(user.userName)}"
+              title="Toggle ${cityssm.escapeHTML(shiftLog.timesheetsSectionName)} Can Manage"
+            >
+              <i class="fa-solid fa-${user.timesheets_canManage ? 'check' : 'times'}"></i>
+            </button>
+          </td>
+        `
+      )
+    }
+
+    // eslint-disable-next-line no-unsanitized/property
+    rowElement.innerHTML += /*html*/ `
+      <td class="has-text-centered has-border-left">
         <button
           class="button is-small permission-toggle ${user.isAdmin ? activePermissionClass : inactivePermissionClass}"
           data-permission="isAdmin"
@@ -359,7 +393,7 @@ declare const exports: {
           ${user.isAdmin ? 'Yes' : 'No'}
         </button>
       </td>
-      <td class="has-text-centered">
+      <td class="has-text-centered has-border-left">
         <div class="buttons is-justify-content-center">
           <button
             class="button is-small is-info edit-user-settings"
@@ -394,29 +428,36 @@ declare const exports: {
     const tableElement = document.createElement('table')
     tableElement.className = 'table is-fullwidth is-striped is-hoverable'
 
+    // eslint-disable-next-line no-unsanitized/property
     tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
           <th rowspan="2">User Name</th>
-          <th rowspan="2" class="has-text-centered">Can Login</th>
-          <th colspan="3" class="has-text-centered">Shifts</th>
-          <th colspan="3" class="has-text-centered">Work Orders</th>
-          <th colspan="3" class="has-text-centered">Timesheets</th>
-          <th rowspan="2" class="has-text-centered">Is Admin</th>
-          <th rowspan="2" class="has-text-centered">
+          <th class="has-text-centered has-border-left" rowspan="2">Can Login</th>
+          ${
+            shiftLog.shiftsAreEnabled
+              ? `<th class="has-text-centered has-border-left" colspan="3">${cityssm.escapeHTML(shiftLog.shiftsSectionName)}</th>`
+              : ''
+          }
+          ${
+            shiftLog.workOrdersAreEnabled
+              ? `<th class="has-text-centered has-border-left" colspan="3">${cityssm.escapeHTML(shiftLog.workOrdersSectionName)}</th>`
+              : ''
+          }
+          ${
+            shiftLog.timesheetsAreEnabled
+              ? `<th class="has-text-centered has-border-left" colspan="3">${cityssm.escapeHTML(shiftLog.timesheetsSectionName)}</th>`
+              : ''
+          }
+          <th class="has-text-centered has-border-left" rowspan="2">Is Admin</th>
+          <th class="has-text-centered has-border-left" rowspan="2">
             <span class="is-sr-only">Actions</span>
           </th>
         </tr>
         <tr>
-          <th class="has-text-centered">View</th>
-          <th class="has-text-centered">Update</th>
-          <th class="has-text-centered">Manage</th>
-          <th class="has-text-centered">View</th>
-          <th class="has-text-centered">Update</th>
-          <th class="has-text-centered">Manage</th>
-          <th class="has-text-centered">View</th>
-          <th class="has-text-centered">Update</th>
-          <th class="has-text-centered">Manage</th>
+          ${shiftLog.shiftsAreEnabled ? '<th class="has-text-centered has-border-left">View</th><th class="has-text-centered">Update</th><th class="has-text-centered">Manage</th>' : ''}
+          ${shiftLog.workOrdersAreEnabled ? '<th class="has-text-centered has-border-left">View</th><th class="has-text-centered">Update</th><th class="has-text-centered">Manage</th>' : ''}
+          ${shiftLog.timesheetsAreEnabled ? '<th class="has-text-centered has-border-left">View</th><th class="has-text-centered">Update</th><th class="has-text-centered">Manage</th>' : ''}
         </tr>
       </thead>
       <tbody></tbody>

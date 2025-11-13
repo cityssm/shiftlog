@@ -22,7 +22,7 @@
 <script>
   globalThis.exports = globalThis.exports || {};
 
-  globalThis.shiftLog = {
+  globalThis.exports.shiftLog = {
     urlPrefix: "<%= urlPrefix %>",
     sessionKeepAliveMillis: <%= configFunctions.getConfigProperty('session.doKeepAlive') ? configFunctions.keepAliveMillis : 0 %>,
     apiKey: "<%= user.userSettings.apiKey %>",
@@ -30,14 +30,17 @@
     shiftsAreEnabled: <%= configFunctions.getConfigProperty('shifts.isEnabled') %>,
     shiftsRouter: "<%= configFunctions.getConfigProperty('shifts.router') %>",
     shiftsSectionName: "<%= configFunctions.getConfigProperty('shifts.sectionName') %>",
+    shiftsSectionNameSingular: "<%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>",
 
     workOrdersAreEnabled: <%= configFunctions.getConfigProperty('workOrders.isEnabled') %>,
     workOrdersRouter: "<%= configFunctions.getConfigProperty('workOrders.router') %>",
     workOrdersSectionName: "<%= configFunctions.getConfigProperty('workOrders.sectionName') %>",
+    workOrdersSectionNameSingular: "<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>",
 
     timesheetsAreEnabled: <%= configFunctions.getConfigProperty('timesheets.isEnabled') %>,
     timesheetsRouter: "<%= configFunctions.getConfigProperty('timesheets.router') %>",
     timesheetsSectionName: "<%= configFunctions.getConfigProperty('timesheets.sectionName') %>",
+    timesheetsSectionNameSingular: "<%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>",
 
     isAdmin: <%= user.userProperties.isAdmin %>
   };

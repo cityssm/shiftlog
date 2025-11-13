@@ -53,6 +53,10 @@
   table-layout: fixed;
 }
 
+.table .has-border-left {
+  border-left: 1px solid var(--bulma-table-cell-border-color);
+}
+
 /*
  * Tabs
  */

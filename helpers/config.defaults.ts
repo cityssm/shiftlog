@@ -50,19 +50,34 @@ export const configDefaultValues = {
   'connectors.pearl': undefined as unknown as MSSQLConfig,
   'connectors.shiftLog': undefined as unknown as MSSQLConfig,
 
+  // Shifts
+
   'shifts.isEnabled': false,
   'shifts.router': 'shifts',
+
   'shifts.sectionName': 'Shifts',
+  'shifts.sectionNameSingular': 'Shift',
+
   'shifts.iconClass': 'fa-calendar-day',
+
+  // Work Orders
 
   'workOrders.isEnabled': false,
   'workOrders.router': 'workOrders',
+
   'workOrders.sectionName': 'Work Orders',
+  'workOrders.sectionNameSingular': 'Work Order',
+
   'workOrders.iconClass': 'fa-hard-hat',
+
+  // Timesheets
   
   'timesheets.isEnabled': false,
   'timesheets.router': 'timesheets',
+
   'timesheets.sectionName': 'Timesheets',
+  'timesheets.sectionNameSingular': 'Timesheet',
+
   'timesheets.iconClass': 'fa-clock'
 }
 

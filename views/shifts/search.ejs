@@ -1,20 +1,27 @@
 <%- include('../_header'); -%>
 
-<nav class="breadcrumb">
-  <ul>
-    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
-    <li class="is-active">
-      <a href="#" aria-current="page">
-        <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i></span>
-        <span><%= configFunctions.getConfigProperty('shifts.sectionName') %></span>
-      </a>
-    </li>
-  </ul>
-</nav>
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- include('_menu'); -%>
+  </div>
+  <div class="column">
+    <nav class="breadcrumb">
+      <ul>
+        <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+        <li class="is-active">
+          <a href="#" aria-current="page">
+            <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i></span>
+            <span><%= configFunctions.getConfigProperty('shifts.sectionName') %></span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-<h1 class="title is-1">
-  <%= configFunctions.getConfigProperty('shifts.sectionName') %>
-</h1>
+    <h1 class="title is-1">
+      <%= configFunctions.getConfigProperty('shifts.sectionName') %>
+    </h1>
+  </div>
+</div>
 
 <%- include('../_footerA'); -%>
 

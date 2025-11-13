@@ -5,10 +5,9 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
-declare const shiftLog: ShiftLogGlobal
 
 declare const exports: {
-    sessionKeepAliveMillis: number
+    shiftLog: ShiftLogGlobal
   }
 
   /*
@@ -17,7 +16,7 @@ declare const exports: {
 ;(() => {
   function doLogout(): void {
     globalThis.localStorage.clear()
-    globalThis.location.href = `${shiftLog.urlPrefix}/logout`
+    globalThis.location.href = `${exports.shiftLog.urlPrefix}/logout`
   }
 
   document
@@ -43,13 +42,13 @@ declare const exports: {
  * KEEP ALIVE
  */
 ;(() => {
-  const keepAliveMillis = shiftLog.sessionKeepAliveMillis
+  const keepAliveMillis = exports.shiftLog.sessionKeepAliveMillis
 
   let keepAliveInterval: NodeJS.Timeout | undefined
 
   function doKeepAlive(): void {
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/keepAlive`,
+      `${exports.shiftLog.urlPrefix}/keepAlive`,
       {
         t: Date.now()
       },

@@ -1,7 +1,7 @@
 (() => {
     function doLogout() {
         globalThis.localStorage.clear();
-        globalThis.location.href = `${shiftLog.urlPrefix}/logout`;
+        globalThis.location.href = `${exports.shiftLog.urlPrefix}/logout`;
     }
     document
         .querySelector('#cityssm-theme--logout-button')
@@ -19,10 +19,10 @@
     });
 })();
 (() => {
-    const keepAliveMillis = shiftLog.sessionKeepAliveMillis;
+    const keepAliveMillis = exports.shiftLog.sessionKeepAliveMillis;
     let keepAliveInterval;
     function doKeepAlive() {
-        cityssm.postJSON(`${shiftLog.urlPrefix}/keepAlive`, {
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/keepAlive`, {
             t: Date.now()
         }, (rawResponseJson) => {
             const responseJson = rawResponseJson;

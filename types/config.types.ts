@@ -67,7 +67,10 @@ export interface Config {
 interface ConfigSection {
   isEnabled?: boolean
   router?: string
+  
   sectionName?: string
+  sectionNameSingular?: string
+  
   iconClass?: `fa-${string}`
 }
 
