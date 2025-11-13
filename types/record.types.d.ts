@@ -59,3 +59,16 @@ export interface Employee extends BaseRecord {
     emailAddress?: string | null;
     userGroupId?: number | null;
 }
+export interface Shift extends BaseRecord {
+    shiftId: number;
+    shiftDate: Date;
+    shiftTimeDataListItem?: string;
+    shiftTimeDataListItemId: number;
+    shiftTypeDataListItem?: string;
+    shiftTypeDataListItemId: number;
+    supervisorEmployeeNumber: string;
+    supervisorFirstName?: string;
+    supervisorLastName?: string;
+    supervisorUserName?: string | null;
+    shiftDescription: string;
+}

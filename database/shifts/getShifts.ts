@@ -1,0 +1,12 @@
+import type { DateString } from '@cityssm/utils-datetime'
+
+import type { Shift } from '../../types/record.types.js'
+
+interface GetShiftFilters {
+  shiftDateString?: DateString
+}
+
+export default async function getShifts(
+  filters: GetShiftFilters,
+  userName: string
+): Promise<Shift[]> {}

@@ -1,8 +1,40 @@
 <%- include('../_header'); -%>
 
 <h1 class="title is-1">
-  <%= configFunctions.getConfigProperty("application.applicationName") %>
+  Today in <%= configFunctions.getConfigProperty("application.applicationName") %>
 </h1>
+
+<% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canView) { %>
+<div class="columns">
+  <div class="column">
+    
+  </div>
+  <div class="column">
+    <div class="panel">
+      <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              <%= configFunctions.getConfigProperty('shifts.sectionName') %>
+            </h2>
+          </div>
+        </div>
+      </a>
+      <% if (user.userProperties.shifts.canUpdate) { %>
+      <div class="panel-block">
+        <a class="button is-success is-fullwidth" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/new">
+          <span class="icon"><i class="fa-solid fa-plus-circle"></i></span>
+          <span>Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
+        </a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<% } %>
 
 <div class="panel">
   <a class="panel-block" href="<%= urlPrefix %>/dashboard/userSettings">

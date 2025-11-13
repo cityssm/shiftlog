@@ -117,6 +117,22 @@ insert into ShiftLog.DataLists (
   recordUpdate_userName
 )
 values (
+  'shiftTimes',
+  'Shift Times',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
   'shiftTypes',
   'Shift Types',
   1,
@@ -243,7 +259,10 @@ GO
 CREATE TABLE ShiftLog.Shifts (
   shiftId int not null primary key identity(1,1),
   supervisorEmployeeNumber varchar(10) not null,
+
   shiftDate date not null,
+  shiftTimeDataListItemId int not null,
+
   shiftDescription varchar(200) not null default '',
 
   shiftTypeDataListItemId int not null,
@@ -257,6 +276,7 @@ CREATE TABLE ShiftLog.Shifts (
   recordDelete_dateTime datetime,
 
   foreign key (supervisorEmployeeNumber) references ShiftLog.Employees(employeeNumber),
+  foreign key (shiftTimeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (shiftTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
 )
 GO
