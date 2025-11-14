@@ -3,5 +3,5 @@ import type { Shift } from '../../types/record.types.js';
 interface GetShiftFilters {
     shiftDateString?: DateString;
 }
-export default function getShifts(filters: GetShiftFilters, userName: string): Promise<Shift[]>;
+export default function getShifts(filters: GetShiftFilters, user?: User): Promise<Shift[]>;
 export {};

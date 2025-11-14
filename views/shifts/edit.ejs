@@ -31,12 +31,233 @@
   <% } %>
 </h1>
 
-<% if (shiftTypes.length === 0) { %>
-<div class="notification is-danger">
-  No shift types available.
-</div>
+<% if (isEdit) { %>
+  <% if (shiftTypes.length === 0) { %>
+  <div class="message is-danger">
+    <p class="message-body">
+      <strong>No shift types available.</strong><br />
+      Please contact your system administrator to set up shift types before creating
+      <%= configFunctions.getConfigProperty('shifts.sectionNameSingular').toLowerCase() %>s.
+    </p>
+  </div>
+  <% } %>
+
+  <% if (shiftTimes.length === 0) { %>
+  <div class="message is-danger">
+    <p class="message-body">
+      <strong>No shift times available.</strong><br />
+      Please contact your system administrator to set up shift times before creating
+      <%= configFunctions.getConfigProperty('shifts.sectionNameSingular').toLowerCase() %>s.
+    </p>
+  </div>
+  <% } %>
+
+  <% if (supervisors.length === 0) { %>
+  <div class="message is-danger">
+    <p class="message-body">
+      <strong>No supervisors available.</strong><br />
+      Please contact your system administrator to set up supervisors before creating
+      <%= configFunctions.getConfigProperty('shifts.sectionNameSingular').toLowerCase() %>s.
+    </p>
+  </div>
+  <% } %>
 <% } %>
 
+<div class="columns is-vcentered is-fixed-bottom has-background-white has-shadow is-hidden-print">
+  <div class="column">
+    <% if (!isCreate) { %>
+      <span class="has-text-weight-bold">
+        <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> #<%= shift.shiftId %>
+      </span>
+    <% } %>
+  </div>
+  <div class="column is-narrow has-text-right">
+    <div class="buttons is-right">
+      <% if (isCreate) { %>
+        <a class="button is-danger is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
+          Cancel
+        </a>
+      <% } %>
+      <% if (isEdit) { %>
+      <button class="button is-primary is-light" type="submit" form="form--shift">
+        <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
+        <span>
+          <%= (isCreate ? "Create": "Update") %>
+          <span class="is-hidden-mobile"><%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
+        </span>
+      </button>
+      <% } else if (
+        user.userProperties.shifts.canUpdate && 
+        (shift.recordLock_dateTime === null || Date.now() > shift.recordLock_dateTime.getTime()) &&
+        (shift.supervisorEmployeeNumber === user.employeeNumber || user.userProperties.shifts.canManage)) { %>
+      <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/<%= shift.shiftId %>/edit">
+        <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
+        <span>
+          Edit
+          <span class="is-hidden-mobile"><%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
+        </span>
+      </a>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<form id="form--shift">
+  <input type="hidden" id="shift--shiftId" name="shiftId" value="<%= shift.shiftId ?? '' %>" />
+
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <label class="label" for="shift--shiftTypeDataListItemId">
+          <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Type
+        </label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="shift--shiftTypeDataListItemId" name="shiftTypeDataListItemId" required>
+              <% if (isCreate) { %>
+              <option value="">(Select a <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Type)</option>
+              <% } %>
+              <% let shiftTypeFound = false %>
+              <% for (const shiftType of shiftTypes) { %>
+              <option
+                value="<%= shiftType.dataListItemId %>"
+                <%
+                  if (shift.shiftTypeDataListItemId === shiftType.dataListItemId) {
+                    shiftTypeFound = true;
+                %>
+                  selected
+                <%
+                  }
+                %>
+              >
+                <%= shiftType.dataListItem %>
+              </option>
+              <% } %>
+              <% if (!shiftTypeFound && shift.shiftTypeDataListItemId !== -1) { %>
+              <option value="<%= shift.shiftTypeDataListItemId %>" selected>
+                <%= shift.shiftTypeDataListItem %>
+                <%= isEdit ? "(Inactive)" : "" %>
+              </option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <label class="label" for="shift--supervisorEmployeeNumber">Supervisor</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="shift--supervisorEmployeeNumber" name="supervisorEmployeeNumber" required>
+              <% if (isCreate) { %>
+              <option value="">(Select a Supervisor)</option>
+              <% } %>
+              <% let supervisorFound = false %>
+              <% for (const supervisor of supervisors) { %>
+              <option
+                value="<%= supervisor.employeeNumber %>"
+                <%
+                  if (shift.supervisorEmployeeNumber === supervisor.employeeNumber || (isCreate && supervisor.userName === user.userName)) {
+                    supervisorFound = true;
+                %>
+                  selected
+                <%
+                  }
+                %>
+              >
+                <%= supervisor.lastName %>, <%= supervisor.firstName %>
+              </option>
+              <% } %>
+              <% if (!supervisorFound && shift.supervisorEmployeeNumber !== '') { %>
+              <option value="<%= shift.supervisorEmployeeNumber %>" selected>
+                <%= shift.supervisorLastName %>, <%= shift.supervisorFirstName %>
+                <%= isEdit ? "(Inactive)" : "" %>
+              </option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <label class="label" for="shift--shiftDateString">Date</label>
+        <div class="control">
+          <input
+            class="input"
+            id="shift--shiftDateString"
+            name="shiftDateString"
+            type="date"
+            value="<%= shift.shiftDate ? shift.shiftDate.toISOString().split('T')[0] : '' %>"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <label class="label" for="shift--shiftTimeDataListItemId">
+          Time
+        </label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="shift--shiftTimeDataListItemId" name="shiftTimeDataListItemId" required>
+              <option value="">
+                (Select a <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Time)
+              </option>
+              <% let shiftTimeFound = false %>
+              <% for (const shiftTime of shiftTimes) { %>
+              <option
+                value="<%= shiftTime.dataListItemId %>"
+                <%
+                  if (shift.shiftTimeDataListItemId === shiftTime.dataListItemId) {
+                    shiftTimeFound = true;
+                %>
+                  selected
+                <%
+                  }
+                %>
+              >
+                <%= shiftTime.dataListItem %>
+              </option>
+              <% } %>
+              <% if (!shiftTimeFound && shift.shiftTimeDataListItemId !== -1) { %>
+              <option value="<%= shift.shiftTimeDataListItemId %>" selected>
+                <%= shift.shiftTimeDataListItem %>
+                <%= isEdit ? "(Inactive)" : "" %>
+              </option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label" for="shift--shiftDescription">Description</label>
+    <div class="control">
+      <textarea
+        class="textarea"
+        id="shift--shiftDescription"
+        name="shiftDescription"
+        rows="4"
+        maxlength="200"
+      ><%= shift.shiftDescription ?? '' %></textarea>
+    </div>
+  </div>
+</form>
+
 <%- include('../_footerA'); -%>
+
+<% if (isEdit) { %>
+<script src="<%= urlPrefix %>/javascripts/shifts.edit.js"></script>
+<% } else { %>
+<script src="<%= urlPrefix %>/javascripts/shifts.view.js"></script>
+<% } %>
 
 <%- include('../_footerB'); -%>

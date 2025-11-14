@@ -44,6 +44,11 @@ export async function getUser(userName: string): Promise<User | undefined> {
   if (localUser?.isActive ?? false) {
     return {
       userName: userNameLowerCase,
+
+      employeeNumber: localUser?.employeeNumber ?? '',
+      firstName: localUser?.firstName ?? '',
+      lastName: localUser?.lastName ?? '',
+
       userProperties: {
         shifts: {
           canView: localUser?.shifts_canView ?? false,

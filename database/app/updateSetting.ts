@@ -1,4 +1,3 @@
-
 import mssqlPool from '@cityssm/mssql-multi-pool'
 
 import { clearCacheByTableName } from '../../helpers/cache.helpers.js'
@@ -9,23 +8,25 @@ export interface UpdateSettingForm {
   settingValue: string
 }
 
-
 export default async function updateSetting(
-  updateForm: UpdateSettingForm
+  updateForm: UpdateSettingForm,
+  user?: User
 ): Promise<boolean> {
   const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
   const currentDate = new Date()
 
   // Try to update first
-  const updateResult = await pool.request()
+  const updateResult = await pool
+    .request()
     .input('settingKey', updateForm.settingKey)
     .input('settingValue', updateForm.settingValue)
-    .input('recordUpdate_dateTime', currentDate)
-    .query(/* sql */ `
+    .input('recordUpdate_userName', user?.userName ?? 'system')
+    .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
       update ShiftLog.ApplicationSettings
       set settingValue = @settingValue,
-          previousSettingValue = settingValue,
-          recordUpdate_dateTime = @recordUpdate_dateTime
+        previousSettingValue = settingValue,
+        recordUpdate_userName = @recordUpdate_userName,
+        recordUpdate_dateTime = @recordUpdate_dateTime
       where settingKey = @settingKey
     `)
 
@@ -35,15 +36,26 @@ export default async function updateSetting(
   }
 
   // If no rows updated, insert new
-  const insertResult = await pool.request()
+  const insertResult = await pool
+    .request()
     .input('settingKey', updateForm.settingKey)
     .input('settingValue', updateForm.settingValue)
     .input('previousSettingValue', '')
-    .input('recordUpdate_dateTime', currentDate)
-    .query(/* sql */ `
-      insert into ShiftLog.ApplicationSettings (settingKey, settingValue, previousSettingValue, recordUpdate_dateTime)
-      values (@settingKey, @settingValue, @previousSettingValue, @recordUpdate_dateTime)
-    `)
+    .input('recordCreate_userName', user?.userName ?? 'system')
+    .input('recordCreate_dateTime', currentDate)
+    .input('recordUpdate_userName', user?.userName ?? 'system')
+    .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
+      insert into ShiftLog.ApplicationSettings (
+        settingKey, settingValue, previousSettingValue,
+        recordCreate_userName, recordCreate_dateTime,
+        recordUpdate_userName, recordUpdate_dateTime
+      )
+      values (
+        @settingKey, @settingValue, @previousSettingValue,
+        @recordCreate_userName, @recordCreate_dateTime,
+        @recordUpdate_userName, @recordUpdate_dateTime
+      )
+      `)
 
   if (insertResult.rowsAffected[0] > 0) {
     clearCacheByTableName('ApplicationSettings')

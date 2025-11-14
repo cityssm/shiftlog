@@ -12,7 +12,7 @@ export default async function handler(
   const userGroups = await getUserGroups()
   const equipmentTypes = await getDataListItems(
     'equipmentTypes',
-    (request.session.user as User).userName
+    request.session.user as User
   )
 
   response.render('admin/equipment', {

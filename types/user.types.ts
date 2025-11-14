@@ -1,6 +1,11 @@
 declare global {
   export interface User {
     userName: string
+
+    employeeNumber: string
+    firstName: string
+    lastName: string
+    
     userProperties: UserProperties
     userSettings: Partial<Record<UserSettingKey, string>>
   }
@@ -14,6 +19,7 @@ export type UserSettingKey = (typeof userSettingKeys)[number]
 
 export interface UserProperties {
   isAdmin: boolean
+
 
   shifts: {
     canView: boolean

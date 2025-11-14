@@ -24,6 +24,10 @@ export interface Setting {
 export interface DatabaseUser extends BaseRecord {
   userName: string
 
+  employeeNumber?: string | null
+  firstName?: string | null
+  lastName?: string | null
+
   isActive: boolean
 
   shifts_canView: boolean
@@ -100,4 +104,6 @@ export interface Shift extends BaseRecord {
   supervisorUserName?: string | null
 
   shiftDescription: string
+
+  recordLock_dateTime?: Date | null
 }

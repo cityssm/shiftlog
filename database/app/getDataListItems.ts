@@ -5,25 +5,31 @@ import type { DataListItem } from '../../types/record.types.js'
 
 export default async function getDataListItems(
   dataListKey: string,
-  userName: string
+  user?: User
 ): Promise<DataListItem[]> {
   const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
 
   const dataListItemsResult = (await pool
     .request()
     .input('dataListKey', dataListKey)
-    .input('userName', userName).query(/* sql */ `
+    .input('userName', user?.userName).query(/* sql */ `
       select
-      dataListItemId, dataListKey, dataListItem
-      from ShiftLog.DataListItems
-      where dataListKey = @dataListKey
-        and (userGroupId is null or userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
-        ))
-        and recordDelete_dateTime is null
-      order by dataListItem
+        i.dataListItemId, i.dataListKey, i.dataListItem
+      from ShiftLog.DataListItems i
+      where i.dataListKey = @dataListKey
+        and i.recordDelete_dateTime is null
+        ${
+          user === undefined
+            ? ''
+            : `
+                and (i.userGroupId is null or i.userGroupId in (
+                  select userGroupId
+                  from ShiftLog.UserGroupMembers
+                  where userName = @userName
+                ))
+              `
+        }
+      order by i.dataListItem
     `)) as mssql.IResult<DataListItem>
 
   return dataListItemsResult.recordset

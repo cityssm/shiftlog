@@ -7,15 +7,19 @@ export default async function getUser(userName) {
     // Get user record
     const userResult = (await pool.request().input('userName', userName)
         .query(/* sql */ `
-      select userName, isActive, isAdmin,
-        shifts_canView, shifts_canUpdate, shifts_canManage,
-        workOrders_canView, workOrders_canUpdate, workOrders_canManage,
-        timesheets_canView, timesheets_canUpdate, timesheets_canManage,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime
-      from ShiftLog.Users
-      where userName = @userName
-        and recordDelete_dateTime is null
+      select top 1
+        u.userName, u.isActive, u.isAdmin,
+        e.employeeNumber, e.firstName, e.lastName,
+        u.shifts_canView, u.shifts_canUpdate, u.shifts_canManage,
+        u.workOrders_canView, u.workOrders_canUpdate, u.workOrders_canManage,
+        u.timesheets_canView, u.timesheets_canUpdate, u.timesheets_canManage,
+        u.recordCreate_userName, u.recordCreate_dateTime,
+        u.recordUpdate_userName, u.recordUpdate_dateTime
+      from ShiftLog.Users u
+      left join ShiftLog.Employees e
+        on u.userName = e.userName and e.recordDelete_dateTime is null
+      where u.userName = @userName
+        and u.recordDelete_dateTime is null
     `));
     if (userResult.recordset.length === 0) {
         return undefined;

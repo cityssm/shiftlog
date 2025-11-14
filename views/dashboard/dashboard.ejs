@@ -7,7 +7,37 @@
 <% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canView) { %>
 <div class="columns">
   <div class="column">
-    
+    <% if (shifts.length > 0) { %>
+    <div class="panel">
+      <div class="panel-heading">
+        Today's <%= configFunctions.getConfigProperty('shifts.sectionName') %>
+      </div>
+      <% for (const shift of shifts) { %>
+      <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/<%= shift.shiftId %>">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-2x <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i>
+          </div>
+          <div class="media-content">
+            <%= shift.shiftTypeDataListItem %><br />
+            <small>
+              <strong>Time:</strong> <%= shift.shiftTimeDataListItem %>
+              <% if (shift.supervisorEmployeeNumber) { %>
+              | <strong>Supervisor:</strong> <%= shift.supervisorFirstName %> <%= shift.supervisorLastName %> (Emp #<%= shift.supervisorEmployeeNumber %>)
+              <% } %>
+            </small>
+          </div>
+        </div>
+      </a>
+      <% } %>
+    </div>
+    <% } else { %>
+    <div class="message is-info">
+      <div class="message-body">
+        There are no <%= configFunctions.getConfigProperty('shifts.sectionName').toLowerCase() %> to display for today.
+      </div>
+    </div>
+    <% } %>
   </div>
   <div class="column">
     <div class="panel">

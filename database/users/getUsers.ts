@@ -9,15 +9,15 @@ export default async function getUsers(): Promise<DatabaseUser[]> {
 
   // Get all users
   const usersResult = (await pool.request().query(/* sql */ `
-      select userName, isActive, isAdmin,
-        shifts_canView, shifts_canUpdate, shifts_canManage,
-        workOrders_canView, workOrders_canUpdate, workOrders_canManage,
-        timesheets_canView, timesheets_canUpdate, timesheets_canManage,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime
-      from ShiftLog.Users
-      where recordDelete_dateTime is null
-      order by userName
+      select u.userName, u.isActive, u.isAdmin,
+        u.shifts_canView, u.shifts_canUpdate, u.shifts_canManage,
+        u.workOrders_canView, u.workOrders_canUpdate, u.workOrders_canManage,
+        u.timesheets_canView, u.timesheets_canUpdate, u.timesheets_canManage,
+        u.recordCreate_userName, u.recordCreate_dateTime,
+        u.recordUpdate_userName, u.recordUpdate_dateTime
+      from ShiftLog.Users u
+      where u.recordDelete_dateTime is null
+      order by u.userName
     `)) as mssql.IResult<DatabaseUser>
 
   const users = usersResult.recordset

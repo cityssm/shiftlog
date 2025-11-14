@@ -1,2 +1,6 @@
 import type { Employee } from '../../types/record.types.js';
-export default function getEmployees(): Promise<Employee[]>;
+interface GetEmployeesFilters {
+    isSupervisor?: boolean;
+}
+export default function getEmployees(filters?: GetEmployeesFilters): Promise<Employee[]>;
+export {};

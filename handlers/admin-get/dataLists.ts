@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import getDataLists from '../../database/app/getDataLists.js'
 import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
+import getDataLists from '../../database/app/getDataLists.js'
 import getUserGroups from '../../database/users/getUserGroups.js'
 
 export default async function handler(
