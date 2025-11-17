@@ -109,6 +109,8 @@ CREATE TABLE ShiftLog.DataLists (
 )
 GO
 
+-- SHIFT DATALISTS
+
 insert into ShiftLog.DataLists (
   dataListKey,
   dataListName,
@@ -141,6 +143,8 @@ values (
 )
 GO
 
+-- EQUIPMENT DATALISTS
+
 insert into ShiftLog.DataLists (
   dataListKey,
   dataListName,
@@ -151,6 +155,56 @@ insert into ShiftLog.DataLists (
 values (
   'equipmentTypes',
   'Equipment Types',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+-- TIMESHEET DATALISTS
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'timesheetTypes',
+  'Timesheet Types',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'jobClassifications',
+  'Timesheet Job Classification',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'timeCodes',
+  'Timesheet Time Codes',
   1,
   'initializeDatabase.sql',
   'initializeDatabase.sql'
