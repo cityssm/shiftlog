@@ -72,6 +72,73 @@
 </div>
 <% } %>
 
+<% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
+<div class="columns">
+  <div class="column">
+    <% if (timesheets.length > 0) { %>
+    <div class="panel is-success">
+      <div class="panel-heading">
+        Today's <%= configFunctions.getConfigProperty('timesheets.sectionName') %>
+      </div>
+      <% for (const timesheet of timesheets) { %>
+      <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/<%= timesheet.timesheetId %>">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-2x <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
+          </div>
+          <div class="media-content">
+            <%= timesheet.timesheetTypeDataListItem %><%= timesheet.timesheetTitle ? ': ' + timesheet.timesheetTitle : '' %><br />
+            <small>
+              <% if (timesheet.supervisorEmployeeNumber) { %>
+              <strong>Supervisor:</strong> <%= timesheet.supervisorFirstName %> <%= timesheet.supervisorLastName %> (Emp #<%= timesheet.supervisorEmployeeNumber %>)
+              <% } %>
+            </small>
+          </div>
+        </div>
+      </a>
+      <% } %>
+    </div>
+    <% } else { %>
+    <div class="message is-info">
+      <div class="message-body">
+        There are no <%= configFunctions.getConfigProperty('timesheets.sectionName').toLowerCase() %> to display for today.
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <div class="column">
+    <div class="panel">
+      <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
+        <div class="media">
+          <div class="media-left">
+            <span class="fa-layers fa-4x">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
+              <i class="fa-solid fa-magnifying-glass" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
+            </span>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Search
+            </h2>
+            <p>
+              Search by date, type, supervisor, and more.
+            </p>
+          </div>
+        </div>
+      </a>
+      <% if (user.userProperties.timesheets.canUpdate) { %>
+      <div class="panel-block">
+        <a class="button is-success is-fullwidth" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new">
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
+        </a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<% } %>
+
 <% if (user.userProperties.isAdmin) { %>
 <h2 class="title is-3">
   Administrator Tools

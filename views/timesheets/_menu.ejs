@@ -1,0 +1,21 @@
+<div class="menu">
+  <p class="menu-label">
+    <%= configFunctions.getConfigProperty('timesheets.sectionName') %>
+  </p>
+  <ul class="menu-list">
+    <li>
+      <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
+        <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <span><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Search</span>
+      </a>
+    </li>
+    <% if (user.userProperties.timesheets.canUpdate) { %>
+    <li>
+      <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new">
+        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+        <span>Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
+      </a>
+    </li>
+    <% } %>
+  </ul>
+</div>

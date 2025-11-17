@@ -2,6 +2,7 @@ import { dateToString } from '@cityssm/utils-datetime'
 import type { Request, Response } from 'express'
 
 import getShifts from '../../database/shifts/getShifts.js'
+import getTimesheets from '../../database/timesheets/getTimesheets.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 export default async function handler(
@@ -20,9 +21,20 @@ export default async function handler(
         )
       : { shifts: [], totalCount: 0 }
 
+  const timesheetsResult =
+    getConfigProperty('timesheets.isEnabled') &&
+    request.session.user?.userProperties.timesheets.canView
+      ? await getTimesheets(
+          { timesheetDateString: todayString },
+          { limit: -1, offset: 0 },
+          request.session.user
+        )
+      : { timesheets: [], totalCount: 0 }
+
   response.render('dashboard/dashboard', {
     headTitle: 'Dashboard',
 
-    shifts: shiftsResult.shifts
+    shifts: shiftsResult.shifts,
+    timesheets: timesheetsResult.timesheets
   })
 }
