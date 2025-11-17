@@ -12,7 +12,9 @@ declare global {
 }
 
 export const userSettingKeys = [
-  'apiKey'
+  'apiKey',
+  'timesheets.canMarkEmployeesAsEntered',
+  'timesheets.canMarkEquipmentAsEntered'
 ] as const
 
 export type UserSettingKey = (typeof userSettingKeys)[number]
