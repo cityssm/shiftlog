@@ -15,13 +15,13 @@ export default async function reorderTimesheetColumns(
     await pool
       .request()
       .input('timesheetColumnId', columnId)
-      .input('orderNumber', index).query(/* sql */ `
+      .input('orderNumber', index)
+      .input('timesheetId', reorderForm.timesheetId).query(/* sql */ `
         update ShiftLog.TimesheetColumns
         set orderNumber = @orderNumber
         where timesheetColumnId = @timesheetColumnId
           and timesheetId = @timesheetId
       `)
-      .input('timesheetId', reorderForm.timesheetId)
   }
 
   return true
