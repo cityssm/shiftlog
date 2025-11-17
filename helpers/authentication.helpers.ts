@@ -59,6 +59,9 @@ export async function authenticate(
 
   let isAuthenticated = false
 
+  console.log('authenticator:', authenticator)
+  
+
   if (authenticator !== undefined) {
     isAuthenticated = await authenticator.authenticate(
       `${domain}\\${userName}`,

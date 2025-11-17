@@ -7,12 +7,11 @@ config.login = {
         type: 'plainText',
         config: {
             users: {
-                administrator: 'administrator',
-                testuser: 'testuser'
+                'domain\\administrator': 'administrator'
             }
         }
     },
-    domain: 'cityssm'
+    domain: 'domain'
 };
 config.connectors = {
     shiftLog: {
