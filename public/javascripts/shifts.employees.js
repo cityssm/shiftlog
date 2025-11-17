@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.shiftsRouter;
@@ -10,29 +12,6 @@
     let availableCrews = [];
     let availableEmployees = [];
     let availableEquipment = [];
-    // Tab switching within the employees tab
-    const tabElements = document.querySelectorAll('#tab--employees .tabs li');
-    for (const tabElement of tabElements) {
-        tabElement.addEventListener('click', (clickEvent) => {
-            clickEvent.preventDefault();
-            const tab = tabElement.dataset.tab;
-            // Update active tab
-            for (const el of tabElements) {
-                el.classList.remove('is-active');
-            }
-            tabElement.classList.add('is-active');
-            // Show/hide content
-            document
-                .querySelector('#tab-content--crews')
-                ?.classList.toggle('is-hidden', tab !== 'crews');
-            document
-                .querySelector('#tab-content--employees')
-                ?.classList.toggle('is-hidden', tab !== 'employees');
-            document
-                .querySelector('#tab-content--equipment')
-                ?.classList.toggle('is-hidden', tab !== 'equipment');
-        });
-    }
     function renderShiftCrews() {
         const containerElement = document.querySelector('#container--shiftCrews');
         if (shiftCrews.length === 0) {
@@ -120,7 +99,8 @@
             return;
         }
         let html = '<table class="table is-fullwidth is-striped is-hoverable">';
-        html += '<thead><tr><th>Equipment</th><th>Assigned Employee</th><th>Note</th>';
+        html +=
+            '<thead><tr><th>Equipment</th><th>Assigned Employee</th><th>Note</th>';
         if (isEdit) {
             html += '<th class="has-text-right">Actions</th>';
         }
@@ -236,67 +216,55 @@
         });
     }
     function addEmployee() {
-        let formHTML = '<form id="form--addEmployee">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Employee</label>';
-        formHTML += '<div class="control"><div class="select is-fullwidth">';
-        formHTML += '<select name="employeeNumber" required>';
-        formHTML += '<option value="">(Select Employee)</option>';
-        for (const employee of availableEmployees) {
-            // Skip employees already added
-            if (shiftEmployees.some((se) => se.employeeNumber === employee.employeeNumber)) {
-                continue;
-            }
-            formHTML += `<option value="${employee.employeeNumber}">${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}</option>`;
-        }
-        formHTML += '</select></div></div></div>';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Crew (Optional)</label>';
-        formHTML += '<div class="control"><div class="select is-fullwidth">';
-        formHTML += '<select name="crewId">';
-        formHTML += '<option value="">(None)</option>';
-        for (const crew of shiftCrews) {
-            formHTML += `<option value="${crew.crewId}">${cityssm.escapeHTML(crew.crewName ?? '')}</option>`;
-        }
-        formHTML += '</select></div></div></div>';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Note</label>';
-        formHTML +=
-            '<div class="control"><textarea class="textarea" name="shiftEmployeeNote" maxlength="200"></textarea></div>';
-        formHTML += '</div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Add Employee',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Add Employee',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--addEmployee');
-                    const crewIdValue = formElement.elements.namedItem('crewId').value;
-                    cityssm.postJSON(`${urlPrefix}/doAddShiftEmployee`, {
-                        shiftId,
-                        employeeNumber: formElement.elements.namedItem('employeeNumber').value,
-                        crewId: crewIdValue === '' ? null : crewIdValue,
-                        shiftEmployeeNote: formElement.elements.namedItem('shiftEmployeeNote').value
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                message: 'Employee added successfully'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to add employee'
-                            });
-                        }
+        let formElement;
+        function doAdd(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doAddShiftEmployee`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Employee added successfully'
                     });
                 }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to add employee'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('shifts-addEmployee', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
+                for (const employee of availableEmployees) {
+                    // Skip employees already added
+                    if (shiftEmployees.some((se) => se.employeeNumber === employee.employeeNumber)) {
+                        continue;
+                    }
+                    employeeNumberElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">
+              ${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}
+              </option>`);
+                }
+                const crewIdElement = modalElement.querySelector('select[name="crewId"]');
+                for (const crew of shiftCrews) {
+                    crewIdElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(crew.crewId.toString())}">
+              ${cityssm.escapeHTML(crew.crewName ?? '')}
+              </option>`);
+                }
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doAdd);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }

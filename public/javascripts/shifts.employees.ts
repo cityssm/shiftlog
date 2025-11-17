@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
@@ -36,36 +39,6 @@ declare const exports: {
   let availableCrews: Crew[] = []
   let availableEmployees: Employee[] = []
   let availableEquipment: Equipment[] = []
-
-  // Tab switching within the employees tab
-  const tabElements = document.querySelectorAll(
-    '#tab--employees .tabs li'
-  ) as NodeListOf<HTMLLIElement>
-
-  for (const tabElement of tabElements) {
-    tabElement.addEventListener('click', (clickEvent) => {
-      clickEvent.preventDefault()
-
-      const tab = tabElement.dataset.tab
-
-      // Update active tab
-      for (const el of tabElements) {
-        el.classList.remove('is-active')
-      }
-      tabElement.classList.add('is-active')
-
-      // Show/hide content
-      document
-        .querySelector('#tab-content--crews')
-        ?.classList.toggle('is-hidden', tab !== 'crews')
-      document
-        .querySelector('#tab-content--employees')
-        ?.classList.toggle('is-hidden', tab !== 'employees')
-      document
-        .querySelector('#tab-content--equipment')
-        ?.classList.toggle('is-hidden', tab !== 'equipment')
-    })
-  }
 
   function renderShiftCrews(): void {
     const containerElement = document.querySelector(
@@ -191,7 +164,8 @@ declare const exports: {
     }
 
     let html = '<table class="table is-fullwidth is-striped is-hoverable">'
-    html += '<thead><tr><th>Equipment</th><th>Assigned Employee</th><th>Note</th>'
+    html +=
+      '<thead><tr><th>Equipment</th><th>Assigned Employee</th><th>Note</th>'
     if (isEdit) {
       html += '<th class="has-text-right">Actions</th>'
     }
@@ -339,8 +313,14 @@ declare const exports: {
             `${urlPrefix}/doAddShiftCrew`,
             {
               shiftId,
-              crewId: (formElement.elements.namedItem('crewId') as HTMLSelectElement).value,
-              shiftCrewNote: (formElement.elements.namedItem('shiftCrewNote') as HTMLTextAreaElement).value
+              crewId: (
+                formElement.elements.namedItem('crewId') as HTMLSelectElement
+              ).value,
+              shiftCrewNote: (
+                formElement.elements.namedItem(
+                  'shiftCrewNote'
+                ) as HTMLTextAreaElement
+              ).value
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
@@ -366,82 +346,85 @@ declare const exports: {
   }
 
   function addEmployee(): void {
-    let formHTML = '<form id="form--addEmployee">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Employee</label>'
-    formHTML += '<div class="control"><div class="select is-fullwidth">'
-    formHTML += '<select name="employeeNumber" required>'
-    formHTML += '<option value="">(Select Employee)</option>'
+    let formElement: HTMLFormElement
 
-    for (const employee of availableEmployees) {
-      // Skip employees already added
-      if (
-        shiftEmployees.some((se) => se.employeeNumber === employee.employeeNumber)
-      ) {
-        continue
-      }
-      formHTML += `<option value="${employee.employeeNumber}">${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}</option>`
+    function doAdd(formEvent: Event): void {
+      formEvent.preventDefault()
+
+      cityssm.postJSON(
+        `${urlPrefix}/doAddShiftEmployee`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+
+          if (responseJSON.success) {
+            refreshData()
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Employee added successfully'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to add employee'
+            })
+          }
+        }
+      )
     }
 
-    formHTML += '</select></div></div></div>'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Crew (Optional)</label>'
-    formHTML += '<div class="control"><div class="select is-fullwidth">'
-    formHTML += '<select name="crewId">'
-    formHTML += '<option value="">(None)</option>'
+    cityssm.openHtmlModal('shifts-addEmployee', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
 
-    for (const crew of shiftCrews) {
-      formHTML += `<option value="${crew.crewId}">${cityssm.escapeHTML(crew.crewName ?? '')}</option>`
-    }
+        const employeeNumberElement = modalElement.querySelector(
+          'select[name="employeeNumber"]'
+        ) as HTMLSelectElement
 
-    formHTML += '</select></div></div></div>'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Note</label>'
-    formHTML +=
-      '<div class="control"><textarea class="textarea" name="shiftEmployeeNote" maxlength="200"></textarea></div>'
-    formHTML += '</div>'
-    formHTML += '</form>'
-
-    bulmaJS.confirm({
-      title: 'Add Employee',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Add Employee',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--addEmployee'
-          ) as HTMLFormElement
-
-          const crewIdValue = (formElement.elements.namedItem('crewId') as HTMLSelectElement).value
-
-          cityssm.postJSON(
-            `${urlPrefix}/doAddShiftEmployee`,
-            {
-              shiftId,
-              employeeNumber: (formElement.elements.namedItem('employeeNumber') as HTMLSelectElement).value,
-              crewId: crewIdValue === '' ? null : crewIdValue,
-              shiftEmployeeNote: (formElement.elements.namedItem('shiftEmployeeNote') as HTMLTextAreaElement).value
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
-
-              if (responseJSON.success) {
-                refreshData()
-                bulmaJS.alert({
-                  contextualColorName: 'success',
-                  message: 'Employee added successfully'
-                })
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to add employee'
-                })
-              }
-            }
+        for (const employee of availableEmployees) {
+          // Skip employees already added
+          if (
+            shiftEmployees.some(
+              (se) => se.employeeNumber === employee.employeeNumber
+            )
+          ) {
+            continue
+          }
+          employeeNumberElement.insertAdjacentHTML(
+            'beforeend',
+            `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">
+              ${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}
+              </option>`
           )
         }
+
+        const crewIdElement = modalElement.querySelector(
+          'select[name="crewId"]'
+        ) as HTMLSelectElement
+
+        for (const crew of shiftCrews) {
+          crewIdElement.insertAdjacentHTML(
+            'beforeend',
+            `<option value="${cityssm.escapeHTML(crew.crewId.toString())}">
+              ${cityssm.escapeHTML(crew.crewName ?? '')}
+              </option>`
+          )
+        }
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doAdd)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -496,15 +479,28 @@ declare const exports: {
             '#form--addEquipment'
           ) as HTMLFormElement
 
-          const employeeNumberValue = (formElement.elements.namedItem('employeeNumber') as HTMLSelectElement).value
+          const employeeNumberValue = (
+            formElement.elements.namedItem(
+              'employeeNumber'
+            ) as HTMLSelectElement
+          ).value
 
           cityssm.postJSON(
             `${urlPrefix}/doAddShiftEquipment`,
             {
               shiftId,
-              equipmentNumber: (formElement.elements.namedItem('equipmentNumber') as HTMLSelectElement).value,
-              employeeNumber: employeeNumberValue === '' ? null : employeeNumberValue,
-              shiftEquipmentNote: (formElement.elements.namedItem('shiftEquipmentNote') as HTMLTextAreaElement).value
+              equipmentNumber: (
+                formElement.elements.namedItem(
+                  'equipmentNumber'
+                ) as HTMLSelectElement
+              ).value,
+              employeeNumber:
+                employeeNumberValue === '' ? null : employeeNumberValue,
+              shiftEquipmentNote: (
+                formElement.elements.namedItem(
+                  'shiftEquipmentNote'
+                ) as HTMLTextAreaElement
+              ).value
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
@@ -561,7 +557,11 @@ declare const exports: {
             {
               shiftId,
               crewId,
-              shiftCrewNote: (formElement.elements.namedItem('shiftCrewNote') as HTMLTextAreaElement).value
+              shiftCrewNote: (
+                formElement.elements.namedItem(
+                  'shiftCrewNote'
+                ) as HTMLTextAreaElement
+              ).value
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
@@ -601,8 +601,7 @@ declare const exports: {
     formHTML += '<option value="">(None)</option>'
 
     for (const crew of shiftCrews) {
-      const selected =
-        crew.crewId === employee.crewId ? ' selected' : ''
+      const selected = crew.crewId === employee.crewId ? ' selected' : ''
       formHTML += `<option value="${crew.crewId}"${selected}>${cityssm.escapeHTML(crew.crewName ?? '')}</option>`
     }
 
@@ -620,7 +619,9 @@ declare const exports: {
             '#form--editEmployeeCrew'
           ) as HTMLFormElement
 
-          const crewIdValue = (formElement.elements.namedItem('crewId') as HTMLSelectElement).value
+          const crewIdValue = (
+            formElement.elements.namedItem('crewId') as HTMLSelectElement
+          ).value
 
           cityssm.postJSON(
             `${urlPrefix}/doUpdateShiftEmployee`,
@@ -682,7 +683,11 @@ declare const exports: {
             {
               shiftId,
               employeeNumber,
-              shiftEmployeeNote: (formElement.elements.namedItem('shiftEmployeeNote') as HTMLTextAreaElement).value
+              shiftEmployeeNote: (
+                formElement.elements.namedItem(
+                  'shiftEmployeeNote'
+                ) as HTMLTextAreaElement
+              ).value
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
@@ -741,14 +746,19 @@ declare const exports: {
             '#form--editEquipmentEmployee'
           ) as HTMLFormElement
 
-          const employeeNumberValue = (formElement.elements.namedItem('employeeNumber') as HTMLSelectElement).value
+          const employeeNumberValue = (
+            formElement.elements.namedItem(
+              'employeeNumber'
+            ) as HTMLSelectElement
+          ).value
 
           cityssm.postJSON(
             `${urlPrefix}/doUpdateShiftEquipment`,
             {
               shiftId,
               equipmentNumber,
-              employeeNumber: employeeNumberValue === '' ? null : employeeNumberValue
+              employeeNumber:
+                employeeNumberValue === '' ? null : employeeNumberValue
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
@@ -803,7 +813,11 @@ declare const exports: {
             {
               shiftId,
               equipmentNumber,
-              shiftEquipmentNote: (formElement.elements.namedItem('shiftEquipmentNote') as HTMLTextAreaElement).value
+              shiftEquipmentNote: (
+                formElement.elements.namedItem(
+                  'shiftEquipmentNote'
+                ) as HTMLTextAreaElement
+              ).value
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
@@ -995,10 +1009,24 @@ declare const exports: {
             `${urlPrefix}/doCopyFromPreviousShift`,
             {
               currentShiftId: shiftId,
-              previousShiftId: (formElement.elements.namedItem('previousShiftId') as HTMLInputElement).value,
-              copyCrews: (formElement.elements.namedItem('copyCrews') as HTMLInputElement).checked,
-              copyEmployees: (formElement.elements.namedItem('copyEmployees') as HTMLInputElement).checked,
-              copyEquipment: (formElement.elements.namedItem('copyEquipment') as HTMLInputElement).checked
+              previousShiftId: (
+                formElement.elements.namedItem(
+                  'previousShiftId'
+                ) as HTMLInputElement
+              ).value,
+              copyCrews: (
+                formElement.elements.namedItem('copyCrews') as HTMLInputElement
+              ).checked,
+              copyEmployees: (
+                formElement.elements.namedItem(
+                  'copyEmployees'
+                ) as HTMLInputElement
+              ).checked,
+              copyEquipment: (
+                formElement.elements.namedItem(
+                  'copyEquipment'
+                ) as HTMLInputElement
+              ).checked
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
