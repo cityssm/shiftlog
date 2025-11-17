@@ -317,3 +317,88 @@ create table ShiftLog.ShiftEquipment (
   foreign key (employeeNumber) references ShiftLog.Employees(employeeNumber)
 )
 GO
+
+-- TIMESHEETS
+
+CREATE TABLE ShiftLog.Timesheets (
+  timesheetId int not null primary key identity(1,1),
+  supervisorEmployeeNumber varchar(10) not null,
+
+  timesheetTypeDataListItemId int not null,
+  timesheetTitle varchar(100) not null default '',
+  timesheetNote varchar(200) not null default '',
+
+  timesheetDate date not null,
+  shiftId int,
+
+  recordSubmitted_dateTime datetime,
+  recordSubmitted_userName varchar(30),
+
+  employeesEntered_dateTime datetime,
+  employeesEntered_userName varchar(30),
+
+  equipmentEntered_dateTime datetime,
+  equipmentEntered_userName varchar(30),
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  foreign key (supervisorEmployeeNumber) references ShiftLog.Employees(employeeNumber),
+  foreign key (timesheetTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+)
+GO
+
+CREATE TABLE ShiftLog.TimesheetColumns (
+  timesheetColumnId int not null primary key identity(1,1),
+  timesheetId int not null,
+  columnTitle varchar(50) not null default '',
+
+  workOrderNumber varchar(20),
+  costCenterA varchar(20),
+  costCenterB varchar(20),  
+  
+  orderNumber smallint not null default 0,
+
+  foreign key (timesheetId) references ShiftLog.Timesheets(timesheetId)
+)
+GO
+
+CREATE TABLE ShiftLog.TimesheetRows (
+  timesheetRowId int not null primary key identity(1,1),
+  timesheetId int not null,
+  rowTitle varchar(50) not null default '',
+
+  employeeNumber varchar(10),
+  equipmentNumber varchar(20),
+
+  jobClassificationDataListItemId int,
+  timeCodeDataListItemId int,  
+
+  foreign key (timesheetId) references ShiftLog.Timesheets(timesheetId),
+  foreign key (employeeNumber) references ShiftLog.Employees(employeeNumber),
+  foreign key (equipmentNumber) references ShiftLog.Equipment(equipmentNumber),
+  foreign key (jobClassificationDataListItemId) references ShiftLog.DataListItems(dataListItemId),
+  foreign key (timeCodeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+)
+GO
+
+CREATE TABLE ShiftLog.TimesheetCells (
+  timesheetRowId int not null,
+  timesheetColumnId int not null,
+
+  recordHours decimal(10,2) not null default 0,
+
+  mappedPositionCode varchar(20),
+  mappedPayCode varchar(20),
+  mappedTimeCode varchar(20),
+  mappingConfidence tinyint not null default 0,
+
+  primary key (timesheetRowId, timesheetColumnId),
+  foreign key (timesheetRowId) references ShiftLog.TimesheetRows(timesheetRowId),
+  foreign key (timesheetColumnId) references ShiftLog.TimesheetColumns(timesheetColumnId)
+)
+GO
