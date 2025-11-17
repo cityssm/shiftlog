@@ -1,1 +1,62 @@
-employees
+<div class="columns">
+  <div class="column">
+    <h2 class="title is-4">Employees and Equipment</h2>
+  </div>
+  <% if (isEdit) { %>
+  <div class="column is-narrow">
+    <div class="buttons">
+      <button class="button is-small is-link" id="button--addCrew" type="button">
+        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+        <span>Add Crew</span>
+      </button>
+      <button class="button is-small is-link" id="button--addEmployee" type="button">
+        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+        <span>Add Employee</span>
+      </button>
+      <button class="button is-small is-link" id="button--addEquipment" type="button">
+        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+        <span>Add Equipment</span>
+      </button>
+      <button class="button is-small is-info" id="button--importFromPreviousShift" type="button">
+        <span class="icon"><i class="fa-solid fa-download"></i></span>
+        <span>Import from Previous Shift</span>
+      </button>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<div class="tabs is-small">
+  <ul>
+    <li class="is-active">
+      <a href="#tab-content--crews">
+        <span class="icon is-small"><i class="fa-solid fa-users-gear"></i></span>
+        <span>Crews</span>
+      </a>
+    </li>
+    <li>
+      <a href="#tab-content--employees">
+        <span class="icon is-small"><i class="fa-solid fa-users"></i></span>
+        <span>Employees</span>
+      </a>
+    </li>
+    <li>
+      <a href="#tab-content--equipment">
+        <span class="icon is-small"><i class="fa-solid fa-truck"></i></span>
+        <span>Equipment</span>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<div id="tab-content--crews">
+  <div id="container--shiftCrews"></div>
+</div>
+
+<div id="tab-content--employees" class="is-hidden">
+  <div id="container--shiftEmployees"></div>
+</div>
+
+<div id="tab-content--equipment" class="is-hidden">
+  <div id="container--shiftEquipment"></div>
+</div>

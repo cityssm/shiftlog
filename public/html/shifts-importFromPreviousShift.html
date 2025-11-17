@@ -1,0 +1,56 @@
+<div
+  class="modal"
+  id="modal--importFromPreviousShift"
+  role="dialog"
+  aria-label="Import from Previous Shift"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Import from Previous Shift</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--import">
+        <input type="hidden" name="currentShiftId" />
+        <div class="field">
+          <label class="label">Previous Shift ID</label>
+          <div class="control">
+            <input class="input" type="number" name="previousShiftId" required />
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="copyCrews" checked /> Import Crews
+            </label>
+          </div>
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="copyEmployees" checked /> Import Employees
+            </label>
+          </div>
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="copyEquipment" checked /> Import Equipment
+            </label>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--import">
+          Import
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

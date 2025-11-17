@@ -1,0 +1,40 @@
+<div
+  class="modal"
+  id="modal--editCrewNote"
+  role="dialog"
+  aria-label="Edit Crew Note"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Crew Note</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editCrewNote">
+        <input type="hidden" name="shiftId" />
+        <input type="hidden" name="crewId" />
+        <div class="field">
+          <label class="label">Note</label>
+          <div class="control">
+            <textarea class="textarea" name="shiftCrewNote" maxlength="200"></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editCrewNote">
+          Update Note
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
