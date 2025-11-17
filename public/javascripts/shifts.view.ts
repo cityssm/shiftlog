@@ -1,4 +1,8 @@
 ;(() => {
+  /*
+   * Make form read only
+   */
+
   const formElement = document.querySelector(
     '#form--shift'
   ) as HTMLFormElement | null

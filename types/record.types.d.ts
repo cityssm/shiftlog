@@ -64,7 +64,7 @@ export interface Employee extends BaseRecord {
 }
 export interface Shift extends BaseRecord {
     shiftId: number;
-    shiftDate: Date;
+    shiftDate: Date | string;
     shiftTimeDataListItem?: string;
     shiftTimeDataListItemId: number;
     shiftTypeDataListItem?: string;

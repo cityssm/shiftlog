@@ -31,6 +31,14 @@ declare const exports: {
   }
 
   /*
+   * URL builders
+   */
+
+  function buildShiftURL(shiftId: number): string {
+    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId.toString()}`
+  }
+
+  /*
    * Declare shiftLog
    */
 
@@ -39,6 +47,8 @@ declare const exports: {
 
     clearUnsavedChanges,
     hasUnsavedChanges,
-    setUnsavedChanges
+    setUnsavedChanges,
+
+    buildShiftURL
   }
 })()

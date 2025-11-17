@@ -1,5 +1,8 @@
 ;
 (() => {
+    /*
+     * Make form read only
+     */
     const formElement = document.querySelector('#form--shift');
     formElement?.addEventListener('submit', (formEvent) => {
         formEvent.preventDefault();

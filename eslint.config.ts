@@ -1,11 +1,9 @@
 import eslintCspell from '@cspell/eslint-plugin'
-import configWebApp, {
-  defineConfig
-} from 'eslint-config-cityssm'
+import configWebApp, { defineConfig } from 'eslint-config-cityssm'
 import { cspellWords } from 'eslint-config-cityssm/exports'
 import eslintPluginNoUnsanitized from 'eslint-plugin-no-unsanitized'
 
-const escapedMethods = ['cityssm.escapeHTML']
+const escapedMethods = ['cityssm.dateToString', 'cityssm.escapeHTML', 'exports.shiftLog.buildShiftURL']
 
 export const config = defineConfig(configWebApp, {
   files: ['**/*.ts'],

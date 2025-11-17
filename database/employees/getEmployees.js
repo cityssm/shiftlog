@@ -1,6 +1,12 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import mssqlPool from '@cityssm/mssql-multi-pool';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
-export default async function getEmployees(filters) {
+const orderByOptions = {
+    employeeNumber: 'employeeNumber, lastName, firstName',
+    name: 'lastName, firstName, employeeNumber'
+};
+export default async function getEmployees(filters, orderBy = 'name') {
     const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
     const result = (await pool
         .request()
@@ -14,7 +20,7 @@ export default async function getEmployees(filters) {
       from ShiftLog.Employees
       where recordDelete_dateTime is null
         ${filters?.isSupervisor === undefined ? '' : `and isSupervisor = @isSupervisor`}
-      order by lastName, firstName
+      order by ${orderByOptions[orderBy] ?? orderByOptions.name}
   `));
     return result.recordset;
 }

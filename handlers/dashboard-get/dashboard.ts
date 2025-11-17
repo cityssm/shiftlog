@@ -10,15 +10,19 @@ export default async function handler(
 ): Promise<void> {
   const todayString = dateToString(new Date())
 
-  const shifts =
+  const shiftsResult =
     getConfigProperty('shifts.isEnabled') &&
     request.session.user?.userProperties.shifts.canView
-      ? await getShifts({ shiftDateString: todayString }, request.session.user)
-      : []
+      ? await getShifts(
+          { shiftDateString: todayString },
+          { limit: -1, offset: 0 },
+          request.session.user
+        )
+      : { shifts: [], totalCount: 0 }
 
   response.render('dashboard/dashboard', {
     headTitle: 'Dashboard',
 
-    shifts
+    shifts: shiftsResult.shifts
   })
 }

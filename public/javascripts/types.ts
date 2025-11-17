@@ -8,6 +8,8 @@ export interface ShiftLogGlobal {
   shiftsSectionName: string
   shiftsSectionNameSingular: string
 
+  buildShiftURL: (shiftId: number) => string
+
   workOrdersAreEnabled: boolean
   workOrdersRouter: string
   workOrdersSectionName: string

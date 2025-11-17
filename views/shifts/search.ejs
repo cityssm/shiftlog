@@ -10,7 +10,9 @@
         <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
         <li class="is-active">
           <a href="#" aria-current="page">
-            <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i></span>
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i>
+            </span>
             <span><%= configFunctions.getConfigProperty('shifts.sectionName') %></span>
           </a>
         </li>
@@ -23,12 +25,67 @@
 
     <div class="box">
       <form id="form--shiftSearch">
-
+        <input
+          id="searchSearch--limit"
+          name="limit"
+          type="hidden"
+          value="50"
+        />
+        <input
+          id="searchSearch--offset"
+          name="offset"
+          type="hidden"
+          value="0"
+        />
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="shiftSearch--supervisorEmployeeNumber">Supervisor</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="shiftSearch--supervisorEmployeeNumber" name="supervisorEmployeeNumber">
+                    <option value="">(All Supervisors)</option>
+                    <% supervisors.forEach(function(supervisor) { %>
+                    <option value="<%= supervisor.employeeNumber %>">
+                      <%= supervisor.lastName %>, <%= supervisor.firstName %> (<%= supervisor.employeeNumber %>)
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="shiftSearch--shiftTypeDataListItemId">
+                <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Type
+              </label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="shiftSearch--shiftTypeDataListItemId" name="shiftTypeDataListItemId">
+                    <option value="">(All Types)</option>
+                    <% shiftTypes.forEach(function(shiftType) { %>
+                    <option value="<%= shiftType.dataListItemId %>">
+                      <%= shiftType.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </form>
+    </div>
+
+    <div id="container--shiftSearchResults">
+      <!-- Filled dynamically -->
     </div>
   </div>
 </div>
 
 <%- include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/shifts.search.js"></script>
 
 <%- include('../_footerB'); -%>
