@@ -275,72 +275,68 @@ declare const exports: {
   }
 
   function addCrew(): void {
-    let formHTML = '<form id="form--addCrew">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Crew</label>'
-    formHTML += '<div class="control"><div class="select is-fullwidth">'
-    formHTML += '<select name="crewId" required>'
-    formHTML += '<option value="">(Select Crew)</option>'
+    let formElement: HTMLFormElement
 
-    for (const crew of availableCrews) {
-      // Skip crews already added
-      if (shiftCrews.some((sc) => sc.crewId === crew.crewId)) {
-        continue
-      }
-      formHTML += `<option value="${crew.crewId}">${cityssm.escapeHTML(crew.crewName)}</option>`
+    function doAdd(formEvent: Event): void {
+      formEvent.preventDefault()
+
+      cityssm.postJSON(
+        `${urlPrefix}/doAddShiftCrew`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+
+          if (responseJSON.success) {
+            refreshData()
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Crew added successfully'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to add crew'
+            })
+          }
+        }
+      )
     }
 
-    formHTML += '</select></div></div></div>'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Note</label>'
-    formHTML +=
-      '<div class="control"><textarea class="textarea" name="shiftCrewNote" maxlength="200"></textarea></div>'
-    formHTML += '</div>'
-    formHTML += '</form>'
+    cityssm.openHtmlModal('shifts-addCrew', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
 
-    bulmaJS.confirm({
-      title: 'Add Crew',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Add Crew',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--addCrew'
-          ) as HTMLFormElement
+        const crewIdElement = modalElement.querySelector(
+          'select[name="crewId"]'
+        ) as HTMLSelectElement
 
-          cityssm.postJSON(
-            `${urlPrefix}/doAddShiftCrew`,
-            {
-              shiftId,
-              crewId: (
-                formElement.elements.namedItem('crewId') as HTMLSelectElement
-              ).value,
-              shiftCrewNote: (
-                formElement.elements.namedItem(
-                  'shiftCrewNote'
-                ) as HTMLTextAreaElement
-              ).value
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
-
-              if (responseJSON.success) {
-                refreshData()
-                bulmaJS.alert({
-                  contextualColorName: 'success',
-                  message: 'Crew added successfully'
-                })
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to add crew'
-                })
-              }
-            }
+        for (const crew of availableCrews) {
+          // Skip crews already added
+          if (shiftCrews.some((sc) => sc.crewId === crew.crewId)) {
+            continue
+          }
+          crewIdElement.insertAdjacentHTML(
+            'beforeend',
+            `<option value="${crew.crewId}">
+              ${cityssm.escapeHTML(crew.crewName)}
+              </option>`
           )
         }
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doAdd)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -430,97 +426,85 @@ declare const exports: {
   }
 
   function addEquipment(): void {
-    let formHTML = '<form id="form--addEquipment">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Equipment</label>'
-    formHTML += '<div class="control"><div class="select is-fullwidth">'
-    formHTML += '<select name="equipmentNumber" required>'
-    formHTML += '<option value="">(Select Equipment)</option>'
+    let formElement: HTMLFormElement
 
-    for (const equipment of availableEquipment) {
-      // Skip equipment already added
-      if (
-        shiftEquipment.some(
-          (se) => se.equipmentNumber === equipment.equipmentNumber
-        )
-      ) {
-        continue
-      }
-      formHTML += `<option value="${equipment.equipmentNumber}">${cityssm.escapeHTML(equipment.equipmentName)}</option>`
+    function doAdd(formEvent: Event): void {
+      formEvent.preventDefault()
+
+      cityssm.postJSON(
+        `${urlPrefix}/doAddShiftEquipment`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+
+          if (responseJSON.success) {
+            refreshData()
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Equipment added successfully'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to add equipment'
+            })
+          }
+        }
+      )
     }
 
-    formHTML += '</select></div></div></div>'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Assigned Employee (Optional)</label>'
-    formHTML += '<div class="control"><div class="select is-fullwidth">'
-    formHTML += '<select name="employeeNumber">'
-    formHTML += '<option value="">(None)</option>'
+    cityssm.openHtmlModal('shifts-addEquipment', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
 
-    for (const employee of shiftEmployees) {
-      formHTML += `<option value="${employee.employeeNumber}">${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</option>`
-    }
+        const equipmentNumberElement = modalElement.querySelector(
+          'select[name="equipmentNumber"]'
+        ) as HTMLSelectElement
 
-    formHTML += '</select></div></div></div>'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Note</label>'
-    formHTML +=
-      '<div class="control"><textarea class="textarea" name="shiftEquipmentNote" maxlength="200"></textarea></div>'
-    formHTML += '</div>'
-    formHTML += '</form>'
-
-    bulmaJS.confirm({
-      title: 'Add Equipment',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Add Equipment',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--addEquipment'
-          ) as HTMLFormElement
-
-          const employeeNumberValue = (
-            formElement.elements.namedItem(
-              'employeeNumber'
-            ) as HTMLSelectElement
-          ).value
-
-          cityssm.postJSON(
-            `${urlPrefix}/doAddShiftEquipment`,
-            {
-              shiftId,
-              equipmentNumber: (
-                formElement.elements.namedItem(
-                  'equipmentNumber'
-                ) as HTMLSelectElement
-              ).value,
-              employeeNumber:
-                employeeNumberValue === '' ? null : employeeNumberValue,
-              shiftEquipmentNote: (
-                formElement.elements.namedItem(
-                  'shiftEquipmentNote'
-                ) as HTMLTextAreaElement
-              ).value
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
-
-              if (responseJSON.success) {
-                refreshData()
-                bulmaJS.alert({
-                  contextualColorName: 'success',
-                  message: 'Equipment added successfully'
-                })
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to add equipment'
-                })
-              }
-            }
+        for (const equipment of availableEquipment) {
+          // Skip equipment already added
+          if (
+            shiftEquipment.some(
+              (se) => se.equipmentNumber === equipment.equipmentNumber
+            )
+          ) {
+            continue
+          }
+          equipmentNumberElement.insertAdjacentHTML(
+            'beforeend',
+            `<option value="${cityssm.escapeHTML(equipment.equipmentNumber)}">
+              ${cityssm.escapeHTML(equipment.equipmentName)}
+              </option>`
           )
         }
+
+        const employeeNumberElement = modalElement.querySelector(
+          'select[name="employeeNumber"]'
+        ) as HTMLSelectElement
+
+        for (const employee of shiftEmployees) {
+          employeeNumberElement.insertAdjacentHTML(
+            'beforeend',
+            `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">
+              ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+              </option>`
+          )
+        }
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doAdd)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -534,50 +518,55 @@ declare const exports: {
       return
     }
 
-    let formHTML = '<form id="form--editCrewNote">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Note</label>'
-    formHTML += `<div class="control"><textarea class="textarea" name="shiftCrewNote" maxlength="200">${cityssm.escapeHTML(crew.shiftCrewNote)}</textarea></div>`
-    formHTML += '</div>'
-    formHTML += '</form>'
+    let formElement: HTMLFormElement
 
-    bulmaJS.confirm({
-      title: 'Edit Crew Note',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Update Note',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--editCrewNote'
-          ) as HTMLFormElement
+    function doUpdate(formEvent: Event): void {
+      formEvent.preventDefault()
 
-          cityssm.postJSON(
-            `${urlPrefix}/doUpdateShiftCrewNote`,
-            {
-              shiftId,
-              crewId,
-              shiftCrewNote: (
-                formElement.elements.namedItem(
-                  'shiftCrewNote'
-                ) as HTMLTextAreaElement
-              ).value
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
+      cityssm.postJSON(
+        `${urlPrefix}/doUpdateShiftCrewNote`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
 
-              if (responseJSON.success) {
-                refreshData()
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to update note'
-                })
-              }
-            }
-          )
+          if (responseJSON.success) {
+            refreshData()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to update note'
+            })
+          }
         }
+      )
+    }
+
+    cityssm.openHtmlModal('shifts-editCrewNote', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
+        ;(
+          modalElement.querySelector('input[name="crewId"]') as HTMLInputElement
+        ).value = crewId ?? ''
+        ;(
+          modalElement.querySelector(
+            'textarea[name="shiftCrewNote"]'
+          ) as HTMLTextAreaElement
+        ).value = crew.shiftCrewNote
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doUpdate)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -593,58 +582,66 @@ declare const exports: {
       return
     }
 
-    let formHTML = '<form id="form--editEmployeeCrew">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Crew</label>'
-    formHTML += '<div class="control"><div class="select is-fullwidth">'
-    formHTML += '<select name="crewId">'
-    formHTML += '<option value="">(None)</option>'
+    let formElement: HTMLFormElement
 
-    for (const crew of shiftCrews) {
-      const selected = crew.crewId === employee.crewId ? ' selected' : ''
-      formHTML += `<option value="${crew.crewId}"${selected}>${cityssm.escapeHTML(crew.crewName ?? '')}</option>`
+    function doUpdate(formEvent: Event): void {
+      formEvent.preventDefault()
+
+      cityssm.postJSON(
+        `${urlPrefix}/doUpdateShiftEmployee`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+
+          if (responseJSON.success) {
+            refreshData()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to update crew'
+            })
+          }
+        }
+      )
     }
 
-    formHTML += '</select></div></div></div>'
-    formHTML += '</form>'
+    cityssm.openHtmlModal('shifts-editEmployeeCrew', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
+        ;(
+          modalElement.querySelector(
+            'input[name="employeeNumber"]'
+          ) as HTMLInputElement
+        ).value = employeeNumber ?? ''
 
-    bulmaJS.confirm({
-      title: 'Change Employee Crew',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Update Crew',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--editEmployeeCrew'
-          ) as HTMLFormElement
+        const crewIdElement = modalElement.querySelector(
+          'select[name="crewId"]'
+        ) as HTMLSelectElement
 
-          const crewIdValue = (
-            formElement.elements.namedItem('crewId') as HTMLSelectElement
-          ).value
-
-          cityssm.postJSON(
-            `${urlPrefix}/doUpdateShiftEmployee`,
-            {
-              shiftId,
-              employeeNumber,
-              crewId: crewIdValue === '' ? null : crewIdValue
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
-
-              if (responseJSON.success) {
-                refreshData()
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to update crew'
-                })
-              }
-            }
+        for (const crew of shiftCrews) {
+          const selected = crew.crewId === employee.crewId
+          crewIdElement.insertAdjacentHTML(
+            'beforeend',
+            `<option value="${crew.crewId}"${selected ? ' selected' : ''}>
+              ${cityssm.escapeHTML(crew.crewName ?? '')}
+              </option>`
           )
         }
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doUpdate)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -660,50 +657,57 @@ declare const exports: {
       return
     }
 
-    let formHTML = '<form id="form--editEmployeeNote">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Note</label>'
-    formHTML += `<div class="control"><textarea class="textarea" name="shiftEmployeeNote" maxlength="200">${cityssm.escapeHTML(employee.shiftEmployeeNote)}</textarea></div>`
-    formHTML += '</div>'
-    formHTML += '</form>'
+    let formElement: HTMLFormElement
 
-    bulmaJS.confirm({
-      title: 'Edit Employee Note',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Update Note',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--editEmployeeNote'
-          ) as HTMLFormElement
+    function doUpdate(formEvent: Event): void {
+      formEvent.preventDefault()
 
-          cityssm.postJSON(
-            `${urlPrefix}/doUpdateShiftEmployeeNote`,
-            {
-              shiftId,
-              employeeNumber,
-              shiftEmployeeNote: (
-                formElement.elements.namedItem(
-                  'shiftEmployeeNote'
-                ) as HTMLTextAreaElement
-              ).value
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
+      cityssm.postJSON(
+        `${urlPrefix}/doUpdateShiftEmployeeNote`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
 
-              if (responseJSON.success) {
-                refreshData()
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to update note'
-                })
-              }
-            }
-          )
+          if (responseJSON.success) {
+            refreshData()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to update note'
+            })
+          }
         }
+      )
+    }
+
+    cityssm.openHtmlModal('shifts-editEmployeeNote', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
+        ;(
+          modalElement.querySelector(
+            'input[name="employeeNumber"]'
+          ) as HTMLInputElement
+        ).value = employeeNumber ?? ''
+        ;(
+          modalElement.querySelector(
+            'textarea[name="shiftEmployeeNote"]'
+          ) as HTMLTextAreaElement
+        ).value = employee.shiftEmployeeNote
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doUpdate)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -719,62 +723,66 @@ declare const exports: {
       return
     }
 
-    let formHTML = '<form id="form--editEquipmentEmployee">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Assigned Employee</label>'
-    formHTML += '<div class="control"><div class="select is-fullwidth">'
-    formHTML += '<select name="employeeNumber">'
-    formHTML += '<option value="">(None)</option>'
+    let formElement: HTMLFormElement
 
-    for (const employee of shiftEmployees) {
-      const selected =
-        employee.employeeNumber === equipment.employeeNumber ? ' selected' : ''
-      formHTML += `<option value="${employee.employeeNumber}"${selected}>${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</option>`
+    function doUpdate(formEvent: Event): void {
+      formEvent.preventDefault()
+
+      cityssm.postJSON(
+        `${urlPrefix}/doUpdateShiftEquipment`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+
+          if (responseJSON.success) {
+            refreshData()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to update assignment'
+            })
+          }
+        }
+      )
     }
 
-    formHTML += '</select></div></div></div>'
-    formHTML += '</form>'
+    cityssm.openHtmlModal('shifts-editEquipmentEmployee', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
+        ;(
+          modalElement.querySelector(
+            'input[name="equipmentNumber"]'
+          ) as HTMLInputElement
+        ).value = equipmentNumber ?? ''
 
-    bulmaJS.confirm({
-      title: 'Assign Equipment Employee',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Update Assignment',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--editEquipmentEmployee'
-          ) as HTMLFormElement
+        const employeeNumberElement = modalElement.querySelector(
+          'select[name="employeeNumber"]'
+        ) as HTMLSelectElement
 
-          const employeeNumberValue = (
-            formElement.elements.namedItem(
-              'employeeNumber'
-            ) as HTMLSelectElement
-          ).value
-
-          cityssm.postJSON(
-            `${urlPrefix}/doUpdateShiftEquipment`,
-            {
-              shiftId,
-              equipmentNumber,
-              employeeNumber:
-                employeeNumberValue === '' ? null : employeeNumberValue
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
-
-              if (responseJSON.success) {
-                refreshData()
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to update assignment'
-                })
-              }
-            }
+        for (const employee of shiftEmployees) {
+          const selected = employee.employeeNumber === equipment.employeeNumber
+          employeeNumberElement.insertAdjacentHTML(
+            'beforeend',
+            `<option value="${cityssm.escapeHTML(employee.employeeNumber)}"${selected ? ' selected' : ''}>
+              ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+              </option>`
           )
         }
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doUpdate)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -790,50 +798,57 @@ declare const exports: {
       return
     }
 
-    let formHTML = '<form id="form--editEquipmentNote">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Note</label>'
-    formHTML += `<div class="control"><textarea class="textarea" name="shiftEquipmentNote" maxlength="200">${cityssm.escapeHTML(equipment.shiftEquipmentNote)}</textarea></div>`
-    formHTML += '</div>'
-    formHTML += '</form>'
+    let formElement: HTMLFormElement
 
-    bulmaJS.confirm({
-      title: 'Edit Equipment Note',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Update Note',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--editEquipmentNote'
-          ) as HTMLFormElement
+    function doUpdate(formEvent: Event): void {
+      formEvent.preventDefault()
 
-          cityssm.postJSON(
-            `${urlPrefix}/doUpdateShiftEquipmentNote`,
-            {
-              shiftId,
-              equipmentNumber,
-              shiftEquipmentNote: (
-                formElement.elements.namedItem(
-                  'shiftEquipmentNote'
-                ) as HTMLTextAreaElement
-              ).value
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
+      cityssm.postJSON(
+        `${urlPrefix}/doUpdateShiftEquipmentNote`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
 
-              if (responseJSON.success) {
-                refreshData()
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to update note'
-                })
-              }
-            }
-          )
+          if (responseJSON.success) {
+            refreshData()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to update note'
+            })
+          }
         }
+      )
+    }
+
+    cityssm.openHtmlModal('shifts-editEquipmentNote', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
+        ;(
+          modalElement.querySelector(
+            'input[name="equipmentNumber"]'
+          ) as HTMLInputElement
+        ).value = equipmentNumber ?? ''
+        ;(
+          modalElement.querySelector(
+            'textarea[name="shiftEquipmentNote"]'
+          ) as HTMLTextAreaElement
+        ).value = equipment.shiftEquipmentNote
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doUpdate)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -972,81 +987,51 @@ declare const exports: {
   }
 
   function importFromPreviousShift(): void {
-    let formHTML = '<form id="form--import">'
-    formHTML += '<div class="field">'
-    formHTML += '<label class="label">Previous Shift ID</label>'
-    formHTML +=
-      '<div class="control"><input class="input" type="number" name="previousShiftId" required /></div>'
-    formHTML += '</div>'
-    formHTML += '<div class="field">'
-    formHTML += '<div class="control">'
-    formHTML +=
-      '<label class="checkbox"><input type="checkbox" name="copyCrews" checked /> Import Crews</label>'
-    formHTML += '</div>'
-    formHTML += '<div class="control">'
-    formHTML +=
-      '<label class="checkbox"><input type="checkbox" name="copyEmployees" checked /> Import Employees</label>'
-    formHTML += '</div>'
-    formHTML += '<div class="control">'
-    formHTML +=
-      '<label class="checkbox"><input type="checkbox" name="copyEquipment" checked /> Import Equipment</label>'
-    formHTML += '</div>'
-    formHTML += '</div>'
-    formHTML += '</form>'
+    let formElement: HTMLFormElement
 
-    bulmaJS.confirm({
-      title: 'Import from Previous Shift',
-      message: formHTML,
-      messageIsHtml: true,
-      okButton: {
-        text: 'Import',
-        callbackFunction: () => {
-          const formElement = document.querySelector(
-            '#form--import'
-          ) as HTMLFormElement
+    function doImport(formEvent: Event): void {
+      formEvent.preventDefault()
 
-          cityssm.postJSON(
-            `${urlPrefix}/doCopyFromPreviousShift`,
-            {
-              currentShiftId: shiftId,
-              previousShiftId: (
-                formElement.elements.namedItem(
-                  'previousShiftId'
-                ) as HTMLInputElement
-              ).value,
-              copyCrews: (
-                formElement.elements.namedItem('copyCrews') as HTMLInputElement
-              ).checked,
-              copyEmployees: (
-                formElement.elements.namedItem(
-                  'copyEmployees'
-                ) as HTMLInputElement
-              ).checked,
-              copyEquipment: (
-                formElement.elements.namedItem(
-                  'copyEquipment'
-                ) as HTMLInputElement
-              ).checked
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
+      cityssm.postJSON(
+        `${urlPrefix}/doCopyFromPreviousShift`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
 
-              if (responseJSON.success) {
-                refreshData()
-                bulmaJS.alert({
-                  contextualColorName: 'success',
-                  message: 'Imported successfully'
-                })
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error',
-                  message: 'Failed to import from previous shift'
-                })
-              }
-            }
-          )
+          if (responseJSON.success) {
+            refreshData()
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Imported successfully'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'Failed to import from previous shift'
+            })
+          }
         }
+      )
+    }
+
+    cityssm.openHtmlModal('shifts-importFromPreviousShift', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            'input[name="currentShiftId"]'
+          ) as HTMLInputElement
+        ).value = shiftId
+      },
+      onshown(modalElement) {
+        bulmaJS.toggleHtmlClipped()
+
+        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement.addEventListener('submit', doImport)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }

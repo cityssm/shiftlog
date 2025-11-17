@@ -1,0 +1,44 @@
+<div
+  class="modal"
+  id="modal--editEmployeeCrew"
+  role="dialog"
+  aria-label="Change Employee Crew"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Change Employee Crew</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editEmployeeCrew">
+        <input type="hidden" name="shiftId" />
+        <input type="hidden" name="employeeNumber" />
+        <div class="field">
+          <label class="label">Crew</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="crewId">
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editEmployeeCrew">
+          Update Crew
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

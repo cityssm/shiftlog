@@ -1,0 +1,49 @@
+<div
+  class="modal"
+  id="modal--addCrew"
+  role="dialog"
+  aria-label="Add Crew"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Crew</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addCrew">
+        <input type="hidden" name="shiftId" />
+        <div class="field">
+          <label class="label">Crew</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="crewId" required>
+                <option value="">(Select Crew)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Note</label>
+          <div class="control">
+            <textarea class="textarea" name="shiftCrewNote" maxlength="200"></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--addCrew">
+          Add Crew
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

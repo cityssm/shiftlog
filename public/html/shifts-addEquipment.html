@@ -1,0 +1,59 @@
+<div
+  class="modal"
+  id="modal--addEquipment"
+  role="dialog"
+  aria-label="Add Equipment"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Equipment</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addEquipment">
+        <input type="hidden" name="shiftId" />
+        <div class="field">
+          <label class="label">Equipment</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="equipmentNumber" required>
+                <option value="">(Select Equipment)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Assigned Employee (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="employeeNumber">
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Note</label>
+          <div class="control">
+            <textarea class="textarea" name="shiftEquipmentNote" maxlength="200"></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--addEquipment">
+          Add Equipment
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

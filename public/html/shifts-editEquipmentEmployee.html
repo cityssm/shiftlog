@@ -1,0 +1,44 @@
+<div
+  class="modal"
+  id="modal--editEquipmentEmployee"
+  role="dialog"
+  aria-label="Assign Equipment Employee"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Assign Equipment Employee</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editEquipmentEmployee">
+        <input type="hidden" name="shiftId" />
+        <input type="hidden" name="equipmentNumber" />
+        <div class="field">
+          <label class="label">Assigned Employee</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="employeeNumber">
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editEquipmentEmployee">
+          Update Assignment
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

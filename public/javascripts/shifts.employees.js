@@ -162,56 +162,49 @@
         });
     }
     function addCrew() {
-        let formHTML = '<form id="form--addCrew">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Crew</label>';
-        formHTML += '<div class="control"><div class="select is-fullwidth">';
-        formHTML += '<select name="crewId" required>';
-        formHTML += '<option value="">(Select Crew)</option>';
-        for (const crew of availableCrews) {
-            // Skip crews already added
-            if (shiftCrews.some((sc) => sc.crewId === crew.crewId)) {
-                continue;
-            }
-            formHTML += `<option value="${crew.crewId}">${cityssm.escapeHTML(crew.crewName)}</option>`;
-        }
-        formHTML += '</select></div></div></div>';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Note</label>';
-        formHTML +=
-            '<div class="control"><textarea class="textarea" name="shiftCrewNote" maxlength="200"></textarea></div>';
-        formHTML += '</div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Add Crew',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Add Crew',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--addCrew');
-                    cityssm.postJSON(`${urlPrefix}/doAddShiftCrew`, {
-                        shiftId,
-                        crewId: formElement.elements.namedItem('crewId').value,
-                        shiftCrewNote: formElement.elements.namedItem('shiftCrewNote').value
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                message: 'Crew added successfully'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to add crew'
-                            });
-                        }
+        let formElement;
+        function doAdd(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doAddShiftCrew`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Crew added successfully'
                     });
                 }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to add crew'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('shifts-addCrew', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                const crewIdElement = modalElement.querySelector('select[name="crewId"]');
+                for (const crew of availableCrews) {
+                    // Skip crews already added
+                    if (shiftCrews.some((sc) => sc.crewId === crew.crewId)) {
+                        continue;
+                    }
+                    crewIdElement.insertAdjacentHTML('beforeend', `<option value="${crew.crewId}">
+              ${cityssm.escapeHTML(crew.crewName)}
+              </option>`);
+                }
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doAdd);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -269,67 +262,55 @@
         });
     }
     function addEquipment() {
-        let formHTML = '<form id="form--addEquipment">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Equipment</label>';
-        formHTML += '<div class="control"><div class="select is-fullwidth">';
-        formHTML += '<select name="equipmentNumber" required>';
-        formHTML += '<option value="">(Select Equipment)</option>';
-        for (const equipment of availableEquipment) {
-            // Skip equipment already added
-            if (shiftEquipment.some((se) => se.equipmentNumber === equipment.equipmentNumber)) {
-                continue;
-            }
-            formHTML += `<option value="${equipment.equipmentNumber}">${cityssm.escapeHTML(equipment.equipmentName)}</option>`;
-        }
-        formHTML += '</select></div></div></div>';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Assigned Employee (Optional)</label>';
-        formHTML += '<div class="control"><div class="select is-fullwidth">';
-        formHTML += '<select name="employeeNumber">';
-        formHTML += '<option value="">(None)</option>';
-        for (const employee of shiftEmployees) {
-            formHTML += `<option value="${employee.employeeNumber}">${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</option>`;
-        }
-        formHTML += '</select></div></div></div>';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Note</label>';
-        formHTML +=
-            '<div class="control"><textarea class="textarea" name="shiftEquipmentNote" maxlength="200"></textarea></div>';
-        formHTML += '</div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Add Equipment',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Add Equipment',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--addEquipment');
-                    const employeeNumberValue = formElement.elements.namedItem('employeeNumber').value;
-                    cityssm.postJSON(`${urlPrefix}/doAddShiftEquipment`, {
-                        shiftId,
-                        equipmentNumber: formElement.elements.namedItem('equipmentNumber').value,
-                        employeeNumber: employeeNumberValue === '' ? null : employeeNumberValue,
-                        shiftEquipmentNote: formElement.elements.namedItem('shiftEquipmentNote').value
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                message: 'Equipment added successfully'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to add equipment'
-                            });
-                        }
+        let formElement;
+        function doAdd(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doAddShiftEquipment`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Equipment added successfully'
                     });
                 }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to add equipment'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('shifts-addEquipment', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                const equipmentNumberElement = modalElement.querySelector('select[name="equipmentNumber"]');
+                for (const equipment of availableEquipment) {
+                    // Skip equipment already added
+                    if (shiftEquipment.some((se) => se.equipmentNumber === equipment.equipmentNumber)) {
+                        continue;
+                    }
+                    equipmentNumberElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(equipment.equipmentNumber)}">
+              ${cityssm.escapeHTML(equipment.equipmentName)}
+              </option>`);
+                }
+                const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
+                for (const employee of shiftEmployees) {
+                    employeeNumberElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">
+              ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+              </option>`);
+                }
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doAdd);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -340,38 +321,37 @@
         if (crew === undefined) {
             return;
         }
-        let formHTML = '<form id="form--editCrewNote">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Note</label>';
-        formHTML += `<div class="control"><textarea class="textarea" name="shiftCrewNote" maxlength="200">${cityssm.escapeHTML(crew.shiftCrewNote)}</textarea></div>`;
-        formHTML += '</div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Edit Crew Note',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Update Note',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--editCrewNote');
-                    cityssm.postJSON(`${urlPrefix}/doUpdateShiftCrewNote`, {
-                        shiftId,
-                        crewId,
-                        shiftCrewNote: formElement.elements.namedItem('shiftCrewNote').value
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to update note'
-                            });
-                        }
+        let formElement;
+        function doUpdate(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftCrewNote`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to update note'
                     });
                 }
+            });
+        }
+        cityssm.openHtmlModal('shifts-editCrewNote', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                modalElement.querySelector('input[name="crewId"]').value = crewId ?? '';
+                modalElement.querySelector('textarea[name="shiftCrewNote"]').value = crew.shiftCrewNote;
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doUpdate);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -382,45 +362,43 @@
         if (employee === undefined) {
             return;
         }
-        let formHTML = '<form id="form--editEmployeeCrew">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Crew</label>';
-        formHTML += '<div class="control"><div class="select is-fullwidth">';
-        formHTML += '<select name="crewId">';
-        formHTML += '<option value="">(None)</option>';
-        for (const crew of shiftCrews) {
-            const selected = crew.crewId === employee.crewId ? ' selected' : '';
-            formHTML += `<option value="${crew.crewId}"${selected}>${cityssm.escapeHTML(crew.crewName ?? '')}</option>`;
-        }
-        formHTML += '</select></div></div></div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Change Employee Crew',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Update Crew',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--editEmployeeCrew');
-                    const crewIdValue = formElement.elements.namedItem('crewId').value;
-                    cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployee`, {
-                        shiftId,
-                        employeeNumber,
-                        crewId: crewIdValue === '' ? null : crewIdValue
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to update crew'
-                            });
-                        }
+        let formElement;
+        function doUpdate(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployee`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to update crew'
                     });
                 }
+            });
+        }
+        cityssm.openHtmlModal('shifts-editEmployeeCrew', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                modalElement.querySelector('input[name="employeeNumber"]').value = employeeNumber ?? '';
+                const crewIdElement = modalElement.querySelector('select[name="crewId"]');
+                for (const crew of shiftCrews) {
+                    const selected = crew.crewId === employee.crewId;
+                    crewIdElement.insertAdjacentHTML('beforeend', `<option value="${crew.crewId}"${selected ? ' selected' : ''}>
+              ${cityssm.escapeHTML(crew.crewName ?? '')}
+              </option>`);
+                }
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doUpdate);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -431,38 +409,37 @@
         if (employee === undefined) {
             return;
         }
-        let formHTML = '<form id="form--editEmployeeNote">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Note</label>';
-        formHTML += `<div class="control"><textarea class="textarea" name="shiftEmployeeNote" maxlength="200">${cityssm.escapeHTML(employee.shiftEmployeeNote)}</textarea></div>`;
-        formHTML += '</div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Edit Employee Note',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Update Note',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--editEmployeeNote');
-                    cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployeeNote`, {
-                        shiftId,
-                        employeeNumber,
-                        shiftEmployeeNote: formElement.elements.namedItem('shiftEmployeeNote').value
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to update note'
-                            });
-                        }
+        let formElement;
+        function doUpdate(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployeeNote`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to update note'
                     });
                 }
+            });
+        }
+        cityssm.openHtmlModal('shifts-editEmployeeNote', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                modalElement.querySelector('input[name="employeeNumber"]').value = employeeNumber ?? '';
+                modalElement.querySelector('textarea[name="shiftEmployeeNote"]').value = employee.shiftEmployeeNote;
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doUpdate);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -473,45 +450,43 @@
         if (equipment === undefined) {
             return;
         }
-        let formHTML = '<form id="form--editEquipmentEmployee">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Assigned Employee</label>';
-        formHTML += '<div class="control"><div class="select is-fullwidth">';
-        formHTML += '<select name="employeeNumber">';
-        formHTML += '<option value="">(None)</option>';
-        for (const employee of shiftEmployees) {
-            const selected = employee.employeeNumber === equipment.employeeNumber ? ' selected' : '';
-            formHTML += `<option value="${employee.employeeNumber}"${selected}>${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</option>`;
-        }
-        formHTML += '</select></div></div></div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Assign Equipment Employee',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Update Assignment',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--editEquipmentEmployee');
-                    const employeeNumberValue = formElement.elements.namedItem('employeeNumber').value;
-                    cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipment`, {
-                        shiftId,
-                        equipmentNumber,
-                        employeeNumber: employeeNumberValue === '' ? null : employeeNumberValue
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to update assignment'
-                            });
-                        }
+        let formElement;
+        function doUpdate(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipment`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to update assignment'
                     });
                 }
+            });
+        }
+        cityssm.openHtmlModal('shifts-editEquipmentEmployee', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
+                const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
+                for (const employee of shiftEmployees) {
+                    const selected = employee.employeeNumber === equipment.employeeNumber;
+                    employeeNumberElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(employee.employeeNumber)}"${selected ? ' selected' : ''}>
+              ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+              </option>`);
+                }
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doUpdate);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -522,38 +497,37 @@
         if (equipment === undefined) {
             return;
         }
-        let formHTML = '<form id="form--editEquipmentNote">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Note</label>';
-        formHTML += `<div class="control"><textarea class="textarea" name="shiftEquipmentNote" maxlength="200">${cityssm.escapeHTML(equipment.shiftEquipmentNote)}</textarea></div>`;
-        formHTML += '</div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Edit Equipment Note',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Update Note',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--editEquipmentNote');
-                    cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipmentNote`, {
-                        shiftId,
-                        equipmentNumber,
-                        shiftEquipmentNote: formElement.elements.namedItem('shiftEquipmentNote').value
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to update note'
-                            });
-                        }
+        let formElement;
+        function doUpdate(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipmentNote`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to update note'
                     });
                 }
+            });
+        }
+        cityssm.openHtmlModal('shifts-editEquipmentNote', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
+                modalElement.querySelector('textarea[name="shiftEquipmentNote"]').value = equipment.shiftEquipmentNote;
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doUpdate);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -666,59 +640,39 @@
         });
     }
     function importFromPreviousShift() {
-        let formHTML = '<form id="form--import">';
-        formHTML += '<div class="field">';
-        formHTML += '<label class="label">Previous Shift ID</label>';
-        formHTML +=
-            '<div class="control"><input class="input" type="number" name="previousShiftId" required /></div>';
-        formHTML += '</div>';
-        formHTML += '<div class="field">';
-        formHTML += '<div class="control">';
-        formHTML +=
-            '<label class="checkbox"><input type="checkbox" name="copyCrews" checked /> Import Crews</label>';
-        formHTML += '</div>';
-        formHTML += '<div class="control">';
-        formHTML +=
-            '<label class="checkbox"><input type="checkbox" name="copyEmployees" checked /> Import Employees</label>';
-        formHTML += '</div>';
-        formHTML += '<div class="control">';
-        formHTML +=
-            '<label class="checkbox"><input type="checkbox" name="copyEquipment" checked /> Import Equipment</label>';
-        formHTML += '</div>';
-        formHTML += '</div>';
-        formHTML += '</form>';
-        bulmaJS.confirm({
-            title: 'Import from Previous Shift',
-            message: formHTML,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Import',
-                callbackFunction: () => {
-                    const formElement = document.querySelector('#form--import');
-                    cityssm.postJSON(`${urlPrefix}/doCopyFromPreviousShift`, {
-                        currentShiftId: shiftId,
-                        previousShiftId: formElement.elements.namedItem('previousShiftId').value,
-                        copyCrews: formElement.elements.namedItem('copyCrews').checked,
-                        copyEmployees: formElement.elements.namedItem('copyEmployees').checked,
-                        copyEquipment: formElement.elements.namedItem('copyEquipment').checked
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            refreshData();
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                message: 'Imported successfully'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error',
-                                message: 'Failed to import from previous shift'
-                            });
-                        }
+        let formElement;
+        function doImport(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doCopyFromPreviousShift`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    refreshData();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Imported successfully'
                     });
                 }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'Failed to import from previous shift'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('shifts-importFromPreviousShift', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="currentShiftId"]').value = shiftId;
+            },
+            onshown(modalElement) {
+                bulmaJS.toggleHtmlClipped();
+                formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doImport);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
