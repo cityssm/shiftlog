@@ -85,6 +85,14 @@ export interface Employee extends BaseRecord {
   userGroupId?: number | null
 }
 
+export interface Crew extends BaseRecord {
+  crewId: number
+  crewName: string
+  userGroupId?: number | null
+  userGroupName?: string
+  memberCount?: number
+}
+
 // Shifts
 
 export interface Shift extends BaseRecord {
@@ -106,4 +114,34 @@ export interface Shift extends BaseRecord {
   shiftDescription: string
 
   recordLock_dateTime?: Date | null
+}
+
+export interface ShiftCrew {
+  shiftId: number
+  crewId: number
+  crewName?: string
+  shiftCrewNote: string
+  userGroupId?: number | null
+}
+
+export interface ShiftEmployee {
+  shiftId: number
+  employeeNumber: string
+  firstName?: string
+  lastName?: string
+  crewId?: number | null
+  crewName?: string
+  shiftEmployeeNote: string
+  userGroupId?: number | null
+}
+
+export interface ShiftEquipment {
+  shiftId: number
+  equipmentNumber: string
+  equipmentName?: string
+  employeeNumber?: string | null
+  employeeFirstName?: string
+  employeeLastName?: string
+  shiftEquipmentNote: string
+  userGroupId?: number | null
 }
