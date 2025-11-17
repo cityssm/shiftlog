@@ -321,4 +321,8 @@
 <script src="<%= urlPrefix %>/javascripts/shifts.view.js"></script>
 <% } %>
 
+<% if (!isCreate) { %>
+<script src="<%= urlPrefix %>/javascripts/shifts.employees.js"></script>
+<% } %>
+
 <%- include('../_footerB'); -%>
