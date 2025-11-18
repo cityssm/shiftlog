@@ -109,6 +109,8 @@ CREATE TABLE ShiftLog.DataLists (
 )
 GO
 
+-- SHIFT DATALISTS
+
 insert into ShiftLog.DataLists (
   dataListKey,
   dataListName,
@@ -141,6 +143,8 @@ values (
 )
 GO
 
+-- EQUIPMENT DATALISTS
+
 insert into ShiftLog.DataLists (
   dataListKey,
   dataListName,
@@ -156,6 +160,8 @@ values (
   'initializeDatabase.sql'
 )
 GO
+
+-- TIMESHEET DATALISTS
 
 insert into ShiftLog.DataLists (
   dataListKey,
@@ -182,7 +188,7 @@ insert into ShiftLog.DataLists (
 )
 values (
   'jobClassifications',
-  'Job Classifications',
+  'Timesheet Job Classification',
   1,
   'initializeDatabase.sql',
   'initializeDatabase.sql'
@@ -198,7 +204,7 @@ insert into ShiftLog.DataLists (
 )
 values (
   'timeCodes',
-  'Time Codes',
+  'Timesheet Time Codes',
   1,
   'initializeDatabase.sql',
   'initializeDatabase.sql'

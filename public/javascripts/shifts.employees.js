@@ -210,6 +210,7 @@
     }
     function addEmployee() {
         let formElement;
+        let closeModalFunction;
         function doAdd(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doAddShiftEmployee`, formElement, (rawResponseJSON) => {
@@ -220,6 +221,7 @@
                         contextualColorName: 'success',
                         message: 'Employee added successfully'
                     });
+                    closeModalFunction();
                 }
                 else {
                     bulmaJS.alert({
@@ -251,8 +253,9 @@
               </option>`);
                 }
             },
-            onshown(modalElement) {
+            onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doAdd);
             },
@@ -262,6 +265,7 @@
         });
     }
     function addEquipment() {
+        let closeModalFunction;
         let formElement;
         function doAdd(formEvent) {
             formEvent.preventDefault();
@@ -273,6 +277,7 @@
                         contextualColorName: 'success',
                         message: 'Equipment added successfully'
                     });
+                    closeModalFunction();
                 }
                 else {
                     bulmaJS.alert({
@@ -304,8 +309,9 @@
               </option>`);
                 }
             },
-            onshown(modalElement) {
+            onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doAdd);
             },
@@ -322,12 +328,14 @@
             return;
         }
         let formElement;
+        let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doUpdateShiftCrewNote`, formElement, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
+                    closeModalFunction();
                 }
                 else {
                     bulmaJS.alert({
@@ -345,8 +353,9 @@
                 modalElement.querySelector('input[name="crewId"]').value = crewId ?? '';
                 modalElement.querySelector('textarea[name="shiftCrewNote"]').value = crew.shiftCrewNote;
             },
-            onshown(modalElement) {
+            onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doUpdate);
             },
@@ -363,12 +372,14 @@
             return;
         }
         let formElement;
+        let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployee`, formElement, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
+                    closeModalFunction();
                 }
                 else {
                     bulmaJS.alert({
@@ -392,8 +403,9 @@
               </option>`);
                 }
             },
-            onshown(modalElement) {
+            onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doUpdate);
             },
@@ -410,12 +422,14 @@
             return;
         }
         let formElement;
+        let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployeeNote`, formElement, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
+                    closeModalFunction();
                 }
                 else {
                     bulmaJS.alert({
@@ -433,8 +447,9 @@
                 modalElement.querySelector('input[name="employeeNumber"]').value = employeeNumber ?? '';
                 modalElement.querySelector('textarea[name="shiftEmployeeNote"]').value = employee.shiftEmployeeNote;
             },
-            onshown(modalElement) {
+            onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doUpdate);
             },
@@ -451,12 +466,14 @@
             return;
         }
         let formElement;
+        let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipment`, formElement, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
+                    closeModalFunction();
                 }
                 else {
                     bulmaJS.alert({
@@ -480,8 +497,9 @@
               </option>`);
                 }
             },
-            onshown(modalElement) {
+            onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doUpdate);
             },
@@ -498,12 +516,14 @@
             return;
         }
         let formElement;
+        let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipmentNote`, formElement, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
+                    closeModalFunction();
                 }
                 else {
                     bulmaJS.alert({
@@ -521,8 +541,9 @@
                 modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
                 modalElement.querySelector('textarea[name="shiftEquipmentNote"]').value = equipment.shiftEquipmentNote;
             },
-            onshown(modalElement) {
+            onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doUpdate);
             },
@@ -641,6 +662,7 @@
     }
     function importFromPreviousShift() {
         let formElement;
+        let closeModalFunction;
         function doImport(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doCopyFromPreviousShift`, formElement, (rawResponseJSON) => {
@@ -651,6 +673,7 @@
                         contextualColorName: 'success',
                         message: 'Imported successfully'
                     });
+                    closeModalFunction();
                 }
                 else {
                     bulmaJS.alert({
@@ -666,8 +689,9 @@
                 ;
                 modalElement.querySelector('input[name="currentShiftId"]').value = shiftId;
             },
-            onshown(modalElement) {
+            onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doImport);
             },
