@@ -19,61 +19,45 @@ declare const cityssm: cityssmGlobal
 
   const isCreate = timesheetIdElement.value === '' || timesheetIdElement.value === '-1'
 
-  async function doSaveTimesheet(
+  function doSaveTimesheet(
     formEvent: SubmitEvent
-  ): Promise<void> {
+  ): void {
     formEvent.preventDefault()
 
-    const formData = new FormData(formElement)
-    const timesheetData: Record<string, string> = {}
+    const endpoint = isCreate ? 'doCreateTimesheet' : 'doUpdateTimesheet'
 
-    for (const [key, value] of formData.entries()) {
-      timesheetData[key] = value.toString()
-    }
-
-    try {
-      const endpoint = isCreate ? 'doCreateTimesheet' : 'doUpdateTimesheet'
-
-      const response = await fetch(
-        `${urlPrefix}/${timesheetRouter}/${endpoint}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(timesheetData)
+    cityssm.postJSON(
+      `${urlPrefix}/${timesheetRouter}/${endpoint}`,
+      formElement,
+      (rawResponseJSON) => {
+        const result = rawResponseJSON as {
+          success: boolean
+          timesheetId?: number
+          redirectURL?: string
         }
-      )
 
-      const result = await response.json()
-
-      if (result.success) {
-        if (isCreate) {
-          window.location.href = result.redirectURL
+        if (result.success) {
+          if (isCreate && result.redirectURL) {
+            window.location.href = result.redirectURL
+          } else {
+            cityssm.alertModal(
+              'Success',
+              'Timesheet updated successfully.',
+              'success',
+              () => {
+                window.location.reload()
+              }
+            )
+          }
         } else {
           cityssm.alertModal(
-            'Success',
-            'Timesheet updated successfully.',
-            'success',
-            () => {
-              window.location.reload()
-            }
+            'Error',
+            'An error occurred while saving the timesheet.',
+            'error'
           )
         }
-      } else {
-        cityssm.alertModal(
-          'Error',
-          'An error occurred while saving the timesheet.',
-          'error'
-        )
       }
-    } catch {
-      cityssm.alertModal(
-        'Error',
-        'An error occurred while saving the timesheet.',
-        'error'
-      )
-    }
+    )
   }
 
   formElement.addEventListener('submit', doSaveTimesheet)

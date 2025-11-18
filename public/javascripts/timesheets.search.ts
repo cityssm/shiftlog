@@ -70,42 +70,25 @@ declare const cityssm: cityssmGlobal
     searchResultsContainerElement.innerHTML = resultsHTML
   }
 
-  async function doSearch(): Promise<void> {
-    const formData = new FormData(formElement)
-    const searchData: Record<string, string> = {}
-
-    for (const [key, value] of formData.entries()) {
-      searchData[key] = value.toString()
-    }
-
-    try {
-      const response = await fetch(
-        `${urlPrefix}/${timesheetRouter}/doSearchTimesheets`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(searchData)
+  function doSearch(): void {
+    cityssm.postJSON(
+      `${urlPrefix}/${timesheetRouter}/doSearchTimesheets`,
+      formElement,
+      (rawResponseJSON) => {
+        const result = rawResponseJSON as {
+          timesheets: Timesheet[]
+          totalCount: number
         }
-      )
 
-      const result = await response.json()
-
-      renderTimesheetResults(result.timesheets, result.totalCount)
-    } catch {
-      cityssm.alertModal(
-        'Search Error',
-        'An error occurred while searching for timesheets.',
-        'error'
-      )
-    }
+        renderTimesheetResults(result.timesheets, result.totalCount)
+      }
+    )
   }
 
   // Set up search on change
   formElement.addEventListener('change', () => {
     offsetElement.value = '0'
-    void doSearch()
+    doSearch()
   })
 
   // Initial search with current date
@@ -115,5 +98,5 @@ declare const cityssm: cityssmGlobal
   timesheetDateStringElement.value = currentTimesheetDateString
   formElement.insertAdjacentElement('afterbegin', timesheetDateStringElement)
 
-  void doSearch()
+  doSearch()
 })()
