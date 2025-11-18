@@ -110,3 +110,56 @@ export interface ShiftEquipment {
     shiftEquipmentNote: string;
     userGroupId?: number | null;
 }
+export interface Timesheet extends BaseRecord {
+    timesheetId: number;
+    supervisorEmployeeNumber: string;
+    supervisorFirstName?: string;
+    supervisorLastName?: string;
+    supervisorUserName?: string | null;
+    timesheetTypeDataListItemId: number;
+    timesheetTypeDataListItem?: string;
+    timesheetTitle: string;
+    timesheetNote: string;
+    timesheetDate: Date | string;
+    shiftId?: number | null;
+    shiftDescription?: string;
+    recordSubmitted_dateTime?: Date | null;
+    recordSubmitted_userName?: string | null;
+    employeesEntered_dateTime?: Date | null;
+    employeesEntered_userName?: string | null;
+    equipmentEntered_dateTime?: Date | null;
+    equipmentEntered_userName?: string | null;
+}
+export interface TimesheetColumn {
+    timesheetColumnId: number;
+    timesheetId: number;
+    columnTitle: string;
+    workOrderNumber?: string | null;
+    costCenterA?: string | null;
+    costCenterB?: string | null;
+    orderNumber: number;
+}
+export interface TimesheetRow {
+    timesheetRowId: number;
+    timesheetId: number;
+    rowTitle: string;
+    employeeNumber?: string | null;
+    employeeFirstName?: string;
+    employeeLastName?: string;
+    equipmentNumber?: string | null;
+    equipmentName?: string;
+    jobClassificationDataListItemId?: number | null;
+    jobClassificationDataListItem?: string;
+    timeCodeDataListItemId?: number | null;
+    timeCodeDataListItem?: string;
+    userGroupId?: number | null;
+}
+export interface TimesheetCell {
+    timesheetRowId: number;
+    timesheetColumnId: number;
+    recordHours: number;
+    mappedPositionCode?: string | null;
+    mappedPayCode?: string | null;
+    mappedTimeCode?: string | null;
+    mappingConfidence: number;
+}

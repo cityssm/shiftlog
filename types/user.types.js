@@ -1,3 +1,5 @@
 export const userSettingKeys = [
-    'apiKey'
+    'apiKey',
+    'timesheets.canMarkEmployeesAsEntered',
+    'timesheets.canMarkEquipmentAsEntered'
 ];
