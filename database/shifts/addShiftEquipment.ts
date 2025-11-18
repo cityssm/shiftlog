@@ -19,7 +19,7 @@ export default async function addShiftEquipment(
       .request()
       .input('shiftId', form.shiftId)
       .input('equipmentNumber', form.equipmentNumber)
-      .input('employeeNumber', form.employeeNumber ?? null)
+      .input('employeeNumber', (form.employeeNumber ?? '') === '' ? null : form.employeeNumber)
       .input('shiftEquipmentNote', form.shiftEquipmentNote ?? '').query(/* sql */ `
         insert into ShiftLog.ShiftEquipment (shiftId, equipmentNumber, employeeNumber, shiftEquipmentNote)
         values (@shiftId, @equipmentNumber, @employeeNumber, @shiftEquipmentNote)

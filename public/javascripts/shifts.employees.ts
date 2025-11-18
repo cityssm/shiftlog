@@ -73,6 +73,7 @@ declare const exports: {
     }
 
     html += '</tbody></table>'
+
     containerElement.innerHTML = html
 
     if (isEdit) {
@@ -343,6 +344,7 @@ declare const exports: {
 
   function addEmployee(): void {
     let formElement: HTMLFormElement
+    let closeModalFunction: () => void
 
     function doAdd(formEvent: Event): void {
       formEvent.preventDefault()
@@ -359,6 +361,7 @@ declare const exports: {
               contextualColorName: 'success',
               message: 'Employee added successfully'
             })
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -412,8 +415,9 @@ declare const exports: {
           )
         }
       },
-      onshown(modalElement) {
+      onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doAdd)
@@ -426,6 +430,7 @@ declare const exports: {
   }
 
   function addEquipment(): void {
+    let closeModalFunction: () => void
     let formElement: HTMLFormElement
 
     function doAdd(formEvent: Event): void {
@@ -443,6 +448,7 @@ declare const exports: {
               contextualColorName: 'success',
               message: 'Equipment added successfully'
             })
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -496,8 +502,9 @@ declare const exports: {
           )
         }
       },
-      onshown(modalElement) {
+      onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doAdd)
@@ -519,6 +526,7 @@ declare const exports: {
     }
 
     let formElement: HTMLFormElement
+    let closeModalFunction: () => void
 
     function doUpdate(formEvent: Event): void {
       formEvent.preventDefault()
@@ -531,6 +539,7 @@ declare const exports: {
 
           if (responseJSON.success) {
             refreshData()
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -558,8 +567,9 @@ declare const exports: {
           ) as HTMLTextAreaElement
         ).value = crew.shiftCrewNote
       },
-      onshown(modalElement) {
+      onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doUpdate)
@@ -583,6 +593,7 @@ declare const exports: {
     }
 
     let formElement: HTMLFormElement
+    let closeModalFunction: () => void
 
     function doUpdate(formEvent: Event): void {
       formEvent.preventDefault()
@@ -595,6 +606,7 @@ declare const exports: {
 
           if (responseJSON.success) {
             refreshData()
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -633,8 +645,9 @@ declare const exports: {
           )
         }
       },
-      onshown(modalElement) {
+      onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doUpdate)
@@ -658,6 +671,7 @@ declare const exports: {
     }
 
     let formElement: HTMLFormElement
+    let closeModalFunction: () => void
 
     function doUpdate(formEvent: Event): void {
       formEvent.preventDefault()
@@ -670,6 +684,7 @@ declare const exports: {
 
           if (responseJSON.success) {
             refreshData()
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -699,8 +714,9 @@ declare const exports: {
           ) as HTMLTextAreaElement
         ).value = employee.shiftEmployeeNote
       },
-      onshown(modalElement) {
+      onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doUpdate)
@@ -724,6 +740,7 @@ declare const exports: {
     }
 
     let formElement: HTMLFormElement
+    let closeModalFunction: () => void
 
     function doUpdate(formEvent: Event): void {
       formEvent.preventDefault()
@@ -736,6 +753,7 @@ declare const exports: {
 
           if (responseJSON.success) {
             refreshData()
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -774,8 +792,9 @@ declare const exports: {
           )
         }
       },
-      onshown(modalElement) {
+      onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doUpdate)
@@ -799,6 +818,7 @@ declare const exports: {
     }
 
     let formElement: HTMLFormElement
+    let closeModalFunction: () => void
 
     function doUpdate(formEvent: Event): void {
       formEvent.preventDefault()
@@ -811,6 +831,7 @@ declare const exports: {
 
           if (responseJSON.success) {
             refreshData()
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -840,8 +861,9 @@ declare const exports: {
           ) as HTMLTextAreaElement
         ).value = equipment.shiftEquipmentNote
       },
-      onshown(modalElement) {
+      onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doUpdate)
@@ -862,10 +884,12 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete Crew',
+
       message: `Are you sure you want to remove crew "${cityssm.escapeHTML(crew?.crewName ?? '')}" from this shift?`,
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete',
+
         callbackFunction: () => {
           cityssm.postJSON(
             `${urlPrefix}/doDeleteShiftCrew`,
@@ -911,6 +935,7 @@ declare const exports: {
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete',
+
         callbackFunction: () => {
           cityssm.postJSON(
             `${urlPrefix}/doDeleteShiftEmployee`,
@@ -952,10 +977,12 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete Equipment',
+
       message: `Are you sure you want to remove equipment "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete',
+
         callbackFunction: () => {
           cityssm.postJSON(
             `${urlPrefix}/doDeleteShiftEquipment`,
@@ -976,6 +1003,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error',
+
                   message: 'Failed to remove equipment'
                 })
               }
@@ -988,6 +1016,7 @@ declare const exports: {
 
   function importFromPreviousShift(): void {
     let formElement: HTMLFormElement
+    let closeModalFunction: () => void
 
     function doImport(formEvent: Event): void {
       formEvent.preventDefault()
@@ -1004,10 +1033,12 @@ declare const exports: {
               contextualColorName: 'success',
               message: 'Imported successfully'
             })
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to import from previous shift'
             })
           }
@@ -1023,8 +1054,9 @@ declare const exports: {
           ) as HTMLInputElement
         ).value = shiftId
       },
-      onshown(modalElement) {
+      onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doImport)
