@@ -26,130 +26,116 @@
 </div>
 
 <% for (const dataList of dataLists) { %>
-  <details class="panel mb-5" data-data-list-key="<%= dataList.dataListKey %>" open>
-    <summary class="panel-heading is-clickable" style="cursor: pointer;">
-      <div class="columns is-vcentered is-mobile mb-0">
-        <div class="column">
-          <span class="icon-text">
-            <span class="icon">
-              <i class="fa-solid fa-chevron-right details-chevron"></i>
-            </span>
-            <span class="has-text-weight-semibold">
-              <%= dataList.dataListName %>
-            </span>
+<details class="panel mb-5 collapsable-panel" data-data-list-key="<%= dataList.dataListKey %>">
+  <summary class="panel-heading is-clickable" style="cursor: pointer;">
+    <div class="columns is-vcentered is-mobile">
+      <div class="column">
+        <span class="icon-text">
+          <span class="icon">
+            <i class="fa-solid fa-chevron-right details-chevron"></i>
           </span>
-        </div>
-        <div class="column is-narrow">
-          <button class="button is-primary is-small button--addItem" 
-                  type="button"
-                  data-data-list-key="<%= dataList.dataListKey %>"
-                  onclick="event.stopPropagation();">
-            <span class="icon">
-              <i class="fa-solid fa-plus"></i>
-            </span>
-            <span>Add Item</span>
-          </button>
-        </div>
+          <span class="has-text-weight-semibold">
+            <%= dataList.dataListName %>
+          </span>
+        </span>
       </div>
-    </summary>
-
-    <div class="panel-block p-0">
-      <div class="table-container" style="width: 100%;">
-        <table class="table is-striped is-hoverable is-fullwidth mb-0">
-          <thead>
-            <tr>
-              <th style="width: 60px;">Order</th>
-              <th>Item</th>
-              <th style="width: 180px;">User Group</th>
-              <th style="width: 200px;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="dataListItems--<%= dataList.dataListKey %>" class="is-sortable">
-            <% if (dataList.items.length === 0) { %>
-              <tr>
-                <td colspan="4" class="has-text-centered has-text-grey">
-                  No items in this list. Click "Add Item" to create one.
-                </td>
-              </tr>
-            <% } else { %>
-              <% for (const item of dataList.items) { %>
-                <tr data-data-list-item-id="<%= item.dataListItemId %>">
-                  <td class="has-text-centered">
-                    <span class="icon is-small has-text-grey handle" style="cursor: move;">
-                      <i class="fa-solid fa-grip-vertical"></i>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="item-text"><%= item.dataListItem %></span>
-                  </td>
-                  <td>
-                    <% if (item.userGroupId) { %>
-                      <% const userGroup = userGroups.find(ug => ug.userGroupId === item.userGroupId) %>
-                      <% if (userGroup) { %>
-                        <span class="tag is-info"><%= userGroup.userGroupName %></span>
-                      <% } else { %>
-                        <span class="has-text-grey-light">-</span>
-                      <% } %>
-                    <% } else { %>
-                      <span class="has-text-grey-light">-</span>
-                    <% } %>
-                  </td>
-                  <td>
-                    <div class="buttons are-small">
-                      <button class="button is-info button--editItem" 
-                              type="button"
-                              data-data-list-key="<%= dataList.dataListKey %>"
-                              data-data-list-item-id="<%= item.dataListItemId %>"
-                              data-data-list-item="<%= item.dataListItem %>"
-                              data-user-group-id="<%= item.userGroupId || '' %>">
-                        <span class="icon">
-                          <i class="fa-solid fa-pencil"></i>
-                        </span>
-                        <span>Edit</span>
-                      </button>
-                      <button class="button is-danger button--deleteItem" 
-                              type="button"
-                              data-data-list-key="<%= dataList.dataListKey %>"
-                              data-data-list-item-id="<%= item.dataListItemId %>"
-                              data-data-list-item="<%= item.dataListItem %>">
-                        <span class="icon">
-                          <i class="fa-solid fa-trash"></i>
-                        </span>
-                        <span>Delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              <% } %>
-            <% } %>
-          </tbody>
-        </table>
+      <div class="column is-narrow">
+        <button
+          class="button is-primary is-small button--addItem" 
+          data-data-list-key="<%= dataList.dataListKey %>"
+          type="button"
+          onclick="event.stopPropagation();"
+        >
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Add Item</span>
+        </button>
       </div>
     </div>
-  </details>
+  </summary>
+
+  <div class="panel-block p-0">
+    <div class="table-container" style="width: 100%;">
+      <table class="table is-striped is-hoverable is-fullwidth mb-0">
+        <thead>
+          <tr>
+            <th style="width: 60px;">Order</th>
+            <th>Item</th>
+            <th style="width: 180px;">User Group</th>
+            <th style="width: 200px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="is-sortable" id="dataListItems--<%= dataList.dataListKey %>">
+          <% if (dataList.items.length === 0) { %>
+          <tr>
+            <td class="has-text-centered has-text-grey" colspan="4">
+              No items in this list. Click "Add Item" to create one.
+            </td>
+          </tr>
+          <% } else { %>
+          <% for (const item of dataList.items) { %>
+          <tr data-data-list-item-id="<%= item.dataListItemId %>">
+            <td class="has-text-centered">
+              <span class="icon is-small has-text-grey handle" style="cursor: move;">
+                <i class="fa-solid fa-grip-vertical"></i>
+              </span>
+            </td>
+            <td>
+              <span class="item-text"><%= item.dataListItem %></span>
+            </td>
+            <td>
+              <% if (item.userGroupId) { %>
+              <% const userGroup = userGroups.find(ug => ug.userGroupId === item.userGroupId) %>
+              <% if (userGroup) { %>
+              <span class="tag is-info"><%= userGroup.userGroupName %></span>
+              <% } else { %>
+              <span class="has-text-grey-light">-</span>
+              <% } %>
+              <% } else { %>
+              <span class="has-text-grey-light">-</span>
+              <% } %>
+            </td>
+            <td>
+              <div class="buttons are-small">
+                <button
+                  class="button is-info button--editItem" 
+                  data-data-list-key="<%= dataList.dataListKey %>"
+                  data-data-list-item-id="<%= item.dataListItemId %>"
+                  data-data-list-item="<%= item.dataListItem %>"
+                  data-user-group-id="<%= item.userGroupId || '' %>"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-pencil"></i>
+                  </span>
+                  <span>Edit</span>
+                </button>
+                <button
+                  class="button is-danger button--deleteItem" 
+                  data-data-list-key="<%= dataList.dataListKey %>"
+                  data-data-list-item-id="<%= item.dataListItemId %>"
+                  data-data-list-item="<%= item.dataListItem %>"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-trash"></i>
+                  </span>
+                  <span>Delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <% } %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</details>
 <% } %>
 
 <%- include('../_footerA'); -%>
-
-<style>
-  /* Rotate chevron icon when details is open */
-  details[open] .details-chevron {
-    transform: rotate(90deg);
-  }
-  
-  .details-chevron {
-    transition: transform 0.2s ease;
-  }
-  
-  /* Remove default marker */
-  summary {
-    list-style: none;
-  }
-  
-  summary::-webkit-details-marker {
-    display: none;
-  }
-</style>
 
 <script src="<%= urlPrefix %>/lib/sortablejs/Sortable.min.js"></script>
 <script>

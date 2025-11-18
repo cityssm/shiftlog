@@ -194,9 +194,44 @@ span.button.is-static {
 }
 
 /*
+ * Collapsable panel
+
+  <details class="panel collapable-panel">
+    <summary class="panel-heading is-clickable">
+      <div class="details-chevron-container">
+        <span class="details-chevron">▶</span>
+      </div>
+      Panel Title
+    </summary>
+    <div class="panel-block">
+      Panel content goes here.
+    </div>
+  </details>
+ */
+
+/* Rotate chevron icon when details is open */
+details.collapsable-panel[open] .details-chevron {
+  transform: rotate(90deg);
+}
+
+.collapsable-panel .details-chevron {
+  transition: transform 0.2s ease;
+}
+
+/* Remove default marker */
+.collapsable-panel summary {
+  list-style: none;
+}
+
+.collapsable-panel summary::-webkit-details-marker {
+  display: none;
+}
+
+/*
  * Panel with hidden block
  */
 
+.collapsable-panel:not([open]) summary.panel-heading,
 .panel-heading:has(+ .panel-block.is-hidden) {
   border-radius: var(--bulma-panel-radius);
 }
@@ -206,6 +241,7 @@ span.button.is-static {
  */
 
 .textarea {
+  /* eslint-disable-next-line css/use-baseline */
   resize: vertical;
 }
 
@@ -271,11 +307,11 @@ span.button.is-static {
 }
 
 .avoid-page-break {
-  page-break-inside: avoid;
+  break-inside: avoid;
 }
 
 /* Fix hover effect when hovering on a label */
 .control.has-icons-left .select:has(select:hover) ~ .icon,
 .control.has-icons-right .select:has(select:hover) ~ .icon {
-  color: var(--bulma-input-icon-hover-color)
+  color: var(--bulma-input-icon-hover-color);
 }
