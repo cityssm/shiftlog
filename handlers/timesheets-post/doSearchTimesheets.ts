@@ -1,7 +1,22 @@
 import type { Request, Response } from 'express'
 
-import type { GetTimesheetsFilters, GetTimesheetsOptions } from '../../database/timesheets/getTimesheets.js'
+import type {
+  GetTimesheetsFilters,
+  GetTimesheetsOptions
+} from '../../database/timesheets/getTimesheets.js'
 import getTimesheets from '../../database/timesheets/getTimesheets.js'
+import type { Timesheet } from '../../types/record.types.js'
+
+export interface DoSearchTimesheetsResponse {
+  success: boolean
+
+  timesheets: Timesheet[]
+
+  totalCount: number
+
+  limit: number
+  offset: number
+}
 
 export default async function handler(
   request: Request<
@@ -11,18 +26,26 @@ export default async function handler(
   >,
   response: Response
 ): Promise<void> {
-  const filters: GetTimesheetsFilters = {
-    timesheetDateString: request.body.timesheetDateString,
-    supervisorEmployeeNumber: request.body.supervisorEmployeeNumber,
-    timesheetTypeDataListItemId: request.body.timesheetTypeDataListItemId
-  }
+  const result = await getTimesheets(
+    request.body,
+    request.body,
+    request.session.user
+  )
 
-  const options: GetTimesheetsOptions = {
-    limit: request.body.limit ?? 50,
-    offset: request.body.offset ?? 0
-  }
+  response.json({
+    success: true,
 
-  const result = await getTimesheets(filters, options, request.session.user)
+    timesheets: result.timesheets,
+    totalCount: result.totalCount,
 
-  response.json(result)
+    limit:
+      typeof request.body.limit === 'number'
+        ? request.body.limit
+        : Number.parseInt(request.body.limit, 10),
+
+    offset:
+      typeof request.body.offset === 'number'
+        ? request.body.offset
+        : Number.parseInt(request.body.offset, 10)
+  } satisfies DoSearchTimesheetsResponse)
 }

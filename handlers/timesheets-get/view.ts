@@ -3,6 +3,8 @@ import type { Request, Response } from 'express'
 import getTimesheet from '../../database/timesheets/getTimesheet.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
+import type { TimesheetEditResponse } from './types.js'
+
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('timesheets.router')}`
 
 export default async function handler(
@@ -16,7 +18,7 @@ export default async function handler(
     return
   }
 
-  response.render('timesheets/view', {
+  response.render('timesheets/edit', {
     headTitle: `${getConfigProperty('timesheets.sectionNameSingular')} #${
       request.params.timesheetId
     }`,
@@ -24,6 +26,9 @@ export default async function handler(
     isCreate: false,
     isEdit: false,
 
-    timesheet
-  })
+    timesheet,
+
+    timesheetTypes: [],
+    supervisors: []
+  } satisfies TimesheetEditResponse)
 }

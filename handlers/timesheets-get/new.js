@@ -19,7 +19,7 @@ export default async function handler(request, response) {
             timesheetTitle: '',
             timesheetNote: ''
         },
+        supervisors,
         timesheetTypes,
-        supervisors
     });
 }

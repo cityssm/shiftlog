@@ -7,10 +7,12 @@ export default async function handler(request, response) {
         response.redirect(`${redirectRoot}/?error=notFound`);
         return;
     }
-    response.render('timesheets/view', {
+    response.render('timesheets/edit', {
         headTitle: `${getConfigProperty('timesheets.sectionNameSingular')} #${request.params.timesheetId}`,
         isCreate: false,
         isEdit: false,
-        timesheet
+        timesheet,
+        timesheetTypes: [],
+        supervisors: []
     });
 }

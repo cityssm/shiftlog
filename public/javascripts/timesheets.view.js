@@ -1,6 +1,18 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+;
 (() => {
-    // View-only mode
-    console.log('Timesheet view loaded');
+    /*
+     * Make form read only
+     */
+    const formElement = document.querySelector('#form--timesheet');
+    formElement?.addEventListener('submit', (formEvent) => {
+        formEvent.preventDefault();
+    });
+    const formElements = formElement?.querySelectorAll('input, select, textarea');
+    for (const formElement of formElements) {
+        formElement.disabled = true;
+        if (formElement.tagName.toLowerCase() !== 'select') {
+            ;
+            formElement.readOnly = true;
+        }
+    }
 })();

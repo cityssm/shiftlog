@@ -8,14 +8,18 @@
         <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
         <span><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Search</span>
       </a>
+      <% if (user.userProperties.timesheets.canUpdate) { %>
+      <ul>
+        <li>
+          <a
+            href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new"
+            title="Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>">
+            <span class="is-hidden-touch">Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
+            <span class="icon is-hidden-desktop"><i class="fa-solid fa-plus"></i></span>
+          </a>
+        </li>
+      </ul>
+      <% } %>
     </li>
-    <% if (user.userProperties.timesheets.canUpdate) { %>
-    <li>
-      <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new">
-        <span class="icon"><i class="fa-solid fa-plus"></i></span>
-        <span>Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
-      </a>
-    </li>
-    <% } %>
   </ul>
 </div>

@@ -19,6 +19,8 @@ export interface ShiftLogGlobal {
   timesheetsRouter: string
   timesheetsSectionName: string
   timesheetsSectionNameSingular: string
+
+  buildTimesheetURL: (timesheetId: number) => string
   
   isAdmin: boolean
 

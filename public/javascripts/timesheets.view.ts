@@ -1,10 +1,25 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
-
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/src/types.js'
-
-declare const cityssm: cityssmGlobal
 ;(() => {
-  // View-only mode
-  console.log('Timesheet view loaded')
+  /*
+   * Make form read only
+   */
+
+  const formElement = document.querySelector(
+    '#form--timesheet'
+  ) as HTMLFormElement | null
+
+  formElement?.addEventListener('submit', (formEvent) => {
+    formEvent.preventDefault()
+  })
+
+  const formElements = formElement?.querySelectorAll(
+    'input, select, textarea'
+  ) as NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+
+  for (const formElement of formElements) {
+    formElement.disabled = true
+
+    if (formElement.tagName.toLowerCase() !== 'select') {
+      ;(formElement as HTMLInputElement | HTMLTextAreaElement).readOnly = true
+    }
+  }
 })()

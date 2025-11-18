@@ -35,7 +35,7 @@ export default async function handler(
       timesheetNote: ''
     },
 
+    supervisors,
     timesheetTypes,
-    supervisors
   } satisfies TimesheetEditResponse)
 }

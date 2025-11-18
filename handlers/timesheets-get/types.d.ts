@@ -1,9 +1,9 @@
-import type { Timesheet } from '../../types/record.types.js';
+import type { DataListItem, Employee, Timesheet } from '../../types/record.types.js';
 export interface TimesheetEditResponse {
     headTitle: string;
     isCreate: boolean;
     isEdit: boolean;
-    timesheet: Timesheet | Partial<Timesheet>;
-    timesheetTypes: any[];
-    supervisors: any[];
+    timesheet: Partial<Timesheet>;
+    supervisors: Employee[];
+    timesheetTypes: DataListItem[];
 }

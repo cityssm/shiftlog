@@ -1,14 +1,15 @@
 import getTimesheets from '../../database/timesheets/getTimesheets.js';
 export default async function handler(request, response) {
-    const filters = {
-        timesheetDateString: request.body.timesheetDateString,
-        supervisorEmployeeNumber: request.body.supervisorEmployeeNumber,
-        timesheetTypeDataListItemId: request.body.timesheetTypeDataListItemId
-    };
-    const options = {
-        limit: request.body.limit ?? 50,
-        offset: request.body.offset ?? 0
-    };
-    const result = await getTimesheets(filters, options, request.session.user);
-    response.json(result);
+    const result = await getTimesheets(request.body, request.body, request.session.user);
+    response.json({
+        success: true,
+        timesheets: result.timesheets,
+        totalCount: result.totalCount,
+        limit: typeof request.body.limit === 'number'
+            ? request.body.limit
+            : Number.parseInt(request.body.limit, 10),
+        offset: typeof request.body.offset === 'number'
+            ? request.body.offset
+            : Number.parseInt(request.body.offset, 10)
+    });
 }

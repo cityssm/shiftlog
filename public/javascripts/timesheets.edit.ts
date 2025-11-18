@@ -1,13 +1,18 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+import type { BulmaJS } from '@cityssm/bulma-js/types.js'
+import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/src/types.js'
+import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
+declare const bulmaJS: BulmaJS
+
+declare const exports: {
+  shiftLog: ShiftLogGlobal
+}
 ;(() => {
-  const urlPrefix = document.querySelector('main')?.dataset.urlPrefix ?? ''
-  const timesheetRouter =
-    document.querySelector('main')?.dataset.timesheetRouter ?? ''
+  const shiftLog = exports.shiftLog
+
+  const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.timesheetsRouter
 
   const formElement = document.querySelector(
     '#form--timesheet'
@@ -27,34 +32,28 @@ declare const cityssm: cityssmGlobal
     const endpoint = isCreate ? 'doCreateTimesheet' : 'doUpdateTimesheet'
 
     cityssm.postJSON(
-      `${urlPrefix}/${timesheetRouter}/${endpoint}`,
+      `${urlPrefix}/${endpoint}`,
       formElement,
       (rawResponseJSON) => {
         const result = rawResponseJSON as {
           success: boolean
           timesheetId?: number
-          redirectURL?: string
         }
 
         if (result.success) {
-          if (isCreate && result.redirectURL) {
-            window.location.href = result.redirectURL
+          if (isCreate) {
+            globalThis.location.href = `${urlPrefix}/${result.timesheetId ?? ''}/edit`
           } else {
-            cityssm.alertModal(
-              'Success',
-              'Timesheet updated successfully.',
-              'success',
-              () => {
-                window.location.reload()
-              }
-            )
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Timesheet updated successfully.'
+            })
           }
         } else {
-          cityssm.alertModal(
-            'Error',
-            'An error occurred while saving the timesheet.',
-            'error'
-          )
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'An error occurred while saving the timesheet.'
+          })
         }
       }
     )
