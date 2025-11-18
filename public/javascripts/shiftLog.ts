@@ -36,6 +36,10 @@ declare const exports: {
 
   function buildShiftURL(shiftId: number): string {
     return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId.toString()}`
+  } 
+  
+  function buildTimesheetURL(timesheetId: number): string {
+    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/${timesheetId.toString()}`
   }
 
   /*
@@ -49,6 +53,7 @@ declare const exports: {
     hasUnsavedChanges,
     setUnsavedChanges,
 
-    buildShiftURL
+    buildShiftURL,
+    buildTimesheetURL
   }
 })()

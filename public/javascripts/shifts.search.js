@@ -50,11 +50,8 @@
     function renderShiftsTable(data) {
         if (data.shifts.length === 0) {
             resultsContainerElement.innerHTML = /* html */ `
-        <div class="notification is-info is-light">
-          <span class="icon">
-            <i class="fa-solid fa-info-circle"></i>
-          </span>
-          <span>No records found.</span>
+        <div class="message is-info">
+          <p class="message-body">No records found.</p>
         </div>
       `;
             return;

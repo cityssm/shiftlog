@@ -1,21 +1,91 @@
 <%- include('../_header'); -%>
 
-<nav class="breadcrumb">
-  <ul>
-    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
-    <li class="is-active">
-      <a href="#" aria-current="page">
-        <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i></span>
-        <span><%= configFunctions.getConfigProperty('timesheets.sectionName') %></span>
-      </a>
-    </li>
-  </ul>
-</nav>
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- include('_menu'); -%>
+  </div>
+  <div class="column">
+    <nav class="breadcrumb">
+      <ul>
+        <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+        <li class="is-active">
+          <a href="#" aria-current="page">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
+            </span>
+            <span><%= configFunctions.getConfigProperty('timesheets.sectionName') %></span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-<h1 class="title is-1">
-  <%= configFunctions.getConfigProperty('timesheets.sectionName') %>
-</h1>
+    <h1 class="title is-1">
+      <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Search
+    </h1>
+
+    <div class="box">
+      <form id="form--timesheetSearch">
+        <input
+          id="timesheetSearch--limit"
+          name="limit"
+          type="hidden"
+          value="50"
+        />
+        <input
+          id="timesheetSearch--offset"
+          name="offset"
+          type="hidden"
+          value="0"
+        />
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="timesheetSearch--supervisorEmployeeNumber">Supervisor</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="timesheetSearch--supervisorEmployeeNumber" name="supervisorEmployeeNumber">
+                    <option value="">(All Supervisors)</option>
+                    <% supervisors.forEach(function(supervisor) { %>
+                    <option value="<%= supervisor.employeeNumber %>">
+                      <%= supervisor.lastName %>, <%= supervisor.firstName %> (<%= supervisor.employeeNumber %>)
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="timesheetSearch--timesheetTypeDataListItemId">
+                <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Type
+              </label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="timesheetSearch--timesheetTypeDataListItemId" name="timesheetTypeDataListItemId">
+                    <option value="">(All Types)</option>
+                    <% timesheetTypes.forEach(function(timesheetType) { %>
+                    <option value="<%= timesheetType.dataListItemId %>">
+                      <%= timesheetType.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div id="container--timesheetSearchResults">
+      <!-- Filled dynamically -->
+    </div>
+  </div>
+</div>
 
 <%- include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/timesheets.search.js"></script>
 
 <%- include('../_footerB'); -%>

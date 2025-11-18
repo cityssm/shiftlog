@@ -22,6 +22,9 @@
     function buildShiftURL(shiftId) {
         return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId.toString()}`;
     }
+    function buildTimesheetURL(timesheetId) {
+        return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/${timesheetId.toString()}`;
+    }
     /*
      * Declare shiftLog
      */
@@ -30,6 +33,7 @@
         clearUnsavedChanges,
         hasUnsavedChanges,
         setUnsavedChanges,
-        buildShiftURL
+        buildShiftURL,
+        buildTimesheetURL
     };
 })();
