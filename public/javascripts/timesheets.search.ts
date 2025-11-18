@@ -1,6 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
-
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoSearchTimesheetsResponse } from '../../handlers/timesheets-post/doSearchTimesheets.js'
@@ -144,7 +141,7 @@ declare const exports: {
         </td>
         <td>${cityssm.escapeHTML(timesheet.timesheetTypeDataListItem ?? '(Unknown Timesheet Type)')}</td>
         <td>${cityssm.dateToString(timesheetDate)}</td>
-        <td>${cityssm.escapeHTML(timesheet.timesheetTitle ?? '')}</td>
+        <td>${cityssm.escapeHTML(timesheet.timesheetTitle === '' ? '(No Title)' : timesheet.timesheetTitle)}</td>
         <td>
           ${cityssm.escapeHTML(timesheet.supervisorLastName ?? '')}, ${cityssm.escapeHTML(timesheet.supervisorFirstName ?? '')}
         </td>

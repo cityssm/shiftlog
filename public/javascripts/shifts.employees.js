@@ -15,29 +15,63 @@
     function renderShiftCrews() {
         const containerElement = document.querySelector('#container--shiftCrews');
         if (shiftCrews.length === 0) {
-            containerElement.innerHTML = `<div class="message"><div class="message-body">No crews assigned to this shift.</div></div>`;
+            containerElement.innerHTML = /* html */ `
+        <div class="message">
+          <div class="message-body">No crews assigned to this shift.</div>
+        </div>
+      `;
             return;
         }
-        let html = '<table class="table is-fullwidth is-striped is-hoverable">';
-        html += '<thead><tr><th>Crew</th><th>Note</th>';
-        if (isEdit) {
-            html += '<th class="has-text-right">Actions</th>';
-        }
-        html += '</tr></thead><tbody>';
+        const tableElement = document.createElement('table');
+        tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+        // eslint-disable-next-line no-unsanitized/property
+        tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Crew</th>
+          <th>Note</th>
+          ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+        const tbodyElement = tableElement.querySelector('tbody');
         for (const crew of shiftCrews) {
-            html += '<tr>';
-            html += `<td>${cityssm.escapeHTML(crew.crewName ?? '')}</td>`;
-            html += `<td><span class="crew-note" data-crew-id="${crew.crewId}">${cityssm.escapeHTML(crew.shiftCrewNote)}</span></td>`;
+            const rowElement = document.createElement('tr');
+            rowElement.innerHTML = /* html */ `
+        <td>${cityssm.escapeHTML(crew.crewName ?? '')}</td>
+        <td>
+          <span class="crew-note" data-crew-id="${cityssm.escapeHTML(crew.crewId.toString())}">
+            ${cityssm.escapeHTML(crew.shiftCrewNote)}
+          </span>
+        </td>
+      `;
             if (isEdit) {
-                html += '<td class="has-text-right">';
-                html += `<button class="button is-small is-light is-warning button--editCrewNote" data-crew-id="${crew.crewId}" type="button" title="Edit Note"><i class="fa-solid fa-edit"></i></button> `;
-                html += `<button class="button is-small is-light is-danger button--deleteCrew" data-crew-id="${crew.crewId}" type="button" title="Delete"><i class="fa-solid fa-trash"></i></button>`;
-                html += '</td>';
+                rowElement.insertAdjacentHTML('beforeend', 
+                /* html */ `
+            <td class="has-text-right">
+              <button
+                class="button is-small is-light is-warning button--editCrewNote"
+                data-crew-id="${cityssm.escapeHTML(crew.crewId.toString())}"
+                type="button"
+                title="Edit Note"
+              >
+                <i class="fa-solid fa-edit"></i>
+              </button>
+              <button
+                class="button is-small is-light is-danger button--deleteCrew"
+                data-crew-id="${cityssm.escapeHTML(crew.crewId.toString())}"
+                type="button"
+                title="Delete"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          `);
             }
-            html += '</tr>';
+            tbodyElement.append(rowElement);
         }
-        html += '</tbody></table>';
-        containerElement.innerHTML = html;
+        containerElement.replaceChildren(tableElement);
         if (isEdit) {
             const editNoteButtons = containerElement.querySelectorAll('.button--editCrewNote');
             for (const button of editNoteButtons) {
@@ -52,31 +86,73 @@
     function renderShiftEmployees() {
         const containerElement = document.querySelector('#container--shiftEmployees');
         if (shiftEmployees.length === 0) {
-            containerElement.innerHTML = `<div class="message"><div class="message-body">No employees assigned to this shift.</div></div>`;
+            containerElement.innerHTML = /* html */ `
+        <div class="message">
+          <div class="message-body">No employees assigned to this shift.</div>
+        </div>
+      `;
             return;
         }
-        let html = '<table class="table is-fullwidth is-striped is-hoverable">';
-        html += '<thead><tr><th>Employee</th><th>Crew</th><th>Note</th>';
-        if (isEdit) {
-            html += '<th class="has-text-right">Actions</th>';
-        }
-        html += '</tr></thead><tbody>';
+        const tableElement = document.createElement('table');
+        tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+        // eslint-disable-next-line no-unsanitized/property
+        tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Crew</th>
+          <th>Note</th>
+          ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+        const tableBodyElement = tableElement.querySelector('tbody');
         for (const employee of shiftEmployees) {
-            html += '<tr>';
-            html += `<td>${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</td>`;
-            html += `<td>${cityssm.escapeHTML(employee.crewName ?? '')}</td>`;
-            html += `<td><span class="employee-note" data-employee-number="${employee.employeeNumber}">${cityssm.escapeHTML(employee.shiftEmployeeNote)}</span></td>`;
+            const rowElement = document.createElement('tr');
+            rowElement.innerHTML = /* html */ `
+        <td>${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</td>
+        <td>${cityssm.escapeHTML(employee.crewName ?? '')}</td>
+        <td>
+          <span class="employee-note" data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}">
+            ${cityssm.escapeHTML(employee.shiftEmployeeNote)}
+          </span>
+        </td>
+      `;
             if (isEdit) {
-                html += '<td class="has-text-right">';
-                html += `<button class="button is-small is-light is-info button--editEmployeeCrew" data-employee-number="${employee.employeeNumber}" type="button" title="Change Crew"><i class="fa-solid fa-users-gear"></i></button> `;
-                html += `<button class="button is-small is-light is-warning button--editEmployeeNote" data-employee-number="${employee.employeeNumber}" type="button" title="Edit Note"><i class="fa-solid fa-edit"></i></button> `;
-                html += `<button class="button is-small is-light is-danger button--deleteEmployee" data-employee-number="${employee.employeeNumber}" type="button" title="Delete"><i class="fa-solid fa-trash"></i></button>`;
-                html += '</td>';
+                rowElement.insertAdjacentHTML('beforeend', 
+                /* html */ `
+            <td class="has-text-right">
+              <button
+                class="button is-small is-light is-info button--editEmployeeCrew"
+                data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
+                type="button"
+                title="Change Crew"
+              >
+                <i class="fa-solid fa-users-gear"></i>
+              </button> 
+              <button
+                class="button is-small is-light is-warning button--editEmployeeNote"
+                data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
+                type="button"
+                title="Edit Note"
+              >
+                <i class="fa-solid fa-edit"></i>
+              </button> 
+              <button
+                class="button is-small is-light is-danger button--deleteEmployee"
+                data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
+                type="button"
+                title="Delete"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          `);
             }
-            html += '</tr>';
+            tableBodyElement.append(rowElement);
         }
-        html += '</tbody></table>';
-        containerElement.innerHTML = html;
+        containerElement.replaceChildren(tableElement);
         if (isEdit) {
             const editCrewButtons = containerElement.querySelectorAll('.button--editEmployeeCrew');
             for (const button of editCrewButtons) {
@@ -95,32 +171,76 @@
     function renderShiftEquipment() {
         const containerElement = document.querySelector('#container--shiftEquipment');
         if (shiftEquipment.length === 0) {
-            containerElement.innerHTML = `<div class="message"><div class="message-body">No equipment assigned to this shift.</div></div>`;
+            containerElement.innerHTML = /* html */ `
+        <div class="message">
+          <div class="message-body">No equipment assigned to this shift.</div>
+        </div>
+      `;
             return;
         }
-        let html = '<table class="table is-fullwidth is-striped is-hoverable">';
-        html +=
-            '<thead><tr><th>Equipment</th><th>Assigned Employee</th><th>Note</th>';
-        if (isEdit) {
-            html += '<th class="has-text-right">Actions</th>';
-        }
-        html += '</tr></thead><tbody>';
+        const tableElement = document.createElement('table');
+        tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+        // eslint-disable-next-line no-unsanitized/property
+        tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Equipment</th>
+          <th>Assigned Employee</th>
+          <th>Note</th>
+          ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+        const tableBodyElement = tableElement.querySelector('tbody');
         for (const equipment of shiftEquipment) {
-            html += '<tr>';
-            html += `<td>${cityssm.escapeHTML(equipment.equipmentName ?? '')}</td>`;
-            html += `<td>${equipment.employeeLastName ? cityssm.escapeHTML(equipment.employeeLastName) + ', ' + cityssm.escapeHTML(equipment.employeeFirstName ?? '') : ''}</td>`;
-            html += `<td><span class="equipment-note" data-equipment-number="${equipment.equipmentNumber}">${cityssm.escapeHTML(equipment.shiftEquipmentNote)}</span></td>`;
+            const rowElement = document.createElement('tr');
+            // eslint-disable-next-line no-unsanitized/property
+            rowElement.innerHTML = /* html */ `
+        <td>${cityssm.escapeHTML(equipment.equipmentName ?? '')}</td>
+        <td>
+          ${(equipment.employeeLastName ?? '') === '' ? '' : cityssm.escapeHTML(equipment.employeeLastName + ', ' + equipment.employeeFirstName)}
+        </td>
+        <td>
+          <span class="equipment-note" data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}">
+            ${cityssm.escapeHTML(equipment.shiftEquipmentNote)}
+          </span>
+        </td>
+      `;
             if (isEdit) {
-                html += '<td class="has-text-right">';
-                html += `<button class="button is-small is-light is-info button--editEquipmentEmployee" data-equipment-number="${equipment.equipmentNumber}" type="button" title="Assign Employee"><i class="fa-solid fa-user"></i></button> `;
-                html += `<button class="button is-small is-light is-warning button--editEquipmentNote" data-equipment-number="${equipment.equipmentNumber}" type="button" title="Edit Note"><i class="fa-solid fa-edit"></i></button> `;
-                html += `<button class="button is-small is-light is-danger button--deleteEquipment" data-equipment-number="${equipment.equipmentNumber}" type="button" title="Delete"><i class="fa-solid fa-trash"></i></button>`;
-                html += '</td>';
+                rowElement.insertAdjacentHTML('beforeend', 
+                /* html */ `
+            <td class="has-text-right">
+              <button
+                class="button is-small is-light is-info button--editEquipmentEmployee"
+                data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}"
+                type="button"
+                title="Assign Employee"
+              >
+                <i class="fa-solid fa-user"></i>
+              </button>
+              <button
+                class="button is-small is-light is-warning button--editEquipmentNote"
+                data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}"
+                type="button"
+                title="Edit Note"
+              >
+                <i class="fa-solid fa-edit"></i>
+              </button>
+              <button
+                class="button is-small is-light is-danger button--deleteEquipment"
+                data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}"
+                type="button"
+                title="Delete"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          `);
             }
-            html += '</tr>';
+            tableBodyElement.append(rowElement);
         }
-        html += '</tbody></table>';
-        containerElement.innerHTML = html;
+        containerElement.replaceChildren(tableElement);
         if (isEdit) {
             const editEmployeeButtons = containerElement.querySelectorAll('.button--editEquipmentEmployee');
             for (const button of editEmployeeButtons) {
@@ -136,25 +256,36 @@
             }
         }
     }
-    function refreshData() {
+    function refreshCrewData() {
         cityssm.postJSON(`${urlPrefix}/doGetShiftCrews`, { shiftId }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             shiftCrews = responseJSON.shiftCrews;
             renderShiftCrews();
         });
+    }
+    function refreshEmployeeData() {
         cityssm.postJSON(`${urlPrefix}/doGetShiftEmployees`, { shiftId }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             shiftEmployees = responseJSON.shiftEmployees;
             renderShiftEmployees();
         });
+    }
+    function refreshEquipmentData() {
         cityssm.postJSON(`${urlPrefix}/doGetShiftEquipment`, { shiftId }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             shiftEquipment = responseJSON.shiftEquipment;
             renderShiftEquipment();
         });
     }
+    function refreshData() {
+        refreshCrewData();
+        refreshEmployeeData();
+        refreshEquipmentData();
+    }
     function loadAvailableData() {
-        cityssm.postJSON(`${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`, {}, (rawResponseJSON) => {
+        cityssm.postJSON(
+        // eslint-disable-next-line no-secrets/no-secrets
+        `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`, {}, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             availableCrews = responseJSON.crews;
             availableEmployees = responseJSON.employees;
@@ -193,9 +324,12 @@
                     if (shiftCrews.some((sc) => sc.crewId === crew.crewId)) {
                         continue;
                     }
-                    crewIdElement.insertAdjacentHTML('beforeend', `<option value="${crew.crewId}">
-              ${cityssm.escapeHTML(crew.crewName)}
-              </option>`);
+                    crewIdElement.insertAdjacentHTML('beforeend', 
+                    /* html */ `
+              <option value="${cityssm.escapeHTML(crew.crewId.toString())}">
+                ${cityssm.escapeHTML(crew.crewName)}
+              </option>
+            `);
                 }
             },
             onshown(modalElement) {
@@ -242,15 +376,21 @@
                     if (shiftEmployees.some((se) => se.employeeNumber === employee.employeeNumber)) {
                         continue;
                     }
-                    employeeNumberElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">
-              ${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}
-              </option>`);
+                    employeeNumberElement.insertAdjacentHTML('beforeend', 
+                    /* html */ `
+              <option value="${cityssm.escapeHTML(employee.employeeNumber)}">
+                ${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}
+              </option>
+            `);
                 }
                 const crewIdElement = modalElement.querySelector('select[name="crewId"]');
                 for (const crew of shiftCrews) {
-                    crewIdElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(crew.crewId.toString())}">
-              ${cityssm.escapeHTML(crew.crewName ?? '')}
-              </option>`);
+                    crewIdElement.insertAdjacentHTML('beforeend', 
+                    /* html */ `
+              <option value="${cityssm.escapeHTML(crew.crewId.toString())}">
+                ${cityssm.escapeHTML(crew.crewName ?? '')}
+              </option>
+            `);
                 }
             },
             onshown(modalElement, _closeModalFunction) {
@@ -298,15 +438,21 @@
                     if (shiftEquipment.some((se) => se.equipmentNumber === equipment.equipmentNumber)) {
                         continue;
                     }
-                    equipmentNumberElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(equipment.equipmentNumber)}">
-              ${cityssm.escapeHTML(equipment.equipmentName)}
-              </option>`);
+                    equipmentNumberElement.insertAdjacentHTML('beforeend', 
+                    /* html */ `
+              <option value="${cityssm.escapeHTML(equipment.equipmentNumber)}">
+                ${cityssm.escapeHTML(equipment.equipmentName)}
+              </option>
+            `);
                 }
                 const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
                 for (const employee of shiftEmployees) {
-                    employeeNumberElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">
-              ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
-              </option>`);
+                    employeeNumberElement.insertAdjacentHTML('beforeend', 
+                    /* html */ `
+              <option value="${cityssm.escapeHTML(employee.employeeNumber)}">
+                ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+              </option>
+            `);
                 }
             },
             onshown(modalElement, _closeModalFunction) {
@@ -367,7 +513,7 @@
     function editEmployeeCrew(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const employeeNumber = buttonElement.dataset.employeeNumber;
-        const employee = shiftEmployees.find((e) => e.employeeNumber === employeeNumber);
+        const employee = shiftEmployees.find((possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber);
         if (employee === undefined) {
             return;
         }
@@ -398,9 +544,16 @@
                 const crewIdElement = modalElement.querySelector('select[name="crewId"]');
                 for (const crew of shiftCrews) {
                     const selected = crew.crewId === employee.crewId;
-                    crewIdElement.insertAdjacentHTML('beforeend', `<option value="${crew.crewId}"${selected ? ' selected' : ''}>
-              ${cityssm.escapeHTML(crew.crewName ?? '')}
-              </option>`);
+                    // eslint-disable-next-line no-unsanitized/method
+                    crewIdElement.insertAdjacentHTML('beforeend', 
+                    /* html */ `
+              <option
+                value="${cityssm.escapeHTML(crew.crewId.toString())}"
+                ${selected ? ' selected' : ''}
+              >
+                ${cityssm.escapeHTML(crew.crewName ?? '')}
+              </option>
+            `);
                 }
             },
             onshown(modalElement, _closeModalFunction) {
@@ -417,7 +570,7 @@
     function editEmployeeNote(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const employeeNumber = buttonElement.dataset.employeeNumber;
-        const employee = shiftEmployees.find((e) => e.employeeNumber === employeeNumber);
+        const employee = shiftEmployees.find((possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber);
         if (employee === undefined) {
             return;
         }
@@ -461,7 +614,7 @@
     function editEquipmentEmployee(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const equipmentNumber = buttonElement.dataset.equipmentNumber;
-        const equipment = shiftEquipment.find((e) => e.equipmentNumber === equipmentNumber);
+        const equipment = shiftEquipment.find((possibleEquipment) => possibleEquipment.equipmentNumber === equipmentNumber);
         if (equipment === undefined) {
             return;
         }
@@ -492,9 +645,16 @@
                 const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
                 for (const employee of shiftEmployees) {
                     const selected = employee.employeeNumber === equipment.employeeNumber;
-                    employeeNumberElement.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(employee.employeeNumber)}"${selected ? ' selected' : ''}>
-              ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
-              </option>`);
+                    // eslint-disable-next-line no-unsanitized/method
+                    employeeNumberElement.insertAdjacentHTML('beforeend', 
+                    /* html */ `
+              <option
+                value="${cityssm.escapeHTML(employee.employeeNumber)}"
+                ${selected ? ' selected' : ''}
+              >
+                ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+              </option>
+            `);
                 }
             },
             onshown(modalElement, _closeModalFunction) {
@@ -511,7 +671,7 @@
     function editEquipmentNote(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const equipmentNumber = buttonElement.dataset.equipmentNumber;
-        const equipment = shiftEquipment.find((e) => e.equipmentNumber === equipmentNumber);
+        const equipment = shiftEquipment.find((possibleEquipment) => possibleEquipment.equipmentNumber === equipmentNumber);
         if (equipment === undefined) {
             return;
         }
@@ -591,7 +751,7 @@
     function deleteShiftEmployee(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const employeeNumber = buttonElement.dataset.employeeNumber;
-        const employee = shiftEmployees.find((e) => e.employeeNumber === employeeNumber);
+        const employee = shiftEmployees.find((possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber);
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Employee',
@@ -627,7 +787,7 @@
     function deleteShiftEquipment(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const equipmentNumber = buttonElement.dataset.equipmentNumber;
-        const equipment = shiftEquipment.find((e) => e.equipmentNumber === equipmentNumber);
+        const equipment = shiftEquipment.find((possibleEquipment) => possibleEquipment.equipmentNumber === equipmentNumber);
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Equipment',

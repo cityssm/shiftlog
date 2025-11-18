@@ -46,35 +46,75 @@ declare const exports: {
     ) as HTMLElement
 
     if (shiftCrews.length === 0) {
-      containerElement.innerHTML = `<div class="message"><div class="message-body">No crews assigned to this shift.</div></div>`
+      containerElement.innerHTML = /* html */ `
+        <div class="message">
+          <div class="message-body">No crews assigned to this shift.</div>
+        </div>
+      `
       return
     }
 
-    let html = '<table class="table is-fullwidth is-striped is-hoverable">'
-    html += '<thead><tr><th>Crew</th><th>Note</th>'
-    if (isEdit) {
-      html += '<th class="has-text-right">Actions</th>'
-    }
-    html += '</tr></thead><tbody>'
+    const tableElement = document.createElement('table')
+    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+
+    // eslint-disable-next-line no-unsanitized/property
+    tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Crew</th>
+          <th>Note</th>
+          ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `
+
+    const tbodyElement = tableElement.querySelector(
+      'tbody'
+    ) as HTMLTableSectionElement
 
     for (const crew of shiftCrews) {
-      html += '<tr>'
-      html += `<td>${cityssm.escapeHTML(crew.crewName ?? '')}</td>`
-      html += `<td><span class="crew-note" data-crew-id="${crew.crewId}">${cityssm.escapeHTML(crew.shiftCrewNote)}</span></td>`
+      const rowElement = document.createElement('tr')
+
+      rowElement.innerHTML = /* html */ `
+        <td>${cityssm.escapeHTML(crew.crewName ?? '')}</td>
+        <td>
+          <span class="crew-note" data-crew-id="${cityssm.escapeHTML(crew.crewId.toString())}">
+            ${cityssm.escapeHTML(crew.shiftCrewNote)}
+          </span>
+        </td>
+      `
 
       if (isEdit) {
-        html += '<td class="has-text-right">'
-        html += `<button class="button is-small is-light is-warning button--editCrewNote" data-crew-id="${crew.crewId}" type="button" title="Edit Note"><i class="fa-solid fa-edit"></i></button> `
-        html += `<button class="button is-small is-light is-danger button--deleteCrew" data-crew-id="${crew.crewId}" type="button" title="Delete"><i class="fa-solid fa-trash"></i></button>`
-        html += '</td>'
+        rowElement.insertAdjacentHTML(
+          'beforeend',
+          /* html */ `
+            <td class="has-text-right">
+              <button
+                class="button is-small is-light is-warning button--editCrewNote"
+                data-crew-id="${cityssm.escapeHTML(crew.crewId.toString())}"
+                type="button"
+                title="Edit Note"
+              >
+                <i class="fa-solid fa-edit"></i>
+              </button>
+              <button
+                class="button is-small is-light is-danger button--deleteCrew"
+                data-crew-id="${cityssm.escapeHTML(crew.crewId.toString())}"
+                type="button"
+                title="Delete"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          `
+        )
       }
 
-      html += '</tr>'
+      tbodyElement.append(rowElement)
     }
 
-    html += '</tbody></table>'
-
-    containerElement.innerHTML = html
+    containerElement.replaceChildren(tableElement)
 
     if (isEdit) {
       const editNoteButtons = containerElement.querySelectorAll(
@@ -99,36 +139,85 @@ declare const exports: {
     ) as HTMLElement
 
     if (shiftEmployees.length === 0) {
-      containerElement.innerHTML = `<div class="message"><div class="message-body">No employees assigned to this shift.</div></div>`
+      containerElement.innerHTML = /* html */ `
+        <div class="message">
+          <div class="message-body">No employees assigned to this shift.</div>
+        </div>
+      `
       return
     }
 
-    let html = '<table class="table is-fullwidth is-striped is-hoverable">'
-    html += '<thead><tr><th>Employee</th><th>Crew</th><th>Note</th>'
-    if (isEdit) {
-      html += '<th class="has-text-right">Actions</th>'
-    }
-    html += '</tr></thead><tbody>'
+    const tableElement = document.createElement('table')
+    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+
+    // eslint-disable-next-line no-unsanitized/property
+    tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Crew</th>
+          <th>Note</th>
+          ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `
+
+    const tableBodyElement = tableElement.querySelector(
+      'tbody'
+    ) as HTMLTableSectionElement
 
     for (const employee of shiftEmployees) {
-      html += '<tr>'
-      html += `<td>${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</td>`
-      html += `<td>${cityssm.escapeHTML(employee.crewName ?? '')}</td>`
-      html += `<td><span class="employee-note" data-employee-number="${employee.employeeNumber}">${cityssm.escapeHTML(employee.shiftEmployeeNote)}</span></td>`
+      const rowElement = document.createElement('tr')
+
+      rowElement.innerHTML = /* html */ `
+        <td>${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</td>
+        <td>${cityssm.escapeHTML(employee.crewName ?? '')}</td>
+        <td>
+          <span class="employee-note" data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}">
+            ${cityssm.escapeHTML(employee.shiftEmployeeNote)}
+          </span>
+        </td>
+      `
 
       if (isEdit) {
-        html += '<td class="has-text-right">'
-        html += `<button class="button is-small is-light is-info button--editEmployeeCrew" data-employee-number="${employee.employeeNumber}" type="button" title="Change Crew"><i class="fa-solid fa-users-gear"></i></button> `
-        html += `<button class="button is-small is-light is-warning button--editEmployeeNote" data-employee-number="${employee.employeeNumber}" type="button" title="Edit Note"><i class="fa-solid fa-edit"></i></button> `
-        html += `<button class="button is-small is-light is-danger button--deleteEmployee" data-employee-number="${employee.employeeNumber}" type="button" title="Delete"><i class="fa-solid fa-trash"></i></button>`
-        html += '</td>'
+        rowElement.insertAdjacentHTML(
+          'beforeend',
+          /* html */ `
+            <td class="has-text-right">
+              <button
+                class="button is-small is-light is-info button--editEmployeeCrew"
+                data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
+                type="button"
+                title="Change Crew"
+              >
+                <i class="fa-solid fa-users-gear"></i>
+              </button> 
+              <button
+                class="button is-small is-light is-warning button--editEmployeeNote"
+                data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
+                type="button"
+                title="Edit Note"
+              >
+                <i class="fa-solid fa-edit"></i>
+              </button> 
+              <button
+                class="button is-small is-light is-danger button--deleteEmployee"
+                data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
+                type="button"
+                title="Delete"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          `
+        )
       }
 
-      html += '</tr>'
+      tableBodyElement.append(rowElement)
     }
 
-    html += '</tbody></table>'
-    containerElement.innerHTML = html
+    containerElement.replaceChildren(tableElement)
 
     if (isEdit) {
       const editCrewButtons = containerElement.querySelectorAll(
@@ -160,37 +249,88 @@ declare const exports: {
     ) as HTMLElement
 
     if (shiftEquipment.length === 0) {
-      containerElement.innerHTML = `<div class="message"><div class="message-body">No equipment assigned to this shift.</div></div>`
+      containerElement.innerHTML = /* html */ `
+        <div class="message">
+          <div class="message-body">No equipment assigned to this shift.</div>
+        </div>
+      `
       return
     }
 
-    let html = '<table class="table is-fullwidth is-striped is-hoverable">'
-    html +=
-      '<thead><tr><th>Equipment</th><th>Assigned Employee</th><th>Note</th>'
-    if (isEdit) {
-      html += '<th class="has-text-right">Actions</th>'
-    }
-    html += '</tr></thead><tbody>'
+    const tableElement = document.createElement('table')
+    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+
+    // eslint-disable-next-line no-unsanitized/property
+    tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Equipment</th>
+          <th>Assigned Employee</th>
+          <th>Note</th>
+          ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `
+
+    const tableBodyElement = tableElement.querySelector(
+      'tbody'
+    ) as HTMLTableSectionElement
 
     for (const equipment of shiftEquipment) {
-      html += '<tr>'
-      html += `<td>${cityssm.escapeHTML(equipment.equipmentName ?? '')}</td>`
-      html += `<td>${equipment.employeeLastName ? cityssm.escapeHTML(equipment.employeeLastName) + ', ' + cityssm.escapeHTML(equipment.employeeFirstName ?? '') : ''}</td>`
-      html += `<td><span class="equipment-note" data-equipment-number="${equipment.equipmentNumber}">${cityssm.escapeHTML(equipment.shiftEquipmentNote)}</span></td>`
+      const rowElement = document.createElement('tr')
+
+      // eslint-disable-next-line no-unsanitized/property
+      rowElement.innerHTML = /* html */ `
+        <td>${cityssm.escapeHTML(equipment.equipmentName ?? '')}</td>
+        <td>
+          ${(equipment.employeeLastName ?? '') === '' ? '' : cityssm.escapeHTML((equipment.employeeLastName as unknown as string) + ', ' + (equipment.employeeFirstName as unknown as string))}
+        </td>
+        <td>
+          <span class="equipment-note" data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}">
+            ${cityssm.escapeHTML(equipment.shiftEquipmentNote)}
+          </span>
+        </td>
+      `
 
       if (isEdit) {
-        html += '<td class="has-text-right">'
-        html += `<button class="button is-small is-light is-info button--editEquipmentEmployee" data-equipment-number="${equipment.equipmentNumber}" type="button" title="Assign Employee"><i class="fa-solid fa-user"></i></button> `
-        html += `<button class="button is-small is-light is-warning button--editEquipmentNote" data-equipment-number="${equipment.equipmentNumber}" type="button" title="Edit Note"><i class="fa-solid fa-edit"></i></button> `
-        html += `<button class="button is-small is-light is-danger button--deleteEquipment" data-equipment-number="${equipment.equipmentNumber}" type="button" title="Delete"><i class="fa-solid fa-trash"></i></button>`
-        html += '</td>'
+        rowElement.insertAdjacentHTML(
+          'beforeend',
+          /* html */ `
+            <td class="has-text-right">
+              <button
+                class="button is-small is-light is-info button--editEquipmentEmployee"
+                data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}"
+                type="button"
+                title="Assign Employee"
+              >
+                <i class="fa-solid fa-user"></i>
+              </button>
+              <button
+                class="button is-small is-light is-warning button--editEquipmentNote"
+                data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}"
+                type="button"
+                title="Edit Note"
+              >
+                <i class="fa-solid fa-edit"></i>
+              </button>
+              <button
+                class="button is-small is-light is-danger button--deleteEquipment"
+                data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}"
+                type="button"
+                title="Delete"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          `
+        )
       }
 
-      html += '</tr>'
+      tableBodyElement.append(rowElement)
     }
 
-    html += '</tbody></table>'
-    containerElement.innerHTML = html
+    containerElement.replaceChildren(tableElement)
 
     if (isEdit) {
       const editEmployeeButtons = containerElement.querySelectorAll(
@@ -216,7 +356,7 @@ declare const exports: {
     }
   }
 
-  function refreshData(): void {
+  function refreshCrewData(): void {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftCrews`,
       { shiftId },
@@ -229,7 +369,9 @@ declare const exports: {
         renderShiftCrews()
       }
     )
+  }
 
+  function refreshEmployeeData(): void {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftEmployees`,
       { shiftId },
@@ -242,7 +384,9 @@ declare const exports: {
         renderShiftEmployees()
       }
     )
+  }
 
+  function refreshEquipmentData(): void {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftEquipment`,
       { shiftId },
@@ -257,8 +401,15 @@ declare const exports: {
     )
   }
 
+  function refreshData(): void {
+    refreshCrewData()
+    refreshEmployeeData()
+    refreshEquipmentData()
+  }
+
   function loadAvailableData(): void {
     cityssm.postJSON(
+      // eslint-disable-next-line no-secrets/no-secrets
       `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`,
       {},
       (rawResponseJSON) => {
@@ -297,6 +448,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to add crew'
             })
           }
@@ -323,9 +475,11 @@ declare const exports: {
           }
           crewIdElement.insertAdjacentHTML(
             'beforeend',
-            `<option value="${crew.crewId}">
-              ${cityssm.escapeHTML(crew.crewName)}
-              </option>`
+            /* html */ `
+              <option value="${cityssm.escapeHTML(crew.crewId.toString())}">
+                ${cityssm.escapeHTML(crew.crewName)}
+              </option>
+            `
           )
         }
       },
@@ -366,6 +520,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to add employee'
             })
           }
@@ -396,9 +551,11 @@ declare const exports: {
           }
           employeeNumberElement.insertAdjacentHTML(
             'beforeend',
-            `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">
-              ${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}
-              </option>`
+            /* html */ `
+              <option value="${cityssm.escapeHTML(employee.employeeNumber)}">
+                ${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}
+              </option>
+            `
           )
         }
 
@@ -409,9 +566,11 @@ declare const exports: {
         for (const crew of shiftCrews) {
           crewIdElement.insertAdjacentHTML(
             'beforeend',
-            `<option value="${cityssm.escapeHTML(crew.crewId.toString())}">
-              ${cityssm.escapeHTML(crew.crewName ?? '')}
-              </option>`
+            /* html */ `
+              <option value="${cityssm.escapeHTML(crew.crewId.toString())}">
+                ${cityssm.escapeHTML(crew.crewName ?? '')}
+              </option>
+            `
           )
         }
       },
@@ -453,6 +612,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to add equipment'
             })
           }
@@ -483,9 +643,11 @@ declare const exports: {
           }
           equipmentNumberElement.insertAdjacentHTML(
             'beforeend',
-            `<option value="${cityssm.escapeHTML(equipment.equipmentNumber)}">
-              ${cityssm.escapeHTML(equipment.equipmentName)}
-              </option>`
+            /* html */ `
+              <option value="${cityssm.escapeHTML(equipment.equipmentNumber)}">
+                ${cityssm.escapeHTML(equipment.equipmentName)}
+              </option>
+            `
           )
         }
 
@@ -496,9 +658,11 @@ declare const exports: {
         for (const employee of shiftEmployees) {
           employeeNumberElement.insertAdjacentHTML(
             'beforeend',
-            `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">
-              ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
-              </option>`
+            /* html */ `
+              <option value="${cityssm.escapeHTML(employee.employeeNumber)}">
+                ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+              </option>
+            `
           )
         }
       },
@@ -544,6 +708,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to update note'
             })
           }
@@ -586,7 +751,7 @@ declare const exports: {
     const employeeNumber = buttonElement.dataset.employeeNumber
 
     const employee = shiftEmployees.find(
-      (e) => e.employeeNumber === employeeNumber
+      (possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber
     )
     if (employee === undefined) {
       return
@@ -611,6 +776,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to update crew'
             })
           }
@@ -637,11 +803,17 @@ declare const exports: {
 
         for (const crew of shiftCrews) {
           const selected = crew.crewId === employee.crewId
+          // eslint-disable-next-line no-unsanitized/method
           crewIdElement.insertAdjacentHTML(
             'beforeend',
-            `<option value="${crew.crewId}"${selected ? ' selected' : ''}>
-              ${cityssm.escapeHTML(crew.crewName ?? '')}
-              </option>`
+            /* html */ `
+              <option
+                value="${cityssm.escapeHTML(crew.crewId.toString())}"
+                ${selected ? ' selected' : ''}
+              >
+                ${cityssm.escapeHTML(crew.crewName ?? '')}
+              </option>
+            `
           )
         }
       },
@@ -664,7 +836,7 @@ declare const exports: {
     const employeeNumber = buttonElement.dataset.employeeNumber
 
     const employee = shiftEmployees.find(
-      (e) => e.employeeNumber === employeeNumber
+      (possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber
     )
     if (employee === undefined) {
       return
@@ -689,6 +861,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to update note'
             })
           }
@@ -733,7 +906,8 @@ declare const exports: {
     const equipmentNumber = buttonElement.dataset.equipmentNumber
 
     const equipment = shiftEquipment.find(
-      (e) => e.equipmentNumber === equipmentNumber
+      (possibleEquipment) =>
+        possibleEquipment.equipmentNumber === equipmentNumber
     )
     if (equipment === undefined) {
       return
@@ -758,6 +932,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to update assignment'
             })
           }
@@ -784,11 +959,18 @@ declare const exports: {
 
         for (const employee of shiftEmployees) {
           const selected = employee.employeeNumber === equipment.employeeNumber
+
+          // eslint-disable-next-line no-unsanitized/method
           employeeNumberElement.insertAdjacentHTML(
             'beforeend',
-            `<option value="${cityssm.escapeHTML(employee.employeeNumber)}"${selected ? ' selected' : ''}>
-              ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
-              </option>`
+            /* html */ `
+              <option
+                value="${cityssm.escapeHTML(employee.employeeNumber)}"
+                ${selected ? ' selected' : ''}
+              >
+                ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+              </option>
+            `
           )
         }
       },
@@ -811,7 +993,8 @@ declare const exports: {
     const equipmentNumber = buttonElement.dataset.equipmentNumber
 
     const equipment = shiftEquipment.find(
-      (e) => e.equipmentNumber === equipmentNumber
+      (possibleEquipment) =>
+        possibleEquipment.equipmentNumber === equipmentNumber
     )
     if (equipment === undefined) {
       return
@@ -836,6 +1019,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error',
+
               message: 'Failed to update note'
             })
           }
@@ -910,6 +1094,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error',
+
                   message: 'Failed to remove crew'
                 })
               }
@@ -925,12 +1110,13 @@ declare const exports: {
     const employeeNumber = buttonElement.dataset.employeeNumber
 
     const employee = shiftEmployees.find(
-      (e) => e.employeeNumber === employeeNumber
+      (possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber
     )
 
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete Employee',
+
       message: `Are you sure you want to remove employee "${cityssm.escapeHTML(employee?.lastName ?? '')}, ${cityssm.escapeHTML(employee?.firstName ?? '')}" from this shift?`,
       okButton: {
         contextualColorName: 'warning',
@@ -956,6 +1142,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error',
+
                   message: 'Failed to remove employee'
                 })
               }
@@ -971,7 +1158,7 @@ declare const exports: {
     const equipmentNumber = buttonElement.dataset.equipmentNumber
 
     const equipment = shiftEquipment.find(
-      (e) => e.equipmentNumber === equipmentNumber
+      (possibleEquipment) => possibleEquipment.equipmentNumber === equipmentNumber
     )
 
     bulmaJS.confirm({

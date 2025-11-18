@@ -1,5 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.timesheetsRouter;
@@ -89,7 +87,7 @@
         </td>
         <td>${cityssm.escapeHTML(timesheet.timesheetTypeDataListItem ?? '(Unknown Timesheet Type)')}</td>
         <td>${cityssm.dateToString(timesheetDate)}</td>
-        <td>${cityssm.escapeHTML(timesheet.timesheetTitle ?? '')}</td>
+        <td>${cityssm.escapeHTML(timesheet.timesheetTitle === '' ? '(No Title)' : timesheet.timesheetTitle)}</td>
         <td>
           ${cityssm.escapeHTML(timesheet.supervisorLastName ?? '')}, ${cityssm.escapeHTML(timesheet.supervisorFirstName ?? '')}
         </td>

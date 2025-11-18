@@ -137,11 +137,15 @@ export interface ShiftEmployee {
 
 export interface ShiftEquipment {
   shiftId: number
+  
   equipmentNumber: string
   equipmentName?: string
-  employeeNumber?: string | null
-  employeeFirstName?: string
-  employeeLastName?: string
+
+  employeeNumber: string | null
+
+  employeeFirstName?: string | null
+  employeeLastName?: string | null
+
   shiftEquipmentNote: string
   userGroupId?: number | null
 }
