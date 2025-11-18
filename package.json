@@ -30,6 +30,7 @@
   "dependencies": {
     "@cacheable/node-cache": "^1.7.5",
     "@cityssm/authentication-helper": "^0.6.1",
+    "@cityssm/avanti-api": "^1.0.0-beta.5",
     "@cityssm/bulma-js": "^1.0.0-rc.3",
     "@cityssm/bulma-sticky-table": "^3.0.1",
     "@cityssm/bulma-webapp-js": "^2.0.0-beta",
@@ -74,7 +75,7 @@
     "axe-core": "^4.11.0",
     "cypress": "^15.6.0",
     "cypress-axe": "^1.7.0",
-    "eslint-config-cityssm": "^34.0.0",
+    "eslint-config-cityssm": "^34.1.0",
     "nodemon": "^3.1.11",
     "prettier-config-cityssm": "^1.0.0"
   }

@@ -16,8 +16,9 @@ export const configDefaultValues = {
     'session.doKeepAlive': false,
     'session.maxAgeMillis': hoursToMillis(1),
     'session.secret': 'cityssm/shiftlog',
-    'connectors.pearl': undefined,
     'connectors.shiftLog': undefined,
+    'connectors.avanti': undefined,
+    'connectors.pearl': undefined,
     // Shifts
     'shifts.isEnabled': false,
     'shifts.router': 'shifts',
@@ -35,6 +36,11 @@ export const configDefaultValues = {
     'timesheets.router': 'timesheets',
     'timesheets.sectionName': 'Timesheets',
     'timesheets.sectionNameSingular': 'Timesheet',
-    'timesheets.iconClass': 'fa-clock'
+    'timesheets.iconClass': 'fa-clock',
+    // Employees
+    employees: {
+        syncSource: ''
+    },
+    'employees.syncSource': ''
 };
 export default configDefaultValues;

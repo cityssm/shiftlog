@@ -4,8 +4,11 @@ import type {
   FunctionAuthenticatorConfiguration,
   PlainTextAuthenticatorConfiguration
 } from '@cityssm/authentication-helper'
+import type { AvantiApiConfiguration } from '@cityssm/avanti-api'
 import { hoursToMillis } from '@cityssm/to-millis'
 import type { config as MSSQLConfig } from 'mssql'
+
+import type { ConfigEmployees } from '../types/config.types.js'
 
 export const configDefaultValues = {
   'application.applicationName': 'ShiftLog',
@@ -47,8 +50,10 @@ export const configDefaultValues = {
   'session.maxAgeMillis': hoursToMillis(1),
   'session.secret': 'cityssm/shiftlog',
 
-  'connectors.pearl': undefined as unknown as MSSQLConfig,
   'connectors.shiftLog': undefined as unknown as MSSQLConfig,
+
+  'connectors.avanti': undefined as unknown as AvantiApiConfiguration | undefined,
+  'connectors.pearl': undefined as unknown as MSSQLConfig | undefined,
 
   // Shifts
 
@@ -71,14 +76,21 @@ export const configDefaultValues = {
   'workOrders.iconClass': 'fa-hard-hat',
 
   // Timesheets
-  
+
   'timesheets.isEnabled': false,
   'timesheets.router': 'timesheets',
 
   'timesheets.sectionName': 'Timesheets',
   'timesheets.sectionNameSingular': 'Timesheet',
 
-  'timesheets.iconClass': 'fa-clock'
+  'timesheets.iconClass': 'fa-clock',
+
+  // Employees
+
+  employees: {
+    syncSource: ''
+  } as unknown as ConfigEmployees,
+  'employees.syncSource': ''
 }
 
 export default configDefaultValues

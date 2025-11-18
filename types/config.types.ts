@@ -4,6 +4,10 @@ import type {
   FunctionAuthenticatorConfiguration,
   PlainTextAuthenticatorConfiguration
 } from '@cityssm/authentication-helper'
+import type {
+  AvantiApiConfiguration,
+  GetEmployeesRequest
+} from '@cityssm/avanti-api/types.js'
 import type { config as MSSQLConfig } from 'mssql'
 
 export interface Config {
@@ -54,23 +58,35 @@ export interface Config {
 
   connectors: {
     shiftLog: MSSQLConfig
+
+    avanti?: AvantiApiConfiguration
     pearl?: MSSQLConfig
   }
 
   shifts?: ConfigSection
-
+  timesheets?: ConfigSection
   workOrders?: ConfigSection
 
-  timesheets?: ConfigSection
+  employees?: ConfigEmployees
 }
+
+export type ConfigEmployees =
+  | {
+      syncSource: ''
+    }
+  | {
+      syncSource: 'avanti'
+
+      filters?: GetEmployeesRequest
+    }
 
 interface ConfigSection {
   isEnabled?: boolean
   router?: string
-  
+
   sectionName?: string
   sectionNameSingular?: string
-  
+
   iconClass?: `fa-${string}`
 }
 

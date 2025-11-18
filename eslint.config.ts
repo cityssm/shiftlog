@@ -48,6 +48,9 @@ export const config = defineConfig(configWebApp, {
             'timesheet',
             'timesheets',
 
+            // Avanti
+            'avanti',
+
             // Pearl
             'worktech'
           ]
