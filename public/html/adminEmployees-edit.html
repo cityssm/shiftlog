@@ -55,30 +55,49 @@
             </div>
           </div>
         </div>
-        <div class="field">
-          <label class="label" for="editEmployee--userName">User Name (Optional)</label>
-          <div class="control">
-            <input
-              class="input"
-              id="editEmployee--userName"
-              name="userName"
-              type="text"
-              maxlength="30"
-            />
+        <div class="columns is-vcentered">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="editEmployee--userName">User Name (Optional)</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="editEmployee--userName"
+                  name="userName"
+                  type="text"
+                  maxlength="30"
+                />
+              </div>
+              <p class="help">Link this employee to a system user account</p>
+            </div>
           </div>
-          <p class="help">Link this employee to a system user account</p>
-        </div>
-        <div class="field">
-          <div class="control">
-            <label class="checkbox">
-              <input
-                id="editEmployee--isSupervisor"
-                name="isSupervisor"
-                type="checkbox"
-                value="1"
-              />
-              Is Supervisor
-            </label>
+          <div class="column">
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="editEmployee--isSupervisor"
+                    name="isSupervisor"
+                    type="checkbox"
+                    value="1"
+                  />
+                  Is Supervisor
+                </label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="editEmployee--recordSync_isSynced"
+                    name="recordSync_isSynced"
+                    type="checkbox"
+                    value="1"
+                  />
+                  Is Synced with External System
+                </label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="field">

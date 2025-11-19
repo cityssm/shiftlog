@@ -9,7 +9,7 @@ export default async function getMaximumEmployeeRecordSyncDateTime(): Promise<
 
   const result = (await pool.request()
     .query(/* sql */ `select max(recordSync_dateTime) as maxRecordSyncDateTime
-      from Employees
+      from ShiftLog.Employees
       where recordSync_isSynced = 1`)) as mssql.IResult<{
     maxRecordSyncDateTime: Date | null
   }>

@@ -1,9 +1,8 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
-import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 async function insertNewEmployee(employeeNumber, firstName, lastName, user) {
     const currentDate = new Date();
     try {
-        const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+        const pool = await getShiftLogConnectionPool();
         await pool
             .request()
             .input('employeeNumber', employeeNumber)
@@ -31,7 +30,7 @@ async function insertNewEmployee(employeeNumber, firstName, lastName, user) {
 }
 async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user) {
     const currentDate = new Date();
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
         .input('employeeNumber', employeeNumber)
@@ -51,7 +50,7 @@ async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user)
     return result.rowsAffected.length > 0;
 }
 export default async function addEmployee(employeeNumber, firstName, lastName, user) {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     // Check if an employee with the same number already exists
     const recordDeleteResult = (await pool
         .request()

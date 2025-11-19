@@ -1,8 +1,17 @@
+import { fork } from 'node:child_process';
 import { getConfigProperty } from '../helpers/config.helpers.js';
-export async function initializeEmployeeSyncTask() {
-    const employeeConfig = getConfigProperty('employees');
-    if (employeeConfig.syncSource === 'avanti') {
-        const { initializeAvantiEmployeeSyncTask } = await import('../tasks/avantiEmployeeSync.task.js');
-        return initializeAvantiEmployeeSyncTask();
+export function initializeTasks() {
+    const childProcesses = [];
+    /*
+     * Employee Sync Task
+     */
+    if (getConfigProperty('employees.syncSource') !== '') {
+        const childProcess = fork('./tasks/employeeSync/task.js', {
+            cwd: process.cwd(),
+            env: process.env,
+            stdio: 'inherit'
+        });
+        childProcesses.push(childProcess);
     }
+    return childProcesses;
 }

@@ -83,6 +83,10 @@ export interface Employee extends BaseRecord {
   emailAddress?: string | null
 
   userGroupId?: number | null
+
+  recordSync_isSynced: boolean
+  recordSync_source?: string | null
+  recordSync_dateTime?: Date | null
 }
 
 export interface Crew extends BaseRecord {

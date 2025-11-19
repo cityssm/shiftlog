@@ -7,9 +7,12 @@ import Debug from 'debug';
 import exitHook, { gracefulExit } from 'exit-hook';
 import { DEBUG_NAMESPACE } from './debug.config.js';
 import { getConfigProperty } from './helpers/config.helpers.js';
+import { initializeTasks } from './tasks/taskInitializer.js';
 import version from './version.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:index`);
 let doShutdown = false;
+const activeWorkers = new Map();
+let tasksChildProcesses = [];
 function initializeCluster() {
     const directoryName = path.dirname(fileURLToPath(import.meta.url));
     const processCount = Math.min(getConfigProperty('application.maximumProcesses'), os.cpus().length * 2);
@@ -26,7 +29,6 @@ function initializeCluster() {
         exec: `${directoryName}/app/appProcess.js`
     };
     cluster.setupPrimary(clusterSettings);
-    const activeWorkers = new Map();
     for (let index = 0; index < processCount; index += 1) {
         const worker = cluster.fork();
         activeWorkers.set(worker.process.pid ?? 0, worker);
@@ -50,6 +52,16 @@ function initializeCluster() {
             activeWorkers.set(newWorker.process.pid ?? 0, newWorker);
         }
     });
+}
+function startApplication() {
+    /*
+     * Start workers
+     */
+    initializeCluster();
+    /*
+     * Start Other Tasks
+     */
+    tasksChildProcesses = initializeTasks();
     /*
      * Set up the exit hook
      */
@@ -60,16 +72,12 @@ function initializeCluster() {
             debug(`Killing worker ${worker.process.pid}`);
             worker.kill();
         }
+        debug('Shutting down task child processes...');
+        for (const childProcess of tasksChildProcesses) {
+            debug(`Killing process ${childProcess.pid}`);
+            childProcess.kill();
+        }
     });
-}
-function startApplication() {
-    /*
-     * Start workers
-     */
-    initializeCluster();
-    /*
-     * Start Other Tasks
-     */
 }
 startApplication();
 /*

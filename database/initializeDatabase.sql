@@ -259,7 +259,6 @@ CREATE TABLE ShiftLog.Employees (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
-  foreign key (userName) references ShiftLog.Users(userName),
   foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
 )
 GO

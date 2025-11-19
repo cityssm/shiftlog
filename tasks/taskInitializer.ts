@@ -1,16 +1,23 @@
-import { ChildProcess } from 'node:child_process'
+import { type ChildProcess, fork } from 'node:child_process'
+
 import { getConfigProperty } from '../helpers/config.helpers.js'
 
-export async function initializeEmployeeSyncTask(): Promise<
-  ChildProcess | undefined
-> {
-  const employeeConfig = getConfigProperty('employees')
+export function initializeTasks(): ChildProcess[] {
+  const childProcesses: ChildProcess[] = []
 
-  if (employeeConfig.syncSource === 'avanti') {
-    const { initializeAvantiEmployeeSyncTask } = await import(
-      '../tasks/avantiEmployeeSync.task.js'
-    )
+  /*
+   * Employee Sync Task
+   */
 
-    return initializeAvantiEmployeeSyncTask()
+  if (getConfigProperty('employees.syncSource') !== '') {
+    const childProcess = fork('./tasks/employeeSync/task.js', {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: 'inherit'
+    })
+
+    childProcesses.push(childProcess)
   }
+
+  return childProcesses
 }

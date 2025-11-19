@@ -138,9 +138,7 @@ declare const exports: {
     cityssm.openHtmlModal('adminEmployees-edit', {
       onshow(modalElement) {
         ;(
-          modalElement.querySelector(
-            '#span--employeeNumber'
-          ) as HTMLSpanElement
+          modalElement.querySelector('#span--employeeNumber') as HTMLSpanElement
         ).textContent = employeeNumber
 
         // Set hidden employeeNumber field
@@ -171,6 +169,11 @@ declare const exports: {
             '#editEmployee--isSupervisor'
           ) as HTMLInputElement
         ).checked = employee.isSupervisor
+        ;(
+          modalElement.querySelector(
+            '#editEmployee--recordSync_isSynced'
+          ) as HTMLInputElement
+        ).checked = employee.recordSync_isSynced
         ;(
           modalElement.querySelector(
             '#editEmployee--phoneNumber'
@@ -233,10 +236,12 @@ declare const exports: {
     rowElement.innerHTML = /*html*/ `
       <td>${cityssm.escapeHTML(employee.employeeNumber)}</td>
       <td>${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}</td>
-      <td class="has-text-centered">${employee.isSupervisor ? 'Yes' : 'No'}</td>
-      <td>${employee.userName === null || employee.userName === undefined ? '' : cityssm.escapeHTML(employee.userName)}</td>
-      <td>${employee.phoneNumber === null || employee.phoneNumber === undefined ? '' : cityssm.escapeHTML(employee.phoneNumber)}</td>
-      <td>${employee.emailAddress === null || employee.emailAddress === undefined ? '' : cityssm.escapeHTML(employee.emailAddress)}</td>
+      <td class="has-text-centered">
+        ${employee.isSupervisor ? '<i class="fa-solid fa-check"></i>' : '-'}
+      </td>
+      <td>${cityssm.escapeHTML(employee.userName ?? '')}</td>
+      <td>${cityssm.escapeHTML(employee.phoneNumber ?? '')}</td>
+      <td>${cityssm.escapeHTML(employee.emailAddress ?? '')}</td>
       <td>${userGroup === undefined ? '' : cityssm.escapeHTML(userGroup.userGroupName)}</td>
       <td class="has-text-centered">
         <div class="buttons is-justify-content-center">
@@ -271,7 +276,8 @@ declare const exports: {
     }
 
     const tableElement = document.createElement('table')
-    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+    tableElement.className =
+      'table is-fullwidth is-striped is-hoverable has-sticky-header'
 
     tableElement.innerHTML = /*html*/ `
       <thead>
@@ -368,7 +374,6 @@ declare const exports: {
           modalElement
             .querySelector('form')
             ?.addEventListener('submit', doAddEmployee)
-
           ;(
             modalElement.querySelector(
               '#addEmployee--employeeNumber'

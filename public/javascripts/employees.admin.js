@@ -84,6 +84,7 @@
                 modalElement.querySelector('#editEmployee--lastName').value = employee.lastName;
                 modalElement.querySelector('#editEmployee--userName').value = employee.userName ?? '';
                 modalElement.querySelector('#editEmployee--isSupervisor').checked = employee.isSupervisor;
+                modalElement.querySelector('#editEmployee--recordSync_isSynced').checked = employee.recordSync_isSynced;
                 modalElement.querySelector('#editEmployee--phoneNumber').value = employee.phoneNumber ?? '';
                 modalElement.querySelector('#editEmployee--phoneNumberAlternate').value = employee.phoneNumberAlternate ?? '';
                 modalElement.querySelector('#editEmployee--emailAddress').value = employee.emailAddress ?? '';
@@ -121,10 +122,12 @@
         rowElement.innerHTML = /*html*/ `
       <td>${cityssm.escapeHTML(employee.employeeNumber)}</td>
       <td>${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}</td>
-      <td class="has-text-centered">${employee.isSupervisor ? 'Yes' : 'No'}</td>
-      <td>${employee.userName === null || employee.userName === undefined ? '' : cityssm.escapeHTML(employee.userName)}</td>
-      <td>${employee.phoneNumber === null || employee.phoneNumber === undefined ? '' : cityssm.escapeHTML(employee.phoneNumber)}</td>
-      <td>${employee.emailAddress === null || employee.emailAddress === undefined ? '' : cityssm.escapeHTML(employee.emailAddress)}</td>
+      <td class="has-text-centered">
+        ${employee.isSupervisor ? '<i class="fa-solid fa-check"></i>' : '-'}
+      </td>
+      <td>${cityssm.escapeHTML(employee.userName ?? '')}</td>
+      <td>${cityssm.escapeHTML(employee.phoneNumber ?? '')}</td>
+      <td>${cityssm.escapeHTML(employee.emailAddress ?? '')}</td>
       <td>${userGroup === undefined ? '' : cityssm.escapeHTML(userGroup.userGroupName)}</td>
       <td class="has-text-centered">
         <div class="buttons is-justify-content-center">
@@ -156,7 +159,8 @@
             return;
         }
         const tableElement = document.createElement('table');
-        tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+        tableElement.className =
+            'table is-fullwidth is-striped is-hoverable has-sticky-header';
         tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>

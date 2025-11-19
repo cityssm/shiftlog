@@ -6,15 +6,20 @@ import { fileURLToPath } from 'node:url'
 import { secondsToMillis } from '@cityssm/to-millis'
 import Debug from 'debug'
 import exitHook, { gracefulExit } from 'exit-hook'
+import type { ChildProcess } from 'node:child_process'
 
 import { DEBUG_NAMESPACE } from './debug.config.js'
 import { getConfigProperty } from './helpers/config.helpers.js'
+import { initializeTasks } from './tasks/taskInitializer.js'
 import type { WorkerMessage } from './types/application.types.js'
 import version from './version.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:index`)
 
 let doShutdown = false
+
+const activeWorkers = new Map<number, Worker>()
+let tasksChildProcesses: ChildProcess[] = []
 
 function initializeCluster(): void {
   const directoryName = path.dirname(fileURLToPath(import.meta.url))
@@ -43,7 +48,6 @@ function initializeCluster(): void {
 
   cluster.setupPrimary(clusterSettings)
 
-  const activeWorkers = new Map<number, Worker>()
 
   for (let index = 0; index < processCount; index += 1) {
     const worker = cluster.fork()
@@ -74,19 +78,7 @@ function initializeCluster(): void {
     }
   })
 
-  /*
-   * Set up the exit hook
-   */
-
-  exitHook(() => {
-    doShutdown = true
-    debug('Shutting down cluster workers...')
-
-    for (const worker of activeWorkers.values()) {
-      debug(`Killing worker ${worker.process.pid}`)
-      worker.kill()
-    }
-  })
+  
 }
 
 function startApplication(): void {
@@ -99,6 +91,30 @@ function startApplication(): void {
   /*
    * Start Other Tasks
    */
+
+  tasksChildProcesses = initializeTasks()
+
+  /*
+   * Set up the exit hook
+   */
+
+  exitHook(() => {
+    doShutdown = true
+
+    debug('Shutting down cluster workers...')
+
+    for (const worker of activeWorkers.values()) {
+      debug(`Killing worker ${worker.process.pid}`)
+      worker.kill()
+    }
+
+    debug('Shutting down task child processes...')
+
+    for (const childProcess of tasksChildProcesses) {
+      debug(`Killing process ${childProcess.pid}`)
+      childProcess.kill()
+    }
+  })
 }
 
 startApplication()

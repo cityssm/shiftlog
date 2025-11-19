@@ -8,6 +8,7 @@ import type {
   AvantiApiConfiguration,
   GetEmployeesRequest
 } from '@cityssm/avanti-api/types.js'
+import type { GetEmployeesFilters } from '@cityssm/worktech-api'
 import type { config as MSSQLConfig } from 'mssql'
 
 export interface Config {
@@ -78,6 +79,11 @@ export type ConfigEmployees =
       syncSource: 'avanti'
 
       filters?: GetEmployeesRequest
+    }
+  | {
+      syncSource: 'pearl'
+
+      filters?: GetEmployeesFilters
     }
 
 interface ConfigSection {

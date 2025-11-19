@@ -1,6 +1,6 @@
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
+import type { mssql } from '@cityssm/mssql-multi-pool'
 
-import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 async function insertNewEmployee(
   employeeNumber: string,
@@ -11,9 +11,7 @@ async function insertNewEmployee(
   const currentDate = new Date()
 
   try {
-    const pool = await mssqlPool.connect(
-      getConfigProperty('connectors.shiftLog')
-    )
+    const pool = await getShiftLogConnectionPool()
 
     await pool
       .request()
@@ -49,7 +47,7 @@ async function restoreDeletedEmployee(
 ): Promise<boolean> {
   const currentDate = new Date()
 
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   const result = await pool
     .request()
@@ -77,7 +75,7 @@ export default async function addEmployee(
   lastName: string,
   user: User
 ): Promise<boolean> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   // Check if an employee with the same number already exists
 

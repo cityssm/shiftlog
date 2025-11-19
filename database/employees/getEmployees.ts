@@ -1,13 +1,15 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
+import type { mssql } from '@cityssm/mssql-multi-pool'
 
-import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Employee } from '../../types/record.types.js'
 
 interface GetEmployeesFilters {
+  employeeNumber?: string
   isSupervisor?: boolean
+  includeDeleted?: boolean
 }
 
 const orderByOptions = {
@@ -16,23 +18,27 @@ const orderByOptions = {
 }
 
 export default async function getEmployees(
-  filters?: GetEmployeesFilters,
+  filters: GetEmployeesFilters = {},
   orderBy: keyof typeof orderByOptions = 'name'
 ): Promise<Employee[]> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   const result = (await pool
     .request()
-    .input('isSupervisor', filters?.isSupervisor).query(/* sql */ `
+    .input('employeeNumber', filters.employeeNumber)
+    .input('isSupervisor', filters.isSupervisor).query(/* sql */ `
       select employeeNumber, firstName, lastName,
         userName, isSupervisor,
         phoneNumber, phoneNumberAlternate, emailAddress,
         userGroupId,
+        recordSync_isSynced, recordSync_source, recordSync_dateTime,
         recordCreate_userName, recordCreate_dateTime,
         recordUpdate_userName, recordUpdate_dateTime
       from ShiftLog.Employees
-      where recordDelete_dateTime is null
-        ${filters?.isSupervisor === undefined ? '' : `and isSupervisor = @isSupervisor`}
+      where
+        ${(filters.includeDeleted ?? false) ? '1=1' : 'recordDelete_dateTime is null'}
+        ${filters.employeeNumber === undefined ? '' : `and employeeNumber = @employeeNumber`}
+        ${filters.isSupervisor === undefined ? '' : `and isSupervisor = @isSupervisor`}
       order by ${orderByOptions[orderBy] ?? orderByOptions.name}
   `)) as mssql.IResult<Employee>
 
