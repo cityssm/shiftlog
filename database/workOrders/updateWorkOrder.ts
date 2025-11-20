@@ -33,6 +33,7 @@ export interface UpdateWorkOrderForm {
 
   locationLatitude?: number | string
   locationLongitude?: number | string
+  
   locationAddress1: string
   locationAddress2: string
   locationCityProvince: string

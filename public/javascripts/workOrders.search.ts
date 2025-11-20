@@ -131,7 +131,7 @@ declare const exports: {
         <td>${cityssm.escapeHTML(workOrder.workOrderTypeDataListItem ?? '(Unknown Type)')}</td>
         <td>${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}</td>
         <td>${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}</td>
-        <td>${cityssm.escapeHTML(workOrder.requestorName ?? '')}</td>
+        <td>${cityssm.escapeHTML(workOrder.requestorName === '' ? '(N/A)' : workOrder.requestorName)}</td>
       `
 
       tableBodyElement.append(tableRowElement)
