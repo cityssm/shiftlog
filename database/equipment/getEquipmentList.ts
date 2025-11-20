@@ -1,6 +1,4 @@
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
-
-import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Equipment } from '../../types/record.types.js'
 
 interface GetEquipmentListFilters {
@@ -11,11 +9,12 @@ interface GetEquipmentListFilters {
 export default async function getEquipmentList(
   filters: GetEquipmentListFilters = {}
 ): Promise<Equipment[]> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
-    .input('equipmentNumber', filters.equipmentNumber).query(/* sql */ `
+    .input('equipmentNumber', filters.equipmentNumber)
+    .query<Equipment>(/* sql */ `
       select e.equipmentNumber, e.equipmentName, e.equipmentDescription,
         e.equipmentTypeDataListItemId, dli.dataListItem as equipmentTypeDataListItem,
         e.userGroupId,
@@ -29,9 +28,9 @@ export default async function getEquipmentList(
       left join ShiftLog.UserGroups ug on e.userGroupId = ug.userGroupId
       where
         ${(filters.includeDeleted ?? false) ? '1=1' : 'e.recordDelete_dateTime is null'}
-        ${filters.equipmentNumber === undefined ? '' : `and e.equipmentNumber = @equipmentNumber`}
+        ${filters.equipmentNumber === undefined ? '' : 'and e.equipmentNumber = @equipmentNumber'}
       order by e.equipmentNumber, e.equipmentName
-    `)) as mssql.IResult<Equipment>
+    `)
 
   return result.recordset
 }

@@ -56,10 +56,10 @@ declare const exports: {
         ? `<a class="pagination-next" href="#" data-page-number="${
             currentPage + 1
           }">Next</a>`
-        : `<a class="pagination-next" disabled>Next</a>`
+        : '<a class="pagination-next" disabled>Next</a>'
 
     // Page numbers
-    paginationHTML += `<ul class="pagination-list">`
+    paginationHTML += '<ul class="pagination-list">'
 
     for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
       paginationHTML +=
@@ -68,7 +68,7 @@ declare const exports: {
           : `<li><a class="pagination-link" href="#" data-page-number="${pageNumber}">${pageNumber}</a></li>`
     }
 
-    paginationHTML += `</ul>`
+    paginationHTML += '</ul>'
 
     // eslint-disable-next-line no-unsanitized/property
     paginationElement.innerHTML = paginationHTML

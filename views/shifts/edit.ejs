@@ -322,6 +322,11 @@
 <% } %>
 
 <% if (!isCreate) { %>
+<script>
+  exports.shiftCrews = <%- JSON.stringify(shiftCrews) %>;
+  exports.shiftEmployees = <%- JSON.stringify(shiftEmployees) %>;  
+  exports.shiftEquipment = <%- JSON.stringify(shiftEquipment) %>;
+</script>
 <script src="<%= urlPrefix %>/javascripts/shifts.employees.js"></script>
 <% } %>
 

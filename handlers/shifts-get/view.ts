@@ -1,6 +1,9 @@
 import type { Request, Response } from 'express'
 
 import getShift from '../../database/shifts/getShift.js'
+import getShiftCrews from '../../database/shifts/getShiftCrews.js'
+import getShiftEmployees from '../../database/shifts/getShiftEmployees.js'
+import getShiftEquipment from '../../database/shifts/getShiftEquipment.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 import type { ShiftEditResponse } from './types.js'
@@ -18,6 +21,10 @@ export default async function handler(
     return
   }
 
+  const shiftCrews = await getShiftCrews(request.params.shiftId)
+  const shiftEmployees = await getShiftEmployees(request.params.shiftId)
+  const shiftEquipment = await getShiftEquipment(request.params.shiftId)
+
   response.render('shifts/edit', {
     headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${
       request.params.shiftId
@@ -27,6 +34,9 @@ export default async function handler(
     isEdit: false,
 
     shift,
+    shiftCrews,
+    shiftEmployees,
+    shiftEquipment,
 
     shiftTimes: [],
     shiftTypes: [],

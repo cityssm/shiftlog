@@ -119,6 +119,8 @@ interface ConfigApplication {
 
   /** The maximum number of concurrent processes */
   maximumProcesses?: number
+
+  backgroundImage?: string
 }
 
 interface ConfigSession {

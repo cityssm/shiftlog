@@ -1,6 +1,7 @@
 import { config as baseConfig } from './partialConfig.js';
 export const config = { ...baseConfig };
 config.application.applicationName = 'Accessibility Reporting';
+config.application.backgroundImage = 'background-accessibility.jpg';
 config.shifts = {
     isEnabled: false
 };

@@ -75,6 +75,7 @@ interface ConfigApplication {
     applicationUrl?: string;
     /** The maximum number of concurrent processes */
     maximumProcesses?: number;
+    backgroundImage?: string;
 }
 interface ConfigSession {
     cookieName?: string;

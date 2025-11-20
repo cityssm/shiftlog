@@ -39,6 +39,9 @@ export default async function handler(
     isEdit: true,
 
     shift,
+    shiftCrews: [],
+    shiftEmployees: [],
+    shiftEquipment: [],
 
     shiftTimes,
     shiftTypes,

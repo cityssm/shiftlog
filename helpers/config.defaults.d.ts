@@ -5,6 +5,7 @@ import type { ConfigEmployees, ConfigEquipment } from '../types/config.types.js'
 export declare const configDefaultValues: {
     'application.applicationName': string;
     'application.applicationUrl': string | undefined;
+    'application.backgroundImage': string;
     'application.httpPort': number;
     'application.maximumProcesses': number;
     'login.authentication': {

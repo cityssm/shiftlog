@@ -1,10 +1,10 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
-import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getEquipmentList(filters = {}) {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
-    const result = (await pool
+    const pool = await getShiftLogConnectionPool();
+    const result = await pool
         .request()
-        .input('equipmentNumber', filters.equipmentNumber).query(/* sql */ `
+        .input('equipmentNumber', filters.equipmentNumber)
+        .query(/* sql */ `
       select e.equipmentNumber, e.equipmentName, e.equipmentDescription,
         e.equipmentTypeDataListItemId, dli.dataListItem as equipmentTypeDataListItem,
         e.userGroupId,
@@ -18,8 +18,8 @@ export default async function getEquipmentList(filters = {}) {
       left join ShiftLog.UserGroups ug on e.userGroupId = ug.userGroupId
       where
         ${(filters.includeDeleted ?? false) ? '1=1' : 'e.recordDelete_dateTime is null'}
-        ${filters.equipmentNumber === undefined ? '' : `and e.equipmentNumber = @equipmentNumber`}
+        ${filters.equipmentNumber === undefined ? '' : 'and e.equipmentNumber = @equipmentNumber'}
       order by e.equipmentNumber, e.equipmentName
-    `));
+    `);
     return result.recordset;
 }

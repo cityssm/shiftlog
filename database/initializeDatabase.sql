@@ -109,108 +109,6 @@ CREATE TABLE ShiftLog.DataLists (
 )
 GO
 
--- SHIFT DATALISTS
-
-insert into ShiftLog.DataLists (
-  dataListKey,
-  dataListName,
-  isSystemList,
-  recordCreate_userName,
-  recordUpdate_userName
-)
-values (
-  'shiftTimes',
-  'Shift Times',
-  1,
-  'initializeDatabase.sql',
-  'initializeDatabase.sql'
-)
-GO
-
-insert into ShiftLog.DataLists (
-  dataListKey,
-  dataListName,
-  isSystemList,
-  recordCreate_userName,
-  recordUpdate_userName
-)
-values (
-  'shiftTypes',
-  'Shift Types',
-  1,
-  'initializeDatabase.sql',
-  'initializeDatabase.sql'
-)
-GO
-
--- EQUIPMENT DATALISTS
-
-insert into ShiftLog.DataLists (
-  dataListKey,
-  dataListName,
-  isSystemList,
-  recordCreate_userName,
-  recordUpdate_userName
-)
-values (
-  'equipmentTypes',
-  'Equipment Types',
-  1,
-  'initializeDatabase.sql',
-  'initializeDatabase.sql'
-)
-GO
-
--- TIMESHEET DATALISTS
-
-insert into ShiftLog.DataLists (
-  dataListKey,
-  dataListName,
-  isSystemList,
-  recordCreate_userName,
-  recordUpdate_userName
-)
-values (
-  'timesheetTypes',
-  'Timesheet Types',
-  1,
-  'initializeDatabase.sql',
-  'initializeDatabase.sql'
-)
-GO
-
-insert into ShiftLog.DataLists (
-  dataListKey,
-  dataListName,
-  isSystemList,
-  recordCreate_userName,
-  recordUpdate_userName
-)
-values (
-  'jobClassifications',
-  'Timesheet Job Classification',
-  1,
-  'initializeDatabase.sql',
-  'initializeDatabase.sql'
-)
-GO
-
-insert into ShiftLog.DataLists (
-  dataListKey,
-  dataListName,
-  isSystemList,
-  recordCreate_userName,
-  recordUpdate_userName
-)
-values (
-  'timeCodes',
-  'Timesheet Time Codes',
-  1,
-  'initializeDatabase.sql',
-  'initializeDatabase.sql'
-)
-GO
-
 CREATE TABLE ShiftLog.DataListItems (
   dataListItemId int not null primary key identity(1,1),
   dataListKey varchar(20) not null,
@@ -315,6 +213,114 @@ CREATE TABLE ShiftLog.Equipment (
 )
 GO
 
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'equipmentTypes',
+  'Equipment Types',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+-- WORK ORDERS
+
+create table ShiftLog.WorkOrders (
+  workOrderId int not null primary key identity(1,1),
+  
+  workOrderNumberYear smallint not null,
+  workOrderNumberSequence int not null,
+  workOrderNumber as (cast(workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(workOrderNumberSequence as varchar(6)),6)) persisted,
+
+  workOrderTypeDataListItemId int not null,
+  workOrderStatusDataListItemId int,
+  workOrderDetails varchar(max) not null default '',
+
+  workOrderOpenDateTime datetime not null,
+  workOrderDueDateTime datetime,
+  workOrderCloseDateTime datetime,
+
+  requestorName varchar(100) not null default '',
+  requestorContactInfo varchar(100) not null default '',
+
+  locationLatitude decimal(10,7),
+  locationLongitude decimal(10,7),
+
+  locationAddress1 varchar(100) not null default '',
+  locationAddress2 varchar(100) not null default '',
+  locationCityProvince varchar(50) not null default '',
+
+  assignedToDataListItemId int,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  unique (workOrderNumberYear, workOrderNumberSequence),
+  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId),
+  foreign key (workOrderTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
+  foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
+  foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'workOrderTypes',
+  'Work Order Types',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'workOrderStatuses',
+  'Work Order Statuses',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'assignedTo',
+  'Assigned To',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
 -- SHIFTS
 
 CREATE TABLE ShiftLog.Shifts (
@@ -339,6 +345,38 @@ CREATE TABLE ShiftLog.Shifts (
   foreign key (supervisorEmployeeNumber) references ShiftLog.Employees(employeeNumber),
   foreign key (shiftTimeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (shiftTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'shiftTimes',
+  'Shift Times',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'shiftTypes',
+  'Shift Types',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
 )
 GO
 
@@ -413,6 +451,22 @@ CREATE TABLE ShiftLog.Timesheets (
 )
 GO
 
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'timesheetTypes',
+  'Timesheet Types',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
 CREATE TABLE ShiftLog.TimesheetColumns (
   timesheetColumnId int not null primary key identity(1,1),
   timesheetId int not null,
@@ -444,6 +498,38 @@ CREATE TABLE ShiftLog.TimesheetRows (
   foreign key (equipmentNumber) references ShiftLog.Equipment(equipmentNumber),
   foreign key (jobClassificationDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (timeCodeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'jobClassifications',
+  'Timesheet Job Classification',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
+)
+GO
+
+insert into ShiftLog.DataLists (
+  dataListKey,
+  dataListName,
+  isSystemList,
+  recordCreate_userName,
+  recordUpdate_userName
+)
+values (
+  'timeCodes',
+  'Timesheet Time Codes',
+  1,
+  'initializeDatabase.sql',
+  'initializeDatabase.sql'
 )
 GO
 

@@ -13,6 +13,7 @@ import type { ConfigEmployees, ConfigEquipment } from '../types/config.types.js'
 export const configDefaultValues = {
   'application.applicationName': 'ShiftLog',
   'application.applicationUrl': undefined as string | undefined,
+  'application.backgroundImage': 'background.jpg',
 
   'application.httpPort': 9000,
   'application.maximumProcesses': 4,

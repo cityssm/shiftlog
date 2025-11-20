@@ -6,9 +6,9 @@
     const shiftIdElement = document.querySelector('#shift--shiftId');
     const shiftId = shiftIdElement.value;
     const isEdit = document.querySelector('#button--addCrew') !== null;
-    let shiftCrews = [];
-    let shiftEmployees = [];
-    let shiftEquipment = [];
+    let shiftCrews = exports.shiftCrews;
+    let shiftEmployees = exports.shiftEmployees;
+    let shiftEquipment = exports.shiftEquipment;
     let availableCrews = [];
     let availableEmployees = [];
     let availableEquipment = [];
@@ -882,6 +882,8 @@
             ?.addEventListener('click', importFromPreviousShift);
         loadAvailableData();
     }
-    // Initial data load
-    refreshData();
+    // Initial render
+    renderShiftCrews();
+    renderShiftEmployees();
+    renderShiftEquipment();
 })();

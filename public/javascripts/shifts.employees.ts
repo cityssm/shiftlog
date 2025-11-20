@@ -20,6 +20,10 @@ declare const bulmaJS: BulmaJS
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
+  shiftCrews: ShiftCrew[]
+  shiftEmployees: ShiftEmployee[]
+  shiftEquipment: ShiftEquipment[]
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -32,9 +36,9 @@ declare const exports: {
 
   const isEdit = document.querySelector('#button--addCrew') !== null
 
-  let shiftCrews: ShiftCrew[] = []
-  let shiftEmployees: ShiftEmployee[] = []
-  let shiftEquipment: ShiftEquipment[] = []
+  let shiftCrews = exports.shiftCrews
+  let shiftEmployees = exports.shiftEmployees
+  let shiftEquipment = exports.shiftEquipment
 
   let availableCrews: Crew[] = []
   let availableEmployees: Employee[] = []
@@ -1266,12 +1270,15 @@ declare const exports: {
     document
       .querySelector('#button--addCrew')
       ?.addEventListener('click', addCrew)
+
     document
       .querySelector('#button--addEmployee')
       ?.addEventListener('click', addEmployee)
+
     document
       .querySelector('#button--addEquipment')
       ?.addEventListener('click', addEquipment)
+
     document
       .querySelector('#button--importFromPreviousShift')
       ?.addEventListener('click', importFromPreviousShift)
@@ -1279,6 +1286,8 @@ declare const exports: {
     loadAvailableData()
   }
 
-  // Initial data load
-  refreshData()
+  // Initial render
+  renderShiftCrews()
+  renderShiftEmployees()
+  renderShiftEquipment()
 })()
