@@ -21,8 +21,8 @@ export default async function getEmployees(filters = {}, orderBy = 'name') {
       from ShiftLog.Employees
       where
         ${(filters.includeDeleted ?? false) ? '1=1' : 'recordDelete_dateTime is null'}
-        ${filters.employeeNumber === undefined ? '' : `and employeeNumber = @employeeNumber`}
-        ${filters.isSupervisor === undefined ? '' : `and isSupervisor = @isSupervisor`}
+        ${filters.employeeNumber === undefined ? '' : 'and employeeNumber = @employeeNumber'}
+        ${filters.isSupervisor === undefined ? '' : 'and isSupervisor = @isSupervisor'}
       order by ${orderByOptions[orderBy] ?? orderByOptions.name}
   `);
     return result.recordset;
