@@ -9,8 +9,7 @@ export interface UpdateSettingForm {
 }
 
 export default async function updateSetting(
-  updateForm: UpdateSettingForm,
-  user?: User
+  updateForm: UpdateSettingForm
 ): Promise<boolean> {
   const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
   const currentDate = new Date()
@@ -20,12 +19,10 @@ export default async function updateSetting(
     .request()
     .input('settingKey', updateForm.settingKey)
     .input('settingValue', updateForm.settingValue)
-    .input('recordUpdate_userName', user?.userName ?? 'system')
     .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
       update ShiftLog.ApplicationSettings
       set settingValue = @settingValue,
         previousSettingValue = settingValue,
-        recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime
       where settingKey = @settingKey
     `)
@@ -41,19 +38,14 @@ export default async function updateSetting(
     .input('settingKey', updateForm.settingKey)
     .input('settingValue', updateForm.settingValue)
     .input('previousSettingValue', '')
-    .input('recordCreate_userName', user?.userName ?? 'system')
-    .input('recordCreate_dateTime', currentDate)
-    .input('recordUpdate_userName', user?.userName ?? 'system')
     .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
       insert into ShiftLog.ApplicationSettings (
         settingKey, settingValue, previousSettingValue,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime
+        recordUpdate_dateTime
       )
       values (
         @settingKey, @settingValue, @previousSettingValue,
-        @recordCreate_userName, @recordCreate_dateTime,
-        @recordUpdate_userName, @recordUpdate_dateTime
+        @recordUpdate_dateTime
       )
       `)
 

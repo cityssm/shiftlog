@@ -2,4 +2,4 @@ export interface UpdateSettingForm {
     settingKey: string;
     settingValue: string;
 }
-export default function updateSetting(updateForm: UpdateSettingForm, user?: User): Promise<boolean>;
+export default function updateSetting(updateForm: UpdateSettingForm): Promise<boolean>;
