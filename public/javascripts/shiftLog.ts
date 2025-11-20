@@ -38,6 +38,10 @@ declare const exports: {
     return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId.toString()}`
   } 
   
+  function buildWorkOrderURL(workOrderId: number): string {
+    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId.toString()}`
+  }
+  
   function buildTimesheetURL(timesheetId: number): string {
     return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/${timesheetId.toString()}`
   }
@@ -54,6 +58,7 @@ declare const exports: {
     setUnsavedChanges,
 
     buildShiftURL,
+    buildWorkOrderURL,
     buildTimesheetURL
   }
 })()

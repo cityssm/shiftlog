@@ -1,21 +1,105 @@
 <%- include('../_header'); -%>
 
-<nav class="breadcrumb">
-  <ul>
-    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
-    <li class="is-active">
-      <a href="#" aria-current="page">
-        <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
-        <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
-      </a>
-    </li>
-  </ul>
-</nav>
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- include('_menu'); -%>
+  </div>
+  <div class="column">
+    <nav class="breadcrumb">
+      <ul>
+        <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+        <li class="is-active">
+          <a href="#" aria-current="page">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+            </span>
+            <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-<h1 class="title is-1">
-  <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
-</h1>
+    <h1 class="title is-1">
+      <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search
+    </h1>
+
+    <div class="box">
+      <form id="form--workOrderSearch">
+        <input
+          id="workOrderSearch--limit"
+          name="limit"
+          type="hidden"
+          value="50"
+        />
+        <input
+          id="workOrderSearch--offset"
+          name="offset"
+          type="hidden"
+          value="0"
+        />
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--workOrderNumber">Work Order Number</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="workOrderSearch--workOrderNumber"
+                  name="workOrderNumber"
+                  type="text"
+                  placeholder="Search by work order number"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--workOrderTypeDataListItemId">
+                <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
+              </label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="workOrderSearch--workOrderTypeDataListItemId" name="workOrderTypeDataListItemId">
+                    <option value="">(All Types)</option>
+                    <% workOrderTypes.forEach(function(workOrderType) { %>
+                    <option value="<%= workOrderType.dataListItemId %>">
+                      <%= workOrderType.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--workOrderStatusDataListItemId">Status</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="workOrderSearch--workOrderStatusDataListItemId" name="workOrderStatusDataListItemId">
+                    <option value="">(All Statuses)</option>
+                    <% workOrderStatuses.forEach(function(workOrderStatus) { %>
+                    <option value="<%= workOrderStatus.dataListItemId %>">
+                      <%= workOrderStatus.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div id="container--workOrderSearchResults">
+      <!-- Filled dynamically -->
+    </div>
+  </div>
+</div>
 
 <%- include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/workOrders.search.js"></script>
 
 <%- include('../_footerB'); -%>

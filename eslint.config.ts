@@ -7,6 +7,7 @@ const escapedMethods = [
   'cityssm.dateToString',
   'cityssm.escapeHTML',
   'exports.shiftLog.buildShiftURL',
+  'exports.shiftLog.buildWorkOrderURL',
   'exports.shiftLog.buildTimesheetURL'
 ]
 
