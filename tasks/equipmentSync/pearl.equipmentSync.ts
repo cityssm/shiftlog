@@ -31,6 +31,7 @@ export default async function getEquipment(): Promise<
       equipmentNumber: worktechEquipmentItem.equipmentId,
 
       equipmentName: worktechEquipmentItem.equipmentDescription,
+      
       equipmentDescription: `${worktechEquipmentItem.equipmentModelYear} ${worktechEquipmentItem.equipmentBrand} ${worktechEquipmentItem.equipmentModel}`,
 
       equipmentTypeDataListItem: worktechEquipmentItem.equipmentClass,

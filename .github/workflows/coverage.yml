@@ -34,6 +34,7 @@ jobs:
         run: |
           sqlcmd -S localhost -U sa -P dbatools.I0 -d tempdb -Q "create database ShiftLog" -C
           sqlcmd -S localhost -U sa -P dbatools.I0 -d ShiftLog -i database/initializeDatabase.sql -C
+          sqlcmd -S localhost -U sa -P dbatools.I0 -d ShiftLog -i test/initializeTestUsers.sql -C
 
       - name: Install Application
         run: |

@@ -7,7 +7,8 @@ config.login = {
         type: 'plainText',
         config: {
             users: {
-                'domain\\administrator': 'administrator'
+                'domain\\~administrator': '~administrator',
+                'domain\\~testuser': '~testuser'
             }
         }
     },

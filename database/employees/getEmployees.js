@@ -7,7 +7,7 @@ const orderByOptions = {
 };
 export default async function getEmployees(filters = {}, orderBy = 'name') {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('employeeNumber', filters.employeeNumber)
         .input('isSupervisor', filters.isSupervisor).query(/* sql */ `
@@ -24,6 +24,6 @@ export default async function getEmployees(filters = {}, orderBy = 'name') {
         ${filters.employeeNumber === undefined ? '' : `and employeeNumber = @employeeNumber`}
         ${filters.isSupervisor === undefined ? '' : `and isSupervisor = @isSupervisor`}
       order by ${orderByOptions[orderBy] ?? orderByOptions.name}
-  `));
+  `);
     return result.recordset;
 }

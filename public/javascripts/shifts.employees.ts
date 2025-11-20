@@ -553,7 +553,9 @@ declare const exports: {
             'beforeend',
             /* html */ `
               <option value="${cityssm.escapeHTML(employee.employeeNumber)}">
-                ${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}
+                ${cityssm.escapeHTML(employee.lastName)},
+                ${cityssm.escapeHTML(employee.firstName)}
+                (${cityssm.escapeHTML(employee.employeeNumber)})
               </option>
             `
           )
@@ -645,6 +647,8 @@ declare const exports: {
             'beforeend',
             /* html */ `
               <option value="${cityssm.escapeHTML(equipment.equipmentNumber)}">
+                ${cityssm.escapeHTML(equipment.equipmentNumber)}
+                -
                 ${cityssm.escapeHTML(equipment.equipmentName)}
               </option>
             `
@@ -660,7 +664,9 @@ declare const exports: {
             'beforeend',
             /* html */ `
               <option value="${cityssm.escapeHTML(employee.employeeNumber)}">
-                ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}
+                ${cityssm.escapeHTML(employee.lastName ?? '')},
+                ${cityssm.escapeHTML(employee.firstName ?? '')}
+                (${cityssm.escapeHTML(employee.employeeNumber)})
               </option>
             `
           )

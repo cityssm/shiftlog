@@ -1,8 +1,6 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Employee } from '../../types/record.types.js'
 
@@ -23,10 +21,10 @@ export default async function getEmployees(
 ): Promise<Employee[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('employeeNumber', filters.employeeNumber)
-    .input('isSupervisor', filters.isSupervisor).query(/* sql */ `
+    .input('isSupervisor', filters.isSupervisor).query<Employee>(/* sql */ `
       select employeeNumber, firstName, lastName,
         userName, isSupervisor,
         phoneNumber, phoneNumberAlternate, emailAddress,
@@ -40,7 +38,7 @@ export default async function getEmployees(
         ${filters.employeeNumber === undefined ? '' : `and employeeNumber = @employeeNumber`}
         ${filters.isSupervisor === undefined ? '' : `and isSupervisor = @isSupervisor`}
       order by ${orderByOptions[orderBy] ?? orderByOptions.name}
-  `)) as mssql.IResult<Employee>
+  `)
 
   return result.recordset
 }

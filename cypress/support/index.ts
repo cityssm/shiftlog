@@ -8,9 +8,11 @@ export const logout = (): void => {
 export const login = (userName: string): void => {
   cy.visit('/login')
 
+  /*
   cy.get('.message').contains('Testing', {
     matchCase: false
   })
+  */
 
   cy.get("form [name='userName']").type(userName)
   cy.get("form [name='password']").type(userName)

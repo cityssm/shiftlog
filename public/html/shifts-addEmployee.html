@@ -16,31 +16,36 @@
     </div>
     <section class="modal-card-body">
       <form id="form--addEmployee">
-        <input type="hidden" name="shiftId" />
+        <input name="shiftId" type="hidden" />
         <div class="field">
-          <label class="label">Employee</label>
+          <label class="label" for="addEmployee--employeeNumber">Employee</label>
           <div class="control">
             <div class="select is-fullwidth">
-              <select name="employeeNumber" required>
+              <select id="addEmployee--employeeNumber" name="employeeNumber" required>
                 <option value="">(Select Employee)</option>
               </select>
             </div>
           </div>
         </div>
         <div class="field">
-          <label class="label">Crew (Optional)</label>
+          <label class="label" for="addEmployee--crewId">Crew (Optional)</label>
           <div class="control">
             <div class="select is-fullwidth">
-              <select name="crewId">
+              <select id="addEmployee--crewId" name="crewId">
                 <option value="">(None)</option>
               </select>
             </div>
           </div>
         </div>
         <div class="field">
-          <label class="label">Note</label>
+          <label class="label" for="addEmployee--shiftEmployeeNote">Note</label>
           <div class="control">
-            <textarea class="textarea" name="shiftEmployeeNote" maxlength="200"></textarea>
+            <textarea
+              class="textarea"
+              id="addEmployee--shiftEmployeeNote"
+              name="shiftEmployeeNote"
+              maxlength="200"
+            ></textarea>
           </div>
         </div>
       </form>
