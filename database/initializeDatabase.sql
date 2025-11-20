@@ -266,7 +266,6 @@ create table ShiftLog.WorkOrders (
   recordDelete_dateTime datetime,
 
   unique (workOrderNumberYear, workOrderNumberSequence),
-  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId),
   foreign key (workOrderTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
