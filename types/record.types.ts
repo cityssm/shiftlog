@@ -237,3 +237,41 @@ export interface TimesheetCell {
   mappedTimeCode?: string | null
   mappingConfidence: number
 }
+
+// Work Orders
+
+export interface WorkOrder extends BaseRecord {
+  workOrderId: number
+
+  workOrderNumberYear: number
+  workOrderNumberSequence: number
+  workOrderNumber: string
+
+  workOrderTypeDataListItemId: number
+  workOrderTypeDataListItem?: string
+
+  workOrderStatusDataListItemId?: number | null
+  workOrderStatusDataListItem?: string
+
+  workOrderDetails: string
+
+  workOrderOpenDateTime: Date | string
+  workOrderDueDateTime?: Date | string | null
+  workOrderCloseDateTime?: Date | string | null
+
+  requestorName: string
+  requestorContactInfo: string
+
+  locationLatitude?: number | null
+  locationLongitude?: number | null
+
+  locationAddress1: string
+  locationAddress2: string
+  locationCityProvince: string
+
+  assignedToDataListItemId?: number | null
+  assignedToDataListItem?: string
+
+  userGroupId?: number | null
+  userGroupName?: string
+}

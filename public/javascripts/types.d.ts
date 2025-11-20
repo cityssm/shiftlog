@@ -11,6 +11,7 @@ export interface ShiftLogGlobal {
     workOrdersRouter: string;
     workOrdersSectionName: string;
     workOrdersSectionNameSingular: string;
+    buildWorkOrderURL: (workOrderId: number) => string;
     timesheetsAreEnabled: boolean;
     timesheetsRouter: string;
     timesheetsSectionName: string;

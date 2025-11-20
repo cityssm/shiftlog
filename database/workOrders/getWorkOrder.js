@@ -1,0 +1,71 @@
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+export default async function getWorkOrder(workOrderId, user) {
+    const pool = await getShiftLogConnectionPool();
+    const sql = /* sql */ `
+    select
+      w.workOrderId,
+      w.workOrderNumberYear,
+      w.workOrderNumberSequence,
+      w.workOrderNumber,
+
+      w.workOrderTypeDataListItemId,
+      wType.dataListItem as workOrderTypeDataListItem,
+
+      w.workOrderStatusDataListItemId,
+      wStatus.dataListItem as workOrderStatusDataListItem,
+
+      w.workOrderDetails,
+
+      w.workOrderOpenDateTime,
+      w.workOrderDueDateTime,
+      w.workOrderCloseDateTime,
+
+      w.requestorName,
+      w.requestorContactInfo,
+
+      w.locationLatitude,
+      w.locationLongitude,
+      w.locationAddress1,
+      w.locationAddress2,
+      w.locationCityProvince,
+
+      w.assignedToDataListItemId,
+      assignedTo.dataListItem as assignedToDataListItem
+
+    from ShiftLog.WorkOrders w
+
+    left join ShiftLog.DataListItems wType
+      on w.workOrderTypeDataListItemId = wType.dataListItemId
+
+    left join ShiftLog.DataListItems wStatus
+      on w.workOrderStatusDataListItemId = wStatus.dataListItemId
+
+    left join ShiftLog.DataListItems assignedTo
+      on w.assignedToDataListItemId = assignedTo.dataListItemId
+
+    where w.recordDelete_dateTime is null
+      and w.workOrderId = @workOrderId
+
+    ${user === undefined
+        ? ''
+        : `
+            and (
+              wType.userGroupId is null or wType.userGroupId in (
+                select userGroupId
+                from ShiftLog.UserGroupMembers
+                where userName = @userName
+              )
+            )
+          `}    
+  `;
+    const workOrdersResult = (await pool
+        .request()
+        .input('workOrderId', workOrderId)
+        .input('userName', user?.userName)
+        .query(sql));
+    if (workOrdersResult.recordset.length === 0) {
+        return undefined;
+    }
+    const workOrder = workOrdersResult.recordset[0];
+    return workOrder;
+}
