@@ -41,6 +41,11 @@ export const configDefaultValues = {
     employees: {
         syncSource: ''
     },
-    'employees.syncSource': ''
+    'employees.syncSource': '',
+    // Equipment
+    equipment: {
+        syncSource: ''
+    },
+    'equipment.syncSource': ''
 };
 export default configDefaultValues;

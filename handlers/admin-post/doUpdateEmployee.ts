@@ -1,5 +1,9 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable @typescript-eslint/naming-convention */
+
 import type { Request, Response } from 'express'
 
+import getEmployees from '../../database/employees/getEmployees.js'
 import updateEmployee from '../../database/employees/updateEmployee.js'
 
 export default async function handler(
@@ -11,6 +15,7 @@ export default async function handler(
     employeeNumber,
     firstName,
     isSupervisor = '0',
+    recordSync_isSynced = '0',
     lastName,
     phoneNumber,
     phoneNumberAlternate,
@@ -21,6 +26,7 @@ export default async function handler(
     employeeNumber: string
     firstName: string
     isSupervisor?: string
+    recordSync_isSynced?: string
     lastName: string
     phoneNumber?: string
     phoneNumberAlternate?: string
@@ -35,6 +41,7 @@ export default async function handler(
         employeeNumber,
         firstName,
         isSupervisor: isSupervisor === '1',
+        recordSync_isSynced: recordSync_isSynced === '1',
         lastName,
         phoneNumber: phoneNumber === '' ? undefined : phoneNumber,
         phoneNumberAlternate:
@@ -49,9 +56,12 @@ export default async function handler(
     )
 
     if (success) {
+      const employees = await getEmployees()
+
       response.json({
         message: 'Employee updated successfully',
-        success: true
+        success: true,
+        employees
       })
     } else {
       response.status(404).json({

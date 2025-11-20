@@ -8,7 +8,7 @@ import type { AvantiApiConfiguration } from '@cityssm/avanti-api'
 import { hoursToMillis } from '@cityssm/to-millis'
 import type { config as MSSQLConfig } from 'mssql'
 
-import type { ConfigEmployees } from '../types/config.types.js'
+import type { ConfigEmployees, ConfigEquipment } from '../types/config.types.js'
 
 export const configDefaultValues = {
   'application.applicationName': 'ShiftLog',
@@ -52,7 +52,9 @@ export const configDefaultValues = {
 
   'connectors.shiftLog': undefined as unknown as MSSQLConfig,
 
-  'connectors.avanti': undefined as unknown as AvantiApiConfiguration | undefined,
+  'connectors.avanti': undefined as unknown as
+    | AvantiApiConfiguration
+    | undefined,
   'connectors.pearl': undefined as unknown as MSSQLConfig | undefined,
 
   // Shifts
@@ -90,7 +92,14 @@ export const configDefaultValues = {
   employees: {
     syncSource: ''
   } as unknown as ConfigEmployees,
-  'employees.syncSource': ''
+  'employees.syncSource': '',
+
+  // Equipment
+
+  equipment: {
+    syncSource: ''
+  } as unknown as ConfigEquipment,
+  'equipment.syncSource': ''
 }
 
 export default configDefaultValues

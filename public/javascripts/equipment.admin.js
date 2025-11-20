@@ -83,18 +83,21 @@
             onshow(modalElement) {
                 ;
                 modalElement.querySelector('[name="equipmentNumber"]').value = equipment.equipmentNumber;
+                modalElement.querySelector('[name="recordSync_isSynced"]').checked = equipment.recordSync_isSynced;
                 modalElement.querySelector('[name="equipmentName"]').value = equipment.equipmentName;
                 modalElement.querySelector('[name="equipmentDescription"]').value = equipment.equipmentDescription;
                 // Populate equipment types dropdown
                 const equipmentTypeSelect = modalElement.querySelector('[name="equipmentTypeDataListItemId"]');
-                equipmentTypeSelect.innerHTML = '<option value="">Select Equipment Type</option>';
+                equipmentTypeSelect.innerHTML =
+                    '<option value="">Select Equipment Type</option>';
                 for (const equipmentType of exports.equipmentTypes) {
                     const option = document.createElement('option');
                     option.value = equipmentType.dataListItemId.toString();
                     option.textContent = equipmentType.dataListItem;
                     equipmentTypeSelect.append(option);
                 }
-                equipmentTypeSelect.value = equipment.equipmentTypeDataListItemId.toString();
+                equipmentTypeSelect.value =
+                    equipment.equipmentTypeDataListItemId.toString();
                 // Populate user groups dropdown
                 const userGroupSelect = modalElement.querySelector('[name="userGroupId"]');
                 userGroupSelect.innerHTML = '<option value="">No User Group</option>';
@@ -226,7 +229,8 @@
                 modalElement.querySelector('[name="equipmentDescription"]').value = '';
                 // Populate equipment types dropdown
                 const equipmentTypeSelect = modalElement.querySelector('[name="equipmentTypeDataListItemId"]');
-                equipmentTypeSelect.innerHTML = '<option value="">Select Equipment Type</option>';
+                equipmentTypeSelect.innerHTML =
+                    '<option value="">Select Equipment Type</option>';
                 for (const equipmentType of exports.equipmentTypes) {
                     const option = document.createElement('option');
                     option.value = equipmentType.dataListItemId.toString();

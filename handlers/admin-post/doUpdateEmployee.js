@@ -1,12 +1,16 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable @typescript-eslint/naming-convention */
+import getEmployees from '../../database/employees/getEmployees.js';
 import updateEmployee from '../../database/employees/updateEmployee.js';
 export default async function handler(request, response) {
-    const { emailAddress, employeeNumber, firstName, isSupervisor = '0', lastName, phoneNumber, phoneNumberAlternate, userGroupId, userName } = request.body;
+    const { emailAddress, employeeNumber, firstName, isSupervisor = '0', recordSync_isSynced = '0', lastName, phoneNumber, phoneNumberAlternate, userGroupId, userName } = request.body;
     try {
         const success = await updateEmployee({
             emailAddress: emailAddress === '' ? undefined : emailAddress,
             employeeNumber,
             firstName,
             isSupervisor: isSupervisor === '1',
+            recordSync_isSynced: recordSync_isSynced === '1',
             lastName,
             phoneNumber: phoneNumber === '' ? undefined : phoneNumber,
             phoneNumberAlternate: phoneNumberAlternate === '' ? undefined : phoneNumberAlternate,
@@ -16,9 +20,11 @@ export default async function handler(request, response) {
             userName: userName === '' ? undefined : userName
         }, request.session.user);
         if (success) {
+            const employees = await getEmployees();
             response.json({
                 message: 'Employee updated successfully',
-                success: true
+                success: true,
+                employees
             });
         }
         else {

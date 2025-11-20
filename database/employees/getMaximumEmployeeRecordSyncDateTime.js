@@ -6,7 +6,7 @@ export default async function getMaximumEmployeeRecordSyncDateTime() {
       from ShiftLog.Employees
       where recordSync_isSynced = 1`));
     if (result.recordset.length === 0 ||
-        !result.recordset[0].maxRecordSyncDateTime) {
+        result.recordset[0].maxRecordSyncDateTime === null) {
         return undefined;
     }
     return result.recordset[0].maxRecordSyncDateTime;

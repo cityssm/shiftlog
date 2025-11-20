@@ -63,8 +63,11 @@
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
-                    // Refresh the page to show updated data
-                    location.reload();
+                    // Update the employees list with the new data from the server
+                    if (responseJSON.employees !== undefined) {
+                        exports.employees = responseJSON.employees;
+                        renderEmployees(responseJSON.employees);
+                    }
                 }
                 else {
                     bulmaJS.alert({
@@ -77,8 +80,8 @@
         }
         cityssm.openHtmlModal('adminEmployees-edit', {
             onshow(modalElement) {
+                // Set employeeNumber field
                 ;
-                modalElement.querySelector('#span--employeeNumber').textContent = employeeNumber;
                 modalElement.querySelector('#editEmployee--employeeNumber').value = employeeNumber;
                 modalElement.querySelector('#editEmployee--firstName').value = employee.firstName;
                 modalElement.querySelector('#editEmployee--lastName').value = employee.lastName;

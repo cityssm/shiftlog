@@ -7,6 +7,7 @@ export interface EmployeeUpdateFields {
   employeeNumber: string
   firstName: string
   isSupervisor?: boolean
+  recordSync_isSynced?: boolean
   lastName: string
   phoneNumber?: string | null
   phoneNumberAlternate?: string | null
@@ -29,6 +30,7 @@ export default async function updateEmployee(
     .input('lastName', employeeFields.lastName)
     .input('userName', employeeFields.userName ?? undefined)
     .input('isSupervisor', employeeFields.isSupervisor ?? false)
+    .input('recordSync_isSynced', employeeFields.recordSync_isSynced ?? false)
     .input('phoneNumber', employeeFields.phoneNumber ?? undefined)
     .input('phoneNumberAlternate', employeeFields.phoneNumberAlternate ?? undefined)
     .input('emailAddress', employeeFields.emailAddress ?? undefined)
@@ -40,6 +42,7 @@ export default async function updateEmployee(
         lastName = @lastName,
         userName = @userName,
         isSupervisor = @isSupervisor,
+        recordSync_isSynced = @recordSync_isSynced,
         phoneNumber = @phoneNumber,
         phoneNumberAlternate = @phoneNumberAlternate,
         emailAddress = @emailAddress,

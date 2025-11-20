@@ -1,6 +1,6 @@
 import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorConfiguration, FunctionAuthenticatorConfiguration, PlainTextAuthenticatorConfiguration } from '@cityssm/authentication-helper';
 import type { AvantiApiConfiguration, GetEmployeesRequest } from '@cityssm/avanti-api/types.js';
-import type { GetEmployeesFilters } from '@cityssm/worktech-api';
+import type { GetEmployeesFilters, GetEquipmentFilters } from '@cityssm/worktech-api';
 import type { config as MSSQLConfig } from 'mssql';
 export interface Config {
     application: ConfigApplication;
@@ -44,6 +44,7 @@ export interface Config {
     timesheets?: ConfigSection;
     workOrders?: ConfigSection;
     employees?: ConfigEmployees;
+    equipment?: ConfigEquipment;
 }
 export type ConfigEmployees = {
     syncSource: '';
@@ -53,6 +54,12 @@ export type ConfigEmployees = {
 } | {
     syncSource: 'pearl';
     filters?: GetEmployeesFilters;
+};
+export type ConfigEquipment = {
+    syncSource: '';
+} | {
+    syncSource: 'pearl';
+    filters?: GetEquipmentFilters;
 };
 interface ConfigSection {
     isEnabled?: boolean;

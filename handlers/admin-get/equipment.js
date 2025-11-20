@@ -1,8 +1,8 @@
 import getDataListItems from '../../database/app/getDataListItems.js';
-import getEquipment from '../../database/equipment/getEquipment.js';
+import getEquipmentList from '../../database/equipment/getEquipmentList.js';
 import getUserGroups from '../../database/users/getUserGroups.js';
 export default async function handler(request, response) {
-    const equipment = await getEquipment();
+    const equipment = await getEquipmentList();
     const userGroups = await getUserGroups();
     const equipmentTypes = await getDataListItems('equipmentTypes', request.session.user);
     response.render('admin/equipment', {

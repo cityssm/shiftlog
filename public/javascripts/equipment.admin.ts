@@ -1,7 +1,11 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { DataListItem, Equipment, UserGroup } from '../../types/record.types.js'
+import type {
+  DataListItem,
+  Equipment,
+  UserGroup
+} from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -33,10 +37,12 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete Equipment',
+
       message: 'Are you sure you want to delete this equipment?',
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete Equipment',
+
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteEquipment`,
@@ -58,12 +64,14 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Equipment Deleted',
+
                   message: 'Equipment has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Deleting Equipment',
+
                   message: 'Please try again.'
                 })
               }
@@ -117,12 +125,14 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Equipment Updated',
+
               message: 'Equipment has been successfully updated.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Equipment',
+
               message: 'Please try again.'
             })
           }
@@ -139,6 +149,11 @@ declare const exports: {
         ).value = equipment.equipmentNumber
         ;(
           modalElement.querySelector(
+            '[name="recordSync_isSynced"]'
+          ) as HTMLInputElement
+        ).checked = equipment.recordSync_isSynced
+        ;(
+          modalElement.querySelector(
             '[name="equipmentName"]'
           ) as HTMLInputElement
         ).value = equipment.equipmentName
@@ -152,14 +167,16 @@ declare const exports: {
         const equipmentTypeSelect = modalElement.querySelector(
           '[name="equipmentTypeDataListItemId"]'
         ) as HTMLSelectElement
-        equipmentTypeSelect.innerHTML = '<option value="">Select Equipment Type</option>'
+        equipmentTypeSelect.innerHTML =
+          '<option value="">Select Equipment Type</option>'
         for (const equipmentType of exports.equipmentTypes) {
           const option = document.createElement('option')
           option.value = equipmentType.dataListItemId.toString()
           option.textContent = equipmentType.dataListItem
           equipmentTypeSelect.append(option)
         }
-        equipmentTypeSelect.value = equipment.equipmentTypeDataListItemId.toString()
+        equipmentTypeSelect.value =
+          equipment.equipmentTypeDataListItemId.toString()
 
         // Populate user groups dropdown
         const userGroupSelect = modalElement.querySelector(
@@ -306,7 +323,8 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Equipment',
-              message: 'Please check the equipment number is unique and try again.'
+              message:
+                'Please check the equipment number is unique and try again.'
             })
           }
         }
@@ -335,7 +353,8 @@ declare const exports: {
         const equipmentTypeSelect = modalElement.querySelector(
           '[name="equipmentTypeDataListItemId"]'
         ) as HTMLSelectElement
-        equipmentTypeSelect.innerHTML = '<option value="">Select Equipment Type</option>'
+        equipmentTypeSelect.innerHTML =
+          '<option value="">Select Equipment Type</option>'
         for (const equipmentType of exports.equipmentTypes) {
           const option = document.createElement('option')
           option.value = equipmentType.dataListItemId.toString()

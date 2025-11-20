@@ -1,7 +1,7 @@
 import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorConfiguration, FunctionAuthenticatorConfiguration, PlainTextAuthenticatorConfiguration } from '@cityssm/authentication-helper';
 import type { AvantiApiConfiguration } from '@cityssm/avanti-api';
 import type { config as MSSQLConfig } from 'mssql';
-import type { ConfigEmployees } from '../types/config.types.js';
+import type { ConfigEmployees, ConfigEquipment } from '../types/config.types.js';
 export declare const configDefaultValues: {
     'application.applicationName': string;
     'application.applicationUrl': string | undefined;
@@ -51,5 +51,7 @@ export declare const configDefaultValues: {
     'timesheets.iconClass': string;
     employees: ConfigEmployees;
     'employees.syncSource': string;
+    equipment: ConfigEquipment;
+    'equipment.syncSource': string;
 };
 export default configDefaultValues;

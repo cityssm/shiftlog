@@ -116,13 +116,17 @@ declare const exports: {
           const responseJSON = rawResponseJSON as {
             message?: string
             success: boolean
+            employees?: Employee[]
           }
 
           if (responseJSON.success) {
             closeModalFunction()
 
-            // Refresh the page to show updated data
-            location.reload()
+            // Update the employees list with the new data from the server
+            if (responseJSON.employees !== undefined) {
+              exports.employees = responseJSON.employees
+              renderEmployees(responseJSON.employees)
+            }
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -137,11 +141,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminEmployees-edit', {
       onshow(modalElement) {
-        ;(
-          modalElement.querySelector('#span--employeeNumber') as HTMLSpanElement
-        ).textContent = employeeNumber
-
-        // Set hidden employeeNumber field
+        // Set employeeNumber field
         ;(
           modalElement.querySelector(
             '#editEmployee--employeeNumber'

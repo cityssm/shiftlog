@@ -8,8 +8,14 @@ export interface BaseRecord {
   recordUpdate_dateTime?: Date
   recordUpdate_userName?: string
 
-  recordDelete_dateTime?: Date
+  recordDelete_dateTime?: Date | null
   recordDelete_userName?: string | null
+}
+
+export interface SyncRecord extends BaseRecord {
+  recordSync_isSynced: boolean
+  recordSync_source?: string | null
+  recordSync_dateTime?: Date | null
 }
 
 export interface Setting {
@@ -30,17 +36,17 @@ export interface DatabaseUser extends BaseRecord {
 
   isActive: boolean
 
-  shifts_canView: boolean
-  shifts_canUpdate: boolean
   shifts_canManage: boolean
+  shifts_canUpdate: boolean
+  shifts_canView: boolean
 
-  workOrders_canView: boolean
-  workOrders_canUpdate: boolean
   workOrders_canManage: boolean
+  workOrders_canUpdate: boolean
+  workOrders_canView: boolean
 
-  timesheets_canView: boolean
-  timesheets_canUpdate: boolean
   timesheets_canManage: boolean
+  timesheets_canUpdate: boolean
+  timesheets_canView: boolean
 
   isAdmin: boolean
 
@@ -59,18 +65,24 @@ export interface DataListItem extends BaseRecord {
   dataListKey: string
 
   dataListItem: string
+
+  userGroupId?: number | null
+  userGroupName?: string
 }
 
-export interface Equipment extends BaseRecord {
+export interface Equipment extends SyncRecord {
   equipmentNumber: string
   equipmentName: string
   equipmentDescription: string
+
+  equipmentTypeDataListItem?: string
   equipmentTypeDataListItemId: number
+
   userGroupId?: number
   userGroupName?: string
 }
 
-export interface Employee extends BaseRecord {
+export interface Employee extends SyncRecord {
   employeeNumber: string
   firstName: string
   lastName: string
@@ -83,10 +95,6 @@ export interface Employee extends BaseRecord {
   emailAddress?: string | null
 
   userGroupId?: number | null
-
-  recordSync_isSynced: boolean
-  recordSync_source?: string | null
-  recordSync_dateTime?: Date | null
 }
 
 export interface Crew extends BaseRecord {
@@ -109,7 +117,7 @@ export interface Shift extends BaseRecord {
 
   shiftTypeDataListItem?: string
   shiftTypeDataListItemId: number
-  
+
   supervisorEmployeeNumber: string
   supervisorFirstName?: string
   supervisorLastName?: string
@@ -141,7 +149,7 @@ export interface ShiftEmployee {
 
 export interface ShiftEquipment {
   shiftId: number
-  
+
   equipmentNumber: string
   equipmentName?: string
 
@@ -158,7 +166,7 @@ export interface ShiftEquipment {
 
 export interface Timesheet extends BaseRecord {
   timesheetId: number
-  
+
   supervisorEmployeeNumber: string
   supervisorFirstName?: string
   supervisorLastName?: string
@@ -166,12 +174,12 @@ export interface Timesheet extends BaseRecord {
 
   timesheetTypeDataListItemId: number
   timesheetTypeDataListItem?: string
-  
+
   timesheetTitle: string
   timesheetNote: string
 
   timesheetDate: Date | string
-  
+
   shiftId?: number | null
   shiftDescription?: string
 

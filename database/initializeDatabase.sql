@@ -298,6 +298,10 @@ CREATE TABLE ShiftLog.Equipment (
 
   equipmentTypeDataListItemId int not null,
   userGroupId int,
+
+  recordSync_isSynced bit not null default 0,
+  recordSync_source varchar(20),
+  recordSync_dateTime datetime,
   
   recordCreate_userName varchar(30) not null,
   recordCreate_dateTime datetime not null default getdate(),

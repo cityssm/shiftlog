@@ -16,7 +16,7 @@ export default async function getMaximumEmployeeRecordSyncDateTime(): Promise<
 
   if (
     result.recordset.length === 0 ||
-    !result.recordset[0].maxRecordSyncDateTime
+    result.recordset[0].maxRecordSyncDateTime === null
   ) {
     return undefined
   }

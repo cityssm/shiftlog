@@ -59,6 +59,7 @@ async function restoreDeletedEmployee(
       update ShiftLog.Employees
         set firstName = @firstName,
         lastName = @lastName,
+        recordSync_isSynced = 0,
         recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime,
         recordDelete_userName = null,

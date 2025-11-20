@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
 import addEquipment from '../../database/equipment/addEquipment.js'
-import getEquipment from '../../database/equipment/getEquipment.js'
+import getEquipmentList from '../../database/equipment/getEquipmentList.js'
 
 export default async function handler(
   request: Request<
@@ -28,7 +28,7 @@ export default async function handler(
     request.session.user as User
   )
 
-  const equipment = await getEquipment()
+  const equipment = await getEquipmentList()
 
   response.json({
     equipment,

@@ -16,11 +16,37 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editEmployee">
-        <input type="hidden" name="employeeNumber" id="editEmployee--employeeNumber" />
-        <div class="field">
-          <label class="label">Employee Number</label>
-          <div class="control">
-            <span id="span--employeeNumber" class="has-text-weight-bold"></span>
+        <div class="columns is-vcentered">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="editEmployee--employeeNumber">Employee Number</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="editEmployee--employeeNumber"
+                  name="employeeNumber"
+                  type="text"
+                  maxlength="20"
+                  readonly
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="editEmployee--recordSync_isSynced"
+                    name="recordSync_isSynced"
+                    type="checkbox"
+                    value="1"
+                  />
+                  Is Synced with External System
+                </label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="columns">
@@ -82,19 +108,6 @@
                     value="1"
                   />
                   Is Supervisor
-                </label>
-              </div>
-            </div>
-            <div class="field">
-              <div class="control">
-                <label class="checkbox">
-                  <input
-                    id="editEmployee--recordSync_isSynced"
-                    name="recordSync_isSynced"
-                    type="checkbox"
-                    value="1"
-                  />
-                  Is Synced with External System
                 </label>
               </div>
             </div>

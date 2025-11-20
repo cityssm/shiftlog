@@ -1,9 +1,7 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
 
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
-import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface AddDataListItemForm {
   dataListKey: string
@@ -15,7 +13,7 @@ export interface AddDataListItemForm {
 export default async function addDataListItem(
   form: AddDataListItemForm
 ): Promise<boolean> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   try {
     await pool

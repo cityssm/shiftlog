@@ -16,18 +16,37 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editEquipment">
-        <div class="field">
-          <label class="label" for="edit-equipmentNumber">Equipment Number</label>
-          <div class="control">
-            <input
-              class="input"
-              id="edit-equipmentNumber"
-              name="equipmentNumber"
-              type="text"
-              maxlength="20"
-              required
-              readonly
-            />
+        <div class="columns is-vcentered">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="edit-equipmentNumber">Equipment Number</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="edit-equipmentNumber"
+                  name="equipmentNumber"
+                  type="text"
+                  maxlength="20"
+                  readonly
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="edit-recordSync_isSynced"
+                    name="recordSync_isSynced"
+                    type="checkbox"
+                    value="1"
+                  />
+                  Is Synced with External System
+                </label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="field">

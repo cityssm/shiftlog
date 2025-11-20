@@ -3,6 +3,7 @@ export interface EmployeeUpdateFields {
     employeeNumber: string;
     firstName: string;
     isSupervisor?: boolean;
+    recordSync_isSynced?: boolean;
     lastName: string;
     phoneNumber?: string | null;
     phoneNumberAlternate?: string | null;

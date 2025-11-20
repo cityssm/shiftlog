@@ -5,4 +5,5 @@ export default function handler(request: Request<unknown, unknown, {
     equipmentNumber: string;
     equipmentTypeDataListItemId: string;
     userGroupId: string;
+    recordSync_isSynced?: string;
 }>, response: Response): Promise<void>;

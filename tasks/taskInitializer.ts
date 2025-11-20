@@ -19,5 +19,19 @@ export function initializeTasks(): ChildProcess[] {
     childProcesses.push(childProcess)
   }
 
+  /*
+   * Equipment Sync Task
+   */
+
+  if (getConfigProperty('equipment.syncSource') !== '') {
+    const childProcess = fork('./tasks/equipmentSync/task.js', {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: 'inherit'
+    })
+
+    childProcesses.push(childProcess)
+  }
+
   return childProcesses
 }
