@@ -1,27 +1,42 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
+
 import type { mssql } from '@cityssm/mssql-multi-pool'
+import type { DateString, TimeString } from '@cityssm/utils-datetime'
 
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
 
 export interface CreateWorkOrderForm {
-  workOrderTypeDataListItemId: number | string
-  workOrderStatusDataListItemId?: number | string | null
   workOrderDetails: string
+  workOrderStatusDataListItemId?: number | string
+  workOrderTypeDataListItemId: number | string
 
-  workOrderOpenDateTimeString: string
-  workOrderDueDateTimeString?: string
-  workOrderCloseDateTimeString?: string
+  workOrderOpenDateTimeString:
+    | `${DateString} ${TimeString}`
+    | `${DateString}T${TimeString}`
+
+  workOrderDueDateTimeString:
+    | ''
+    | `${DateString} ${TimeString}`
+    | `${DateString}T${TimeString}`
+
+  workOrderCloseDateTimeString:
+    | ''
+    | `${DateString} ${TimeString}`
+    | `${DateString}T${TimeString}`
 
   requestorName: string
   requestorContactInfo: string
 
-  locationLatitude?: number | string | null
-  locationLongitude?: number | string | null
+  locationLatitude?: number | string
+  locationLongitude?: number | string
+
   locationAddress1: string
   locationAddress2: string
   locationCityProvince: string
 
-  assignedToDataListItemId?: number | string | null
-  userGroupId?: number | string | null
+  assignedToDataListItemId?: number | string
 }
 
 export default async function createWorkOrder(
@@ -47,12 +62,39 @@ export default async function createWorkOrder(
     .request()
     .input('workOrderNumberYear', currentYear)
     .input('workOrderNumberSequence', nextSequence)
-    .input('workOrderTypeDataListItemId', createWorkOrderForm.workOrderTypeDataListItemId)
-    .input('workOrderStatusDataListItemId', createWorkOrderForm.workOrderStatusDataListItemId ?? null)
+    .input(
+      'workOrderTypeDataListItemId',
+      createWorkOrderForm.workOrderTypeDataListItemId
+    )
+    .input(
+      'workOrderStatusDataListItemId',
+      createWorkOrderForm.workOrderStatusDataListItemId === ''
+        ? null
+        : createWorkOrderForm.workOrderStatusDataListItemId
+    )
     .input('workOrderDetails', createWorkOrderForm.workOrderDetails)
-    .input('workOrderOpenDateTime', createWorkOrderForm.workOrderOpenDateTimeString)
-    .input('workOrderDueDateTime', createWorkOrderForm.workOrderDueDateTimeString ?? null)
-    .input('workOrderCloseDateTime', createWorkOrderForm.workOrderCloseDateTimeString ?? null)
+    .input(
+      'workOrderOpenDateTime',
+      dateTimeInputToSqlDateTime(
+        createWorkOrderForm.workOrderOpenDateTimeString
+      )
+    )
+    .input(
+      'workOrderDueDateTime',
+      createWorkOrderForm.workOrderDueDateTimeString === ''
+        ? null
+        : dateTimeInputToSqlDateTime(
+            createWorkOrderForm.workOrderDueDateTimeString
+          )
+    )
+    .input(
+      'workOrderCloseDateTime',
+      createWorkOrderForm.workOrderCloseDateTimeString
+        ? dateTimeInputToSqlDateTime(
+            createWorkOrderForm.workOrderCloseDateTimeString
+          )
+        : null
+    )
     .input('requestorName', createWorkOrderForm.requestorName)
     .input('requestorContactInfo', createWorkOrderForm.requestorContactInfo)
     .input('locationLatitude', createWorkOrderForm.locationLatitude ?? null)
@@ -60,8 +102,10 @@ export default async function createWorkOrder(
     .input('locationAddress1', createWorkOrderForm.locationAddress1)
     .input('locationAddress2', createWorkOrderForm.locationAddress2)
     .input('locationCityProvince', createWorkOrderForm.locationCityProvince)
-    .input('assignedToDataListItemId', createWorkOrderForm.assignedToDataListItemId ?? null)
-    .input('userGroupId', createWorkOrderForm.userGroupId ?? null)
+    .input(
+      'assignedToDataListItemId',
+      createWorkOrderForm.assignedToDataListItemId ?? null
+    )
     .input('userName', userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
         workOrderNumberYear,
@@ -80,7 +124,6 @@ export default async function createWorkOrder(
         locationAddress2,
         locationCityProvince,
         assignedToDataListItemId,
-        userGroupId,
         recordCreate_userName,
         recordUpdate_userName
       )
@@ -102,7 +145,6 @@ export default async function createWorkOrder(
         @locationAddress2,
         @locationCityProvince,
         @assignedToDataListItemId,
-        @userGroupId,
         @userName,
         @userName
       )

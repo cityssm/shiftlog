@@ -17,11 +17,11 @@ export default async function handler(
 
   const workOrder = {
     workOrderOpenDateTime: new Date(),
-    workOrderTypeDataListItemId: -1,
-    workOrderStatusDataListItemId: -1,
     workOrderDetails: '',
-    requestorName: '',
+
+    requestorName: request.session.user?.firstName + ' ' + request.session.user?.lastName,
     requestorContactInfo: '',
+
     locationAddress1: '',
     locationAddress2: '',
     locationCityProvince: ''

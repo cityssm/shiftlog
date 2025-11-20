@@ -1,28 +1,43 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
+
 import type { mssql } from '@cityssm/mssql-multi-pool'
+import type { DateString, TimeString } from '@cityssm/utils-datetime'
 
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
 
 export interface UpdateWorkOrderForm {
   workOrderId: number | string
-  workOrderTypeDataListItemId: number | string
-  workOrderStatusDataListItemId?: number | string | null
-  workOrderDetails: string
 
-  workOrderOpenDateTimeString: string
-  workOrderDueDateTimeString?: string
-  workOrderCloseDateTimeString?: string
+  workOrderDetails: string
+  workOrderStatusDataListItemId?: number | string
+  workOrderTypeDataListItemId: number | string
+
+  workOrderOpenDateTimeString:
+    | `${DateString} ${TimeString}`
+    | `${DateString}T${TimeString}`
+
+  workOrderDueDateTimeString:
+    | ''
+    | `${DateString} ${TimeString}`
+    | `${DateString}T${TimeString}`
+
+  workOrderCloseDateTimeString:
+    | ''
+    | `${DateString} ${TimeString}`
+    | `${DateString}T${TimeString}`
 
   requestorName: string
   requestorContactInfo: string
 
-  locationLatitude?: number | string | null
-  locationLongitude?: number | string | null
+  locationLatitude?: number | string
+  locationLongitude?: number | string
   locationAddress1: string
   locationAddress2: string
   locationCityProvince: string
 
-  assignedToDataListItemId?: number | string | null
-  userGroupId?: number | string | null
+  assignedToDataListItemId?: number | string
 }
 
 export default async function updateWorkOrder(
@@ -34,12 +49,39 @@ export default async function updateWorkOrder(
   const result = (await pool
     .request()
     .input('workOrderId', updateWorkOrderForm.workOrderId)
-    .input('workOrderTypeDataListItemId', updateWorkOrderForm.workOrderTypeDataListItemId)
-    .input('workOrderStatusDataListItemId', updateWorkOrderForm.workOrderStatusDataListItemId ?? null)
+    .input(
+      'workOrderTypeDataListItemId',
+      updateWorkOrderForm.workOrderTypeDataListItemId
+    )
+    .input(
+      'workOrderStatusDataListItemId',
+      updateWorkOrderForm.workOrderStatusDataListItemId === ''
+        ? null
+        : updateWorkOrderForm.workOrderStatusDataListItemId
+    )
     .input('workOrderDetails', updateWorkOrderForm.workOrderDetails)
-    .input('workOrderOpenDateTime', updateWorkOrderForm.workOrderOpenDateTimeString)
-    .input('workOrderDueDateTime', updateWorkOrderForm.workOrderDueDateTimeString ?? null)
-    .input('workOrderCloseDateTime', updateWorkOrderForm.workOrderCloseDateTimeString ?? null)
+    .input(
+      'workOrderOpenDateTime',
+      dateTimeInputToSqlDateTime(
+        updateWorkOrderForm.workOrderOpenDateTimeString
+      )
+    )
+    .input(
+      'workOrderDueDateTime',
+      updateWorkOrderForm.workOrderDueDateTimeString === ''
+        ? null
+        : dateTimeInputToSqlDateTime(
+            updateWorkOrderForm.workOrderDueDateTimeString
+          )
+    )
+    .input(
+      'workOrderCloseDateTime',
+      updateWorkOrderForm.workOrderCloseDateTimeString === ''
+        ? null
+        : dateTimeInputToSqlDateTime(
+            updateWorkOrderForm.workOrderCloseDateTimeString
+          )
+    )
     .input('requestorName', updateWorkOrderForm.requestorName)
     .input('requestorContactInfo', updateWorkOrderForm.requestorContactInfo)
     .input('locationLatitude', updateWorkOrderForm.locationLatitude ?? null)
@@ -47,8 +89,10 @@ export default async function updateWorkOrder(
     .input('locationAddress1', updateWorkOrderForm.locationAddress1)
     .input('locationAddress2', updateWorkOrderForm.locationAddress2)
     .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
-    .input('assignedToDataListItemId', updateWorkOrderForm.assignedToDataListItemId ?? null)
-    .input('userGroupId', updateWorkOrderForm.userGroupId ?? null)
+    .input(
+      'assignedToDataListItemId',
+      updateWorkOrderForm.assignedToDataListItemId ?? null
+    )
     .input('userName', userName).query(/* sql */ `
       update ShiftLog.WorkOrders
       set
@@ -66,7 +110,6 @@ export default async function updateWorkOrder(
         locationAddress2 = @locationAddress2,
         locationCityProvince = @locationCityProvince,
         assignedToDataListItemId = @assignedToDataListItemId,
-        userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       where workOrderId = @workOrderId

@@ -1,15 +1,24 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
 export default async function updateWorkOrder(updateWorkOrderForm, userName) {
     const pool = await getShiftLogConnectionPool();
     const result = (await pool
         .request()
         .input('workOrderId', updateWorkOrderForm.workOrderId)
         .input('workOrderTypeDataListItemId', updateWorkOrderForm.workOrderTypeDataListItemId)
-        .input('workOrderStatusDataListItemId', updateWorkOrderForm.workOrderStatusDataListItemId ?? null)
+        .input('workOrderStatusDataListItemId', updateWorkOrderForm.workOrderStatusDataListItemId === ''
+        ? null
+        : updateWorkOrderForm.workOrderStatusDataListItemId)
         .input('workOrderDetails', updateWorkOrderForm.workOrderDetails)
-        .input('workOrderOpenDateTime', updateWorkOrderForm.workOrderOpenDateTimeString)
-        .input('workOrderDueDateTime', updateWorkOrderForm.workOrderDueDateTimeString ?? null)
-        .input('workOrderCloseDateTime', updateWorkOrderForm.workOrderCloseDateTimeString ?? null)
+        .input('workOrderOpenDateTime', dateTimeInputToSqlDateTime(updateWorkOrderForm.workOrderOpenDateTimeString))
+        .input('workOrderDueDateTime', updateWorkOrderForm.workOrderDueDateTimeString === ''
+        ? null
+        : dateTimeInputToSqlDateTime(updateWorkOrderForm.workOrderDueDateTimeString))
+        .input('workOrderCloseDateTime', updateWorkOrderForm.workOrderCloseDateTimeString === ''
+        ? null
+        : dateTimeInputToSqlDateTime(updateWorkOrderForm.workOrderCloseDateTimeString))
         .input('requestorName', updateWorkOrderForm.requestorName)
         .input('requestorContactInfo', updateWorkOrderForm.requestorContactInfo)
         .input('locationLatitude', updateWorkOrderForm.locationLatitude ?? null)
@@ -18,7 +27,6 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .input('locationAddress2', updateWorkOrderForm.locationAddress2)
         .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
         .input('assignedToDataListItemId', updateWorkOrderForm.assignedToDataListItemId ?? null)
-        .input('userGroupId', updateWorkOrderForm.userGroupId ?? null)
         .input('userName', userName).query(/* sql */ `
       update ShiftLog.WorkOrders
       set
@@ -36,7 +44,6 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         locationAddress2 = @locationAddress2,
         locationCityProvince = @locationCityProvince,
         assignedToDataListItemId = @assignedToDataListItemId,
-        userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       where workOrderId = @workOrderId

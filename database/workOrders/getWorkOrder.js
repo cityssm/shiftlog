@@ -30,10 +30,7 @@ export default async function getWorkOrder(workOrderId, user) {
       w.locationCityProvince,
 
       w.assignedToDataListItemId,
-      assignedTo.dataListItem as assignedToDataListItem,
-
-      w.userGroupId,
-      ug.userGroupName
+      assignedTo.dataListItem as assignedToDataListItem
 
     from ShiftLog.WorkOrders w
 
@@ -45,9 +42,6 @@ export default async function getWorkOrder(workOrderId, user) {
 
     left join ShiftLog.DataListItems assignedTo
       on w.assignedToDataListItemId = assignedTo.dataListItemId
-
-    left join ShiftLog.UserGroups ug
-      on w.userGroupId = ug.userGroupId
 
     where w.recordDelete_dateTime is null
       and w.workOrderId = @workOrderId

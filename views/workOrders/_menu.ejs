@@ -5,18 +5,31 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
   <p class="menu-label"><%= configFunctions.getConfigProperty('workOrders.sectionName') %></p>
   <ul class="menu-list">
     <li>
-      <a href="<%= urlPrefix %>/<%= workOrdersRouter %>">
-        <span class="icon is-small"><i class="fa-solid fa-magnifying-glass"></i></span>
-        <span>Search</span>
+      <a
+        href="<%= urlPrefix %>/<%= workOrdersRouter %>"
+        title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search
+          </div>
+        </div>
       </a>
+      <% if (user.userProperties.workOrders.canUpdate) { %>
+      <ul>
+        <li>
+          <a href="<%= urlPrefix %>/<%= workOrdersRouter %>/new">
+            <span class="is-hidden-touch">Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
+            <span class="icon is-hidden-desktop"><i class="fa-solid fa-plus"></i></span>
+          </a>
+        </li>
+      </ul>
+      <% } %>
     </li>
-    <% if (user.userProperties.workOrders.canUpdate) { %>
-    <li>
-      <a href="<%= urlPrefix %>/<%= workOrdersRouter %>/new">
-        <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
-        <span>Create New</span>
-      </a>
-    </li>
-    <% } %>
   </ul>
 </aside>

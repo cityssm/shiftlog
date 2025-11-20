@@ -1,4 +1,7 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
 export default async function createWorkOrder(createWorkOrderForm, userName) {
     const pool = await getShiftLogConnectionPool();
     const openDateTime = new Date(createWorkOrderForm.workOrderOpenDateTimeString);
@@ -16,11 +19,17 @@ export default async function createWorkOrder(createWorkOrderForm, userName) {
         .input('workOrderNumberYear', currentYear)
         .input('workOrderNumberSequence', nextSequence)
         .input('workOrderTypeDataListItemId', createWorkOrderForm.workOrderTypeDataListItemId)
-        .input('workOrderStatusDataListItemId', createWorkOrderForm.workOrderStatusDataListItemId ?? null)
+        .input('workOrderStatusDataListItemId', createWorkOrderForm.workOrderStatusDataListItemId === ''
+        ? null
+        : createWorkOrderForm.workOrderStatusDataListItemId)
         .input('workOrderDetails', createWorkOrderForm.workOrderDetails)
-        .input('workOrderOpenDateTime', createWorkOrderForm.workOrderOpenDateTimeString)
-        .input('workOrderDueDateTime', createWorkOrderForm.workOrderDueDateTimeString ?? null)
-        .input('workOrderCloseDateTime', createWorkOrderForm.workOrderCloseDateTimeString ?? null)
+        .input('workOrderOpenDateTime', dateTimeInputToSqlDateTime(createWorkOrderForm.workOrderOpenDateTimeString))
+        .input('workOrderDueDateTime', createWorkOrderForm.workOrderDueDateTimeString === ''
+        ? null
+        : dateTimeInputToSqlDateTime(createWorkOrderForm.workOrderDueDateTimeString))
+        .input('workOrderCloseDateTime', createWorkOrderForm.workOrderCloseDateTimeString
+        ? dateTimeInputToSqlDateTime(createWorkOrderForm.workOrderCloseDateTimeString)
+        : null)
         .input('requestorName', createWorkOrderForm.requestorName)
         .input('requestorContactInfo', createWorkOrderForm.requestorContactInfo)
         .input('locationLatitude', createWorkOrderForm.locationLatitude ?? null)
@@ -29,7 +38,6 @@ export default async function createWorkOrder(createWorkOrderForm, userName) {
         .input('locationAddress2', createWorkOrderForm.locationAddress2)
         .input('locationCityProvince', createWorkOrderForm.locationCityProvince)
         .input('assignedToDataListItemId', createWorkOrderForm.assignedToDataListItemId ?? null)
-        .input('userGroupId', createWorkOrderForm.userGroupId ?? null)
         .input('userName', userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
         workOrderNumberYear,
@@ -48,7 +56,6 @@ export default async function createWorkOrder(createWorkOrderForm, userName) {
         locationAddress2,
         locationCityProvince,
         assignedToDataListItemId,
-        userGroupId,
         recordCreate_userName,
         recordUpdate_userName
       )
@@ -70,7 +77,6 @@ export default async function createWorkOrder(createWorkOrderForm, userName) {
         @locationAddress2,
         @locationCityProvince,
         @assignedToDataListItemId,
-        @userGroupId,
         @userName,
         @userName
       )

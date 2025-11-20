@@ -72,7 +72,7 @@
                     <%= workOrderType.dataListItem %>
                   </option>
                   <% } %>
-                  <% if (!workOrderTypeFound && workOrder.workOrderTypeDataListItemId !== -1) { %>
+                  <% if (!isCreate && !workOrderTypeFound && workOrder.workOrderTypeDataListItemId !== -1) { %>
                   <option value="<%= workOrder.workOrderTypeDataListItemId %>" selected>
                     <%= workOrder.workOrderTypeDataListItem %>
                     <%= isEdit ? "(Inactive)" : "" %>

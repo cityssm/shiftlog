@@ -256,7 +256,8 @@ details.collapsable-panel[open] .details-chevron {
   }
 }
 
-.input:read-only {
+.input:read-only,
+.textarea:read-only {
   background-color: var(--bulma-input-disabled-background-color);
 }
 
