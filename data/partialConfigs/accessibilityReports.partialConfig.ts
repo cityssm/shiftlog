@@ -18,7 +18,9 @@ config.workOrders = {
   sectionName: 'Accessibility Reports',
   sectionNameSingular: 'Accessibility Report',
 
-  iconClass: 'fa-wheelchair'
+  iconClass: 'fa-wheelchair',
+
+  workOrderNumberPrefix: 'ACC-'
 }
 
 config.timesheets = {

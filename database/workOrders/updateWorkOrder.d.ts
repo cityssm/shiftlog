@@ -7,8 +7,8 @@ export interface UpdateWorkOrderForm {
     workOrderOpenDateTimeString: `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderDueDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderCloseDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
-    requestorName: string;
     requestorContactInfo: string;
+    requestorName: string;
     locationLatitude?: number | string;
     locationLongitude?: number | string;
     locationAddress1: string;

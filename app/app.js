@@ -89,6 +89,7 @@ if (!configFunctions.getConfigProperty('reverseProxy.disableRateLimit')) {
 app
     .use(urlPrefix, express.static('public'))
     .use(`${urlPrefix}/lib/bulma`, express.static('node_modules/bulma/css'))
+    .use(`${urlPrefix}/lib/flatpickr`, express.static('node_modules/flatpickr/dist'))
     .use(`${urlPrefix}/lib/cityssm-bulma-js/bulma-js.js`, express.static('node_modules/@cityssm/bulma-js/dist/bulma-js.js'))
     .use(`${urlPrefix}/lib/cityssm-fa-glow`, express.static('node_modules/@cityssm/fa-glow'))
     .use(`${urlPrefix}/lib/cityssm-bulma-sticky-table`, express.static('node_modules/@cityssm/bulma-sticky-table'))

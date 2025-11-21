@@ -16,7 +16,9 @@ config.shifts = {
 }
 
 config.workOrders = {
-  isEnabled: false
+  isEnabled: false,
+
+  workOrderNumberPrefix: 'PW-'
 }
 
 config.timesheets = {

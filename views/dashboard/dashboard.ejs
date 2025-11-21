@@ -139,6 +139,75 @@
 </div>
 <% } %>
 
+<div class="columns">
+  <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+  <div class="column">
+    <div class="panel">
+      <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
+        <div class="media">
+          <div class="media-left">
+            <span class="fa-layers fa-4x">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+              <i class="fa-solid fa-magnifying-glass" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
+            </span>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search
+            </h2>
+            <p>
+              Search by number, type, location, status, and more.
+            </p>
+          </div>
+        </div>
+      </a>
+      <% if (user.userProperties.workOrders.canUpdate) { %>
+      <div class="panel-block">
+        <a class="button is-success is-fullwidth" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/new">
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
+        </a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+  <div class="column">
+    <div class="panel">
+      <a class="panel-block" href="<%= urlPrefix %>/dashboard/reports">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-file-lines"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Reports
+            </h2>
+            <p>
+              Generate and view various reports.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/dashboard/userSettings">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-user-gear"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              User Settings
+            </h2>
+            <p>
+              Update your personal settings and preferences.
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
 <% if (user.userProperties.isAdmin) { %>
 <h2 class="title is-3">
   Administrator Tools

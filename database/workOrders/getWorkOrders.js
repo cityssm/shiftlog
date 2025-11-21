@@ -1,5 +1,5 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable unicorn/no-null */
+/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 function buildWhereClause(filters, user) {
     let whereClause = 'where w.recordDelete_dateTime is null';

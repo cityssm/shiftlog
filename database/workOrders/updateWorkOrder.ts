@@ -28,12 +28,12 @@ export interface UpdateWorkOrderForm {
     | `${DateString} ${TimeString}`
     | `${DateString}T${TimeString}`
 
-  requestorName: string
   requestorContactInfo: string
+  requestorName: string
 
   locationLatitude?: number | string
   locationLongitude?: number | string
-  
+
   locationAddress1: string
   locationAddress2: string
   locationCityProvince: string

@@ -31,19 +31,60 @@ declare const exports: {
   }
 
   /*
+   * Record Menu Tabs
+   */
+
+  function initializeRecordTabs(tabsContainerElement: HTMLElement): void {
+    const menuTabElements: NodeListOf<HTMLAnchorElement> =
+      tabsContainerElement.querySelectorAll('.menu a')
+
+    const tabContainerElements: NodeListOf<HTMLElement> =
+      tabsContainerElement.querySelectorAll('.tabs-container > div')
+
+    function doSelectTab(clickEvent: Event): void {
+      clickEvent.preventDefault()
+
+      // Remove .is-active from all tabs
+      for (const menuTabElement of menuTabElements) {
+        menuTabElement.classList.remove('is-active')
+      }
+
+      // Set .is-active on clicked tab
+      const selectedTabElement = clickEvent.currentTarget as HTMLAnchorElement
+      selectedTabElement.classList.add('is-active')
+
+      // Hide all but selected tab
+      const selectedTabContainerId = selectedTabElement.href.slice(
+        Math.max(0, selectedTabElement.href.indexOf('#') + 1)
+      )
+
+      for (const tabContainerElement of tabContainerElements) {
+        tabContainerElement.classList.toggle(
+          'is-hidden',
+          tabContainerElement.id !== selectedTabContainerId
+        )
+      }
+    }
+
+    for (const menuTabElement of menuTabElements) {
+      menuTabElement.addEventListener('click', doSelectTab)
+    }
+  }
+
+  /*
    * URL builders
    */
 
-  function buildShiftURL(shiftId: number): string {
-    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId.toString()}`
-  } 
-  
-  function buildWorkOrderURL(workOrderId: number): string {
-    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId.toString()}`
+  function buildShiftURL(shiftId: number, edit = false): string {
+    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId.toString()}${edit ? '/edit' : ''}`
   }
-  
-  function buildTimesheetURL(timesheetId: number): string {
-    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/${timesheetId.toString()}`
+
+  function buildWorkOrderURL(workOrderId: number, edit = false): string {
+    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId.toString()}${edit ? '/edit' : ''}`
+  }
+
+  function buildTimesheetURL(timesheetId: number, edit = false): string {
+    return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/${timesheetId.toString()}${edit ? '/edit' : ''}`
   }
 
   /*
@@ -58,7 +99,9 @@ declare const exports: {
     setUnsavedChanges,
 
     buildShiftURL,
+    buildTimesheetURL,
     buildWorkOrderURL,
-    buildTimesheetURL
+
+    initializeRecordTabs
   }
 })()

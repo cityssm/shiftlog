@@ -1,9 +1,10 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable unicorn/no-null */
+/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
 
 import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString, TimeString } from '@cityssm/utils-datetime'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
 
@@ -49,17 +50,27 @@ export default async function createWorkOrder(
   const currentYear = openDateTime.getFullYear()
 
   // Get the next sequence number for the current year
-  const sequenceResult = (await pool.request().input('year', currentYear)
-    .query(/* sql */ `
+  const sequenceResult = (await pool
+    .request()
+    .input('year', currentYear)
+    .input(
+      'workOrderNumberPrefix',
+      getConfigProperty('workOrders.workOrderNumberPrefix')
+    ).query(/* sql */ `
       select isnull(max(workOrderNumberSequence), 0) + 1 as nextSequence
       from ShiftLog.WorkOrders
       where workOrderNumberYear = @year
+        and workOrderNumberPrefix = @workOrderNumberPrefix
     `)) as mssql.IResult<{ nextSequence: number }>
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
 
   const result = (await pool
     .request()
+    .input(
+      'workOrderNumberPrefix',
+      getConfigProperty('workOrders.workOrderNumberPrefix')
+    )
     .input('workOrderNumberYear', currentYear)
     .input('workOrderNumberSequence', nextSequence)
     .input(
@@ -108,6 +119,7 @@ export default async function createWorkOrder(
     )
     .input('userName', userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
+        workOrderNumberPrefix,
         workOrderNumberYear,
         workOrderNumberSequence,
         workOrderTypeDataListItemId,
@@ -129,6 +141,7 @@ export default async function createWorkOrder(
       )
       output inserted.workOrderId
       values (
+        @workOrderNumberPrefix,
         @workOrderNumberYear,
         @workOrderNumberSequence,
         @workOrderTypeDataListItemId,

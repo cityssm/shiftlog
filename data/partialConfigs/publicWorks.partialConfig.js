@@ -9,7 +9,8 @@ config.shifts = {
     sectionNameSingular: 'SHift'
 };
 config.workOrders = {
-    isEnabled: false
+    isEnabled: false,
+    workOrderNumberPrefix: 'PW-'
 };
 config.timesheets = {
     isEnabled: true,

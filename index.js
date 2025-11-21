@@ -47,9 +47,13 @@ function initializeCluster() {
         debug(`Worker ${(worker.process.pid ?? 0).toString()} has been killed`);
         activeWorkers.delete(worker.process.pid ?? 0);
         if (!doShutdown) {
-            debug('Starting another worker');
-            const newWorker = cluster.fork();
-            activeWorkers.set(newWorker.process.pid ?? 0, newWorker);
+            // eslint-disable-next-line sonarjs/pseudo-random
+            const delaySeconds = 5 + 15 * Math.random();
+            debug(`Worker will be restarted in ${delaySeconds.toFixed(0)} seconds...`);
+            globalThis.setTimeout(() => {
+                const newWorker = cluster.fork();
+                activeWorkers.set(newWorker.process.pid ?? 0, newWorker);
+            }, secondsToMillis(delaySeconds));
         }
     });
 }

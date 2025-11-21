@@ -69,7 +69,10 @@ export interface Config {
 
   shifts?: ConfigSection
   timesheets?: ConfigSection
-  workOrders?: ConfigSection
+
+  workOrders?: ConfigSection & {
+    workOrderNumberPrefix?: string
+  }
 
   employees?: ConfigEmployees
   equipment?: ConfigEquipment

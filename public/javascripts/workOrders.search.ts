@@ -42,7 +42,7 @@ declare const exports: {
         ? `<a class="pagination-previous" href="#" data-page-number="${
             currentPage - 1
           }">Previous</a>`
-        : `<a class="pagination-previous" disabled>Previous</a>`
+        : '<a class="pagination-previous" disabled>Previous</a>'
 
     // Next button
     paginationHTML +=
@@ -50,7 +50,7 @@ declare const exports: {
         ? `<a class="pagination-next" href="#" data-page-number="${
             currentPage + 1
           }">Next</a>`
-        : `<a class="pagination-next" disabled>Next</a>`
+        : '<a class="pagination-next" disabled>Next</a>'
 
     // Page numbers
     paginationHTML += `<ul class="pagination-list">`
@@ -105,8 +105,12 @@ declare const exports: {
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
+          <th class="has-width-1">
+            <span class="is-sr-only">Open / Closed</span>
+          </th>
           <th>Number</th>
-          <th>Type</th>
+          <th>Type / Details</th>
+          <th>Location</th>
           <th>Status</th>
           <th>Open Date</th>
           <th>Requestor</th>
@@ -122,15 +126,50 @@ declare const exports: {
     for (const workOrder of data.workOrders) {
       const tableRowElement = document.createElement('tr')
 
+      let openClosedIconHTML =
+        '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>'
+
+      if (workOrder.workOrderCloseDateTime !== null) {
+        openClosedIconHTML =
+          '<span class="icon has-text-grey" title="Closed"><i class="fa-solid fa-stop"></i></span>'
+      } else if (workOrder.workOrderDueDateTime !== null) {
+        const dueDateTime = new Date(workOrder.workOrderDueDateTime as string)
+        const now = new Date()
+        if (dueDateTime < now) {
+          openClosedIconHTML =
+            '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>'
+        }
+      }
+
+      // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
+        <td>${openClosedIconHTML}</td>
         <td>
           <a href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a>
         </td>
-        <td>${cityssm.escapeHTML(workOrder.workOrderTypeDataListItem ?? '(Unknown Type)')}</td>
+        <td>
+          ${cityssm.escapeHTML(workOrder.workOrderTypeDataListItem ?? '(Unknown Type)')}<br />
+          <span class="is-size-7 has-text-grey">
+            ${cityssm.escapeHTML(
+              workOrder.workOrderDetails.length > 75
+                ? workOrder.workOrderDetails.slice(0, 75) + '…'
+                : workOrder.workOrderDetails
+            )}
+          </span>
+        </td>
+        <td>
+          ${cityssm.escapeHTML(workOrder.locationAddress1 === '' ? '(No Location)' : workOrder.locationAddress1)}<br />
+          <span class="is-size-7 has-text-grey">${cityssm.escapeHTML(workOrder.locationAddress2)}</span>
+        </td>
         <td>${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}</td>
-        <td>${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}</td>
+        <td>
+          ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}<br />
+          <span class="is-size-7 has-text-grey">
+            ${workOrder.workOrderDueDateTime === null ? '' : 'Due ' + cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}
+          </span>
+        </td>
         <td>${cityssm.escapeHTML(workOrder.requestorName === '' ? '(N/A)' : workOrder.requestorName)}</td>
       `
 

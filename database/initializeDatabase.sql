@@ -234,9 +234,10 @@ GO
 create table ShiftLog.WorkOrders (
   workOrderId int not null primary key identity(1,1),
   
+  workOrderNumberPrefix varchar(10) not null default '',
   workOrderNumberYear smallint not null,
   workOrderNumberSequence int not null,
-  workOrderNumber as (cast(workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(workOrderNumberSequence as varchar(6)),6)) persisted,
+  workOrderNumber as (workOrderNumberPrefix + cast(workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(workOrderNumberSequence as varchar(6)),6)) persisted,
 
   workOrderTypeDataListItemId int not null,
   workOrderStatusDataListItemId int,
@@ -265,7 +266,7 @@ create table ShiftLog.WorkOrders (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
-  unique (workOrderNumberYear, workOrderNumberSequence),
+  unique (workOrderNumberPrefix, workOrderNumberYear, workOrderNumberSequence),
   foreign key (workOrderTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
@@ -317,6 +318,24 @@ values (
   1,
   'initializeDatabase.sql',
   'initializeDatabase.sql'
+)
+GO
+
+create table ShiftLog.WorkOrderNotes (
+  workOrderId int not null,
+  noteSequence int not null,
+
+  noteText varchar(max) not null,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  primary key (workOrderId, noteSequence),
+  foreign key (workOrderId) references ShiftLog.WorkOrders(workOrderId)
 )
 GO
 

@@ -19,6 +19,10 @@ export default async function handler(
     response.redirect(`${redirectRoot}/?error=notFound`)
     return
   }
+  else if (workOrder.workOrderCloseDateTime !== null) {
+    response.redirect(`${redirectRoot}/${workOrder.workOrderId}?error=recordClosed`)
+    return
+  }
 
   const workOrderTypes = await getWorkOrderTypeDataListItems(request.session.user)
 

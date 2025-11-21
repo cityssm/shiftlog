@@ -48,7 +48,6 @@ function initializeCluster(): void {
 
   cluster.setupPrimary(clusterSettings)
 
-
   for (let index = 0; index < processCount; index += 1) {
     const worker = cluster.fork()
     activeWorkers.set(worker.process.pid ?? 0, worker)
@@ -71,14 +70,18 @@ function initializeCluster(): void {
     activeWorkers.delete(worker.process.pid ?? 0)
 
     if (!doShutdown) {
-      debug('Starting another worker')
-      const newWorker = cluster.fork()
+      // eslint-disable-next-line sonarjs/pseudo-random
+      const delaySeconds = 5 + 15 * Math.random()
 
-      activeWorkers.set(newWorker.process.pid ?? 0, newWorker)
+      debug(`Worker will be restarted in ${delaySeconds.toFixed(0)} seconds...`)
+
+      globalThis.setTimeout(() => {
+        const newWorker = cluster.fork()
+
+        activeWorkers.set(newWorker.process.pid ?? 0, newWorker)
+      }, secondsToMillis(delaySeconds))
     }
   })
-
-  
 }
 
 function startApplication(): void {

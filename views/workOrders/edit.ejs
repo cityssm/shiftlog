@@ -9,30 +9,53 @@
         <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
       </a>
     </li>
-    <li class="is-active">
-      <a href="#" aria-current="page">
-        <span>
-          <% if (isCreate) { %>
-          Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
-          <% } else { %>
-          <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #<%= workOrder.workOrderNumber %>
-          <% } %>
-        </span>
-      </a>
-    </li>
+    <% if (isCreate) { %>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          <span>
+            Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+          </span>
+        </a>
+      </li>
+    <% } else if (isEdit) { %>
+      <li>
+        <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
+          <span>
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #<%= workOrder.workOrderNumber %>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="#" aria-current="page">
+          <span>Edit <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
+        </a>
+      </li>
+    <% } else { %>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          <span>
+            <% if (isCreate) { %>
+              Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+            <% } else { %>
+              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #<%= workOrder.workOrderNumber %>
+            <% } %>
+          </span>
+        </a>
+      </li>
+    <% } %>
   </ul>
 </nav>
-
+    
 <h1 class="title is-1">
   <% if (isCreate) { %>
-  Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+    Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
   <% } else { %>
-  <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #<%= workOrder.workOrderNumber %>
+    <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #<%= workOrder.workOrderNumber %>
   <% } %>
 </h1>
 
 <% if (isEdit) { %>
-  <% if (workOrderTypes.length === 0) { %>
+<% if (workOrderTypes.length === 0) { %>
   <div class="message is-danger">
     <p class="message-body">
       <strong>No work order types available.</strong><br />
@@ -40,231 +63,238 @@
       <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular').toLowerCase() %>s.
     </p>
   </div>
-  <% } %>
+<% } %>
 <% } %>
 
 <form id="form--workOrder">
-  <div class="panel">
-    <div class="panel-block is-block">
-      <input type="hidden" id="workOrder--workOrderId" name="workOrderId" value="<%= workOrder.workOrderId ?? '' %>" />
-    
-      <div class="columns">
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--workOrderTypeDataListItemId">
-              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
-            </label>
-            <div class="control">
-              <div class="select is-fullwidth">
-                <select id="workOrder--workOrderTypeDataListItemId" name="workOrderTypeDataListItemId" required <% if (!isEdit) { %>disabled<% } %>>
-                  <% if (isCreate) { %>
-                  <option value="">(Select Type)</option>
-                  <% } %>
-                  <% let workOrderTypeFound = false %>
-                  <% for (const workOrderType of workOrderTypes) { %>
-                  <option
-                    value="<%= workOrderType.dataListItemId %>"
-                    <% if (workOrder.workOrderTypeDataListItemId === workOrderType.dataListItemId) { %>
-                    <% workOrderTypeFound = true; %>
-                    selected
+  <input type="hidden" id="workOrder--workOrderId" name="workOrderId" value="<%= workOrder.workOrderId ?? '' %>" />
+  
+  <div class="columns">
+    <div class="column">
+      <div class="box">
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrder--workOrderTypeDataListItemId">
+                <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
+              </label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="workOrder--workOrderTypeDataListItemId" name="workOrderTypeDataListItemId" required <% if (!isEdit) { %>disabled<% } %>>
+                    <% if (isCreate) { %>
+                      <option value="">(Select Type)</option>
+                      <% } %>
+                      <% let workOrderTypeFound = false %>
+                      <% for (const workOrderType of workOrderTypes) { %>
+                        <option
+                        value="<%= workOrderType.dataListItemId %>"
+                        <% if (workOrder.workOrderTypeDataListItemId === workOrderType.dataListItemId) { %>
+                          <% workOrderTypeFound = true; %>
+                          selected
+                          <% } %>
+                          >
+                          <%= workOrderType.dataListItem %>
+                    </option>
                     <% } %>
-                  >
-                    <%= workOrderType.dataListItem %>
-                  </option>
-                  <% } %>
-                  <% if (!isCreate && !workOrderTypeFound && workOrder.workOrderTypeDataListItemId !== -1) { %>
-                  <option value="<%= workOrder.workOrderTypeDataListItemId %>" selected>
-                    <%= workOrder.workOrderTypeDataListItem %>
-                    <%= isEdit ? "(Inactive)" : "" %>
-                  </option>
-                  <% } %>
-                </select>
+                    <% if (!isCreate && !workOrderTypeFound && workOrder.workOrderTypeDataListItemId !== -1) { %>
+                      <option value="<%= workOrder.workOrderTypeDataListItemId %>" selected>
+                        <%= workOrder.workOrderTypeDataListItem %>
+                        <%= isEdit ? "(Inactive)" : "" %>
+                      </option>
+                    <% } %>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--workOrderStatusDataListItemId">Status</label>
-            <div class="control">
-              <div class="select is-fullwidth">
-                <select id="workOrder--workOrderStatusDataListItemId" name="workOrderStatusDataListItemId" <% if (!isEdit) { %>disabled<% } %>>
-                  <option value="">(No Status)</option>
-                  <% let workOrderStatusFound = false %>
-                  <% for (const workOrderStatus of workOrderStatuses) { %>
-                  <option
-                    value="<%= workOrderStatus.dataListItemId %>"
-                    <% if (workOrder.workOrderStatusDataListItemId === workOrderStatus.dataListItemId) { %>
-                    <% workOrderStatusFound = true; %>
-                    selected
-                    <% } %>
-                  >
-                    <%= workOrderStatus.dataListItem %>
-                  </option>
-                  <% } %>
-                  <% if (!workOrderStatusFound && workOrder.workOrderStatusDataListItemId) { %>
-                  <option value="<%= workOrder.workOrderStatusDataListItemId %>" selected>
-                    <%= workOrder.workOrderStatusDataListItem %>
-                    <%= isEdit ? "(Inactive)" : "" %>
-                  </option>
-                  <% } %>
-                </select>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrder--workOrderStatusDataListItemId">Status</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="workOrder--workOrderStatusDataListItemId" name="workOrderStatusDataListItemId" <% if (!isEdit) { %>disabled<% } %>>
+                    <option value="">(No Status)</option>
+                    <% let workOrderStatusFound = false %>
+                    <% for (const workOrderStatus of workOrderStatuses) { %>
+                      <option
+                      value="<%= workOrderStatus.dataListItemId %>"
+                      <% if (workOrder.workOrderStatusDataListItemId === workOrderStatus.dataListItemId) { %>
+                        <% workOrderStatusFound = true; %>
+                        selected
+                        <% } %>
+                        >
+                        <%= workOrderStatus.dataListItem %>
+                      </option>
+                      <% } %>
+                      <% if (!workOrderStatusFound && workOrder.workOrderStatusDataListItemId) { %>
+                        <option value="<%= workOrder.workOrderStatusDataListItemId %>" selected>
+                          <%= workOrder.workOrderStatusDataListItem %>
+                          <%= isEdit ? "(Inactive)" : "" %>
+                        </option>
+                        <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+        </div>
+        <div class="field">
+          <label class="label" for="workOrder--workOrderDetails">Details</label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="workOrder--workOrderDetails"
+              name="workOrderDetails"
+              rows="6"
+              <% if (!isEdit) { %>readonly<% } %>
+            ><%= workOrder.workOrderDetails ?? '' %></textarea>
           </div>
         </div>
       </div>
-    
-      <div class="columns">
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--workOrderOpenDateTimeString">Open Date/Time</label>
-            <div class="control">
-              <input
-                class="input"
-                id="workOrder--workOrderOpenDateTimeString"
-                name="workOrderOpenDateTimeString"
-                type="datetime-local"
-                value="<%= workOrder.workOrderOpenDateTime ? new Date(workOrder.workOrderOpenDateTime).toISOString().slice(0, 16) : '' %>"
-                required
-                <% if (!isEdit) { %>readonly<% } %>
-              />
-            </div>
+      <div class="box">
+        <div class="field">
+          <label class="label" for="workOrder--requestorName">Requestor Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--requestorName"
+              name="requestorName"
+              type="text"
+              value="<%= workOrder.requestorName ?? '' %>"
+              maxlength="100"
+              required
+              <% if (!isEdit) { %>readonly<% } %>
+            />
           </div>
         </div>
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--workOrderDueDateTimeString">Due Date/Time</label>
-            <div class="control">
-              <input
-                class="input"
-                id="workOrder--workOrderDueDateTimeString"
-                name="workOrderDueDateTimeString"
-                type="datetime-local"
-                value="<%= workOrder.workOrderDueDateTime ? new Date(workOrder.workOrderDueDateTime).toISOString().slice(0, 16) : '' %>"
-                <% if (!isEdit) { %>readonly<% } %>
-              />
-            </div>
+        <div class="field">
+          <label class="label" for="workOrder--requestorContactInfo">Requestor Contact Info</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--requestorContactInfo"
+              name="requestorContactInfo"
+              type="text"
+              value="<%= workOrder.requestorContactInfo ?? '' %>"
+              maxlength="100"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
           </div>
-        </div>
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--workOrderCloseDateTimeString">Close Date/Time</label>
-            <div class="control">
-              <input
-                class="input"
-                id="workOrder--workOrderCloseDateTimeString"
-                name="workOrderCloseDateTimeString"
-                type="datetime-local"
-                value="<%= workOrder.workOrderCloseDateTime ? new Date(workOrder.workOrderCloseDateTime).toISOString().slice(0, 16) : '' %>"
-                <% if (!isEdit) { %>readonly<% } %>
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="columns">
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--requestorName">Requestor Name</label>
-            <div class="control">
-              <input
-                class="input"
-                id="workOrder--requestorName"
-                name="requestorName"
-                type="text"
-                value="<%= workOrder.requestorName ?? '' %>"
-                maxlength="100"
-                required
-                <% if (!isEdit) { %>readonly<% } %>
-              />
-            </div>
-          </div>
-        </div>
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--requestorContactInfo">Requestor Contact Info</label>
-            <div class="control">
-              <input
-                class="input"
-                id="workOrder--requestorContactInfo"
-                name="requestorContactInfo"
-                type="text"
-                value="<%= workOrder.requestorContactInfo ?? '' %>"
-                maxlength="100"
-                <% if (!isEdit) { %>readonly<% } %>
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="columns">
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--locationAddress1">Location Address 1</label>
-            <div class="control">
-              <input
-                class="input"
-                id="workOrder--locationAddress1"
-                name="locationAddress1"
-                type="text"
-                value="<%= workOrder.locationAddress1 ?? '' %>"
-                maxlength="100"
-                <% if (!isEdit) { %>readonly<% } %>
-              />
-            </div>
-          </div>
-        </div>
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--locationAddress2">Location Address 2</label>
-            <div class="control">
-              <input
-                class="input"
-                id="workOrder--locationAddress2"
-                name="locationAddress2"
-                type="text"
-                value="<%= workOrder.locationAddress2 ?? '' %>"
-                maxlength="100"
-                <% if (!isEdit) { %>readonly<% } %>
-              />
-            </div>
-          </div>
-        </div>
-        <div class="column">
-          <div class="field">
-            <label class="label" for="workOrder--locationCityProvince">City/Province</label>
-            <div class="control">
-              <input
-                class="input"
-                id="workOrder--locationCityProvince"
-                name="locationCityProvince"
-                type="text"
-                value="<%= workOrder.locationCityProvince ?? '' %>"
-                maxlength="50"
-                <% if (!isEdit) { %>readonly<% } %>
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    
-      <div class="field">
-        <label class="label" for="workOrder--workOrderDetails">Details</label>
-        <div class="control">
-          <textarea
-            class="textarea"
-            id="workOrder--workOrderDetails"
-            name="workOrderDetails"
-            rows="6"
-            <% if (!isEdit) { %>readonly<% } %>
-          ><%= workOrder.workOrderDetails ?? '' %></textarea>
         </div>
       </div>
     </div>
-    <div class="panel-block is-justify-content-end">
+    <div class="column">
+      <div class="box">
+        <div class="field">
+          <label class="label" for="workOrder--locationAddress1">Location Address</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--locationAddress1"
+              name="locationAddress1"
+              type="text"
+              value="<%= workOrder.locationAddress1 ?? '' %>"
+              placeholder="Address Line 1"
+              maxlength="100"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--locationAddress2"
+              name="locationAddress2"
+              type="text"
+              value="<%= workOrder.locationAddress2 ?? '' %>"
+              placeholder="Address Line 2"
+              maxlength="100"
+              aria-label="Address Line 2"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="workOrder--locationCityProvince">City/Province</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--locationCityProvince"
+              name="locationCityProvince"
+              type="text"
+              value="<%= workOrder.locationCityProvince ?? '' %>"
+              maxlength="50"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="field">
+          <label class="label" for="workOrder--workOrderOpenDateTimeString">Open Date/Time</label>
+          <div class="control has-icons-left has-icons-right">
+            <input
+              class="input"
+              id="workOrder--workOrderOpenDateTimeString"
+              name="workOrderOpenDateTimeString"
+              type="datetime-local"
+              value="<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>"
+              required
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+            <span class="icon is-small is-left">
+              <i class="fa-solid fa-play"></i>
+            </span>
+            <span class="icon is-small is-right">
+              <i class="fa-solid fa-asterisk"></i>
+            </span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="workOrder--workOrderDueDateTimeString">Due Date/Time</label>
+          <div class="control has-icons-left">
+            <input
+              class="input"
+              id="workOrder--workOrderDueDateTimeString"
+              name="workOrderDueDateTimeString"
+              type="datetime-local"
+              value="<%= workOrder.workOrderDueDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderDueDateTime) : '' %>"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+            <span class="icon is-small is-left">
+              <i class="fa-solid fa-exclamation-triangle"></i>
+            </span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="workOrder--workOrderCloseDateTimeString">Close Date/Time</label>
+          <div class="control has-icons-left">
+            <input
+              class="input"
+              id="workOrder--workOrderCloseDateTimeString"
+              name="workOrderCloseDateTimeString"
+              type="datetime-local"
+              value="<%= workOrder.workOrderCloseDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderCloseDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderCloseDateTime) : '' %>"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+            <span class="icon is-small is-left">
+              <i class="fa-solid fa-stop"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns is-vcentered is-fixed-bottom has-background-white has-shadow is-hidden-print">
+    <div class="column">
+      <% if (!isCreate) { %>
+      #<%= workOrder.workOrderNumber %>
+      <% } %>
+    </div>
+    <div class="column is-narrow has-text-right">
       <div class="buttons is-right">
         <% if (isCreate) { %>
         <a class="button is-danger is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
@@ -281,7 +311,7 @@
             </span>
           </span>
         </button>
-        <% } else if (user.userProperties.workOrders.canUpdate) { %>
+        <% } else if (user.userProperties.workOrders.canUpdate && workOrder.workOrderCloseDateTime === null) { %>
         <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>/edit">
           <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
           <span>
@@ -295,7 +325,50 @@
   </div>
 </form>
 
+<% if (!isCreate) { %>
+<div class="columns is-mobile mt-4" id="container--workOrderTabs">
+  <div class="column is-3 is-narrow-touch">
+    <div class="menu">
+      <ul class="menu-list">
+        <li>
+          <a class="is-active" href="#tab--milestones" title="Milestones">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-list-check"></i></span>
+              </div>
+              <div class="column is-hidden-touch">Milestones</div>
+            </div>
+          </a>
+        </li> 
+        <li>
+          <a href="#tab--notes" title="Notes">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-note-sticky"></i></span>
+              </div>
+              <div class="column is-hidden-touch">Notes</div>
+            </div>
+          </a>
+        </li>
+      </ul>  
+    </div>
+  </div>
+  <div class="column">
+    <div class="tabs-container">
+      <div id="tab--milestones">
+        <%- include('_edit-milestones'); -%>
+      </div>
+      <div id="tab--notes" class="is-hidden">
+        <%- include('_edit-notes'); -%>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
+
 <%- include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
 
 <% if (isEdit) { %>
 <script src="<%= urlPrefix %>/javascripts/workOrders.edit.js"></script>

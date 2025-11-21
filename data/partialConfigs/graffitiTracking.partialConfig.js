@@ -6,7 +6,8 @@ config.shifts = {
     isEnabled: false
 };
 config.workOrders = {
-    isEnabled: true
+    isEnabled: true,
+    workOrderNumberPrefix: 'CSD-'
 };
 config.timesheets = {
     isEnabled: false
