@@ -72,6 +72,7 @@ export interface Config {
 
   workOrders?: ConfigSection & {
     workOrderNumberPrefix?: string
+    defaultLocationCityProvince?: string
   }
 
   employees?: ConfigEmployees

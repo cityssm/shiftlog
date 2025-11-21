@@ -24,7 +24,7 @@ export default async function handler(
 
     locationAddress1: '',
     locationAddress2: '',
-    locationCityProvince: ''
+    locationCityProvince: getConfigProperty('workOrders.defaultLocationCityProvince') ?? ''
   } satisfies Partial<WorkOrder>
 
   response.render('workOrders/edit', {

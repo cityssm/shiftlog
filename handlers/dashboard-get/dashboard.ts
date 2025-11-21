@@ -3,6 +3,8 @@ import type { Request, Response } from 'express'
 
 import getShifts from '../../database/shifts/getShifts.js'
 import getTimesheets from '../../database/timesheets/getTimesheets.js'
+import getOverdueWorkOrders from '../../database/workOrders/getOverdueWorkOrders.js'
+import getRecentWorkOrders from '../../database/workOrders/getRecentWorkOrders.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 export default async function handler(
@@ -31,10 +33,24 @@ export default async function handler(
         )
       : { timesheets: [], totalCount: 0 }
 
+  const recentWorkOrders =
+    getConfigProperty('workOrders.isEnabled') &&
+    request.session.user?.userProperties.workOrders.canView
+      ? await getRecentWorkOrders(10, request.session.user)
+      : []
+
+  const overdueWorkOrders =
+    getConfigProperty('workOrders.isEnabled') &&
+    request.session.user?.userProperties.workOrders.canView
+      ? await getOverdueWorkOrders(10, request.session.user)
+      : []
+
   response.render('dashboard/dashboard', {
     headTitle: 'Dashboard',
 
     shifts: shiftsResult.shifts,
-    timesheets: timesheetsResult.timesheets
+    timesheets: timesheetsResult.timesheets,
+    recentWorkOrders,
+    overdueWorkOrders
   })
 }

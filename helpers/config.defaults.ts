@@ -79,6 +79,7 @@ export const configDefaultValues = {
   'workOrders.iconClass': 'fa-hard-hat',
 
   'workOrders.workOrderNumberPrefix': '',
+  'workOrders.defaultLocationCityProvince': '',
 
   // Timesheets
 
