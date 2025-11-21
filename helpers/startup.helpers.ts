@@ -1,7 +1,7 @@
 import Debug from 'debug'
 
-import { DEBUG_NAMESPACE } from '../debug.config.js'
 import getDataLists from '../database/app/getDataLists.js'
+import { DEBUG_NAMESPACE } from '../debug.config.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:startup`)
 
@@ -24,8 +24,7 @@ const REQUIRED_SYSTEM_LISTS = [
 /**
  * Validates that all required system lists exist in the DataLists table.
  * This check should be run on application startup to ensure database integrity.
- * 
- * @throws Error if any required system lists are missing
+ * @throws {Error} if any required system lists are missing
  */
 export async function validateSystemLists(): Promise<void> {
   debug('Validating system lists...')
