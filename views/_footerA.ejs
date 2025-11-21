@@ -42,7 +42,9 @@
     timesheetsSectionName: "<%= configFunctions.getConfigProperty('timesheets.sectionName') %>",
     timesheetsSectionNameSingular: "<%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>",
 
-    isAdmin: <%= user.userProperties.isAdmin %>
+    isAdmin: <%= user.userProperties.isAdmin %>,
+    userName: "<%= user.userName %>",
+    userCanManageWorkOrders: <%= user.userProperties.workOrders.canManage %>
   };
 </script>
 <script src="<%= urlPrefix %>/lib/flatpickr/flatpickr.min.js"></script>

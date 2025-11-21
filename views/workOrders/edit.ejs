@@ -350,15 +350,40 @@
         </a>
         <% } %>
         <% if (isEdit) { %>
-        <button class="button is-primary is-light" type="submit" form="form--workOrder">
-          <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
-          <span>
-            <%= (isCreate ? "Create": "Update") %>
-            <span class="is-hidden-mobile">
-              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
-            </span>
-          </span>
-        </button>
+        <div class="field has-addons">
+          <p class="control">
+            <button class="button is-primary is-light" type="submit" form="form--workOrder">
+              <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
+              <span>
+                <%= (isCreate ? "Create": "Update") %>
+                <span class="is-hidden-mobile">
+                  <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+                </span>
+              </span>
+            </button>
+          </p>
+          <% if (!isCreate) { %>
+          <p class="control">
+            <div class="dropdown is-hoverable is-right">
+              <div class="dropdown-trigger">
+                <button class="button is-primary is-light" aria-haspopup="true" aria-controls="dropdown-workorder-actions" type="button">
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-angle-down"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown-menu" id="dropdown-workorder-actions" role="menu">
+                <div class="dropdown-content">
+                  <a href="#" class="dropdown-item has-text-danger" id="button--deleteWorkOrder">
+                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    <span>Delete Work Order</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </p>
+          <% } %>
+        </div>
         <% } else if (user.userProperties.workOrders.canUpdate && workOrder.workOrderCloseDateTime === null) { %>
         <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>/edit">
           <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>

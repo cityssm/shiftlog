@@ -227,4 +227,50 @@ declare const exports: {
 
     L.marker([lat, lng]).addTo(map)
   }
+
+  /*
+   * Delete work order
+   */
+
+  const deleteWorkOrderButton = document.querySelector('#button--deleteWorkOrder') as HTMLAnchorElement | null
+
+  if (deleteWorkOrderButton !== null) {
+    deleteWorkOrderButton.addEventListener('click', (event) => {
+      event.preventDefault()
+
+      bulmaJS.confirm({
+        title: 'Delete Work Order',
+        message: `Are you sure you want to delete this work order? This action cannot be undone.`,
+        contextualColorName: 'danger',
+        okButton: {
+          text: 'Delete Work Order',
+          callbackFunction: () => {
+            cityssm.postJSON(
+              `${urlPrefix}/doDeleteWorkOrder`,
+              {
+                workOrderId
+              },
+              (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON as {
+                  success: boolean
+                  redirectUrl?: string
+                  errorMessage?: string
+                }
+
+                if (responseJSON.success && responseJSON.redirectUrl !== undefined) {
+                  globalThis.location.href = responseJSON.redirectUrl
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Delete Error',
+                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                  })
+                }
+              }
+            )
+          }
+        }
+      })
+    })
+  }
 })()

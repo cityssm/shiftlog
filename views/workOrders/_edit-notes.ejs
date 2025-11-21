@@ -1,1 +1,16 @@
 <h2 class="title is-4">Notes</h2>
+
+<% if (isEdit) { %>
+<div class="field">
+  <div class="control">
+    <button class="button is-success" id="button--addNote">
+      <span class="icon"><i class="fa-solid fa-plus"></i></span>
+      <span>Add Note</span>
+    </button>
+  </div>
+</div>
+<% } %>
+
+<div id="container--notes">
+  <!-- Notes will be loaded here -->
+</div>
