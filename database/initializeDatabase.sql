@@ -213,6 +213,28 @@ CREATE TABLE ShiftLog.Equipment (
 )
 GO
 
+-- LOCATIONS
+
+CREATE TABLE ShiftLog.Locations (
+  locationId int not null primary key identity(1,1),
+  locationName varchar(100) not null,
+
+  latitude decimal(10,7),
+  longitude decimal(10,7),
+
+  address1 varchar(100) not null default '',
+  address2 varchar(100) not null default '',
+  cityProvince varchar(50) not null default '',
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime
+)
+GO
+
 -- WORK ORDERS
 
 create table ShiftLog.WorkOrders (
