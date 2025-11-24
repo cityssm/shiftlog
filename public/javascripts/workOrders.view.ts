@@ -1,25 +1,23 @@
-import type { ShiftLogGlobal } from './types.js'
+import type Leaflet from 'leaflet'
 
-declare const exports: {
-  shiftLog: ShiftLogGlobal
-}
+declare const L: typeof Leaflet
 ;(() => {
   // View page - map display for location
-  const mapViewElement = document.querySelector('#map--locationView') as HTMLElement | null
+  const mapViewElement = document.querySelector(
+    '#map--locationView'
+  ) as HTMLElement | null
 
   if (mapViewElement !== null) {
-    // @ts-expect-error - Leaflet is loaded via script tag
-    const L = globalThis.L
-
     const lat = Number.parseFloat(mapViewElement.dataset.lat ?? '0')
     const lng = Number.parseFloat(mapViewElement.dataset.lng ?? '0')
 
-    const map = L.map('map--locationView').setView([lat, lng], 15)
+    const map = new L.Map('map--locationView').setView([lat, lng], 15)
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:
+        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map)
 
-    L.marker([lat, lng]).addTo(map)
+    new L.Marker([lat, lng]).addTo(map)
   }
 })()

@@ -51,7 +51,7 @@
     const workOrderCloseDateTimePicker = flatpickr(workOrderCloseDateTimeStringElement, {
         ...dateTimePickerOptions,
         maxDate: new Date(),
-        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
+        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? ''
     });
     flatpickr(workOrderOpenDateTimeStringElement, {
         ...dateTimePickerOptions,
@@ -79,8 +79,6 @@
      */
     const mapPickerElement = document.querySelector('#map--locationPicker');
     if (mapPickerElement !== null) {
-        // @ts-expect-error - Leaflet is loaded via script tag
-        const L = globalThis.L;
         const latitudeInput = workOrderFormElement.querySelector('#workOrder--locationLatitude');
         const longitudeInput = workOrderFormElement.querySelector('#workOrder--locationLongitude');
         // Default to SSM or use existing coordinates
@@ -92,13 +90,14 @@
             defaultLng = Number.parseFloat(longitudeInput.value);
             defaultZoom = 15;
         }
-        const map = L.map('map--locationPicker').setView([defaultLat, defaultLng], defaultZoom);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        const map = new L.Map('map--locationPicker').setView([defaultLat, defaultLng], defaultZoom);
+        new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+        // eslint-disable-next-line unicorn/no-null
         let marker = null;
         if (latitudeInput.value !== '' && longitudeInput.value !== '') {
-            marker = L.marker([defaultLat, defaultLng]).addTo(map);
+            marker = new L.Marker([defaultLat, defaultLng]).addTo(map);
         }
         map.on('click', (event) => {
             const lat = event.latlng.lat;
@@ -108,17 +107,22 @@
             if (marker !== null) {
                 map.removeLayer(marker);
             }
-            marker = L.marker([lat, lng]).addTo(map);
+            marker = new L.Marker([lat, lng]).addTo(map);
         });
         // Update map when coordinates are manually entered
         function updateMapFromInputs() {
             const lat = Number.parseFloat(latitudeInput.value);
             const lng = Number.parseFloat(longitudeInput.value);
-            if (!Number.isNaN(lat) && !Number.isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+            if (!Number.isNaN(lat) &&
+                !Number.isNaN(lng) &&
+                lat >= -90 &&
+                lat <= 90 &&
+                lng >= -180 &&
+                lng <= 180) {
                 if (marker !== null) {
                     map.removeLayer(marker);
                 }
-                marker = L.marker([lat, lng]).addTo(map);
+                marker = new L.Marker([lat, lng]).addTo(map);
                 map.setView([lat, lng], 15);
             }
         }
@@ -128,15 +132,13 @@
     // View-only map
     const mapViewElement = document.querySelector('#map--locationView');
     if (mapViewElement !== null) {
-        // @ts-expect-error - Leaflet is loaded via script tag
-        const L = globalThis.L;
         const lat = Number.parseFloat(mapViewElement.dataset.lat ?? '0');
         const lng = Number.parseFloat(mapViewElement.dataset.lng ?? '0');
-        const map = L.map('map--locationView').setView([lat, lng], 15);
+        const map = new L.Map('map--locationView').setView([lat, lng], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        L.marker([lat, lng]).addTo(map);
+        new L.Marker([lat, lng]).addTo(map);
     }
     /*
      * Delete work order
@@ -146,9 +148,9 @@
         deleteWorkOrderButton.addEventListener('click', (event) => {
             event.preventDefault();
             bulmaJS.confirm({
+                contextualColorName: 'danger',
                 title: 'Delete Work Order',
                 message: `Are you sure you want to delete this work order? This action cannot be undone.`,
-                contextualColorName: 'danger',
                 okButton: {
                     text: 'Delete Work Order',
                     callbackFunction: () => {
@@ -156,7 +158,8 @@
                             workOrderId
                         }, (rawResponseJSON) => {
                             const responseJSON = rawResponseJSON;
-                            if (responseJSON.success && responseJSON.redirectUrl !== undefined) {
+                            if (responseJSON.success &&
+                                responseJSON.redirectUrl !== undefined) {
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }
                             else {

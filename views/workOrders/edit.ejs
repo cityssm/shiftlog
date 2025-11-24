@@ -439,15 +439,7 @@
 </div>
 <% } %>
 
-<% if (isEdit || (workOrder.locationLatitude && workOrder.locationLongitude)) { %>
-<link rel="stylesheet" href="<%= urlPrefix %>/lib/leaflet/leaflet.css" />
-<% } %>
-
 <%- include('../_footerA'); -%>
-
-<% if (isEdit || (workOrder.locationLatitude && workOrder.locationLongitude)) { %>
-<script src="<%= urlPrefix %>/lib/leaflet/leaflet.js"></script>
-<% } %>
 
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
 
