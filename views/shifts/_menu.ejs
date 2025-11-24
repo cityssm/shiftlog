@@ -30,5 +30,19 @@
       </ul>
       <% } %>
     </li>
+    <li>
+      <a
+        href="<%= urlPrefix %>/dashboard/reports#tab--shifts"
+        title="<%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Reports">
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon"><i class="fa-solid fa-file-lines"></i></span>
+          </div>
+          <div class="column is-hidden-touch">
+            <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Reports
+          </div>
+        </div>
+      </a>
+    </li>
   </ul>
 </aside>

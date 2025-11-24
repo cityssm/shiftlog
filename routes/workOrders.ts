@@ -8,6 +8,8 @@ import handler_doCreateWorkOrder from '../handlers/workOrders-post/doCreateWorkO
 import handler_doCreateWorkOrderNote from '../handlers/workOrders-post/doCreateWorkOrderNote.js'
 import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkOrder.js'
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js'
+import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js'
+import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGetRequestorSuggestions.js'
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js'
 import handler_doUpdateWorkOrder from '../handlers/workOrders-post/doUpdateWorkOrder.js'
@@ -28,6 +30,10 @@ function updateHandler(
 export const router = Router()
 
 router.get('/', handler_search).post('/doSearchWorkOrders', handler_doSearchWorkOrders)
+
+router
+  .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)
+  .post('/doGetLocationSuggestions', handler_doGetLocationSuggestions)
 
 router
   .get('/new', updateHandler, handler_new)

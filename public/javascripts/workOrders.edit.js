@@ -34,6 +34,141 @@
     }
     workOrderFormElement.addEventListener('submit', updateWorkOrder);
     /*
+     * Set Close Time to Now Button
+     */
+    const setCloseTimeNowButton = document.querySelector('#button--setCloseTimeNow');
+    if (setCloseTimeNowButton !== null) {
+        setCloseTimeNowButton.addEventListener('click', () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const dateTimeString = `${year}-${month}-${day}T${hours}:${minutes}`;
+            workOrderCloseDateTimeStringElement.value = dateTimeString;
+            // Update flatpickr instance if it exists
+            if (workOrderCloseDateTimePicker) {
+                workOrderCloseDateTimePicker.setDate(now, true);
+            }
+        });
+    }
+    /*
+     * Requestor Name Datalist
+     */
+    const requestorNameInput = workOrderFormElement.querySelector('#workOrder--requestorName');
+    const requestorContactInfoInput = workOrderFormElement.querySelector('#workOrder--requestorContactInfo');
+    const requestorDatalist = document.querySelector('#datalist--requestorNames');
+    if (requestorDatalist !== null) {
+        let requestorsData = [];
+        // Load requestor suggestions
+        cityssm.postJSON(`${urlPrefix}/doGetRequestorSuggestions`, {}, (responseJSON) => {
+            if (responseJSON.success && responseJSON.requestors) {
+                requestorsData = responseJSON.requestors;
+                for (const requestor of responseJSON.requestors) {
+                    const option = document.createElement('option');
+                    option.value = requestor.requestorName;
+                    option.dataset.contactInfo = requestor.requestorContactInfo ?? '';
+                    requestorDatalist.append(option);
+                }
+            }
+        });
+        // Handle requestor name selection
+        requestorNameInput.addEventListener('change', () => {
+            const selectedName = requestorNameInput.value;
+            const matchingRequestor = requestorsData.find((r) => r.requestorName === selectedName);
+            if (matchingRequestor && matchingRequestor.requestorContactInfo) {
+                // Check if contact info is already set
+                if (requestorContactInfoInput.value !== '' &&
+                    requestorContactInfoInput.value !== matchingRequestor.requestorContactInfo) {
+                    bulmaJS.confirm({
+                        title: 'Update Requestor Contact Info?',
+                        message: `The contact info for "${selectedName}" is "${matchingRequestor.requestorContactInfo}". Do you want to update the current contact info?`,
+                        okButton: {
+                            text: 'Update',
+                            callbackFunction: () => {
+                                requestorContactInfoInput.value = matchingRequestor.requestorContactInfo;
+                            }
+                        }
+                    });
+                }
+                else {
+                    requestorContactInfoInput.value = matchingRequestor.requestorContactInfo;
+                }
+            }
+        });
+    }
+    /*
+     * Location Address Datalist
+     */
+    const locationAddress1Input = workOrderFormElement.querySelector('#workOrder--locationAddress1');
+    const locationAddress2Input = workOrderFormElement.querySelector('#workOrder--locationAddress2');
+    const locationCityProvinceInput = workOrderFormElement.querySelector('#workOrder--locationCityProvince');
+    const locationLatitudeInput = workOrderFormElement.querySelector('#workOrder--locationLatitude');
+    const locationLongitudeInput = workOrderFormElement.querySelector('#workOrder--locationLongitude');
+    const locationDatalist = document.querySelector('#datalist--locations');
+    if (locationDatalist !== null) {
+        let locationsData = [];
+        // Load location suggestions
+        cityssm.postJSON(`${urlPrefix}/doGetLocationSuggestions`, {}, (responseJSON) => {
+            if (responseJSON.success && responseJSON.locations) {
+                locationsData = responseJSON.locations;
+                for (const location of responseJSON.locations) {
+                    const option = document.createElement('option');
+                    option.value = location.address1;
+                    option.dataset.locationId = location.locationId;
+                    option.dataset.address2 = location.address2 ?? '';
+                    option.dataset.cityProvince = location.cityProvince ?? '';
+                    option.dataset.latitude = location.latitude ?? '';
+                    option.dataset.longitude = location.longitude ?? '';
+                    locationDatalist.append(option);
+                }
+            }
+        });
+        // Handle location selection
+        locationAddress1Input.addEventListener('change', () => {
+            const selectedAddress = locationAddress1Input.value;
+            const matchingLocation = locationsData.find((l) => l.address1 === selectedAddress);
+            if (matchingLocation) {
+                // Check if other location fields are already set
+                const hasExistingData = locationAddress2Input.value !== '' ||
+                    locationCityProvinceInput.value !== '' ||
+                    (locationLatitudeInput && locationLatitudeInput.value !== '') ||
+                    (locationLongitudeInput && locationLongitudeInput.value !== '');
+                if (hasExistingData) {
+                    bulmaJS.confirm({
+                        title: 'Update Location Information?',
+                        message: 'Do you want to update the location details with the selected address?',
+                        okButton: {
+                            text: 'Update',
+                            callbackFunction: () => {
+                                applyLocationData(matchingLocation);
+                            }
+                        }
+                    });
+                }
+                else {
+                    applyLocationData(matchingLocation);
+                }
+            }
+        });
+        function applyLocationData(location) {
+            locationAddress2Input.value = location.address2 ?? '';
+            locationCityProvinceInput.value = location.cityProvince ?? '';
+            if (locationLatitudeInput && location.latitude) {
+                locationLatitudeInput.value = location.latitude;
+            }
+            if (locationLongitudeInput && location.longitude) {
+                locationLongitudeInput.value = location.longitude;
+            }
+            // Update map if coordinates are set
+            if (locationLatitudeInput && locationLongitudeInput) {
+                const changeEvent = new Event('change');
+                locationLatitudeInput.dispatchEvent(changeEvent);
+            }
+        }
+    }
+    /*
      * Set up date-time pickers
      */
     const dateTimePickerOptions = {

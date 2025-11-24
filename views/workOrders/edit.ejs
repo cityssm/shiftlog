@@ -163,8 +163,12 @@
               value="<%= workOrder.requestorName ?? '' %>"
               maxlength="100"
               required
+              <% if (isEdit) { %>list="datalist--requestorNames"<% } %>
               <% if (!isEdit) { %>readonly<% } %>
             />
+            <% if (isEdit) { %>
+            <datalist id="datalist--requestorNames"></datalist>
+            <% } %>
           </div>
         </div>
         <div class="field">
@@ -196,8 +200,12 @@
               value="<%= workOrder.locationAddress1 ?? '' %>"
               placeholder="Address Line 1"
               maxlength="100"
+              <% if (isEdit) { %>list="datalist--locations"<% } %>
               <% if (!isEdit) { %>readonly<% } %>
             />
+            <% if (isEdit) { %>
+            <datalist id="datalist--locations"></datalist>
+            <% } %>
           </div>
         </div>
         <div class="field">
@@ -318,18 +326,28 @@
         </div>
         <div class="field">
           <label class="label" for="workOrder--workOrderCloseDateTimeString">Close Date/Time</label>
-          <div class="control has-icons-left">
-            <input
-              class="input"
-              id="workOrder--workOrderCloseDateTimeString"
-              name="workOrderCloseDateTimeString"
-              type="datetime-local"
-              value="<%= workOrder.workOrderCloseDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderCloseDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderCloseDateTime) : '' %>"
-              <% if (!isEdit) { %>readonly<% } %>
-            />
-            <span class="icon is-small is-left">
-              <i class="fa-solid fa-stop"></i>
-            </span>
+          <div class="field has-addons">
+            <div class="control is-expanded has-icons-left">
+              <input
+                class="input"
+                id="workOrder--workOrderCloseDateTimeString"
+                name="workOrderCloseDateTimeString"
+                type="datetime-local"
+                value="<%= workOrder.workOrderCloseDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderCloseDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderCloseDateTime) : '' %>"
+                <% if (!isEdit) { %>readonly<% } %>
+              />
+              <span class="icon is-small is-left">
+                <i class="fa-solid fa-stop"></i>
+              </span>
+            </div>
+            <% if (isEdit) { %>
+            <div class="control">
+              <button class="button" type="button" id="button--setCloseTimeNow" title="Set to Now">
+                <span class="icon"><i class="fa-solid fa-clock"></i></span>
+                <span class="is-hidden-touch">Now</span>
+              </button>
+            </div>
+            <% } %>
           </div>
         </div>
       </div>
@@ -419,7 +437,10 @@
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-note-sticky"></i></span>
               </div>
-              <div class="column is-hidden-touch">Notes</div>
+              <div class="column is-hidden-touch">
+                Notes
+                <span class="tag is-rounded ml-2" id="notesCount">0</span>
+              </div>
             </div>
           </a>
         </li>
