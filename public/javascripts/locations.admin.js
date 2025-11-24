@@ -233,7 +233,7 @@
             }
             else {
                 const filteredLocations = exports.locations.filter((location) => {
-                    const searchText = `${location.locationName} ${location.address1} ${location.address2} ${location.cityProvince}`.toLowerCase();
+                    const searchText = `${location.locationName} ${location.address1 ?? ''} ${location.address2 ?? ''} ${location.cityProvince ?? ''}`.toLowerCase();
                     return searchText.includes(filterText);
                 });
                 renderLocations(filteredLocations);

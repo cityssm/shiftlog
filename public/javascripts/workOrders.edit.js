@@ -135,11 +135,11 @@
         function applyLocationData(location) {
             locationAddress2Input.value = location.address2 ?? '';
             locationCityProvinceInput.value = location.cityProvince ?? '';
-            if (locationLatitudeInput && location.latitude) {
-                locationLatitudeInput.value = location.latitude;
+            if (locationLatitudeInput && location.latitude !== null && location.latitude !== undefined) {
+                locationLatitudeInput.value = location.latitude.toString();
             }
-            if (locationLongitudeInput && location.longitude) {
-                locationLongitudeInput.value = location.longitude;
+            if (locationLongitudeInput && location.longitude !== null && location.longitude !== undefined) {
+                locationLongitudeInput.value = location.longitude.toString();
             }
             // Update map if coordinates are set
             if (locationLatitudeInput && locationLongitudeInput) {
