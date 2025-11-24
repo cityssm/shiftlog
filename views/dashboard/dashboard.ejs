@@ -227,11 +227,6 @@
       </div>
     </div>
   </div>
-</div>
-<% } %>
-
-<div class="columns">
-  <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
   <div class="column">
     <div class="panel">
       <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
@@ -262,7 +257,10 @@
       <% } %>
     </div>
   </div>
-  <% } %>
+</div>
+<% } %>
+
+<div class="columns">
   <div class="column">
     <div class="panel">
       <a class="panel-block" href="<%= urlPrefix %>/dashboard/reports">
@@ -280,6 +278,10 @@
           </div>
         </div>
       </a>
+    </div>
+  </div>
+  <div class="column">
+    <div class="panel">
       <a class="panel-block" href="<%= urlPrefix %>/dashboard/userSettings">
         <div class="media">
           <div class="media-left">

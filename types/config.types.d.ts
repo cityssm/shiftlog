@@ -44,6 +44,7 @@ export interface Config {
     timesheets?: ConfigSection;
     workOrders?: ConfigSection & {
         workOrderNumberPrefix?: string;
+        defaultLocationCityProvince?: string;
     };
     employees?: ConfigEmployees;
     equipment?: ConfigEquipment;

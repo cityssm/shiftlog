@@ -74,4 +74,102 @@
             }
         }
     });
+    /*
+     * Set up map for location picker
+     */
+    const mapPickerElement = document.querySelector('#map--locationPicker');
+    if (mapPickerElement !== null) {
+        // @ts-expect-error - Leaflet is loaded via script tag
+        const L = globalThis.L;
+        const latitudeInput = workOrderFormElement.querySelector('#workOrder--locationLatitude');
+        const longitudeInput = workOrderFormElement.querySelector('#workOrder--locationLongitude');
+        // Default to SSM or use existing coordinates
+        let defaultLat = 46.5136;
+        let defaultLng = -84.3422;
+        let defaultZoom = 13;
+        if (latitudeInput.value !== '' && longitudeInput.value !== '') {
+            defaultLat = Number.parseFloat(latitudeInput.value);
+            defaultLng = Number.parseFloat(longitudeInput.value);
+            defaultZoom = 15;
+        }
+        const map = L.map('map--locationPicker').setView([defaultLat, defaultLng], defaultZoom);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        let marker = null;
+        if (latitudeInput.value !== '' && longitudeInput.value !== '') {
+            marker = L.marker([defaultLat, defaultLng]).addTo(map);
+        }
+        map.on('click', (event) => {
+            const lat = event.latlng.lat;
+            const lng = event.latlng.lng;
+            latitudeInput.value = lat.toFixed(7);
+            longitudeInput.value = lng.toFixed(7);
+            if (marker !== null) {
+                map.removeLayer(marker);
+            }
+            marker = L.marker([lat, lng]).addTo(map);
+        });
+        // Update map when coordinates are manually entered
+        function updateMapFromInputs() {
+            const lat = Number.parseFloat(latitudeInput.value);
+            const lng = Number.parseFloat(longitudeInput.value);
+            if (!Number.isNaN(lat) && !Number.isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                if (marker !== null) {
+                    map.removeLayer(marker);
+                }
+                marker = L.marker([lat, lng]).addTo(map);
+                map.setView([lat, lng], 15);
+            }
+        }
+        latitudeInput.addEventListener('change', updateMapFromInputs);
+        longitudeInput.addEventListener('change', updateMapFromInputs);
+    }
+    // View-only map
+    const mapViewElement = document.querySelector('#map--locationView');
+    if (mapViewElement !== null) {
+        // @ts-expect-error - Leaflet is loaded via script tag
+        const L = globalThis.L;
+        const lat = Number.parseFloat(mapViewElement.dataset.lat ?? '0');
+        const lng = Number.parseFloat(mapViewElement.dataset.lng ?? '0');
+        const map = L.map('map--locationView').setView([lat, lng], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        L.marker([lat, lng]).addTo(map);
+    }
+    /*
+     * Delete work order
+     */
+    const deleteWorkOrderButton = document.querySelector('#button--deleteWorkOrder');
+    if (deleteWorkOrderButton !== null) {
+        deleteWorkOrderButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            bulmaJS.confirm({
+                title: 'Delete Work Order',
+                message: `Are you sure you want to delete this work order? This action cannot be undone.`,
+                contextualColorName: 'danger',
+                okButton: {
+                    text: 'Delete Work Order',
+                    callbackFunction: () => {
+                        cityssm.postJSON(`${urlPrefix}/doDeleteWorkOrder`, {
+                            workOrderId
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
+                            if (responseJSON.success && responseJSON.redirectUrl !== undefined) {
+                                globalThis.location.href = responseJSON.redirectUrl;
+                            }
+                            else {
+                                bulmaJS.alert({
+                                    contextualColorName: 'danger',
+                                    title: 'Delete Error',
+                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    }
 })();

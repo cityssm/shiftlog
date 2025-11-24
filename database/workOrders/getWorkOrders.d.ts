@@ -4,6 +4,8 @@ export interface GetWorkOrdersFilters {
     workOrderTypeDataListItemId?: number | string;
     workOrderStatusDataListItemId?: number | string;
     requestorName?: string;
+    requestor?: string;
+    openClosedFilter?: 'open' | 'overdue' | 'closed' | '';
 }
 export interface GetWorkOrdersOptions {
     limit: number | string;

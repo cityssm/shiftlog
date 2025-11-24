@@ -33,6 +33,7 @@ export const configDefaultValues = {
     'workOrders.sectionNameSingular': 'Work Order',
     'workOrders.iconClass': 'fa-hard-hat',
     'workOrders.workOrderNumberPrefix': '',
+    'workOrders.defaultLocationCityProvince': '',
     // Timesheets
     'timesheets.isEnabled': false,
     'timesheets.router': 'timesheets',
