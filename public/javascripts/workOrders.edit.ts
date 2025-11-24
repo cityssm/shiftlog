@@ -180,7 +180,7 @@ declare const exports: {
     }).addTo(map)
 
     // eslint-disable-next-line unicorn/no-null
-    let marker: typeof L.Marker | null = null
+    let marker: L.Marker | null = null
 
     if (latitudeInput.value !== '' && longitudeInput.value !== '') {
       marker = new L.Marker([defaultLat, defaultLng]).addTo(map)

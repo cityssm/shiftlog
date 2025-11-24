@@ -16,6 +16,72 @@
   Reports
 </h1>
 
+<div class="columns is-mobile mt-4" id="container--reportTabs">
+  <div class="column is-3 is-narrow-touch">
+    <div class="menu">
+      <ul class="menu-list">
+        <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+        <li>
+          <a href="#tab--workOrders" title="<%= configFunctions.getConfigProperty('workOrders.sectionNamePlural') %>">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
+              </div>
+              <div class="column"><%= configFunctions.getConfigProperty('workOrders.sectionName') %></div>
+            </div>
+          </a>
+        </li>
+        <% } %>
+        <% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canView) { %>
+        <li>
+          <a href="#tab--shifts" title="<%= configFunctions.getConfigProperty('shifts.sectionNamePlural') %>">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i></span>
+              </div>
+              <div class="column is-hidden-touch"><%= configFunctions.getConfigProperty('shifts.sectionName') %></div>
+            </div>
+          </a>
+        </li>
+        <% } %>
+        <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
+        <li>
+          <a href="#tab--timesheets" title="<%= configFunctions.getConfigProperty('timesheets.sectionNamePlural') %>">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i></span>
+              </div>
+              <div class="column is-hidden-touch"><%= configFunctions.getConfigProperty('timesheets.sectionName') %></div>
+            </div>
+          </a>
+        </li>
+        <% } %>
+      </ul>  
+    </div>
+  </div>
+  <div class="column">
+    <div class="tabs-container">
+      <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+      <div class="is-hidden" id="tab--workOrders">
+        <%- include('_reports-workOrders'); -%>
+      </div>
+      <% } %>
+      <% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canView) { %>
+      <div class="is-hidden" id="tab--shifts">
+        <%- include('_reports-shifts'); -%>
+      </div>
+      <% } %>
+      <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
+      <div class="is-hidden" id="tab--timesheets">
+        <%- include('_reports-timesheets'); -%>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
 <%- include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/reports.js"></script>
 
 <%- include('../_footerB'); -%>
