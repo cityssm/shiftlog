@@ -10,6 +10,7 @@ import type { ChildProcess } from 'node:child_process'
 
 import { DEBUG_NAMESPACE } from './debug.config.js'
 import { getConfigProperty } from './helpers/config.helpers.js'
+import { validateSystemLists } from './helpers/startup.helpers.js'
 import { initializeTasks } from './tasks/taskInitializer.js'
 import type { WorkerMessage } from './types/application.types.js'
 import version from './version.js'
@@ -84,7 +85,13 @@ function initializeCluster(): void {
   })
 }
 
-function startApplication(): void {
+async function startApplication(): Promise<void> {
+  /*
+   * Validate System Lists
+   */
+
+  await validateSystemLists()
+
   /*
    * Start workers
    */
@@ -120,7 +127,7 @@ function startApplication(): void {
   })
 }
 
-startApplication()
+await startApplication()
 
 /*
  * Set up the startup test

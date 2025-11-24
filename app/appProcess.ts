@@ -5,7 +5,6 @@ import exitHook, { gracefulExit } from 'exit-hook'
 
 import { DEBUG_NAMESPACE, PROCESS_ID_MAX_DIGITS } from '../debug.config.js'
 import { getConfigProperty } from '../helpers/config.helpers.js'
-import { validateSystemLists } from '../helpers/startup.helpers.js'
 
 import { app, shutdownAbuseCheck } from './app.js'
 
@@ -54,12 +53,6 @@ function onListening(server: http.Server): void {
     debug(`HTTP Listening on ${bind}`)
   }
 }
-
-/*
- * Validate System Lists on Startup
- */
-
-await validateSystemLists()
 
 /*
  * Initialize HTTP

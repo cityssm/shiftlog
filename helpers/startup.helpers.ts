@@ -1,5 +1,6 @@
 import Debug from 'debug'
 
+import createDataList from '../database/app/createDataList.js'
 import getDataLists from '../database/app/getDataLists.js'
 import { DEBUG_NAMESPACE } from '../debug.config.js'
 
@@ -7,19 +8,21 @@ const debug = Debug(`${DEBUG_NAMESPACE}:startup`)
 
 /**
  * System list keys that are required for the application to function properly.
- * These correspond to the system lists defined in database/initializeDatabase.sql
  */
-const REQUIRED_SYSTEM_LISTS = [
-  'equipmentTypes',
-  'workOrderTypes',
-  'workOrderStatuses',
-  'assignedTo',
-  'shiftTimes',
-  'shiftTypes',
-  'timesheetTypes',
-  'jobClassifications',
-  'timeCodes'
-] as const
+export const REQUIRED_SYSTEM_LISTS = {
+  equipmentTypes: 'Equipment Types',
+
+  assignedTo: 'Assigned To',
+  workOrderStatuses: 'Work Order Statuses',
+  workOrderTypes: 'Work Order Types',
+
+  shiftTimes: 'Shift Times',
+  shiftTypes: 'Shift Types',
+
+  jobClassifications: 'Job Classifications',
+  timeCodes: 'Time Codes',
+  timesheetTypes: 'Timesheet Types'
+} as const
 
 /**
  * Validates that all required system lists exist in the DataLists table.
@@ -30,21 +33,33 @@ export async function validateSystemLists(): Promise<void> {
   debug('Validating system lists...')
 
   const dataLists = await getDataLists()
+
   const existingSystemListKeys = new Set(
     dataLists
       .filter((list) => list.isSystemList)
       .map((list) => list.dataListKey)
   )
 
-  const missingSystemLists = REQUIRED_SYSTEM_LISTS.filter(
+  const missingSystemLists = Object.keys(REQUIRED_SYSTEM_LISTS).filter(
     (requiredKey) => !existingSystemListKeys.has(requiredKey)
   )
 
-  if (missingSystemLists.length > 0) {
-    const errorMessage = `Missing required system lists in DataLists table: ${missingSystemLists.join(', ')}`
-    debug(errorMessage)
-    throw new Error(errorMessage)
+  for (const missingKey of missingSystemLists) {
+    const listName =
+      REQUIRED_SYSTEM_LISTS[missingKey as keyof typeof REQUIRED_SYSTEM_LISTS]
+    debug(
+      `Missing required system list: ${missingKey} (${listName}), creating...`
+    )
+
+    await createDataList(
+      {
+        dataListKey: missingKey,
+        dataListName: listName,
+        isSystemList: true
+      },
+      'system'
+    )
   }
 
-  debug(`All ${REQUIRED_SYSTEM_LISTS.length} required system lists are present`)
+  debug(`All ${Object.keys(REQUIRED_SYSTEM_LISTS).length} required system lists are present`)
 }

@@ -11,9 +11,4 @@ await describe('startup.helpers', async () => {
       await validateSystemLists()
     })
   })
-
-  await it('validateSystemLists() should validate without errors when all system lists are present', async () => {
-    await validateSystemLists()
-    assert.ok(true)
-  })
 })
