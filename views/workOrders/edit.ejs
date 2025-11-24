@@ -230,6 +230,54 @@
             />
           </div>
         </div>
+
+        <% if (isEdit) { %>
+        <div class="field">
+          <label class="label">Location Coordinates</label>
+          <div class="columns is-mobile is-variable is-2">
+            <div class="column">
+              <div class="control">
+                <input
+                  class="input"
+                  id="workOrder--locationLatitude"
+                  name="locationLatitude"
+                  type="number"
+                  step="0.0000001"
+                  min="-90"
+                  max="90"
+                  value="<%= workOrder.locationLatitude ?? '' %>"
+                  placeholder="Latitude"
+                />
+              </div>
+            </div>
+            <div class="column">
+              <div class="control">
+                <input
+                  class="input"
+                  id="workOrder--locationLongitude"
+                  name="locationLongitude"
+                  type="number"
+                  step="0.0000001"
+                  min="-180"
+                  max="180"
+                  value="<%= workOrder.locationLongitude ?? '' %>"
+                  placeholder="Longitude"
+                />
+              </div>
+            </div>
+          </div>
+          <div id="map--locationPicker" style="height: 300px; margin-top: 0.5rem;" class="has-background-grey-lighter"></div>
+          <p class="help">Click on the map to set location coordinates.</p>
+        </div>
+        <% } else if (workOrder.locationLatitude && workOrder.locationLongitude) { %>
+        <div class="field">
+          <label class="label">Location Coordinates</label>
+          <p class="is-size-7">
+            <%= workOrder.locationLatitude %>, <%= workOrder.locationLongitude %>
+          </p>
+          <div id="map--locationView" data-lat="<%= workOrder.locationLatitude %>" data-lng="<%= workOrder.locationLongitude %>" style="height: 300px; margin-top: 0.5rem;" class="has-background-grey-lighter"></div>
+        </div>
+        <% } %>
       </div>
       <div class="box">
         <div class="field">
@@ -302,15 +350,40 @@
         </a>
         <% } %>
         <% if (isEdit) { %>
-        <button class="button is-primary is-light" type="submit" form="form--workOrder">
-          <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
-          <span>
-            <%= (isCreate ? "Create": "Update") %>
-            <span class="is-hidden-mobile">
-              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
-            </span>
-          </span>
-        </button>
+        <div class="field has-addons">
+          <p class="control">
+            <button class="button is-primary is-light" type="submit" form="form--workOrder">
+              <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
+              <span>
+                <%= (isCreate ? "Create": "Update") %>
+                <span class="is-hidden-mobile">
+                  <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+                </span>
+              </span>
+            </button>
+          </p>
+          <% if (!isCreate) { %>
+          <p class="control">
+            <div class="dropdown is-up is-right">
+              <div class="dropdown-trigger">
+                <button class="button is-primary is-light" aria-haspopup="true" aria-controls="dropdown-workorder-actions" type="button">
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-angle-up"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown-menu" id="dropdown-workorder-actions" role="menu">
+                <div class="dropdown-content">
+                  <a href="#" class="dropdown-item" id="button--deleteWorkOrder">
+                    <span class="icon has-text-danger"><i class="fa-solid fa-trash"></i></span>
+                    <span>Delete Work Order</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </p>
+          <% } %>
+        </div>
         <% } else if (user.userProperties.workOrders.canUpdate && workOrder.workOrderCloseDateTime === null) { %>
         <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>/edit">
           <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>

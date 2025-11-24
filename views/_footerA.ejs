@@ -42,10 +42,13 @@
     timesheetsSectionName: "<%= configFunctions.getConfigProperty('timesheets.sectionName') %>",
     timesheetsSectionNameSingular: "<%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>",
 
-    isAdmin: <%= user.userProperties.isAdmin %>
+    isAdmin: <%= user.userProperties.isAdmin %>,
+    userName: "<%= user.userName %>",
+    userCanManageWorkOrders: <%= user.userProperties.workOrders.canManage %>
   };
 </script>
 <script src="<%= urlPrefix %>/lib/flatpickr/flatpickr.min.js"></script>
+<script src="<%= urlPrefix %>/lib/leaflet/leaflet-global.js"></script>
 <script src="<%= urlPrefix %>/lib/cityssm-bulma-js/bulma-js.js"></script>
 <script src="<%= urlPrefix %>/lib/cityssm-bulma-webapp-js/cityssm.js"></script>
 <script>

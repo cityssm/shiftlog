@@ -139,8 +139,85 @@
 </div>
 <% } %>
 
+<% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
 <div class="columns">
-  <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+  <div class="column">
+    <div class="panel is-info" id="panel--workOrderHighlights">
+      <div class="panel-heading">
+        <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Highlights
+      </div>
+      <div class="panel-tabs">
+        <a class="is-active" data-work-order-type="recent" href="#">
+          <span class="icon is-small"><i class="fa-solid fa-clock"></i></span>
+          <span>Recently Created</span>
+        </a>
+        <a data-work-order-type="overdue" href="#">
+          <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
+          <span>Overdue</span>
+        </a>
+      </div>
+      <% if (recentWorkOrders.length > 0) { %>
+      <% for (const workOrder of recentWorkOrders) { %>
+      <a class="panel-block" data-work-order-type="recent" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-2x <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+          </div>
+          <div class="media-content">
+            #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderTypeDataListItem %><br />
+            <small>
+              <% if (workOrder.locationAddress1) { %>
+              <strong>Location:</strong> <%= workOrder.locationAddress1 %>
+              <% } %>
+              <% if (workOrder.workOrderOpenDateTime) { %>
+              | <strong>Opened:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) %>
+              <% } %>
+            </small>
+          </div>
+        </div>
+      </a>
+      <% } %>
+      <% } else { %>
+      <div class="panel-block" data-work-order-type="recent">
+        <div class="message is-info has-text-centered" style="width: 100%;">
+          <div class="message-body">
+            No recent work orders.
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <% if (overdueWorkOrders.length > 0) { %>
+      <% for (const workOrder of overdueWorkOrders) { %>
+      <a class="panel-block is-hidden" data-work-order-type="overdue" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-2x fa-exclamation-triangle has-text-danger"></i>
+          </div>
+          <div class="media-content">
+            #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderTypeDataListItem %><br />
+            <small>
+              <% if (workOrder.locationAddress1) { %>
+              <strong>Location:</strong> <%= workOrder.locationAddress1 %>
+              <% } %>
+              <% if (workOrder.workOrderDueDateTime) { %>
+              | <strong>Due:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>
+              <% } %>
+            </small>
+          </div>
+        </div>
+      </a>
+      <% } %>
+      <% } else { %>
+      <div class="panel-block is-hidden" data-work-order-type="overdue">
+        <div class="message is-success has-text-centered" style="width: 100%;">
+          <div class="message-body">
+            No overdue work orders.
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
   <div class="column">
     <div class="panel">
       <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
@@ -171,7 +248,10 @@
       <% } %>
     </div>
   </div>
-  <% } %>
+</div>
+<% } %>
+
+<div class="columns">
   <div class="column">
     <div class="panel">
       <a class="panel-block" href="<%= urlPrefix %>/dashboard/reports">
@@ -189,6 +269,10 @@
           </div>
         </div>
       </a>
+    </div>
+  </div>
+  <div class="column">
+    <div class="panel">
       <a class="panel-block" href="<%= urlPrefix %>/dashboard/userSettings">
         <div class="media">
           <div class="media-left">
@@ -324,5 +408,7 @@
 
 
 <%- include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/dashboard.js"></script>
 
 <%- include('../_footerB'); -%>

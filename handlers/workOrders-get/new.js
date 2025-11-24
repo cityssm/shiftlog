@@ -11,7 +11,7 @@ export default async function handler(request, response) {
         requestorContactInfo: '',
         locationAddress1: '',
         locationAddress2: '',
-        locationCityProvince: ''
+        locationCityProvince: getConfigProperty('workOrders.defaultLocationCityProvince') ?? ''
     };
     response.render('workOrders/edit', {
         headTitle: `Create New ${getConfigProperty('workOrders.sectionNameSingular')}`,

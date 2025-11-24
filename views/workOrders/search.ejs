@@ -89,6 +89,37 @@
             </div>
           </div>
         </div>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--openClosedFilter">Open / Closed</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="workOrderSearch--openClosedFilter" name="openClosedFilter">
+                    <option value="">(All)</option>
+                    <option value="open" selected>Open</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="closed">Closed</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--requestor">Requestor</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="workOrderSearch--requestor"
+                  name="requestor"
+                  type="text"
+                  placeholder="Search by requestor name or contact info"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
 
