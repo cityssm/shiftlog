@@ -7,6 +7,7 @@ import Debug from 'debug';
 import exitHook, { gracefulExit } from 'exit-hook';
 import { DEBUG_NAMESPACE } from './debug.config.js';
 import { getConfigProperty } from './helpers/config.helpers.js';
+import { validateSystemLists } from './helpers/startup.helpers.js';
 import { initializeTasks } from './tasks/taskInitializer.js';
 import version from './version.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:index`);
@@ -57,7 +58,11 @@ function initializeCluster() {
         }
     });
 }
-function startApplication() {
+async function startApplication() {
+    /*
+     * Validate System Lists
+     */
+    await validateSystemLists();
     /*
      * Start workers
      */
@@ -83,7 +88,7 @@ function startApplication() {
         }
     });
 }
-startApplication();
+await startApplication();
 /*
  * Set up the startup test
  */
