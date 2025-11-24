@@ -142,89 +142,80 @@
 <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
 <div class="columns">
   <div class="column">
-    <div class="panel is-info">
+    <div class="panel is-info" id="panel--workOrderHighlights">
       <div class="panel-heading">
-        <div class="tabs is-toggle is-small is-fullwidth" id="tabs--workOrderHighlights">
-          <ul>
-            <li class="is-active" data-tab="recent">
-              <a>
-                <span class="icon is-small"><i class="fa-solid fa-clock"></i></span>
-                <span>Recently Created</span>
-              </a>
-            </li>
-            <li data-tab="overdue">
-              <a>
-                <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
-                <span>Overdue</span>
-              </a>
-            </li>
-          </ul>
-        </div>
+        <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Highlights
       </div>
-      <div id="tab-content--recent" class="tab-content">
-        <% if (recentWorkOrders.length > 0) { %>
-          <% for (const workOrder of recentWorkOrders) { %>
-          <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
-            <div class="media">
-              <div class="media-left">
-                <i class="fa-solid fa-2x <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
-              </div>
-              <div class="media-content">
-                #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderTypeDataListItem %><br />
-                <small>
-                  <% if (workOrder.locationAddress1) { %>
-                  <strong>Location:</strong> <%= workOrder.locationAddress1 %>
-                  <% } %>
-                  <% if (workOrder.workOrderOpenDateTime) { %>
-                  | <strong>Opened:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) %>
-                  <% } %>
-                </small>
-              </div>
-            </div>
-          </a>
-          <% } %>
-        <% } else { %>
-        <div class="panel-block">
-          <div class="message is-info has-text-centered" style="width: 100%;">
-            <div class="message-body">
-              No recent work orders.
-            </div>
+      <div class="panel-tabs">
+        <a class="is-active" data-work-order-type="recent" href="#">
+          <span class="icon is-small"><i class="fa-solid fa-clock"></i></span>
+          <span>Recently Created</span>
+        </a>
+        <a data-work-order-type="overdue" href="#">
+          <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
+          <span>Overdue</span>
+        </a>
+      </div>
+      <% if (recentWorkOrders.length > 0) { %>
+      <% for (const workOrder of recentWorkOrders) { %>
+      <a class="panel-block" data-work-order-type="recent" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-2x <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+          </div>
+          <div class="media-content">
+            #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderTypeDataListItem %><br />
+            <small>
+              <% if (workOrder.locationAddress1) { %>
+              <strong>Location:</strong> <%= workOrder.locationAddress1 %>
+              <% } %>
+              <% if (workOrder.workOrderOpenDateTime) { %>
+              | <strong>Opened:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) %>
+              <% } %>
+            </small>
           </div>
         </div>
-        <% } %>
-      </div>
-      <div id="tab-content--overdue" class="tab-content is-hidden">
-        <% if (overdueWorkOrders.length > 0) { %>
-          <% for (const workOrder of overdueWorkOrders) { %>
-          <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
-            <div class="media">
-              <div class="media-left">
-                <i class="fa-solid fa-2x fa-exclamation-triangle has-text-danger"></i>
-              </div>
-              <div class="media-content">
-                #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderTypeDataListItem %><br />
-                <small>
-                  <% if (workOrder.locationAddress1) { %>
-                  <strong>Location:</strong> <%= workOrder.locationAddress1 %>
-                  <% } %>
-                  <% if (workOrder.workOrderDueDateTime) { %>
-                  | <strong>Due:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>
-                  <% } %>
-                </small>
-              </div>
-            </div>
-          </a>
-          <% } %>
-        <% } else { %>
-        <div class="panel-block">
-          <div class="message is-success has-text-centered" style="width: 100%;">
-            <div class="message-body">
-              No overdue work orders.
-            </div>
+      </a>
+      <% } %>
+      <% } else { %>
+      <div class="panel-block" data-work-order-type="recent">
+        <div class="message is-info has-text-centered" style="width: 100%;">
+          <div class="message-body">
+            No recent work orders.
           </div>
         </div>
-        <% } %>
       </div>
+      <% } %>
+      <% if (overdueWorkOrders.length > 0) { %>
+      <% for (const workOrder of overdueWorkOrders) { %>
+      <a class="panel-block is-hidden" data-work-order-type="overdue" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-2x fa-exclamation-triangle has-text-danger"></i>
+          </div>
+          <div class="media-content">
+            #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderTypeDataListItem %><br />
+            <small>
+              <% if (workOrder.locationAddress1) { %>
+              <strong>Location:</strong> <%= workOrder.locationAddress1 %>
+              <% } %>
+              <% if (workOrder.workOrderDueDateTime) { %>
+              | <strong>Due:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>
+              <% } %>
+            </small>
+          </div>
+        </div>
+      </a>
+      <% } %>
+      <% } else { %>
+      <div class="panel-block is-hidden" data-work-order-type="overdue">
+        <div class="message is-success has-text-centered" style="width: 100%;">
+          <div class="message-body">
+            No overdue work orders.
+          </div>
+        </div>
+      </div>
+      <% } %>
     </div>
   </div>
   <div class="column">
@@ -418,31 +409,6 @@
 
 <%- include('../_footerA'); -%>
 
-<% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
-<script>
-  // Handle work order highlights tabs
-  (() => {
-    const tabsContainer = document.querySelector('#tabs--workOrderHighlights');
-    if (tabsContainer) {
-      const tabButtons = tabsContainer.querySelectorAll('li');
-      
-      tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          // Remove active from all tabs
-          tabButtons.forEach(btn => btn.classList.remove('is-active'));
-          
-          // Add active to clicked tab
-          button.classList.add('is-active');
-          
-          // Show/hide content
-          const tabName = button.dataset.tab;
-          document.getElementById('tab-content--recent').classList.toggle('is-hidden', tabName !== 'recent');
-          document.getElementById('tab-content--overdue').classList.toggle('is-hidden', tabName !== 'overdue');
-        });
-      });
-    }
-  })();
-</script>
-<% } %>
+<script src="<%= urlPrefix %>/javascripts/dashboard.js"></script>
 
 <%- include('../_footerB'); -%>

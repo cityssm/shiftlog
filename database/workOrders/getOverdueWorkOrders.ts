@@ -1,6 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
-
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
