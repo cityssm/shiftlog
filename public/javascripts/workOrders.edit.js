@@ -34,26 +34,6 @@
     }
     workOrderFormElement.addEventListener('submit', updateWorkOrder);
     /*
-     * Set Close Time to Now Button
-     */
-    const setCloseTimeNowButton = document.querySelector('#button--setCloseTimeNow');
-    if (setCloseTimeNowButton !== null) {
-        setCloseTimeNowButton.addEventListener('click', () => {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const dateTimeString = `${year}-${month}-${day}T${hours}:${minutes}`;
-            workOrderCloseDateTimeStringElement.value = dateTimeString;
-            // Update flatpickr instance if it exists
-            if (workOrderCloseDateTimePicker) {
-                workOrderCloseDateTimePicker.setDate(now, true);
-            }
-        });
-    }
-    /*
      * Requestor Name Datalist
      */
     const requestorNameInput = workOrderFormElement.querySelector('#workOrder--requestorName');
@@ -209,6 +189,17 @@
             }
         }
     });
+    /*
+     * Set Close Time to Now Button
+     */
+    const setCloseTimeNowButton = document.querySelector('#button--setCloseTimeNow');
+    if (setCloseTimeNowButton !== null) {
+        setCloseTimeNowButton.addEventListener('click', () => {
+            const now = new Date();
+            workOrderCloseDateTimeStringElement.value = cityssm.dateToString(now) + 'T' + cityssm.timeToString(now);
+            workOrderCloseDateTimePicker.setDate(now, true);
+        });
+    }
     /*
      * Set up map for location picker
      */

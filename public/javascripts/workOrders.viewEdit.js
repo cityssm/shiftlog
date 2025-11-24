@@ -189,11 +189,6 @@
                 }
             });
         }
-            });
-            // Focus the textarea
-            const textarea = modalElement.querySelector('textarea');
-            textarea.focus();
-        }
         function deleteNote(noteSequence) {
             bulmaJS.confirm({
                 title: 'Delete Note',
