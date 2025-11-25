@@ -17,7 +17,7 @@ declare const exports: {
   const shiftLog = exports.shiftLog
   const locationsContainerElement = document.querySelector(
     '#container--locations'
-  )
+  ) as HTMLDivElement
 
   function deleteLocation(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
