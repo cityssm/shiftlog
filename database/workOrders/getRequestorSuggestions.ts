@@ -1,0 +1,25 @@
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+
+export default async function doGetRequestorSuggestions(
+  searchString: string,
+  user?: User
+): Promise<Array<{ requestorContactInfo: string; requestorName: string }>> {
+  const pool = await getShiftLogConnectionPool()
+
+  const result = await pool
+    .request()
+    .input('searchString', searchString)
+    .input('userName', user?.userName).query<{
+    requestorName: string
+    requestorContactInfo: string
+  }>(/* sql */ `
+      SELECT DISTINCT requestorName, requestorContactInfo
+      FROM ShiftLog.WorkOrders
+      WHERE recordDelete_dateTime IS NULL
+        AND requestorName LIKE '%' + @searchString + '%'
+        and requestorContactInfo <> ''
+      ORDER BY requestorName
+    `)
+
+  return result.recordset
+}

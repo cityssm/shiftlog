@@ -388,4 +388,30 @@ declare const exports: {
     })
 
   renderEmployees(exports.employees)
+
+  /*
+   * Filter employees
+   */
+
+  const filterInput = document.querySelector(
+    '#filter--employees'
+  ) as HTMLInputElement | null
+
+  if (filterInput !== null) {
+    filterInput.addEventListener('input', () => {
+      const filterText = filterInput.value.toLowerCase()
+
+      if (filterText === '') {
+        renderEmployees(exports.employees)
+      } else {
+        const filteredEmployees = exports.employees.filter((employee) => {
+          const searchText =
+            `${employee.employeeNumber} ${employee.firstName} ${employee.lastName} ${employee.userName ?? ''} ${employee.phoneNumber ?? ''} ${employee.emailAddress ?? ''}`.toLowerCase()
+          return searchText.includes(filterText)
+        })
+
+        renderEmployees(filteredEmployees)
+      }
+    })
+  }
 })()

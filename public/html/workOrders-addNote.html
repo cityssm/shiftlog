@@ -1,0 +1,45 @@
+<div
+  class="modal"
+  id="modal--addWorkOrderNote"
+  role="dialog"
+  aria-label="Add Note"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Note</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addWorkOrderNote">
+        <input type="hidden" name="workOrderId" id="addWorkOrderNote--workOrderId" />
+        <div class="field">
+          <div class="control">
+            <textarea
+              class="textarea"
+              name="noteText"
+              id="addWorkOrderNote--noteText"
+              rows="8"
+              placeholder="Enter note text..."
+              required
+            ></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-success" type="submit" form="form--addWorkOrderNote">
+          Add Note
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

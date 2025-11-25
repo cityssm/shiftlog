@@ -226,6 +226,8 @@ CREATE TABLE ShiftLog.Locations (
   address2 varchar(100) not null default '',
   cityProvince varchar(50) not null default '',
 
+  userGroupId int,
+
   recordSync_isSynced bit not null default 0,
   recordSync_source varchar(20),
   recordSync_dateTime datetime,
@@ -235,7 +237,9 @@ CREATE TABLE ShiftLog.Locations (
   recordUpdate_userName varchar(30) not null,
   recordUpdate_dateTime datetime not null default getdate(),
   recordDelete_userName varchar(30),
-  recordDelete_dateTime datetime
+  recordDelete_dateTime datetime,
+
+  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
 )
 GO
 

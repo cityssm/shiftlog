@@ -108,8 +108,18 @@ export default async function createWorkOrder(
     )
     .input('requestorName', createWorkOrderForm.requestorName)
     .input('requestorContactInfo', createWorkOrderForm.requestorContactInfo)
-    .input('locationLatitude', createWorkOrderForm.locationLatitude ?? null)
-    .input('locationLongitude', createWorkOrderForm.locationLongitude ?? null)
+    .input(
+      'locationLatitude',
+      (createWorkOrderForm.locationLatitude ?? '') === ''
+        ? null
+        : createWorkOrderForm.locationLatitude
+    )
+    .input(
+      'locationLongitude',
+      (createWorkOrderForm.locationLongitude ?? '') === ''
+        ? null
+        : createWorkOrderForm.locationLongitude
+    )
     .input('locationAddress1', createWorkOrderForm.locationAddress1)
     .input('locationAddress2', createWorkOrderForm.locationAddress2)
     .input('locationCityProvince', createWorkOrderForm.locationCityProvince)

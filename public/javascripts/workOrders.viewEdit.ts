@@ -9,7 +9,6 @@ declare const exports: {
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
-
 ;(() => {
   const workOrderTabsContainerElement = document.querySelector(
     '#container--workOrderTabs'
@@ -25,11 +24,19 @@ declare const bulmaJS: BulmaJS
    * Notes functionality
    */
 
-  const notesContainerElement = document.querySelector('#container--notes') as HTMLElement | null
-  
+  const notesContainerElement = document.querySelector(
+    '#container--notes'
+  ) as HTMLElement | null
+
   if (notesContainerElement !== null) {
-    const workOrderFormElement = document.querySelector('#form--workOrder') as HTMLFormElement
-    const workOrderId = (workOrderFormElement.querySelector('#workOrder--workOrderId') as HTMLInputElement).value
+    const workOrderFormElement = document.querySelector(
+      '#form--workOrder'
+    ) as HTMLFormElement
+    const workOrderId = (
+      workOrderFormElement.querySelector(
+        '#workOrder--workOrderId'
+      ) as HTMLInputElement
+    ).value
 
     interface WorkOrderNote {
       workOrderId: number
@@ -49,6 +56,12 @@ declare const bulmaJS: BulmaJS
     }
 
     function renderNotes(notes: WorkOrderNote[]): void {
+      // Update notes count
+      const notesCountElement = document.querySelector('#notesCount')
+      if (notesCountElement !== null) {
+        notesCountElement.textContent = notes.length.toString()
+      }
+
       if (notes.length === 0) {
         notesContainerElement.innerHTML = /* html */ `
           <div class="message is-info">
@@ -64,8 +77,8 @@ declare const bulmaJS: BulmaJS
         const noteElement = document.createElement('div')
         noteElement.className = 'box'
 
-        const canEdit = 
-          exports.shiftLog.userCanManageWorkOrders || 
+        const canEdit =
+          exports.shiftLog.userCanManageWorkOrders ||
           note.recordCreate_userName === exports.shiftLog.userName
 
         const truncatedText = truncateText(note.noteText, 200)
@@ -78,15 +91,23 @@ declare const bulmaJS: BulmaJS
                 <p>
                   <strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong>
                   <small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small>
-                  ${note.recordUpdate_dateTime !== note.recordCreate_dateTime ? 
-                    `<small class="has-text-grey">(edited)</small>` : ''}
+                  ${
+                    note.recordUpdate_dateTime !== note.recordCreate_dateTime
+                      ? `<small class="has-text-grey">(edited)</small>`
+                      : ''
+                  }
                   <br />
                   <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
-                  ${needsExpand ? 
-                    `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>` : ''}
+                  ${
+                    needsExpand
+                      ? `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>`
+                      : ''
+                  }
                 </p>
               </div>
-              ${canEdit ? /* html */ `
+              ${
+                canEdit
+                  ? /* html */ `
                 <nav class="level is-mobile">
                   <div class="level-left">
                     <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
@@ -97,14 +118,18 @@ declare const bulmaJS: BulmaJS
                     </a>
                   </div>
                 </nav>
-              ` : ''}
+              `
+                  : ''
+              }
             </div>
           </article>
         `
 
         // Add event listeners
         if (needsExpand) {
-          const viewFullLink = noteElement.querySelector('.view-full-note') as HTMLAnchorElement
+          const viewFullLink = noteElement.querySelector(
+            '.view-full-note'
+          ) as HTMLAnchorElement
           viewFullLink.addEventListener('click', (event) => {
             event.preventDefault()
             showFullNoteModal(note)
@@ -112,13 +137,17 @@ declare const bulmaJS: BulmaJS
         }
 
         if (canEdit) {
-          const editLink = noteElement.querySelector('.edit-note') as HTMLAnchorElement
+          const editLink = noteElement.querySelector(
+            '.edit-note'
+          ) as HTMLAnchorElement
           editLink.addEventListener('click', (event) => {
             event.preventDefault()
             showEditNoteModal(note)
           })
 
-          const deleteLink = noteElement.querySelector('.delete-note') as HTMLAnchorElement
+          const deleteLink = noteElement.querySelector(
+            '.delete-note'
+          ) as HTMLAnchorElement
           deleteLink.addEventListener('click', (event) => {
             event.preventDefault()
             deleteNote(note.noteSequence)
@@ -154,7 +183,9 @@ declare const bulmaJS: BulmaJS
 
       document.body.append(modalElement)
 
-      const closeButtons = modalElement.querySelectorAll('.delete, .close-modal, .modal-background')
+      const closeButtons = modalElement.querySelectorAll(
+        '.delete, .close-modal, .modal-background'
+      )
       for (const button of closeButtons) {
         button.addEventListener('click', () => {
           modalElement.remove()
@@ -163,52 +194,18 @@ declare const bulmaJS: BulmaJS
     }
 
     function showEditNoteModal(note: WorkOrderNote): void {
-      const modalElement = document.createElement('div')
-      modalElement.className = 'modal is-active'
-      modalElement.innerHTML = /* html */ `
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Edit Note</p>
-            <button class="delete" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <form id="form--editNote">
-              <input type="hidden" name="workOrderId" value="${workOrderId}" />
-              <input type="hidden" name="noteSequence" value="${note.noteSequence}" />
-              <div class="field">
-                <div class="control">
-                  <textarea class="textarea" name="noteText" rows="8" required>${cityssm.escapeHTML(note.noteText)}</textarea>
-                </div>
-              </div>
-            </form>
-          </section>
-          <footer class="modal-card-foot">
-            <button class="button is-success save-note">Save</button>
-            <button class="button close-modal">Cancel</button>
-          </footer>
-        </div>
-      `
+      let closeModalFunction
 
-      document.body.append(modalElement)
+      function doUpdateNote(submitEvent) {
+        submitEvent.preventDefault()
+        const formElement = submitEvent.currentTarget
 
-      const closeButtons = modalElement.querySelectorAll('.delete, .close-modal, .modal-background')
-      for (const button of closeButtons) {
-        button.addEventListener('click', () => {
-          modalElement.remove()
-        })
-      }
-
-      const saveButton = modalElement.querySelector('.save-note') as HTMLButtonElement
-      saveButton.addEventListener('click', () => {
-        const formElement = modalElement.querySelector('#form--editNote') as HTMLFormElement
-        
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`,
           formElement,
           (responseJSON) => {
             if (responseJSON.success) {
-              modalElement.remove()
+              closeModalFunction()
               loadNotes()
             } else {
               bulmaJS.alert({
@@ -218,55 +215,42 @@ declare const bulmaJS: BulmaJS
             }
           }
         )
+      }
+      cityssm.openHtmlModal('workOrders-editNote', {
+        onshow(modalElement) {
+          modalElement.querySelector('#editWorkOrderNote--workOrderId').value =
+            workOrderId
+          modalElement.querySelector('#editWorkOrderNote--noteSequence').value =
+            note.noteSequence.toString()
+          modalElement.querySelector('#editWorkOrderNote--noteText').value =
+            note.noteText
+        },
+        onshown(modalElement, _closeModalFunction) {
+          bulmaJS.toggleHtmlClipped()
+          closeModalFunction = _closeModalFunction
+          modalElement
+            .querySelector('form')
+            ?.addEventListener('submit', doUpdateNote)
+        },
+        onremoved() {
+          bulmaJS.toggleHtmlClipped()
+        }
       })
     }
 
     function showAddNoteModal(): void {
-      const modalElement = document.createElement('div')
-      modalElement.className = 'modal is-active'
-      modalElement.innerHTML = /* html */ `
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Add Note</p>
-            <button class="delete" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <form id="form--addNote">
-              <input type="hidden" name="workOrderId" value="${workOrderId}" />
-              <div class="field">
-                <div class="control">
-                  <textarea class="textarea" name="noteText" rows="8" placeholder="Enter note text..." required></textarea>
-                </div>
-              </div>
-            </form>
-          </section>
-          <footer class="modal-card-foot">
-            <button class="button is-success save-note">Add Note</button>
-            <button class="button close-modal">Cancel</button>
-          </footer>
-        </div>
-      `
+      let closeModalFunction
+      function doAddNote(submitEvent) {
+        submitEvent.preventDefault()
+        const formElement = submitEvent.currentTarget
 
-      document.body.append(modalElement)
-
-      const closeButtons = modalElement.querySelectorAll('.delete, .close-modal, .modal-background')
-      for (const button of closeButtons) {
-        button.addEventListener('click', () => {
-          modalElement.remove()
-        })
-      }
-
-      const saveButton = modalElement.querySelector('.save-note') as HTMLButtonElement
-      saveButton.addEventListener('click', () => {
-        const formElement = modalElement.querySelector('#form--addNote') as HTMLFormElement
-        
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`,
           formElement,
           (responseJSON) => {
             if (responseJSON.success) {
-              modalElement.remove()
+              closeModalFunction()
+              formElement.reset()
               loadNotes()
             } else {
               bulmaJS.alert({
@@ -276,11 +260,25 @@ declare const bulmaJS: BulmaJS
             }
           }
         )
-      })
+      }
 
-      // Focus the textarea
-      const textarea = modalElement.querySelector('textarea') as HTMLTextAreaElement
-      textarea.focus()
+      cityssm.openHtmlModal('workOrders-addNote', {
+        onshow(modalElement) {
+          modalElement.querySelector('#addWorkOrderNote--workOrderId').value =
+            workOrderId
+        },
+        onshown(modalElement, _closeModalFunction) {
+          bulmaJS.toggleHtmlClipped()
+          closeModalFunction = _closeModalFunction
+          modalElement
+            .querySelector('form')
+            ?.addEventListener('submit', doAddNote)
+          modalElement.querySelector('#addWorkOrderNote--noteText')?.focus()
+        },
+        onremoved() {
+          bulmaJS.toggleHtmlClipped()
+        }
+      })
     }
 
     function deleteNote(noteSequence: number): void {
@@ -318,8 +316,11 @@ declare const bulmaJS: BulmaJS
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`,
         {},
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean; notes: WorkOrderNote[] }
-          
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            notes: WorkOrderNote[]
+          }
+
           if (responseJSON.success) {
             renderNotes(responseJSON.notes)
           }
@@ -328,7 +329,9 @@ declare const bulmaJS: BulmaJS
     }
 
     // Add note button
-    const addNoteButton = document.querySelector('#button--addNote') as HTMLButtonElement | null
+    const addNoteButton = document.querySelector(
+      '#button--addNote'
+    ) as HTMLButtonElement | null
     if (addNoteButton !== null) {
       addNoteButton.addEventListener('click', () => {
         showAddNoteModal()

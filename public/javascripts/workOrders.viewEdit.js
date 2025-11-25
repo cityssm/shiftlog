@@ -17,6 +17,11 @@
             return text.slice(0, maxLength) + '…';
         }
         function renderNotes(notes) {
+            // Update notes count
+            const notesCountElement = document.querySelector('#notesCount');
+            if (notesCountElement !== null) {
+                notesCountElement.textContent = notes.length.toString();
+            }
             if (notes.length === 0) {
                 notesContainerElement.innerHTML = /* html */ `
           <div class="message is-info">
@@ -40,15 +45,18 @@
                 <p>
                   <strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong>
                   <small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small>
-                  ${note.recordUpdate_dateTime !== note.recordCreate_dateTime ?
-                    `<small class="has-text-grey">(edited)</small>` : ''}
+                  ${note.recordUpdate_dateTime !== note.recordCreate_dateTime
+                    ? `<small class="has-text-grey">(edited)</small>`
+                    : ''}
                   <br />
                   <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
-                  ${needsExpand ?
-                    `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>` : ''}
+                  ${needsExpand
+                    ? `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>`
+                    : ''}
                 </p>
               </div>
-              ${canEdit ? /* html */ `
+              ${canEdit
+                    ? /* html */ `
                 <nav class="level is-mobile">
                   <div class="level-left">
                     <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
@@ -59,7 +67,8 @@
                     </a>
                   </div>
                 </nav>
-              ` : ''}
+              `
+                    : ''}
             </div>
           </article>
         `;
@@ -117,45 +126,13 @@
             }
         }
         function showEditNoteModal(note) {
-            const modalElement = document.createElement('div');
-            modalElement.className = 'modal is-active';
-            modalElement.innerHTML = /* html */ `
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Edit Note</p>
-            <button class="delete" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <form id="form--editNote">
-              <input type="hidden" name="workOrderId" value="${workOrderId}" />
-              <input type="hidden" name="noteSequence" value="${note.noteSequence}" />
-              <div class="field">
-                <div class="control">
-                  <textarea class="textarea" name="noteText" rows="8" required>${cityssm.escapeHTML(note.noteText)}</textarea>
-                </div>
-              </div>
-            </form>
-          </section>
-          <footer class="modal-card-foot">
-            <button class="button is-success save-note">Save</button>
-            <button class="button close-modal">Cancel</button>
-          </footer>
-        </div>
-      `;
-            document.body.append(modalElement);
-            const closeButtons = modalElement.querySelectorAll('.delete, .close-modal, .modal-background');
-            for (const button of closeButtons) {
-                button.addEventListener('click', () => {
-                    modalElement.remove();
-                });
-            }
-            const saveButton = modalElement.querySelector('.save-note');
-            saveButton.addEventListener('click', () => {
-                const formElement = modalElement.querySelector('#form--editNote');
+            let closeModalFunction;
+            function doUpdateNote(submitEvent) {
+                submitEvent.preventDefault();
+                const formElement = submitEvent.currentTarget;
                 cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`, formElement, (responseJSON) => {
                     if (responseJSON.success) {
-                        modalElement.remove();
+                        closeModalFunction();
                         loadNotes();
                     }
                     else {
@@ -165,47 +142,37 @@
                         });
                     }
                 });
+            }
+            cityssm.openHtmlModal('workOrders-editNote', {
+                onshow(modalElement) {
+                    modalElement.querySelector('#editWorkOrderNote--workOrderId').value =
+                        workOrderId;
+                    modalElement.querySelector('#editWorkOrderNote--noteSequence').value =
+                        note.noteSequence.toString();
+                    modalElement.querySelector('#editWorkOrderNote--noteText').value =
+                        note.noteText;
+                },
+                onshown(modalElement, _closeModalFunction) {
+                    bulmaJS.toggleHtmlClipped();
+                    closeModalFunction = _closeModalFunction;
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doUpdateNote);
+                },
+                onremoved() {
+                    bulmaJS.toggleHtmlClipped();
+                }
             });
         }
         function showAddNoteModal() {
-            const modalElement = document.createElement('div');
-            modalElement.className = 'modal is-active';
-            modalElement.innerHTML = /* html */ `
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Add Note</p>
-            <button class="delete" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <form id="form--addNote">
-              <input type="hidden" name="workOrderId" value="${workOrderId}" />
-              <div class="field">
-                <div class="control">
-                  <textarea class="textarea" name="noteText" rows="8" placeholder="Enter note text..." required></textarea>
-                </div>
-              </div>
-            </form>
-          </section>
-          <footer class="modal-card-foot">
-            <button class="button is-success save-note">Add Note</button>
-            <button class="button close-modal">Cancel</button>
-          </footer>
-        </div>
-      `;
-            document.body.append(modalElement);
-            const closeButtons = modalElement.querySelectorAll('.delete, .close-modal, .modal-background');
-            for (const button of closeButtons) {
-                button.addEventListener('click', () => {
-                    modalElement.remove();
-                });
-            }
-            const saveButton = modalElement.querySelector('.save-note');
-            saveButton.addEventListener('click', () => {
-                const formElement = modalElement.querySelector('#form--addNote');
+            let closeModalFunction;
+            function doAddNote(submitEvent) {
+                submitEvent.preventDefault();
+                const formElement = submitEvent.currentTarget;
                 cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`, formElement, (responseJSON) => {
                     if (responseJSON.success) {
-                        modalElement.remove();
+                        closeModalFunction();
+                        formElement.reset();
                         loadNotes();
                     }
                     else {
@@ -215,10 +182,24 @@
                         });
                     }
                 });
+            }
+            cityssm.openHtmlModal('workOrders-addNote', {
+                onshow(modalElement) {
+                    modalElement.querySelector('#addWorkOrderNote--workOrderId').value =
+                        workOrderId;
+                },
+                onshown(modalElement, _closeModalFunction) {
+                    bulmaJS.toggleHtmlClipped();
+                    closeModalFunction = _closeModalFunction;
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doAddNote);
+                    modalElement.querySelector('#addWorkOrderNote--noteText')?.focus();
+                },
+                onremoved() {
+                    bulmaJS.toggleHtmlClipped();
+                }
             });
-            // Focus the textarea
-            const textarea = modalElement.querySelector('textarea');
-            textarea.focus();
         }
         function deleteNote(noteSequence) {
             bulmaJS.confirm({

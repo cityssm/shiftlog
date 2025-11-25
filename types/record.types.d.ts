@@ -59,6 +59,15 @@ export interface Equipment extends SyncRecord {
     userGroupId?: number;
     userGroupName?: string;
 }
+export interface Location extends SyncRecord {
+    locationId: number;
+    locationName: string;
+    latitude?: number | null;
+    longitude?: number | null;
+    address1: string;
+    address2: string;
+    cityProvince: string;
+}
 export interface Employee extends SyncRecord {
     employeeNumber: string;
     firstName: string;
