@@ -32,8 +32,9 @@ export const configDefaultValues = {
     'workOrders.sectionName': 'Work Orders',
     'workOrders.sectionNameSingular': 'Work Order',
     'workOrders.iconClass': 'fa-hard-hat',
-    'workOrders.workOrderNumberPrefix': '',
+    // eslint-disable-next-line no-secrets/no-secrets
     'workOrders.defaultLocationCityProvince': '',
+    'workOrders.workOrderNumberPrefix': '',
     // Timesheets
     'timesheets.isEnabled': false,
     'timesheets.router': 'timesheets',
@@ -49,6 +50,11 @@ export const configDefaultValues = {
     equipment: {
         syncSource: ''
     },
-    'equipment.syncSource': ''
+    'equipment.syncSource': '',
+    // Locations
+    locations: {
+        syncSource: ''
+    },
+    'locations.syncSource': ''
 };
 export default configDefaultValues;

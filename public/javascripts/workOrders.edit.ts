@@ -283,6 +283,7 @@ declare const exports: {
           locationCityProvinceInput.value !== '' ||
           locationLatitudeInput.value !== '' ||
           locationLongitudeInput.value !== ''
+          
         if (hasExistingData) {
           bulmaJS.confirm({
             title: 'Update Location Information?',

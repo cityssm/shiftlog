@@ -47,7 +47,9 @@ export const config = defineConfig(configWebApp, {
                         // Avanti
                         'avanti',
                         // Pearl
-                        'worktech'
+                        'worktech',
+                        // ArcGIS
+                        'arcgis'
                     ]
                 }
             }
