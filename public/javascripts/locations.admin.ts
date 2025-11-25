@@ -21,6 +21,90 @@ declare const exports: {
     '#container--locations'
   ) as HTMLDivElement
 
+  // Default map coordinates (Sault Ste. Marie)
+  const DEFAULT_MAP_LAT = 46.5136
+  const DEFAULT_MAP_LNG = -84.3422
+  const DEFAULT_MAP_ZOOM = 13
+  const DETAIL_MAP_ZOOM = 15
+
+  /**
+   * Initialize a Leaflet map picker for location coordinate selection
+   */
+  function initializeLocationMapPicker(
+    mapElementId: string,
+    latitudeInput: HTMLInputElement,
+    longitudeInput: HTMLInputElement
+  ): void {
+    // Use existing coordinates or default to SSM
+    let defaultLat = DEFAULT_MAP_LAT
+    let defaultLng = DEFAULT_MAP_LNG
+    let defaultZoom = DEFAULT_MAP_ZOOM
+
+    if (latitudeInput.value !== '' && longitudeInput.value !== '') {
+      defaultLat = Number.parseFloat(latitudeInput.value)
+      defaultLng = Number.parseFloat(longitudeInput.value)
+      defaultZoom = DETAIL_MAP_ZOOM
+    }
+
+    const map = new L.Map(mapElementId).setView(
+      [defaultLat, defaultLng],
+      defaultZoom
+    )
+
+    new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:
+        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map)
+
+    // eslint-disable-next-line unicorn/no-null
+    let marker: L.Marker | null = null
+
+    // Add existing marker if coordinates are set
+    if (latitudeInput.value !== '' && longitudeInput.value !== '') {
+      marker = new L.Marker([defaultLat, defaultLng]).addTo(map)
+    }
+
+    // Handle map click to set coordinates
+    map.on('click', (event: { latlng: { lat: number; lng: number } }) => {
+      const lat = event.latlng.lat
+      const lng = event.latlng.lng
+
+      latitudeInput.value = lat.toFixed(7)
+      longitudeInput.value = lng.toFixed(7)
+
+      if (marker !== null) {
+        map.removeLayer(marker)
+      }
+
+      marker = new L.Marker([lat, lng]).addTo(map)
+    })
+
+    // Update map when coordinates are manually entered
+    function updateMapFromInputs(): void {
+      const lat = Number.parseFloat(latitudeInput.value)
+      const lng = Number.parseFloat(longitudeInput.value)
+
+      if (
+        !Number.isNaN(lat) &&
+        !Number.isNaN(lng) &&
+        lat >= -90 &&
+        lat <= 90 &&
+        lng >= -180 &&
+        lng <= 180
+      ) {
+        if (marker !== null) {
+          map.removeLayer(marker)
+        }
+
+        marker = new L.Marker([lat, lng]).addTo(map)
+        map.setView([lat, lng], DETAIL_MAP_ZOOM)
+      }
+    }
+
+    latitudeInput.addEventListener('change', updateMapFromInputs)
+    longitudeInput.addEventListener('change', updateMapFromInputs)
+  }
+
   function deleteLocation(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
 
@@ -173,80 +257,11 @@ declare const exports: {
         ) as HTMLElement | null
 
         if (mapPickerElement !== null) {
-          const latitudeInput = modalElement.querySelector(
-            '#editLocation--latitude'
-          ) as HTMLInputElement
-
-          const longitudeInput = modalElement.querySelector(
-            '#editLocation--longitude'
-          ) as HTMLInputElement
-
-          // Default to SSM or use existing coordinates
-          let defaultLat = 46.5136
-          let defaultLng = -84.3422
-          let defaultZoom = 13
-
-          if (latitudeInput.value !== '' && longitudeInput.value !== '') {
-            defaultLat = Number.parseFloat(latitudeInput.value)
-            defaultLng = Number.parseFloat(longitudeInput.value)
-            defaultZoom = 15
-          }
-
-          const map = new L.Map('map--editLocationPicker').setView(
-            [defaultLat, defaultLng],
-            defaultZoom
+          initializeLocationMapPicker(
+            'map--editLocationPicker',
+            modalElement.querySelector('#editLocation--latitude') as HTMLInputElement,
+            modalElement.querySelector('#editLocation--longitude') as HTMLInputElement
           )
-
-          new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution:
-              '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          }).addTo(map)
-
-          // eslint-disable-next-line unicorn/no-null
-          let marker: L.Marker | null = null
-
-          if (latitudeInput.value !== '' && longitudeInput.value !== '') {
-            marker = new L.Marker([defaultLat, defaultLng]).addTo(map)
-          }
-
-          map.on('click', (event: { latlng: { lat: number; lng: number } }) => {
-            const lat = event.latlng.lat
-            const lng = event.latlng.lng
-
-            latitudeInput.value = lat.toFixed(7)
-            longitudeInput.value = lng.toFixed(7)
-
-            if (marker !== null) {
-              map.removeLayer(marker)
-            }
-
-            marker = new L.Marker([lat, lng]).addTo(map)
-          })
-
-          // Update map when coordinates are manually entered
-          function updateMapFromInputs(): void {
-            const lat = Number.parseFloat(latitudeInput.value)
-            const lng = Number.parseFloat(longitudeInput.value)
-
-            if (
-              !Number.isNaN(lat) &&
-              !Number.isNaN(lng) &&
-              lat >= -90 &&
-              lat <= 90 &&
-              lng >= -180 &&
-              lng <= 180
-            ) {
-              if (marker !== null) {
-                map.removeLayer(marker)
-              }
-
-              marker = new L.Marker([lat, lng]).addTo(map)
-              map.setView([lat, lng], 15)
-            }
-          }
-
-          latitudeInput.addEventListener('change', updateMapFromInputs)
-          longitudeInput.addEventListener('change', updateMapFromInputs)
         }
       },
 
@@ -394,70 +409,11 @@ declare const exports: {
           ) as HTMLElement | null
 
           if (mapPickerElement !== null) {
-            const latitudeInput = modalElement.querySelector(
-              '#addLocation--latitude'
-            ) as HTMLInputElement
-
-            const longitudeInput = modalElement.querySelector(
-              '#addLocation--longitude'
-            ) as HTMLInputElement
-
-            // Default to SSM
-            const defaultLat = 46.5136
-            const defaultLng = -84.3422
-            const defaultZoom = 13
-
-            const map = new L.Map('map--addLocationPicker').setView(
-              [defaultLat, defaultLng],
-              defaultZoom
+            initializeLocationMapPicker(
+              'map--addLocationPicker',
+              modalElement.querySelector('#addLocation--latitude') as HTMLInputElement,
+              modalElement.querySelector('#addLocation--longitude') as HTMLInputElement
             )
-
-            new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution:
-                '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map)
-
-            // eslint-disable-next-line unicorn/no-null
-            let marker: L.Marker | null = null
-
-            map.on('click', (event: { latlng: { lat: number; lng: number } }) => {
-              const lat = event.latlng.lat
-              const lng = event.latlng.lng
-
-              latitudeInput.value = lat.toFixed(7)
-              longitudeInput.value = lng.toFixed(7)
-
-              if (marker !== null) {
-                map.removeLayer(marker)
-              }
-
-              marker = new L.Marker([lat, lng]).addTo(map)
-            })
-
-            // Update map when coordinates are manually entered
-            function updateMapFromInputs(): void {
-              const lat = Number.parseFloat(latitudeInput.value)
-              const lng = Number.parseFloat(longitudeInput.value)
-
-              if (
-                !Number.isNaN(lat) &&
-                !Number.isNaN(lng) &&
-                lat >= -90 &&
-                lat <= 90 &&
-                lng >= -180 &&
-                lng <= 180
-              ) {
-                if (marker !== null) {
-                  map.removeLayer(marker)
-                }
-
-                marker = new L.Marker([lat, lng]).addTo(map)
-                map.setView([lat, lng], 15)
-              }
-            }
-
-            latitudeInput.addEventListener('change', updateMapFromInputs)
-            longitudeInput.addEventListener('change', updateMapFromInputs)
           }
         },
 
