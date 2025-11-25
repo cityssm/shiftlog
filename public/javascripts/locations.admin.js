@@ -104,6 +104,59 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateLocation);
+                // Initialize map picker
+                const mapPickerElement = modalElement.querySelector('#map--editLocationPicker');
+                if (mapPickerElement !== null) {
+                    const latitudeInput = modalElement.querySelector('#editLocation--latitude');
+                    const longitudeInput = modalElement.querySelector('#editLocation--longitude');
+                    // Default to SSM or use existing coordinates
+                    let defaultLat = 46.5136;
+                    let defaultLng = -84.3422;
+                    let defaultZoom = 13;
+                    if (latitudeInput.value !== '' && longitudeInput.value !== '') {
+                        defaultLat = Number.parseFloat(latitudeInput.value);
+                        defaultLng = Number.parseFloat(longitudeInput.value);
+                        defaultZoom = 15;
+                    }
+                    const map = new L.Map('map--editLocationPicker').setView([defaultLat, defaultLng], defaultZoom);
+                    new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                    // eslint-disable-next-line unicorn/no-null
+                    let marker = null;
+                    if (latitudeInput.value !== '' && longitudeInput.value !== '') {
+                        marker = new L.Marker([defaultLat, defaultLng]).addTo(map);
+                    }
+                    map.on('click', (event) => {
+                        const lat = event.latlng.lat;
+                        const lng = event.latlng.lng;
+                        latitudeInput.value = lat.toFixed(7);
+                        longitudeInput.value = lng.toFixed(7);
+                        if (marker !== null) {
+                            map.removeLayer(marker);
+                        }
+                        marker = new L.Marker([lat, lng]).addTo(map);
+                    });
+                    // Update map when coordinates are manually entered
+                    function updateMapFromInputs() {
+                        const lat = Number.parseFloat(latitudeInput.value);
+                        const lng = Number.parseFloat(longitudeInput.value);
+                        if (!Number.isNaN(lat) &&
+                            !Number.isNaN(lng) &&
+                            lat >= -90 &&
+                            lat <= 90 &&
+                            lng >= -180 &&
+                            lng <= 180) {
+                            if (marker !== null) {
+                                map.removeLayer(marker);
+                            }
+                            marker = new L.Marker([lat, lng]).addTo(map);
+                            map.setView([lat, lng], 15);
+                        }
+                    }
+                    latitudeInput.addEventListener('change', updateMapFromInputs);
+                    longitudeInput.addEventListener('change', updateMapFromInputs);
+                }
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
@@ -222,6 +275,51 @@
                     .querySelector('form')
                     ?.addEventListener('submit', doAddLocation);
                 modalElement.querySelector('#addLocation--locationName').focus();
+                // Initialize map picker
+                const mapPickerElement = modalElement.querySelector('#map--addLocationPicker');
+                if (mapPickerElement !== null) {
+                    const latitudeInput = modalElement.querySelector('#addLocation--latitude');
+                    const longitudeInput = modalElement.querySelector('#addLocation--longitude');
+                    // Default to SSM
+                    const defaultLat = 46.5136;
+                    const defaultLng = -84.3422;
+                    const defaultZoom = 13;
+                    const map = new L.Map('map--addLocationPicker').setView([defaultLat, defaultLng], defaultZoom);
+                    new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                    // eslint-disable-next-line unicorn/no-null
+                    let marker = null;
+                    map.on('click', (event) => {
+                        const lat = event.latlng.lat;
+                        const lng = event.latlng.lng;
+                        latitudeInput.value = lat.toFixed(7);
+                        longitudeInput.value = lng.toFixed(7);
+                        if (marker !== null) {
+                            map.removeLayer(marker);
+                        }
+                        marker = new L.Marker([lat, lng]).addTo(map);
+                    });
+                    // Update map when coordinates are manually entered
+                    function updateMapFromInputs() {
+                        const lat = Number.parseFloat(latitudeInput.value);
+                        const lng = Number.parseFloat(longitudeInput.value);
+                        if (!Number.isNaN(lat) &&
+                            !Number.isNaN(lng) &&
+                            lat >= -90 &&
+                            lat <= 90 &&
+                            lng >= -180 &&
+                            lng <= 180) {
+                            if (marker !== null) {
+                                map.removeLayer(marker);
+                            }
+                            marker = new L.Marker([lat, lng]).addTo(map);
+                            map.setView([lat, lng], 15);
+                        }
+                    }
+                    latitudeInput.addEventListener('change', updateMapFromInputs);
+                    longitudeInput.addEventListener('change', updateMapFromInputs);
+                }
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
