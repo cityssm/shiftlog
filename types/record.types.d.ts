@@ -67,6 +67,8 @@ export interface Location extends SyncRecord {
     address1: string;
     address2: string;
     cityProvince: string;
+    userGroupId?: number;
+    userGroupName?: string;
 }
 export interface Employee extends SyncRecord {
     employeeNumber: string;

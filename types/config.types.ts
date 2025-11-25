@@ -77,6 +77,7 @@ export interface Config {
 
   employees?: ConfigEmployees
   equipment?: ConfigEquipment
+  locations?: ConfigLocations
 }
 
 export type ConfigEmployees =
@@ -102,6 +103,28 @@ export type ConfigEquipment =
       syncSource: 'pearl'
 
       filters?: GetEquipmentFilters
+    }
+
+export type ConfigLocations =
+  | {
+      syncSource: ''
+    }
+  | {
+      syncSource: 'arcgis'
+
+      layerURL: string
+      whereClause?: string
+
+      mappings: {
+        locationName?: ((record: unknown) => string | undefined) | string
+
+        latitude?: ((record: unknown) => number | undefined) | string
+        longitude?: ((record: unknown) => number | undefined) | string
+
+        address1: ((record: unknown) => string | undefined) | string
+        address2?: ((record: unknown) => string | undefined) | string
+        cityProvince?: ((record: unknown) => string | undefined) | string
+      }
     }
 
 interface ConfigSection {

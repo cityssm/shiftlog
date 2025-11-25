@@ -33,5 +33,19 @@ export function initializeTasks(): ChildProcess[] {
     childProcesses.push(childProcess)
   }
 
+  /*
+   * Location Sync Task
+   */
+
+  if (getConfigProperty('locations.syncSource') !== '') {
+    const childProcess = fork('./tasks/locationSync/task.js', {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: 'inherit'
+    })
+
+    childProcesses.push(childProcess)
+  }
+
   return childProcesses
 }

@@ -1,7 +1,7 @@
 import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorConfiguration, FunctionAuthenticatorConfiguration, PlainTextAuthenticatorConfiguration } from '@cityssm/authentication-helper';
 import type { AvantiApiConfiguration } from '@cityssm/avanti-api';
 import type { config as MSSQLConfig } from 'mssql';
-import type { ConfigEmployees, ConfigEquipment } from '../types/config.types.js';
+import type { ConfigEmployees, ConfigEquipment, ConfigLocations } from '../types/config.types.js';
 export declare const configDefaultValues: {
     'application.applicationName': string;
     'application.applicationUrl': string | undefined;
@@ -45,8 +45,8 @@ export declare const configDefaultValues: {
     'workOrders.sectionName': string;
     'workOrders.sectionNameSingular': string;
     'workOrders.iconClass': string;
-    'workOrders.workOrderNumberPrefix': string;
     'workOrders.defaultLocationCityProvince': string;
+    'workOrders.workOrderNumberPrefix': string;
     'timesheets.isEnabled': boolean;
     'timesheets.router': string;
     'timesheets.sectionName': string;
@@ -56,5 +56,7 @@ export declare const configDefaultValues: {
     'employees.syncSource': string;
     equipment: ConfigEquipment;
     'equipment.syncSource': string;
+    locations: ConfigLocations;
+    'locations.syncSource': string;
 };
 export default configDefaultValues;
