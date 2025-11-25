@@ -82,7 +82,7 @@ export interface Equipment extends SyncRecord {
   userGroupName?: string
 }
 
-export interface Location extends BaseRecord {
+export interface Location extends SyncRecord {
   locationId: number
   locationName: string
   latitude?: number | null

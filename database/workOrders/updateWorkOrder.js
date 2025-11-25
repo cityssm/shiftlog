@@ -4,7 +4,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
 export default async function updateWorkOrder(updateWorkOrderForm, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('workOrderId', updateWorkOrderForm.workOrderId)
         .input('workOrderTypeDataListItemId', updateWorkOrderForm.workOrderTypeDataListItemId)
@@ -21,8 +21,12 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         : dateTimeInputToSqlDateTime(updateWorkOrderForm.workOrderCloseDateTimeString))
         .input('requestorName', updateWorkOrderForm.requestorName)
         .input('requestorContactInfo', updateWorkOrderForm.requestorContactInfo)
-        .input('locationLatitude', updateWorkOrderForm.locationLatitude ?? null)
-        .input('locationLongitude', updateWorkOrderForm.locationLongitude ?? null)
+        .input('locationLatitude', (updateWorkOrderForm.locationLatitude ?? '') === ''
+        ? null
+        : updateWorkOrderForm.locationLatitude)
+        .input('locationLongitude', (updateWorkOrderForm.locationLongitude ?? '') === ''
+        ? null
+        : updateWorkOrderForm.locationLongitude)
         .input('locationAddress1', updateWorkOrderForm.locationAddress1)
         .input('locationAddress2', updateWorkOrderForm.locationAddress2)
         .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
@@ -48,6 +52,6 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         recordUpdate_dateTime = getdate()
       where workOrderId = @workOrderId
         and recordDelete_dateTime is null
-    `));
+    `);
     return result.rowsAffected[0] > 0;
 }

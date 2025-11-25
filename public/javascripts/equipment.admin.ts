@@ -398,7 +398,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
-      
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -410,4 +410,28 @@ declare const exports: {
     ?.addEventListener('click', addEquipment)
 
   renderEquipment(exports.equipment)
+
+  /*
+   * Filter equipment
+   */
+  const filterInput = document.querySelector(
+    '#filter--equipment'
+  ) as HTMLInputElement | null
+
+  if (filterInput !== null) {
+    filterInput.addEventListener('input', () => {
+      const filterText = filterInput.value.toLowerCase()
+
+      if (filterText === '') {
+        renderEquipment(exports.equipment)
+      } else {
+        const filteredEquipment = exports.equipment.filter((equipment) => {
+          const searchText =
+            `${equipment.equipmentNumber} ${equipment.equipmentName} ${equipment.equipmentDescription} ${equipment.equipmentTypeDataListItem ?? ''}`.toLowerCase()
+          return searchText.includes(filterText)
+        })
+        renderEquipment(filteredEquipment)
+      }
+    })
+  }
 })()

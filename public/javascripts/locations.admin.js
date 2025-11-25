@@ -7,7 +7,7 @@
         if (locationId === undefined) {
             return;
         }
-        const location = exports.locations.find((loc) => loc.locationId === Number(locationId));
+        const location = exports.locations.find((possibleLocation) => possibleLocation.locationId === Number(locationId));
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Location',
@@ -49,7 +49,7 @@
         if (locationId === undefined) {
             return;
         }
-        const location = exports.locations.find((loc) => loc.locationId === Number(locationId));
+        const location = exports.locations.find((possibleLocation) => possibleLocation.locationId === Number(locationId));
         if (location === undefined) {
             return;
         }
@@ -82,13 +82,21 @@
         }
         cityssm.openHtmlModal('adminLocations-edit', {
             onshow(modalElement) {
-                modalElement.querySelector('#editLocation--locationId').value = location.locationId.toString();
-                modalElement.querySelector('#editLocation--locationName').value = location.locationName;
-                modalElement.querySelector('#editLocation--address1').value = location.address1;
-                modalElement.querySelector('#editLocation--address2').value = location.address2;
-                modalElement.querySelector('#editLocation--cityProvince').value = location.cityProvince;
-                modalElement.querySelector('#editLocation--latitude').value = location.latitude?.toString() ?? '';
-                modalElement.querySelector('#editLocation--longitude').value = location.longitude?.toString() ?? '';
+                ;
+                modalElement.querySelector('#editLocation--locationId').value =
+                    location.locationId.toString();
+                modalElement.querySelector('#editLocation--locationName').value =
+                    location.locationName;
+                modalElement.querySelector('#editLocation--address1').value =
+                    location.address1;
+                modalElement.querySelector('#editLocation--address2').value =
+                    location.address2;
+                modalElement.querySelector('#editLocation--cityProvince').value =
+                    location.cityProvince;
+                modalElement.querySelector('#editLocation--latitude').value =
+                    location.latitude?.toString() ?? '';
+                modalElement.querySelector('#editLocation--longitude').value =
+                    location.longitude?.toString() ?? '';
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -106,7 +114,7 @@
         const rowElement = document.createElement('tr');
         rowElement.dataset.locationId = location.locationId.toString();
         // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML = /*html*/ `
+        rowElement.innerHTML = /* html */ `
       <td>${cityssm.escapeHTML(location.locationName)}</td>
       <td>${cityssm.escapeHTML(location.address1)}</td>
       <td>${cityssm.escapeHTML(location.address2)}</td>
@@ -233,7 +241,7 @@
             }
             else {
                 const filteredLocations = exports.locations.filter((location) => {
-                    const searchText = `${location.locationName} ${location.address1 ?? ''} ${location.address2 ?? ''} ${location.cityProvince ?? ''}`.toLowerCase();
+                    const searchText = `${location.locationName} ${location.address1} ${location.address2} ${location.cityProvince}`.toLowerCase();
                     return searchText.includes(filterText);
                 });
                 renderLocations(filteredLocations);

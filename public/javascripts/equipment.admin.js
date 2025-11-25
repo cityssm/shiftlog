@@ -275,7 +275,7 @@
             }
             else {
                 const filteredEquipment = exports.equipment.filter((equipment) => {
-                    const searchText = `${equipment.equipmentNumber} ${equipment.equipmentName} ${equipment.equipmentDescription ?? ''} ${equipment.equipmentTypeDataListItem ?? ''}`.toLowerCase();
+                    const searchText = `${equipment.equipmentNumber} ${equipment.equipmentName} ${equipment.equipmentDescription} ${equipment.equipmentTypeDataListItem ?? ''}`.toLowerCase();
                     return searchText.includes(filterText);
                 });
                 renderEquipment(filteredEquipment);

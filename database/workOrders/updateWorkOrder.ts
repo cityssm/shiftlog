@@ -1,7 +1,6 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable no-secrets/no-secrets, unicorn/no-null */
 
-import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString, TimeString } from '@cityssm/utils-datetime'
 
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
@@ -47,7 +46,7 @@ export default async function updateWorkOrder(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('workOrderId', updateWorkOrderForm.workOrderId)
     .input(
@@ -85,8 +84,18 @@ export default async function updateWorkOrder(
     )
     .input('requestorName', updateWorkOrderForm.requestorName)
     .input('requestorContactInfo', updateWorkOrderForm.requestorContactInfo)
-    .input('locationLatitude', updateWorkOrderForm.locationLatitude ?? null)
-    .input('locationLongitude', updateWorkOrderForm.locationLongitude ?? null)
+    .input(
+      'locationLatitude',
+      (updateWorkOrderForm.locationLatitude ?? '') === ''
+        ? null
+        : updateWorkOrderForm.locationLatitude
+    )
+    .input(
+      'locationLongitude',
+      (updateWorkOrderForm.locationLongitude ?? '') === ''
+        ? null
+        : updateWorkOrderForm.locationLongitude
+    )
     .input('locationAddress1', updateWorkOrderForm.locationAddress1)
     .input('locationAddress2', updateWorkOrderForm.locationAddress2)
     .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
@@ -115,7 +124,7 @@ export default async function updateWorkOrder(
         recordUpdate_dateTime = getdate()
       where workOrderId = @workOrderId
         and recordDelete_dateTime is null
-    `)) as mssql.IResult<Record<string, never>>
+    `)
 
   return result.rowsAffected[0] > 0
 }

@@ -1,25 +1,19 @@
 import type { Request, Response } from 'express'
 
-import * as mssqlPool from '@cityssm/mssql-multi-pool'
-import * as configFunctions from '../../helpers/functions.config.js'
+import getLocationSuggestions from '../../database/locations/getLocationSuggestions.js'
 
 export default async function handler(
-  _request: Request,
+  request: Request<unknown, unknown, { searchString: string }>,
   response: Response
 ): Promise<void> {
-  const pool = mssqlPool.getPool(
-    configFunctions.getConfigProperty('mssqlConfig')
+  const locations = await getLocationSuggestions(
+    request.body.searchString,
+    request.session.user
   )
-
-  const result = await pool.request().query(`
-    SELECT locationId, locationName, address1, address2, cityProvince, latitude, longitude
-    FROM ShiftLog.Locations
-    WHERE recordDelete_dateTime IS NULL
-    ORDER BY locationName
-  `)
 
   response.json({
     success: true,
-    locations: result.recordset
+
+    locations
   })
 }

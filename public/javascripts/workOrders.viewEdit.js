@@ -45,15 +45,18 @@
                 <p>
                   <strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong>
                   <small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small>
-                  ${note.recordUpdate_dateTime !== note.recordCreate_dateTime ?
-                    `<small class="has-text-grey">(edited)</small>` : ''}
+                  ${note.recordUpdate_dateTime !== note.recordCreate_dateTime
+                    ? `<small class="has-text-grey">(edited)</small>`
+                    : ''}
                   <br />
                   <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
-                  ${needsExpand ?
-                    `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>` : ''}
+                  ${needsExpand
+                    ? `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>`
+                    : ''}
                 </p>
               </div>
-              ${canEdit ? /* html */ `
+              ${canEdit
+                    ? /* html */ `
                 <nav class="level is-mobile">
                   <div class="level-left">
                     <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
@@ -64,7 +67,8 @@
                     </a>
                   </div>
                 </nav>
-              ` : ''}
+              `
+                    : ''}
             </div>
           </article>
         `;
@@ -141,14 +145,19 @@
             }
             cityssm.openHtmlModal('workOrders-editNote', {
                 onshow(modalElement) {
-                    modalElement.querySelector('#editWorkOrderNote--workOrderId').value = workOrderId;
-                    modalElement.querySelector('#editWorkOrderNote--noteSequence').value = note.noteSequence.toString();
-                    modalElement.querySelector('#editWorkOrderNote--noteText').value = note.noteText;
+                    modalElement.querySelector('#editWorkOrderNote--workOrderId').value =
+                        workOrderId;
+                    modalElement.querySelector('#editWorkOrderNote--noteSequence').value =
+                        note.noteSequence.toString();
+                    modalElement.querySelector('#editWorkOrderNote--noteText').value =
+                        note.noteText;
                 },
                 onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();
                     closeModalFunction = _closeModalFunction;
-                    modalElement.querySelector('form')?.addEventListener('submit', doUpdateNote);
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doUpdateNote);
                 },
                 onremoved() {
                     bulmaJS.toggleHtmlClipped();
@@ -176,12 +185,15 @@
             }
             cityssm.openHtmlModal('workOrders-addNote', {
                 onshow(modalElement) {
-                    modalElement.querySelector('#addWorkOrderNote--workOrderId').value = workOrderId;
+                    modalElement.querySelector('#addWorkOrderNote--workOrderId').value =
+                        workOrderId;
                 },
                 onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();
                     closeModalFunction = _closeModalFunction;
-                    modalElement.querySelector('form')?.addEventListener('submit', doAddNote);
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doAddNote);
                     modalElement.querySelector('#addWorkOrderNote--noteText')?.focus();
                 },
                 onremoved() {

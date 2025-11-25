@@ -1,26 +1,19 @@
 import type { Request, Response } from 'express'
 
-import * as mssqlPool from '@cityssm/mssql-multi-pool'
-import * as configFunctions from '../../helpers/functions.config.js'
+import doGetRequestorSuggestions from '../../database/workOrders/getRequestorSuggestions.js'
 
 export default async function handler(
-  _request: Request,
+  request: Request<unknown, unknown, { searchString: string }>,
   response: Response
 ): Promise<void> {
-  const pool = mssqlPool.getPool(
-    configFunctions.getConfigProperty('mssqlConfig')
+  const requestors = await doGetRequestorSuggestions(
+    request.body.searchString,
+    request.session.user
   )
-
-  const result = await pool.request().query(`
-    SELECT DISTINCT requestorName, requestorContactInfo
-    FROM ShiftLog.WorkOrders
-    WHERE recordDelete_dateTime IS NULL
-      AND requestorName <> ''
-    ORDER BY requestorName
-  `)
 
   response.json({
     success: true,
-    requestors: result.recordset
+    
+    requestors
   })
 }

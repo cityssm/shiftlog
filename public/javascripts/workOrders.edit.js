@@ -40,40 +40,58 @@
     const requestorContactInfoInput = workOrderFormElement.querySelector('#workOrder--requestorContactInfo');
     const requestorDatalist = document.querySelector('#datalist--requestorNames');
     if (requestorDatalist !== null) {
+        let requestorSearchString = '';
         let requestorsData = [];
-        // Load requestor suggestions
-        cityssm.postJSON(`${urlPrefix}/doGetRequestorSuggestions`, {}, (responseJSON) => {
-            if (responseJSON.success && responseJSON.requestors) {
-                requestorsData = responseJSON.requestors;
-                for (const requestor of responseJSON.requestors) {
-                    const option = document.createElement('option');
-                    option.value = requestor.requestorName;
-                    option.dataset.contactInfo = requestor.requestorContactInfo ?? '';
-                    requestorDatalist.append(option);
-                }
+        requestorNameInput.addEventListener('keyup', () => {
+            const newSearchString = requestorNameInput.value.trim().slice(0, 3);
+            if (newSearchString.length >= 3 &&
+                newSearchString !== requestorSearchString) {
+                requestorSearchString = newSearchString;
+                // Load requestor suggestions
+                cityssm.postJSON(`${urlPrefix}/doGetRequestorSuggestions`, {
+                    searchString: requestorSearchString
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success && responseJSON.requestors) {
+                        requestorsData = responseJSON.requestors;
+                        for (const requestor of responseJSON.requestors) {
+                            const option = document.createElement('option');
+                            option.value = requestor.requestorName;
+                            option.textContent = requestor.requestorName + (requestor.requestorContactInfo
+                                ? ` (${requestor.requestorContactInfo})`
+                                : '');
+                            option.dataset.contactInfo =
+                                requestor.requestorContactInfo ?? '';
+                            requestorDatalist.append(option);
+                        }
+                    }
+                });
             }
         });
         // Handle requestor name selection
         requestorNameInput.addEventListener('change', () => {
             const selectedName = requestorNameInput.value;
-            const matchingRequestor = requestorsData.find((r) => r.requestorName === selectedName);
-            if (matchingRequestor && matchingRequestor.requestorContactInfo) {
+            const matchingRequestor = requestorsData.find((possibleRequestor) => possibleRequestor.requestorName === selectedName);
+            if (matchingRequestor?.requestorContactInfo !== undefined) {
                 // Check if contact info is already set
                 if (requestorContactInfoInput.value !== '' &&
-                    requestorContactInfoInput.value !== matchingRequestor.requestorContactInfo) {
+                    requestorContactInfoInput.value !==
+                        matchingRequestor.requestorContactInfo) {
                     bulmaJS.confirm({
                         title: 'Update Requestor Contact Info?',
                         message: `The contact info for "${selectedName}" is "${matchingRequestor.requestorContactInfo}". Do you want to update the current contact info?`,
                         okButton: {
                             text: 'Update',
                             callbackFunction: () => {
-                                requestorContactInfoInput.value = matchingRequestor.requestorContactInfo;
+                                requestorContactInfoInput.value =
+                                    matchingRequestor.requestorContactInfo ?? '';
                             }
                         }
                     });
                 }
                 else {
-                    requestorContactInfoInput.value = matchingRequestor.requestorContactInfo;
+                    requestorContactInfoInput.value =
+                        matchingRequestor.requestorContactInfo;
                 }
             }
         });
@@ -88,33 +106,50 @@
     const locationLongitudeInput = workOrderFormElement.querySelector('#workOrder--locationLongitude');
     const locationDatalist = document.querySelector('#datalist--locations');
     if (locationDatalist !== null) {
+        let locationSearchString = '';
         let locationsData = [];
-        // Load location suggestions
-        cityssm.postJSON(`${urlPrefix}/doGetLocationSuggestions`, {}, (responseJSON) => {
-            if (responseJSON.success && responseJSON.locations) {
-                locationsData = responseJSON.locations;
-                for (const location of responseJSON.locations) {
-                    const option = document.createElement('option');
-                    option.value = location.address1;
-                    option.dataset.locationId = location.locationId;
-                    option.dataset.address2 = location.address2 ?? '';
-                    option.dataset.cityProvince = location.cityProvince ?? '';
-                    option.dataset.latitude = location.latitude ?? '';
-                    option.dataset.longitude = location.longitude ?? '';
-                    locationDatalist.append(option);
-                }
+        locationAddress1Input.addEventListener('keyup', () => {
+            const newSearchString = locationAddress1Input.value.trim().slice(0, 3);
+            if (newSearchString.length >= 3 &&
+                newSearchString !== locationSearchString) {
+                locationSearchString = newSearchString;
+                // Load location suggestions
+                cityssm.postJSON(`${urlPrefix}/doGetLocationSuggestions`, { searchString: locationSearchString }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success && responseJSON.locations) {
+                        locationsData = responseJSON.locations;
+                        locationDatalist.replaceChildren();
+                        for (const location of responseJSON.locations) {
+                            const option = document.createElement('option');
+                            option.value = location.address1;
+                            option.dataset.locationId = location.locationId.toString();
+                            option.dataset.address2 = location.address2;
+                            option.dataset.cityProvince = location.cityProvince;
+                            option.dataset.latitude =
+                                typeof location.latitude === 'number'
+                                    ? location.latitude.toString()
+                                    : '';
+                            option.dataset.longitude =
+                                typeof location.longitude === 'number'
+                                    ? location.longitude.toString()
+                                    : '';
+                            locationDatalist.append(option);
+                        }
+                    }
+                });
             }
         });
         // Handle location selection
         locationAddress1Input.addEventListener('change', () => {
             const selectedAddress = locationAddress1Input.value;
-            const matchingLocation = locationsData.find((l) => l.address1 === selectedAddress);
-            if (matchingLocation) {
+            const matchingLocation = locationsData.find((possibleLocation) => possibleLocation.locationName === selectedAddress ||
+                possibleLocation.address1 === selectedAddress);
+            if (matchingLocation !== undefined) {
                 // Check if other location fields are already set
                 const hasExistingData = locationAddress2Input.value !== '' ||
                     locationCityProvinceInput.value !== '' ||
-                    (locationLatitudeInput && locationLatitudeInput.value !== '') ||
-                    (locationLongitudeInput && locationLongitudeInput.value !== '');
+                    locationLatitudeInput.value !== '' ||
+                    locationLongitudeInput.value !== '';
                 if (hasExistingData) {
                     bulmaJS.confirm({
                         title: 'Update Location Information?',
@@ -133,19 +168,17 @@
             }
         });
         function applyLocationData(location) {
-            locationAddress2Input.value = location.address2 ?? '';
-            locationCityProvinceInput.value = location.cityProvince ?? '';
-            if (locationLatitudeInput && location.latitude !== null && location.latitude !== undefined) {
+            locationAddress2Input.value = location.address2;
+            locationCityProvinceInput.value = location.cityProvince;
+            if (location.latitude !== null && location.latitude !== undefined) {
                 locationLatitudeInput.value = location.latitude.toString();
             }
-            if (locationLongitudeInput && location.longitude !== null && location.longitude !== undefined) {
+            if (location.longitude !== null && location.longitude !== undefined) {
                 locationLongitudeInput.value = location.longitude.toString();
             }
             // Update map if coordinates are set
-            if (locationLatitudeInput && locationLongitudeInput) {
-                const changeEvent = new Event('change');
-                locationLatitudeInput.dispatchEvent(changeEvent);
-            }
+            const changeEvent = new Event('change');
+            locationLatitudeInput.dispatchEvent(changeEvent);
         }
     }
     /*
@@ -155,7 +188,8 @@
         allowInput: true,
         enableTime: true,
         nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
-        prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+        prevArrow: '<i class="fa-solid fa-chevron-left"></i>',
+        minuteIncrement: 1
     };
     const workOrderOpenDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderOpenDateTimeString');
     const workOrderDueDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderDueDateTimeString');
@@ -166,7 +200,10 @@
     const workOrderCloseDateTimePicker = flatpickr(workOrderCloseDateTimeStringElement, {
         ...dateTimePickerOptions,
         maxDate: new Date(),
-        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? ''
+        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
+        onOpen: () => {
+            workOrderCloseDateTimePicker.set('maxDate', new Date());
+        }
     });
     flatpickr(workOrderOpenDateTimeStringElement, {
         ...dateTimePickerOptions,
@@ -192,14 +229,13 @@
     /*
      * Set Close Time to Now Button
      */
-    const setCloseTimeNowButton = document.querySelector('#button--setCloseTimeNow');
-    if (setCloseTimeNowButton !== null) {
-        setCloseTimeNowButton.addEventListener('click', () => {
-            const now = new Date();
-            workOrderCloseDateTimeStringElement.value = cityssm.dateToString(now) + 'T' + cityssm.timeToString(now);
-            workOrderCloseDateTimePicker.setDate(now, true);
-        });
-    }
+    document
+        .querySelector('#button--setCloseTimeNow')
+        ?.addEventListener('click', () => {
+        const now = new Date();
+        workOrderCloseDateTimePicker.set('maxDate', now);
+        workOrderCloseDateTimePicker.setDate(now, true);
+    });
     /*
      * Set up map for location picker
      */
