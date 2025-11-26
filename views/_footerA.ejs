@@ -15,6 +15,9 @@
         >
           v<%= buildNumber %>
         </a>
+        <% if (configFunctions.getConfigProperty('application.instance') !== '') { %>
+        (<%= configFunctions.getConfigProperty('application.instance') %>)
+        <% } %>
       </span>
     </div>
   </div>
