@@ -8,7 +8,7 @@ declare global {
         userSettings: Partial<Record<UserSettingKey, string>>;
     }
 }
-export declare const userSettingKeys: readonly ["apiKey", "timesheets.canMarkEmployeesAsEntered", "timesheets.canMarkEquipmentAsEntered"];
+export declare const userSettingKeys: readonly ["apiKey", "timesheets.canMarkEmployeesAsEntered", "timesheets.canMarkEquipmentAsEntered", "workOrders.defaultAssignedToDataListItemId"];
 export type UserSettingKey = (typeof userSettingKeys)[number];
 export interface UserProperties {
     isAdmin: boolean;
