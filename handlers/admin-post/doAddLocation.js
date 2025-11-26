@@ -5,8 +5,8 @@ export default async function handler(request, response) {
     const address1 = request.body.address1 || '';
     const address2 = request.body.address2 || '';
     const cityProvince = request.body.cityProvince || '';
-    const latitude = request.body.latitude === '' ? null : Number(request.body.latitude);
-    const longitude = request.body.longitude === '' ? null : Number(request.body.longitude);
+    const latitude = request.body.latitude === '' ? undefined : Number(request.body.latitude);
+    const longitude = request.body.longitude === '' ? undefined : Number(request.body.longitude);
     const success = await addLocation({ locationName, address1, address2, cityProvince, latitude, longitude }, request.session.user);
     if (success) {
         const locations = await getLocations();

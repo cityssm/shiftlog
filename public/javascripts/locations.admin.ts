@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type Leaflet from 'leaflet'
@@ -36,17 +39,13 @@ declare const exports: {
    * Build pagination controls for location list
    * Shows up to 10 page links including current page and neighboring pages
    */
-  function buildPaginationControls(
-    totalCount: number,
-    currentPage: number,
-    itemsPerPage: number
-  ): HTMLElement {
+  function buildPaginationControls(totalCount: number): HTMLElement {
     const paginationElement = document.createElement('nav')
     paginationElement.className = 'pagination is-centered mt-4'
     paginationElement.setAttribute('role', 'navigation')
     paginationElement.setAttribute('aria-label', 'pagination')
 
-    const totalPages = Math.ceil(totalCount / itemsPerPage)
+    const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
     let paginationHTML = ''
 
     // Previous button
@@ -121,6 +120,7 @@ declare const exports: {
     for (const pageLink of pageLinks) {
       pageLink.addEventListener('click', (event) => {
         event.preventDefault()
+
         const target = event.currentTarget as HTMLElement
         const pageNumberString = target.dataset.pageNumber
 
@@ -274,7 +274,7 @@ declare const exports: {
       }
     })
   }
-  
+
   function editLocation(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
 
@@ -334,26 +334,41 @@ declare const exports: {
     }
     cityssm.openHtmlModal('adminLocations-edit', {
       onshow(modalElement) {
-        ;(modalElement.querySelector('#editLocation--locationId') as HTMLInputElement).value =
-          location.locationId.toString()
-
-        ;(modalElement.querySelector('#editLocation--locationName') as HTMLInputElement).value =
-          location.locationName
-
-        ;(modalElement.querySelector('#editLocation--address1') as HTMLInputElement).value =
-          location.address1
-
-        ;(modalElement.querySelector('#editLocation--address2') as HTMLInputElement).value =
-          location.address2
-
-        ;(modalElement.querySelector('#editLocation--cityProvince') as HTMLInputElement).value =
-          location.cityProvince
-
-        ;(modalElement.querySelector('#editLocation--latitude') as HTMLInputElement).value =
-          location.latitude?.toString() ?? ''
-
-        ;(modalElement.querySelector('#editLocation--longitude') as HTMLInputElement).value =
-          location.longitude?.toString() ?? ''
+        ;(
+          modalElement.querySelector(
+            '#editLocation--locationId'
+          ) as HTMLInputElement
+        ).value = location.locationId.toString()
+        ;(
+          modalElement.querySelector(
+            '#editLocation--locationName'
+          ) as HTMLInputElement
+        ).value = location.locationName
+        ;(
+          modalElement.querySelector(
+            '#editLocation--address1'
+          ) as HTMLInputElement
+        ).value = location.address1
+        ;(
+          modalElement.querySelector(
+            '#editLocation--address2'
+          ) as HTMLInputElement
+        ).value = location.address2
+        ;(
+          modalElement.querySelector(
+            '#editLocation--cityProvince'
+          ) as HTMLInputElement
+        ).value = location.cityProvince
+        ;(
+          modalElement.querySelector(
+            '#editLocation--latitude'
+          ) as HTMLInputElement
+        ).value = location.latitude?.toString() ?? ''
+        ;(
+          modalElement.querySelector(
+            '#editLocation--longitude'
+          ) as HTMLInputElement
+        ).value = location.longitude?.toString() ?? ''
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -371,8 +386,12 @@ declare const exports: {
         if (mapPickerElement !== null) {
           initializeLocationMapPicker(
             'map--editLocationPicker',
-            modalElement.querySelector('#editLocation--latitude') as HTMLInputElement,
-            modalElement.querySelector('#editLocation--longitude') as HTMLInputElement
+            modalElement.querySelector(
+              '#editLocation--latitude'
+            ) as HTMLInputElement,
+            modalElement.querySelector(
+              '#editLocation--longitude'
+            ) as HTMLInputElement
           )
         }
       },
@@ -384,6 +403,7 @@ declare const exports: {
   }
   function buildLocationRowElement(location: Location): HTMLTableRowElement {
     const rowElement = document.createElement('tr')
+
     rowElement.dataset.locationId = location.locationId.toString()
     // eslint-disable-next-line no-unsanitized/property
     rowElement.innerHTML = /* html */ `
@@ -424,9 +444,11 @@ declare const exports: {
       locationsContainerElement.innerHTML = '<p>No locations found.</p>'
       return
     }
+
     const tableElement = document.createElement('table')
     tableElement.className =
       'table is-fullwidth is-striped is-hoverable has-sticky-header'
+
     tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
@@ -468,6 +490,7 @@ declare const exports: {
     // Calculate pagination
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
     const endIndex = startIndex + ITEMS_PER_PAGE
+
     const paginatedLocations = locations.slice(startIndex, endIndex)
 
     // Render table
@@ -475,19 +498,17 @@ declare const exports: {
 
     // Add pagination controls if needed
     if (locations.length > ITEMS_PER_PAGE) {
-      const paginationControls = buildPaginationControls(
-        locations.length,
-        currentPage,
-        ITEMS_PER_PAGE
-      )
+      const paginationControls = buildPaginationControls(locations.length)
+
       locationsContainerElement.append(paginationControls)
     }
   }
+
   document
     .querySelector('#button--addLocation')
     ?.addEventListener('click', () => {
       let closeModalFunction: () => void
-      
+
       function doAddLocation(submitEvent: Event): void {
         submitEvent.preventDefault()
 
@@ -537,8 +558,11 @@ declare const exports: {
           modalElement
             .querySelector('form')
             ?.addEventListener('submit', doAddLocation)
-
-          ;(modalElement.querySelector('#addLocation--locationName') as HTMLInputElement).focus()
+          ;(
+            modalElement.querySelector(
+              '#addLocation--locationName'
+            ) as HTMLInputElement
+          ).focus()
 
           // Initialize map picker
           const mapPickerElement = modalElement.querySelector(
@@ -548,8 +572,12 @@ declare const exports: {
           if (mapPickerElement !== null) {
             initializeLocationMapPicker(
               'map--addLocationPicker',
-              modalElement.querySelector('#addLocation--latitude') as HTMLInputElement,
-              modalElement.querySelector('#addLocation--longitude') as HTMLInputElement
+              modalElement.querySelector(
+                '#addLocation--latitude'
+              ) as HTMLInputElement,
+              modalElement.querySelector(
+                '#addLocation--longitude'
+              ) as HTMLInputElement
             )
           }
         },
@@ -563,7 +591,9 @@ declare const exports: {
   /*
    * Filter locations with debouncing
    */
-  const filterInput = document.querySelector('#filter--locations') as HTMLInputElement | null
+  const filterInput = document.querySelector(
+    '#filter--locations'
+  ) as HTMLInputElement | null
   let filterTimeout: ReturnType<typeof setTimeout> | null = null
 
   if (filterInput !== null) {

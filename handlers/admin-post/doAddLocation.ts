@@ -13,10 +13,10 @@ export default async function handler(
   const cityProvince = (request.body.cityProvince as string) || ''
 
   const latitude =
-    request.body.latitude === '' ? null : Number(request.body.latitude)
+    request.body.latitude === '' ? undefined : Number(request.body.latitude)
 
   const longitude =
-    request.body.longitude === '' ? null : Number(request.body.longitude)
+    request.body.longitude === '' ? undefined : Number(request.body.longitude)
 
   const success = await addLocation(
     { locationName, address1, address2, cityProvince, latitude, longitude },

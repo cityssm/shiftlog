@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const locationsContainerElement = document.querySelector('#container--locations');
@@ -14,12 +16,12 @@
      * Build pagination controls for location list
      * Shows up to 10 page links including current page and neighboring pages
      */
-    function buildPaginationControls(totalCount, currentPage, itemsPerPage) {
+    function buildPaginationControls(totalCount) {
         const paginationElement = document.createElement('nav');
         paginationElement.className = 'pagination is-centered mt-4';
         paginationElement.setAttribute('role', 'navigation');
         paginationElement.setAttribute('aria-label', 'pagination');
-        const totalPages = Math.ceil(totalCount / itemsPerPage);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
         let paginationHTML = '';
         // Previous button
         paginationHTML +=
@@ -226,20 +228,13 @@
         cityssm.openHtmlModal('adminLocations-edit', {
             onshow(modalElement) {
                 ;
-                modalElement.querySelector('#editLocation--locationId').value =
-                    location.locationId.toString();
-                modalElement.querySelector('#editLocation--locationName').value =
-                    location.locationName;
-                modalElement.querySelector('#editLocation--address1').value =
-                    location.address1;
-                modalElement.querySelector('#editLocation--address2').value =
-                    location.address2;
-                modalElement.querySelector('#editLocation--cityProvince').value =
-                    location.cityProvince;
-                modalElement.querySelector('#editLocation--latitude').value =
-                    location.latitude?.toString() ?? '';
-                modalElement.querySelector('#editLocation--longitude').value =
-                    location.longitude?.toString() ?? '';
+                modalElement.querySelector('#editLocation--locationId').value = location.locationId.toString();
+                modalElement.querySelector('#editLocation--locationName').value = location.locationName;
+                modalElement.querySelector('#editLocation--address1').value = location.address1;
+                modalElement.querySelector('#editLocation--address2').value = location.address2;
+                modalElement.querySelector('#editLocation--cityProvince').value = location.cityProvince;
+                modalElement.querySelector('#editLocation--latitude').value = location.latitude?.toString() ?? '';
+                modalElement.querySelector('#editLocation--longitude').value = location.longitude?.toString() ?? '';
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -343,7 +338,7 @@
         renderLocations(paginatedLocations);
         // Add pagination controls if needed
         if (locations.length > ITEMS_PER_PAGE) {
-            const paginationControls = buildPaginationControls(locations.length, currentPage, ITEMS_PER_PAGE);
+            const paginationControls = buildPaginationControls(locations.length);
             locationsContainerElement.append(paginationControls);
         }
     }
