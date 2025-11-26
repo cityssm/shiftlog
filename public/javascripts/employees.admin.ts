@@ -157,7 +157,7 @@ declare const exports: {
     }
 
     const employee = exports.employees.find(
-      (employee) => employee.employeeNumber === employeeNumber
+      (possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber
     )
 
     bulmaJS.confirm({
@@ -567,11 +567,13 @@ declare const exports: {
           currentPage = 1
           renderEmployeesWithPagination(exports.employees)
         } else {
-          const filteredEmployees = exports.employees.filter((employee) => {
-            const searchText =
-              `${employee.employeeNumber} ${employee.firstName} ${employee.lastName} ${employee.userName ?? ''} ${employee.phoneNumber ?? ''} ${employee.emailAddress ?? ''}`.toLowerCase()
-            return searchText.includes(filterText)
-          })
+          const filteredEmployees = exports.employees.filter(
+            (possibleEmployee) => {
+              const searchText =
+                `${possibleEmployee.employeeNumber} ${possibleEmployee.firstName} ${possibleEmployee.lastName} ${possibleEmployee.userName ?? ''} ${possibleEmployee.phoneNumber ?? ''} ${possibleEmployee.emailAddress ?? ''}`.toLowerCase()
+              return searchText.includes(filterText)
+            }
+          )
 
           currentFilteredEmployees = filteredEmployees
           currentPage = 1

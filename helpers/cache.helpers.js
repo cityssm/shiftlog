@@ -9,7 +9,7 @@ const debug = Debug(`${DEBUG_NAMESPACE}:helpers.cache:${process.pid.toString().p
  */
 export function preloadCaches() {
     debug('Preloading caches');
-    getCachedApiKeys();
+    void getCachedApiKeys();
     debug('Caches preloaded');
 }
 export const cacheTableNames = ['ApplicationSettings', 'UserSettings'];

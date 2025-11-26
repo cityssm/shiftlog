@@ -21,7 +21,7 @@ const debug = Debug(
 
 export function preloadCaches(): void {
   debug('Preloading caches')
-  getCachedApiKeys()
+  void getCachedApiKeys()
   debug('Caches preloaded')
 }
 

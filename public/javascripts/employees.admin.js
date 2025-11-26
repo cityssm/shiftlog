@@ -107,7 +107,7 @@
         if (employeeNumber === undefined) {
             return;
         }
-        const employee = exports.employees.find((employee) => employee.employeeNumber === employeeNumber);
+        const employee = exports.employees.find((possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber);
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Employee',
@@ -384,8 +384,8 @@
                     renderEmployeesWithPagination(exports.employees);
                 }
                 else {
-                    const filteredEmployees = exports.employees.filter((employee) => {
-                        const searchText = `${employee.employeeNumber} ${employee.firstName} ${employee.lastName} ${employee.userName ?? ''} ${employee.phoneNumber ?? ''} ${employee.emailAddress ?? ''}`.toLowerCase();
+                    const filteredEmployees = exports.employees.filter((possibleEmployee) => {
+                        const searchText = `${possibleEmployee.employeeNumber} ${possibleEmployee.firstName} ${possibleEmployee.lastName} ${possibleEmployee.userName ?? ''} ${possibleEmployee.phoneNumber ?? ''} ${possibleEmployee.emailAddress ?? ''}`.toLowerCase();
                         return searchText.includes(filterText);
                     });
                     currentFilteredEmployees = filteredEmployees;

@@ -11,15 +11,15 @@
     formEvent.preventDefault()
   })
 
-  const formElements = formElement?.querySelectorAll(
+  const inputElements = formElement?.querySelectorAll(
     'input, select, textarea'
   ) as NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 
-  for (const formElement of formElements) {
-    formElement.disabled = true
+  for (const inputElement of inputElements) {
+    inputElement.disabled = true
 
-    if (formElement.tagName.toLowerCase() !== 'select') {
-      ;(formElement as HTMLInputElement | HTMLTextAreaElement).readOnly = true
+    if (inputElement.tagName.toLowerCase() !== 'select') {
+      ;(inputElement as HTMLInputElement | HTMLTextAreaElement).readOnly = true
     }
   }
 })()
