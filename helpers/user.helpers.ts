@@ -24,11 +24,7 @@ export async function apiKeyIsValid(request: APIRequest): Promise<boolean> {
 
   const userName = await getUserNameFromApiKey(apiKey)
 
-  if (userName === undefined) {
-    return false
-  }
-
-  return true
+  return userName !== undefined
 }
 
 export function userIsAdmin(request: UserRequest): boolean {

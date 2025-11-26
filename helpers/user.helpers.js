@@ -7,10 +7,7 @@ export async function apiKeyIsValid(request) {
         return false;
     }
     const userName = await getUserNameFromApiKey(apiKey);
-    if (userName === undefined) {
-        return false;
-    }
-    return true;
+    return userName !== undefined;
 }
 export function userIsAdmin(request) {
     return request.session?.user?.userProperties.isAdmin ?? false;
