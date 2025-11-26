@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createShift(createShiftForm, userName) {
     const pool = await getShiftLogConnectionPool();
@@ -8,6 +9,7 @@ export default async function createShift(createShiftForm, userName) {
     recordLockDate.setDate(recordLockDate.getDate() + 7);
     const result = (await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('shiftDate', createShiftForm.shiftDateString)
         .input('shiftTimeDataListItemId', createShiftForm.shiftTimeDataListItemId)
         .input('shiftTypeDataListItemId', createShiftForm.shiftTypeDataListItemId)
@@ -16,6 +18,7 @@ export default async function createShift(createShiftForm, userName) {
         .input('userName', userName)
         .input('recordLockDate', recordLockDate).query(/* sql */ `
       insert into ShiftLog.Shifts (
+        instance,
         shiftTypeDataListItemId,
         supervisorEmployeeNumber,
         shiftDate,
@@ -26,6 +29,7 @@ export default async function createShift(createShiftForm, userName) {
       )
       output inserted.shiftId
       values (
+        @instance,
         @shiftTypeDataListItemId,
         @supervisorEmployeeNumber,
         @shiftDate,

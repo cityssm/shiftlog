@@ -1,6 +1,7 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString } from '@cityssm/utils-datetime'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface CreateTimesheetForm {
@@ -22,14 +23,16 @@ export default async function createTimesheet(
 
   const result = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('timesheetDate', createTimesheetForm.timesheetDateString)
     .input('timesheetTypeDataListItemId', createTimesheetForm.timesheetTypeDataListItemId)
     .input('supervisorEmployeeNumber', createTimesheetForm.supervisorEmployeeNumber)
     .input('timesheetTitle', createTimesheetForm.timesheetTitle)
     .input('timesheetNote', createTimesheetForm.timesheetNote)
-    .input('shiftId', createTimesheetForm.shiftId ?? null)
+    .input('shiftId', createTimesheetForm.shiftId ?? undefined)
     .input('userName', userName).query(/* sql */ `
       insert into ShiftLog.Timesheets (
+        instance,
         supervisorEmployeeNumber,
         timesheetTypeDataListItemId,
         timesheetTitle,
@@ -40,6 +43,7 @@ export default async function createTimesheet(
       )
       output inserted.timesheetId
       values (
+        @instance,
         @supervisorEmployeeNumber,
         @timesheetTypeDataListItemId,
         @timesheetTitle,

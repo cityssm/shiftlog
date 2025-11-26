@@ -19,6 +19,8 @@ export const configDefaultValues = {
   'application.applicationUrl': undefined as string | undefined,
   'application.backgroundImage': 'background.jpg',
 
+  'application.instance': '',
+
   'application.httpPort': 9000,
   'application.maximumProcesses': 4,
 
@@ -82,8 +84,6 @@ export const configDefaultValues = {
 
   'workOrders.iconClass': 'fa-hard-hat',
 
-  // eslint-disable-next-line no-secrets/no-secrets
-  'workOrders.defaultLocationCityProvince': '',
   'workOrders.workOrderNumberPrefix': '',
 
   // Timesheets

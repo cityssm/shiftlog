@@ -6,6 +6,7 @@ export declare const configDefaultValues: {
     'application.applicationName': string;
     'application.applicationUrl': string | undefined;
     'application.backgroundImage': string;
+    'application.instance': string;
     'application.httpPort': number;
     'application.maximumProcesses': number;
     'login.authentication': {
@@ -45,7 +46,6 @@ export declare const configDefaultValues: {
     'workOrders.sectionName': string;
     'workOrders.sectionNameSingular': string;
     'workOrders.iconClass': string;
-    'workOrders.defaultLocationCityProvince': string;
     'workOrders.workOrderNumberPrefix': string;
     'timesheets.isEnabled': boolean;
     'timesheets.router': string;

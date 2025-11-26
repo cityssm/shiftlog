@@ -51,10 +51,10 @@ export default async function copyFromPreviousShift(
         .input('currentShiftId', form.currentShiftId)
         .input('previousShiftId', form.previousShiftId)
         .input('userName', user.userName).query(/* sql */ `
-          insert into ShiftLog.ShiftEmployees (shiftId, employeeNumber, crewId, shiftEmployeeNote)
-          select @currentShiftId, se.employeeNumber, se.crewId, se.shiftEmployeeNote
+          insert into ShiftLog.ShiftEmployees (shiftId, instance, employeeNumber, crewId, shiftEmployeeNote)
+          select @currentShiftId, se.instance, se.employeeNumber, se.crewId, se.shiftEmployeeNote
           from ShiftLog.ShiftEmployees se
-          inner join ShiftLog.Employees e on se.employeeNumber = e.employeeNumber
+          inner join ShiftLog.Employees e on se.instance = e.instance and se.employeeNumber = e.employeeNumber
           where se.shiftId = @previousShiftId
             and e.recordDelete_dateTime is null
             and (
@@ -78,10 +78,10 @@ export default async function copyFromPreviousShift(
         .input('currentShiftId', form.currentShiftId)
         .input('previousShiftId', form.previousShiftId)
         .input('userName', user.userName).query(/* sql */ `
-          insert into ShiftLog.ShiftEquipment (shiftId, equipmentNumber, employeeNumber, shiftEquipmentNote)
-          select @currentShiftId, se.equipmentNumber, se.employeeNumber, se.shiftEquipmentNote
+          insert into ShiftLog.ShiftEquipment (shiftId, instance, equipmentNumber, employeeNumber, shiftEquipmentNote)
+          select @currentShiftId, se.instance, se.equipmentNumber, se.employeeNumber, se.shiftEquipmentNote
           from ShiftLog.ShiftEquipment se
-          inner join ShiftLog.Equipment eq on se.equipmentNumber = eq.equipmentNumber
+          inner join ShiftLog.Equipment eq on se.instance = eq.instance and se.equipmentNumber = eq.equipmentNumber
           where se.shiftId = @previousShiftId
             and eq.recordDelete_dateTime is null
             and (

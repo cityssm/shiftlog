@@ -1,8 +1,6 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
-
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function deleteWorkOrderNote(
@@ -14,6 +12,7 @@ export default async function deleteWorkOrderNote(
 
   const result = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('workOrderId', workOrderId)
     .input('noteSequence', noteSequence)
     .input('userName', userName).query(/* sql */ `
@@ -24,6 +23,12 @@ export default async function deleteWorkOrderNote(
       where workOrderId = @workOrderId
         and noteSequence = @noteSequence
         and recordDelete_dateTime is null
+        and workOrderId in (
+          select workOrderId
+          from ShiftLog.WorkOrders
+          where recordDelete_dateTime is null
+            and instance = @instance
+        )
     `)) as mssql.IResult<Record<string, never>>
 
   return result.rowsAffected[0] > 0

@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function reorderTimesheetColumns(reorderForm) {
     const pool = await getShiftLogConnectionPool();
@@ -7,11 +8,18 @@ export default async function reorderTimesheetColumns(reorderForm) {
             .request()
             .input('timesheetColumnId', columnId)
             .input('orderNumber', index)
-            .input('timesheetId', reorderForm.timesheetId).query(/* sql */ `
+            .input('timesheetId', reorderForm.timesheetId)
+            .input('instance', getConfigProperty('application.instance'))
+            .query(/* sql */ `
         update ShiftLog.TimesheetColumns
         set orderNumber = @orderNumber
         where timesheetColumnId = @timesheetColumnId
           and timesheetId = @timesheetId
+          and timesheetId in (
+            select timesheetId
+            from ShiftLog.Timesheets
+            where instance = @instance
+          )
       `);
     }
     return true;

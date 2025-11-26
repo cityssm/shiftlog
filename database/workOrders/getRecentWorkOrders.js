@@ -1,7 +1,8 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getRecentWorkOrders(limit, user) {
     const pool = await getShiftLogConnectionPool();
-    let whereClause = 'where w.recordDelete_dateTime is null';
+    let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
     if (user !== undefined) {
         whereClause += `
       and (
@@ -15,6 +16,7 @@ export default async function getRecentWorkOrders(limit, user) {
     }
     const result = (await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
         .input('limit', limit).query(/* sql */ `
       select top(@limit)
@@ -46,6 +48,7 @@ export default async function getRecentWorkOrders(limit, user) {
 
         w.assignedToDataListItemId,
         assignedTo.dataListItem as assignedToDataListItem
+
       from ShiftLog.WorkOrders w
 
       left join ShiftLog.DataListItems wType

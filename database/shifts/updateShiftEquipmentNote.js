@@ -10,7 +10,8 @@ export default async function updateShiftEquipmentNote(form) {
             .input('shiftEquipmentNote', form.shiftEquipmentNote).query(/* sql */ `
         update ShiftLog.ShiftEquipment
         set shiftEquipmentNote = @shiftEquipmentNote
-        where shiftId = @shiftId and equipmentNumber = @equipmentNumber
+        where shiftId = @shiftId
+          and equipmentNumber = @equipmentNumber
       `);
         return true;
     }

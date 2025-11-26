@@ -9,18 +9,20 @@ export default async function deleteUser(
   const currentDate = new Date()
 
   try {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+    const pool = await mssqlPool.connect(
+      getConfigProperty('connectors.shiftLog')
+    )
 
     const result = await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('userName', userName)
       .input('recordDelete_userName', user.userName)
-      .input('recordDelete_dateTime', currentDate)
-      .query(/* sql */ `
+      .input('recordDelete_dateTime', currentDate).query(/* sql */ `
         update ShiftLog.Users
         set recordDelete_userName = @recordDelete_userName,
             recordDelete_dateTime = @recordDelete_dateTime
-        where userName = @userName
+        where instance = @instance and userName = @userName
           and recordDelete_dateTime is null
       `)
 

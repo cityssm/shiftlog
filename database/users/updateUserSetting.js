@@ -1,12 +1,13 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
 import { generateApiKey } from '../../helpers/api.helpers.js';
 import { clearCacheByTableName } from '../../helpers/cache.helpers.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateUserSetting(userName, settingKey, settingValue) {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     // Try to update first
     const updateResult = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
         .input('settingKey', settingKey)
         .input('settingValue', settingValue)
@@ -15,7 +16,8 @@ export default async function updateUserSetting(userName, settingKey, settingVal
       set settingValue = @settingValue,
         previousSettingValue = settingValue,
         recordUpdate_dateTime = @recordUpdate_dateTime
-      where userName = @userName
+      where instance = @instance
+        and userName = @userName
         and settingKey = @settingKey
     `);
     if (updateResult.rowsAffected[0] > 0) {
@@ -24,12 +26,13 @@ export default async function updateUserSetting(userName, settingKey, settingVal
     // If no rows updated, insert new
     const insertResult = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
         .input('settingKey', settingKey)
         .input('settingValue', settingValue)
         .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      insert into ShiftLog.UserSettings (userName, settingKey, settingValue, recordUpdate_dateTime)
-      values (@userName, @settingKey, @settingValue, @recordUpdate_dateTime)
+      insert into ShiftLog.UserSettings (instance, userName, settingKey, settingValue, recordUpdate_dateTime)
+      values (@instance, @userName, @settingKey, @settingValue, @recordUpdate_dateTime)
     `);
     return insertResult.rowsAffected[0] > 0;
 }

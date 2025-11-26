@@ -1,5 +1,6 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Timesheet } from '../../types/record.types.js'
 
@@ -47,7 +48,8 @@ export default async function getTimesheet(
     left join ShiftLog.Shifts s
       on t.shiftId = s.shiftId
 
-    where t.recordDelete_dateTime is null
+    where t.instance = @instance
+      and t.recordDelete_dateTime is null
       and t.timesheetId = @timesheetId
 
     ${
@@ -66,6 +68,7 @@ export default async function getTimesheet(
   `
   const timesheetsResult = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('timesheetId', timesheetId)
     .input('userName', user?.userName)
     .query(sql)) as mssql.IResult<Timesheet>

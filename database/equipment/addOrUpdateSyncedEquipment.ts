@@ -1,6 +1,7 @@
 import Debug from 'debug'
 
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { usePartialOrCurrentValue } from '../../helpers/sync.helpers.js'
 import type { Equipment } from '../../types/record.types.js'
@@ -20,6 +21,7 @@ async function addSyncedEquipment(
 
   await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('equipmentNumber', partialEquipment.equipmentNumber)
     .input('equipmentName', partialEquipment.equipmentName ?? '')
     .input('equipmentDescription', partialEquipment.equipmentDescription ?? '')
@@ -39,13 +41,13 @@ async function addSyncedEquipment(
     .input('recordUpdate_userName', syncUserName)
     .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
       insert into ShiftLog.Equipment (
-        equipmentNumber, equipmentName, equipmentDescription,
+        instance, equipmentNumber, equipmentName, equipmentDescription,
         equipmentTypeDataListItemId, userGroupId,
         recordSync_isSynced, recordSync_source, recordSync_dateTime,
         recordCreate_userName, recordCreate_dateTime,
         recordUpdate_userName, recordUpdate_dateTime
       ) values (
-        @equipmentNumber, @equipmentName, @equipmentDescription,
+        @instance, @equipmentNumber, @equipmentName, @equipmentDescription,
         @equipmentTypeDataListItemId, @userGroupId,
         @recordSync_isSynced, @recordSync_source, @recordSync_dateTime,
         @recordCreate_userName, @recordCreate_dateTime,
@@ -97,6 +99,7 @@ async function updateSyncedEquipment(
 
   await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('equipmentNumber', updateEquipment.equipmentNumber)
     .input('equipmentName', updateEquipment.equipmentName)
     .input('equipmentDescription', updateEquipment.equipmentDescription)
@@ -122,7 +125,8 @@ async function updateSyncedEquipment(
         recordUpdate_dateTime = @recordUpdate_dateTime,
         recordDelete_userName = null,
         recordDelete_dateTime = null
-      where equipmentNumber = @equipmentNumber
+      where instance = @instance
+        and equipmentNumber = @equipmentNumber
     `)
 }
 

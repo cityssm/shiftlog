@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getWorkOrder(workOrderId, user) {
     const pool = await getShiftLogConnectionPool();
@@ -45,6 +46,7 @@ export default async function getWorkOrder(workOrderId, user) {
 
     where w.recordDelete_dateTime is null
       and w.workOrderId = @workOrderId
+      and w.instance = @instance
 
     ${user === undefined
         ? ''
@@ -61,6 +63,7 @@ export default async function getWorkOrder(workOrderId, user) {
     const workOrdersResult = (await pool
         .request()
         .input('workOrderId', workOrderId)
+        .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
         .query(sql));
     if (workOrdersResult.recordset.length === 0) {

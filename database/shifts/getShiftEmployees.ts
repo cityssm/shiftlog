@@ -14,23 +14,23 @@ export default async function getShiftEmployees(
       e.firstName, e.lastName, e.userGroupId,
       c.crewName
     from ShiftLog.ShiftEmployees se
-    inner join ShiftLog.Employees e on se.employeeNumber = e.employeeNumber
+    inner join ShiftLog.Employees e on se.instance = e.instance and se.employeeNumber = e.employeeNumber
     left join ShiftLog.Crews c on se.crewId = c.crewId
     where se.shiftId = @shiftId
       and e.recordDelete_dateTime is null
-    ${
-      user === undefined
-        ? ''
-        : `
-          and (
-            e.userGroupId is null or e.userGroupId in (
-              select userGroupId
-              from ShiftLog.UserGroupMembers
-              where userName = @userName
+      ${
+        user === undefined
+          ? ''
+          : `
+            and (
+              e.userGroupId is null or e.userGroupId in (
+                select userGroupId
+                from ShiftLog.UserGroupMembers
+                where userName = @userName
+              )
             )
-          )
-        `
-    }
+          `
+      }
     order by e.lastName, e.firstName
   `
 

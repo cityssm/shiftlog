@@ -1,5 +1,6 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
@@ -53,6 +54,7 @@ export default async function getWorkOrder(
 
     where w.recordDelete_dateTime is null
       and w.workOrderId = @workOrderId
+      and w.instance = @instance
 
     ${
       user === undefined
@@ -71,6 +73,7 @@ export default async function getWorkOrder(
   const workOrdersResult = (await pool
     .request()
     .input('workOrderId', workOrderId)
+    .input('instance', getConfigProperty('application.instance'))
     .input('userName', user?.userName)
     .query(sql)) as mssql.IResult<WorkOrder>
 

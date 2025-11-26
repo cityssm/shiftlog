@@ -1,5 +1,6 @@
 import Debug from 'debug';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { usePartialOrCurrentValue } from '../../helpers/sync.helpers.js';
 import getLocationByAddress1 from './getLocationByAddress1.js';
@@ -8,6 +9,7 @@ async function addSyncedLocation(partialLocation, syncUserName) {
     const pool = await getShiftLogConnectionPool();
     await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('locationName', partialLocation.locationName ?? '')
         .input('address1', partialLocation.address1 ?? '')
         .input('address2', partialLocation.address2 ?? '')
@@ -23,13 +25,13 @@ async function addSyncedLocation(partialLocation, syncUserName) {
         .input('recordUpdate_userName', syncUserName)
         .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
       insert into ShiftLog.Locations (
-        locationName, address1, address2,
+        instance, locationName, address1, address2,
         cityProvince, latitude, longitude, userGroupId,
         recordSync_isSynced, recordSync_source, recordSync_dateTime,
         recordCreate_userName, recordCreate_dateTime,
         recordUpdate_userName, recordUpdate_dateTime
       ) values (
-        @locationName, @address1, @address2,
+        @instance, @locationName, @address1, @address2,
         @cityProvince, @latitude, @longitude, @userGroupId,
         @recordSync_isSynced, @recordSync_source, @recordSync_dateTime,
         @recordCreate_userName, @recordCreate_dateTime,

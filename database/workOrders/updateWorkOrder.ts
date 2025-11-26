@@ -3,6 +3,7 @@
 
 import type { DateString, TimeString } from '@cityssm/utils-datetime'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
 
@@ -48,6 +49,7 @@ export default async function updateWorkOrder(
 
   const result = await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('workOrderId', updateWorkOrderForm.workOrderId)
     .input(
       'workOrderTypeDataListItemId',
@@ -123,6 +125,7 @@ export default async function updateWorkOrder(
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       where workOrderId = @workOrderId
+        and instance = @instance
         and recordDelete_dateTime is null
     `)
 

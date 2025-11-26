@@ -7,21 +7,21 @@ export default async function getShiftEquipment(shiftId, user) {
       eq.equipmentName, eq.userGroupId,
       e.firstName as employeeFirstName, e.lastName as employeeLastName
     from ShiftLog.ShiftEquipment se
-    inner join ShiftLog.Equipment eq on se.equipmentNumber = eq.equipmentNumber
-    left join ShiftLog.Employees e on se.employeeNumber = e.employeeNumber
+    inner join ShiftLog.Equipment eq on se.instance = eq.instance and se.equipmentNumber = eq.equipmentNumber
+    left join ShiftLog.Employees e on se.instance = e.instance and se.employeeNumber = e.employeeNumber
     where se.shiftId = @shiftId
       and eq.recordDelete_dateTime is null
-    ${user === undefined
+      ${user === undefined
         ? ''
         : `
-          and (
-            eq.userGroupId is null or eq.userGroupId in (
-              select userGroupId
-              from ShiftLog.UserGroupMembers
-              where userName = @userName
+            and (
+              eq.userGroupId is null or eq.userGroupId in (
+                select userGroupId
+                from ShiftLog.UserGroupMembers
+                where userName = @userName
+              )
             )
-          )
-        `}
+          `}
     order by eq.equipmentName
   `;
     const result = (await pool

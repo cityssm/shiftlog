@@ -1,8 +1,9 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 function buildWhereClause(filters, user) {
-    let whereClause = 'where t.recordDelete_dateTime is null';
+    let whereClause = 'where t.instance = @instance and t.recordDelete_dateTime is null';
     if (filters.timesheetDateString !== undefined) {
         whereClause += ' and t.timesheetDate = @timesheetDateString';
     }
@@ -46,6 +47,7 @@ export default async function getTimesheets(filters, options, user) {
     `;
         const countResult = await pool
             .request()
+            .input('instance', getConfigProperty('application.instance'))
             .input('timesheetDateString', filters.timesheetDateString ?? null)
             .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
             .input('timesheetTypeDataListItemId', filters.timesheetTypeDataListItemId ?? null)
@@ -58,6 +60,7 @@ export default async function getTimesheets(filters, options, user) {
     if (totalCount > 0 || limit === -1) {
         const timesheetsResult = (await pool
             .request()
+            .input('instance', getConfigProperty('application.instance'))
             .input('timesheetDateString', filters.timesheetDateString ?? null)
             .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
             .input('timesheetTypeDataListItemId', filters.timesheetTypeDataListItemId ?? null)
@@ -93,7 +96,7 @@ export default async function getTimesheets(filters, options, user) {
           on t.timesheetTypeDataListItemId = tType.dataListItemId
           
         left join ShiftLog.Employees e
-          on t.supervisorEmployeeNumber = e.employeeNumber
+          on t.instance = e.instance and t.supervisorEmployeeNumber = e.employeeNumber
 
         ${whereClause}    
 

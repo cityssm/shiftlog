@@ -1,17 +1,19 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-export default async function updateLocation(locationId, locationName, address1, address2, cityProvince, latitude, longitude, user) {
+export default async function updateLocation(updateLocationForm, user) {
     const currentDate = new Date();
     try {
         const pool = await getShiftLogConnectionPool();
         const result = await pool
             .request()
-            .input('locationId', locationId)
-            .input('locationName', locationName)
-            .input('address1', address1)
-            .input('address2', address2)
-            .input('cityProvince', cityProvince)
-            .input('latitude', latitude)
-            .input('longitude', longitude)
+            .input('instance', getConfigProperty('application.instance'))
+            .input('locationId', updateLocationForm.locationId)
+            .input('locationName', updateLocationForm.locationName)
+            .input('address1', updateLocationForm.address1)
+            .input('address2', updateLocationForm.address2)
+            .input('cityProvince', updateLocationForm.cityProvince)
+            .input('latitude', updateLocationForm.latitude)
+            .input('longitude', updateLocationForm.longitude)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         UPDATE ShiftLog.Locations
@@ -24,6 +26,7 @@ export default async function updateLocation(locationId, locationName, address1,
             recordUpdate_userName = @recordUpdate_userName,
             recordUpdate_dateTime = @recordUpdate_dateTime
         WHERE locationId = @locationId
+          and instance = @instance
           AND recordDelete_dateTime IS NULL
       `);
         return result.rowsAffected[0] > 0;

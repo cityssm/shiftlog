@@ -7,6 +7,7 @@ export default async function updateSetting(updateForm) {
     // Try to update first
     const updateResult = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('settingKey', updateForm.settingKey)
         .input('settingValue', updateForm.settingValue)
         .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
@@ -14,7 +15,8 @@ export default async function updateSetting(updateForm) {
       set settingValue = @settingValue,
         previousSettingValue = settingValue,
         recordUpdate_dateTime = @recordUpdate_dateTime
-      where settingKey = @settingKey
+      where instance = @instance
+        and settingKey = @settingKey
     `);
     if (updateResult.rowsAffected[0] > 0) {
         clearCacheByTableName('ApplicationSettings');
@@ -23,16 +25,17 @@ export default async function updateSetting(updateForm) {
     // If no rows updated, insert new
     const insertResult = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('settingKey', updateForm.settingKey)
         .input('settingValue', updateForm.settingValue)
         .input('previousSettingValue', '')
         .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
       insert into ShiftLog.ApplicationSettings (
-        settingKey, settingValue, previousSettingValue,
+        instance, settingKey, settingValue, previousSettingValue,
         recordUpdate_dateTime
       )
       values (
-        @settingKey, @settingValue, @previousSettingValue,
+        @instance, @settingKey, @settingValue, @previousSettingValue,
         @recordUpdate_dateTime
       )
       `);

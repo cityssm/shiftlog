@@ -4,17 +4,20 @@ GO
 -- APPLICATION SETTINGS
 
 CREATE TABLE ShiftLog.ApplicationSettings (
-  settingKey varchar(100) not null primary key,
+  instance varchar(20) not null,
+  settingKey varchar(100) not null,
   settingValue varchar(500),
   previousSettingValue varchar(500),
-  recordUpdate_dateTime datetime not null default getdate()
+  recordUpdate_dateTime datetime not null default getdate(),
+  primary key (instance, settingKey)
 )
 GO
 
 -- USERS
 
 CREATE TABLE ShiftLog.Users (
-  userName varchar(30) not null primary key,
+  instance varchar(20) not null,
+  userName varchar(30) not null,
   isActive bit not null default 1,
 
   shifts_canView bit not null default 0,
@@ -38,41 +41,27 @@ CREATE TABLE ShiftLog.Users (
   recordUpdate_dateTime datetime not null default getdate(),
 
   recordDelete_userName varchar(30),
-  recordDelete_dateTime datetime
-)
-GO
+  recordDelete_dateTime datetime,
 
-insert into ShiftLog.Users (
-  userName, isActive,
-  shifts_canView, shifts_canUpdate, shifts_canManage,
-  workOrders_canView, workOrders_canUpdate, workOrders_canManage,
-  timesheets_canView, timesheets_canUpdate, timesheets_canManage,
-  isAdmin,
-  recordCreate_userName, recordUpdate_userName
-)
-values (
-  'administrator', 1,
-  1, 0, 1,
-  1, 0, 1,
-  1, 0, 1,
-  1,
-  'initializeDatabase.sql', 'initializeDatabase.sql'
+  primary key (instance, userName)
 )
 GO
 
 CREATE TABLE ShiftLog.UserSettings (
+  instance varchar(20) not null,
   userName varchar(30) not null,
   settingKey varchar(100) not null,
   settingValue varchar(500),
   previousSettingValue varchar(500),
   recordUpdate_dateTime datetime not null default getdate(),
-  primary key (userName, settingKey),
-  foreign key (userName) references ShiftLog.Users(userName)
+  primary key (instance, userName, settingKey),
+  foreign key (instance, userName) references ShiftLog.Users(instance, userName)
 )
 GO
 
 CREATE TABLE ShiftLog.UserGroups (
   userGroupId int not null primary key identity(1,1),
+  instance varchar(20) not null,
   userGroupName varchar(50) not null,
   
   recordCreate_userName varchar(30) not null,
@@ -86,18 +75,20 @@ GO
 
 CREATE TABLE ShiftLog.UserGroupMembers (
   userGroupId int not null,
+  instance varchar(20) not null,
   userName varchar(30) not null,
 
   primary key (userGroupId, userName),
   foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId),
-  foreign key (userName) references ShiftLog.Users(userName)
+  foreign key (instance, userName) references ShiftLog.Users(instance, userName)
 )
 GO
 
 -- DATALISTS
 
 CREATE TABLE ShiftLog.DataLists (
-  dataListKey varchar(20) not null primary key,
+  instance varchar(20) not null,
+  dataListKey varchar(20) not null,
   dataListName varchar(50) not null,
   isSystemList bit not null default 0,
   recordCreate_userName varchar(30) not null,
@@ -105,12 +96,14 @@ CREATE TABLE ShiftLog.DataLists (
   recordUpdate_userName varchar(30) not null,
   recordUpdate_dateTime datetime not null default getdate(),
   recordDelete_userName varchar(30),
-  recordDelete_dateTime datetime
+  recordDelete_dateTime datetime,
+  primary key (instance, dataListKey)
 )
 GO
 
 CREATE TABLE ShiftLog.DataListItems (
   dataListItemId int not null primary key identity(1,1),
+  instance varchar(20) not null,
   dataListKey varchar(20) not null,
   dataListItem varchar(200) not null,
   orderNumber smallint not null default 0,
@@ -125,7 +118,7 @@ CREATE TABLE ShiftLog.DataListItems (
 
   unique (dataListKey, dataListItem),
 
-  foreign key (dataListKey) references ShiftLog.DataLists(dataListKey),
+  foreign key (instance, dataListKey) references ShiftLog.DataLists(instance, dataListKey),
   foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
 )
 GO
@@ -133,7 +126,9 @@ GO
 -- EMPLOYEES
 
 CREATE TABLE ShiftLog.Employees (
-  employeeNumber varchar(10) not null primary key,
+  instance varchar(20) not null,
+  employeeNumber varchar(10) not null,
+
   firstName varchar(50) not null,
   lastName varchar(50) not null,
   
@@ -157,12 +152,14 @@ CREATE TABLE ShiftLog.Employees (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
+  primary key (instance, employeeNumber),
   foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
 )
 GO
 
 CREATE TABLE ShiftLog.Crews (
   crewId int not null primary key identity(1,1),
+  instance varchar(20) not null,
   crewName varchar(50) not null,
 
   userGroupId int,
@@ -180,17 +177,19 @@ GO
 
 CREATE TABLE ShiftLog.CrewMembers (
   crewId int not null,
+  instance varchar(20) not null,
   employeeNumber varchar(10) not null,
   primary key (crewId, employeeNumber),
   foreign key (crewId) references ShiftLog.Crews(crewId),
-  foreign key (employeeNumber) references ShiftLog.Employees(employeeNumber)
+  foreign key (instance, employeeNumber) references ShiftLog.Employees(instance, employeeNumber)
 )
 GO
 
 -- EQUIPMENT
 
 CREATE TABLE ShiftLog.Equipment (
-  equipmentNumber varchar(20) not null primary key,
+  instance varchar(20) not null,
+  equipmentNumber varchar(20) not null,
   equipmentName varchar(100) not null,
   equipmentDescription varchar(200) not null default '',
 
@@ -208,6 +207,7 @@ CREATE TABLE ShiftLog.Equipment (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
+  primary key (instance, equipmentNumber),
   foreign key (equipmentTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
 )
@@ -217,6 +217,8 @@ GO
 
 CREATE TABLE ShiftLog.Locations (
   locationId int not null primary key identity(1,1),
+
+  instance varchar(20) not null,
   locationName varchar(100) not null,
 
   latitude decimal(10,7),
@@ -248,6 +250,7 @@ GO
 create table ShiftLog.WorkOrders (
   workOrderId int not null primary key identity(1,1),
   
+  instance varchar(20) not null,
   workOrderNumberPrefix varchar(10) not null default '',
   workOrderNumberYear smallint not null,
   workOrderNumberSequence int not null,
@@ -280,7 +283,7 @@ create table ShiftLog.WorkOrders (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
-  unique (workOrderNumberPrefix, workOrderNumberYear, workOrderNumberSequence),
+  unique (instance, workOrderNumberPrefix, workOrderNumberYear, workOrderNumberSequence),
   foreign key (workOrderTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
@@ -309,6 +312,8 @@ GO
 
 CREATE TABLE ShiftLog.Shifts (
   shiftId int not null primary key identity(1,1),
+
+  instance varchar(20) not null,
   supervisorEmployeeNumber varchar(10) not null,
 
   shiftDate date not null,
@@ -326,7 +331,7 @@ CREATE TABLE ShiftLog.Shifts (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
-  foreign key (supervisorEmployeeNumber) references ShiftLog.Employees(employeeNumber),
+  foreign key (instance, supervisorEmployeeNumber) references ShiftLog.Employees(instance, employeeNumber),
   foreign key (shiftTimeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (shiftTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
 )
@@ -345,27 +350,31 @@ GO
 
 CREATE TABLE ShiftLog.ShiftEmployees (
   shiftId int not null,
+  instance varchar(20) not null,
+
   employeeNumber varchar(10) not null,
   crewId int,
   shiftEmployeeNote varchar(200) not null default '',
 
   primary key (shiftId, employeeNumber),
   foreign key (shiftId) references ShiftLog.Shifts(shiftId),
-  foreign key (employeeNumber) references ShiftLog.Employees(employeeNumber),
+  foreign key (instance, employeeNumber) references ShiftLog.Employees(instance, employeeNumber),
   foreign key (crewId) references ShiftLog.Crews(crewId)
 )
 GO
 
 create table ShiftLog.ShiftEquipment (
   shiftId int not null,
+  instance varchar(20) not null,
+
   equipmentNumber varchar(20) not null,
   employeeNumber varchar(10),
   shiftEquipmentNote varchar(200) not null default '',
 
   primary key (shiftId, equipmentNumber),
   foreign key (shiftId) references ShiftLog.Shifts(shiftId),
-  foreign key (equipmentNumber) references ShiftLog.Equipment(equipmentNumber),
-  foreign key (employeeNumber) references ShiftLog.Employees(employeeNumber)
+  foreign key (instance, equipmentNumber) references ShiftLog.Equipment(instance, equipmentNumber),
+  foreign key (instance, employeeNumber) references ShiftLog.Employees(instance, employeeNumber)
 )
 GO
 
@@ -373,6 +382,8 @@ GO
 
 CREATE TABLE ShiftLog.Timesheets (
   timesheetId int not null primary key identity(1,1),
+  
+  instance varchar(20) not null,
   supervisorEmployeeNumber varchar(10) not null,
 
   timesheetTypeDataListItemId int not null,
@@ -398,7 +409,7 @@ CREATE TABLE ShiftLog.Timesheets (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
-  foreign key (supervisorEmployeeNumber) references ShiftLog.Employees(employeeNumber),
+  foreign key (instance, supervisorEmployeeNumber) references ShiftLog.Employees(instance, employeeNumber),
   foreign key (timesheetTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
 )
 GO
@@ -420,6 +431,7 @@ GO
 
 CREATE TABLE ShiftLog.TimesheetRows (
   timesheetRowId int not null primary key identity(1,1),
+  instance varchar(20) not null,
   timesheetId int not null,
   rowTitle varchar(50) not null default '',
 
@@ -430,8 +442,8 @@ CREATE TABLE ShiftLog.TimesheetRows (
   timeCodeDataListItemId int,  
 
   foreign key (timesheetId) references ShiftLog.Timesheets(timesheetId),
-  foreign key (employeeNumber) references ShiftLog.Employees(employeeNumber),
-  foreign key (equipmentNumber) references ShiftLog.Equipment(equipmentNumber),
+  foreign key (instance, employeeNumber) references ShiftLog.Employees(instance, employeeNumber),
+  foreign key (instance, equipmentNumber) references ShiftLog.Equipment(instance, equipmentNumber),
   foreign key (jobClassificationDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (timeCodeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
 )

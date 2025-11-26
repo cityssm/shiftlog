@@ -6,6 +6,7 @@ export default async function updateEquipment(equipmentFields, user) {
         const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
         const result = await pool
             .request()
+            .input('instance', getConfigProperty('application.instance'))
             .input('equipmentNumber', equipmentFields.equipmentNumber)
             .input('equipmentName', equipmentFields.equipmentName)
             .input('equipmentDescription', equipmentFields.equipmentDescription)
@@ -22,7 +23,8 @@ export default async function updateEquipment(equipmentFields, user) {
           recordSync_isSynced = @recordSync_isSynced,
           recordUpdate_userName = @recordUpdate_userName,
           recordUpdate_dateTime = @recordUpdate_dateTime
-        where equipmentNumber = @equipmentNumber
+        where instance = @instance
+          and equipmentNumber = @equipmentNumber
           and recordDelete_dateTime is null
       `);
         return result.rowsAffected[0] > 0;

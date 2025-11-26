@@ -6,6 +6,7 @@ export const config: Config = { ...baseConfig }
 
 config.application.applicationName = 'Graffiti Tracking'
 config.application.backgroundImage = 'background-graffiti.jpg'
+config.application.instance = 'graffiti'
 
 config.shifts = {
   isEnabled: false

@@ -1,10 +1,14 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getMaximumEmployeeRecordSyncDateTime() {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool.request()
+    const result = (await pool
+        .request()
+        .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `select max(recordSync_dateTime) as maxRecordSyncDateTime
       from ShiftLog.Employees
-      where recordSync_isSynced = 1`));
+      where instance = @instance
+        and recordSync_isSynced = 1`));
     if (result.recordset.length === 0 ||
         result.recordset[0].maxRecordSyncDateTime === null) {
         return undefined;

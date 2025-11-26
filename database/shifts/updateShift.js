@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateShift(updateShiftForm, userName) {
     const pool = await getShiftLogConnectionPool();
@@ -8,6 +9,7 @@ export default async function updateShift(updateShiftForm, userName) {
     recordLockDate.setDate(recordLockDate.getDate() + 7);
     const result = (await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('shiftTypeDataListItemId', updateShiftForm.shiftTypeDataListItemId)
         .input('supervisorEmployeeNumber', updateShiftForm.supervisorEmployeeNumber)
         .input('shiftDate', updateShiftForm.shiftDateString)
@@ -27,6 +29,7 @@ export default async function updateShift(updateShiftForm, userName) {
         recordUpdate_dateTime = getutcdate(),
         recordLock_dateTime = @recordLockDate
       where shiftId = @shiftId
+        and instance = @instance
         and recordDelete_dateTime is null
     `));
     return result.rowsAffected[0] > 0;

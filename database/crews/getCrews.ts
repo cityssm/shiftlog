@@ -15,24 +15,26 @@ export default async function getCrews(user?: User): Promise<Crew[]> {
     from ShiftLog.Crews c
     left join ShiftLog.UserGroups ug on c.userGroupId = ug.userGroupId
     where c.recordDelete_dateTime is null
-    ${
-      user === undefined
-        ? ''
-        : `
-          and (
-            c.userGroupId is null or c.userGroupId in (
-              select userGroupId
-              from ShiftLog.UserGroupMembers
-              where userName = @userName
+      and c.instance = @instance
+      ${
+        user === undefined
+          ? ''
+          : `
+            and (
+              c.userGroupId is null or c.userGroupId in (
+                select userGroupId
+                from ShiftLog.UserGroupMembers
+                where userName = @userName
+              )
             )
-          )
-        `
-    }
+          `
+      }
     order by c.crewName
   `
 
   const result = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('userName', user?.userName)
     .query(sql)) as mssql.IResult<Crew>
 

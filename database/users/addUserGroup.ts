@@ -1,6 +1,7 @@
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
+import type { mssql } from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function addUserGroup(
   userGroupName: string,
@@ -9,24 +10,24 @@ export default async function addUserGroup(
   const currentDate = new Date()
 
   try {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+    const pool = await getShiftLogConnectionPool()
 
     const result = (await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('userGroupName', userGroupName)
       .input('recordCreate_userName', user.userName)
       .input('recordCreate_dateTime', currentDate)
       .input('recordUpdate_userName', user.userName)
-      .input('recordUpdate_dateTime', currentDate)
-      .query(/* sql */ `
+      .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         insert into ShiftLog.UserGroups (
-          userGroupName,
+          instance, userGroupName,
           recordCreate_userName, recordCreate_dateTime,
           recordUpdate_userName, recordUpdate_dateTime
         )
         output inserted.userGroupId
         values (
-          @userGroupName,
+          @instance, @userGroupName,
           @recordCreate_userName, @recordCreate_dateTime,
           @recordUpdate_userName, @recordUpdate_dateTime
         )

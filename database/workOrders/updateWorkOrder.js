@@ -1,11 +1,13 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable no-secrets/no-secrets, unicorn/no-null */
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
 export default async function updateWorkOrder(updateWorkOrderForm, userName) {
     const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('workOrderId', updateWorkOrderForm.workOrderId)
         .input('workOrderTypeDataListItemId', updateWorkOrderForm.workOrderTypeDataListItemId)
         .input('workOrderStatusDataListItemId', updateWorkOrderForm.workOrderStatusDataListItemId === ''
@@ -51,6 +53,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       where workOrderId = @workOrderId
+        and instance = @instance
         and recordDelete_dateTime is null
     `);
     return result.rowsAffected[0] > 0;

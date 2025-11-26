@@ -22,6 +22,7 @@ export default async function updateEquipment(
 
     const result = await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('equipmentNumber', equipmentFields.equipmentNumber)
       .input('equipmentName', equipmentFields.equipmentName)
       .input('equipmentDescription', equipmentFields.equipmentDescription)
@@ -30,7 +31,10 @@ export default async function updateEquipment(
         equipmentFields.equipmentTypeDataListItemId
       )
       .input('userGroupId', equipmentFields.userGroupId ?? undefined)
-      .input('recordSync_isSynced', equipmentFields.recordSync_isSynced ?? false)
+      .input(
+        'recordSync_isSynced',
+        equipmentFields.recordSync_isSynced ?? false
+      )
       .input('recordUpdate_userName', user.userName)
       .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         update ShiftLog.Equipment
@@ -41,7 +45,8 @@ export default async function updateEquipment(
           recordSync_isSynced = @recordSync_isSynced,
           recordUpdate_userName = @recordUpdate_userName,
           recordUpdate_dateTime = @recordUpdate_dateTime
-        where equipmentNumber = @equipmentNumber
+        where instance = @instance
+          and equipmentNumber = @equipmentNumber
           and recordDelete_dateTime is null
       `)
 

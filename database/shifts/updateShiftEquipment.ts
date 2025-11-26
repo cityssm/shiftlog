@@ -18,10 +18,14 @@ export default async function updateShiftEquipment(
       .request()
       .input('shiftId', form.shiftId)
       .input('equipmentNumber', form.equipmentNumber)
-      .input('employeeNumber', (form.employeeNumber ?? '') === '' ? null : form.employeeNumber).query(/* sql */ `
+      .input(
+        'employeeNumber',
+        (form.employeeNumber ?? '') === '' ? undefined : form.employeeNumber
+      ).query(/* sql */ `
         update ShiftLog.ShiftEquipment
         set employeeNumber = @employeeNumber
-        where shiftId = @shiftId and equipmentNumber = @equipmentNumber
+        where shiftId = @shiftId
+          and equipmentNumber = @equipmentNumber
       `)
 
     return true

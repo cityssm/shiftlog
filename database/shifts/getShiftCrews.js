@@ -9,17 +9,17 @@ export default async function getShiftCrews(shiftId, user) {
     inner join ShiftLog.Crews c on sc.crewId = c.crewId
     where sc.shiftId = @shiftId
       and c.recordDelete_dateTime is null
-    ${user === undefined
+      ${user === undefined
         ? ''
         : `
-          and (
-            c.userGroupId is null or c.userGroupId in (
-              select userGroupId
-              from ShiftLog.UserGroupMembers
-              where userName = @userName
+            and (
+              c.userGroupId is null or c.userGroupId in (
+                select userGroupId
+                from ShiftLog.UserGroupMembers
+                where userName = @userName
+              )
             )
-          )
-        `}
+          `}
     order by c.crewName
   `;
     const result = (await pool

@@ -4,6 +4,7 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString } from '@cityssm/utils-datetime'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Timesheet } from '../../types/record.types.js'
 
@@ -19,7 +20,7 @@ export interface GetTimesheetsOptions {
 }
 
 function buildWhereClause(filters: GetTimesheetsFilters, user?: User): string {
-  let whereClause = 'where t.recordDelete_dateTime is null'
+  let whereClause = 'where t.instance = @instance and t.recordDelete_dateTime is null'
 
   if (filters.timesheetDateString !== undefined) {
     whereClause += ' and t.timesheetDate = @timesheetDateString'
@@ -85,6 +86,7 @@ export default async function getTimesheets(
 
     const countResult = await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('timesheetDateString', filters.timesheetDateString ?? null)
       .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
       .input('timesheetTypeDataListItemId', filters.timesheetTypeDataListItemId ?? null)
@@ -101,6 +103,7 @@ export default async function getTimesheets(
   if (totalCount > 0 || limit === -1) {
     const timesheetsResult = (await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('timesheetDateString', filters.timesheetDateString ?? null)
       .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
       .input('timesheetTypeDataListItemId', filters.timesheetTypeDataListItemId ?? null)
@@ -136,7 +139,7 @@ export default async function getTimesheets(
           on t.timesheetTypeDataListItemId = tType.dataListItemId
           
         left join ShiftLog.Employees e
-          on t.supervisorEmployeeNumber = e.employeeNumber
+          on t.instance = e.instance and t.supervisorEmployeeNumber = e.employeeNumber
 
         ${whereClause}    
 

@@ -4,6 +4,7 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString } from '@cityssm/utils-datetime'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Shift } from '../../types/record.types.js'
 
@@ -17,7 +18,7 @@ export interface GetShiftsOptions {
 }
 
 function buildWhereClause(filters: GetShiftsFilters, user?: User): string {
-  let whereClause = 'where s.recordDelete_dateTime is null'
+  let whereClause = 'where s.instance = @instance and s.recordDelete_dateTime is null'
 
   if (filters.shiftDateString !== undefined) {
     whereClause += ' and s.shiftDate = @shiftDateString'
@@ -75,6 +76,7 @@ export default async function getShifts(
 
     const countResult = await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('shiftDateString', filters.shiftDateString ?? null)
       .input('userName', user?.userName)
       .query(countSql)
@@ -89,6 +91,7 @@ export default async function getShifts(
   if (totalCount > 0 || limit === -1) {
     const shiftsResult = (await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('shiftDateString', filters.shiftDateString ?? null)
       .input('userName', user?.userName).query(/* sql */ `
         select
@@ -116,7 +119,8 @@ export default async function getShifts(
           on s.shiftTypeDataListItemId = sType.dataListItemId
           
         left join ShiftLog.Employees e
-          on s.supervisorEmployeeNumber = e.employeeNumber
+          on s.instance = e.instance
+          and s.supervisorEmployeeNumber = e.employeeNumber
 
         ${whereClause}    
 

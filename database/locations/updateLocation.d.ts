@@ -1,1 +1,11 @@
-export default function updateLocation(locationId: number, locationName: string, address1: string, address2: string, cityProvince: string, latitude: number | null, longitude: number | null, user: User): Promise<boolean>;
+interface UpdateLocationForm {
+    locationId: number;
+    locationName: string;
+    address1: string;
+    address2: string;
+    cityProvince: string;
+    latitude?: number | null;
+    longitude?: number | null;
+}
+export default function updateLocation(updateLocationForm: UpdateLocationForm, user: User): Promise<boolean>;
+export {};

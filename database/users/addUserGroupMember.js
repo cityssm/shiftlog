@@ -1,15 +1,15 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function addUserGroupMember(userGroupId, userName) {
     try {
-        const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+        const pool = await getShiftLogConnectionPool();
         await pool
             .request()
             .input('userGroupId', userGroupId)
-            .input('userName', userName)
-            .query(/* sql */ `
-        insert into ShiftLog.UserGroupMembers (userGroupId, userName)
-        values (@userGroupId, @userName)
+            .input('instance', getConfigProperty('application.instance'))
+            .input('userName', userName).query(/* sql */ `
+        insert into ShiftLog.UserGroupMembers (userGroupId, instance, userName)
+        values (@userGroupId, @instance, @userName)
       `);
         return true;
     }

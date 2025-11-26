@@ -3,6 +3,7 @@ export const configDefaultValues = {
     'application.applicationName': 'ShiftLog',
     'application.applicationUrl': undefined,
     'application.backgroundImage': 'background.jpg',
+    'application.instance': '',
     'application.httpPort': 9000,
     'application.maximumProcesses': 4,
     'login.authentication': undefined,
@@ -32,8 +33,6 @@ export const configDefaultValues = {
     'workOrders.sectionName': 'Work Orders',
     'workOrders.sectionNameSingular': 'Work Order',
     'workOrders.iconClass': 'fa-hard-hat',
-    // eslint-disable-next-line no-secrets/no-secrets
-    'workOrders.defaultLocationCityProvince': '',
     'workOrders.workOrderNumberPrefix': '',
     // Timesheets
     'timesheets.isEnabled': false,

@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getTimesheet(timesheetId, user) {
     const pool = await getShiftLogConnectionPool();
@@ -39,7 +40,8 @@ export default async function getTimesheet(timesheetId, user) {
     left join ShiftLog.Shifts s
       on t.shiftId = s.shiftId
 
-    where t.recordDelete_dateTime is null
+    where t.instance = @instance
+      and t.recordDelete_dateTime is null
       and t.timesheetId = @timesheetId
 
     ${user === undefined
@@ -56,6 +58,7 @@ export default async function getTimesheet(timesheetId, user) {
   `;
     const timesheetsResult = (await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('timesheetId', timesheetId)
         .input('userName', user?.userName)
         .query(sql));

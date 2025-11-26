@@ -30,6 +30,7 @@ export default async function copyFromPreviousTimesheet(sourceTimesheetId, targe
         .input('sourceTimesheetId', sourceTimesheetId)
         .input('targetTimesheetId', targetTimesheetId).query(/* sql */ `
       insert into ShiftLog.TimesheetRows (
+        instance,
         timesheetId,
         rowTitle,
         employeeNumber,
@@ -38,6 +39,7 @@ export default async function copyFromPreviousTimesheet(sourceTimesheetId, targe
         timeCodeDataListItemId
       )
       select
+        instance,
         @targetTimesheetId,
         rowTitle,
         employeeNumber,

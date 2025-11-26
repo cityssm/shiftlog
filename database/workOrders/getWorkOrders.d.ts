@@ -1,11 +1,11 @@
 import type { WorkOrder } from '../../types/record.types.js';
 export interface GetWorkOrdersFilters {
-    workOrderNumber?: string;
-    workOrderTypeDataListItemId?: number | string;
-    workOrderStatusDataListItemId?: number | string;
-    requestorName?: string;
+    openClosedFilter?: '' | 'closed' | 'open' | 'overdue';
     requestor?: string;
-    openClosedFilter?: 'open' | 'overdue' | 'closed' | '';
+    requestorName?: string;
+    workOrderNumber?: string;
+    workOrderStatusDataListItemId?: number | string;
+    workOrderTypeDataListItemId?: number | string;
 }
 export interface GetWorkOrdersOptions {
     limit: number | string;

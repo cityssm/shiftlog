@@ -3,11 +3,14 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { updateApiKeyUserSetting } from './updateUserSetting.js';
 export default async function getUserSettings(userName) {
     const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
-    const result = (await pool.request().input('userName', userName)
-        .query(/* sql */ `
+    const result = (await pool
+        .request()
+        .input('instance', getConfigProperty('application.instance'))
+        .input('userName', userName).query(/* sql */ `
       select settingKey, settingValue
       from ShiftLog.UserSettings
-      where userName = @userName
+      where instance = @instance
+        and userName = @userName
     `));
     const settings = {};
     for (const row of result.recordset) {

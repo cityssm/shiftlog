@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface EmployeeUpdateFields {
@@ -23,6 +24,7 @@ export default async function updateEmployee(
 
   const result = await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('employeeNumber', employeeFields.employeeNumber)
     .input('firstName', employeeFields.firstName)
     .input('lastName', employeeFields.lastName)
@@ -50,7 +52,8 @@ export default async function updateEmployee(
         recordSync_isSynced = @recordSync_isSynced,
         recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime
-      where employeeNumber = @employeeNumber
+      where instance = @instance
+        and employeeNumber = @employeeNumber
         and recordDelete_dateTime is null
     `)
 

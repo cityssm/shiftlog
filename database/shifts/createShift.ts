@@ -1,6 +1,7 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString } from '@cityssm/utils-datetime'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface CreateShiftForm {
@@ -29,6 +30,7 @@ export default async function createShift(
 
   const result = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('shiftDate', createShiftForm.shiftDateString)
     .input('shiftTimeDataListItemId', createShiftForm.shiftTimeDataListItemId)
     .input('shiftTypeDataListItemId', createShiftForm.shiftTypeDataListItemId)
@@ -37,6 +39,7 @@ export default async function createShift(
     .input('userName', userName)
     .input('recordLockDate', recordLockDate).query(/* sql */ `
       insert into ShiftLog.Shifts (
+        instance,
         shiftTypeDataListItemId,
         supervisorEmployeeNumber,
         shiftDate,
@@ -47,6 +50,7 @@ export default async function createShift(
       )
       output inserted.shiftId
       values (
+        @instance,
         @shiftTypeDataListItemId,
         @supervisorEmployeeNumber,
         @shiftDate,

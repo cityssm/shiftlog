@@ -12,10 +12,14 @@ export default async function getSettings(): Promise<
 > {
   const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
 
-  const result = (await pool.request().query(/* sql */ `
+  const result = (await pool
+    .request()
+    .input('instance', getConfigProperty('application.instance'))
+    .query(/* sql */ `
       select s.settingKey, s.settingValue, s.previousSettingValue,
         s.recordUpdate_dateTime
       from ShiftLog.ApplicationSettings s
+      where instance = @instance
     `)) as mssql.IResult<Setting>
 
   const databaseSettings = result.recordset
@@ -28,7 +32,6 @@ export default async function getSettings(): Promise<
     const settingKey = databaseSetting.settingKey
 
     const setting = settings.find(
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       (property) => property.settingKey === settingKey
     )
 

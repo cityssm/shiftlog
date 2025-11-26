@@ -1,5 +1,6 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 async function insertNewEmployee(
@@ -15,6 +16,7 @@ async function insertNewEmployee(
 
     await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('employeeNumber', employeeNumber)
       .input('firstName', firstName)
       .input('lastName', lastName)
@@ -23,11 +25,11 @@ async function insertNewEmployee(
       .input('recordUpdate_userName', user.userName)
       .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         insert into ShiftLog.Employees (
-          employeeNumber, firstName, lastName,
+          instance, employeeNumber, firstName, lastName,
           recordCreate_userName, recordCreate_dateTime,
           recordUpdate_userName, recordUpdate_dateTime
         ) values (
-          @employeeNumber, @firstName, @lastName,
+          @instance, @employeeNumber, @firstName, @lastName,
           @recordCreate_userName, @recordCreate_dateTime,
           @recordUpdate_userName, @recordUpdate_dateTime
         )
@@ -51,6 +53,7 @@ async function restoreDeletedEmployee(
 
   const result = await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('employeeNumber', employeeNumber)
     .input('firstName', firstName)
     .input('lastName', lastName)
@@ -64,7 +67,8 @@ async function restoreDeletedEmployee(
         recordUpdate_dateTime = @recordUpdate_dateTime,
         recordDelete_userName = null,
         recordDelete_dateTime = null
-      where employeeNumber = @employeeNumber
+      where instance = @instance
+        and employeeNumber = @employeeNumber
     `)
 
   return result.rowsAffected.length > 0
@@ -82,8 +86,12 @@ export default async function addEmployee(
 
   const recordDeleteResult = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('employeeNumber', employeeNumber).query(/* sql */ `
-      select recordDelete_dateTime from ShiftLog.Employees where employeeNumber = @employeeNumber
+      select recordDelete_dateTime
+      from ShiftLog.Employees
+      where instance = @instance
+        and employeeNumber = @employeeNumber
     `)) as mssql.IResult<{ recordDelete_dateTime: Date | null }>
 
   let success = false

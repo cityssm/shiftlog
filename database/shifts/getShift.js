@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShift(shiftId, user) {
     const pool = await getShiftLogConnectionPool();
@@ -31,7 +32,8 @@ export default async function getShift(shiftId, user) {
     left join ShiftLog.Employees e
       on s.supervisorEmployeeNumber = e.employeeNumber
 
-    where s.recordDelete_dateTime is null
+    where s.instance = @instance
+      and s.recordDelete_dateTime is null
       and s.shiftId = @shiftId
 
     ${user === undefined
@@ -48,6 +50,7 @@ export default async function getShift(shiftId, user) {
   `;
     const shiftsResult = (await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('shiftId', shiftId)
         .input('userName', user?.userName)
         .query(sql));

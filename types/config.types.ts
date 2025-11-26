@@ -72,7 +72,6 @@ export interface Config {
 
   workOrders?: ConfigSection & {
     workOrderNumberPrefix?: string
-    defaultLocationCityProvince?: string
   }
 
   employees?: ConfigEmployees
@@ -140,6 +139,9 @@ interface ConfigSection {
 interface ConfigApplication {
   applicationName?: string
   httpPort?: number
+
+  // The application instance key, used to differentiate installations in a single database
+  instance?: string
 
   /** The base, public facing URL of the application, including the protocol (http or https), and any URL prefixes */
   applicationUrl?: string

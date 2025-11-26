@@ -1,8 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
-
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface UpdateWorkOrderNoteForm {
@@ -17,8 +13,9 @@ export default async function updateWorkOrderNote(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('workOrderId', updateWorkOrderNoteForm.workOrderId)
     .input('noteSequence', updateWorkOrderNoteForm.noteSequence)
     .input('noteText', updateWorkOrderNoteForm.noteText)
@@ -31,7 +28,13 @@ export default async function updateWorkOrderNote(
       where workOrderId = @workOrderId
         and noteSequence = @noteSequence
         and recordDelete_dateTime is null
-    `)) as mssql.IResult<Record<string, never>>
+        and workOrderId in (
+          select workOrderId
+          from ShiftLog.WorkOrders
+          where recordDelete_dateTime is null
+            and instance = @instance
+        )
+    `)
 
   return result.rowsAffected[0] > 0
 }

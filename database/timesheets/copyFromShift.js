@@ -5,19 +5,22 @@ export default async function copyFromShift(shiftId, timesheetId) {
     await pool
         .request()
         .input('shiftId', shiftId)
-        .input('timesheetId', timesheetId).query(/* sql */ `
+        .input('timesheetId', timesheetId)
+        .query(/* sql */ `
       insert into ShiftLog.TimesheetRows (
+        instance
         timesheetId,
         rowTitle,
         employeeNumber
       )
       select
+        se.instance,
         @timesheetId,
         e.firstName + ' ' + e.lastName,
         se.employeeNumber
       from ShiftLog.ShiftEmployees se
       inner join ShiftLog.Employees e
-        on se.employeeNumber = e.employeeNumber
+        on se.instance = e.instance and se.employeeNumber = e.employeeNumber
       where se.shiftId = @shiftId
         and e.recordDelete_dateTime is null
     `);
@@ -27,17 +30,19 @@ export default async function copyFromShift(shiftId, timesheetId) {
         .input('shiftId', shiftId)
         .input('timesheetId', timesheetId).query(/* sql */ `
       insert into ShiftLog.TimesheetRows (
+        instance,
         timesheetId,
         rowTitle,
         equipmentNumber
       )
       select
+        se.instance,
         @timesheetId,
         eq.equipmentName,
         se.equipmentNumber
       from ShiftLog.ShiftEquipment se
       inner join ShiftLog.Equipment eq
-        on se.equipmentNumber = eq.equipmentNumber
+        on  se.instance = eq.instance and se.equipmentNumber = eq.equipmentNumber
       where se.shiftId = @shiftId
         and eq.recordDelete_dateTime is null
     `);
