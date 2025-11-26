@@ -34,6 +34,7 @@ declare const exports: {
 
   /**
    * Build pagination controls for location list
+   * Shows up to 10 page links including current page and neighboring pages
    */
   function buildPaginationControls(
     totalCount: number,
@@ -64,14 +65,47 @@ declare const exports: {
           }">Next</a>`
         : `<a class="pagination-next" disabled>Next</a>`
 
-    // Page numbers
+    // Page numbers with smart ellipsis
     paginationHTML += `<ul class="pagination-list">`
 
-    for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+    const maxVisiblePages = 10
+    let startPage = 1
+    let endPage = totalPages
+
+    if (totalPages > maxVisiblePages) {
+      // Calculate range around current page
+      const halfVisible = Math.floor(maxVisiblePages / 2)
+      startPage = Math.max(1, currentPage - halfVisible)
+      endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
+
+      // Adjust if we're near the end
+      if (endPage - startPage < maxVisiblePages - 1) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1)
+      }
+    }
+
+    // Always show first page
+    if (startPage > 1) {
+      paginationHTML += `<li><a class="pagination-link" href="#" data-page-number="1">1</a></li>`
+      if (startPage > 2) {
+        paginationHTML += `<li><span class="pagination-ellipsis">&hellip;</span></li>`
+      }
+    }
+
+    // Show page range
+    for (let pageNumber = startPage; pageNumber <= endPage; pageNumber += 1) {
       paginationHTML +=
         pageNumber === currentPage
           ? `<li><a class="pagination-link is-current" aria-current="page">${pageNumber}</a></li>`
           : `<li><a class="pagination-link" href="#" data-page-number="${pageNumber}">${pageNumber}</a></li>`
+    }
+
+    // Always show last page
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        paginationHTML += `<li><span class="pagination-ellipsis">&hellip;</span></li>`
+      }
+      paginationHTML += `<li><a class="pagination-link" href="#" data-page-number="${totalPages}">${totalPages}</a></li>`
     }
 
     paginationHTML += `</ul>`
