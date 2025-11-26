@@ -269,6 +269,7 @@ export interface WorkOrder extends BaseRecord {
   workOrderDetails: string
 
   workOrderOpenDateTime: Date | string
+  
   workOrderDueDateTime?: Date | string | null
   workOrderCloseDateTime?: Date | string | null
 
@@ -287,6 +288,9 @@ export interface WorkOrder extends BaseRecord {
 
   userGroupId?: number | null
   userGroupName?: string
+
+  milestonesCount?: number
+  milestonesCompletedCount?: number
 }
 
 export interface WorkOrderMilestone extends BaseRecord {

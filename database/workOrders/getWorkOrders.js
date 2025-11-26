@@ -102,7 +102,7 @@ export default async function getWorkOrders(filters, options, user) {
     // Main query with limit and offset
     let workOrders = [];
     if (totalCount > 0 || limit === -1) {
-        const workOrdersResult = (await pool
+        const workOrdersResult = await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('workOrderNumber', filters.workOrderNumber === undefined
@@ -143,7 +143,10 @@ export default async function getWorkOrders(filters, options, user) {
           w.locationCityProvince,
 
           w.assignedToDataListItemId,
-          assignedTo.dataListItem as assignedToDataListItem
+          assignedTo.dataListItem as assignedToDataListItem,
+
+          milestones.milestonesCount,
+          milestones.milestonesCompletedCount
           
         from ShiftLog.WorkOrders w
 
@@ -156,13 +159,24 @@ export default async function getWorkOrders(filters, options, user) {
         left join ShiftLog.DataListItems assignedTo
           on w.assignedToDataListItemId = assignedTo.dataListItemId
 
+        left join (
+          select workOrderId,
+            count(*) as milestonesCount,
+            sum(
+              case when milestoneCompleteDateTime is null then 0 else 1 end
+            ) as milestonesCompletedCount
+          from ShiftLog.WorkOrderMilestones
+          where recordDelete_dateTime is null
+          group by workOrderId
+        ) as milestones on milestones.workOrderId = w.workOrderId
+
         ${whereClause}    
 
         order by w.workOrderOpenDateTime desc, w.workOrderNumber desc
 
         ${limit === -1 ? '' : ' offset ' + offset + ' rows'}
         ${limit === -1 ? '' : ' fetch next ' + limit + ' rows only'}
-      `));
+      `);
         workOrders = workOrdersResult.recordset;
         if (limit === -1) {
             totalCount = workOrders.length;

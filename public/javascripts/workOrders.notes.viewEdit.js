@@ -1,4 +1,4 @@
-;(() => {
+(() => {
     const workOrderFormElement = document.querySelector('#form--workOrder');
     const workOrderId = workOrderFormElement !== null
         ? workOrderFormElement.querySelector('#workOrder--workOrderId').value
@@ -143,6 +143,7 @@
             }
             cityssm.openHtmlModal('workOrders-editNote', {
                 onshow(modalElement) {
+                    ;
                     modalElement.querySelector('#editWorkOrderNote--workOrderId').value = workOrderId;
                     modalElement.querySelector('#editWorkOrderNote--noteSequence').value = note.noteSequence.toString();
                     modalElement.querySelector('#editWorkOrderNote--noteText').value = note.noteText;
@@ -180,6 +181,7 @@
             }
             cityssm.openHtmlModal('workOrders-addNote', {
                 onshow(modalElement) {
+                    ;
                     modalElement.querySelector('#addWorkOrderNote--workOrderId').value = workOrderId;
                 },
                 onshown(modalElement, _closeModalFunction) {

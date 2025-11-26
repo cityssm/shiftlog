@@ -1,4 +1,4 @@
-;(() => {
+(() => {
     const workOrderFormElement = document.querySelector('#form--workOrder');
     const workOrderId = workOrderFormElement !== null
         ? workOrderFormElement.querySelector('#workOrder--workOrderId').value
@@ -186,6 +186,7 @@
             }
             cityssm.openHtmlModal('workOrders-addMilestone', {
                 onshow(modalElement) {
+                    ;
                     modalElement.querySelector('#addWorkOrderMilestone--workOrderId').value = workOrderId;
                     // Populate Assigned To select
                     const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToDataListItemId');
@@ -200,10 +201,10 @@
                     modalElement
                         .querySelector('#addWorkOrderMilestone--setCompleteTimeNow')
                         ?.addEventListener('click', () => {
-                            const now = new Date();
-                            completeDatePicker.set('maxDate', now);
-                            completeDatePicker.setDate(now, true);
-                        });
+                        const now = new Date();
+                        completeDatePicker.set('maxDate', now);
+                        completeDatePicker.setDate(now, true);
+                    });
                 },
                 onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();
@@ -238,6 +239,7 @@
             }
             cityssm.openHtmlModal('workOrders-editMilestone', {
                 onshow(modalElement) {
+                    ;
                     modalElement.querySelector('#editWorkOrderMilestone--workOrderMilestoneId').value = milestone.workOrderMilestoneId.toString();
                     modalElement.querySelector('#editWorkOrderMilestone--milestoneTitle').value = milestone.milestoneTitle;
                     modalElement.querySelector('#editWorkOrderMilestone--milestoneDescription').value = milestone.milestoneDescription;
@@ -261,16 +263,17 @@
                     modalElement
                         .querySelector('#editWorkOrderMilestone--setCompleteTimeNow')
                         ?.addEventListener('click', () => {
-                            const now = new Date();
-                            completeDatePicker.set('maxDate', now);
-                            completeDatePicker.setDate(now, true);
-                        });
+                        const now = new Date();
+                        completeDatePicker.set('maxDate', now);
+                        completeDatePicker.setDate(now, true);
+                    });
                     // Populate Assigned To select
                     const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToDataListItemId');
                     populateAssignedToSelect(assignedToSelect);
                     // Set the selected option if there is one
                     if (milestone.assignedToDataListItemId !== null) {
-                        assignedToSelect.value = milestone.assignedToDataListItemId.toString();
+                        assignedToSelect.value =
+                            milestone.assignedToDataListItemId.toString();
                     }
                 },
                 onshown(modalElement, _closeModalFunction) {

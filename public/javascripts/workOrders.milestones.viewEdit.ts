@@ -78,8 +78,7 @@ declare const Sortable: {
 
     function renderMilestones(milestones: WorkOrderMilestone[]): void {
       // Update milestones count (incomplete / total)
-      const milestonesCountElement =
-        document.querySelector('#milestonesCount')
+      const milestonesCountElement = document.querySelector('#milestonesCount')
       if (milestonesCountElement !== null) {
         const incompleteCount = milestones.filter(
           (m) => m.milestoneCompleteDateTime === null
@@ -438,7 +437,8 @@ declare const Sortable: {
 
           // Set the selected option if there is one
           if (milestone.assignedToDataListItemId !== null) {
-            assignedToSelect.value = milestone.assignedToDataListItemId.toString()
+            assignedToSelect.value =
+              milestone.assignedToDataListItemId.toString()
           }
         },
         onshown(modalElement, _closeModalFunction) {
