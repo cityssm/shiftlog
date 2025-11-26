@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function doGetRequestorSuggestions(
@@ -8,6 +9,7 @@ export default async function doGetRequestorSuggestions(
 
   const result = await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('searchString', searchString)
     .input('userName', user?.userName).query<{
     requestorName: string
@@ -15,7 +17,9 @@ export default async function doGetRequestorSuggestions(
   }>(/* sql */ `
       SELECT DISTINCT requestorName, requestorContactInfo
       FROM ShiftLog.WorkOrders
-      WHERE recordDelete_dateTime IS NULL
+      WHERE
+        instance = @instance
+        and recordDelete_dateTime IS NULL
         AND requestorName LIKE '%' + @searchString + '%'
         and requestorContactInfo <> ''
       ORDER BY requestorName

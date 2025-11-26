@@ -4,9 +4,11 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 interface UpdateLocationForm {
   locationId: number
   locationName: string
+
   address1: string
   address2: string
   cityProvince: string
+  
   latitude?: number | null
   longitude?: number | null
 }

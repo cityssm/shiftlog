@@ -14,7 +14,7 @@ export default async function getLocations(): Promise<Location[]> {
            recordUpdate_userName, recordUpdate_dateTime
     FROM ShiftLog.Locations
     WHERE instance = @instance and recordDelete_dateTime IS NULL
-    ORDER BY locationName
+    ORDER BY locationName, address1
   `)
 
   return result.recordset as Location[]
