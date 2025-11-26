@@ -3,6 +3,9 @@ export interface ShiftLogGlobal {
   sessionKeepAliveMillis: number
   urlPrefix: string
 
+  defaultLatitude: number
+  defaultLongitude: number
+
   shiftsAreEnabled: boolean
   shiftsRouter: string
   shiftsSectionName: string
@@ -14,6 +17,8 @@ export interface ShiftLogGlobal {
   workOrdersRouter: string
   workOrdersSectionName: string
   workOrdersSectionNameSingular: string
+  
+  userCanManageWorkOrders: boolean
 
   buildWorkOrderURL: (workOrderId: number, edit?: boolean) => string
 

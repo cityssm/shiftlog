@@ -27,6 +27,9 @@
     sessionKeepAliveMillis: <%= configFunctions.getConfigProperty('session.doKeepAlive') ? configFunctions.keepAliveMillis : 0 %>,
     apiKey: "<%= user.userSettings.apiKey %>",
 
+    defaultLatitude: <%= await settingFunctions.getSettingValue('locations.defaultLatitude') %>,
+    defaultLongitude: <%= await settingFunctions.getSettingValue('locations.defaultLongitude') %>,
+
     shiftsAreEnabled: <%= configFunctions.getConfigProperty('shifts.isEnabled') %>,
     shiftsRouter: "<%= configFunctions.getConfigProperty('shifts.router') %>",
     shiftsSectionName: "<%= configFunctions.getConfigProperty('shifts.sectionName') %>",

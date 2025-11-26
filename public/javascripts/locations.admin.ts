@@ -25,8 +25,6 @@ declare const exports: {
   ) as HTMLDivElement
 
   // Default map coordinates (Sault Ste. Marie)
-  const DEFAULT_MAP_LAT = 46.5136
-  const DEFAULT_MAP_LNG = -84.3422
   const DEFAULT_MAP_ZOOM = 13
   const DETAIL_MAP_ZOOM = 15
 
@@ -54,7 +52,7 @@ declare const exports: {
         ? `<a class="pagination-previous" href="#" data-page-number="${
             currentPage - 1
           }">Previous</a>`
-        : `<a class="pagination-previous" disabled>Previous</a>`
+        : '<a class="pagination-previous" disabled>Previous</a>'
 
     // Next button
     paginationHTML +=
@@ -62,10 +60,10 @@ declare const exports: {
         ? `<a class="pagination-next" href="#" data-page-number="${
             currentPage + 1
           }">Next</a>`
-        : `<a class="pagination-next" disabled>Next</a>`
+        : '<a class="pagination-next" disabled>Next</a>'
 
     // Page numbers with smart ellipsis
-    paginationHTML += `<ul class="pagination-list">`
+    paginationHTML += '<ul class="pagination-list">'
 
     const maxVisiblePages = 10
     let startPage = 1
@@ -85,9 +83,17 @@ declare const exports: {
 
     // Always show first page
     if (startPage > 1) {
-      paginationHTML += `<li><a class="pagination-link" href="#" data-page-number="1">1</a></li>`
+      paginationHTML += /* html */ `
+        <li>
+          <a class="pagination-link" data-page-number="1" href="#">1</a>
+        </li>
+      `
       if (startPage > 2) {
-        paginationHTML += `<li><span class="pagination-ellipsis">&hellip;</span></li>`
+        paginationHTML += /* html */ `
+          <li>
+            <span class="pagination-ellipsis">&hellip;</span>
+          </li>
+        `
       }
     }
 
@@ -95,19 +101,28 @@ declare const exports: {
     for (let pageNumber = startPage; pageNumber <= endPage; pageNumber += 1) {
       paginationHTML +=
         pageNumber === currentPage
-          ? `<li><a class="pagination-link is-current" aria-current="page">${pageNumber}</a></li>`
-          : `<li><a class="pagination-link" href="#" data-page-number="${pageNumber}">${pageNumber}</a></li>`
+          ? /* html */ `
+            <li>
+              <a class="pagination-link is-current" aria-current="page">${pageNumber}</a>
+            </li>
+          `
+          : /* html */ `
+            <li>
+              <a class="pagination-link" data-page-number="${pageNumber}" href="#">${pageNumber}</a>
+            </li>
+          `
     }
 
     // Always show last page
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
-        paginationHTML += `<li><span class="pagination-ellipsis">&hellip;</span></li>`
+        paginationHTML +=
+          '<li><span class="pagination-ellipsis">&hellip;</span></li>'
       }
-      paginationHTML += `<li><a class="pagination-link" href="#" data-page-number="${totalPages}">${totalPages}</a></li>`
+      paginationHTML += `<li><a class="pagination-link" data-page-number="${totalPages}" href="#">${totalPages}</a></li>`
     }
 
-    paginationHTML += `</ul>`
+    paginationHTML += '</ul>'
 
     // eslint-disable-next-line no-unsanitized/property
     paginationElement.innerHTML = paginationHTML
@@ -118,21 +133,23 @@ declare const exports: {
     )
 
     for (const pageLink of pageLinks) {
-      pageLink.addEventListener('click', (event) => {
-        event.preventDefault()
-
-        const target = event.currentTarget as HTMLElement
-        const pageNumberString = target.dataset.pageNumber
-
-        if (pageNumberString !== undefined) {
-          const pageNumber = Number.parseInt(pageNumberString, 10)
-          currentPage = pageNumber
-          renderLocationsWithPagination(currentFilteredLocations)
-        }
-      })
+      pageLink.addEventListener('click', pageSelect)
     }
 
     return paginationElement
+  }
+
+  function pageSelect(event: Event): void {
+    event.preventDefault()
+
+    const target = event.currentTarget as HTMLElement
+    const pageNumberString = target.dataset.pageNumber
+
+    if (pageNumberString !== undefined) {
+      const pageNumber = Number.parseInt(pageNumberString, 10)
+      currentPage = pageNumber
+      renderLocationsWithPagination(currentFilteredLocations)
+    }
   }
 
   /**
@@ -144,8 +161,8 @@ declare const exports: {
     longitudeInput: HTMLInputElement
   ): void {
     // Use existing coordinates or default to SSM
-    let defaultLat = DEFAULT_MAP_LAT
-    let defaultLng = DEFAULT_MAP_LNG
+    let defaultLat = shiftLog.defaultLatitude
+    let defaultLng = shiftLog.defaultLongitude
     let defaultZoom = DEFAULT_MAP_ZOOM
 
     if (latitudeInput.value !== '' && longitudeInput.value !== '') {
@@ -555,6 +572,7 @@ declare const exports: {
         onshown(modalElement, _closeModalFunction) {
           bulmaJS.toggleHtmlClipped()
           closeModalFunction = _closeModalFunction
+
           modalElement
             .querySelector('form')
             ?.addEventListener('submit', doAddLocation)

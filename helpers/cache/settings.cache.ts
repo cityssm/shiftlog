@@ -20,7 +20,6 @@ export async function getCachedSetting(
   const cachedSettings = await getCachedSettings()
 
   return cachedSettings.find(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     (setting) => setting.settingKey === settingKey
   ) as Partial<Setting> & SettingProperties
 }

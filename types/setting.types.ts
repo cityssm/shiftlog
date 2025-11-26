@@ -34,16 +34,16 @@ export const settingProperties: SettingProperties[] = [
     settingKey: 'locations.defaultLatitude',
     settingName: 'Locations - Default Latitude',
     description: 'The default latitude to use when centering maps.',
-    type: 'string',
-    defaultValue: '',
+    type: 'number',
+    defaultValue: '46.5136',
     isUserConfigurable: true
   },
   {
     settingKey: 'locations.defaultLongitude',
     settingName: 'Locations - Default Longitude',
     description: 'The default longitude to use when centering maps.',
-    type: 'string',
-    defaultValue: '',
+    type: 'number',
+    defaultValue: '-84.3422',
     isUserConfigurable: true
   },
   {

@@ -1,4 +1,4 @@
-<%- include('../_header'); -%>
+<%- await include('../_header'); -%>
 
 <nav class="breadcrumb">
   <ul>
@@ -293,17 +293,17 @@
   <div class="column">
     <div class="tabs-container">
       <div id="tab--employees">
-        <%- include('_edit-employees'); -%>
+        <%- await include('_edit-employees'); -%>
       </div>
       <div id="tab--tasks" class="is-hidden">
-        <%- include('_edit-tasks'); -%>
+        <%- await include('_edit-tasks'); -%>
       </div>
       <div id="tab--notes" class="is-hidden">
-        <%- include('_edit-notes'); -%>
+        <%- await include('_edit-notes'); -%>
       </div>
       <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
       <div id="tab--timesheets" class="is-hidden">
-        <%- include('_edit-timesheets'); -%>
+        <%- await include('_edit-timesheets'); -%>
       </div>
       <% } %>
     </div>
@@ -311,7 +311,7 @@
 </div>
 <% } %>
 
-<%- include('../_footerA'); -%>
+<%- await include('../_footerA'); -%>
 
 <script src="<%= urlPrefix %>/javascripts/shifts.viewEdit.js"></script>
 
@@ -330,4 +330,4 @@
 <script src="<%= urlPrefix %>/javascripts/shifts.employees.js"></script>
 <% } %>
 
-<%- include('../_footerB'); -%>
+<%- await include('../_footerB'); -%>

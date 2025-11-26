@@ -1,4 +1,4 @@
-<%- include('../_header'); -%>
+<%- await include('../_header'); -%>
 
 <nav class="breadcrumb">
   <ul>
@@ -450,17 +450,17 @@
   <div class="column">
     <div class="tabs-container">
       <div id="tab--milestones">
-        <%- include('_edit-milestones'); -%>
+        <%- await include('_edit-milestones'); -%>
       </div>
       <div id="tab--notes" class="is-hidden">
-        <%- include('_edit-notes'); -%>
+        <%- await include('_edit-notes'); -%>
       </div>
     </div>
   </div>
 </div>
 <% } %>
 
-<%- include('../_footerA'); -%>
+<%- await include('../_footerA'); -%>
 
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
 
@@ -470,4 +470,4 @@
 <script src="<%= urlPrefix %>/javascripts/workOrders.view.js"></script>
 <% } %>
 
-<%- include('../_footerB'); -%>
+<%- await include('../_footerB'); -%>

@@ -1,8 +1,8 @@
-<%- include('../_header'); -%>
+<%- await include('../_header'); -%>
 
 <div class="columns is-mobile">
   <div class="column is-2-desktop is-narrow-touch is-hidden-print">
-    <%- include('_menu'); -%>
+    <%- await include('_menu'); -%>
   </div>
   <div class="column">
     <nav class="breadcrumb">
@@ -84,8 +84,8 @@
   </div>
 </div>
 
-<%- include('../_footerA'); -%>
+<%- await include('../_footerA'); -%>
 
 <script src="<%= urlPrefix %>/javascripts/timesheets.search.js"></script>
 
-<%- include('../_footerB'); -%>
+<%- await include('../_footerB'); -%>

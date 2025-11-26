@@ -5,6 +5,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
 import Debug from 'debug';
+import ejs from 'ejs';
 import exitHook from 'exit-hook';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
@@ -42,7 +43,19 @@ app.use((request, _response, next) => {
 /*
  * Configure Views
  */
-app.set('views', 'views').set('view engine', 'ejs');
+app
+    .set('views', 'views')
+    .set('view engine', 'ejs')
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .engine('ejs', async (path, data, callback) => {
+    try {
+        const html = await ejs.renderFile(path, data, { async: true });
+        callback(undefined, html);
+    }
+    catch (error) {
+        callback(error, '');
+    }
+});
 /*
  * Adjust headers
  */

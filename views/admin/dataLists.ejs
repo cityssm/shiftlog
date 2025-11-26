@@ -1,4 +1,4 @@
-<%- include('../_header'); -%>
+<%- await include('../_header'); -%>
 
 <nav class="breadcrumb">
   <ul>
@@ -135,7 +135,7 @@
 </details>
 <% } %>
 
-<%- include('../_footerA'); -%>
+<%- await include('../_footerA'); -%>
 
 <script src="<%= urlPrefix %>/lib/sortablejs/Sortable.min.js"></script>
 <script>
@@ -144,4 +144,4 @@
 </script>
 <script src="<%= urlPrefix %>/javascripts/dataLists.admin.js"></script>
 
-<%- include('../_footerB'); -%>
+<%- await include('../_footerB'); -%>

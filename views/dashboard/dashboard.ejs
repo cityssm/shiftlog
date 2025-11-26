@@ -1,4 +1,4 @@
-<%- include('../_header'); -%>
+<%- await include('../_header'); -%>
 
 <h1 class="title is-1">
   Today in <%= configFunctions.getConfigProperty("application.applicationName") %>
@@ -422,8 +422,8 @@
 <% } %>
 
 
-<%- include('../_footerA'); -%>
+<%- await include('../_footerA'); -%>
 
 <script src="<%= urlPrefix %>/javascripts/dashboard.js"></script>
 
-<%- include('../_footerB'); -%>
+<%- await include('../_footerB'); -%>

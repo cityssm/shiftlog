@@ -1,4 +1,4 @@
-<%- include('../_header'); -%>
+<%- await include('../_header'); -%>
 
 <nav class="breadcrumb">
   <ul>
@@ -51,7 +51,7 @@
 
 <div id="container--employees"></div>
 
-<%- include('../_footerA'); -%>
+<%- await include('../_footerA'); -%>
 
 <script>
   exports.employees = <%- JSON.stringify(employees) %>;
@@ -59,4 +59,4 @@
 </script>
 <script src="<%= urlPrefix %>/javascripts/employees.admin.js"></script>
 
-<%- include('../_footerB'); -%>
+<%- await include('../_footerB'); -%>

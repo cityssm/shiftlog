@@ -6,9 +6,7 @@ export async function getCachedSettings() {
 }
 export async function getCachedSetting(settingKey) {
     const cachedSettings = await getCachedSettings();
-    return cachedSettings.find(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (setting) => setting.settingKey === settingKey);
+    return cachedSettings.find((setting) => setting.settingKey === settingKey);
 }
 export async function getCachedSettingValue(settingKey) {
     const setting = await getCachedSetting(settingKey);

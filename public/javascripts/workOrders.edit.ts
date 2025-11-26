@@ -422,8 +422,8 @@ declare const exports: {
     ) as HTMLInputElement
 
     // Default to SSM or use existing coordinates
-    let defaultLat = 46.5136
-    let defaultLng = -84.3422
+    let defaultLat = shiftLog.defaultLatitude
+    let defaultLng = shiftLog.defaultLongitude
     let defaultZoom = 13
 
     if (latitudeInput.value !== '' && longitudeInput.value !== '') {
