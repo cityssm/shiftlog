@@ -16,29 +16,71 @@
   User Settings
 </h1>
 
-<div class="panel">
-  <h2 class="panel-heading">API Key Reset</h2>
-  <div class="panel-block is-block">
-    <div class="message is-warning">
-      <div class="message-body">
-        <p>
-          API keys are used to authenticate API requests without using your username and password.
-          If you have set up your calendar application to automatically refresh milestone updates,
-          you are using your API key.
-        </p>
-        <p>
-          If you believe your API key has been compromised, you can reset it here.
-          This will invalidate your current API key and generate a new one.
-        </p>
+<div class="columns">
+  <div class="column">
+    <div class="panel">
+      <h2 class="panel-heading"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Settings</h2>
+      <div class="panel-block is-block">
+        <form class="userSettingForm">
+          <input type="hidden" name="settingKey" value="workOrders.defaultAssignedToDataListItemId" />
+          <label class="label" for="userSettingForm--1">Default "Assigned To" Value</label>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <div class="select is-fullwidth">
+                <select id="userSettingForm--1" name="settingValue">
+                  <option value="">-- None --</option>
+                  <% for (const dataListItem of assignedToDataListItems) { %>
+                  <option
+                    value="<%= dataListItem.dataListItemId %>"
+                    <%= user.userSettings['workOrders.defaultAssignedToDataListItemId'] === dataListItem.dataListItemId.toString() ? 'selected' : '' %>>
+                    <%= dataListItem.dataListItem %>
+                  </option>
+                  <% } %>
+                </select>
+              </div>
+              <p class="help">
+                This value will help highlight <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> and milestones assigned to you.
+              </p>
+            </div>
+            <div class="control">
+              <button class="button is-primary" type="submit">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                </span>
+                <span>Save</span>
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
-    <div class="has-text-right">
-      <button class="button is-warning" id="button--resetApiKey" type="button">
-        <span class="icon is-small">
-          <i class="fa-solid fa-rotate"></i>
-        </span>
-        <span>Reset API Key</span>
-      </button>
+  </div>
+  <div class="column">
+    <div class="panel">
+      <h2 class="panel-heading">API Key Reset</h2>
+      <div class="panel-block is-block">
+        <div class="message is-warning">
+          <div class="message-body">
+            <p>
+              API keys are used to authenticate API requests without using your username and password.
+              If you have set up your calendar application to automatically refresh milestone updates,
+              you are using your API key.
+            </p>
+            <p>
+              If you believe your API key has been compromised, you can reset it here.
+              This will invalidate your current API key and generate a new one.
+            </p>
+          </div>
+        </div>
+        <div class="has-text-right">
+          <button class="button is-warning" id="button--resetApiKey" type="button">
+            <span class="icon is-small">
+              <i class="fa-solid fa-rotate"></i>
+            </span>
+            <span>Reset API Key</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
