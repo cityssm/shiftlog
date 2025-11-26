@@ -206,8 +206,7 @@
                 <% } %>
                 <% if (!assignedToFound && workOrder.assignedToDataListItemId) { %>
                   <option value="<%= workOrder.assignedToDataListItemId %>" selected>
-                    <%= workOrder.assignedToDataListItem %>
-                    (Inactive)
+                    <%= workOrder.assignedToDataListItem %> (Inactive)
                   </option>
                 <% } %>
               </select>

@@ -465,10 +465,13 @@ declare const Sortable: {
 
           populateAssignedToSelect(assignedToSelect)
 
-          // Set the selected option if there is one
+          // Set the selected option if there is one, otherwise default to work order's assigned to
           if (milestone.assignedToDataListItemId !== null) {
             assignedToSelect.value =
               milestone.assignedToDataListItemId.toString()
+          } else if (exports.workOrderAssignedToDataListItemId !== null) {
+            assignedToSelect.value =
+              exports.workOrderAssignedToDataListItemId.toString()
           }
         },
         onshown(modalElement, _closeModalFunction) {
