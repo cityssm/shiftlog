@@ -1,3 +1,4 @@
+import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
 import getWorkOrderTypeDataListItems from '../../database/workOrders/getWorkOrderTypeDataListItems.js';
@@ -15,13 +16,14 @@ export default async function handler(request, response) {
     }
     const workOrderTypes = await getWorkOrderTypeDataListItems(request.session.user);
     const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user);
+    const assignedToOptions = await getAssignedToDataListItems(request.session.user);
     response.render('workOrders/edit', {
         headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
         isCreate: false,
         isEdit: true,
         workOrder,
-        workOrderTypes,
+        assignedToOptions,
         workOrderStatuses,
-        assignedToOptions: []
+        workOrderTypes
     });
 }

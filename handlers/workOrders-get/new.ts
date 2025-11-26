@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express'
 
+import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js'
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js'
 import getWorkOrderTypeDataListItems from '../../database/workOrders/getWorkOrderTypeDataListItems.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
@@ -15,6 +16,8 @@ export default async function handler(
   const workOrderTypes = await getWorkOrderTypeDataListItems(request.session.user)
 
   const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user)
+
+  const assignedToOptions = await getAssignedToDataListItems(request.session.user)
 
   const workOrder = {
     workOrderTypeDataListItemId: workOrderTypes.length === 1 ? workOrderTypes[0].dataListItemId : undefined,
@@ -38,7 +41,7 @@ export default async function handler(
 
     workOrder,
 
-    assignedToOptions: [],
+    assignedToOptions,
     workOrderStatuses,
     workOrderTypes,
   } satisfies WorkOrderEditResponse)
