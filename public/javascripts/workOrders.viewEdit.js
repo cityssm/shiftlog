@@ -152,6 +152,22 @@
                 }
             });
         }
+        const dateTimePickerOptions = {
+            allowInput: true,
+            enableTime: true,
+            nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+            prevArrow: '<i class="fa-solid fa-chevron-left"></i>',
+            minuteIncrement: 1,
+            minDate: exports.workOrderOpenDateTime || undefined
+        };
+        function populateAssignedToSelect(selectElement) {
+            for (const option of exports.assignedToOptions) {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.dataListItemId.toString();
+                optionElement.textContent = option.dataListItem;
+                selectElement.append(optionElement);
+            }
+        }
         function showAddMilestoneModal() {
             let closeModalFunction;
             function doAddMilestone(submitEvent) {
@@ -172,8 +188,16 @@
             }
             cityssm.openHtmlModal('workOrders-addMilestone', {
                 onshow(modalElement) {
-                    ;
                     modalElement.querySelector('#addWorkOrderMilestone--workOrderId').value = workOrderId;
+                    // Populate Assigned To select
+                    const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToDataListItemId');
+                    populateAssignedToSelect(assignedToSelect);
+                    // Initialize flatpickr on date fields
+                    flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneDueDateTimeString'), dateTimePickerOptions);
+                    flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneCompleteDateTimeString'), {
+                        ...dateTimePickerOptions,
+                        maxDate: new Date()
+                    });
                 },
                 onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();
@@ -208,20 +232,31 @@
             }
             cityssm.openHtmlModal('workOrders-editMilestone', {
                 onshow(modalElement) {
-                    ;
                     modalElement.querySelector('#editWorkOrderMilestone--workOrderMilestoneId').value = milestone.workOrderMilestoneId.toString();
                     modalElement.querySelector('#editWorkOrderMilestone--milestoneTitle').value = milestone.milestoneTitle;
                     modalElement.querySelector('#editWorkOrderMilestone--milestoneDescription').value = milestone.milestoneDescription;
-                    modalElement.querySelector('#editWorkOrderMilestone--milestoneDueDateTimeString').value = formatDateTimeForInput(milestone.milestoneDueDateTime);
-                    modalElement.querySelector('#editWorkOrderMilestone--milestoneCompleteDateTimeString').value = formatDateTimeForInput(milestone.milestoneCompleteDateTime);
+                    // Initialize flatpickr on date fields
+                    const dueDateInput = modalElement.querySelector('#editWorkOrderMilestone--milestoneDueDateTimeString');
+                    flatpickr(dueDateInput, {
+                        ...dateTimePickerOptions,
+                        defaultDate: milestone.milestoneDueDateTime
+                            ? new Date(milestone.milestoneDueDateTime)
+                            : undefined
+                    });
+                    const completeDateInput = modalElement.querySelector('#editWorkOrderMilestone--milestoneCompleteDateTimeString');
+                    flatpickr(completeDateInput, {
+                        ...dateTimePickerOptions,
+                        maxDate: new Date(),
+                        defaultDate: milestone.milestoneCompleteDateTime
+                            ? new Date(milestone.milestoneCompleteDateTime)
+                            : undefined
+                    });
+                    // Populate Assigned To select
                     const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToDataListItemId');
-                    if (milestone.assignedToDataListItemId !== null &&
-                        milestone.assignedToDataListItem !== null) {
-                        const option = document.createElement('option');
-                        option.value = milestone.assignedToDataListItemId.toString();
-                        option.textContent = milestone.assignedToDataListItem;
-                        option.selected = true;
-                        assignedToSelect.append(option);
+                    populateAssignedToSelect(assignedToSelect);
+                    // Set the selected option if there is one
+                    if (milestone.assignedToDataListItemId !== null) {
+                        assignedToSelect.value = milestone.assignedToDataListItemId.toString();
                     }
                 },
                 onshown(modalElement, _closeModalFunction) {
