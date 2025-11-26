@@ -16,11 +16,11 @@
             return cityssm.dateToString(date) + ' ' + cityssm.dateToTimeString(date);
         }
         function renderMilestones(milestones) {
-            // Update milestones count (incomplete / total)
+            // Update milestones count (completed / total)
             const milestonesCountElement = document.querySelector('#milestonesCount');
             if (milestonesCountElement !== null) {
-                const incompleteCount = milestones.filter((m) => m.milestoneCompleteDateTime === null).length;
-                milestonesCountElement.textContent = `${incompleteCount} / ${milestones.length}`;
+                const completedCount = milestones.filter((m) => m.milestoneCompleteDateTime !== null).length;
+                milestonesCountElement.textContent = `${completedCount} / ${milestones.length}`;
             }
             if (milestones.length === 0) {
                 milestonesContainerElement.innerHTML = /* html */ `
