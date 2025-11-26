@@ -1,14 +1,23 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type FlatPickr from 'flatpickr'
 
 import type { ShiftLogGlobal } from './types.js'
 
+interface DataListItem {
+  dataListItemId: number
+  dataListItem: string
+}
+
 declare const exports: {
   shiftLog: ShiftLogGlobal
+  assignedToOptions: DataListItem[]
+  workOrderOpenDateTime: string
 }
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const flatpickr: typeof FlatPickr
 declare const Sortable: {
   create: (
     element: HTMLElement,
@@ -250,6 +259,24 @@ declare const Sortable: {
       )
     }
 
+    const dateTimePickerOptions = {
+      allowInput: true,
+      enableTime: true,
+      nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+      prevArrow: '<i class="fa-solid fa-chevron-left"></i>',
+      minuteIncrement: 1,
+      minDate: exports.workOrderOpenDateTime || undefined
+    } satisfies Partial<FlatPickr.Options.Options>
+
+    function populateAssignedToSelect(selectElement: HTMLSelectElement): void {
+      for (const option of exports.assignedToOptions) {
+        const optionElement = document.createElement('option')
+        optionElement.value = option.dataListItemId.toString()
+        optionElement.textContent = option.dataListItem
+        selectElement.append(optionElement)
+      }
+    }
+
     function showAddMilestoneModal(): void {
       let closeModalFunction: () => void
 
@@ -281,6 +308,30 @@ declare const Sortable: {
               '#addWorkOrderMilestone--workOrderId'
             ) as HTMLInputElement
           ).value = workOrderId
+
+          // Populate Assigned To select
+          const assignedToSelect = modalElement.querySelector(
+            '#addWorkOrderMilestone--assignedToDataListItemId'
+          ) as HTMLSelectElement
+          populateAssignedToSelect(assignedToSelect)
+
+          // Initialize flatpickr on date fields
+          flatpickr(
+            modalElement.querySelector(
+              '#addWorkOrderMilestone--milestoneDueDateTimeString'
+            ) as HTMLInputElement,
+            dateTimePickerOptions
+          )
+
+          flatpickr(
+            modalElement.querySelector(
+              '#addWorkOrderMilestone--milestoneCompleteDateTimeString'
+            ) as HTMLInputElement,
+            {
+              ...dateTimePickerOptions,
+              maxDate: new Date()
+            }
+          )
         },
         onshown(modalElement, _closeModalFunction) {
           bulmaJS.toggleHtmlClipped()
@@ -341,29 +392,38 @@ declare const Sortable: {
               '#editWorkOrderMilestone--milestoneDescription'
             ) as HTMLTextAreaElement
           ).value = milestone.milestoneDescription
-          ;(
-            modalElement.querySelector(
-              '#editWorkOrderMilestone--milestoneDueDateTimeString'
-            ) as HTMLInputElement
-          ).value = formatDateTimeForInput(milestone.milestoneDueDateTime)
-          ;(
-            modalElement.querySelector(
-              '#editWorkOrderMilestone--milestoneCompleteDateTimeString'
-            ) as HTMLInputElement
-          ).value = formatDateTimeForInput(milestone.milestoneCompleteDateTime)
 
+          // Initialize flatpickr on date fields
+          const dueDateInput = modalElement.querySelector(
+            '#editWorkOrderMilestone--milestoneDueDateTimeString'
+          ) as HTMLInputElement
+          flatpickr(dueDateInput, {
+            ...dateTimePickerOptions,
+            defaultDate: milestone.milestoneDueDateTime
+              ? new Date(milestone.milestoneDueDateTime)
+              : undefined
+          })
+
+          const completeDateInput = modalElement.querySelector(
+            '#editWorkOrderMilestone--milestoneCompleteDateTimeString'
+          ) as HTMLInputElement
+          flatpickr(completeDateInput, {
+            ...dateTimePickerOptions,
+            maxDate: new Date(),
+            defaultDate: milestone.milestoneCompleteDateTime
+              ? new Date(milestone.milestoneCompleteDateTime)
+              : undefined
+          })
+
+          // Populate Assigned To select
           const assignedToSelect = modalElement.querySelector(
             '#editWorkOrderMilestone--assignedToDataListItemId'
           ) as HTMLSelectElement
-          if (
-            milestone.assignedToDataListItemId !== null &&
-            milestone.assignedToDataListItem !== null
-          ) {
-            const option = document.createElement('option')
-            option.value = milestone.assignedToDataListItemId.toString()
-            option.textContent = milestone.assignedToDataListItem
-            option.selected = true
-            assignedToSelect.append(option)
+          populateAssignedToSelect(assignedToSelect)
+
+          // Set the selected option if there is one
+          if (milestone.assignedToDataListItemId !== null) {
+            assignedToSelect.value = milestone.assignedToDataListItemId.toString()
           }
         },
         onshown(modalElement, _closeModalFunction) {
