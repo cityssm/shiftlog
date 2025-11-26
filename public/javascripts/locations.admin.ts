@@ -27,6 +27,80 @@ declare const exports: {
   const DEFAULT_MAP_ZOOM = 13
   const DETAIL_MAP_ZOOM = 15
 
+  // Pagination settings
+  const ITEMS_PER_PAGE = 10
+  let currentPage = 1
+  let currentFilteredLocations: Location[] = exports.locations
+
+  /**
+   * Build pagination controls for location list
+   */
+  function buildPaginationControls(
+    totalCount: number,
+    currentPage: number,
+    itemsPerPage: number
+  ): HTMLElement {
+    const paginationElement = document.createElement('nav')
+    paginationElement.className = 'pagination is-centered mt-4'
+    paginationElement.setAttribute('role', 'navigation')
+    paginationElement.setAttribute('aria-label', 'pagination')
+
+    const totalPages = Math.ceil(totalCount / itemsPerPage)
+    let paginationHTML = ''
+
+    // Previous button
+    paginationHTML +=
+      currentPage > 1
+        ? `<a class="pagination-previous" href="#" data-page-number="${
+            currentPage - 1
+          }">Previous</a>`
+        : `<a class="pagination-previous" disabled>Previous</a>`
+
+    // Next button
+    paginationHTML +=
+      currentPage < totalPages
+        ? `<a class="pagination-next" href="#" data-page-number="${
+            currentPage + 1
+          }">Next</a>`
+        : `<a class="pagination-next" disabled>Next</a>`
+
+    // Page numbers
+    paginationHTML += `<ul class="pagination-list">`
+
+    for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+      paginationHTML +=
+        pageNumber === currentPage
+          ? `<li><a class="pagination-link is-current" aria-current="page">${pageNumber}</a></li>`
+          : `<li><a class="pagination-link" href="#" data-page-number="${pageNumber}">${pageNumber}</a></li>`
+    }
+
+    paginationHTML += `</ul>`
+
+    // eslint-disable-next-line no-unsanitized/property
+    paginationElement.innerHTML = paginationHTML
+
+    // Event listeners
+    const pageLinks = paginationElement.querySelectorAll(
+      'a.pagination-previous, a.pagination-next, a.pagination-link'
+    )
+
+    for (const pageLink of pageLinks) {
+      pageLink.addEventListener('click', (event) => {
+        event.preventDefault()
+        const target = event.currentTarget as HTMLElement
+        const pageNumberString = target.dataset.pageNumber
+
+        if (pageNumberString !== undefined) {
+          const pageNumber = Number.parseInt(pageNumberString, 10)
+          currentPage = pageNumber
+          renderLocationsWithPagination(currentFilteredLocations)
+        }
+      })
+    }
+
+    return paginationElement
+  }
+
   /**
    * Initialize a Leaflet map picker for location coordinate selection
    */
@@ -142,7 +216,9 @@ declare const exports: {
               if (responseJSON.success) {
                 if (responseJSON.locations !== undefined) {
                   exports.locations = responseJSON.locations
-                  renderLocations(responseJSON.locations)
+                  currentFilteredLocations = responseJSON.locations
+                  currentPage = 1
+                  renderLocationsWithPagination(responseJSON.locations)
                 }
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -201,7 +277,9 @@ declare const exports: {
             closeModalFunction()
             if (responseJSON.locations !== undefined) {
               exports.locations = responseJSON.locations
-              renderLocations(responseJSON.locations)
+              currentFilteredLocations = responseJSON.locations
+              currentPage = 1
+              renderLocationsWithPagination(responseJSON.locations)
             }
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -348,6 +426,29 @@ declare const exports: {
 
     locationsContainerElement.replaceChildren(tableElement)
   }
+
+  /**
+   * Render locations with pagination
+   */
+  function renderLocationsWithPagination(locations: Location[]): void {
+    // Calculate pagination
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+    const paginatedLocations = locations.slice(startIndex, endIndex)
+
+    // Render table
+    renderLocations(paginatedLocations)
+
+    // Add pagination controls if needed
+    if (locations.length > ITEMS_PER_PAGE) {
+      const paginationControls = buildPaginationControls(
+        locations.length,
+        currentPage,
+        ITEMS_PER_PAGE
+      )
+      locationsContainerElement.append(paginationControls)
+    }
+  }
   document
     .querySelector('#button--addLocation')
     ?.addEventListener('click', () => {
@@ -374,7 +475,9 @@ declare const exports: {
 
               if (responseJSON.locations !== undefined) {
                 exports.locations = responseJSON.locations
-                renderLocations(responseJSON.locations)
+                currentFilteredLocations = responseJSON.locations
+                currentPage = 1
+                renderLocationsWithPagination(responseJSON.locations)
               }
               bulmaJS.alert({
                 contextualColorName: 'success',
@@ -422,27 +525,40 @@ declare const exports: {
         }
       })
     })
-  renderLocations(exports.locations)
+  renderLocationsWithPagination(exports.locations)
   /*
-   * Filter locations
+   * Filter locations with debouncing
    */
   const filterInput = document.querySelector('#filter--locations') as HTMLInputElement | null
+  let filterTimeout: ReturnType<typeof setTimeout> | null = null
 
   if (filterInput !== null) {
     filterInput.addEventListener('input', () => {
-      const filterText = filterInput.value.toLowerCase()
-
-      if (filterText === '') {
-        renderLocations(exports.locations)
-      } else {
-        const filteredLocations = exports.locations.filter((location) => {
-          const searchText =
-            `${location.locationName} ${location.address1} ${location.address2} ${location.cityProvince}`.toLowerCase()
-          return searchText.includes(filterText)
-        })
-
-        renderLocations(filteredLocations)
+      // Clear existing timeout
+      if (filterTimeout !== null) {
+        clearTimeout(filterTimeout)
       }
+
+      // Set new timeout (debounce for 300ms)
+      filterTimeout = setTimeout(() => {
+        const filterText = filterInput.value.toLowerCase()
+
+        if (filterText === '') {
+          currentFilteredLocations = exports.locations
+          currentPage = 1
+          renderLocationsWithPagination(exports.locations)
+        } else {
+          const filteredLocations = exports.locations.filter((location) => {
+            const searchText =
+              `${location.locationName} ${location.address1} ${location.address2} ${location.cityProvince}`.toLowerCase()
+            return searchText.includes(filterText)
+          })
+
+          currentFilteredLocations = filteredLocations
+          currentPage = 1
+          renderLocationsWithPagination(filteredLocations)
+        }
+      }, 300)
     })
   }
 })()
