@@ -152,13 +152,16 @@
                 }
             });
         }
+        const workOrderOpenDate = exports.workOrderOpenDateTime
+            ? new Date(exports.workOrderOpenDateTime)
+            : undefined;
         const dateTimePickerOptions = {
             allowInput: true,
             enableTime: true,
             nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
             prevArrow: '<i class="fa-solid fa-chevron-left"></i>',
             minuteIncrement: 1,
-            minDate: exports.workOrderOpenDateTime || undefined
+            minDate: workOrderOpenDate
         };
         function populateAssignedToSelect(selectElement) {
             for (const option of exports.assignedToOptions) {
