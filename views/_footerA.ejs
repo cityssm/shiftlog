@@ -50,7 +50,8 @@
 
     isAdmin: <%= user.userProperties.isAdmin %>,
     userName: "<%= user.userName %>",
-    userCanManageWorkOrders: <%= user.userProperties.workOrders.canManage %>
+    userCanManageWorkOrders: <%= user.userProperties.workOrders.canManage %>,
+    userCanUpdateWorkOrders: <%= user.userProperties.workOrders.canUpdate %>
   };
 </script>
 <script src="<%= urlPrefix %>/lib/flatpickr/flatpickr.min.js"></script>

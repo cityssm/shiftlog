@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express'
 
+import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js'
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js'
 import getWorkOrderTypeDataListItems from '../../database/workOrders/getWorkOrderTypeDataListItems.js'
@@ -10,23 +11,40 @@ import type { WorkOrderEditResponse } from './types.js'
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`
 
 export default async function handler(
-  request: Request<{ workOrderId: string }, unknown, unknown, { error?: string }>,
+  request: Request<
+    { workOrderId: string },
+    unknown,
+    unknown,
+    { error?: string }
+  >,
   response: Response
 ): Promise<void> {
-  const workOrder = await getWorkOrder(request.params.workOrderId, request.session.user)
+  const workOrder = await getWorkOrder(
+    request.params.workOrderId,
+    request.session.user
+  )
 
   if (workOrder === undefined) {
     response.redirect(`${redirectRoot}/?error=notFound`)
     return
-  }
-  else if (workOrder.workOrderCloseDateTime !== null) {
-    response.redirect(`${redirectRoot}/${workOrder.workOrderId}?error=recordClosed`)
+  } else if (workOrder.workOrderCloseDateTime !== null) {
+    response.redirect(
+      `${redirectRoot}/${workOrder.workOrderId}?error=recordClosed`
+    )
     return
   }
 
-  const workOrderTypes = await getWorkOrderTypeDataListItems(request.session.user)
+  const workOrderTypes = await getWorkOrderTypeDataListItems(
+    request.session.user
+  )
 
-  const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user)
+  const workOrderStatuses = await getWorkOrderStatusDataListItems(
+    request.session.user
+  )
+
+  const assignedToOptions = await getAssignedToDataListItems(
+    request.session.user
+  )
 
   response.render('workOrders/edit', {
     headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${
@@ -38,8 +56,8 @@ export default async function handler(
 
     workOrder,
 
-    workOrderTypes,
+    assignedToOptions,
     workOrderStatuses,
-    assignedToOptions: []
+    workOrderTypes
   } satisfies WorkOrderEditResponse)
 }

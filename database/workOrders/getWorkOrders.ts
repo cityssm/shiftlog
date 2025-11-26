@@ -71,8 +71,16 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
         break
       }
       case 'overdue': {
-        whereClause +=
-          ' and w.workOrderCloseDateTime is null and w.workOrderDueDateTime < getdate()'
+        whereClause += ` and w.workOrderCloseDateTime is null
+              and (
+                w.workOrderDueDateTime < getdate()
+                or w.workOrderId in (
+                  select workOrderId from ShiftLog.WorkOrderMilestones
+                  where milestoneCompleteDateTime is null
+                    and milestoneDueDateTime < getdate()
+                )
+              )
+          `
 
         break
       }
@@ -167,7 +175,7 @@ export default async function getWorkOrders(
   let workOrders: WorkOrder[] = []
 
   if (totalCount > 0 || limit === -1) {
-    const workOrdersResult = (await pool
+    const workOrdersResult = await pool
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input(
@@ -194,7 +202,7 @@ export default async function getWorkOrders(
         'requestor',
         filters.requestor === undefined ? null : `%${filters.requestor}%`
       )
-      .input('userName', user?.userName).query(/* sql */ `
+      .input('userName', user?.userName).query<WorkOrder>(/* sql */ `
         select
           w.workOrderId,
           w.workOrderNumberYear,
@@ -223,7 +231,10 @@ export default async function getWorkOrders(
           w.locationCityProvince,
 
           w.assignedToDataListItemId,
-          assignedTo.dataListItem as assignedToDataListItem
+          assignedTo.dataListItem as assignedToDataListItem,
+
+          milestones.milestonesCount,
+          milestones.milestonesCompletedCount
           
         from ShiftLog.WorkOrders w
 
@@ -236,13 +247,24 @@ export default async function getWorkOrders(
         left join ShiftLog.DataListItems assignedTo
           on w.assignedToDataListItemId = assignedTo.dataListItemId
 
+        left join (
+          select workOrderId,
+            count(*) as milestonesCount,
+            sum(
+              case when milestoneCompleteDateTime is null then 0 else 1 end
+            ) as milestonesCompletedCount
+          from ShiftLog.WorkOrderMilestones
+          where recordDelete_dateTime is null
+          group by workOrderId
+        ) as milestones on milestones.workOrderId = w.workOrderId
+
         ${whereClause}    
 
         order by w.workOrderOpenDateTime desc, w.workOrderNumber desc
 
         ${limit === -1 ? '' : ' offset ' + offset + ' rows'}
         ${limit === -1 ? '' : ' fetch next ' + limit + ' rows only'}
-      `)) as mssql.IResult<WorkOrder>
+      `)
 
     workOrders = workOrdersResult.recordset
 

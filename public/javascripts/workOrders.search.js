@@ -92,7 +92,16 @@
             }
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ `
-        <td>${openClosedIconHTML}</td>
+        <td class="has-text-centered">
+          ${openClosedIconHTML}<br />
+          ${workOrder.milestonesCount && workOrder.milestonesCount > 0
+                ? /* html */ `
+                <span class="tag">
+                  ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
+                </span>
+              `
+                : ''}
+        </td>
         <td>
           <a href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}

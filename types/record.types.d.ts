@@ -206,4 +206,17 @@ export interface WorkOrder extends BaseRecord {
     assignedToDataListItem?: string;
     userGroupId?: number | null;
     userGroupName?: string;
+    milestonesCount?: number;
+    milestonesCompletedCount?: number;
+}
+export interface WorkOrderMilestone extends BaseRecord {
+    workOrderMilestoneId: number;
+    workOrderId: number;
+    milestoneTitle: string;
+    milestoneDescription: string;
+    milestoneDueDateTime?: Date | string | null;
+    milestoneCompleteDateTime?: Date | string | null;
+    assignedToDataListItemId?: number | null;
+    assignedToDataListItem?: string;
+    orderNumber: number;
 }

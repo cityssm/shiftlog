@@ -14,6 +14,7 @@ export interface ShiftLogGlobal {
     workOrdersSectionName: string;
     workOrdersSectionNameSingular: string;
     userCanManageWorkOrders: boolean;
+    userCanUpdateWorkOrders: boolean;
     buildWorkOrderURL: (workOrderId: number, edit?: boolean) => string;
     timesheetsAreEnabled: boolean;
     timesheetsRouter: string;
@@ -21,6 +22,7 @@ export interface ShiftLogGlobal {
     timesheetsSectionNameSingular: string;
     buildTimesheetURL: (timesheetId: number, edit?: boolean) => string;
     isAdmin: boolean;
+    userName: string;
     clearUnsavedChanges: () => void;
     hasUnsavedChanges: () => boolean;
     setUnsavedChanges: () => void;

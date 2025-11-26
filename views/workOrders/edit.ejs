@@ -427,7 +427,10 @@
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-list-check"></i></span>
               </div>
-              <div class="column is-hidden-touch">Milestones</div>
+              <div class="column is-hidden-touch">
+                Milestones
+                <span class="tag is-rounded ml-2" id="milestonesCount">0</span>
+              </div>
             </div>
           </a>
         </li> 
@@ -462,7 +465,15 @@
 
 <%- await include('../_footerA'); -%>
 
+<script>
+  exports.assignedToOptions = <%- JSON.stringify(assignedToOptions) %>;
+  exports.workOrderOpenDateTime = "<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>";
+  exports.isEdit = <%= isEdit %>;
+</script>
+
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.notes.viewEdit.js"></script>
 
 <% if (isEdit) { %>
 <script src="<%= urlPrefix %>/javascripts/workOrders.edit.js"></script>
