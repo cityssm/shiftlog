@@ -308,6 +308,32 @@ create table ShiftLog.WorkOrderNotes (
 )
 GO
 
+create table ShiftLog.WorkOrderMilestones (
+  workOrderMilestoneId int not null primary key identity(1,1),
+  workOrderId int not null,
+
+  milestoneTitle varchar(100) not null default '',
+  milestoneDescription varchar(max) not null default '',
+
+  milestoneDueDateTime datetime,
+  milestoneCompleteDateTime datetime,
+
+  assignedToDataListItemId int,
+
+  orderNumber smallint not null default 0,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  foreign key (workOrderId) references ShiftLog.WorkOrders(workOrderId),
+  foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+)
+GO
+
 -- SHIFTS
 
 CREATE TABLE ShiftLog.Shifts (
