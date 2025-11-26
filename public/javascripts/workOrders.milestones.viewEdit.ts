@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
@@ -35,13 +38,13 @@ declare const Sortable: {
   ) as HTMLFormElement | null
 
   const workOrderId =
-    workOrderFormElement !== null
-      ? (
+    workOrderFormElement === null
+      ? ''
+      : (
           workOrderFormElement.querySelector(
             '#workOrder--workOrderId'
           ) as HTMLInputElement
         ).value
-      : ''
 
   /*
    * Milestones functionality
@@ -54,18 +57,25 @@ declare const Sortable: {
   if (milestonesContainerElement !== null) {
     interface WorkOrderMilestone {
       workOrderMilestoneId: number
+
       workOrderId: number
+
       milestoneTitle: string
       milestoneDescription: string
+
       milestoneDueDateTime: string | null
       milestoneCompleteDateTime: string | null
-      assignedToDataListItemId: number | null
+
       assignedToDataListItem: string | null
+      assignedToDataListItemId: number | null
+
       orderNumber: number
-      recordCreate_userName: string
+
       recordCreate_dateTime: string
-      recordUpdate_userName: string
+      recordCreate_userName: string
+
       recordUpdate_dateTime: string
+      recordUpdate_userName: string
     }
 
     function formatDateTime(dateTimeString: string | null): string {
@@ -73,13 +83,12 @@ declare const Sortable: {
         return ''
       }
       const date = new Date(dateTimeString)
-      return cityssm.dateToString(date) + ' ' + cityssm.dateToTimeString(date)
+      return `${cityssm.dateToString(date)} ${cityssm.dateToTimeString(date)}`
     }
 
     function renderMilestones(milestones: WorkOrderMilestone[]): void {
       // Update milestones count (completed / total)
-      const milestonesCountElement =
-        document.querySelector('#milestonesCount')
+      const milestonesCountElement = document.querySelector('#milestonesCount')
       if (milestonesCountElement !== null) {
         const completedCount = milestones.filter(
           (m) => m.milestoneCompleteDateTime !== null
@@ -98,6 +107,7 @@ declare const Sortable: {
 
       const tableElement = document.createElement('table')
       tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+
       tableElement.innerHTML = /* html */ `
         <thead>
           <tr>
@@ -134,14 +144,17 @@ declare const Sortable: {
           (exports.shiftLog.userCanManageWorkOrders ||
             milestone.recordCreate_userName === exports.shiftLog.userName)
 
+        // eslint-disable-next-line no-unsanitized/property
         trElement.innerHTML = /* html */ `
           ${
             exports.isEdit
-              ? `<td class="is-hidden-print">
-            <span class="icon drag-handle" style="cursor: grab;">
-              <i class="fa-solid fa-grip-vertical"></i>
-            </span>
-          </td>`
+              ? /* html */ `
+                <td class="is-hidden-print">
+                  <span class="icon drag-handle" style="cursor: grab;">
+                    <i class="fa-solid fa-grip-vertical"></i>
+                  </span>
+                </td>
+              `
               : ''
           }
           <td>
@@ -152,7 +165,11 @@ declare const Sortable: {
             </div>
             ${
               milestone.milestoneDescription
-                ? `<div class="is-size-7 has-text-grey">${cityssm.escapeHTML(milestone.milestoneDescription.slice(0, 100))}${milestone.milestoneDescription.length > 100 ? '…' : ''}</div>`
+                ? /* html */ `
+                  <div class="is-size-7 has-text-grey">
+                    ${cityssm.escapeHTML(milestone.milestoneDescription.slice(0, 100))}${milestone.milestoneDescription.length > 100 ? '…' : ''}
+                  </div>
+                `
                 : ''
             }
           </td>
@@ -171,15 +188,15 @@ declare const Sortable: {
             ${
               canEdit
                 ? /* html */ `
-              <div class="buttons are-small is-justify-content-flex-end">
-                <button class="button edit-milestone" type="button" title="Edit">
-                  <span class="icon"><i class="fa-solid fa-edit"></i></span>
-                </button>
-                <button class="button is-danger is-light delete-milestone" type="button" title="Delete">
-                  <span class="icon"><i class="fa-solid fa-trash"></i></span>
-                </button>
-              </div>
-            `
+                  <div class="buttons are-small is-justify-content-flex-end">
+                    <button class="button edit-milestone" type="button" title="Edit">
+                      <span class="icon"><i class="fa-solid fa-edit"></i></span>
+                    </button>
+                    <button class="button is-danger is-light delete-milestone" type="button" title="Delete">
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
+                `
                 : ''
             }
           </td>`
@@ -231,12 +248,12 @@ declare const Sortable: {
         orderNumber: number
       }> = []
 
-      rows.forEach((row, index) => {
+      for (const [index, row] of rows.entries()) {
         milestoneOrders.push({
           workOrderMilestoneId: row.dataset.milestoneId ?? '',
           orderNumber: index + 1
         })
-      })
+      }
 
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestoneOrder`,
@@ -349,8 +366,9 @@ declare const Sortable: {
             modalElement.querySelector(
               '#addWorkOrderMilestone--milestoneTitle'
             ) as HTMLInputElement
-          )?.focus()
+          ).focus()
         },
+
         onremoved() {
           bulmaJS.toggleHtmlClipped()
         }
@@ -403,8 +421,10 @@ declare const Sortable: {
           const dueDateInput = modalElement.querySelector(
             '#editWorkOrderMilestone--milestoneDueDateTimeString'
           ) as HTMLInputElement
+
           flatpickr(dueDateInput, {
             ...dateTimePickerOptions,
+
             defaultDate: milestone.milestoneDueDateTime
               ? new Date(milestone.milestoneDueDateTime)
               : undefined
@@ -415,10 +435,11 @@ declare const Sortable: {
           ) as HTMLInputElement
           const completeDatePicker = flatpickr(completeDateInput, {
             ...dateTimePickerOptions,
-            maxDate: new Date(),
+
             defaultDate: milestone.milestoneCompleteDateTime
               ? new Date(milestone.milestoneCompleteDateTime)
-              : undefined
+              : undefined,
+            maxDate: new Date()
           })
 
           // Add "Now" button handler for complete date
@@ -434,6 +455,7 @@ declare const Sortable: {
           const assignedToSelect = modalElement.querySelector(
             '#editWorkOrderMilestone--assignedToDataListItemId'
           ) as HTMLSelectElement
+
           populateAssignedToSelect(assignedToSelect)
 
           // Set the selected option if there is one
@@ -449,6 +471,7 @@ declare const Sortable: {
             .querySelector('form')
             ?.addEventListener('submit', doUpdateMilestone)
         },
+
         onremoved() {
           bulmaJS.toggleHtmlClipped()
         }
@@ -457,11 +480,13 @@ declare const Sortable: {
 
     function deleteMilestone(workOrderMilestoneId: number): void {
       bulmaJS.confirm({
-        title: 'Delete Milestone',
-        message: 'Are you sure you want to delete this milestone?',
         contextualColorName: 'danger',
+        title: 'Delete Milestone',
+        
+        message: 'Are you sure you want to delete this milestone?',
         okButton: {
           text: 'Delete',
+
           callbackFunction: () => {
             cityssm.postJSON(
               `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderMilestone`,

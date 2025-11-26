@@ -1,8 +1,6 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable no-secrets/no-secrets, unicorn/no-null */
 
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
@@ -262,8 +260,8 @@ export default async function getWorkOrders(
 
         order by w.workOrderOpenDateTime desc, w.workOrderNumber desc
 
-        ${limit === -1 ? '' : ' offset ' + offset + ' rows'}
-        ${limit === -1 ? '' : ' fetch next ' + limit + ' rows only'}
+        ${limit === -1 ? '' : ` offset ${offset} rows`}
+        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
       `)
 
     workOrders = workOrdersResult.recordset

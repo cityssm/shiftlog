@@ -27,7 +27,7 @@ declare const exports: {
 }
 ;(() => {
   const shiftLog = exports.shiftLog
-  const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.shiftsRouter
+  const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`
 
   const shiftIdElement = document.querySelector(
     '#shift--shiftId'
@@ -288,7 +288,7 @@ declare const exports: {
       rowElement.innerHTML = /* html */ `
         <td>${cityssm.escapeHTML(equipment.equipmentName ?? '')}</td>
         <td>
-          ${(equipment.employeeLastName ?? '') === '' ? '' : cityssm.escapeHTML((equipment.employeeLastName as unknown as string) + ', ' + (equipment.employeeFirstName as unknown as string))}
+          ${(equipment.employeeLastName ?? '') === '' ? '' : cityssm.escapeHTML(`${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName ?? ''}`)}
         </td>
         <td>
           <span class="equipment-note" data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}">
@@ -1168,7 +1168,8 @@ declare const exports: {
     const equipmentNumber = buttonElement.dataset.equipmentNumber
 
     const equipment = shiftEquipment.find(
-      (possibleEquipment) => possibleEquipment.equipmentNumber === equipmentNumber
+      (possibleEquipment) =>
+        possibleEquipment.equipmentNumber === equipmentNumber
     )
 
     bulmaJS.confirm({

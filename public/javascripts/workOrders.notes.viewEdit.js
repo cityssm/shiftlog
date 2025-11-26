@@ -1,8 +1,8 @@
 (() => {
     const workOrderFormElement = document.querySelector('#form--workOrder');
-    const workOrderId = workOrderFormElement !== null
-        ? workOrderFormElement.querySelector('#workOrder--workOrderId').value
-        : '';
+    const workOrderId = workOrderFormElement === null
+        ? ''
+        : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     /*
      * Notes functionality
      */
@@ -12,7 +12,7 @@
             if (text.length <= maxLength) {
                 return text;
             }
-            return text.slice(0, maxLength) + '…';
+            return `${text.slice(0, maxLength)}…`;
         }
         function renderNotes(notes) {
             // Update notes count
@@ -36,6 +36,7 @@
                     note.recordCreate_userName === exports.shiftLog.userName;
                 const truncatedText = truncateText(note.noteText, 200);
                 const needsExpand = note.noteText.length > 200;
+                // eslint-disable-next-line no-unsanitized/property
                 noteElement.innerHTML = /* html */ `
           <article class="media">
             <div class="media-content">
@@ -43,9 +44,9 @@
                 <p>
                   <strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong>
                   <small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small>
-                  ${note.recordUpdate_dateTime !== note.recordCreate_dateTime
-                    ? `<small class="has-text-grey">(edited)</small>`
-                    : ''}
+                  ${note.recordUpdate_dateTime === note.recordCreate_dateTime
+                    ? ''
+                    : `<small class="has-text-grey">(edited)</small>`}
                   <br />
                   <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
                   ${needsExpand
@@ -55,17 +56,17 @@
               </div>
               ${canEdit
                     ? /* html */ `
-                <nav class="level is-mobile">
-                  <div class="level-left">
-                    <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
-                      <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
-                    </a>
-                    <a class="level-item delete-note" data-note-sequence="${note.noteSequence}">
-                      <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
-                    </a>
-                  </div>
-                </nav>
-              `
+                    <nav class="level is-mobile">
+                      <div class="level-left">
+                        <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
+                          <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
+                        </a>
+                        <a class="level-item delete-note" data-note-sequence="${note.noteSequence}">
+                          <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
+                        </a>
+                      </div>
+                    </nav>
+                  `
                     : ''}
             </div>
           </article>
@@ -190,7 +191,7 @@
                     modalElement
                         .querySelector('form')
                         ?.addEventListener('submit', doAddNote);
-                    modalElement.querySelector('#addWorkOrderNote--noteText')?.focus();
+                    modalElement.querySelector('#addWorkOrderNote--noteText').focus();
                 },
                 onremoved() {
                     bulmaJS.toggleHtmlClipped();
@@ -199,9 +200,9 @@
         }
         function deleteNote(noteSequence) {
             bulmaJS.confirm({
+                contextualColorName: 'danger',
                 title: 'Delete Note',
                 message: 'Are you sure you want to delete this note?',
-                contextualColorName: 'danger',
                 okButton: {
                     text: 'Delete',
                     callbackFunction: () => {

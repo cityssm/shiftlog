@@ -1,6 +1,6 @@
 (() => {
     const shiftLog = exports.shiftLog;
-    const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.timesheetsRouter;
+    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.timesheetsRouter}`;
     const formElement = document.querySelector('#form--timesheetSearch');
     const searchResultsContainerElement = document.querySelector('#container--timesheetSearchResults');
     const offsetElement = formElement.querySelector('#timesheetSearch--offset');

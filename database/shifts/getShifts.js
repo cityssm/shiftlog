@@ -50,7 +50,7 @@ export default async function getShifts(filters, options, user) {
     // Main query with limit and offset
     let shifts = [];
     if (totalCount > 0 || limit === -1) {
-        const shiftsResult = (await pool
+        const shiftsResult = await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('shiftDateString', filters.shiftDateString ?? null)
@@ -87,9 +87,9 @@ export default async function getShifts(filters, options, user) {
 
         order by s.shiftDate desc, sType.dataListItem, sTime.dataListItem
 
-        ${limit === -1 ? '' : ' offset ' + offset + ' rows'}
-        ${limit === -1 ? '' : ' fetch next ' + limit + ' rows only'}
-      `));
+        ${limit === -1 ? '' : ` offset ${offset} rows`}
+        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
+      `);
         shifts = shiftsResult.recordset;
         if (limit === -1) {
             totalCount = shifts.length;

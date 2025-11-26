@@ -1,7 +1,6 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
 
-import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString } from '@cityssm/utils-datetime'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -20,18 +19,26 @@ export interface GetTimesheetsOptions {
 }
 
 function buildWhereClause(filters: GetTimesheetsFilters, user?: User): string {
-  let whereClause = 'where t.instance = @instance and t.recordDelete_dateTime is null'
+  let whereClause =
+    'where t.instance = @instance and t.recordDelete_dateTime is null'
 
   if (filters.timesheetDateString !== undefined) {
     whereClause += ' and t.timesheetDate = @timesheetDateString'
   }
 
-  if (filters.supervisorEmployeeNumber !== undefined && filters.supervisorEmployeeNumber !== '') {
+  if (
+    filters.supervisorEmployeeNumber !== undefined &&
+    filters.supervisorEmployeeNumber !== ''
+  ) {
     whereClause += ' and t.supervisorEmployeeNumber = @supervisorEmployeeNumber'
   }
 
-  if (filters.timesheetTypeDataListItemId !== undefined && filters.timesheetTypeDataListItemId !== '') {
-    whereClause += ' and t.timesheetTypeDataListItemId = @timesheetTypeDataListItemId'
+  if (
+    filters.timesheetTypeDataListItemId !== undefined &&
+    filters.timesheetTypeDataListItemId !== ''
+  ) {
+    whereClause +=
+      ' and t.timesheetTypeDataListItemId = @timesheetTypeDataListItemId'
   }
 
   if (user !== undefined) {
@@ -88,8 +95,14 @@ export default async function getTimesheets(
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('timesheetDateString', filters.timesheetDateString ?? null)
-      .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
-      .input('timesheetTypeDataListItemId', filters.timesheetTypeDataListItemId ?? null)
+      .input(
+        'supervisorEmployeeNumber',
+        filters.supervisorEmployeeNumber ?? null
+      )
+      .input(
+        'timesheetTypeDataListItemId',
+        filters.timesheetTypeDataListItemId ?? null
+      )
       .input('userName', user?.userName)
       .query(countSql)
 
@@ -101,13 +114,19 @@ export default async function getTimesheets(
   let timesheets: Timesheet[] = []
 
   if (totalCount > 0 || limit === -1) {
-    const timesheetsResult = (await pool
+    const timesheetsResult = await pool
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('timesheetDateString', filters.timesheetDateString ?? null)
-      .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
-      .input('timesheetTypeDataListItemId', filters.timesheetTypeDataListItemId ?? null)
-      .input('userName', user?.userName).query(/* sql */ `
+      .input(
+        'supervisorEmployeeNumber',
+        filters.supervisorEmployeeNumber ?? null
+      )
+      .input(
+        'timesheetTypeDataListItemId',
+        filters.timesheetTypeDataListItemId ?? null
+      )
+      .input('userName', user?.userName).query<Timesheet>(/* sql */ `
         select
           t.timesheetId, t.timesheetDate,
           
@@ -145,9 +164,9 @@ export default async function getTimesheets(
 
         order by t.timesheetDate desc, tType.dataListItem, t.timesheetTitle
 
-        ${limit === -1 ? '' : ' offset ' + offset + ' rows'}
-        ${limit === -1 ? '' : ' fetch next ' + limit + ' rows only'}
-      `)) as mssql.IResult<Timesheet>
+        ${limit === -1 ? '' : ` offset ${offset} rows`}
+        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
+      `)
 
     timesheets = timesheetsResult.recordset
 

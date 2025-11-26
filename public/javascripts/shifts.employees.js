@@ -2,7 +2,7 @@
 /* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
-    const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.shiftsRouter;
+    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
     const shiftIdElement = document.querySelector('#shift--shiftId');
     const shiftId = shiftIdElement.value;
     const isEdit = document.querySelector('#button--addCrew') !== null;
@@ -199,7 +199,7 @@
             rowElement.innerHTML = /* html */ `
         <td>${cityssm.escapeHTML(equipment.equipmentName ?? '')}</td>
         <td>
-          ${(equipment.employeeLastName ?? '') === '' ? '' : cityssm.escapeHTML(equipment.employeeLastName + ', ' + equipment.employeeFirstName)}
+          ${(equipment.employeeLastName ?? '') === '' ? '' : cityssm.escapeHTML(`${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName ?? ''}`)}
         </td>
         <td>
           <span class="equipment-note" data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}">

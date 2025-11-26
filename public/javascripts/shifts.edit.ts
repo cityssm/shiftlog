@@ -12,7 +12,7 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
-  const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.shiftsRouter
+  const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`
 
   const shiftFormElement = document.querySelector(
     '#form--shift'

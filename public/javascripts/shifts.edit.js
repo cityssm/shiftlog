@@ -1,6 +1,6 @@
 (() => {
     const shiftLog = exports.shiftLog;
-    const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.shiftsRouter;
+    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
     const shiftFormElement = document.querySelector('#form--shift');
     const shiftId = shiftFormElement.querySelector('#shift--shiftId').value;
     const isCreate = shiftId === '';

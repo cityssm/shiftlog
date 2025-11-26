@@ -174,8 +174,8 @@ export default async function getWorkOrders(filters, options, user) {
 
         order by w.workOrderOpenDateTime desc, w.workOrderNumber desc
 
-        ${limit === -1 ? '' : ' offset ' + offset + ' rows'}
-        ${limit === -1 ? '' : ' fetch next ' + limit + ' rows only'}
+        ${limit === -1 ? '' : ` offset ${offset} rows`}
+        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
       `);
         workOrders = workOrdersResult.recordset;
         if (limit === -1) {

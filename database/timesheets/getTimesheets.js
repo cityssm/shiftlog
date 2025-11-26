@@ -7,11 +7,14 @@ function buildWhereClause(filters, user) {
     if (filters.timesheetDateString !== undefined) {
         whereClause += ' and t.timesheetDate = @timesheetDateString';
     }
-    if (filters.supervisorEmployeeNumber !== undefined && filters.supervisorEmployeeNumber !== '') {
+    if (filters.supervisorEmployeeNumber !== undefined &&
+        filters.supervisorEmployeeNumber !== '') {
         whereClause += ' and t.supervisorEmployeeNumber = @supervisorEmployeeNumber';
     }
-    if (filters.timesheetTypeDataListItemId !== undefined && filters.timesheetTypeDataListItemId !== '') {
-        whereClause += ' and t.timesheetTypeDataListItemId = @timesheetTypeDataListItemId';
+    if (filters.timesheetTypeDataListItemId !== undefined &&
+        filters.timesheetTypeDataListItemId !== '') {
+        whereClause +=
+            ' and t.timesheetTypeDataListItemId = @timesheetTypeDataListItemId';
     }
     if (user !== undefined) {
         whereClause += `
@@ -58,7 +61,7 @@ export default async function getTimesheets(filters, options, user) {
     // Main query with limit and offset
     let timesheets = [];
     if (totalCount > 0 || limit === -1) {
-        const timesheetsResult = (await pool
+        const timesheetsResult = await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('timesheetDateString', filters.timesheetDateString ?? null)
@@ -102,9 +105,9 @@ export default async function getTimesheets(filters, options, user) {
 
         order by t.timesheetDate desc, tType.dataListItem, t.timesheetTitle
 
-        ${limit === -1 ? '' : ' offset ' + offset + ' rows'}
-        ${limit === -1 ? '' : ' fetch next ' + limit + ' rows only'}
-      `));
+        ${limit === -1 ? '' : ` offset ${offset} rows`}
+        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
+      `);
         timesheets = timesheetsResult.recordset;
         if (limit === -1) {
             totalCount = timesheets.length;

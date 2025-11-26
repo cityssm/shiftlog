@@ -1,6 +1,6 @@
 (() => {
     const shiftLog = exports.shiftLog;
-    const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.timesheetsRouter;
+    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.timesheetsRouter}`;
     const formElement = document.querySelector('#form--timesheet');
     const timesheetIdElement = formElement.querySelector('#timesheet--timesheetId');
     const isCreate = timesheetIdElement.value === '' || timesheetIdElement.value === '-1';

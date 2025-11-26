@@ -26,7 +26,7 @@ export default async function handler(
     workOrderOpenDateTime: new Date(),
 
     requestorContactInfo: '',
-    requestorName: request.session.user?.firstName + ' ' + request.session.user?.lastName,
+    requestorName: `${request.session.user?.firstName} ${request.session.user?.lastName}`,
 
     locationAddress1: '',
     locationAddress2: '',

@@ -18,7 +18,7 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
-  const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.workOrdersRouter
+  const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`
 
   const workOrderFormElement = document.querySelector(
     '#form--workOrder'
@@ -132,11 +132,11 @@ declare const exports: {
                 const option = document.createElement('option')
 
                 option.value = requestor.requestorName
-                option.textContent = requestor.requestorName + (
-                  requestor.requestorContactInfo
+                option.textContent =
+                  requestor.requestorName +
+                  (requestor.requestorContactInfo
                     ? ` (${requestor.requestorContactInfo})`
-                    : ''
-                )
+                    : '')
 
                 option.dataset.contactInfo =
                   requestor.requestorContactInfo ?? ''
@@ -283,7 +283,7 @@ declare const exports: {
           locationCityProvinceInput.value !== '' ||
           locationLatitudeInput.value !== '' ||
           locationLongitudeInput.value !== ''
-          
+
         if (hasExistingData) {
           bulmaJS.confirm({
             title: 'Update Location Information?',

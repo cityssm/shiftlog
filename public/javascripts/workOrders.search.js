@@ -111,7 +111,7 @@
           ${cityssm.escapeHTML(workOrder.workOrderTypeDataListItem ?? '(Unknown Type)')}<br />
           <span class="is-size-7 has-text-grey">
             ${cityssm.escapeHTML(workOrder.workOrderDetails.length > 75
-                ? workOrder.workOrderDetails.slice(0, 75) + '…'
+                ? `${workOrder.workOrderDetails.slice(0, 75)}…`
                 : workOrder.workOrderDetails)}
           </span>
         </td>
@@ -123,7 +123,7 @@
         <td>
           ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}<br />
           <span class="is-size-7 has-text-grey">
-            ${workOrder.workOrderDueDateTime === null ? '' : 'Due ' + cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}
+            ${workOrder.workOrderDueDateTime === null ? '' : `Due ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`}
           </span>
         </td>
         <td>${cityssm.escapeHTML(workOrder.requestorName === '' ? '(N/A)' : workOrder.requestorName)}</td>

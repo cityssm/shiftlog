@@ -15,13 +15,13 @@ declare const bulmaJS: BulmaJS
   ) as HTMLFormElement | null
 
   const workOrderId =
-    workOrderFormElement !== null
-      ? (
+    workOrderFormElement === null
+      ? ''
+      : (
           workOrderFormElement.querySelector(
             '#workOrder--workOrderId'
           ) as HTMLInputElement
         ).value
-      : ''
 
   /*
    * Notes functionality
@@ -46,7 +46,7 @@ declare const bulmaJS: BulmaJS
       if (text.length <= maxLength) {
         return text
       }
-      return text.slice(0, maxLength) + '…'
+      return `${text.slice(0, maxLength)}…`
     }
 
     function renderNotes(notes: WorkOrderNote[]): void {
@@ -78,6 +78,7 @@ declare const bulmaJS: BulmaJS
         const truncatedText = truncateText(note.noteText, 200)
         const needsExpand = note.noteText.length > 200
 
+        // eslint-disable-next-line no-unsanitized/property
         noteElement.innerHTML = /* html */ `
           <article class="media">
             <div class="media-content">
@@ -86,9 +87,9 @@ declare const bulmaJS: BulmaJS
                   <strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong>
                   <small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small>
                   ${
-                    note.recordUpdate_dateTime !== note.recordCreate_dateTime
-                      ? `<small class="has-text-grey">(edited)</small>`
-                      : ''
+                    note.recordUpdate_dateTime === note.recordCreate_dateTime
+                      ? ''
+                      : `<small class="has-text-grey">(edited)</small>`
                   }
                   <br />
                   <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
@@ -102,17 +103,17 @@ declare const bulmaJS: BulmaJS
               ${
                 canEdit
                   ? /* html */ `
-                <nav class="level is-mobile">
-                  <div class="level-left">
-                    <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
-                      <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
-                    </a>
-                    <a class="level-item delete-note" data-note-sequence="${note.noteSequence}">
-                      <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
-                    </a>
-                  </div>
-                </nav>
-              `
+                    <nav class="level is-mobile">
+                      <div class="level-left">
+                        <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
+                          <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
+                        </a>
+                        <a class="level-item delete-note" data-note-sequence="${note.noteSequence}">
+                          <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
+                        </a>
+                      </div>
+                    </nav>
+                  `
                   : ''
               }
             </div>
@@ -235,6 +236,7 @@ declare const bulmaJS: BulmaJS
             .querySelector('form')
             ?.addEventListener('submit', doUpdateNote)
         },
+
         onremoved() {
           bulmaJS.toggleHtmlClipped()
         }
@@ -283,8 +285,9 @@ declare const bulmaJS: BulmaJS
             modalElement.querySelector(
               '#addWorkOrderNote--noteText'
             ) as HTMLTextAreaElement
-          )?.focus()
+          ).focus()
         },
+
         onremoved() {
           bulmaJS.toggleHtmlClipped()
         }
@@ -293,11 +296,13 @@ declare const bulmaJS: BulmaJS
 
     function deleteNote(noteSequence: number): void {
       bulmaJS.confirm({
-        title: 'Delete Note',
-        message: 'Are you sure you want to delete this note?',
         contextualColorName: 'danger',
+        title: 'Delete Note',
+
+        message: 'Are you sure you want to delete this note?',
         okButton: {
           text: 'Delete',
+
           callbackFunction: () => {
             cityssm.postJSON(
               `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`,

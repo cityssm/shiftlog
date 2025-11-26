@@ -1,8 +1,10 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 (() => {
     const workOrderFormElement = document.querySelector('#form--workOrder');
-    const workOrderId = workOrderFormElement !== null
-        ? workOrderFormElement.querySelector('#workOrder--workOrderId').value
-        : '';
+    const workOrderId = workOrderFormElement === null
+        ? ''
+        : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     /*
      * Milestones functionality
      */
@@ -13,7 +15,7 @@
                 return '';
             }
             const date = new Date(dateTimeString);
-            return cityssm.dateToString(date) + ' ' + cityssm.dateToTimeString(date);
+            return `${cityssm.dateToString(date)} ${cityssm.dateToTimeString(date)}`;
         }
         function renderMilestones(milestones) {
             // Update milestones count (completed / total)
@@ -58,13 +60,16 @@
                 const canEdit = exports.isEdit &&
                     (exports.shiftLog.userCanManageWorkOrders ||
                         milestone.recordCreate_userName === exports.shiftLog.userName);
+                // eslint-disable-next-line no-unsanitized/property
                 trElement.innerHTML = /* html */ `
           ${exports.isEdit
-                    ? `<td class="is-hidden-print">
-            <span class="icon drag-handle" style="cursor: grab;">
-              <i class="fa-solid fa-grip-vertical"></i>
-            </span>
-          </td>`
+                    ? /* html */ `
+                <td class="is-hidden-print">
+                  <span class="icon drag-handle" style="cursor: grab;">
+                    <i class="fa-solid fa-grip-vertical"></i>
+                  </span>
+                </td>
+              `
                     : ''}
           <td>
             <div>
@@ -73,7 +78,11 @@
               <strong>${cityssm.escapeHTML(milestone.milestoneTitle)}</strong>
             </div>
             ${milestone.milestoneDescription
-                    ? `<div class="is-size-7 has-text-grey">${cityssm.escapeHTML(milestone.milestoneDescription.slice(0, 100))}${milestone.milestoneDescription.length > 100 ? '…' : ''}</div>`
+                    ? /* html */ `
+                  <div class="is-size-7 has-text-grey">
+                    ${cityssm.escapeHTML(milestone.milestoneDescription.slice(0, 100))}${milestone.milestoneDescription.length > 100 ? '…' : ''}
+                  </div>
+                `
                     : ''}
           </td>
           <td class="is-hidden-touch">
@@ -89,15 +98,15 @@
                     ? `<td class="is-hidden-print">
             ${canEdit
                         ? /* html */ `
-              <div class="buttons are-small is-justify-content-flex-end">
-                <button class="button edit-milestone" type="button" title="Edit">
-                  <span class="icon"><i class="fa-solid fa-edit"></i></span>
-                </button>
-                <button class="button is-danger is-light delete-milestone" type="button" title="Delete">
-                  <span class="icon"><i class="fa-solid fa-trash"></i></span>
-                </button>
-              </div>
-            `
+                  <div class="buttons are-small is-justify-content-flex-end">
+                    <button class="button edit-milestone" type="button" title="Edit">
+                      <span class="icon"><i class="fa-solid fa-edit"></i></span>
+                    </button>
+                    <button class="button is-danger is-light delete-milestone" type="button" title="Delete">
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
+                `
                         : ''}
           </td>`
                     : ''}
@@ -132,12 +141,12 @@
                 return;
             const rows = tbodyElement.querySelectorAll('tr');
             const milestoneOrders = [];
-            rows.forEach((row, index) => {
+            for (const [index, row] of rows.entries()) {
                 milestoneOrders.push({
                     workOrderMilestoneId: row.dataset.milestoneId ?? '',
                     orderNumber: index + 1
                 });
-            });
+            }
             cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestoneOrder`, { milestoneOrders }, (responseJSON) => {
                 if (!responseJSON.success) {
                     bulmaJS.alert({
@@ -212,7 +221,7 @@
                     modalElement
                         .querySelector('form')
                         ?.addEventListener('submit', doAddMilestone);
-                    modalElement.querySelector('#addWorkOrderMilestone--milestoneTitle')?.focus();
+                    modalElement.querySelector('#addWorkOrderMilestone--milestoneTitle').focus();
                 },
                 onremoved() {
                     bulmaJS.toggleHtmlClipped();
@@ -254,10 +263,10 @@
                     const completeDateInput = modalElement.querySelector('#editWorkOrderMilestone--milestoneCompleteDateTimeString');
                     const completeDatePicker = flatpickr(completeDateInput, {
                         ...dateTimePickerOptions,
-                        maxDate: new Date(),
                         defaultDate: milestone.milestoneCompleteDateTime
                             ? new Date(milestone.milestoneCompleteDateTime)
-                            : undefined
+                            : undefined,
+                        maxDate: new Date()
                     });
                     // Add "Now" button handler for complete date
                     modalElement
@@ -290,9 +299,9 @@
         }
         function deleteMilestone(workOrderMilestoneId) {
             bulmaJS.confirm({
+                contextualColorName: 'danger',
                 title: 'Delete Milestone',
                 message: 'Are you sure you want to delete this milestone?',
-                contextualColorName: 'danger',
                 okButton: {
                     text: 'Delete',
                     callbackFunction: () => {

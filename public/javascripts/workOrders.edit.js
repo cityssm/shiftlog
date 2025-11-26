@@ -1,6 +1,6 @@
 (() => {
     const shiftLog = exports.shiftLog;
-    const urlPrefix = shiftLog.urlPrefix + '/' + shiftLog.workOrdersRouter;
+    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`;
     const workOrderFormElement = document.querySelector('#form--workOrder');
     const workOrderId = workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     const workOrderCloseDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderCloseDateTimeString');
@@ -57,9 +57,11 @@
                         for (const requestor of responseJSON.requestors) {
                             const option = document.createElement('option');
                             option.value = requestor.requestorName;
-                            option.textContent = requestor.requestorName + (requestor.requestorContactInfo
-                                ? ` (${requestor.requestorContactInfo})`
-                                : '');
+                            option.textContent =
+                                requestor.requestorName +
+                                    (requestor.requestorContactInfo
+                                        ? ` (${requestor.requestorContactInfo})`
+                                        : '');
                             option.dataset.contactInfo =
                                 requestor.requestorContactInfo ?? '';
                             requestorDatalist.append(option);

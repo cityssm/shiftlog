@@ -1,7 +1,6 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
 
-import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString } from '@cityssm/utils-datetime'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -18,7 +17,8 @@ export interface GetShiftsOptions {
 }
 
 function buildWhereClause(filters: GetShiftsFilters, user?: User): string {
-  let whereClause = 'where s.instance = @instance and s.recordDelete_dateTime is null'
+  let whereClause =
+    'where s.instance = @instance and s.recordDelete_dateTime is null'
 
   if (filters.shiftDateString !== undefined) {
     whereClause += ' and s.shiftDate = @shiftDateString'
@@ -89,11 +89,11 @@ export default async function getShifts(
   let shifts: Shift[] = []
 
   if (totalCount > 0 || limit === -1) {
-    const shiftsResult = (await pool
+    const shiftsResult = await pool
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('shiftDateString', filters.shiftDateString ?? null)
-      .input('userName', user?.userName).query(/* sql */ `
+      .input('userName', user?.userName).query<Shift>(/* sql */ `
         select
           s.shiftId, s.shiftDate,
 
@@ -126,9 +126,9 @@ export default async function getShifts(
 
         order by s.shiftDate desc, sType.dataListItem, sTime.dataListItem
 
-        ${limit === -1 ? '' : ' offset ' + offset + ' rows'}
-        ${limit === -1 ? '' : ' fetch next ' + limit + ' rows only'}
-      `)) as mssql.IResult<Shift>
+        ${limit === -1 ? '' : ` offset ${offset} rows`}
+        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
+      `)
 
     shifts = shiftsResult.recordset
 
