@@ -1,13 +1,22 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getApiKeys() {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
-    const result = (await pool.request().input('settingKey', 'apiKey')
+    const pool = await getShiftLogConnectionPool();
+    const result = (await pool
+        .request()
+        .input('settingKey', 'apiKey')
+        .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
       select s.userName, s.settingValue
       from ShiftLog.UserSettings s
       where s.settingKey = @settingKey
-      and s.userName in (select userName from ShiftLog.Users where isActive = 1 and recordDelete_dateTime is null)
+        and s.instance = @instance
+        and s.userName in (
+          select userName from ShiftLog.Users
+          where instance = @instance
+            and isActive = 1
+            and recordDelete_dateTime is null
+        )
     `));
     const apiKeys = {};
     const rows = result.recordset;

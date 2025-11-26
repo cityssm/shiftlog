@@ -89,6 +89,7 @@ interface ConfigSection {
 interface ConfigApplication {
     applicationName?: string;
     httpPort?: number;
+    instance?: string;
     /** The base, public facing URL of the application, including the protocol (http or https), and any URL prefixes */
     applicationUrl?: string;
     /** The maximum number of concurrent processes */

@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function deleteEmployee(
@@ -10,13 +11,15 @@ export default async function deleteEmployee(
 
   const result = await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('employeeNumber', employeeNumber)
     .input('recordDelete_userName', user.userName)
     .input('recordDelete_dateTime', currentDate).query(/* sql */ `
       update ShiftLog.Employees
         set recordDelete_userName = @recordDelete_userName,
         recordDelete_dateTime = @recordDelete_dateTime
-      where employeeNumber = @employeeNumber
+      where instance = @instance
+        and employeeNumber = @employeeNumber
         and recordDelete_dateTime is null
     `)
 

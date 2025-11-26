@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 async function insertNewEmployee(employeeNumber, firstName, lastName, user) {
     const currentDate = new Date();
@@ -5,6 +6,7 @@ async function insertNewEmployee(employeeNumber, firstName, lastName, user) {
         const pool = await getShiftLogConnectionPool();
         await pool
             .request()
+            .input('instance', getConfigProperty('application.instance'))
             .input('employeeNumber', employeeNumber)
             .input('firstName', firstName)
             .input('lastName', lastName)
@@ -13,11 +15,11 @@ async function insertNewEmployee(employeeNumber, firstName, lastName, user) {
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         insert into ShiftLog.Employees (
-          employeeNumber, firstName, lastName,
+          instance, employeeNumber, firstName, lastName,
           recordCreate_userName, recordCreate_dateTime,
           recordUpdate_userName, recordUpdate_dateTime
         ) values (
-          @employeeNumber, @firstName, @lastName,
+          @instance, @employeeNumber, @firstName, @lastName,
           @recordCreate_userName, @recordCreate_dateTime,
           @recordUpdate_userName, @recordUpdate_dateTime
         )
@@ -33,6 +35,7 @@ async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user)
     const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('employeeNumber', employeeNumber)
         .input('firstName', firstName)
         .input('lastName', lastName)
@@ -46,7 +49,8 @@ async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user)
         recordUpdate_dateTime = @recordUpdate_dateTime,
         recordDelete_userName = null,
         recordDelete_dateTime = null
-      where employeeNumber = @employeeNumber
+      where instance = @instance
+        and employeeNumber = @employeeNumber
     `);
     return result.rowsAffected.length > 0;
 }
@@ -55,8 +59,12 @@ export default async function addEmployee(employeeNumber, firstName, lastName, u
     // Check if an employee with the same number already exists
     const recordDeleteResult = (await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('employeeNumber', employeeNumber).query(/* sql */ `
-      select recordDelete_dateTime from ShiftLog.Employees where employeeNumber = @employeeNumber
+      select recordDelete_dateTime
+      from ShiftLog.Employees
+      where instance = @instance
+        and employeeNumber = @employeeNumber
     `));
     let success = false;
     if (recordDeleteResult.recordset.length === 0) {

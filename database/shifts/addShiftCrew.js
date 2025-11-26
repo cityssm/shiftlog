@@ -13,9 +13,8 @@ export default async function addShiftCrew(form, user) {
         values (@shiftId, @crewId, @shiftCrewNote)
       `);
         // Get crew members
-        const crewMembersResult = await pool
-            .request()
-            .input('crewId', form.crewId).query(/* sql */ `
+        const crewMembersResult = await pool.request().input('crewId', form.crewId)
+            .query(/* sql */ `
         select employeeNumber
         from ShiftLog.CrewMembers
         where crewId = @crewId
@@ -25,6 +24,7 @@ export default async function addShiftCrew(form, user) {
             await pool
                 .request()
                 .input('shiftId', form.shiftId)
+                .input('instance', getConfigProperty('application.instance'))
                 .input('employeeNumber', member.employeeNumber)
                 .input('crewId', form.crewId).query(/* sql */ `
           if not exists (
@@ -32,8 +32,8 @@ export default async function addShiftCrew(form, user) {
             where shiftId = @shiftId and employeeNumber = @employeeNumber
           )
           begin
-            insert into ShiftLog.ShiftEmployees (shiftId, employeeNumber, crewId, shiftEmployeeNote)
-            values (@shiftId, @employeeNumber, @crewId, '')
+            insert into ShiftLog.ShiftEmployees (shiftId, instance, employeeNumber, crewId, shiftEmployeeNote)
+            values (@shiftId, @instance, @employeeNumber, @crewId, '')
           end
         `);
         }

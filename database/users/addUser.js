@@ -1,21 +1,22 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 async function insertNewUser(newUserName, user) {
     const currentDate = new Date();
     try {
-        const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+        const pool = await getShiftLogConnectionPool();
         await pool
             .request()
+            .input('instance', getConfigProperty('application.instance'))
             .input('userName', newUserName)
             .input('recordCreate_userName', user.userName)
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         insert into ShiftLog.Users (
-          userName,
+          instance, userName,
           recordCreate_userName, recordCreate_dateTime,
           recordUpdate_userName, recordUpdate_dateTime
-        ) values (@userName,
+        ) values (@instance, @userName,
           @recordCreate_userName, @recordCreate_dateTime,
           @recordUpdate_userName, @recordUpdate_dateTime
         )
@@ -28,9 +29,10 @@ async function insertNewUser(newUserName, user) {
 }
 async function restoreDeletedUser(newUserName, user) {
     const currentDate = new Date();
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('userName', newUserName)
         .input('recordUpdate_userName', user.userName)
         .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
@@ -39,17 +41,20 @@ async function restoreDeletedUser(newUserName, user) {
         recordUpdate_dateTime = @recordUpdate_dateTime,
         recordDelete_userName = null,
         recordDelete_timeMillis = null
-      where userName = @userName
+      where instance = @instance and userName = @userName
       `);
     return result.rowsAffected.length > 0;
 }
 export default async function addUser(newUserName, user) {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     // Check if an user with the same name already exists
     const recordDeleteResult = (await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('userName', newUserName).query(/* sql */ `
-      select recordDelete_dateTime from ShiftLog.Users where userName = @userName
+      select recordDelete_dateTime
+      from ShiftLog.Users
+      where instance = @instance and userName = @userName
     `));
     let success = false;
     if (recordDeleteResult.recordset.length === 0) {

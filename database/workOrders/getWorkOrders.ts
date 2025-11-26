@@ -3,16 +3,17 @@
 
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
 export interface GetWorkOrdersFilters {
-  workOrderNumber?: string
-  workOrderTypeDataListItemId?: number | string
-  workOrderStatusDataListItemId?: number | string
-  requestorName?: string
+  openClosedFilter?: '' | 'closed' | 'open' | 'overdue'
   requestor?: string
-  openClosedFilter?: 'open' | 'overdue' | 'closed' | ''
+  requestorName?: string
+  workOrderNumber?: string
+  workOrderStatusDataListItemId?: number | string
+  workOrderTypeDataListItemId?: number | string
 }
 
 export interface GetWorkOrdersOptions {
@@ -21,7 +22,8 @@ export interface GetWorkOrdersOptions {
 }
 
 function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
-  let whereClause = 'where w.recordDelete_dateTime is null'
+  let whereClause =
+    'where w.instance = @instance and w.recordDelete_dateTime is null'
 
   if (filters.workOrderNumber !== undefined && filters.workOrderNumber !== '') {
     whereClause += ' and w.workOrderNumber like @workOrderNumber'
@@ -31,14 +33,16 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
     filters.workOrderTypeDataListItemId !== undefined &&
     filters.workOrderTypeDataListItemId !== ''
   ) {
-    whereClause += ' and w.workOrderTypeDataListItemId = @workOrderTypeDataListItemId'
+    whereClause +=
+      ' and w.workOrderTypeDataListItemId = @workOrderTypeDataListItemId'
   }
 
   if (
     filters.workOrderStatusDataListItemId !== undefined &&
     filters.workOrderStatusDataListItemId !== ''
   ) {
-    whereClause += ' and w.workOrderStatusDataListItemId = @workOrderStatusDataListItemId'
+    whereClause +=
+      ' and w.workOrderStatusDataListItemId = @workOrderStatusDataListItemId'
   }
 
   if (filters.requestorName !== undefined && filters.requestorName !== '') {
@@ -46,16 +50,32 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
   }
 
   if (filters.requestor !== undefined && filters.requestor !== '') {
-    whereClause += ' and (w.requestorName like @requestor or w.requestorContactInfo like @requestor)'
+    whereClause +=
+      ' and (w.requestorName like @requestor or w.requestorContactInfo like @requestor)'
   }
 
-  if (filters.openClosedFilter !== undefined && filters.openClosedFilter !== '') {
-    if (filters.openClosedFilter === 'open') {
-      whereClause += ' and w.workOrderCloseDateTime is null and (w.workOrderDueDateTime is null or w.workOrderDueDateTime >= getdate())'
-    } else if (filters.openClosedFilter === 'overdue') {
-      whereClause += ' and w.workOrderCloseDateTime is null and w.workOrderDueDateTime < getdate()'
-    } else if (filters.openClosedFilter === 'closed') {
-      whereClause += ' and w.workOrderCloseDateTime is not null'
+  if (
+    filters.openClosedFilter !== undefined &&
+    filters.openClosedFilter !== ''
+  ) {
+    switch (filters.openClosedFilter) {
+      case 'closed': {
+        whereClause += ' and w.workOrderCloseDateTime is not null'
+
+        break
+      }
+      case 'open': {
+        whereClause +=
+          ' and w.workOrderCloseDateTime is null and (w.workOrderDueDateTime is null or w.workOrderDueDateTime >= getdate())'
+
+        break
+      }
+      case 'overdue': {
+        whereClause +=
+          ' and w.workOrderCloseDateTime is null and w.workOrderDueDateTime < getdate()'
+
+        break
+      }
     }
   }
 
@@ -111,11 +131,31 @@ export default async function getWorkOrders(
 
     const countResult = await pool
       .request()
-      .input('workOrderNumber', filters.workOrderNumber === undefined ? null : `%${filters.workOrderNumber}%`)
-      .input('workOrderTypeDataListItemId', filters.workOrderTypeDataListItemId ?? null)
-      .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
-      .input('requestorName', filters.requestorName === undefined ? null : `%${filters.requestorName}%`)
-      .input('requestor', filters.requestor === undefined ? null : `%${filters.requestor}%`)
+      .input('instance', getConfigProperty('application.instance'))
+      .input(
+        'workOrderNumber',
+        filters.workOrderNumber === undefined
+          ? null
+          : `%${filters.workOrderNumber}%`
+      )
+      .input(
+        'workOrderTypeDataListItemId',
+        filters.workOrderTypeDataListItemId ?? null
+      )
+      .input(
+        'workOrderStatusDataListItemId',
+        filters.workOrderStatusDataListItemId ?? null
+      )
+      .input(
+        'requestorName',
+        filters.requestorName === undefined
+          ? null
+          : `%${filters.requestorName}%`
+      )
+      .input(
+        'requestor',
+        filters.requestor === undefined ? null : `%${filters.requestor}%`
+      )
       .input('userName', user?.userName)
       .query(countSql)
 
@@ -129,11 +169,31 @@ export default async function getWorkOrders(
   if (totalCount > 0 || limit === -1) {
     const workOrdersResult = (await pool
       .request()
-      .input('workOrderNumber', filters.workOrderNumber === undefined ? null : `%${filters.workOrderNumber}%`)
-      .input('workOrderTypeDataListItemId', filters.workOrderTypeDataListItemId ?? null)
-      .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
-      .input('requestorName', filters.requestorName === undefined ? null : `%${filters.requestorName}%`)
-      .input('requestor', filters.requestor === undefined ? null : `%${filters.requestor}%`)
+      .input('instance', getConfigProperty('application.instance'))
+      .input(
+        'workOrderNumber',
+        filters.workOrderNumber === undefined
+          ? null
+          : `%${filters.workOrderNumber}%`
+      )
+      .input(
+        'workOrderTypeDataListItemId',
+        filters.workOrderTypeDataListItemId ?? null
+      )
+      .input(
+        'workOrderStatusDataListItemId',
+        filters.workOrderStatusDataListItemId ?? null
+      )
+      .input(
+        'requestorName',
+        filters.requestorName === undefined
+          ? null
+          : `%${filters.requestorName}%`
+      )
+      .input(
+        'requestor',
+        filters.requestor === undefined ? null : `%${filters.requestor}%`
+      )
       .input('userName', user?.userName).query(/* sql */ `
         select
           w.workOrderId,
@@ -164,6 +224,7 @@ export default async function getWorkOrders(
 
           w.assignedToDataListItemId,
           assignedTo.dataListItem as assignedToDataListItem
+          
         from ShiftLog.WorkOrders w
 
         left join ShiftLog.DataListItems wType

@@ -1,8 +1,11 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getLocationByAddress1(address1) {
     const pool = await getShiftLogConnectionPool();
-    const result = await pool.request().input('address1', address1)
-        .query(/* sql */ `
+    const result = await pool
+        .request()
+        .input('instance', getConfigProperty('application.instance'))
+        .input('address1', address1).query(/* sql */ `
       select locationId,
         locationName,
         address1,
@@ -19,7 +22,7 @@ export default async function getLocationByAddress1(address1) {
         recordUpdate_userName,
         recordUpdate_dateTime
       from ShiftLog.Locations
-      where address1 = @address1
+      where instance = @instance and address1 = @address1
     `);
     return result.recordset[0];
 }

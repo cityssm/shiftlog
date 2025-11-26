@@ -1,8 +1,10 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getOrAddDataListItemId(dataListKey, dataListItem, userName) {
     const pool = await getShiftLogConnectionPool();
     const dataListItems = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('dataListKey', dataListKey)
         .input('dataListItem', dataListItem).query(/* sql */ `
       select top 1
@@ -11,7 +13,9 @@ export default async function getOrAddDataListItemId(dataListKey, dataListItem, 
         recordUpdate_userName, recordUpdate_dateTime,
         recordDelete_userName, recordDelete_dateTime
       from ShiftLog.DataListItems
-      where dataListKey = @dataListKey
+      where
+        instance = @instance
+        and dataListKey = @dataListKey
         and dataListItem = @dataListItem
     `);
     if (dataListItems.recordset.length > 0) {
@@ -34,15 +38,16 @@ export default async function getOrAddDataListItemId(dataListKey, dataListItem, 
     }
     const insertResult = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('dataListKey', dataListKey)
         .input('dataListItem', dataListItem)
         .input('userName', userName).query(/* sql */ `
       insert into ShiftLog.DataListItems (
-        dataListKey, dataListItem, orderNumber,
+        instance, dataListKey, dataListItem, orderNumber,
         recordCreate_userName, recordUpdate_userName
       )
       select 
-        @dataListKey, @dataListItem,
+        @instance, @dataListKey, @dataListItem,
         coalesce(max(orderNumber) + 1, 0),
         @userName, @userName
       from ShiftLog.DataListItems

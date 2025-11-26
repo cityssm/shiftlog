@@ -19,11 +19,11 @@ export default async function handler(
   const workOrder = {
     workOrderTypeDataListItemId: workOrderTypes.length === 1 ? workOrderTypes[0].dataListItemId : undefined,
 
-    workOrderOpenDateTime: new Date(),
     workOrderDetails: '',
+    workOrderOpenDateTime: new Date(),
 
-    requestorName: request.session.user?.firstName + ' ' + request.session.user?.lastName,
     requestorContactInfo: '',
+    requestorName: request.session.user?.firstName + ' ' + request.session.user?.lastName,
 
     locationAddress1: '',
     locationAddress2: '',

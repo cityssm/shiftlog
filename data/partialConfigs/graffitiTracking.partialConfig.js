@@ -2,6 +2,7 @@ import { config as baseConfig } from './partialConfig.js';
 export const config = { ...baseConfig };
 config.application.applicationName = 'Graffiti Tracking';
 config.application.backgroundImage = 'background-graffiti.jpg';
+config.application.instance = 'graffiti';
 config.shifts = {
     isEnabled: false
 };

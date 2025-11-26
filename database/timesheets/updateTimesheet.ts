@@ -1,5 +1,6 @@
 import type { DateString } from '@cityssm/utils-datetime'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface UpdateTimesheetForm {
@@ -23,12 +24,13 @@ export default async function updateTimesheet(
   const result = await pool
     .request()
     .input('timesheetId', updateTimesheetForm.timesheetId)
+    .input('instance', getConfigProperty('application.instance'))
     .input('timesheetDate', updateTimesheetForm.timesheetDateString)
     .input('timesheetTypeDataListItemId', updateTimesheetForm.timesheetTypeDataListItemId)
     .input('supervisorEmployeeNumber', updateTimesheetForm.supervisorEmployeeNumber)
     .input('timesheetTitle', updateTimesheetForm.timesheetTitle)
     .input('timesheetNote', updateTimesheetForm.timesheetNote)
-    .input('shiftId', updateTimesheetForm.shiftId ?? null)
+    .input('shiftId', updateTimesheetForm.shiftId ?? undefined)
     .input('userName', userName).query(/* sql */ `
       update ShiftLog.Timesheets
       set
@@ -41,6 +43,7 @@ export default async function updateTimesheet(
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       where timesheetId = @timesheetId
+        and instance = @instance
         and recordDelete_dateTime is null
         and employeesEntered_dateTime is null
         and equipmentEntered_dateTime is null

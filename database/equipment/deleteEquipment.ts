@@ -1,6 +1,5 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function deleteEquipment(
   equipmentNumber: string,
@@ -9,18 +8,19 @@ export default async function deleteEquipment(
   const currentDate = new Date()
 
   try {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+    const pool = await getShiftLogConnectionPool()
 
     const result = await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('equipmentNumber', equipmentNumber)
       .input('recordDelete_userName', user.userName)
-      .input('recordDelete_dateTime', currentDate)
-      .query(/* sql */ `
+      .input('recordDelete_dateTime', currentDate).query(/* sql */ `
         update ShiftLog.Equipment
         set recordDelete_userName = @recordDelete_userName,
           recordDelete_dateTime = @recordDelete_dateTime
-        where equipmentNumber = @equipmentNumber
+        where instance = @instance
+          and equipmentNumber = @equipmentNumber
           and recordDelete_dateTime is null
       `)
 

@@ -1,13 +1,18 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+interface UpdateLocationForm {
+  locationId: number
+  locationName: string
+  address1: string
+  address2: string
+  cityProvince: string
+  latitude?: number | null
+  longitude?: number | null
+}
+
 export default async function updateLocation(
-  locationId: number,
-  locationName: string,
-  address1: string,
-  address2: string,
-  cityProvince: string,
-  latitude: number | null,
-  longitude: number | null,
+  updateLocationForm: UpdateLocationForm,
   user: User
 ): Promise<boolean> {
   const currentDate = new Date()
@@ -17,13 +22,14 @@ export default async function updateLocation(
 
     const result = await pool
       .request()
-      .input('locationId', locationId)
-      .input('locationName', locationName)
-      .input('address1', address1)
-      .input('address2', address2)
-      .input('cityProvince', cityProvince)
-      .input('latitude', latitude)
-      .input('longitude', longitude)
+      .input('instance', getConfigProperty('application.instance'))
+      .input('locationId', updateLocationForm.locationId)
+      .input('locationName', updateLocationForm.locationName)
+      .input('address1', updateLocationForm.address1)
+      .input('address2', updateLocationForm.address2)
+      .input('cityProvince', updateLocationForm.cityProvince)
+      .input('latitude', updateLocationForm.latitude)
+      .input('longitude', updateLocationForm.longitude)
       .input('recordUpdate_userName', user.userName)
       .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         UPDATE ShiftLog.Locations
@@ -36,6 +42,7 @@ export default async function updateLocation(
             recordUpdate_userName = @recordUpdate_userName,
             recordUpdate_dateTime = @recordUpdate_dateTime
         WHERE locationId = @locationId
+          and instance = @instance
           AND recordDelete_dateTime IS NULL
       `)
 

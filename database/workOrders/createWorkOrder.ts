@@ -52,6 +52,7 @@ export default async function createWorkOrder(
   // Get the next sequence number for the current year
   const sequenceResult = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('year', currentYear)
     .input(
       'workOrderNumberPrefix',
@@ -59,7 +60,9 @@ export default async function createWorkOrder(
     ).query(/* sql */ `
       select isnull(max(workOrderNumberSequence), 0) + 1 as nextSequence
       from ShiftLog.WorkOrders
-      where workOrderNumberYear = @year
+      where
+        instance = @instance
+        and workOrderNumberYear = @year
         and workOrderNumberPrefix = @workOrderNumberPrefix
     `)) as mssql.IResult<{ nextSequence: number }>
 
@@ -67,6 +70,7 @@ export default async function createWorkOrder(
 
   const result = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input(
       'workOrderNumberPrefix',
       getConfigProperty('workOrders.workOrderNumberPrefix')
@@ -129,6 +133,7 @@ export default async function createWorkOrder(
     )
     .input('userName', userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
+        instance,
         workOrderNumberPrefix,
         workOrderNumberYear,
         workOrderNumberSequence,
@@ -151,6 +156,7 @@ export default async function createWorkOrder(
       )
       output inserted.workOrderId
       values (
+        @instance,
         @workOrderNumberPrefix,
         @workOrderNumberYear,
         @workOrderNumberSequence,

@@ -1,8 +1,6 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
-
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface WorkOrderNote {
@@ -22,7 +20,10 @@ export default async function getWorkOrderNotes(
 ): Promise<WorkOrderNote[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool.request().input('workOrderId', workOrderId)
+  const result = (await pool
+    .request()
+    .input('workOrderId', workOrderId)
+    .input('instance', getConfigProperty('application.instance'))
     .query(/* sql */ `
       select
         workOrderId,
@@ -37,6 +38,12 @@ export default async function getWorkOrderNotes(
       from ShiftLog.WorkOrderNotes
       where workOrderId = @workOrderId
         and recordDelete_dateTime is null
+        and workOrderId in (
+          select workOrderId
+          from ShiftLog.WorkOrders
+          where recordDelete_dateTime is null
+            and instance = @instance
+        )
       order by noteSequence desc
     `)) as mssql.IResult<WorkOrderNote>
 

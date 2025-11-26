@@ -7,10 +7,10 @@ export default async function handler(request, response) {
     const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user);
     const workOrder = {
         workOrderTypeDataListItemId: workOrderTypes.length === 1 ? workOrderTypes[0].dataListItemId : undefined,
-        workOrderOpenDateTime: new Date(),
         workOrderDetails: '',
-        requestorName: request.session.user?.firstName + ' ' + request.session.user?.lastName,
+        workOrderOpenDateTime: new Date(),
         requestorContactInfo: '',
+        requestorName: request.session.user?.firstName + ' ' + request.session.user?.lastName,
         locationAddress1: '',
         locationAddress2: '',
         locationCityProvince: await getCachedSettingValue('locations.defaultCityProvince'),

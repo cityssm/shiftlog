@@ -21,7 +21,8 @@ export default async function updateShiftCrewNote(
       .input('shiftCrewNote', form.shiftCrewNote).query(/* sql */ `
         update ShiftLog.ShiftCrews
         set shiftCrewNote = @shiftCrewNote
-        where shiftId = @shiftId and crewId = @crewId
+        where shiftId = @shiftId
+          and crewId = @crewId
       `)
 
     return true

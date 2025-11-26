@@ -1,8 +1,9 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 function buildWhereClause(filters, user) {
-    let whereClause = 'where s.recordDelete_dateTime is null';
+    let whereClause = 'where s.instance = @instance and s.recordDelete_dateTime is null';
     if (filters.shiftDateString !== undefined) {
         whereClause += ' and s.shiftDate = @shiftDateString';
     }
@@ -40,6 +41,7 @@ export default async function getShifts(filters, options, user) {
     `;
         const countResult = await pool
             .request()
+            .input('instance', getConfigProperty('application.instance'))
             .input('shiftDateString', filters.shiftDateString ?? null)
             .input('userName', user?.userName)
             .query(countSql);
@@ -50,6 +52,7 @@ export default async function getShifts(filters, options, user) {
     if (totalCount > 0 || limit === -1) {
         const shiftsResult = (await pool
             .request()
+            .input('instance', getConfigProperty('application.instance'))
             .input('shiftDateString', filters.shiftDateString ?? null)
             .input('userName', user?.userName).query(/* sql */ `
         select
@@ -77,7 +80,8 @@ export default async function getShifts(filters, options, user) {
           on s.shiftTypeDataListItemId = sType.dataListItemId
           
         left join ShiftLog.Employees e
-          on s.supervisorEmployeeNumber = e.employeeNumber
+          on s.instance = e.instance
+          and s.supervisorEmployeeNumber = e.employeeNumber
 
         ${whereClause}    
 

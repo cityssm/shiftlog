@@ -1,5 +1,6 @@
 import Debug from 'debug';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { usePartialOrCurrentValue } from '../../helpers/sync.helpers.js';
 import getEmployee from './getEmployee.js';
@@ -8,6 +9,7 @@ async function addSyncedEmployee(partialEmployee, syncUserName) {
     const pool = await getShiftLogConnectionPool();
     await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('employeeNumber', partialEmployee.employeeNumber)
         .input('firstName', partialEmployee.firstName ?? '')
         .input('lastName', partialEmployee.lastName ?? '')
@@ -25,7 +27,7 @@ async function addSyncedEmployee(partialEmployee, syncUserName) {
         .input('recordUpdate_userName', syncUserName)
         .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
       insert into ShiftLog.Employees (
-        employeeNumber, firstName, lastName,
+        instance, employeeNumber, firstName, lastName,
         userName, isSupervisor,
         phoneNumber, phoneNumberAlternate, emailAddress,
         userGroupId,
@@ -33,7 +35,7 @@ async function addSyncedEmployee(partialEmployee, syncUserName) {
         recordCreate_userName, recordCreate_dateTime,
         recordUpdate_userName, recordUpdate_dateTime
       ) values (
-        @employeeNumber, @firstName, @lastName,
+        @instance, @employeeNumber, @firstName, @lastName,
         @userName, @isSupervisor,
         @phoneNumber, @phoneNumberAlternate, @emailAddress,
         @userGroupId,
@@ -61,6 +63,7 @@ async function updateSyncedEmployee(currentEmployee, partialEmployee, syncUserNa
     const pool = await getShiftLogConnectionPool();
     await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('employeeNumber', updateEmployee.employeeNumber)
         .input('firstName', updateEmployee.firstName)
         .input('lastName', updateEmployee.lastName)
@@ -91,7 +94,8 @@ async function updateSyncedEmployee(currentEmployee, partialEmployee, syncUserNa
         recordUpdate_dateTime = @recordUpdate_dateTime,
         recordDelete_userName = null,
         recordDelete_dateTime = null
-      where employeeNumber = @employeeNumber
+      where instance = @instance
+        and employeeNumber = @employeeNumber
     `);
 }
 export default async function addOrUpdateSyncedEmployee(partialEmployee, syncUserName) {

@@ -19,6 +19,8 @@ export const configDefaultValues = {
   'application.applicationUrl': undefined as string | undefined,
   'application.backgroundImage': 'background.jpg',
 
+  'application.instance': '',
+
   'application.httpPort': 9000,
   'application.maximumProcesses': 4,
 

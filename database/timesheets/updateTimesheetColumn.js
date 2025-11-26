@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateTimesheetColumn(updateColumnForm) {
     const pool = await getShiftLogConnectionPool();
@@ -5,9 +6,11 @@ export default async function updateTimesheetColumn(updateColumnForm) {
         .request()
         .input('timesheetColumnId', updateColumnForm.timesheetColumnId)
         .input('columnTitle', updateColumnForm.columnTitle)
-        .input('workOrderNumber', updateColumnForm.workOrderNumber ?? null)
-        .input('costCenterA', updateColumnForm.costCenterA ?? null)
-        .input('costCenterB', updateColumnForm.costCenterB ?? null).query(/* sql */ `
+        .input('workOrderNumber', updateColumnForm.workOrderNumber ?? undefined)
+        .input('costCenterA', updateColumnForm.costCenterA ?? undefined)
+        .input('costCenterB', updateColumnForm.costCenterB ?? undefined)
+        .input('instance', getConfigProperty('application.instance'))
+        .query(/* sql */ `
       update ShiftLog.TimesheetColumns
       set
         columnTitle = @columnTitle,
@@ -15,6 +18,11 @@ export default async function updateTimesheetColumn(updateColumnForm) {
         costCenterA = @costCenterA,
         costCenterB = @costCenterB
       where timesheetColumnId = @timesheetColumnId
+        and timesheetId in (
+          select timesheetId
+          from ShiftLog.Timesheets
+          where instance = @instance
+        )
     `);
     return result.rowsAffected[0] > 0;
 }

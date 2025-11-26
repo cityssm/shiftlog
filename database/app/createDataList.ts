@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface CreateDataListForm {
@@ -15,16 +16,17 @@ export default async function createDataList(
   try {
     await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('dataListKey', form.dataListKey)
       .input('dataListName', form.dataListName)
       .input('isSystemList', form.isSystemList)
       .input('userName', userName).query(/* sql */ `
         insert into ShiftLog.DataLists (
-          dataListKey, dataListName, isSystemList,
+          instance, dataListKey, dataListName, isSystemList,
           recordCreate_userName, recordUpdate_userName
         )
         values (
-          @dataListKey, @dataListName, @isSystemList,
+          @instance, @dataListKey, @dataListName, @isSystemList,
           @userName, @userName
         )
       `)

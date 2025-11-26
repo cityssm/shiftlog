@@ -1,8 +1,10 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getEquipmentList(filters = {}) {
     const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
+        .input('instance', getConfigProperty('application.instance'))
         .input('equipmentNumber', filters.equipmentNumber)
         .query(/* sql */ `
       select e.equipmentNumber, e.equipmentName, e.equipmentDescription,
@@ -17,7 +19,8 @@ export default async function getEquipmentList(filters = {}) {
         e.equipmentTypeDataListItemId = dli.dataListItemId
       left join ShiftLog.UserGroups ug on e.userGroupId = ug.userGroupId
       where
-        ${(filters.includeDeleted ?? false) ? '1=1' : 'e.recordDelete_dateTime is null'}
+        e.instance = @instance
+        ${(filters.includeDeleted ?? false) ? '' : 'and e.recordDelete_dateTime is null'}
         ${filters.equipmentNumber === undefined ? '' : 'and e.equipmentNumber = @equipmentNumber'}
       order by e.equipmentNumber, e.equipmentName
     `);

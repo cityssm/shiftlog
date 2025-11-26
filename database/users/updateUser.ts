@@ -1,6 +1,5 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface UpdateUserForm {
   userName: string
@@ -27,10 +26,11 @@ export default async function updateUser(
   user: User
 ): Promise<boolean> {
   const currentDate = new Date()
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   const result = await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('userName', updateForm.userName)
     .input('isActive', updateForm.isActive ? 1 : 0)
     .input('shifts_canView', updateForm.shifts_canView ? 1 : 0)
@@ -59,7 +59,9 @@ export default async function updateUser(
           isAdmin = @isAdmin,
           recordUpdate_userName = @recordUpdate_userName,
           recordUpdate_dateTime = @recordUpdate_dateTime
-      where userName = @userName
+      where
+        instance = @instance
+        and userName = @userName
         and recordDelete_dateTime is null
     `)
 

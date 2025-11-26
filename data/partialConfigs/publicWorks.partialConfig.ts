@@ -6,6 +6,7 @@ export const config: Config = { ...baseConfig }
 
 config.application.applicationName = 'Public Works Shift Log'
 config.application.backgroundImage = 'background.jpg'
+config.application.instance = 'publicWorks'
 
 config.session.doKeepAlive = true
 

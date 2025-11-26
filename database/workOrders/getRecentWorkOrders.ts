@@ -1,5 +1,6 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
@@ -9,7 +10,7 @@ export default async function getRecentWorkOrders(
 ): Promise<WorkOrder[]> {
   const pool = await getShiftLogConnectionPool()
 
-  let whereClause = 'where w.recordDelete_dateTime is null'
+  let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null'
 
   if (user !== undefined) {
     whereClause += `
@@ -25,6 +26,7 @@ export default async function getRecentWorkOrders(
 
   const result = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('userName', user?.userName)
     .input('limit', limit).query(/* sql */ `
       select top(@limit)
@@ -56,6 +58,7 @@ export default async function getRecentWorkOrders(
 
         w.assignedToDataListItemId,
         assignedTo.dataListItem as assignedToDataListItem
+
       from ShiftLog.WorkOrders w
 
       left join ShiftLog.DataListItems wType

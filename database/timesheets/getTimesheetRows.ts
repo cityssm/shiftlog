@@ -1,5 +1,6 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { TimesheetRow } from '../../types/record.types.js'
 
@@ -17,7 +18,8 @@ export default async function getTimesheetRows(
 ): Promise<TimesheetRow[]> {
   const pool = await getShiftLogConnectionPool()
 
-  let whereClause = 'where tr.timesheetId = @timesheetId'
+  let whereClause =
+    'where tr.instance = @instance and tr.timesheetId = @timesheetId'
 
   if (filters?.employeeNumberFilter) {
     whereClause += ` and (tr.employeeNumber = @employeeNumberFilter or e.firstName + ' ' + e.lastName like '%' + @employeeNumberFilter + '%')`
@@ -60,9 +62,9 @@ export default async function getTimesheetRows(
       tc.dataListItem as timeCodeDataListItem
     from ShiftLog.TimesheetRows tr
     left join ShiftLog.Employees e
-      on tr.employeeNumber = e.employeeNumber
+      on tr.instance = e.instance and tr.employeeNumber = e.employeeNumber
     left join ShiftLog.Equipment eq
-      on tr.equipmentNumber = eq.equipmentNumber
+      on tr.instance = eq.instance and tr.equipmentNumber = eq.equipmentNumber
     left join ShiftLog.DataListItems jc
       on tr.jobClassificationDataListItemId = jc.dataListItemId
     left join ShiftLog.DataListItems tc
@@ -77,9 +79,10 @@ export default async function getTimesheetRows(
 
   const result = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('timesheetId', timesheetId)
-    .input('employeeNumberFilter', filters?.employeeNumberFilter ?? null)
-    .input('equipmentNumberFilter', filters?.equipmentNumberFilter ?? null)
+    .input('employeeNumberFilter', filters?.employeeNumberFilter ?? undefined)
+    .input('equipmentNumberFilter', filters?.equipmentNumberFilter ?? undefined)
     .query(sql)) as mssql.IResult<TimesheetRow>
 
   return result.recordset

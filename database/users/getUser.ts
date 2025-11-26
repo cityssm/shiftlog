@@ -1,7 +1,6 @@
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
-
 import { generateApiKey } from '../../helpers/api.helpers.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { DatabaseUser } from '../../types/record.types.js'
 import type { UserSettingKey } from '../../types/user.types.js'
 
@@ -10,11 +9,13 @@ import updateUserSetting from './updateUserSetting.js'
 export default async function getUser(
   userName: string
 ): Promise<DatabaseUser | undefined> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   // Get user record
-  const userResult = (await pool.request().input('userName', userName)
-    .query(/* sql */ `
+  const userResult = await pool
+    .request()
+    .input('instance', getConfigProperty('application.instance'))
+    .input('userName', userName).query<DatabaseUser>(/* sql */ `
       select top 1
         u.userName, u.isActive, u.isAdmin,
         e.employeeNumber, e.firstName, e.lastName,
@@ -25,10 +26,13 @@ export default async function getUser(
         u.recordUpdate_userName, u.recordUpdate_dateTime
       from ShiftLog.Users u
       left join ShiftLog.Employees e
-        on u.userName = e.userName and e.recordDelete_dateTime is null
-      where u.userName = @userName
+        on u.instance = e.instance
+        and u.userName = e.userName
+        and e.recordDelete_dateTime is null
+      where u.instance = @instance
+        and u.userName = @userName
         and u.recordDelete_dateTime is null
-    `)) as mssql.IResult<DatabaseUser>
+    `)
 
   if (userResult.recordset.length === 0) {
     return undefined
@@ -37,14 +41,18 @@ export default async function getUser(
   const user = userResult.recordset[0]
 
   // Get user settings
-  const settingsResult = await pool.request().input('userName', userName)
-    .query(/* sql */ `
+  const settingsResult = await pool
+    .request()
+    .input('instance', getConfigProperty('application.instance'))
+    .input('userName', userName).query(/* sql */ `
       select settingKey, settingValue
       from ShiftLog.UserSettings
-      where userName = @userName
+      where instance = @instance
+        and userName = @userName
     `)
 
   const settings: Partial<Record<UserSettingKey, string>> = {}
+
   for (const row of settingsResult.recordset as Array<{
     settingKey: UserSettingKey
     settingValue: string

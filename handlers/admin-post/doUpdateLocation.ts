@@ -12,17 +12,23 @@ export default async function handler(
   const address1 = (request.body.address1 as string) || ''
   const address2 = (request.body.address2 as string) || ''
   const cityProvince = (request.body.cityProvince as string) || ''
-  const latitude = request.body.latitude !== '' ? Number(request.body.latitude) : null
-  const longitude = request.body.longitude !== '' ? Number(request.body.longitude) : null
+
+  const latitude =
+    request.body.latitude === '' ? undefined : Number(request.body.latitude)
+
+  const longitude =
+    request.body.longitude === '' ? undefined : Number(request.body.longitude)
 
   const success = await updateLocation(
-    locationId,
-    locationName,
-    address1,
-    address2,
-    cityProvince,
-    latitude,
-    longitude,
+    {
+      locationId,
+      locationName,
+      address1,
+      address2,
+      cityProvince,
+      latitude,
+      longitude
+    },
     request.session.user as User
   )
 

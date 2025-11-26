@@ -1,5 +1,6 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
@@ -13,6 +14,7 @@ export default async function getOverdueWorkOrders(
     where w.recordDelete_dateTime is null
       and w.workOrderCloseDateTime is null
       and w.workOrderDueDateTime < getdate()
+      and w.instance = @instance
   `
 
   if (user !== undefined) {
@@ -29,6 +31,7 @@ export default async function getOverdueWorkOrders(
 
   const result = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('userName', user?.userName)
     .input('limit', limit).query(/* sql */ `
       select top(@limit)
@@ -60,6 +63,7 @@ export default async function getOverdueWorkOrders(
 
         w.assignedToDataListItemId,
         assignedTo.dataListItem as assignedToDataListItem
+        
       from ShiftLog.WorkOrders w
 
       left join ShiftLog.DataListItems wType

@@ -1,5 +1,6 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Shift } from '../../types/record.types.js'
 
@@ -39,7 +40,8 @@ export default async function getShift(
     left join ShiftLog.Employees e
       on s.supervisorEmployeeNumber = e.employeeNumber
 
-    where s.recordDelete_dateTime is null
+    where s.instance = @instance
+      and s.recordDelete_dateTime is null
       and s.shiftId = @shiftId
 
     ${
@@ -58,6 +60,7 @@ export default async function getShift(
   `
   const shiftsResult = (await pool
     .request()
+    .input('instance', getConfigProperty('application.instance'))
     .input('shiftId', shiftId)
     .input('userName', user?.userName)
     .query(sql)) as mssql.IResult<Shift>

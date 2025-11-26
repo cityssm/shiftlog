@@ -1,6 +1,7 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
 
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface AddDataListItemForm {
@@ -18,16 +19,17 @@ export default async function addDataListItem(
   try {
     await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('dataListKey', form.dataListKey)
       .input('dataListItem', form.dataListItem)
       .input('userGroupId', form.userGroupId ?? null)
       .input('userName', form.userName).query(/* sql */ `
         insert into ShiftLog.DataListItems (
-          dataListKey, dataListItem, userGroupId, orderNumber,
+          instance, dataListKey, dataListItem, userGroupId, orderNumber,
           recordCreate_userName, recordUpdate_userName
         )
         select 
-          @dataListKey, @dataListItem, @userGroupId,
+          @instance, @dataListKey, @dataListItem, @userGroupId,
           coalesce(max(orderNumber) + 1, 0),
           @userName, @userName
         from ShiftLog.DataListItems
