@@ -13,6 +13,7 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
   assignedToOptions: DataListItem[]
   workOrderOpenDateTime: string
+  isEdit: boolean
 }
 
 declare const cityssm: cityssmGlobal
@@ -96,11 +97,14 @@ declare const Sortable: {
     }
 
     function renderMilestones(milestones: WorkOrderMilestone[]): void {
-      // Update milestones count
+      // Update milestones count (incomplete / total)
       const milestonesCountElement =
         document.querySelector('#milestonesCount')
       if (milestonesCountElement !== null) {
-        milestonesCountElement.textContent = milestones.length.toString()
+        const incompleteCount = milestones.filter(
+          (m) => m.milestoneCompleteDateTime === null
+        ).length
+        milestonesCountElement.textContent = `${incompleteCount} / ${milestones.length}`
       }
 
       if (milestones.length === 0) {
@@ -117,12 +121,12 @@ declare const Sortable: {
       tableElement.innerHTML = /* html */ `
         <thead>
           <tr>
-            <th class="is-hidden-print" style="width: 30px;"></th>
+            ${exports.isEdit ? '<th class="is-hidden-print" style="width: 30px;"></th>' : ''}
             <th>Title</th>
             <th class="is-hidden-touch">Assigned To</th>
             <th>Due Date</th>
             <th>Complete Date</th>
-            <th class="is-hidden-print" style="width: 80px;"></th>
+            ${exports.isEdit ? '<th class="is-hidden-print" style="width: 80px;"></th>' : ''}
           </tr>
         </thead>
         <tbody id="tbody--milestones"></tbody>
@@ -146,15 +150,20 @@ declare const Sortable: {
           new Date(milestone.milestoneDueDateTime) < new Date()
 
         const canEdit =
-          exports.shiftLog.userCanManageWorkOrders ||
-          milestone.recordCreate_userName === exports.shiftLog.userName
+          exports.isEdit &&
+          (exports.shiftLog.userCanManageWorkOrders ||
+            milestone.recordCreate_userName === exports.shiftLog.userName)
 
         trElement.innerHTML = /* html */ `
-          <td class="is-hidden-print">
+          ${
+            exports.isEdit
+              ? `<td class="is-hidden-print">
             <span class="icon drag-handle" style="cursor: grab;">
               <i class="fa-solid fa-grip-vertical"></i>
             </span>
-          </td>
+          </td>`
+              : ''
+          }
           <td>
             <div>
               ${isComplete ? '<span class="icon has-text-success"><i class="fa-solid fa-check-circle"></i></span> ' : ''}
@@ -176,7 +185,9 @@ declare const Sortable: {
           <td>
             ${milestone.milestoneCompleteDateTime ? formatDateTime(milestone.milestoneCompleteDateTime) : '<span class="has-text-grey">-</span>'}
           </td>
-          <td class="is-hidden-print">
+          ${
+            exports.isEdit
+              ? `<td class="is-hidden-print">
             ${
               canEdit
                 ? /* html */ `
@@ -191,7 +202,9 @@ declare const Sortable: {
             `
                 : ''
             }
-          </td>
+          </td>`
+              : ''
+          }
         `
 
         // Add event listeners
@@ -215,7 +228,7 @@ declare const Sortable: {
       }
 
       // Initialize sortable for reordering
-      if (exports.shiftLog.userCanUpdateWorkOrders) {
+      if (exports.isEdit && exports.shiftLog.userCanUpdateWorkOrders) {
         Sortable.create(tbodyElement, {
           handle: '.drag-handle',
           animation: 150,

@@ -468,6 +468,7 @@
 <script>
   exports.assignedToOptions = <%- JSON.stringify(assignedToOptions) %>;
   exports.workOrderOpenDateTime = "<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>";
+  exports.isEdit = <%= isEdit %>;
 </script>
 
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
