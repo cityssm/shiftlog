@@ -71,8 +71,16 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
         break
       }
       case 'overdue': {
-        whereClause +=
-          ' and w.workOrderCloseDateTime is null and w.workOrderDueDateTime < getdate()'
+        whereClause += ` and w.workOrderCloseDateTime is null
+              and (
+                w.workOrderDueDateTime < getdate()
+                or w.workOrderId in (
+                  select workOrderId from ShiftLog.WorkOrderMilestones
+                  where milestoneCompleteDateTime is null
+                    and milestoneDueDateTime < getdate()
+                )
+              )
+          `
 
         break
       }
