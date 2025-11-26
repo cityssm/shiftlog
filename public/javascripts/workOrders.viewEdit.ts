@@ -9,6 +9,16 @@ declare const exports: {
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const Sortable: {
+  create: (
+    element: HTMLElement,
+    options: {
+      handle: string
+      animation: number
+      onEnd: () => void
+    }
+  ) => void
+}
 ;(() => {
   const workOrderTabsContainerElement = document.querySelector(
     '#container--workOrderTabs'
@@ -20,6 +30,419 @@ declare const bulmaJS: BulmaJS
     )
   }
 
+  const workOrderFormElement = document.querySelector(
+    '#form--workOrder'
+  ) as HTMLFormElement | null
+
+  const workOrderId =
+    workOrderFormElement !== null
+      ? (
+          workOrderFormElement.querySelector(
+            '#workOrder--workOrderId'
+          ) as HTMLInputElement
+        ).value
+      : ''
+
+  /*
+   * Milestones functionality
+   */
+
+  const milestonesContainerElement = document.querySelector(
+    '#container--milestones'
+  ) as HTMLElement | null
+
+  if (milestonesContainerElement !== null) {
+    interface WorkOrderMilestone {
+      workOrderMilestoneId: number
+      workOrderId: number
+      milestoneTitle: string
+      milestoneDescription: string
+      milestoneDueDateTime: string | null
+      milestoneCompleteDateTime: string | null
+      assignedToDataListItemId: number | null
+      assignedToDataListItem: string | null
+      orderNumber: number
+      recordCreate_userName: string
+      recordCreate_dateTime: string
+      recordUpdate_userName: string
+      recordUpdate_dateTime: string
+    }
+
+    let currentMilestones: WorkOrderMilestone[] = []
+
+    function formatDateTime(dateTimeString: string | null): string {
+      if (dateTimeString === null) {
+        return ''
+      }
+      const date = new Date(dateTimeString)
+      return cityssm.dateToString(date) + ' ' + cityssm.dateToTimeString(date)
+    }
+
+    function formatDateTimeForInput(dateTimeString: string | null): string {
+      if (dateTimeString === null) {
+        return ''
+      }
+      const date = new Date(dateTimeString)
+      return (
+        cityssm.dateToString(date) + 'T' + cityssm.dateToTimeString(date)
+      )
+    }
+
+    function renderMilestones(milestones: WorkOrderMilestone[]): void {
+      currentMilestones = milestones
+
+      // Update milestones count
+      const milestonesCountElement =
+        document.querySelector('#milestonesCount')
+      if (milestonesCountElement !== null) {
+        milestonesCountElement.textContent = milestones.length.toString()
+      }
+
+      if (milestones.length === 0) {
+        milestonesContainerElement.innerHTML = /* html */ `
+          <div class="message is-info">
+            <p class="message-body">No milestones have been added yet.</p>
+          </div>
+        `
+        return
+      }
+
+      const tableElement = document.createElement('table')
+      tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+      tableElement.innerHTML = /* html */ `
+        <thead>
+          <tr>
+            <th class="is-hidden-print" style="width: 30px;"></th>
+            <th>Title</th>
+            <th class="is-hidden-touch">Assigned To</th>
+            <th>Due Date</th>
+            <th>Complete Date</th>
+            <th class="is-hidden-print" style="width: 80px;"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody--milestones"></tbody>
+      `
+
+      milestonesContainerElement.replaceChildren(tableElement)
+
+      const tbodyElement = tableElement.querySelector(
+        '#tbody--milestones'
+      ) as HTMLTableSectionElement
+
+      for (const milestone of milestones) {
+        const trElement = document.createElement('tr')
+        trElement.dataset.milestoneId =
+          milestone.workOrderMilestoneId.toString()
+
+        const isComplete = milestone.milestoneCompleteDateTime !== null
+        const isOverdue =
+          !isComplete &&
+          milestone.milestoneDueDateTime !== null &&
+          new Date(milestone.milestoneDueDateTime) < new Date()
+
+        const canEdit =
+          exports.shiftLog.userCanManageWorkOrders ||
+          milestone.recordCreate_userName === exports.shiftLog.userName
+
+        trElement.innerHTML = /* html */ `
+          <td class="is-hidden-print">
+            <span class="icon drag-handle" style="cursor: grab;">
+              <i class="fa-solid fa-grip-vertical"></i>
+            </span>
+          </td>
+          <td>
+            <div>
+              ${isComplete ? '<span class="icon has-text-success"><i class="fa-solid fa-check-circle"></i></span> ' : ''}
+              ${isOverdue ? '<span class="icon has-text-danger"><i class="fa-solid fa-exclamation-circle"></i></span> ' : ''}
+              <strong>${cityssm.escapeHTML(milestone.milestoneTitle)}</strong>
+            </div>
+            ${
+              milestone.milestoneDescription
+                ? `<div class="is-size-7 has-text-grey">${cityssm.escapeHTML(milestone.milestoneDescription.slice(0, 100))}${milestone.milestoneDescription.length > 100 ? '…' : ''}</div>`
+                : ''
+            }
+          </td>
+          <td class="is-hidden-touch">
+            ${milestone.assignedToDataListItem ? cityssm.escapeHTML(milestone.assignedToDataListItem) : '<span class="has-text-grey">(Not Assigned)</span>'}
+          </td>
+          <td>
+            ${milestone.milestoneDueDateTime ? formatDateTime(milestone.milestoneDueDateTime) : '<span class="has-text-grey">-</span>'}
+          </td>
+          <td>
+            ${milestone.milestoneCompleteDateTime ? formatDateTime(milestone.milestoneCompleteDateTime) : '<span class="has-text-grey">-</span>'}
+          </td>
+          <td class="is-hidden-print">
+            ${
+              canEdit
+                ? /* html */ `
+              <div class="buttons are-small is-justify-content-flex-end">
+                <button class="button edit-milestone" type="button" title="Edit">
+                  <span class="icon"><i class="fa-solid fa-edit"></i></span>
+                </button>
+                <button class="button is-danger is-light delete-milestone" type="button" title="Delete">
+                  <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                </button>
+              </div>
+            `
+                : ''
+            }
+          </td>
+        `
+
+        // Add event listeners
+        if (canEdit) {
+          const editButton = trElement.querySelector(
+            '.edit-milestone'
+          ) as HTMLButtonElement
+          editButton.addEventListener('click', () => {
+            showEditMilestoneModal(milestone)
+          })
+
+          const deleteButton = trElement.querySelector(
+            '.delete-milestone'
+          ) as HTMLButtonElement
+          deleteButton.addEventListener('click', () => {
+            deleteMilestone(milestone.workOrderMilestoneId)
+          })
+        }
+
+        tbodyElement.append(trElement)
+      }
+
+      // Initialize sortable for reordering
+      if (exports.shiftLog.userCanUpdateWorkOrders) {
+        Sortable.create(tbodyElement, {
+          handle: '.drag-handle',
+          animation: 150,
+          onEnd: () => {
+            saveMilestoneOrder()
+          }
+        })
+      }
+    }
+
+    function saveMilestoneOrder(): void {
+      const tbodyElement = document.querySelector(
+        '#tbody--milestones'
+      ) as HTMLTableSectionElement | null
+      if (tbodyElement === null) return
+
+      const rows = tbodyElement.querySelectorAll('tr')
+      const milestoneOrders: Array<{
+        workOrderMilestoneId: string
+        orderNumber: number
+      }> = []
+
+      rows.forEach((row, index) => {
+        milestoneOrders.push({
+          workOrderMilestoneId: row.dataset.milestoneId ?? '',
+          orderNumber: index + 1
+        })
+      })
+
+      cityssm.postJSON(
+        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestoneOrder`,
+        { milestoneOrders },
+        (responseJSON) => {
+          if (!responseJSON.success) {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to save milestone order.'
+            })
+          }
+        }
+      )
+    }
+
+    function showAddMilestoneModal(): void {
+      let closeModalFunction: () => void
+
+      function doAddMilestone(submitEvent: Event): void {
+        submitEvent.preventDefault()
+        const formElement = submitEvent.currentTarget as HTMLFormElement
+
+        cityssm.postJSON(
+          `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderMilestone`,
+          formElement,
+          (responseJSON) => {
+            if (responseJSON.success) {
+              closeModalFunction()
+              loadMilestones()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to add milestone.'
+              })
+            }
+          }
+        )
+      }
+
+      cityssm.openHtmlModal('workOrders-addMilestone', {
+        onshow(modalElement) {
+          ;(
+            modalElement.querySelector(
+              '#addWorkOrderMilestone--workOrderId'
+            ) as HTMLInputElement
+          ).value = workOrderId
+        },
+        onshown(modalElement, _closeModalFunction) {
+          bulmaJS.toggleHtmlClipped()
+          closeModalFunction = _closeModalFunction
+          modalElement
+            .querySelector('form')
+            ?.addEventListener('submit', doAddMilestone)
+          ;(
+            modalElement.querySelector(
+              '#addWorkOrderMilestone--milestoneTitle'
+            ) as HTMLInputElement
+          )?.focus()
+        },
+        onremoved() {
+          bulmaJS.toggleHtmlClipped()
+        }
+      })
+    }
+
+    function showEditMilestoneModal(milestone: WorkOrderMilestone): void {
+      let closeModalFunction: () => void
+
+      function doUpdateMilestone(submitEvent: Event): void {
+        submitEvent.preventDefault()
+        const formElement = submitEvent.currentTarget as HTMLFormElement
+
+        cityssm.postJSON(
+          `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestone`,
+          formElement,
+          (responseJSON) => {
+            if (responseJSON.success) {
+              closeModalFunction()
+              loadMilestones()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to update milestone.'
+              })
+            }
+          }
+        )
+      }
+
+      cityssm.openHtmlModal('workOrders-editMilestone', {
+        onshow(modalElement) {
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderMilestone--workOrderMilestoneId'
+            ) as HTMLInputElement
+          ).value = milestone.workOrderMilestoneId.toString()
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderMilestone--milestoneTitle'
+            ) as HTMLInputElement
+          ).value = milestone.milestoneTitle
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderMilestone--milestoneDescription'
+            ) as HTMLTextAreaElement
+          ).value = milestone.milestoneDescription
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderMilestone--milestoneDueDateTimeString'
+            ) as HTMLInputElement
+          ).value = formatDateTimeForInput(milestone.milestoneDueDateTime)
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderMilestone--milestoneCompleteDateTimeString'
+            ) as HTMLInputElement
+          ).value = formatDateTimeForInput(milestone.milestoneCompleteDateTime)
+
+          const assignedToSelect = modalElement.querySelector(
+            '#editWorkOrderMilestone--assignedToDataListItemId'
+          ) as HTMLSelectElement
+          if (
+            milestone.assignedToDataListItemId !== null &&
+            milestone.assignedToDataListItem !== null
+          ) {
+            const option = document.createElement('option')
+            option.value = milestone.assignedToDataListItemId.toString()
+            option.textContent = milestone.assignedToDataListItem
+            option.selected = true
+            assignedToSelect.append(option)
+          }
+        },
+        onshown(modalElement, _closeModalFunction) {
+          bulmaJS.toggleHtmlClipped()
+          closeModalFunction = _closeModalFunction
+          modalElement
+            .querySelector('form')
+            ?.addEventListener('submit', doUpdateMilestone)
+        },
+        onremoved() {
+          bulmaJS.toggleHtmlClipped()
+        }
+      })
+    }
+
+    function deleteMilestone(workOrderMilestoneId: number): void {
+      bulmaJS.confirm({
+        title: 'Delete Milestone',
+        message: 'Are you sure you want to delete this milestone?',
+        contextualColorName: 'danger',
+        okButton: {
+          text: 'Delete',
+          callbackFunction: () => {
+            cityssm.postJSON(
+              `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderMilestone`,
+              {
+                workOrderMilestoneId
+              },
+              (responseJSON) => {
+                if (responseJSON.success) {
+                  loadMilestones()
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: 'Failed to delete milestone.'
+                  })
+                }
+              }
+            )
+          }
+        }
+      })
+    }
+
+    function loadMilestones(): void {
+      cityssm.postJSON(
+        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`,
+        {},
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            milestones: WorkOrderMilestone[]
+          }
+
+          if (responseJSON.success) {
+            renderMilestones(responseJSON.milestones)
+          }
+        }
+      )
+    }
+
+    // Add milestone button
+    const addMilestoneButton = document.querySelector(
+      '#button--addMilestone'
+    ) as HTMLButtonElement | null
+    if (addMilestoneButton !== null) {
+      addMilestoneButton.addEventListener('click', () => {
+        showAddMilestoneModal()
+      })
+    }
+
+    // Load milestones initially
+    loadMilestones()
+  }
+
   /*
    * Notes functionality
    */
@@ -29,15 +452,6 @@ declare const bulmaJS: BulmaJS
   ) as HTMLElement | null
 
   if (notesContainerElement !== null) {
-    const workOrderFormElement = document.querySelector(
-      '#form--workOrder'
-    ) as HTMLFormElement
-    const workOrderId = (
-      workOrderFormElement.querySelector(
-        '#workOrder--workOrderId'
-      ) as HTMLInputElement
-    ).value
-
     interface WorkOrderNote {
       workOrderId: number
       noteSequence: number
@@ -194,11 +608,11 @@ declare const bulmaJS: BulmaJS
     }
 
     function showEditNoteModal(note: WorkOrderNote): void {
-      let closeModalFunction
+      let closeModalFunction: () => void
 
-      function doUpdateNote(submitEvent) {
+      function doUpdateNote(submitEvent: Event): void {
         submitEvent.preventDefault()
-        const formElement = submitEvent.currentTarget
+        const formElement = submitEvent.currentTarget as HTMLFormElement
 
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`,
@@ -218,12 +632,21 @@ declare const bulmaJS: BulmaJS
       }
       cityssm.openHtmlModal('workOrders-editNote', {
         onshow(modalElement) {
-          modalElement.querySelector('#editWorkOrderNote--workOrderId').value =
-            workOrderId
-          modalElement.querySelector('#editWorkOrderNote--noteSequence').value =
-            note.noteSequence.toString()
-          modalElement.querySelector('#editWorkOrderNote--noteText').value =
-            note.noteText
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderNote--workOrderId'
+            ) as HTMLInputElement
+          ).value = workOrderId
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderNote--noteSequence'
+            ) as HTMLInputElement
+          ).value = note.noteSequence.toString()
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderNote--noteText'
+            ) as HTMLTextAreaElement
+          ).value = note.noteText
         },
         onshown(modalElement, _closeModalFunction) {
           bulmaJS.toggleHtmlClipped()
@@ -239,10 +662,10 @@ declare const bulmaJS: BulmaJS
     }
 
     function showAddNoteModal(): void {
-      let closeModalFunction
-      function doAddNote(submitEvent) {
+      let closeModalFunction: () => void
+      function doAddNote(submitEvent: Event): void {
         submitEvent.preventDefault()
-        const formElement = submitEvent.currentTarget
+        const formElement = submitEvent.currentTarget as HTMLFormElement
 
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`,
@@ -264,8 +687,11 @@ declare const bulmaJS: BulmaJS
 
       cityssm.openHtmlModal('workOrders-addNote', {
         onshow(modalElement) {
-          modalElement.querySelector('#addWorkOrderNote--workOrderId').value =
-            workOrderId
+          ;(
+            modalElement.querySelector(
+              '#addWorkOrderNote--workOrderId'
+            ) as HTMLInputElement
+          ).value = workOrderId
         },
         onshown(modalElement, _closeModalFunction) {
           bulmaJS.toggleHtmlClipped()
@@ -273,7 +699,11 @@ declare const bulmaJS: BulmaJS
           modalElement
             .querySelector('form')
             ?.addEventListener('submit', doAddNote)
-          modalElement.querySelector('#addWorkOrderNote--noteText')?.focus()
+          ;(
+            modalElement.querySelector(
+              '#addWorkOrderNote--noteText'
+            ) as HTMLTextAreaElement
+          )?.focus()
         },
         onremoved() {
           bulmaJS.toggleHtmlClipped()
