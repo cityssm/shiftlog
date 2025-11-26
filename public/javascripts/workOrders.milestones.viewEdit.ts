@@ -15,6 +15,7 @@ interface DataListItem {
 declare const exports: {
   shiftLog: ShiftLogGlobal
   assignedToOptions: DataListItem[]
+  workOrderAssignedToDataListItemId: number | null
   workOrderOpenDateTime: string
   isEdit: boolean
 }
@@ -328,6 +329,12 @@ declare const Sortable: {
             '#addWorkOrderMilestone--assignedToDataListItemId'
           ) as HTMLSelectElement
           populateAssignedToSelect(assignedToSelect)
+
+          // Set the default value to the work order's "assigned to" value
+          if (exports.workOrderAssignedToDataListItemId !== null) {
+            assignedToSelect.value =
+              exports.workOrderAssignedToDataListItemId.toString()
+          }
 
           // Initialize flatpickr on date fields
           flatpickr(

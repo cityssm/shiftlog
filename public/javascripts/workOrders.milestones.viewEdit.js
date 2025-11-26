@@ -200,6 +200,11 @@
                     // Populate Assigned To select
                     const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToDataListItemId');
                     populateAssignedToSelect(assignedToSelect);
+                    // Set the default value to the work order's "assigned to" value
+                    if (exports.workOrderAssignedToDataListItemId !== null) {
+                        assignedToSelect.value =
+                            exports.workOrderAssignedToDataListItemId.toString();
+                    }
                     // Initialize flatpickr on date fields
                     flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneDueDateTimeString'), dateTimePickerOptions);
                     const completeDatePicker = flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneCompleteDateTimeString'), {
