@@ -12,6 +12,44 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
+  const userSettingForms = document.querySelectorAll('.userSettingForm')
+
+  for (const userSettingForm of userSettingForms) {
+    userSettingForm.addEventListener('submit', (formEvent) => {
+      formEvent.preventDefault()
+
+      const formElement = formEvent.currentTarget as HTMLFormElement
+
+      const formData = new FormData(formElement)
+
+      const settingKey = formData.get('settingKey') as string
+      const settingValue = formData.get('settingValue') as string
+
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/dashboard/doUpdateUserSetting`,
+        {
+          settingKey,
+          settingValue
+        },
+        (responseJSON: { success: boolean }) => {
+          if (responseJSON.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'User Setting Updated',
+              message: 'Your user setting has been updated successfully.'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error',
+              message: 'There was an error updating your user setting.'
+            })
+          }
+        }
+      )
+    })
+  }
+
   /*
    * API Key
    */
