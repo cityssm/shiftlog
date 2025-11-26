@@ -2,6 +2,30 @@
 /* eslint-disable perfectionist/sort-objects */
 export const settingProperties = [
     {
+        settingKey: 'locations.defaultCityProvince',
+        settingName: 'Locations - Default City/Province',
+        description: 'The default city/province to use when creating new work orders and locations.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
+    },
+    {
+        settingKey: 'locations.defaultLatitude',
+        settingName: 'Locations - Default Latitude',
+        description: 'The default latitude to use when centering maps.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
+    },
+    {
+        settingKey: 'locations.defaultLongitude',
+        settingName: 'Locations - Default Longitude',
+        description: 'The default longitude to use when centering maps.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
+    },
+    {
         settingKey: 'application.csrfSecret',
         settingName: 'Application - CSRF Secret',
         description: 'The secret used for CSRF protection.',

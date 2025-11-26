@@ -32,8 +32,6 @@ export const configDefaultValues = {
     'workOrders.sectionName': 'Work Orders',
     'workOrders.sectionNameSingular': 'Work Order',
     'workOrders.iconClass': 'fa-hard-hat',
-    // eslint-disable-next-line no-secrets/no-secrets
-    'workOrders.defaultLocationCityProvince': '',
     'workOrders.workOrderNumberPrefix': '',
     // Timesheets
     'timesheets.isEnabled': false,

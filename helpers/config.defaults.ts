@@ -82,8 +82,6 @@ export const configDefaultValues = {
 
   'workOrders.iconClass': 'fa-hard-hat',
 
-  // eslint-disable-next-line no-secrets/no-secrets
-  'workOrders.defaultLocationCityProvince': '',
   'workOrders.workOrderNumberPrefix': '',
 
   // Timesheets
