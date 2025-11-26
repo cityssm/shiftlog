@@ -197,10 +197,18 @@
                     populateAssignedToSelect(assignedToSelect);
                     // Initialize flatpickr on date fields
                     flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneDueDateTimeString'), dateTimePickerOptions);
-                    flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneCompleteDateTimeString'), {
+                    const completeDatePicker = flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneCompleteDateTimeString'), {
                         ...dateTimePickerOptions,
                         maxDate: new Date()
                     });
+                    // Add "Now" button handler for complete date
+                    modalElement
+                        .querySelector('#addWorkOrderMilestone--setCompleteTimeNow')
+                        ?.addEventListener('click', () => {
+                            const now = new Date();
+                            completeDatePicker.set('maxDate', now);
+                            completeDatePicker.setDate(now, true);
+                        });
                 },
                 onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();
@@ -247,13 +255,21 @@
                             : undefined
                     });
                     const completeDateInput = modalElement.querySelector('#editWorkOrderMilestone--milestoneCompleteDateTimeString');
-                    flatpickr(completeDateInput, {
+                    const completeDatePicker = flatpickr(completeDateInput, {
                         ...dateTimePickerOptions,
                         maxDate: new Date(),
                         defaultDate: milestone.milestoneCompleteDateTime
                             ? new Date(milestone.milestoneCompleteDateTime)
                             : undefined
                     });
+                    // Add "Now" button handler for complete date
+                    modalElement
+                        .querySelector('#editWorkOrderMilestone--setCompleteTimeNow')
+                        ?.addEventListener('click', () => {
+                            const now = new Date();
+                            completeDatePicker.set('maxDate', now);
+                            completeDatePicker.setDate(now, true);
+                        });
                     // Populate Assigned To select
                     const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToDataListItemId');
                     populateAssignedToSelect(assignedToSelect);

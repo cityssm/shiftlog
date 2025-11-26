@@ -327,7 +327,7 @@ declare const Sortable: {
             dateTimePickerOptions
           )
 
-          flatpickr(
+          const completeDatePicker = flatpickr(
             modalElement.querySelector(
               '#addWorkOrderMilestone--milestoneCompleteDateTimeString'
             ) as HTMLInputElement,
@@ -336,6 +336,15 @@ declare const Sortable: {
               maxDate: new Date()
             }
           )
+
+          // Add "Now" button handler for complete date
+          modalElement
+            .querySelector('#addWorkOrderMilestone--setCompleteTimeNow')
+            ?.addEventListener('click', () => {
+              const now = new Date()
+              completeDatePicker.set('maxDate', now)
+              completeDatePicker.setDate(now, true)
+            })
         },
         onshown(modalElement, _closeModalFunction) {
           bulmaJS.toggleHtmlClipped()
@@ -411,13 +420,22 @@ declare const Sortable: {
           const completeDateInput = modalElement.querySelector(
             '#editWorkOrderMilestone--milestoneCompleteDateTimeString'
           ) as HTMLInputElement
-          flatpickr(completeDateInput, {
+          const completeDatePicker = flatpickr(completeDateInput, {
             ...dateTimePickerOptions,
             maxDate: new Date(),
             defaultDate: milestone.milestoneCompleteDateTime
               ? new Date(milestone.milestoneCompleteDateTime)
               : undefined
           })
+
+          // Add "Now" button handler for complete date
+          modalElement
+            .querySelector('#editWorkOrderMilestone--setCompleteTimeNow')
+            ?.addEventListener('click', () => {
+              const now = new Date()
+              completeDatePicker.set('maxDate', now)
+              completeDatePicker.setDate(now, true)
+            })
 
           // Populate Assigned To select
           const assignedToSelect = modalElement.querySelector(

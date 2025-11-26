@@ -61,16 +61,24 @@
           <div class="column">
             <div class="field">
               <label class="label" for="editWorkOrderMilestone--milestoneCompleteDateTimeString">Complete Date/Time</label>
-              <div class="control has-icons-left">
-                <input
-                  class="input"
-                  type="datetime-local"
-                  name="milestoneCompleteDateTimeString"
-                  id="editWorkOrderMilestone--milestoneCompleteDateTimeString"
-                />
-                <span class="icon is-small is-left">
-                  <i class="fa-solid fa-check"></i>
-                </span>
+              <div class="field has-addons">
+                <div class="control is-expanded has-icons-left">
+                  <input
+                    class="input"
+                    type="datetime-local"
+                    name="milestoneCompleteDateTimeString"
+                    id="editWorkOrderMilestone--milestoneCompleteDateTimeString"
+                  />
+                  <span class="icon is-small is-left">
+                    <i class="fa-solid fa-check"></i>
+                  </span>
+                </div>
+                <div class="control">
+                  <button class="button" type="button" id="editWorkOrderMilestone--setCompleteTimeNow" title="Set to Now">
+                    <span class="icon"><i class="fa-solid fa-clock"></i></span>
+                    <span>Now</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
