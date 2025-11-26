@@ -68,8 +68,6 @@ declare const Sortable: {
       recordUpdate_dateTime: string
     }
 
-    let currentMilestones: WorkOrderMilestone[] = []
-
     function formatDateTime(dateTimeString: string | null): string {
       if (dateTimeString === null) {
         return ''
@@ -89,8 +87,6 @@ declare const Sortable: {
     }
 
     function renderMilestones(milestones: WorkOrderMilestone[]): void {
-      currentMilestones = milestones
-
       // Update milestones count
       const milestonesCountElement =
         document.querySelector('#milestonesCount')
