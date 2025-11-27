@@ -11,8 +11,7 @@ config.workOrders = {
     router: 'accessibilityReports',
     sectionName: 'Accessibility Reports',
     sectionNameSingular: 'Accessibility Report',
-    iconClass: 'fa-wheelchair',
-    workOrderNumberPrefix: 'ACC-'
+    iconClass: 'fa-wheelchair'
 };
 config.timesheets = {
     isEnabled: false

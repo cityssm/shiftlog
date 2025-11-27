@@ -5,7 +5,7 @@ export interface GetWorkOrdersFilters {
     requestorName?: string;
     workOrderNumber?: string;
     workOrderStatusDataListItemId?: number | string;
-    workOrderTypeDataListItemId?: number | string;
+    workOrderTypeId?: number | string;
 }
 export interface GetWorkOrdersOptions {
     limit: number | string;

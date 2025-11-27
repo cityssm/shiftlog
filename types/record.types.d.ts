@@ -182,13 +182,23 @@ export interface TimesheetCell {
     mappedTimeCode?: string | null;
     mappingConfidence: number;
 }
+export interface WorkOrderType extends BaseRecord {
+    workOrderTypeId: number;
+    workOrderType: string;
+    workOrderNumberPrefix: string;
+    orderNumber: number;
+    userGroupId?: number | null;
+    userGroupName?: string;
+}
 export interface WorkOrder extends BaseRecord {
     workOrderId: number;
+    workOrderNumberPrefix: string;
     workOrderNumberYear: number;
     workOrderNumberSequence: number;
+    workOrderNumberOverride?: string | null;
     workOrderNumber: string;
-    workOrderTypeDataListItemId: number;
-    workOrderTypeDataListItem?: string;
+    workOrderTypeId: number;
+    workOrderType?: string;
     workOrderStatusDataListItemId?: number | null;
     workOrderStatusDataListItem?: string;
     workOrderDetails: string;

@@ -1,5 +1,5 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
+/* eslint-disable unicorn/no-null */
 
 import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString, TimeString } from '@cityssm/utils-datetime'
@@ -7,6 +7,7 @@ import type { DateString, TimeString } from '@cityssm/utils-datetime'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
+import getWorkOrderType from '../workOrderTypes/getWorkOrderType.js'
 
 export interface CreateWorkOrderForm {
   workOrderDetails: string
@@ -42,9 +43,20 @@ export interface CreateWorkOrderForm {
 
 export default async function createWorkOrder(
   createWorkOrderForm: CreateWorkOrderForm,
-  userName: string
+  user: User
 ): Promise<number> {
   const pool = await getShiftLogConnectionPool()
+
+  const workOrderType = await getWorkOrderType(
+    typeof createWorkOrderForm.workOrderTypeId === 'string'
+      ? Number.parseInt(createWorkOrderForm.workOrderTypeId, 10)
+      : createWorkOrderForm.workOrderTypeId,
+    user
+  )
+
+  if (workOrderType === undefined) {
+    throw new Error('Invalid work order type.')
+  }
 
   const openDateTime = new Date(createWorkOrderForm.workOrderOpenDateTimeString)
   const currentYear = openDateTime.getFullYear()
@@ -54,14 +66,14 @@ export default async function createWorkOrder(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('year', currentYear)
-    .input('workOrderTypeId', createWorkOrderForm.workOrderTypeId)
+    .input('workOrderNumberPrefix', workOrderType.workOrderNumberPrefix)
     .query(/* sql */ `
       select isnull(max(workOrderNumberSequence), 0) + 1 as nextSequence
       from ShiftLog.WorkOrders
       where
         instance = @instance
+        and workOrderNumberPrefix = @workOrderNumberPrefix
         and workOrderNumberYear = @year
-        and workOrderTypeId = @workOrderTypeId
     `)) as mssql.IResult<{ nextSequence: number }>
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
@@ -69,6 +81,7 @@ export default async function createWorkOrder(
   const result = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
+    .input('workOrderNumberPrefix', workOrderType.workOrderNumberPrefix)
     .input('workOrderNumberYear', currentYear)
     .input('workOrderNumberSequence', nextSequence)
     .input('workOrderTypeId', createWorkOrderForm.workOrderTypeId)
@@ -122,9 +135,10 @@ export default async function createWorkOrder(
       'assignedToDataListItemId',
       createWorkOrderForm.assignedToDataListItemId ?? null
     )
-    .input('userName', userName).query(/* sql */ `
+    .input('userName', user.userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
         instance,
+        workOrderNumberPrefix,
         workOrderNumberYear,
         workOrderNumberSequence,
         workOrderTypeId,
@@ -147,6 +161,7 @@ export default async function createWorkOrder(
       output inserted.workOrderId
       values (
         @instance,
+        @workOrderNumberPrefix,
         @workOrderNumberYear,
         @workOrderNumberSequence,
         @workOrderTypeId,

@@ -271,11 +271,26 @@ GO
 create table ShiftLog.WorkOrders (
   workOrderId int not null primary key identity(1,1),
   
+  workOrderTypeId int not null,
+
   instance varchar(20) not null,
+  workOrderNumberPrefix varchar(10) not null,
   workOrderNumberYear smallint not null,
   workOrderNumberSequence int not null,
 
-  workOrderTypeId int not null,
+  workOrderNumberOverride varchar(50) not null default '',
+
+  workOrderNumber as 
+    case 
+      when workOrderNumberOverride <> '' then workOrderNumberOverride
+      else 
+        concat(
+          workOrderNumberPrefix,
+          right('0000' + cast(workOrderNumberYear as varchar(4)), 4),
+          '-',
+          right('00000' +  cast(workOrderNumberSequence as varchar(5)), 5)
+        )
+    end PERSISTED,
 
   workOrderStatusDataListItemId int,
   workOrderDetails varchar(max) not null default '',
@@ -303,7 +318,7 @@ create table ShiftLog.WorkOrders (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
-  unique (instance, workOrderTypeId, workOrderNumberYear, workOrderNumberSequence),
+  unique (instance, workOrderNumberPrefix, workOrderNumberYear, workOrderNumberSequence, workOrderNumberOverride),
   foreign key (workOrderTypeId) references ShiftLog.WorkOrderTypes(workOrderTypeId),
   foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)

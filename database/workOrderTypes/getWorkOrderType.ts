@@ -5,7 +5,8 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
 export default async function getWorkOrderType(
-  workOrderTypeId: number | string
+  workOrderTypeId: number | string,
+  user?: User
 ): Promise<WorkOrderType | undefined> {
   const pool = await getShiftLogConnectionPool()
 
@@ -26,6 +27,19 @@ export default async function getWorkOrderType(
       where wt.instance = @instance
         and wt.workOrderTypeId = @workOrderTypeId
         and wt.recordDelete_dateTime is null
+        ${
+          user === undefined
+            ? ''
+            : /* sql */ `
+              and (
+                wt.userGroupId is null or wt.userGroupId in (
+                  select userGroupId
+                  from ShiftLog.UserGroupMembers
+                  where userName = @userName
+                )
+              )
+              `
+        }
     `)) as mssql.IResult<WorkOrderType>
 
   return result.recordset[0]

@@ -3,7 +3,7 @@ export interface UpdateWorkOrderForm {
     workOrderId: number | string;
     workOrderDetails: string;
     workOrderStatusDataListItemId?: number | string;
-    workOrderTypeDataListItemId: number | string;
+    workOrderTypeId: number | string;
     workOrderOpenDateTimeString: `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderDueDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderCloseDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;

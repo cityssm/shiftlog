@@ -1,7 +1,7 @@
+import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
 import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
-import getWorkOrderTypeDataListItems from '../../database/workOrders/getWorkOrderTypeDataListItems.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`;
 export default async function handler(request, response) {
@@ -14,7 +14,7 @@ export default async function handler(request, response) {
         response.redirect(`${redirectRoot}/${workOrder.workOrderId}?error=recordClosed`);
         return;
     }
-    const workOrderTypes = await getWorkOrderTypeDataListItems(request.session.user);
+    const workOrderTypes = await getWorkOrderTypes(request.session.user);
     const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user);
     const assignedToOptions = await getAssignedToDataListItems(request.session.user);
     response.render('workOrders/edit', {

@@ -46,7 +46,6 @@ export declare const configDefaultValues: {
     'workOrders.sectionName': string;
     'workOrders.sectionNameSingular': string;
     'workOrders.iconClass': string;
-    'workOrders.workOrderNumberPrefix': string;
     'timesheets.isEnabled': boolean;
     'timesheets.router': string;
     'timesheets.sectionName': string;

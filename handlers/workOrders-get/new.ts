@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express'
 
-import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js'
 import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js'
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js'
+import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'

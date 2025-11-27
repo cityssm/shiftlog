@@ -1,5 +1,5 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
+/* eslint-disable unicorn/no-null */
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
@@ -25,7 +25,7 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
 
   if (filters.workOrderNumber !== undefined && filters.workOrderNumber !== '') {
     whereClause +=
-      " and (isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(w.workOrderNumberSequence as varchar(6)),6)) like @workOrderNumber"
+      " and w.workOrderNumber like @workOrderNumber"
   }
 
   if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
@@ -194,9 +194,12 @@ export default async function getWorkOrders(
       .input('userName', user?.userName).query<WorkOrder>(/* sql */ `
         select
           w.workOrderId,
+
+          w.workOrderNumberPrefix,
           w.workOrderNumberYear,
           w.workOrderNumberSequence,
-          isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(w.workOrderNumberSequence as varchar(6)),6) as workOrderNumber,
+          w.workOrderNumberOverride,
+          w.workOrderNumber,
 
           w.workOrderTypeId,
           wType.workOrderType,

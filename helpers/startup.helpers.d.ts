@@ -5,7 +5,6 @@ export declare const REQUIRED_SYSTEM_LISTS: {
     readonly equipmentTypes: "Equipment Types";
     readonly assignedTo: "Assigned To";
     readonly workOrderStatuses: "Work Order Statuses";
-    readonly workOrderTypes: "Work Order Types";
     readonly shiftTimes: "Shift Times";
     readonly shiftTypes: "Shift Types";
     readonly jobClassifications: "Job Classifications";

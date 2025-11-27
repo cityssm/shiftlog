@@ -10,7 +10,6 @@ export const REQUIRED_SYSTEM_LISTS = {
     equipmentTypes: 'Equipment Types',
     assignedTo: 'Assigned To',
     workOrderStatuses: 'Work Order Statuses',
-    workOrderTypes: 'Work Order Types',
     shiftTimes: 'Shift Times',
     shiftTypes: 'Shift Types',
     jobClassifications: 'Job Classifications',

@@ -267,8 +267,10 @@ export interface WorkOrderType extends BaseRecord {
 export interface WorkOrder extends BaseRecord {
   workOrderId: number
 
+  workOrderNumberPrefix: string
   workOrderNumberYear: number
   workOrderNumberSequence: number
+  workOrderNumberOverride?: string | null
   workOrderNumber: string
 
   workOrderTypeId: number
