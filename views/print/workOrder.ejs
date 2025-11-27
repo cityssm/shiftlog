@@ -118,7 +118,7 @@
       <% for (const milestone of milestones) { %>
       <tr>
         <td><%= milestone.milestoneTitle %></td>
-        <td><%= milestone.milestoneDescription || '' %></td>
+        <td><%= milestone.milestoneDescription %></td>
         <td><%= milestone.assignedToDataListItem ?? '' %></td>
         <td>
           <% if (milestone.milestoneDueDateTime) { %>
