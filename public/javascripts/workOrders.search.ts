@@ -161,7 +161,7 @@ declare const exports: {
           </a>
         </td>
         <td>
-          ${cityssm.escapeHTML(workOrder.workOrderTypeDataListItem ?? '(Unknown Type)')}<br />
+          ${cityssm.escapeHTML(workOrder.workOrderType ?? '(Unknown Type)')}<br />
           <span class="is-size-7 has-text-grey">
             ${cityssm.escapeHTML(
               workOrder.workOrderDetails.length > 75
