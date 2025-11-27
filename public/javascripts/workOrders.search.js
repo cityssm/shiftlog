@@ -94,6 +94,13 @@
                         '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>';
                 }
             }
+            let extraDateHTML = '';
+            if (workOrder.workOrderCloseDateTime !== null) {
+                extraDateHTML = `<i class="fa-solid fa-stop" title="Close Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderCloseDateTime ?? ''))}`;
+            }
+            else if (workOrder.workOrderDueDateTime !== null) {
+                extraDateHTML = `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`;
+            }
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ `
         <td class="has-text-centered">
@@ -120,14 +127,14 @@
         <td>
           ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}<br />
           <span class="is-size-7 has-text-grey">
-            ${workOrder.workOrderDueDateTime === null ? '' : `Due ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`}
+            ${extraDateHTML}
           </span>
         </td>
         <td>
           ${cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName)}
         </td>
         <td>
-          ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : workOrder.assignedToDataListItem ?? '')}
+          ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : (workOrder.assignedToDataListItem ?? ''))}
         </td>
         <td>
           <a
