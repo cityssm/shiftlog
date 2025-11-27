@@ -366,7 +366,7 @@ if (configFunctions.getConfigProperty('timesheets.isEnabled')) {
   )
 }
 
-app.use(`${urlPrefix}/api/:apiKey`, permissionHandlers.apiGetHandler, routerApi)
+app.use(`${urlPrefix}/api`, routerApi)
 
 app.use(
   `${urlPrefix}/admin`,

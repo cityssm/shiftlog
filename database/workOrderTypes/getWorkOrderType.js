@@ -5,6 +5,7 @@ export default async function getWorkOrderType(workOrderTypeId, user) {
     const result = (await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
+        .input('userName', user?.userName ?? '')
         .input('workOrderTypeId', workOrderTypeId).query(/* sql */ `
       select
         wt.workOrderTypeId,

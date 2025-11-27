@@ -256,8 +256,10 @@ export interface TimesheetCell {
 export interface WorkOrderType extends BaseRecord {
   workOrderTypeId: number
   workOrderType: string
+  
   workOrderNumberPrefix: string
   orderNumber: number
+
   userGroupId?: number | null
   userGroupName?: string
 }

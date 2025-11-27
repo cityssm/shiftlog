@@ -242,7 +242,7 @@ if (configFunctions.getConfigProperty('timesheets.isEnabled')) {
         }
     }, routerTimesheets);
 }
-app.use(`${urlPrefix}/api/:apiKey`, permissionHandlers.apiGetHandler, routerApi);
+app.use(`${urlPrefix}/api`, routerApi);
 app.use(`${urlPrefix}/admin`, sessionCheckHandler, permissionHandlers.adminGetHandler, routerAdmin);
 if (configFunctions.getConfigProperty('session.doKeepAlive')) {
     app.all(`${urlPrefix}/keepAlive`, (request, response) => {

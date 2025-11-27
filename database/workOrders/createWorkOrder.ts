@@ -133,7 +133,9 @@ export default async function createWorkOrder(
     .input('locationCityProvince', createWorkOrderForm.locationCityProvince)
     .input(
       'assignedToDataListItemId',
-      createWorkOrderForm.assignedToDataListItemId ?? null
+      createWorkOrderForm.assignedToDataListItemId === ''
+        ? null
+        : createWorkOrderForm.assignedToDataListItemId
     )
     .input('userName', user.userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
