@@ -393,6 +393,34 @@ declare const exports: {
   })
 
   /*
+   * Set Due Date Options
+   */
+
+  function setDueDateOption(clickEvent: Event): void {
+    clickEvent.preventDefault()
+
+    const target = clickEvent.currentTarget as HTMLElement
+    const daysToAddString = target.dataset.days
+
+    if (daysToAddString !== undefined) {
+      const daysToAdd = Number.parseInt(daysToAddString, 10)
+
+      const dueDate = new Date()
+      dueDate.setDate(dueDate.getDate() + daysToAdd)
+
+      workOrderDueDateTimePicker.setDate(dueDate, true)
+    }
+  }
+
+  const dueDateOptionElements = workOrderFormElement.querySelectorAll(
+    '#dropdown--dueDateOptions a'
+  )
+
+  for (const dueDateOptionElement of dueDateOptionElements) {
+    dueDateOptionElement.addEventListener('click', setDueDateOption)
+  }
+
+  /*
    * Set Close Time to Now Button
    */
 
