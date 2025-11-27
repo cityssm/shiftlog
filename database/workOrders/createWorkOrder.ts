@@ -11,7 +11,7 @@ import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
 export interface CreateWorkOrderForm {
   workOrderDetails: string
   workOrderStatusDataListItemId?: number | string
-  workOrderTypeDataListItemId: number | string
+  workOrderTypeId: number | string
 
   workOrderOpenDateTimeString:
     | `${DateString} ${TimeString}`
@@ -49,21 +49,19 @@ export default async function createWorkOrder(
   const openDateTime = new Date(createWorkOrderForm.workOrderOpenDateTimeString)
   const currentYear = openDateTime.getFullYear()
 
-  // Get the next sequence number for the current year
+  // Get the next sequence number for the current year and work order type
   const sequenceResult = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('year', currentYear)
-    .input(
-      'workOrderNumberPrefix',
-      getConfigProperty('workOrders.workOrderNumberPrefix')
-    ).query(/* sql */ `
+    .input('workOrderTypeId', createWorkOrderForm.workOrderTypeId)
+    .query(/* sql */ `
       select isnull(max(workOrderNumberSequence), 0) + 1 as nextSequence
       from ShiftLog.WorkOrders
       where
         instance = @instance
         and workOrderNumberYear = @year
-        and workOrderNumberPrefix = @workOrderNumberPrefix
+        and workOrderTypeId = @workOrderTypeId
     `)) as mssql.IResult<{ nextSequence: number }>
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
@@ -71,16 +69,9 @@ export default async function createWorkOrder(
   const result = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input(
-      'workOrderNumberPrefix',
-      getConfigProperty('workOrders.workOrderNumberPrefix')
-    )
     .input('workOrderNumberYear', currentYear)
     .input('workOrderNumberSequence', nextSequence)
-    .input(
-      'workOrderTypeDataListItemId',
-      createWorkOrderForm.workOrderTypeDataListItemId
-    )
+    .input('workOrderTypeId', createWorkOrderForm.workOrderTypeId)
     .input(
       'workOrderStatusDataListItemId',
       createWorkOrderForm.workOrderStatusDataListItemId === ''
@@ -134,10 +125,9 @@ export default async function createWorkOrder(
     .input('userName', userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
         instance,
-        workOrderNumberPrefix,
         workOrderNumberYear,
         workOrderNumberSequence,
-        workOrderTypeDataListItemId,
+        workOrderTypeId,
         workOrderStatusDataListItemId,
         workOrderDetails,
         workOrderOpenDateTime,
@@ -157,10 +147,9 @@ export default async function createWorkOrder(
       output inserted.workOrderId
       values (
         @instance,
-        @workOrderNumberPrefix,
         @workOrderNumberYear,
         @workOrderNumberSequence,
-        @workOrderTypeDataListItemId,
+        @workOrderTypeId,
         @workOrderStatusDataListItemId,
         @workOrderDetails,
         @workOrderOpenDateTime,

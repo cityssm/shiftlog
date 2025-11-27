@@ -12,7 +12,7 @@ export interface UpdateWorkOrderForm {
 
   workOrderDetails: string
   workOrderStatusDataListItemId?: number | string
-  workOrderTypeDataListItemId: number | string
+  workOrderTypeId: number | string
 
   workOrderOpenDateTimeString:
     | `${DateString} ${TimeString}`
@@ -51,10 +51,7 @@ export default async function updateWorkOrder(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('workOrderId', updateWorkOrderForm.workOrderId)
-    .input(
-      'workOrderTypeDataListItemId',
-      updateWorkOrderForm.workOrderTypeDataListItemId
-    )
+    .input('workOrderTypeId', updateWorkOrderForm.workOrderTypeId)
     .input(
       'workOrderStatusDataListItemId',
       updateWorkOrderForm.workOrderStatusDataListItemId === ''
@@ -108,7 +105,7 @@ export default async function updateWorkOrder(
     .input('userName', userName).query(/* sql */ `
       update ShiftLog.WorkOrders
       set
-        workOrderTypeDataListItemId = @workOrderTypeDataListItemId,
+        workOrderTypeId = @workOrderTypeId,
         workOrderStatusDataListItemId = @workOrderStatusDataListItemId,
         workOrderDetails = @workOrderDetails,
         workOrderOpenDateTime = @workOrderOpenDateTime,

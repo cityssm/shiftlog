@@ -84,8 +84,6 @@ export const configDefaultValues = {
 
   'workOrders.iconClass': 'fa-hard-hat',
 
-  'workOrders.workOrderNumberPrefix': '',
-
   // Timesheets
 
   'timesheets.isEnabled': false,

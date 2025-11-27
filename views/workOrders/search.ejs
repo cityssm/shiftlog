@@ -54,16 +54,16 @@
           </div>
           <div class="column">
             <div class="field">
-              <label class="label" for="workOrderSearch--workOrderTypeDataListItemId">
+              <label class="label" for="workOrderSearch--workOrderTypeId">
                 <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
               </label>
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select id="workOrderSearch--workOrderTypeDataListItemId" name="workOrderTypeDataListItemId">
+                  <select id="workOrderSearch--workOrderTypeId" name="workOrderTypeId">
                     <option value="">(All Types)</option>
                     <% workOrderTypes.forEach(function(workOrderType) { %>
-                    <option value="<%= workOrderType.dataListItemId %>">
-                      <%= workOrderType.dataListItem %>
+                    <option value="<%= workOrderType.workOrderTypeId %>">
+                      <%= workOrderType.workOrderType %>
                     </option>
                     <% }); %>
                   </select>

@@ -13,9 +13,7 @@ config.shifts = {
 }
 
 config.workOrders = {
-  isEnabled: true,
-
-  workOrderNumberPrefix: 'CSD-'
+  isEnabled: true
 }
 
 config.timesheets = {

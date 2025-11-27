@@ -17,8 +17,8 @@ export default async function getWorkOrder(
       w.workOrderNumberSequence,
       w.workOrderNumber,
 
-      w.workOrderTypeDataListItemId,
-      wType.dataListItem as workOrderTypeDataListItem,
+      w.workOrderTypeId,
+      wType.workOrderType,
 
       w.workOrderStatusDataListItemId,
       wStatus.dataListItem as workOrderStatusDataListItem,
@@ -43,8 +43,8 @@ export default async function getWorkOrder(
 
     from ShiftLog.WorkOrders w
 
-    left join ShiftLog.DataListItems wType
-      on w.workOrderTypeDataListItemId = wType.dataListItemId
+    left join ShiftLog.WorkOrderTypes wType
+      on w.workOrderTypeId = wType.workOrderTypeId
 
     left join ShiftLog.DataListItems wStatus
       on w.workOrderStatusDataListItemId = wStatus.dataListItemId

@@ -11,7 +11,7 @@ export interface GetWorkOrdersFilters {
   requestorName?: string
   workOrderNumber?: string
   workOrderStatusDataListItemId?: number | string
-  workOrderTypeDataListItemId?: number | string
+  workOrderTypeId?: number | string
 }
 
 export interface GetWorkOrdersOptions {
@@ -27,12 +27,8 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
     whereClause += ' and w.workOrderNumber like @workOrderNumber'
   }
 
-  if (
-    filters.workOrderTypeDataListItemId !== undefined &&
-    filters.workOrderTypeDataListItemId !== ''
-  ) {
-    whereClause +=
-      ' and w.workOrderTypeDataListItemId = @workOrderTypeDataListItemId'
+  if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
+    whereClause += ' and w.workOrderTypeId = @workOrderTypeId'
   }
 
   if (
@@ -130,8 +126,8 @@ export default async function getWorkOrders(
     const countSql = /* sql */ `
       select count(*) as totalCount
       from ShiftLog.WorkOrders w
-      left join ShiftLog.DataListItems wType
-        on w.workOrderTypeDataListItemId = wType.dataListItemId
+      left join ShiftLog.WorkOrderTypes wType
+        on w.workOrderTypeId = wType.workOrderTypeId
       ${whereClause}
     `
 
@@ -144,10 +140,7 @@ export default async function getWorkOrders(
           ? null
           : `%${filters.workOrderNumber}%`
       )
-      .input(
-        'workOrderTypeDataListItemId',
-        filters.workOrderTypeDataListItemId ?? null
-      )
+      .input('workOrderTypeId', filters.workOrderTypeId ?? null)
       .input(
         'workOrderStatusDataListItemId',
         filters.workOrderStatusDataListItemId ?? null
@@ -182,10 +175,7 @@ export default async function getWorkOrders(
           ? null
           : `%${filters.workOrderNumber}%`
       )
-      .input(
-        'workOrderTypeDataListItemId',
-        filters.workOrderTypeDataListItemId ?? null
-      )
+      .input('workOrderTypeId', filters.workOrderTypeId ?? null)
       .input(
         'workOrderStatusDataListItemId',
         filters.workOrderStatusDataListItemId ?? null
@@ -207,8 +197,8 @@ export default async function getWorkOrders(
           w.workOrderNumberSequence,
           w.workOrderNumber,
 
-          w.workOrderTypeDataListItemId,
-          wType.dataListItem as workOrderTypeDataListItem,
+          w.workOrderTypeId,
+          wType.workOrderType,
 
           w.workOrderStatusDataListItemId,
           wStatus.dataListItem as workOrderStatusDataListItem,
@@ -236,8 +226,8 @@ export default async function getWorkOrders(
           
         from ShiftLog.WorkOrders w
 
-        left join ShiftLog.DataListItems wType
-          on w.workOrderTypeDataListItemId = wType.dataListItemId
+        left join ShiftLog.WorkOrderTypes wType
+          on w.workOrderTypeId = wType.workOrderTypeId
 
         left join ShiftLog.DataListItems wStatus
           on w.workOrderStatusDataListItemId = wStatus.dataListItemId

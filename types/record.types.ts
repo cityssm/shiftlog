@@ -251,6 +251,17 @@ export interface TimesheetCell {
   mappingConfidence: number
 }
 
+// Work Order Types
+
+export interface WorkOrderType extends BaseRecord {
+  workOrderTypeId: number
+  workOrderType: string
+  workOrderNumberPrefix: string
+  orderNumber: number
+  userGroupId?: number | null
+  userGroupName?: string
+}
+
 // Work Orders
 
 export interface WorkOrder extends BaseRecord {
@@ -260,8 +271,8 @@ export interface WorkOrder extends BaseRecord {
   workOrderNumberSequence: number
   workOrderNumber: string
 
-  workOrderTypeDataListItemId: number
-  workOrderTypeDataListItem?: string
+  workOrderTypeId: number
+  workOrderType?: string
 
   workOrderStatusDataListItemId?: number | null
   workOrderStatusDataListItem?: string

@@ -75,30 +75,30 @@
         <div class="columns">
           <div class="column">
             <div class="field">
-              <label class="label" for="workOrder--workOrderTypeDataListItemId">
+              <label class="label" for="workOrder--workOrderTypeId">
                 <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
               </label>
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select id="workOrder--workOrderTypeDataListItemId" name="workOrderTypeDataListItemId" required <% if (!isEdit) { %>disabled<% } %>>
+                  <select id="workOrder--workOrderTypeId" name="workOrderTypeId" required <% if (!isEdit) { %>disabled<% } %>>
                     <% if (isCreate) { %>
                       <option value="">(Select Type)</option>
                       <% } %>
                       <% let workOrderTypeFound = false %>
                       <% for (const workOrderType of workOrderTypes) { %>
                         <option
-                        value="<%= workOrderType.dataListItemId %>"
-                        <% if (workOrder.workOrderTypeDataListItemId === workOrderType.dataListItemId) { %>
+                        value="<%= workOrderType.workOrderTypeId %>"
+                        <% if (workOrder.workOrderTypeId === workOrderType.workOrderTypeId) { %>
                           <% workOrderTypeFound = true; %>
                           selected
                           <% } %>
                           >
-                          <%= workOrderType.dataListItem %>
+                          <%= workOrderType.workOrderType %>
                     </option>
                     <% } %>
-                    <% if (!isCreate && !workOrderTypeFound && workOrder.workOrderTypeDataListItemId !== -1) { %>
-                      <option value="<%= workOrder.workOrderTypeDataListItemId %>" selected>
-                        <%= workOrder.workOrderTypeDataListItem %>
+                    <% if (!isCreate && !workOrderTypeFound && workOrder.workOrderTypeId !== -1) { %>
+                      <option value="<%= workOrder.workOrderTypeId %>" selected>
+                        <%= workOrder.workOrderType %>
                         <%= isEdit ? "(Inactive)" : "" %>
                       </option>
                     <% } %>
