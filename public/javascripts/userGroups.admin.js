@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const userGroupsContainerElement = document.querySelector('#container--userGroups');
@@ -126,30 +128,36 @@
             const modalElement = document.querySelector('.modal.is-active');
             const membersContainer = modalElement.querySelector('#container--members');
             if (currentMembers.length === 0) {
-                membersContainer.innerHTML = '<p class="has-text-grey">No members in this group.</p>';
+                membersContainer.innerHTML =
+                    '<p class="has-text-grey">No members in this group.</p>';
                 return;
             }
             const listHtml = currentMembers
                 .map((userName) => /*html*/ `
-        <div class="field is-grouped">
-          <div class="control is-expanded">
-            <input class="input" type="text" value="${cityssm.escapeHTML(userName)}" readonly />
-          </div>
-          <div class="control">
-            <button class="button is-danger remove-member" data-user-name="${cityssm.escapeHTML(userName)}" type="button">
-              <span class="icon">
-                <i class="fa-solid fa-times"></i>
-              </span>
-              <span>Remove</span>
-            </button>
-          </div>
-        </div>
-      `)
+            <div class="field is-grouped">
+              <div class="control is-expanded">
+                <input
+                  class="input"
+                  type="text"
+                  value="${cityssm.escapeHTML(userName)}"
+                  readonly
+                />
+              </div>
+              <div class="control">
+                <button class="button is-danger remove-member" data-user-name="${cityssm.escapeHTML(userName)}" type="button">
+                  <span class="icon">
+                    <i class="fa-solid fa-times"></i>
+                  </span>
+                  <span>Remove</span>
+                </button>
+              </div>
+            </div>
+          `)
                 .join('');
             membersContainer.innerHTML = listHtml;
             // Add event listeners for remove buttons
             const removeButtons = membersContainer.querySelectorAll('.remove-member');
-            for (const button of Array.from(removeButtons)) {
+            for (const button of removeButtons) {
                 button.addEventListener('click', removeMember);
             }
         }
@@ -171,8 +179,10 @@
                         renderMembersList();
                         // Update the user group in the main list and re-render
                         const groupIndex = exports.userGroups.findIndex((ug) => ug.userGroupId.toString() === userGroupId);
-                        if (groupIndex !== -1 && responseJSON.userGroup.memberCount !== undefined) {
-                            exports.userGroups[groupIndex].memberCount = responseJSON.userGroup.memberCount;
+                        if (groupIndex !== -1 &&
+                            responseJSON.userGroup.memberCount !== undefined) {
+                            exports.userGroups[groupIndex].memberCount =
+                                responseJSON.userGroup.memberCount;
                             renderUserGroups(exports.userGroups);
                         }
                     }
@@ -211,8 +221,10 @@
                         renderMembersList();
                         // Update the user group in the main list and re-render
                         const groupIndex = exports.userGroups.findIndex((ug) => ug.userGroupId.toString() === userGroupId);
-                        if (groupIndex !== -1 && responseJSON.userGroup.memberCount !== undefined) {
-                            exports.userGroups[groupIndex].memberCount = responseJSON.userGroup.memberCount;
+                        if (groupIndex !== -1 &&
+                            responseJSON.userGroup.memberCount !== undefined) {
+                            exports.userGroups[groupIndex].memberCount =
+                                responseJSON.userGroup.memberCount;
                             renderUserGroups(exports.userGroups);
                         }
                     }
@@ -240,8 +252,11 @@
                 userSelect.innerHTML =
                     '<option value="">Select a user...</option>' +
                         exports.users
-                            .map((user) => 
-                        /*html*/ `<option value="${cityssm.escapeHTML(user.userName)}">${cityssm.escapeHTML(user.userName)}</option>`)
+                            .map((user) => /*html*/ `
+                  <option value="${cityssm.escapeHTML(user.userName)}">
+                    ${cityssm.escapeHTML(user.userName)}
+                  </option>
+                `)
                             .join('');
                 // Get current members
                 fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
@@ -313,13 +328,15 @@
     }
     function renderUserGroups(userGroups) {
         if (userGroups.length === 0) {
-            userGroupsContainerElement.innerHTML =
-                '<p class="has-text-grey">No user groups found.</p>';
+            userGroupsContainerElement.innerHTML = /* html */ `
+          <div class="message is-info">
+            <div class="message-body">No user groups found.</div>
+          </div>
+        `;
             return;
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
         tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
@@ -336,15 +353,15 @@
         }
         // Add event listeners
         const manageMembersButtons = tableElement.querySelectorAll('.manage-members');
-        for (const button of Array.from(manageMembersButtons)) {
+        for (const button of manageMembersButtons) {
             button.addEventListener('click', manageMembers);
         }
         const editButtons = tableElement.querySelectorAll('.edit-user-group');
-        for (const button of Array.from(editButtons)) {
+        for (const button of editButtons) {
             button.addEventListener('click', editUserGroup);
         }
         const deleteButtons = tableElement.querySelectorAll('.delete-user-group');
-        for (const button of Array.from(deleteButtons)) {
+        for (const button of deleteButtons) {
             button.addEventListener('click', deleteUserGroup);
         }
         userGroupsContainerElement.replaceChildren(tableElement);

@@ -60,7 +60,7 @@
     <p class="message-body">
       <strong>No work order types available.</strong><br />
       Please contact your system administrator to set up work order types before creating
-      <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular').toLowerCase() %>s.
+      <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
     </p>
   </div>
 <% } %>
@@ -401,6 +401,11 @@
         <% if (isCreate) { %>
         <a class="button is-danger is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
           Cancel
+        </a>
+        <% } else { %>
+        <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>/print" target="_blank">
+          <span class="icon is-small"><i class="fa-solid fa-print"></i></span>
+          <span>Print</span>
         </a>
         <% } %>
         <% if (isEdit) { %>

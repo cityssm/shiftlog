@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
@@ -32,10 +35,12 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete User Group',
+
       message: 'Are you sure you want to delete this user group?',
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete User Group',
+
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteUserGroup`,
@@ -57,12 +62,14 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'User Group Deleted',
+
                   message: 'User group has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Deleting User Group',
+
                   message: 'Please try again.'
                 })
               }
@@ -116,12 +123,14 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'User Group Updated',
+
               message: 'User group has been successfully updated.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating User Group',
+
               message: 'Please try again.'
             })
           }
@@ -132,9 +141,7 @@ declare const exports: {
     cityssm.openHtmlModal('adminUserGroups-edit', {
       onshow(modalElement) {
         ;(
-          modalElement.querySelector(
-            '[name="userGroupId"]'
-          ) as HTMLInputElement
+          modalElement.querySelector('[name="userGroupId"]') as HTMLInputElement
         ).value = userGroupId
         ;(
           modalElement.querySelector(
@@ -150,6 +157,7 @@ declare const exports: {
           .querySelector('form')
           ?.addEventListener('submit', doUpdateUserGroup)
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -198,27 +206,33 @@ declare const exports: {
       ) as HTMLElement
 
       if (currentMembers.length === 0) {
-        membersContainer.innerHTML = '<p class="has-text-grey">No members in this group.</p>'
+        membersContainer.innerHTML =
+          '<p class="has-text-grey">No members in this group.</p>'
         return
       }
 
       const listHtml = currentMembers
         .map(
           (userName) => /*html*/ `
-        <div class="field is-grouped">
-          <div class="control is-expanded">
-            <input class="input" type="text" value="${cityssm.escapeHTML(userName)}" readonly />
-          </div>
-          <div class="control">
-            <button class="button is-danger remove-member" data-user-name="${cityssm.escapeHTML(userName)}" type="button">
-              <span class="icon">
-                <i class="fa-solid fa-times"></i>
-              </span>
-              <span>Remove</span>
-            </button>
-          </div>
-        </div>
-      `
+            <div class="field is-grouped">
+              <div class="control is-expanded">
+                <input
+                  class="input"
+                  type="text"
+                  value="${cityssm.escapeHTML(userName)}"
+                  readonly
+                />
+              </div>
+              <div class="control">
+                <button class="button is-danger remove-member" data-user-name="${cityssm.escapeHTML(userName)}" type="button">
+                  <span class="icon">
+                    <i class="fa-solid fa-times"></i>
+                  </span>
+                  <span>Remove</span>
+                </button>
+              </div>
+            </div>
+          `
         )
         .join('')
 
@@ -226,7 +240,7 @@ declare const exports: {
 
       // Add event listeners for remove buttons
       const removeButtons = membersContainer.querySelectorAll('.remove-member')
-      for (const button of Array.from(removeButtons)) {
+      for (const button of removeButtons) {
         button.addEventListener('click', removeMember)
       }
     }
@@ -259,13 +273,18 @@ declare const exports: {
             if (responseJSON.userGroup !== undefined) {
               currentMembers = responseJSON.userGroup.members ?? []
               renderMembersList()
-              
+
               // Update the user group in the main list and re-render
               const groupIndex = exports.userGroups.findIndex(
                 (ug) => ug.userGroupId.toString() === userGroupId
               )
-              if (groupIndex !== -1 && responseJSON.userGroup.memberCount !== undefined) {
-                exports.userGroups[groupIndex].memberCount = responseJSON.userGroup.memberCount
+              if (
+                groupIndex !== -1 &&
+                responseJSON.userGroup.memberCount !== undefined
+              ) {
+                exports.userGroups[groupIndex].memberCount =
+                  responseJSON.userGroup.memberCount
+
                 renderUserGroups(exports.userGroups)
               }
             }
@@ -278,12 +297,14 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Member Added',
+
               message: 'User has been added to the group.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Member',
+
               message: 'Please try again.'
             })
           }
@@ -315,13 +336,17 @@ declare const exports: {
             if (responseJSON.userGroup !== undefined) {
               currentMembers = responseJSON.userGroup.members ?? []
               renderMembersList()
-              
+
               // Update the user group in the main list and re-render
               const groupIndex = exports.userGroups.findIndex(
                 (ug) => ug.userGroupId.toString() === userGroupId
               )
-              if (groupIndex !== -1 && responseJSON.userGroup.memberCount !== undefined) {
-                exports.userGroups[groupIndex].memberCount = responseJSON.userGroup.memberCount
+              if (
+                groupIndex !== -1 &&
+                responseJSON.userGroup.memberCount !== undefined
+              ) {
+                exports.userGroups[groupIndex].memberCount =
+                  responseJSON.userGroup.memberCount
                 renderUserGroups(exports.userGroups)
               }
             }
@@ -329,12 +354,14 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Member Removed',
+
               message: 'User has been removed from the group.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Removing Member',
+
               message: 'Please try again.'
             })
           }
@@ -352,12 +379,16 @@ declare const exports: {
         const userSelect = modalElement.querySelector(
           '[name="userName"]'
         ) as HTMLSelectElement
+
         userSelect.innerHTML =
           '<option value="">Select a user...</option>' +
           exports.users
             .map(
-              (user) =>
-                /*html*/ `<option value="${cityssm.escapeHTML(user.userName)}">${cityssm.escapeHTML(user.userName)}</option>`
+              (user) => /*html*/ `
+                  <option value="${cityssm.escapeHTML(user.userName)}">
+                    ${cityssm.escapeHTML(user.userName)}
+                  </option>
+                `
             )
             .join('')
 
@@ -382,6 +413,7 @@ declare const exports: {
           .querySelector('#form--addMember')
           ?.addEventListener('submit', addMember)
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -436,15 +468,17 @@ declare const exports: {
 
   function renderUserGroups(userGroups: UserGroup[]): void {
     if (userGroups.length === 0) {
-      userGroupsContainerElement.innerHTML =
-        '<p class="has-text-grey">No user groups found.</p>'
+      userGroupsContainerElement.innerHTML = /* html */ `
+          <div class="message is-info">
+            <div class="message-body">No user groups found.</div>
+          </div>
+        `
       return
     }
 
     const tableElement = document.createElement('table')
     tableElement.className = 'table is-fullwidth is-striped is-hoverable'
 
-    // eslint-disable-next-line no-unsanitized/property
     tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
@@ -462,18 +496,19 @@ declare const exports: {
     }
 
     // Add event listeners
-    const manageMembersButtons = tableElement.querySelectorAll('.manage-members')
-    for (const button of Array.from(manageMembersButtons)) {
+    const manageMembersButtons =
+      tableElement.querySelectorAll('.manage-members')
+    for (const button of manageMembersButtons) {
       button.addEventListener('click', manageMembers)
     }
 
     const editButtons = tableElement.querySelectorAll('.edit-user-group')
-    for (const button of Array.from(editButtons)) {
+    for (const button of editButtons) {
       button.addEventListener('click', editUserGroup)
     }
 
     const deleteButtons = tableElement.querySelectorAll('.delete-user-group')
-    for (const button of Array.from(deleteButtons)) {
+    for (const button of deleteButtons) {
       button.addEventListener('click', deleteUserGroup)
     }
 
@@ -507,12 +542,14 @@ declare const exports: {
               bulmaJS.alert({
                 contextualColorName: 'success',
                 title: 'User Group Added',
+
                 message: 'User group has been successfully created.'
               })
             } else {
               bulmaJS.alert({
                 contextualColorName: 'danger',
                 title: 'Error Adding User Group',
+
                 message: 'Please try again.'
               })
             }
@@ -529,6 +566,7 @@ declare const exports: {
             .querySelector('form')
             ?.addEventListener('submit', doAddUserGroup)
         },
+
         onremoved() {
           bulmaJS.toggleHtmlClipped()
         }
