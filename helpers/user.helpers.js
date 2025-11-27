@@ -1,5 +1,18 @@
 import getUserFromDatabase from '../database/users/getUser.js';
 import { getUserNameFromApiKey } from './cache/apiKeys.cache.js';
+export const SYSTEM_USER = {
+    userName: 'system',
+    employeeNumber: '',
+    firstName: '',
+    lastName: '',
+    userProperties: {
+        isAdmin: true,
+        shifts: { canView: true, canUpdate: true, canManage: true },
+        workOrders: { canView: true, canUpdate: true, canManage: true },
+        timesheets: { canView: true, canUpdate: true, canManage: true }
+    },
+    userSettings: {}
+};
 export async function apiKeyIsValid(request) {
     const apiKey = request.params?.apiKey;
     // eslint-disable-next-line security/detect-possible-timing-attacks

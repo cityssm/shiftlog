@@ -571,12 +571,12 @@ declare const exports: {
   const filterInput = document.querySelector(
     '#filter--equipment'
   ) as HTMLInputElement | null
-  let filterTimeout: ReturnType<typeof setTimeout> | null = null
+  let filterTimeout: ReturnType<typeof setTimeout> | undefined
 
   if (filterInput !== null) {
     filterInput.addEventListener('input', () => {
       // Clear existing timeout
-      if (filterTimeout !== null) {
+      if (filterTimeout !== undefined) {
         clearTimeout(filterTimeout)
       }
 

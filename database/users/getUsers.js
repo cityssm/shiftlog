@@ -38,3 +38,7 @@ export default async function getUsers() {
     }
     return users;
 }
+export async function getUserCount() {
+    const users = await getUsers();
+    return users.length;
+}

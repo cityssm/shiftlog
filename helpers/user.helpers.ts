@@ -14,6 +14,20 @@ export interface UserRequest {
   }
 }
 
+export const SYSTEM_USER: User = {
+  userName: 'system',
+  employeeNumber: '',
+  firstName: '',
+  lastName: '',
+  userProperties: {
+    isAdmin: true,
+    shifts: { canView: true, canUpdate: true, canManage: true },
+    workOrders: { canView: true, canUpdate: true, canManage: true },
+    timesheets: { canView: true, canUpdate: true, canManage: true }
+  },
+  userSettings: {}
+}
+
 export async function apiKeyIsValid(request: APIRequest): Promise<boolean> {
   const apiKey = request.params?.apiKey
 

@@ -24,7 +24,6 @@ export type UserSettingKey = (typeof userSettingKeys)[number]
 export interface UserProperties {
   isAdmin: boolean
 
-
   shifts: {
     canView: boolean
     canUpdate: boolean

@@ -262,7 +262,13 @@
     }
     function renderEmployees(employees) {
         if (employees.length === 0) {
-            employeesContainerElement.innerHTML = '<p>No employees found.</p>';
+            employeesContainerElement.innerHTML = /*html*/ `
+        <div class="message is-info">
+          <div class="message-body">
+            No employees available.
+          </div>
+        </div>
+      `;
             return;
         }
         const tableElement = document.createElement('table');
@@ -368,11 +374,11 @@
      * Filter employees with debouncing
      */
     const filterInput = document.querySelector('#filter--employees');
-    let filterTimeout = null;
+    let filterTimeout;
     if (filterInput !== null) {
         filterInput.addEventListener('input', () => {
             // Clear existing timeout
-            if (filterTimeout !== null) {
+            if (filterTimeout !== undefined) {
                 clearTimeout(filterTimeout);
             }
             // Set new timeout (debounce for 300ms)

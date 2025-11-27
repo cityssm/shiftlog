@@ -402,7 +402,13 @@ declare const exports: {
 
   function renderEmployees(employees: Employee[]): void {
     if (employees.length === 0) {
-      employeesContainerElement.innerHTML = '<p>No employees found.</p>'
+      employeesContainerElement.innerHTML = /*html*/ `
+        <div class="message is-info">
+          <div class="message-body">
+            No employees available.
+          </div>
+        </div>
+      `
       return
     }
 
@@ -549,12 +555,13 @@ declare const exports: {
   const filterInput = document.querySelector(
     '#filter--employees'
   ) as HTMLInputElement | null
-  let filterTimeout: ReturnType<typeof setTimeout> | null = null
+
+  let filterTimeout: ReturnType<typeof setTimeout> | undefined
 
   if (filterInput !== null) {
     filterInput.addEventListener('input', () => {
       // Clear existing timeout
-      if (filterTimeout !== null) {
+      if (filterTimeout !== undefined) {
         clearTimeout(filterTimeout)
       }
 

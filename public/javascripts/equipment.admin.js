@@ -389,11 +389,11 @@
      * Filter equipment with debouncing
      */
     const filterInput = document.querySelector('#filter--equipment');
-    let filterTimeout = null;
+    let filterTimeout;
     if (filterInput !== null) {
         filterInput.addEventListener('input', () => {
             // Clear existing timeout
-            if (filterTimeout !== null) {
+            if (filterTimeout !== undefined) {
                 clearTimeout(filterTimeout);
             }
             // Set new timeout (debounce for 300ms)

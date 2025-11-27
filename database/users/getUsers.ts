@@ -51,3 +51,8 @@ export default async function getUsers(): Promise<DatabaseUser[]> {
 
   return users
 }
+
+export async function getUserCount(): Promise<number> {
+  const users = await getUsers()
+  return users.length
+}
