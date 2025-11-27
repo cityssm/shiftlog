@@ -9,32 +9,32 @@ declare const Sortable: {
   create: (
     element: HTMLElement,
     options: {
-      handle: string
       animation: number
+      handle: string
       onEnd: () => void
     }
   ) => void
 }
 
 interface WorkOrderType {
-  workOrderTypeId: number
-  workOrderType: string
-  workOrderNumberPrefix: string
   orderNumber: number
   userGroupId: number | null
   userGroupName?: string
+  workOrderNumberPrefix: string
+  workOrderType: string
+  workOrderTypeId: number
 }
 
 interface UserGroup {
+  memberCount?: number
   userGroupId: number
   userGroupName: string
-  memberCount?: number
 }
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
-  workOrderTypes: WorkOrderType[]
   userGroups: UserGroup[]
+  workOrderTypes: WorkOrderType[]
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -57,9 +57,11 @@ declare const exports: {
     let html = ''
 
     for (const workOrderType of workOrderTypes) {
-      const userGroupDisplay = workOrderType.userGroupName
-        ? `<span class="tag is-info">${cityssm.escapeHTML(workOrderType.userGroupName)}</span>`
-        : '<span class="has-text-grey-light">-</span>'
+      const userGroupDisplay =
+        workOrderType.userGroupName !== undefined &&
+        workOrderType.userGroupName !== ''
+          ? `<span class="tag is-info">${cityssm.escapeHTML(workOrderType.userGroupName)}</span>`
+          : '<span class="has-text-grey-light">-</span>'
 
       html += `<tr data-work-order-type-id="${workOrderType.workOrderTypeId}">
         <td class="has-text-centered">
@@ -103,16 +105,13 @@ declare const exports: {
       </tr>`
     }
 
+    // eslint-disable-next-line no-unsanitized/property
     tbodyElement.innerHTML = html
     attachEventListeners()
     initializeSortable()
   }
 
   function addWorkOrderType(): void {
-    let typeInputElement: HTMLInputElement
-    let prefixInputElement: HTMLInputElement
-    let userGroupSelectElement: HTMLSelectElement
-
     // Build user group options
     let userGroupOptions = '<option value="">None (Available to All)</option>'
     for (const userGroup of exports.userGroups) {
@@ -120,7 +119,7 @@ declare const exports: {
     }
 
     bulmaJS.confirm({
-      title: 'Add Work Order Type',
+      contextualColorName: 'primary',
       message: `<div class="field">
         <label class="label">Type Name</label>
         <div class="control">
@@ -146,33 +145,42 @@ declare const exports: {
         <p class="help">If specified, only members of this user group will see this work order type.</p>
       </div>`,
       messageIsHtml: true,
-      contextualColorName: 'primary',
       okButton: {
-        text: 'Add Work Order Type',
         callbackFunction() {
+          const typeInputElement = document.querySelector(
+            '#input--workOrderType'
+          ) as HTMLInputElement
+          const prefixInputElement = document.querySelector(
+            '#input--workOrderNumberPrefix'
+          ) as HTMLInputElement
+          const userGroupSelectElement = document.querySelector(
+            '#select--userGroup'
+          ) as HTMLSelectElement
+
           const workOrderType = typeInputElement.value.trim()
 
           if (workOrderType === '') {
             bulmaJS.alert({
               contextualColorName: 'warning',
-              title: 'Type Name Required',
-              message: 'Please enter a work order type name.'
+              message: 'Please enter a work order type name.',
+              title: 'Type Name Required'
             })
             return
           }
 
           const workOrderNumberPrefix = prefixInputElement.value.trim()
           const userGroupIdValue = userGroupSelectElement.value
-          const userGroupId = userGroupIdValue
-            ? Number.parseInt(userGroupIdValue)
-            : null
+          const userGroupId =
+            userGroupIdValue === ''
+              ? undefined
+              : Number.parseInt(userGroupIdValue, 10)
 
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doAddWorkOrderType`,
             {
-              workOrderType,
+              userGroupId,
               workOrderNumberPrefix,
-              userGroupId
+              workOrderType
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
@@ -188,31 +196,27 @@ declare const exports: {
                 renderWorkOrderTypes()
                 bulmaJS.alert({
                   contextualColorName: 'success',
-                  title: 'Work Order Type Added',
-                  message: 'The work order type has been successfully added.'
+                  message: 'The work order type has been successfully added.',
+                  title: 'Work Order Type Added'
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Adding Work Order Type',
-                  message: 'Please try again.'
+                  message: 'An error occurred. Please try again.',
+                  title: 'Error Adding Work Order Type'
                 })
               }
             }
           )
-        }
-      }
+        },
+        text: 'Add Work Order Type'
+      },
+      title: 'Add Work Order Type'
     })
 
-    typeInputElement = document.querySelector(
+    const typeInputElement = document.querySelector(
       '#input--workOrderType'
     ) as HTMLInputElement
-    prefixInputElement = document.querySelector(
-      '#input--workOrderNumberPrefix'
-    ) as HTMLInputElement
-    userGroupSelectElement = document.querySelector(
-      '#select--userGroup'
-    ) as HTMLSelectElement
     typeInputElement.focus()
   }
 
@@ -232,23 +236,20 @@ declare const exports: {
       return
     }
 
-    let typeInputElement: HTMLInputElement
-    let prefixInputElement: HTMLInputElement
-    let userGroupSelectElement: HTMLSelectElement
-
     // Build user group options
     let userGroupOptions = '<option value="">None (Available to All)</option>'
     for (const userGroup of exports.userGroups) {
       const selected =
-        currentUserGroupId &&
-        Number.parseInt(currentUserGroupId) === userGroup.userGroupId
+        currentUserGroupId !== undefined &&
+        currentUserGroupId !== '' &&
+        Number.parseInt(currentUserGroupId, 10) === userGroup.userGroupId
           ? 'selected'
           : ''
       userGroupOptions += `<option value="${userGroup.userGroupId}" ${selected}>${cityssm.escapeHTML(userGroup.userGroupName)}</option>`
     }
 
     bulmaJS.confirm({
-      title: 'Edit Work Order Type',
+      contextualColorName: 'info',
       message: `<div class="field">
         <label class="label">Type Name</label>
         <div class="control">
@@ -274,34 +275,43 @@ declare const exports: {
         <p class="help">If specified, only members of this user group will see this work order type.</p>
       </div>`,
       messageIsHtml: true,
-      contextualColorName: 'info',
       okButton: {
-        text: 'Update Work Order Type',
         callbackFunction() {
+          const typeInputElement = document.querySelector(
+            '#input--editWorkOrderType'
+          ) as HTMLInputElement
+          const prefixInputElement = document.querySelector(
+            '#input--editWorkOrderNumberPrefix'
+          ) as HTMLInputElement
+          const userGroupSelectElement = document.querySelector(
+            '#select--editUserGroup'
+          ) as HTMLSelectElement
+
           const newWorkOrderType = typeInputElement.value.trim()
 
           if (newWorkOrderType === '') {
             bulmaJS.alert({
               contextualColorName: 'warning',
-              title: 'Type Name Required',
-              message: 'Please enter a work order type name.'
+              message: 'Please enter a work order type name.',
+              title: 'Type Name Required'
             })
             return
           }
 
           const newWorkOrderNumberPrefix = prefixInputElement.value.trim()
           const userGroupIdValue = userGroupSelectElement.value
-          const newUserGroupId = userGroupIdValue
-            ? Number.parseInt(userGroupIdValue)
-            : null
+          const newUserGroupId =
+            userGroupIdValue === ''
+              ? undefined
+              : Number.parseInt(userGroupIdValue, 10)
 
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`,
             {
-              workOrderTypeId: Number.parseInt(workOrderTypeId),
-              workOrderType: newWorkOrderType,
+              userGroupId: newUserGroupId,
               workOrderNumberPrefix: newWorkOrderNumberPrefix,
-              userGroupId: newUserGroupId
+              workOrderType: newWorkOrderType,
+              workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
@@ -317,31 +327,27 @@ declare const exports: {
                 renderWorkOrderTypes()
                 bulmaJS.alert({
                   contextualColorName: 'success',
-                  title: 'Work Order Type Updated',
-                  message: 'The work order type has been successfully updated.'
+                  message: 'The work order type has been successfully updated.',
+                  title: 'Work Order Type Updated'
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Updating Work Order Type',
-                  message: 'Please try again.'
+                  message: 'An error occurred. Please try again.',
+                  title: 'Error Updating Work Order Type'
                 })
               }
             }
           )
-        }
-      }
+        },
+        text: 'Update Work Order Type'
+      },
+      title: 'Edit Work Order Type'
     })
 
-    typeInputElement = document.querySelector(
+    const typeInputElement = document.querySelector(
       '#input--editWorkOrderType'
     ) as HTMLInputElement
-    prefixInputElement = document.querySelector(
-      '#input--editWorkOrderNumberPrefix'
-    ) as HTMLInputElement
-    userGroupSelectElement = document.querySelector(
-      '#select--editUserGroup'
-    ) as HTMLSelectElement
     typeInputElement.focus()
     typeInputElement.select()
   }
@@ -356,17 +362,14 @@ declare const exports: {
     }
 
     bulmaJS.confirm({
-      title: 'Delete Work Order Type',
-      message: `Are you sure you want to delete "${workOrderType}"? This action cannot be undone.`,
       contextualColorName: 'warning',
+      message: `Are you sure you want to delete "${workOrderType}"? This action cannot be undone.`,
       okButton: {
-        text: 'Delete Work Order Type',
-        contextualColorName: 'danger',
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteWorkOrderType`,
             {
-              workOrderTypeId: Number.parseInt(workOrderTypeId)
+              workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
@@ -382,20 +385,23 @@ declare const exports: {
                 renderWorkOrderTypes()
                 bulmaJS.alert({
                   contextualColorName: 'success',
-                  title: 'Work Order Type Deleted',
-                  message: 'The work order type has been successfully deleted.'
+                  message: 'The work order type has been successfully deleted.',
+                  title: 'Work Order Type Deleted'
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Deleting Work Order Type',
-                  message: 'Please try again.'
+                  message: 'An error occurred. Please try again.',
+                  title: 'Error Deleting Work Order Type'
                 })
               }
             }
           )
-        }
-      }
+        },
+        contextualColorName: 'danger',
+        text: 'Delete Work Order Type'
+      },
+      title: 'Delete Work Order Type'
     })
   }
 
@@ -418,8 +424,8 @@ declare const exports: {
   function initializeSortable(): void {
     if (workOrderTypes.length > 0) {
       Sortable.create(tbodyElement, {
-        handle: '.handle',
         animation: 150,
+        handle: '.handle',
         onEnd() {
           // Get the new order
           const rows = tbodyElement.querySelectorAll(
@@ -428,10 +434,9 @@ declare const exports: {
           const workOrderTypeIds: number[] = []
 
           for (const row of rows) {
-            const workOrderTypeId = (row as HTMLElement).dataset
-              .workOrderTypeId
-            if (workOrderTypeId !== undefined) {
-              workOrderTypeIds.push(Number.parseInt(workOrderTypeId))
+            const id = (row as HTMLElement).dataset.workOrderTypeId
+            if (id !== undefined) {
+              workOrderTypeIds.push(Number.parseInt(id, 10))
             }
           }
 
@@ -450,8 +455,8 @@ declare const exports: {
               if (!responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Reordering Work Order Types',
-                  message: 'Please refresh the page and try again.'
+                  message: 'Please refresh the page and try again.',
+                  title: 'Error Reordering Work Order Types'
                 })
               }
             }

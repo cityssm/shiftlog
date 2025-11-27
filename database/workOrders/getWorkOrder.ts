@@ -15,7 +15,7 @@ export default async function getWorkOrder(
       w.workOrderId,
       w.workOrderNumberYear,
       w.workOrderNumberSequence,
-      w.workOrderNumber,
+      isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(w.workOrderNumberSequence as varchar(6)),6) as workOrderNumber,
 
       w.workOrderTypeId,
       wType.workOrderType,

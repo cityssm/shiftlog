@@ -1,19 +1,16 @@
 import type { Request, Response } from 'express'
 
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
-import updateWorkOrderType from '../../database/workOrderTypes/updateWorkOrderType.js'
+import updateWorkOrderType, {
+  type UpdateWorkOrderTypeForm
+} from '../../database/workOrderTypes/updateWorkOrderType.js'
 
 export default async function handler(
-  request: Request,
+  request: Request<unknown, unknown, UpdateWorkOrderTypeForm>,
   response: Response
 ): Promise<void> {
-  const workOrderTypeId = request.body.workOrderTypeId
-  const workOrderType = request.body.workOrderType as string
-  const workOrderNumberPrefix = (request.body.workOrderNumberPrefix as string) || ''
-  const userGroupId = request.body.userGroupId
-
   const success = await updateWorkOrderType(
-    { workOrderTypeId, workOrderType, workOrderNumberPrefix, userGroupId },
+    request.body,
     request.session.user?.userName ?? ''
   )
 
@@ -25,8 +22,8 @@ export default async function handler(
     })
   } else {
     response.json({
-      success: false,
-      message: 'Work order type could not be updated.'
+      message: 'Work order type could not be updated.',
+      success: false
     })
   }
 }

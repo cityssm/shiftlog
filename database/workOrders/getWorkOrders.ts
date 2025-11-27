@@ -24,7 +24,8 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
     'where w.instance = @instance and w.recordDelete_dateTime is null'
 
   if (filters.workOrderNumber !== undefined && filters.workOrderNumber !== '') {
-    whereClause += ' and w.workOrderNumber like @workOrderNumber'
+    whereClause +=
+      " and (isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(w.workOrderNumberSequence as varchar(6)),6)) like @workOrderNumber"
   }
 
   if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
@@ -195,7 +196,7 @@ export default async function getWorkOrders(
           w.workOrderId,
           w.workOrderNumberYear,
           w.workOrderNumberSequence,
-          w.workOrderNumber,
+          isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(w.workOrderNumberSequence as varchar(6)),6) as workOrderNumber,
 
           w.workOrderTypeId,
           wType.workOrderType,
@@ -248,7 +249,7 @@ export default async function getWorkOrders(
 
         ${whereClause}    
 
-        order by w.workOrderOpenDateTime desc, w.workOrderNumber desc
+        order by w.workOrderOpenDateTime desc, w.workOrderNumberYear desc, w.workOrderNumberSequence desc
 
         ${limit === -1 ? '' : ` offset ${offset} rows`}
         ${limit === -1 ? '' : ` fetch next ${limit} rows only`}

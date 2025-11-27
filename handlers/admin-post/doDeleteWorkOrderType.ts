@@ -3,14 +3,16 @@ import type { Request, Response } from 'express'
 import deleteWorkOrderType from '../../database/workOrderTypes/deleteWorkOrderType.js'
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
 
+interface DeleteWorkOrderTypeForm {
+  workOrderTypeId: number | string
+}
+
 export default async function handler(
-  request: Request,
+  request: Request<unknown, unknown, DeleteWorkOrderTypeForm>,
   response: Response
 ): Promise<void> {
-  const workOrderTypeId = request.body.workOrderTypeId
-
   const success = await deleteWorkOrderType(
-    workOrderTypeId,
+    request.body.workOrderTypeId,
     request.session.user?.userName ?? ''
   )
 
@@ -22,8 +24,8 @@ export default async function handler(
     })
   } else {
     response.json({
-      success: false,
-      message: 'Work order type could not be deleted.'
+      message: 'Work order type could not be deleted.',
+      success: false
     })
   }
 }

@@ -276,10 +276,6 @@ create table ShiftLog.WorkOrders (
   workOrderNumberSequence int not null,
 
   workOrderTypeId int not null,
-  workOrderNumber as (
-    (select isnull(workOrderNumberPrefix, '') from ShiftLog.WorkOrderTypes where workOrderTypeId = ShiftLog.WorkOrders.workOrderTypeId)
-    + cast(workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(workOrderNumberSequence as varchar(6)),6)
-  ) persisted,
 
   workOrderStatusDataListItemId int,
   workOrderDetails varchar(max) not null default '',

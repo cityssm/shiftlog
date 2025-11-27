@@ -1,12 +1,15 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
+
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface AddWorkOrderTypeForm {
-  workOrderType: string
-  workOrderNumberPrefix: string
   userGroupId?: number | string
+  workOrderNumberPrefix?: string
+  workOrderType: string
 }
 
 export default async function addWorkOrderType(
