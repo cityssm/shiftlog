@@ -1,0 +1,71 @@
+<div
+  class="modal"
+  id="modal--editWorkOrderType"
+  role="dialog"
+  aria-label="Edit Work Order Type"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Work Order Type</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editWorkOrderType">
+        <input type="hidden" id="editWorkOrderType--workOrderTypeId" name="workOrderTypeId" />
+        <div class="field">
+          <label class="label" for="editWorkOrderType--workOrderType">Type Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="editWorkOrderType--workOrderType"
+              name="workOrderType"
+              type="text"
+              maxlength="100"
+              required
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="editWorkOrderType--workOrderNumberPrefix">Work Order Number Prefix</label>
+          <div class="control">
+            <input
+              class="input"
+              id="editWorkOrderType--workOrderNumberPrefix"
+              name="workOrderNumberPrefix"
+              type="text"
+              maxlength="10"
+              placeholder="e.g. WO-, PW-, etc."
+            />
+          </div>
+          <p class="help">This prefix will be added to work order numbers for this type.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="editWorkOrderType--userGroupId">User Group (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="editWorkOrderType--userGroupId" name="userGroupId">
+                <option value="">None (Available to All)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">If specified, only members of this user group will see this work order type.</p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editWorkOrderType">
+          Update Work Order Type
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

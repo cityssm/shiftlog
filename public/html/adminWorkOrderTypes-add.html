@@ -1,0 +1,70 @@
+<div
+  class="modal"
+  id="modal--addWorkOrderType"
+  role="dialog"
+  aria-label="Add Work Order Type"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Work Order Type</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addWorkOrderType">
+        <div class="field">
+          <label class="label" for="addWorkOrderType--workOrderType">Type Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="addWorkOrderType--workOrderType"
+              name="workOrderType"
+              type="text"
+              maxlength="100"
+              required
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addWorkOrderType--workOrderNumberPrefix">Work Order Number Prefix</label>
+          <div class="control">
+            <input
+              class="input"
+              id="addWorkOrderType--workOrderNumberPrefix"
+              name="workOrderNumberPrefix"
+              type="text"
+              maxlength="10"
+              placeholder="e.g. WO-, PW-, etc."
+            />
+          </div>
+          <p class="help">This prefix will be added to work order numbers for this type.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="addWorkOrderType--userGroupId">User Group (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="addWorkOrderType--userGroupId" name="userGroupId">
+                <option value="">None (Available to All)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">If specified, only members of this user group will see this work order type.</p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--addWorkOrderType">
+          Add Work Order Type
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
