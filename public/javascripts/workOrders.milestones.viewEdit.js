@@ -200,6 +200,11 @@
                     // Populate Assigned To select
                     const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToDataListItemId');
                     populateAssignedToSelect(assignedToSelect);
+                    // Set the default value to the work order's "assigned to" value
+                    if (exports.workOrderAssignedToDataListItemId !== null) {
+                        assignedToSelect.value =
+                            exports.workOrderAssignedToDataListItemId.toString();
+                    }
                     // Initialize flatpickr on date fields
                     flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneDueDateTimeString'), dateTimePickerOptions);
                     const completeDatePicker = flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneCompleteDateTimeString'), {
@@ -279,10 +284,14 @@
                     // Populate Assigned To select
                     const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToDataListItemId');
                     populateAssignedToSelect(assignedToSelect);
-                    // Set the selected option if there is one
+                    // Set the selected option if there is one, otherwise default to work order's assigned to
                     if (milestone.assignedToDataListItemId !== null) {
                         assignedToSelect.value =
                             milestone.assignedToDataListItemId.toString();
+                    }
+                    else if (exports.workOrderAssignedToDataListItemId !== null) {
+                        assignedToSelect.value =
+                            exports.workOrderAssignedToDataListItemId.toString();
                     }
                 },
                 onshown(modalElement, _closeModalFunction) {

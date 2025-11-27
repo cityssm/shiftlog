@@ -185,6 +185,42 @@
             />
           </div>
         </div>
+        <div class="field">
+          <label class="label" for="workOrder--assignedToDataListItemId">Assigned To</label>
+          <div class="control">
+            <% if (isEdit) { %>
+            <div class="select is-fullwidth">
+              <select id="workOrder--assignedToDataListItemId" name="assignedToDataListItemId">
+                <option value="">(Not Assigned)</option>
+                <% let assignedToFound = false %>
+                <% for (const assignedToOption of assignedToOptions) { %>
+                  <option
+                    value="<%= assignedToOption.dataListItemId %>"
+                    <% if (workOrder.assignedToDataListItemId === assignedToOption.dataListItemId) { %>
+                      <% assignedToFound = true; %>
+                      selected
+                    <% } %>
+                  >
+                    <%= assignedToOption.dataListItem %>
+                  </option>
+                <% } %>
+                <% if (!assignedToFound && workOrder.assignedToDataListItemId) { %>
+                  <option value="<%= workOrder.assignedToDataListItemId %>" selected>
+                    <%= workOrder.assignedToDataListItem %> (Inactive)
+                  </option>
+                <% } %>
+              </select>
+            </div>
+            <% } else { %>
+            <input
+              class="input"
+              type="text"
+              value="<%= workOrder.assignedToDataListItem ?? '(Not Assigned)' %>"
+              readonly
+            />
+            <% } %>
+          </div>
+        </div>
       </div>
     </div>
     <div class="column">
@@ -467,6 +503,7 @@
 
 <script>
   exports.assignedToOptions = <%- JSON.stringify(assignedToOptions) %>;
+  exports.workOrderAssignedToDataListItemId = <%= workOrder.assignedToDataListItemId ? workOrder.assignedToDataListItemId : 'null' %>;
   exports.workOrderOpenDateTime = "<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>";
   exports.isEdit = <%= isEdit %>;
 </script>
