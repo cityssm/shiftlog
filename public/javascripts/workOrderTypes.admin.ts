@@ -141,6 +141,7 @@ declare const exports: {
             closeModalFunction()
             workOrderTypes = responseJSON.workOrderTypes
             renderWorkOrderTypes()
+            
             bulmaJS.alert({
               contextualColorName: 'success',
               message: 'The work order type has been successfully added.',
@@ -149,8 +150,9 @@ declare const exports: {
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              message: 'An error occurred. Please try again.',
-              title: 'Error Adding Work Order Type'
+              title: 'Error Adding Work Order Type',
+
+              message: 'An error occurred. Please try again.'
             })
           }
         }
@@ -184,6 +186,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -297,6 +300,7 @@ declare const exports: {
         typeInputElement.focus()
         typeInputElement.select()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }

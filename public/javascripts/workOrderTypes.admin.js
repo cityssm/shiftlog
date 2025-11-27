@@ -70,88 +70,55 @@
         initializeSortable();
     }
     function addWorkOrderType() {
-        // Build user group options
-        let userGroupOptions = '<option value="">None (Available to All)</option>';
-        for (const userGroup of exports.userGroups) {
-            userGroupOptions += `<option value="${userGroup.userGroupId}">${cityssm.escapeHTML(userGroup.userGroupName)}</option>`;
-        }
-        bulmaJS.confirm({
-            contextualColorName: 'primary',
-            message: `<div class="field">
-        <label class="label">Type Name</label>
-        <div class="control">
-          <input class="input" id="input--workOrderType" type="text" required maxlength="100" />
-        </div>
-      </div>
-      <div class="field">
-        <label class="label">Work Order Number Prefix</label>
-        <div class="control">
-          <input class="input" id="input--workOrderNumberPrefix" type="text" maxlength="10" placeholder="e.g. WO-, PW-, etc." />
-        </div>
-        <p class="help">This prefix will be added to work order numbers for this type.</p>
-      </div>
-      <div class="field">
-        <label class="label">User Group (Optional)</label>
-        <div class="control">
-          <div class="select is-fullwidth">
-            <select id="select--userGroup">
-              ${userGroupOptions}
-            </select>
-          </div>
-        </div>
-        <p class="help">If specified, only members of this user group will see this work order type.</p>
-      </div>`,
-            messageIsHtml: true,
-            okButton: {
-                callbackFunction() {
-                    const typeInputElement = document.querySelector('#input--workOrderType');
-                    const prefixInputElement = document.querySelector('#input--workOrderNumberPrefix');
-                    const userGroupSelectElement = document.querySelector('#select--userGroup');
-                    const workOrderType = typeInputElement.value.trim();
-                    if (workOrderType === '') {
-                        bulmaJS.alert({
-                            contextualColorName: 'warning',
-                            message: 'Please enter a work order type name.',
-                            title: 'Type Name Required'
-                        });
-                        return;
-                    }
-                    const workOrderNumberPrefix = prefixInputElement.value.trim();
-                    const userGroupIdValue = userGroupSelectElement.value;
-                    const userGroupId = userGroupIdValue === ''
-                        ? undefined
-                        : Number.parseInt(userGroupIdValue, 10);
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddWorkOrderType`, {
-                        userGroupId,
-                        workOrderNumberPrefix,
-                        workOrderType
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success &&
-                            responseJSON.workOrderTypes !== undefined) {
-                            workOrderTypes = responseJSON.workOrderTypes;
-                            renderWorkOrderTypes();
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                message: 'The work order type has been successfully added.',
-                                title: 'Work Order Type Added'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                message: 'An error occurred. Please try again.',
-                                title: 'Error Adding Work Order Type'
-                            });
-                        }
+        let closeModalFunction;
+        function doAddWorkOrderType(submitEvent) {
+            submitEvent.preventDefault();
+            const addForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddWorkOrderType`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success &&
+                    responseJSON.workOrderTypes !== undefined) {
+                    closeModalFunction();
+                    workOrderTypes = responseJSON.workOrderTypes;
+                    renderWorkOrderTypes();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'The work order type has been successfully added.',
+                        title: 'Work Order Type Added'
                     });
-                },
-                text: 'Add Work Order Type'
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Adding Work Order Type',
+                        message: 'An error occurred. Please try again.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminWorkOrderTypes-add', {
+            onshow(modalElement) {
+                // Populate user group options
+                const userGroupSelect = modalElement.querySelector('#addWorkOrderType--userGroupId');
+                for (const userGroup of exports.userGroups) {
+                    const option = document.createElement('option');
+                    option.value = userGroup.userGroupId.toString();
+                    option.textContent = userGroup.userGroupName;
+                    userGroupSelect.append(option);
+                }
             },
-            title: 'Add Work Order Type'
+            onshown(modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doAddWorkOrderType);
+                modalElement.querySelector('#addWorkOrderType--workOrderType').focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
         });
-        const typeInputElement = document.querySelector('#input--workOrderType');
-        typeInputElement.focus();
     }
     function editWorkOrderType(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
@@ -164,95 +131,67 @@
             currentWorkOrderNumberPrefix === undefined) {
             return;
         }
-        // Build user group options
-        let userGroupOptions = '<option value="">None (Available to All)</option>';
-        for (const userGroup of exports.userGroups) {
-            const selected = currentUserGroupId !== undefined &&
-                currentUserGroupId !== '' &&
-                Number.parseInt(currentUserGroupId, 10) === userGroup.userGroupId
-                ? 'selected'
-                : '';
-            userGroupOptions += `<option value="${userGroup.userGroupId}" ${selected}>${cityssm.escapeHTML(userGroup.userGroupName)}</option>`;
-        }
-        bulmaJS.confirm({
-            contextualColorName: 'info',
-            message: `<div class="field">
-        <label class="label">Type Name</label>
-        <div class="control">
-          <input class="input" id="input--editWorkOrderType" type="text" value="${cityssm.escapeHTML(currentWorkOrderType)}" required maxlength="100" />
-        </div>
-      </div>
-      <div class="field">
-        <label class="label">Work Order Number Prefix</label>
-        <div class="control">
-          <input class="input" id="input--editWorkOrderNumberPrefix" type="text" value="${cityssm.escapeHTML(currentWorkOrderNumberPrefix)}" maxlength="10" placeholder="e.g. WO-, PW-, etc." />
-        </div>
-        <p class="help">This prefix will be added to work order numbers for this type.</p>
-      </div>
-      <div class="field">
-        <label class="label">User Group (Optional)</label>
-        <div class="control">
-          <div class="select is-fullwidth">
-            <select id="select--editUserGroup">
-              ${userGroupOptions}
-            </select>
-          </div>
-        </div>
-        <p class="help">If specified, only members of this user group will see this work order type.</p>
-      </div>`,
-            messageIsHtml: true,
-            okButton: {
-                callbackFunction() {
-                    const typeInputElement = document.querySelector('#input--editWorkOrderType');
-                    const prefixInputElement = document.querySelector('#input--editWorkOrderNumberPrefix');
-                    const userGroupSelectElement = document.querySelector('#select--editUserGroup');
-                    const newWorkOrderType = typeInputElement.value.trim();
-                    if (newWorkOrderType === '') {
-                        bulmaJS.alert({
-                            contextualColorName: 'warning',
-                            message: 'Please enter a work order type name.',
-                            title: 'Type Name Required'
-                        });
-                        return;
-                    }
-                    const newWorkOrderNumberPrefix = prefixInputElement.value.trim();
-                    const userGroupIdValue = userGroupSelectElement.value;
-                    const newUserGroupId = userGroupIdValue === ''
-                        ? undefined
-                        : Number.parseInt(userGroupIdValue, 10);
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, {
-                        userGroupId: newUserGroupId,
-                        workOrderNumberPrefix: newWorkOrderNumberPrefix,
-                        workOrderType: newWorkOrderType,
-                        workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success &&
-                            responseJSON.workOrderTypes !== undefined) {
-                            workOrderTypes = responseJSON.workOrderTypes;
-                            renderWorkOrderTypes();
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                message: 'The work order type has been successfully updated.',
-                                title: 'Work Order Type Updated'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                message: 'An error occurred. Please try again.',
-                                title: 'Error Updating Work Order Type'
-                            });
-                        }
+        let closeModalFunction;
+        function doUpdateWorkOrderType(submitEvent) {
+            submitEvent.preventDefault();
+            const editForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success &&
+                    responseJSON.workOrderTypes !== undefined) {
+                    closeModalFunction();
+                    workOrderTypes = responseJSON.workOrderTypes;
+                    renderWorkOrderTypes();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'The work order type has been successfully updated.',
+                        title: 'Work Order Type Updated'
                     });
-                },
-                text: 'Update Work Order Type'
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        message: 'An error occurred. Please try again.',
+                        title: 'Error Updating Work Order Type'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminWorkOrderTypes-edit', {
+            onshow(modalElement) {
+                // Set form values
+                ;
+                modalElement.querySelector('#editWorkOrderType--workOrderTypeId').value = workOrderTypeId;
+                modalElement.querySelector('#editWorkOrderType--workOrderType').value = currentWorkOrderType;
+                modalElement.querySelector('#editWorkOrderType--workOrderNumberPrefix').value = currentWorkOrderNumberPrefix;
+                // Populate user group options
+                const userGroupSelect = modalElement.querySelector('#editWorkOrderType--userGroupId');
+                for (const userGroup of exports.userGroups) {
+                    const option = document.createElement('option');
+                    option.value = userGroup.userGroupId.toString();
+                    option.textContent = userGroup.userGroupName;
+                    if (currentUserGroupId !== undefined &&
+                        currentUserGroupId !== '' &&
+                        Number.parseInt(currentUserGroupId, 10) === userGroup.userGroupId) {
+                        option.selected = true;
+                    }
+                    userGroupSelect.append(option);
+                }
             },
-            title: 'Edit Work Order Type'
+            onshown(modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doUpdateWorkOrderType);
+                const typeInputElement = modalElement.querySelector('#editWorkOrderType--workOrderType');
+                typeInputElement.focus();
+                typeInputElement.select();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
         });
-        const typeInputElement = document.querySelector('#input--editWorkOrderType');
-        typeInputElement.focus();
-        typeInputElement.select();
     }
     function deleteWorkOrderType(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
