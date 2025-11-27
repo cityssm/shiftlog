@@ -5,8 +5,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 function buildWhereClause(filters, user) {
     let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
     if (filters.workOrderNumber !== undefined && filters.workOrderNumber !== '') {
-        whereClause +=
-            " and w.workOrderNumber like @workOrderNumber";
+        whereClause += ' and w.workOrderNumber like @workOrderNumber';
     }
     if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
         whereClause += ' and w.workOrderTypeId = @workOrderTypeId';
@@ -22,6 +21,16 @@ function buildWhereClause(filters, user) {
     if (filters.requestor !== undefined && filters.requestor !== '') {
         whereClause +=
             ' and (w.requestorName like @requestor or w.requestorContactInfo like @requestor)';
+    }
+    if (filters.assignedToDataListItemId !== undefined &&
+        filters.assignedToDataListItemId !== '') {
+        whereClause += ` and (w.assignedToDataListItemId = @assignedToDataListItemId
+      or w.workOrderId in (
+        select workOrderId from ShiftLog.WorkOrderMilestones
+        where assignedToDataListItemId = @assignedToDataListItemId
+          and recordDelete_dateTime is null
+      )
+    )`;
     }
     if (filters.openClosedFilter !== undefined &&
         filters.openClosedFilter !== '') {
@@ -63,6 +72,19 @@ function buildWhereClause(filters, user) {
     }
     return whereClause;
 }
+function applyParameters(sqlRequest, filters, user) {
+    sqlRequest
+        .input('instance', getConfigProperty('application.instance'))
+        .input('workOrderNumber', filters.workOrderNumber === undefined
+        ? null
+        : `%${filters.workOrderNumber}%`)
+        .input('workOrderTypeId', filters.workOrderTypeId ?? null)
+        .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
+        .input('requestorName', filters.requestorName === undefined ? null : `%${filters.requestorName}%`)
+        .input('requestor', filters.requestor === undefined ? null : `%${filters.requestor}%`)
+        .input('assignedToDataListItemId', filters.assignedToDataListItemId ?? null)
+        .input('userName', user?.userName);
+}
 export default async function getWorkOrders(filters, options, user) {
     const pool = await getShiftLogConnectionPool();
     const whereClause = buildWhereClause(filters, user);
@@ -82,38 +104,17 @@ export default async function getWorkOrders(filters, options, user) {
         on w.workOrderTypeId = wType.workOrderTypeId
       ${whereClause}
     `;
-        const countResult = await pool
-            .request()
-            .input('instance', getConfigProperty('application.instance'))
-            .input('workOrderNumber', filters.workOrderNumber === undefined
-            ? null
-            : `%${filters.workOrderNumber}%`)
-            .input('workOrderTypeId', filters.workOrderTypeId ?? null)
-            .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
-            .input('requestorName', filters.requestorName === undefined
-            ? null
-            : `%${filters.requestorName}%`)
-            .input('requestor', filters.requestor === undefined ? null : `%${filters.requestor}%`)
-            .input('userName', user?.userName)
-            .query(countSql);
+        const countRequest = pool.request();
+        applyParameters(countRequest, filters, user);
+        const countResult = await countRequest.query(countSql);
         totalCount = countResult.recordset[0]?.totalCount ?? 0;
     }
     // Main query with limit and offset
     let workOrders = [];
     if (totalCount > 0 || limit === -1) {
-        const workOrdersResult = await pool
-            .request()
-            .input('instance', getConfigProperty('application.instance'))
-            .input('workOrderNumber', filters.workOrderNumber === undefined
-            ? null
-            : `%${filters.workOrderNumber}%`)
-            .input('workOrderTypeId', filters.workOrderTypeId ?? null)
-            .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
-            .input('requestorName', filters.requestorName === undefined
-            ? null
-            : `%${filters.requestorName}%`)
-            .input('requestor', filters.requestor === undefined ? null : `%${filters.requestor}%`)
-            .input('userName', user?.userName).query(/* sql */ `
+        const workOrdersRequest = pool.request();
+        applyParameters(workOrdersRequest, filters, user);
+        const workOrdersResult = await workOrdersRequest.query(/* sql */ `
         select
           w.workOrderId,
 

@@ -101,7 +101,8 @@ declare const exports: {
     }
 
     const tableElement = document.createElement('table')
-    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+    tableElement.className =
+      'table is-fullwidth is-striped is-hoverable is-narrow'
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
@@ -109,11 +110,14 @@ declare const exports: {
             <span class="is-sr-only">Open / Closed</span>
           </th>
           <th>Number</th>
-          <th>Type / Details</th>
           <th>Location</th>
           <th>Status</th>
           <th>Open Date</th>
           <th>Requestor</th>
+          <th>Assigned To</th>
+          <th class="has-width-1">
+            <span class="is-sr-only">Actions</span>
+          </th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -158,17 +162,8 @@ declare const exports: {
         <td>
           <a href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
-          </a>
-        </td>
-        <td>
-          ${cityssm.escapeHTML(workOrder.workOrderType ?? '(Unknown Type)')}<br />
-          <span class="is-size-7 has-text-grey">
-            ${cityssm.escapeHTML(
-              workOrder.workOrderDetails.length > 75
-                ? `${workOrder.workOrderDetails.slice(0, 75)}…`
-                : workOrder.workOrderDetails
-            )}
-          </span>
+          </a><br />
+          <span class="is-size-7">${cityssm.escapeHTML(workOrder.workOrderType ?? '(Unknown Type)')}</span>
         </td>
         <td>
           ${cityssm.escapeHTML(workOrder.locationAddress1 === '' ? '(No Location)' : workOrder.locationAddress1)}<br />
@@ -181,7 +176,22 @@ declare const exports: {
             ${workOrder.workOrderDueDateTime === null ? '' : `Due ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`}
           </span>
         </td>
-        <td>${cityssm.escapeHTML(workOrder.requestorName === '' ? '(N/A)' : workOrder.requestorName)}</td>
+        <td>
+          ${cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName)}
+        </td>
+        <td>
+          ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : workOrder.assignedToDataListItem ?? '')}
+        </td>
+        <td>
+          <a
+            class="button is-small is-info is-light"
+            href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}/print"
+            title="Print Work Order"
+            target="_blank"
+          >
+            <span class="icon is-small"><i class="fa-solid fa-print"></i></span>
+          </a>
+        </td>
       `
 
       tableBodyElement.append(tableRowElement)

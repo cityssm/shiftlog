@@ -1,11 +1,14 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
 
+import type { mssql } from '@cityssm/mssql-multi-pool'
+
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
 export interface GetWorkOrdersFilters {
+  assignedToDataListItemId?: number | string
   openClosedFilter?: '' | 'closed' | 'open' | 'overdue'
   requestor?: string
   requestorName?: string
@@ -24,8 +27,7 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
     'where w.instance = @instance and w.recordDelete_dateTime is null'
 
   if (filters.workOrderNumber !== undefined && filters.workOrderNumber !== '') {
-    whereClause +=
-      " and w.workOrderNumber like @workOrderNumber"
+    whereClause += ' and w.workOrderNumber like @workOrderNumber'
   }
 
   if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
@@ -47,6 +49,19 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
   if (filters.requestor !== undefined && filters.requestor !== '') {
     whereClause +=
       ' and (w.requestorName like @requestor or w.requestorContactInfo like @requestor)'
+  }
+
+  if (
+    filters.assignedToDataListItemId !== undefined &&
+    filters.assignedToDataListItemId !== ''
+  ) {
+    whereClause += ` and (w.assignedToDataListItemId = @assignedToDataListItemId
+      or w.workOrderId in (
+        select workOrderId from ShiftLog.WorkOrderMilestones
+        where assignedToDataListItemId = @assignedToDataListItemId
+          and recordDelete_dateTime is null
+      )
+    )`
   }
 
   if (
@@ -97,6 +112,36 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
   return whereClause
 }
 
+function applyParameters(
+  sqlRequest: mssql.Request,
+  filters: GetWorkOrdersFilters,
+  user?: User
+): void {
+  sqlRequest
+    .input('instance', getConfigProperty('application.instance'))
+    .input(
+      'workOrderNumber',
+      filters.workOrderNumber === undefined
+        ? null
+        : `%${filters.workOrderNumber}%`
+    )
+    .input('workOrderTypeId', filters.workOrderTypeId ?? null)
+    .input(
+      'workOrderStatusDataListItemId',
+      filters.workOrderStatusDataListItemId ?? null
+    )
+    .input(
+      'requestorName',
+      filters.requestorName === undefined ? null : `%${filters.requestorName}%`
+    )
+    .input(
+      'requestor',
+      filters.requestor === undefined ? null : `%${filters.requestor}%`
+    )
+    .input('assignedToDataListItemId', filters.assignedToDataListItemId ?? null)
+    .input('userName', user?.userName)
+}
+
 export default async function getWorkOrders(
   filters: GetWorkOrdersFilters,
   options: GetWorkOrdersOptions,
@@ -132,32 +177,11 @@ export default async function getWorkOrders(
       ${whereClause}
     `
 
-    const countResult = await pool
-      .request()
-      .input('instance', getConfigProperty('application.instance'))
-      .input(
-        'workOrderNumber',
-        filters.workOrderNumber === undefined
-          ? null
-          : `%${filters.workOrderNumber}%`
-      )
-      .input('workOrderTypeId', filters.workOrderTypeId ?? null)
-      .input(
-        'workOrderStatusDataListItemId',
-        filters.workOrderStatusDataListItemId ?? null
-      )
-      .input(
-        'requestorName',
-        filters.requestorName === undefined
-          ? null
-          : `%${filters.requestorName}%`
-      )
-      .input(
-        'requestor',
-        filters.requestor === undefined ? null : `%${filters.requestor}%`
-      )
-      .input('userName', user?.userName)
-      .query(countSql)
+    const countRequest = pool.request()
+
+    applyParameters(countRequest, filters, user)
+
+    const countResult = await countRequest.query(countSql)
 
     totalCount = countResult.recordset[0]?.totalCount ?? 0
   }
@@ -167,31 +191,12 @@ export default async function getWorkOrders(
   let workOrders: WorkOrder[] = []
 
   if (totalCount > 0 || limit === -1) {
-    const workOrdersResult = await pool
-      .request()
-      .input('instance', getConfigProperty('application.instance'))
-      .input(
-        'workOrderNumber',
-        filters.workOrderNumber === undefined
-          ? null
-          : `%${filters.workOrderNumber}%`
-      )
-      .input('workOrderTypeId', filters.workOrderTypeId ?? null)
-      .input(
-        'workOrderStatusDataListItemId',
-        filters.workOrderStatusDataListItemId ?? null
-      )
-      .input(
-        'requestorName',
-        filters.requestorName === undefined
-          ? null
-          : `%${filters.requestorName}%`
-      )
-      .input(
-        'requestor',
-        filters.requestor === undefined ? null : `%${filters.requestor}%`
-      )
-      .input('userName', user?.userName).query<WorkOrder>(/* sql */ `
+    const workOrdersRequest = pool.request()
+
+    applyParameters(workOrdersRequest, filters, user)
+
+    const workOrdersResult =
+      await workOrdersRequest.query<WorkOrder>(/* sql */ `
         select
           w.workOrderId,
 

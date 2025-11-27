@@ -1,5 +1,6 @@
 import type { WorkOrder } from '../../types/record.types.js';
 export interface GetWorkOrdersFilters {
+    assignedToDataListItemId?: number | string;
     openClosedFilter?: '' | 'closed' | 'open' | 'overdue';
     requestor?: string;
     requestorName?: string;

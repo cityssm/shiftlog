@@ -36,6 +36,7 @@ export const config = defineConfig(configWebApp, {
             ...cspellWords,
 
             // App
+            'hellip',
             'noopener',
             'noreferrer',
             'onhidden',

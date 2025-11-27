@@ -119,6 +119,23 @@
               </div>
             </div>
           </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--assignedToDataListItemId">Assigned To</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="workOrderSearch--assignedToDataListItemId" name="assignedToDataListItemId">
+                    <option value="">(All Assignees)</option>
+                    <% assignedToItems.forEach(function(assignedToItem) { %>
+                    <option value="<%= assignedToItem.dataListItemId %>">
+                      <%= assignedToItem.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </form>
     </div>
