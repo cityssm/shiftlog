@@ -24,6 +24,11 @@ work order recording, shift activity logging, and timesheet tracking.
 - 🛡️ [Security Policy](SECURITY.md)
 - 📃 [MIT Licence](LICENSE.md)
 
+This system is a rewrite of an internal system used by the City's Public Works
+department to track activity occurring during shifts that does not necessarily
+fit well into a work order itself. The scope has then been expanded to cover
+several other outstanding "work order"-like projects.
+
 Although the system is quite niche, it's being released in an open source
 environment in hopes to pool developer resources from other municipalities
 looking to move away from older, legacy systems or complicated spreadsheets.
