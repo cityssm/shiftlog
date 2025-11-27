@@ -1,5 +1,5 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
+/* eslint-disable unicorn/no-null */
 
 import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString, TimeString } from '@cityssm/utils-datetime'
@@ -7,11 +7,12 @@ import type { DateString, TimeString } from '@cityssm/utils-datetime'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
+import getWorkOrderType from '../workOrderTypes/getWorkOrderType.js'
 
 export interface CreateWorkOrderForm {
   workOrderDetails: string
   workOrderStatusDataListItemId?: number | string
-  workOrderTypeDataListItemId: number | string
+  workOrderTypeId: number | string
 
   workOrderOpenDateTimeString:
     | `${DateString} ${TimeString}`
@@ -42,28 +43,37 @@ export interface CreateWorkOrderForm {
 
 export default async function createWorkOrder(
   createWorkOrderForm: CreateWorkOrderForm,
-  userName: string
+  user: User
 ): Promise<number> {
   const pool = await getShiftLogConnectionPool()
+
+  const workOrderType = await getWorkOrderType(
+    typeof createWorkOrderForm.workOrderTypeId === 'string'
+      ? Number.parseInt(createWorkOrderForm.workOrderTypeId, 10)
+      : createWorkOrderForm.workOrderTypeId,
+    user
+  )
+
+  if (workOrderType === undefined) {
+    throw new Error('Invalid work order type.')
+  }
 
   const openDateTime = new Date(createWorkOrderForm.workOrderOpenDateTimeString)
   const currentYear = openDateTime.getFullYear()
 
-  // Get the next sequence number for the current year
+  // Get the next sequence number for the current year and work order type
   const sequenceResult = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('year', currentYear)
-    .input(
-      'workOrderNumberPrefix',
-      getConfigProperty('workOrders.workOrderNumberPrefix')
-    ).query(/* sql */ `
+    .input('workOrderNumberPrefix', workOrderType.workOrderNumberPrefix)
+    .query(/* sql */ `
       select isnull(max(workOrderNumberSequence), 0) + 1 as nextSequence
       from ShiftLog.WorkOrders
       where
         instance = @instance
-        and workOrderNumberYear = @year
         and workOrderNumberPrefix = @workOrderNumberPrefix
+        and workOrderNumberYear = @year
     `)) as mssql.IResult<{ nextSequence: number }>
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
@@ -71,16 +81,10 @@ export default async function createWorkOrder(
   const result = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input(
-      'workOrderNumberPrefix',
-      getConfigProperty('workOrders.workOrderNumberPrefix')
-    )
+    .input('workOrderNumberPrefix', workOrderType.workOrderNumberPrefix)
     .input('workOrderNumberYear', currentYear)
     .input('workOrderNumberSequence', nextSequence)
-    .input(
-      'workOrderTypeDataListItemId',
-      createWorkOrderForm.workOrderTypeDataListItemId
-    )
+    .input('workOrderTypeId', createWorkOrderForm.workOrderTypeId)
     .input(
       'workOrderStatusDataListItemId',
       createWorkOrderForm.workOrderStatusDataListItemId === ''
@@ -131,13 +135,13 @@ export default async function createWorkOrder(
       'assignedToDataListItemId',
       createWorkOrderForm.assignedToDataListItemId ?? null
     )
-    .input('userName', userName).query(/* sql */ `
+    .input('userName', user.userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
         instance,
         workOrderNumberPrefix,
         workOrderNumberYear,
         workOrderNumberSequence,
-        workOrderTypeDataListItemId,
+        workOrderTypeId,
         workOrderStatusDataListItemId,
         workOrderDetails,
         workOrderOpenDateTime,
@@ -160,7 +164,7 @@ export default async function createWorkOrder(
         @workOrderNumberPrefix,
         @workOrderNumberYear,
         @workOrderNumberSequence,
-        @workOrderTypeDataListItemId,
+        @workOrderTypeId,
         @workOrderStatusDataListItemId,
         @workOrderDetails,
         @workOrderOpenDateTime,

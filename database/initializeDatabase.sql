@@ -245,18 +245,53 @@ CREATE TABLE ShiftLog.Locations (
 )
 GO
 
+-- WORK ORDER TYPES
+
+CREATE TABLE ShiftLog.WorkOrderTypes (
+  workOrderTypeId int not null primary key identity(1,1),
+  instance varchar(20) not null,
+  workOrderType varchar(100) not null,
+  workOrderNumberPrefix varchar(10) not null default '',
+  orderNumber smallint not null default 0,
+  userGroupId int,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
+)
+GO
+
 -- WORK ORDERS
 
 create table ShiftLog.WorkOrders (
   workOrderId int not null primary key identity(1,1),
   
+  workOrderTypeId int not null,
+
   instance varchar(20) not null,
-  workOrderNumberPrefix varchar(10) not null default '',
+  workOrderNumberPrefix varchar(10) not null,
   workOrderNumberYear smallint not null,
   workOrderNumberSequence int not null,
-  workOrderNumber as (workOrderNumberPrefix + cast(workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(workOrderNumberSequence as varchar(6)),6)) persisted,
 
-  workOrderTypeDataListItemId int not null,
+  workOrderNumberOverride varchar(50) not null default '',
+
+  workOrderNumber as 
+    case 
+      when workOrderNumberOverride <> '' then workOrderNumberOverride
+      else 
+        concat(
+          workOrderNumberPrefix,
+          right('0000' + cast(workOrderNumberYear as varchar(4)), 4),
+          '-',
+          right('00000' +  cast(workOrderNumberSequence as varchar(5)), 5)
+        )
+    end PERSISTED,
+
   workOrderStatusDataListItemId int,
   workOrderDetails varchar(max) not null default '',
 
@@ -283,8 +318,8 @@ create table ShiftLog.WorkOrders (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
-  unique (instance, workOrderNumberPrefix, workOrderNumberYear, workOrderNumberSequence),
-  foreign key (workOrderTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
+  unique (instance, workOrderNumberPrefix, workOrderNumberYear, workOrderNumberSequence, workOrderNumberOverride),
+  foreign key (workOrderTypeId) references ShiftLog.WorkOrderTypes(workOrderTypeId),
   foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
 )

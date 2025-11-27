@@ -28,10 +28,10 @@ export default async function getOverdueWorkOrders(limit, user) {
         w.workOrderId,
         w.workOrderNumberYear,
         w.workOrderNumberSequence,
-        w.workOrderNumber,
+        isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(w.workOrderNumberSequence as varchar(6)),6) as workOrderNumber,
 
-        w.workOrderTypeDataListItemId,
-        wType.dataListItem as workOrderTypeDataListItem,
+        w.workOrderTypeId,
+        wType.workOrderType,
 
         w.workOrderStatusDataListItemId,
         wStatus.dataListItem as workOrderStatusDataListItem,
@@ -56,8 +56,8 @@ export default async function getOverdueWorkOrders(limit, user) {
         
       from ShiftLog.WorkOrders w
 
-      left join ShiftLog.DataListItems wType
-        on w.workOrderTypeDataListItemId = wType.dataListItemId
+      left join ShiftLog.WorkOrderTypes wType
+        on w.workOrderTypeId = wType.workOrderTypeId
 
       left join ShiftLog.DataListItems wStatus
         on w.workOrderStatusDataListItemId = wStatus.dataListItemId
@@ -67,7 +67,7 @@ export default async function getOverdueWorkOrders(limit, user) {
 
       ${whereClause}
 
-      order by w.workOrderDueDateTime asc, w.workOrderNumber desc
+      order by w.workOrderDueDateTime asc, w.workOrderNumberYear desc, w.workOrderNumberSequence desc
     `));
     return result.recordset;
 }

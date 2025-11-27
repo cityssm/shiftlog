@@ -1,16 +1,15 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
+/* eslint-disable unicorn/no-null */
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 function buildWhereClause(filters, user) {
     let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
     if (filters.workOrderNumber !== undefined && filters.workOrderNumber !== '') {
-        whereClause += ' and w.workOrderNumber like @workOrderNumber';
-    }
-    if (filters.workOrderTypeDataListItemId !== undefined &&
-        filters.workOrderTypeDataListItemId !== '') {
         whereClause +=
-            ' and w.workOrderTypeDataListItemId = @workOrderTypeDataListItemId';
+            " and w.workOrderNumber like @workOrderNumber";
+    }
+    if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
+        whereClause += ' and w.workOrderTypeId = @workOrderTypeId';
     }
     if (filters.workOrderStatusDataListItemId !== undefined &&
         filters.workOrderStatusDataListItemId !== '') {
@@ -79,8 +78,8 @@ export default async function getWorkOrders(filters, options, user) {
         const countSql = /* sql */ `
       select count(*) as totalCount
       from ShiftLog.WorkOrders w
-      left join ShiftLog.DataListItems wType
-        on w.workOrderTypeDataListItemId = wType.dataListItemId
+      left join ShiftLog.WorkOrderTypes wType
+        on w.workOrderTypeId = wType.workOrderTypeId
       ${whereClause}
     `;
         const countResult = await pool
@@ -89,7 +88,7 @@ export default async function getWorkOrders(filters, options, user) {
             .input('workOrderNumber', filters.workOrderNumber === undefined
             ? null
             : `%${filters.workOrderNumber}%`)
-            .input('workOrderTypeDataListItemId', filters.workOrderTypeDataListItemId ?? null)
+            .input('workOrderTypeId', filters.workOrderTypeId ?? null)
             .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
             .input('requestorName', filters.requestorName === undefined
             ? null
@@ -108,7 +107,7 @@ export default async function getWorkOrders(filters, options, user) {
             .input('workOrderNumber', filters.workOrderNumber === undefined
             ? null
             : `%${filters.workOrderNumber}%`)
-            .input('workOrderTypeDataListItemId', filters.workOrderTypeDataListItemId ?? null)
+            .input('workOrderTypeId', filters.workOrderTypeId ?? null)
             .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
             .input('requestorName', filters.requestorName === undefined
             ? null
@@ -117,12 +116,15 @@ export default async function getWorkOrders(filters, options, user) {
             .input('userName', user?.userName).query(/* sql */ `
         select
           w.workOrderId,
+
+          w.workOrderNumberPrefix,
           w.workOrderNumberYear,
           w.workOrderNumberSequence,
+          w.workOrderNumberOverride,
           w.workOrderNumber,
 
-          w.workOrderTypeDataListItemId,
-          wType.dataListItem as workOrderTypeDataListItem,
+          w.workOrderTypeId,
+          wType.workOrderType,
 
           w.workOrderStatusDataListItemId,
           wStatus.dataListItem as workOrderStatusDataListItem,
@@ -150,8 +152,8 @@ export default async function getWorkOrders(filters, options, user) {
           
         from ShiftLog.WorkOrders w
 
-        left join ShiftLog.DataListItems wType
-          on w.workOrderTypeDataListItemId = wType.dataListItemId
+        left join ShiftLog.WorkOrderTypes wType
+          on w.workOrderTypeId = wType.workOrderTypeId
 
         left join ShiftLog.DataListItems wStatus
           on w.workOrderStatusDataListItemId = wStatus.dataListItemId
@@ -172,7 +174,7 @@ export default async function getWorkOrders(filters, options, user) {
 
         ${whereClause}    
 
-        order by w.workOrderOpenDateTime desc, w.workOrderNumber desc
+        order by w.workOrderOpenDateTime desc, w.workOrderNumberYear desc, w.workOrderNumberSequence desc
 
         ${limit === -1 ? '' : ` offset ${offset} rows`}
         ${limit === -1 ? '' : ` fetch next ${limit} rows only`}

@@ -2,7 +2,7 @@ import type { DateString, TimeString } from '@cityssm/utils-datetime';
 export interface CreateWorkOrderForm {
     workOrderDetails: string;
     workOrderStatusDataListItemId?: number | string;
-    workOrderTypeDataListItemId: number | string;
+    workOrderTypeId: number | string;
     workOrderOpenDateTimeString: `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderDueDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderCloseDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
@@ -15,4 +15,4 @@ export interface CreateWorkOrderForm {
     locationCityProvince: string;
     assignedToDataListItemId?: number | string;
 }
-export default function createWorkOrder(createWorkOrderForm: CreateWorkOrderForm, userName: string): Promise<number>;
+export default function createWorkOrder(createWorkOrderForm: CreateWorkOrderForm, user: User): Promise<number>;

@@ -42,9 +42,7 @@ export interface Config {
     };
     shifts?: ConfigSection;
     timesheets?: ConfigSection;
-    workOrders?: ConfigSection & {
-        workOrderNumberPrefix?: string;
-    };
+    workOrders?: ConfigSection;
     employees?: ConfigEmployees;
     equipment?: ConfigEquipment;
     locations?: ConfigLocations;

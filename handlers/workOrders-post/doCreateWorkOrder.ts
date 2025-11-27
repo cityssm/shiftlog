@@ -10,7 +10,7 @@ export default async function handler(
 ): Promise<void> {
   const workOrderId = await createWorkOrder(
     request.body,
-    request.session.user?.userName ?? ''
+    request.session.user as User
   )
 
   response.json({

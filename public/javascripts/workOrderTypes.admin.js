@@ -1,0 +1,289 @@
+(() => {
+    const shiftLog = exports.shiftLog;
+    let workOrderTypes = exports.workOrderTypes;
+    const tbodyElement = document.querySelector('#tbody--workOrderTypes');
+    function renderWorkOrderTypes() {
+        if (workOrderTypes.length === 0) {
+            tbodyElement.innerHTML = `<tr id="tr--noWorkOrderTypes">
+        <td colspan="5" class="has-text-centered has-text-grey">
+          No work order types found. Click "Add Work Order Type" to create one.
+        </td>
+      </tr>`;
+            return;
+        }
+        let html = '';
+        for (const workOrderType of workOrderTypes) {
+            const userGroupDisplay = workOrderType.userGroupName !== undefined &&
+                workOrderType.userGroupName !== ''
+                ? `<span class="tag is-info">${cityssm.escapeHTML(workOrderType.userGroupName)}</span>`
+                : '<span class="has-text-grey-light">-</span>';
+            html += /* html */ `
+        <tr data-work-order-type-id="${workOrderType.workOrderTypeId}">
+          <td class="has-text-centered">
+            <span class="icon is-small has-text-grey handle" style="cursor: move;">
+              <i class="fa-solid fa-grip-vertical"></i>
+            </span>
+          </td>
+          <td>
+            <span class="work-order-type-name">${cityssm.escapeHTML(workOrderType.workOrderType)}</span>
+          </td>
+          <td>
+            <span class="work-order-number-prefix">${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}</span>
+          </td>
+          <td>
+            ${userGroupDisplay}
+          </td>
+          <td>
+            <div class="buttons are-small">
+              <button
+                class="button is-info button--editWorkOrderType"
+                data-work-order-type-id="${workOrderType.workOrderTypeId}"
+                data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
+                data-work-order-number-prefix="${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}"
+                data-user-group-id="${workOrderType.userGroupId ?? ''}"
+                type="button"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>Edit</span>
+              </button>
+              <button
+                class="button is-danger button--deleteWorkOrderType"
+                data-work-order-type-id="${workOrderType.workOrderTypeId}"
+                data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
+                type="button"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-trash"></i>
+                </span>
+                <span>Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+        }
+        // eslint-disable-next-line no-unsanitized/property
+        tbodyElement.innerHTML = html;
+        attachEventListeners();
+        initializeSortable();
+    }
+    function addWorkOrderType() {
+        let closeModalFunction;
+        function doAddWorkOrderType(submitEvent) {
+            submitEvent.preventDefault();
+            const addForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddWorkOrderType`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success &&
+                    responseJSON.workOrderTypes !== undefined) {
+                    closeModalFunction();
+                    workOrderTypes = responseJSON.workOrderTypes;
+                    renderWorkOrderTypes();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'The work order type has been successfully added.',
+                        title: 'Work Order Type Added'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Adding Work Order Type',
+                        message: 'An error occurred. Please try again.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminWorkOrderTypes-add', {
+            onshow(modalElement) {
+                // Populate user group options
+                const userGroupSelect = modalElement.querySelector('#addWorkOrderType--userGroupId');
+                for (const userGroup of exports.userGroups) {
+                    const option = document.createElement('option');
+                    option.value = userGroup.userGroupId.toString();
+                    option.textContent = userGroup.userGroupName;
+                    userGroupSelect.append(option);
+                }
+            },
+            onshown(modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doAddWorkOrderType);
+                modalElement.querySelector('#addWorkOrderType--workOrderType').focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function editWorkOrderType(clickEvent) {
+        const buttonElement = clickEvent.currentTarget;
+        const workOrderTypeId = buttonElement.dataset.workOrderTypeId;
+        const currentWorkOrderType = buttonElement.dataset.workOrderType;
+        const currentWorkOrderNumberPrefix = buttonElement.dataset.workOrderNumberPrefix;
+        const currentUserGroupId = buttonElement.dataset.userGroupId;
+        if (workOrderTypeId === undefined ||
+            currentWorkOrderType === undefined ||
+            currentWorkOrderNumberPrefix === undefined) {
+            return;
+        }
+        let closeModalFunction;
+        function doUpdateWorkOrderType(submitEvent) {
+            submitEvent.preventDefault();
+            const editForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success &&
+                    responseJSON.workOrderTypes !== undefined) {
+                    closeModalFunction();
+                    workOrderTypes = responseJSON.workOrderTypes;
+                    renderWorkOrderTypes();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'The work order type has been successfully updated.',
+                        title: 'Work Order Type Updated'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        message: 'An error occurred. Please try again.',
+                        title: 'Error Updating Work Order Type'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminWorkOrderTypes-edit', {
+            onshow(modalElement) {
+                // Set form values
+                ;
+                modalElement.querySelector('#editWorkOrderType--workOrderTypeId').value = workOrderTypeId;
+                modalElement.querySelector('#editWorkOrderType--workOrderType').value = currentWorkOrderType;
+                modalElement.querySelector('#editWorkOrderType--workOrderNumberPrefix').value = currentWorkOrderNumberPrefix;
+                // Populate user group options
+                const userGroupSelect = modalElement.querySelector('#editWorkOrderType--userGroupId');
+                for (const userGroup of exports.userGroups) {
+                    const option = document.createElement('option');
+                    option.value = userGroup.userGroupId.toString();
+                    option.textContent = userGroup.userGroupName;
+                    if (currentUserGroupId !== undefined &&
+                        currentUserGroupId !== '' &&
+                        Number.parseInt(currentUserGroupId, 10) === userGroup.userGroupId) {
+                        option.selected = true;
+                    }
+                    userGroupSelect.append(option);
+                }
+            },
+            onshown(modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doUpdateWorkOrderType);
+                const typeInputElement = modalElement.querySelector('#editWorkOrderType--workOrderType');
+                typeInputElement.focus();
+                typeInputElement.select();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function deleteWorkOrderType(clickEvent) {
+        const buttonElement = clickEvent.currentTarget;
+        const workOrderTypeId = buttonElement.dataset.workOrderTypeId;
+        const workOrderType = buttonElement.dataset.workOrderType;
+        if (workOrderTypeId === undefined || workOrderType === undefined) {
+            return;
+        }
+        bulmaJS.confirm({
+            contextualColorName: 'warning',
+            message: `Are you sure you want to delete "${workOrderType}"? This action cannot be undone.`,
+            okButton: {
+                callbackFunction() {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteWorkOrderType`, {
+                        workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success &&
+                            responseJSON.workOrderTypes !== undefined) {
+                            workOrderTypes = responseJSON.workOrderTypes;
+                            renderWorkOrderTypes();
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'The work order type has been successfully deleted.',
+                                title: 'Work Order Type Deleted'
+                            });
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                message: 'An error occurred. Please try again.',
+                                title: 'Error Deleting Work Order Type'
+                            });
+                        }
+                    });
+                },
+                contextualColorName: 'danger',
+                text: 'Delete Work Order Type'
+            },
+            title: 'Delete Work Order Type'
+        });
+    }
+    function attachEventListeners() {
+        // Edit buttons
+        const editButtons = document.querySelectorAll('.button--editWorkOrderType');
+        for (const button of editButtons) {
+            button.addEventListener('click', editWorkOrderType);
+        }
+        // Delete buttons
+        const deleteButtons = document.querySelectorAll('.button--deleteWorkOrderType');
+        for (const button of deleteButtons) {
+            button.addEventListener('click', deleteWorkOrderType);
+        }
+    }
+    function initializeSortable() {
+        if (workOrderTypes.length > 0) {
+            Sortable.create(tbodyElement, {
+                animation: 150,
+                handle: '.handle',
+                onEnd() {
+                    // Get the new order
+                    const rows = tbodyElement.querySelectorAll('tr[data-work-order-type-id]');
+                    const workOrderTypeIds = [];
+                    for (const row of rows) {
+                        const id = row.dataset.workOrderTypeId;
+                        if (id !== undefined) {
+                            workOrderTypeIds.push(Number.parseInt(id, 10));
+                        }
+                    }
+                    // Send to server
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderWorkOrderTypes`, {
+                        workOrderTypeIds
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (!responseJSON.success) {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                message: 'Please refresh the page and try again.',
+                                title: 'Error Reordering Work Order Types'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }
+    // Add work order type button
+    const addButton = document.querySelector('#button--addWorkOrderType');
+    if (addButton !== null) {
+        addButton.addEventListener('click', addWorkOrderType);
+    }
+    // Initialize
+    attachEventListeners();
+    initializeSortable();
+})();

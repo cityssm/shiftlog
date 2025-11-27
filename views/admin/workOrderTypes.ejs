@@ -1,0 +1,123 @@
+<%- await include('../_header'); -%>
+
+<nav class="breadcrumb">
+  <ul>
+    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+    <li>
+      <a href="#">
+        <span class="icon is-small"><i class="fa-solid fa-cog"></i></span>
+        <span>Administrator Tools</span>
+      </a>
+    </li>
+    <li class="is-active">
+      <a href="#" aria-current="page">
+        Work Order Type Maintenance
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div class="columns is-vcentered">
+  <div class="column">
+    <h1 class="title is-1">
+      Work Order Type Maintenance
+    </h1>
+  </div>
+  <div class="column is-narrow">
+    <button class="button is-primary" id="button--addWorkOrderType" type="button">
+      <span class="icon">
+        <i class="fa-solid fa-plus"></i>
+      </span>
+      <span>Add Work Order Type</span>
+    </button>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-block p-0">
+    <div class="table-container" style="width: 100%;">
+      <table class="table is-striped is-hoverable is-fullwidth mb-0">
+        <thead>
+          <tr>
+            <th style="width: 60px;">Order</th>
+            <th>Type Name</th>
+            <th style="width: 150px;">Number Prefix</th>
+            <th style="width: 180px;">User Group</th>
+            <th style="width: 200px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody--workOrderTypes" class="is-sortable">
+          <% if (workOrderTypes.length === 0) { %>
+          <tr id="tr--noWorkOrderTypes">
+            <td class="has-text-centered has-text-grey" colspan="5">
+              No work order types found. Click "Add Work Order Type" to create one.
+            </td>
+          </tr>
+          <% } else { %>
+          <% for (const workOrderType of workOrderTypes) { %>
+          <tr data-work-order-type-id="<%= workOrderType.workOrderTypeId %>">
+            <td class="has-text-centered">
+              <span class="icon is-small has-text-grey handle" style="cursor: move;">
+                <i class="fa-solid fa-grip-vertical"></i>
+              </span>
+            </td>
+            <td>
+              <span class="work-order-type-name"><%= workOrderType.workOrderType %></span>
+            </td>
+            <td>
+              <span class="work-order-number-prefix"><%= workOrderType.workOrderNumberPrefix %></span>
+            </td>
+            <td>
+              <% if (workOrderType.userGroupId) { %>
+              <span class="tag is-info"><%= workOrderType.userGroupName %></span>
+              <% } else { %>
+              <span class="has-text-grey-light">-</span>
+              <% } %>
+            </td>
+            <td>
+              <div class="buttons are-small">
+                <button
+                  class="button is-info button--editWorkOrderType" 
+                  data-work-order-type-id="<%= workOrderType.workOrderTypeId %>"
+                  data-work-order-type="<%= workOrderType.workOrderType %>"
+                  data-work-order-number-prefix="<%= workOrderType.workOrderNumberPrefix %>"
+                  data-user-group-id="<%= workOrderType.userGroupId || '' %>"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-pencil"></i>
+                  </span>
+                  <span>Edit</span>
+                </button>
+                <button
+                  class="button is-danger button--deleteWorkOrderType" 
+                  data-work-order-type-id="<%= workOrderType.workOrderTypeId %>"
+                  data-work-order-type="<%= workOrderType.workOrderType %>"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-trash"></i>
+                  </span>
+                  <span>Delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <% } %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/lib/sortablejs/Sortable.min.js"></script>
+<script>
+  exports.workOrderTypes = <%- JSON.stringify(workOrderTypes) %>;
+  exports.userGroups = <%- JSON.stringify(userGroups) %>;
+</script>
+<script src="<%= urlPrefix %>/javascripts/workOrderTypes.admin.js"></script>
+
+<%- await include('../_footerB'); -%>

@@ -1,5 +1,5 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
+/* eslint-disable unicorn/no-null */
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
@@ -9,7 +9,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderId', updateWorkOrderForm.workOrderId)
-        .input('workOrderTypeDataListItemId', updateWorkOrderForm.workOrderTypeDataListItemId)
+        .input('workOrderTypeId', updateWorkOrderForm.workOrderTypeId)
         .input('workOrderStatusDataListItemId', updateWorkOrderForm.workOrderStatusDataListItemId === ''
         ? null
         : updateWorkOrderForm.workOrderStatusDataListItemId)
@@ -36,7 +36,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .input('userName', userName).query(/* sql */ `
       update ShiftLog.WorkOrders
       set
-        workOrderTypeDataListItemId = @workOrderTypeDataListItemId,
+        workOrderTypeId = @workOrderTypeId,
         workOrderStatusDataListItemId = @workOrderStatusDataListItemId,
         workOrderDetails = @workOrderDetails,
         workOrderOpenDateTime = @workOrderOpenDateTime,
