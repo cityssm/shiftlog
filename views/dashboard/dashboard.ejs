@@ -300,88 +300,6 @@
 <div class="columns">
   <div class="column">
     <div class="panel">
-      <a class="panel-block" href="<%= urlPrefix %>/admin/workOrderTypes">
-        <div class="media">
-          <div class="media-left">
-            <span class="fa-layers fa-4x">
-              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
-              <i class="fa-solid fa-cog" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
-            </span>
-          </div>
-          <div class="media-content">
-            <h2 class="title is-4 mb-0 has-text-link">
-              Work Order Type Management
-            </h2>
-            <p>
-              Manage work order types.
-            </p>
-          </div>
-        </div>
-      </a>
-      <a class="panel-block" href="<%= urlPrefix %>/admin/dataLists">
-        <div class="media">
-          <div class="media-left">
-            <i class="fa-solid fa-4x fa-list"></i>
-          </div>
-          <div class="media-content">
-            <h2 class="title is-4 mb-0 has-text-link">
-              Data List Management
-            </h2>
-            <p>
-              Manage equipment types, shift types, and other data lists.
-            </p>
-          </div>
-        </div>
-      </a>
-      <a class="panel-block" href="<%= urlPrefix %>/admin/employees">
-        <div class="media">
-          <div class="media-left">
-            <i class="fa-solid fa-4x fa-address-card"></i>
-          </div>
-          <div class="media-content">
-            <h2 class="title is-4 mb-0 has-text-link">
-              Employee Management
-            </h2>
-            <p>
-              Manage employee records and information.
-            </p>
-          </div>
-        </div>
-      </a>
-      <a class="panel-block" href="<%= urlPrefix %>/admin/equipment">
-        <div class="media">
-          <div class="media-left">
-            <i class="fa-solid fa-4x fa-truck"></i>
-          </div>
-          <div class="media-content">
-            <h2 class="title is-4 mb-0 has-text-link">
-              Equipment Management
-            </h2>
-            <p>
-              Manage equipment records and information.
-            </p>
-          </div>
-        </div>
-      </a>
-      <a class="panel-block" href="<%= urlPrefix %>/admin/locations">
-        <div class="media">
-          <div class="media-left">
-            <i class="fa-solid fa-4x fa-map-marker-alt"></i>
-          </div>
-          <div class="media-content">
-            <h2 class="title is-4 mb-0 has-text-link">
-              Location Management
-            </h2>
-            <p>
-              Manage suggested locations.
-            </p>
-          </div>
-        </div>
-      </a>
-    </div>
-  </div>
-  <div class="column">
-    <div class="panel">
       <a class="panel-block" href="<%= urlPrefix %>/admin/users">
         <div class="media">
           <div class="media-left">
@@ -433,7 +351,88 @@
           </div>
         </div>
       </a>
-      
+    </div>
+  </div>
+  <div class="column">
+    <div class="panel">
+      <a class="panel-block" href="<%= urlPrefix %>/admin/workOrderTypes">
+        <div class="media">
+          <div class="media-left">
+            <span class="fa-layers fa-4x">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+              <i class="fa-solid fa-cog" data-fa-transform="shrink-8 right-7 down-5" data-fa-glow="10"></i>
+            </span>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type Management
+            </h2>
+            <p>
+              Manage <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular').toLowerCase() %> types.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/dataLists">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-list"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Data List Management
+            </h2>
+            <p>
+              Manage equipment types, shift types, and other data lists.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/employees">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-address-card"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Employee Management
+            </h2>
+            <p>
+              Manage employee records and information.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/equipment">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-truck"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Equipment Maintenance
+            </h2>
+            <p>
+              Manage equipment records and information.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/locations">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-4x fa-map-marker-alt"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Location Maintenance
+            </h2>
+            <p>
+              Manage suggested locations.
+            </p>
+          </div>
+        </div>
+      </a>
     </div>
   </div>
 </div>

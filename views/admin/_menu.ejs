@@ -1,0 +1,152 @@
+<aside class="menu">
+  <p class="menu-label">Administration</p>
+  <ul class="menu-list">
+    <li>
+      <a
+        class="<%= headTitle === 'User Management' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/users"
+        title="User Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-users"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Users
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        class="<%= headTitle === 'User Group Management' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/userGroups"
+        title="User Group Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-user-group"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            User Groups
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        class="<%= headTitle === 'Settings Management' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/settings"
+        title="Settings Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-sliders"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Application Settings
+          </div>
+        </div>
+      </a>
+    </li>
+  </ul>
+  <p class="menu-label">Lists</p>
+  <ul class="menu-list">
+    <li>
+      <a
+        class="<%= headTitle === configFunctions.getConfigProperty('workOrders.sectionNameSingular') + ' Type Maintenance' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/workOrderTypes"
+        title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Types
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        class="<%= headTitle === 'Data List Management' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/dataLists"
+        title="Data List Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-list"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Data Lists
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        class="<%= headTitle === 'Employee Management' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/employees"
+        title="Employee Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-address-card"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Employees
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        class="<%= headTitle === 'Equipment Maintenance' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/equipment"
+        title="Equipment Maintenance"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-truck"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Equipment
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        class="<%= headTitle === 'Location Maintenance' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/locations"
+        title="Location Maintenance"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-map-marker-alt"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Locations
+          </div>
+        </div>
+      </a>
+    </li>
+  </ul>
+</aside>
