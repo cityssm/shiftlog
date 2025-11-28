@@ -238,6 +238,23 @@
           </div>
         </div>
       </a>
+      <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/map">
+        <div class="media">
+          <div class="media-left">
+            <span class="fa-layers fa-4x">
+              <i class="fa-solid fa-map"></i>
+            </span>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Open <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Map
+            </h2>
+            <p>
+              View <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> on an interactive map.
+            </p>
+          </div>
+        </div>
+      </a>
       <% if (user.userProperties.workOrders.canUpdate) { %>
       <div class="panel-block">
         <a class="button is-success is-fullwidth" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/new">
