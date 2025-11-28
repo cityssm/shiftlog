@@ -20,6 +20,8 @@ export interface GetWorkOrdersFilters {
 export interface GetWorkOrdersOptions {
   limit: number | string
   offset: number | string
+
+  includeMoreInfoFormData?: boolean
 }
 
 function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
@@ -75,8 +77,7 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
         break
       }
       case 'open': {
-        whereClause +=
-          ' and w.workOrderCloseDateTime is null'
+        whereClause += ' and w.workOrderCloseDateTime is null'
 
         break
       }
@@ -230,6 +231,12 @@ export default async function getWorkOrders(
           w.assignedToDataListItemId,
           assignedTo.dataListItem as assignedToDataListItem,
 
+          ${
+            options.includeMoreInfoFormData === true
+              ? 'w.moreInfoFormDataJson,'
+              : ''
+          }
+
           milestones.milestonesCount,
           milestones.milestonesCompletedCount
           
@@ -267,6 +274,22 @@ export default async function getWorkOrders(
 
     if (limit === -1) {
       totalCount = workOrders.length
+    }
+
+    if (options.includeMoreInfoFormData === true) {
+      for (const workOrder of workOrders) {
+        if (workOrder.moreInfoFormDataJson === undefined) {
+          workOrder.moreInfoFormData = {}
+        } else {
+          try {
+            workOrder.moreInfoFormData = JSON.parse(
+              workOrder.moreInfoFormDataJson
+            ) as Record<string, unknown>
+          } catch {
+            workOrder.moreInfoFormData = {}
+          }
+        }
+      }
     }
   }
 

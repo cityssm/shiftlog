@@ -1,0 +1,22 @@
+<input
+  name="moreInfo_formName"
+  type="hidden"
+  form="form--workOrder"
+  value="graffiti"
+/>
+
+<div class="field">
+  <label class="label" for="moreInfo_graffiti_notes2">Graffiti Notes</label>
+  <div class="control">
+    <textarea
+      class="textarea is-small"
+      id="moreInfo_graffiti_notes2"
+      name="moreInfo_graffiti_notes2"
+      maxlength="2000"
+      placeholder="Enter graffiti notes here..."
+      rows="4"
+      form="form--workOrder"
+      <%= !isEdit ? 'readonly' : '' %>
+    ><%= workOrder.moreInfoFormData.moreInfo_graffiti_notes2 ?? '' %></textarea>
+  </div>
+</div>

@@ -1,2 +1,2 @@
 import type { WorkOrderType } from '../../types/record.types.js';
-export default function getWorkOrderType(workOrderTypeId: number | string, user?: User): Promise<WorkOrderType | undefined>;
+export default function getWorkOrderType(workOrderTypeId: number | string, user?: User, includeDeleted?: boolean): Promise<WorkOrderType | undefined>;

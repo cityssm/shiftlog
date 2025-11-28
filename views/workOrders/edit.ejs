@@ -492,12 +492,30 @@
 </form>
 
 <% if (!isCreate) { %>
+  <% 
+    const workOrderType = workOrderTypes.find(wot => wot.workOrderTypeId === workOrder.workOrderTypeId);
+    const hasMoreInfoForm = (workOrderType && Array.isArray(workOrderType.moreInfoFormNames) && workOrderType.moreInfoFormNames.length > 0) || Object.keys(workOrder.moreInfoFormData).length > 0;
+  %>
 <div class="columns is-mobile mt-4" id="container--workOrderTabs">
   <div class="column is-3 is-narrow-touch">
     <div class="menu">
       <ul class="menu-list">
+        <% if (hasMoreInfoForm) { %>
         <li>
-          <a class="is-active" href="#tab--milestones" title="Milestones">
+          <a class="is-active" href="#tab--moreInfo" title="More Info">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-info-circle"></i></span>
+              </div>
+              <div class="column is-hidden-touch">
+                More Info
+              </div>
+            </div>
+          </a>
+        </li>
+        <% } %>
+        <li>
+          <a class="<%= hasMoreInfoForm ? '' : 'is-active' %>" href="#tab--milestones" title="Milestones">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-list-check"></i></span>
@@ -527,7 +545,12 @@
   </div>
   <div class="column">
     <div class="tabs-container">
-      <div id="tab--milestones">
+      <% if (hasMoreInfoForm) { %>
+      <div id="tab--moreInfo">
+        <%- await include('_edit-moreInfo', { workOrderType, workOrder }); -%>
+      </div>
+      <% } %>
+      <div id="tab--milestones" class="<%= hasMoreInfoForm ? 'is-hidden' : '' %>">
         <%- await include('_edit-milestones'); -%>
       </div>
       <div id="tab--notes" class="is-hidden">

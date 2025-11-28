@@ -11,6 +11,7 @@ export interface GetWorkOrdersFilters {
 export interface GetWorkOrdersOptions {
     limit: number | string;
     offset: number | string;
+    includeMoreInfoFormData?: boolean;
 }
 export default function getWorkOrders(filters: GetWorkOrdersFilters, options: GetWorkOrdersOptions, user?: User): Promise<{
     workOrders: WorkOrder[];

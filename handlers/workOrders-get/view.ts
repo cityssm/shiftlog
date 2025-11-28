@@ -1,7 +1,9 @@
 import type { Request, Response } from 'express'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
+import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import type { WorkOrderType } from '../../types/record.types.js'
 
 import type { WorkOrderEditResponse } from './types.js'
 
@@ -26,6 +28,12 @@ export default async function handler(
     return
   }
 
+  const workOrderType = (await getWorkOrderType(
+    workOrder.workOrderTypeId,
+    request.session.user,
+    true
+  )) as WorkOrderType
+
   response.render('workOrders/edit', {
     headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${
       workOrder.workOrderNumber
@@ -36,7 +44,7 @@ export default async function handler(
 
     workOrder,
 
-    workOrderTypes: [],
+    workOrderTypes: [workOrderType],
     workOrderStatuses: [],
     assignedToOptions: []
   } satisfies WorkOrderEditResponse)

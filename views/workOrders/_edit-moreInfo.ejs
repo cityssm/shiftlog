@@ -1,0 +1,35 @@
+<h2 class="title is-4">More Info</h2>
+
+<!-- eslint-disable html/indent -->
+<% 
+  const workOrderFormNames = workOrderType?.moreInfoFormNames || [];
+
+  const savedFormNames = workOrder.moreInfoFormData.moreInfo_formName
+
+  if (typeof savedFormNames === 'string') {
+    if (!workOrderFormNames.includes(savedFormNames)) {
+      workOrderFormNames.push(savedFormNames);
+    }
+  } else if (Array.isArray(savedFormNames)) {
+    // If multiple forms were saved, add them to the list
+    for (const formName of savedFormNames) {
+      if (!workOrderFormNames.includes(formName)) {
+        workOrderFormNames.push(formName);
+      }
+    }
+  }
+%>
+
+<% if (workOrderType && Array.isArray(workOrderType.moreInfoFormNames)) { %>
+  <% for (const formName of workOrderType.moreInfoFormNames) { %>
+    <% try { %>
+      <%- await include(`_moreInfo-${formName}`, { workOrder, isEdit: isEdit }); -%>
+    <% } catch (error) { %>
+      <div class="message is-danger">
+        <div class="message-body">
+          <p>Error loading form: <%= formName %></p>
+        </div>
+      </div>
+    <% } %>
+  <% } %>
+<% } %>

@@ -2,13 +2,16 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
+import getWorkOrderTypeMoreInfoFormNames from './getWorkOrderTypeMoreInfoFormNames.js'
+
 export default async function getWorkOrderType(
   workOrderTypeId: number | string,
-  user?: User
+  user?: User,
+  includeDeleted = false
 ): Promise<WorkOrderType | undefined> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('userName', user?.userName ?? '')
@@ -25,7 +28,7 @@ export default async function getWorkOrderType(
         on wt.userGroupId = ug.userGroupId
       where wt.instance = @instance
         and wt.workOrderTypeId = @workOrderTypeId
-        and wt.recordDelete_dateTime is null
+        ${includeDeleted ? '' : 'and wt.recordDelete_dateTime is null'}
         ${
           user === undefined
             ? ''
@@ -39,7 +42,13 @@ export default async function getWorkOrderType(
               )
               `
         }
-    `))
+    `)
 
-  return result.recordset[0]
+  const workOrderType = result.recordset[0]
+
+  workOrderType.moreInfoFormNames = await getWorkOrderTypeMoreInfoFormNames(
+    workOrderType.workOrderTypeId
+  )
+
+  return workOrderType
 }

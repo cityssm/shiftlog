@@ -266,6 +266,15 @@ CREATE TABLE ShiftLog.WorkOrderTypes (
 )
 GO
 
+CREATE TABLE ShiftLog.WorkOrderTypeMoreInfoForms (
+  workOrderTypeId int not null,
+  formName varchar(100) not null,
+
+  primary key (workOrderTypeId, formName),
+  foreign key (workOrderTypeId) references ShiftLog.WorkOrderTypes(workOrderTypeId)
+)
+GO
+
 -- WORK ORDERS
 
 create table ShiftLog.WorkOrders (
@@ -310,6 +319,8 @@ create table ShiftLog.WorkOrders (
   locationCityProvince varchar(50) not null default '',
 
   assignedToDataListItemId int,
+
+  moreInfoFormDataJson nvarchar(max) not null default '{}',
 
   recordCreate_userName varchar(30) not null,
   recordCreate_dateTime datetime not null default getdate(),

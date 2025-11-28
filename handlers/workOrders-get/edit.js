@@ -1,7 +1,7 @@
-import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
 import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
+import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`;
 export default async function handler(request, response) {

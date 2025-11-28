@@ -262,6 +262,8 @@ export interface WorkOrderType extends BaseRecord {
 
   userGroupId?: number | null
   userGroupName?: string
+
+  moreInfoFormNames?: string[]
 }
 
 // Work Orders
@@ -300,6 +302,9 @@ export interface WorkOrder extends BaseRecord {
 
   assignedToDataListItemId?: number | null
   assignedToDataListItem?: string
+
+  moreInfoFormDataJson?: string
+  moreInfoFormData?: Record<string, unknown>
 
   userGroupId?: number | null
   userGroupName?: string

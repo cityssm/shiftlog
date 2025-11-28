@@ -1,5 +1,5 @@
 import type { DateString, TimeString } from '@cityssm/utils-datetime';
-export interface UpdateWorkOrderForm {
+export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
     workOrderId: number | string;
     workOrderDetails: string;
     workOrderStatusDataListItemId?: number | string;
@@ -15,5 +15,5 @@ export interface UpdateWorkOrderForm {
     locationAddress2: string;
     locationCityProvince: string;
     assignedToDataListItemId?: number | string;
-}
+};
 export default function updateWorkOrder(updateWorkOrderForm: UpdateWorkOrderForm, userName: string): Promise<boolean>;

@@ -39,7 +39,9 @@ export default async function getWorkOrder(
       w.locationCityProvince,
 
       w.assignedToDataListItemId,
-      assignedTo.dataListItem as assignedToDataListItem
+      assignedTo.dataListItem as assignedToDataListItem,
+
+      moreInfoFormDataJson
 
     from ShiftLog.WorkOrders w
 
@@ -82,6 +84,18 @@ export default async function getWorkOrder(
   }
 
   const workOrder = workOrdersResult.recordset[0]
+
+  if (workOrder.moreInfoFormDataJson === undefined) {
+    workOrder.moreInfoFormData = {}
+  } else {
+    try {
+      workOrder.moreInfoFormData = JSON.parse(
+        workOrder.moreInfoFormDataJson
+      ) as Record<string, unknown>
+    } catch {
+      workOrder.moreInfoFormData = {}
+    }
+  }
 
   return workOrder
 }

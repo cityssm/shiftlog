@@ -3,7 +3,20 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
+function buildMoreInfoFormDataJson(updateWorkOrderForm) {
+    const moreInfoFormData = {};
+    for (const [key, value] of Object.entries(updateWorkOrderForm)) {
+        if (key.startsWith('moreInfo_')) {
+            moreInfoFormData[key] = value;
+        }
+    }
+    if (Object.keys(moreInfoFormData).length === 0) {
+        return '{}';
+    }
+    return JSON.stringify(moreInfoFormData);
+}
 export default async function updateWorkOrder(updateWorkOrderForm, userName) {
+    const moreInfoFormDataJson = buildMoreInfoFormDataJson(updateWorkOrderForm);
     const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
@@ -32,7 +45,10 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .input('locationAddress1', updateWorkOrderForm.locationAddress1)
         .input('locationAddress2', updateWorkOrderForm.locationAddress2)
         .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
-        .input('assignedToDataListItemId', updateWorkOrderForm.assignedToDataListItemId ?? null)
+        .input('assignedToDataListItemId', updateWorkOrderForm.assignedToDataListItemId === ''
+        ? null
+        : updateWorkOrderForm.assignedToDataListItemId)
+        .input('moreInfoFormDataJson', moreInfoFormDataJson)
         .input('userName', userName).query(/* sql */ `
       update ShiftLog.WorkOrders
       set
@@ -50,6 +66,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         locationAddress2 = @locationAddress2,
         locationCityProvince = @locationCityProvince,
         assignedToDataListItemId = @assignedToDataListItemId,
+        moreInfoFormDataJson = @moreInfoFormDataJson,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       where workOrderId = @workOrderId

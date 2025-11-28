@@ -40,8 +40,7 @@ function buildWhereClause(filters, user) {
                 break;
             }
             case 'open': {
-                whereClause +=
-                    ' and w.workOrderCloseDateTime is null';
+                whereClause += ' and w.workOrderCloseDateTime is null';
                 break;
             }
             case 'overdue': {
@@ -148,6 +147,10 @@ export default async function getWorkOrders(filters, options, user) {
           w.assignedToDataListItemId,
           assignedTo.dataListItem as assignedToDataListItem,
 
+          ${options.includeMoreInfoFormData === true
+            ? 'w.moreInfoFormDataJson,'
+            : ''}
+
           milestones.milestonesCount,
           milestones.milestonesCompletedCount
           
@@ -183,6 +186,21 @@ export default async function getWorkOrders(filters, options, user) {
         workOrders = workOrdersResult.recordset;
         if (limit === -1) {
             totalCount = workOrders.length;
+        }
+        if (options.includeMoreInfoFormData === true) {
+            for (const workOrder of workOrders) {
+                if (workOrder.moreInfoFormDataJson === undefined) {
+                    workOrder.moreInfoFormData = {};
+                }
+                else {
+                    try {
+                        workOrder.moreInfoFormData = JSON.parse(workOrder.moreInfoFormDataJson);
+                    }
+                    catch {
+                        workOrder.moreInfoFormData = {};
+                    }
+                }
+            }
         }
     }
     return {

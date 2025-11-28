@@ -189,6 +189,7 @@ export interface WorkOrderType extends BaseRecord {
     orderNumber: number;
     userGroupId?: number | null;
     userGroupName?: string;
+    moreInfoFormNames?: string[];
 }
 export interface WorkOrder extends BaseRecord {
     workOrderId: number;
@@ -214,6 +215,8 @@ export interface WorkOrder extends BaseRecord {
     locationCityProvince: string;
     assignedToDataListItemId?: number | null;
     assignedToDataListItem?: string;
+    moreInfoFormDataJson?: string;
+    moreInfoFormData?: Record<string, unknown>;
     userGroupId?: number | null;
     userGroupName?: string;
     milestonesCount?: number;
