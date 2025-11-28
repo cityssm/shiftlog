@@ -37,4 +37,3 @@ megalinter-reports/
 temp_build/
 
 tsconfig.tsbuildinfo
-data/config.js

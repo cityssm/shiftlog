@@ -1,0 +1,99 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <nav class="breadcrumb">
+      <ul>
+        <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+        <li>
+          <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+            </span>
+            <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
+          </a>
+        </li>
+        <li class="is-active">
+          <a href="#" aria-current="page">
+            <span class="icon is-small">
+              <i class="fa-solid fa-map"></i>
+            </span>
+            <span>Map</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <h1 class="title is-1">
+      Open <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Map
+    </h1>
+
+    <div class="box">
+      <div class="columns">
+        <div class="column">
+          <div class="field">
+            <label class="label" for="workOrderMap--workOrderTypeId">
+              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
+            </label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="workOrderMap--workOrderTypeId">
+                  <option value="">(All Types)</option>
+                  <% workOrderTypes.forEach(function(workOrderType) { %>
+                  <option value="<%= workOrderType.workOrderTypeId %>">
+                    <%= workOrderType.workOrderType %>
+                  </option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="field">
+            <label class="label" for="workOrderMap--assignedToDataListItemId">Assigned To</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="workOrderMap--assignedToDataListItemId">
+                  <option value="">(All Assignees)</option>
+                  <% assignedToItems.forEach(function(assignedToItem) { %>
+                  <option value="<%= assignedToItem.dataListItemId %>">
+                    <%= assignedToItem.dataListItem %>
+                  </option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box mb-3">
+      <div class="columns is-vcentered">
+        <div class="column is-narrow">
+          <span class="icon has-text-success"><i class="fa-solid fa-circle"></i></span>
+          <span class="has-text-grey">Open</span>
+        </div>
+        <div class="column is-narrow">
+          <span class="icon has-text-danger"><i class="fa-solid fa-circle"></i></span>
+          <span class="has-text-grey">Overdue</span>
+        </div>
+        <div class="column has-text-right">
+          <span class="has-text-grey" id="container--workOrderCount">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="has-background-grey-lighter" id="map--workOrders" style="height: 500px;"></div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/workOrders.map.js"></script>
+
+<%- await include('../_footerB'); -%>

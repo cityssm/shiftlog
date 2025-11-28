@@ -1,6 +1,7 @@
 import { type NextFunction, type Request, type Response, Router } from 'express'
 
 import handler_edit from '../handlers/workOrders-get/edit.js'
+import handler_map from '../handlers/workOrders-get/map.js'
 import handler_new from '../handlers/workOrders-get/new.js'
 import handler_print from '../handlers/workOrders-get/print.js'
 import handler_search from '../handlers/workOrders-get/search.js'
@@ -37,6 +38,7 @@ export const router = Router()
 
 router
   .get('/', handler_search)
+  .get('/map', handler_map)
   .post('/doSearchWorkOrders', handler_doSearchWorkOrders)
 
 router
