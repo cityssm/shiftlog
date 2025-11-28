@@ -76,7 +76,7 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
       }
       case 'open': {
         whereClause +=
-          ' and w.workOrderCloseDateTime is null and (w.workOrderDueDateTime is null or w.workOrderDueDateTime >= getdate())'
+          ' and w.workOrderCloseDateTime is null'
 
         break
       }

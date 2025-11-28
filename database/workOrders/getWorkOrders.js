@@ -41,7 +41,7 @@ function buildWhereClause(filters, user) {
             }
             case 'open': {
                 whereClause +=
-                    ' and w.workOrderCloseDateTime is null and (w.workOrderDueDateTime is null or w.workOrderDueDateTime >= getdate())';
+                    ' and w.workOrderCloseDateTime is null';
                 break;
             }
             case 'overdue': {

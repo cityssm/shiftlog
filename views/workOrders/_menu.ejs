@@ -6,6 +6,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
   <ul class="menu-list">
     <li>
       <a
+        class="<%= headTitle.endsWith(' - Search') ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/<%= workOrdersRouter %>"
         title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search"
       >
@@ -33,6 +34,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
     </li>
     <li>
       <a
+        class="<%= headTitle.endsWith(' - Map') ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/<%= workOrdersRouter %>/map"
         title="Open <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Map"
       >
