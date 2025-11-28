@@ -5,18 +5,53 @@
   value="graffiti"
 />
 
-<div class="field">
-  <label class="label" for="moreInfo_graffiti_notes2">Graffiti Notes</label>
-  <div class="control">
-    <textarea
-      class="textarea is-small"
-      id="moreInfo_graffiti_notes2"
-      name="moreInfo_graffiti_notes2"
-      maxlength="2000"
-      placeholder="Enter graffiti notes here..."
-      rows="4"
-      form="form--workOrder"
-      <%= !isEdit ? 'readonly' : '' %>
-    ><%= workOrder.moreInfoFormData.moreInfo_graffiti_notes2 ?? '' %></textarea>
+<div class="box">
+  <div class="field">
+    <label class="label" for="moreInfo_graffiti_surfaceType">
+      Surface Type
+    </label>
+    <div class="control">
+      <input
+        class="input"
+        id="moreInfo_graffiti_surfaceType"
+        name="moreInfo_graffiti_surfaceType"
+        type="text"
+        value="<%= workOrder.moreInfoFormData.moreInfo_graffiti_surfaceType || '' %>"
+        form="form--workOrder"
+        list="datalist--moreInfo_graffiti_surfaceType"
+      />
+    </div>
   </div>
+
+  <datalist id="datalist--moreInfo_graffiti_surfaceType">
+    <option value="Brick"></option>
+    <option value="Concrete"></option>
+    <option value="Wood"></option>
+    <option value="Metal"></option>
+    <option value="Glass"></option>
+    <option value="Other"></option>
+  </datalist>
+
+  <div class="field">
+    <label class="label" for="moreInfo_graffiti_paintUsed">Paint Used</label>
+    <div class="control">
+      <input
+        class="input"
+        id="moreInfo_graffiti_paintUsed"
+        name="moreInfo_graffiti_paintUsed"
+        type="text"
+        value="<%= workOrder.moreInfoFormData.moreInfo_graffiti_paintUsed || '' %>"
+        form="form--workOrder"
+        list="datalist--moreInfo_graffiti_paintUsed"
+      />
+    </div>
+  </div>
+
+  <datalist id="datalist--moreInfo_graffiti_paintUsed">
+    <option value="Spray Paint"></option>
+    <option value="Marker"></option>
+    <option value="Sticker"></option>
+    <option value="Etching"></option>
+    <option value="Other"></option>
+  </datalist>
 </div>
