@@ -233,3 +233,12 @@ export interface WorkOrderMilestone extends BaseRecord {
     assignedToDataListItem?: string;
     orderNumber: number;
 }
+export interface WorkOrderAttachment extends BaseRecord {
+    workOrderAttachmentId: number;
+    workOrderId: number;
+    attachmentFileName: string;
+    attachmentFileType: string;
+    attachmentFileSizeInBytes: number;
+    attachmentDescription: string;
+    fileSystemPath: string;
+}

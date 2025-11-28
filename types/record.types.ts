@@ -328,3 +328,16 @@ export interface WorkOrderMilestone extends BaseRecord {
 
   orderNumber: number
 }
+
+export interface WorkOrderAttachment extends BaseRecord {
+  workOrderAttachmentId: number
+  workOrderId: number
+
+  attachmentFileName: string
+  attachmentFileType: string
+  attachmentFileSizeInBytes: number
+
+  attachmentDescription: string
+
+  fileSystemPath: string
+}

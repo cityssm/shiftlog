@@ -540,6 +540,19 @@
             </div>
           </a>
         </li>
+        <li>
+          <a href="#tab--attachments" title="Attachments">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-paperclip"></i></span>
+              </div>
+              <div class="column is-hidden-touch">
+                Attachments
+                <span class="tag is-rounded ml-2" id="attachmentsCount">0</span>
+              </div>
+            </div>
+          </a>
+        </li>
       </ul>  
     </div>
   </div>
@@ -556,6 +569,9 @@
       <div id="tab--notes" class="is-hidden">
         <%- await include('_edit-notes'); -%>
       </div>
+      <div id="tab--attachments" class="is-hidden">
+        <%- await include('_edit-attachments'); -%>
+      </div>
     </div>
   </div>
 </div>
@@ -568,11 +584,13 @@
   exports.workOrderAssignedToDataListItemId = <%= workOrder.assignedToDataListItemId ? workOrder.assignedToDataListItemId : 'null' %>;
   exports.workOrderOpenDateTime = "<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>";
   exports.isEdit = <%= isEdit %>;
+  exports.attachmentMaximumFileSizeBytes = <%= configFunctions.getConfigProperty('application.attachmentMaximumFileSizeBytes') %>;
 </script>
 
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.notes.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.attachments.viewEdit.js"></script>
 
 <% if (isEdit) { %>
 <script src="<%= urlPrefix %>/javascripts/workOrders.edit.js"></script>

@@ -298,7 +298,13 @@ if (!configFunctions.getConfigProperty('reverseProxy.disableCsrf')) {
     generateCsrfToken // Use this in your routes to provide a CSRF token.
   } = doubleCsrf({
     getSecret: (_request) => csrfSecret, // return a secret for the request
-    getSessionIdentifier: (request) => request.session.id // return the requests unique identifier
+    getSessionIdentifier: (request) => request.session.id, // return the requests unique identifier
+    skipCsrfProtection(request) {
+      return (
+        hasSession(request) &&
+        request.path.endsWith('/doUploadWorkOrderAttachment')
+      )
+    }
   })
 
   app.use(doubleCsrfProtection)
