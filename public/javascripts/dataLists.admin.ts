@@ -42,6 +42,16 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
+  function updateItemCount(dataListKey: string, count: number): void {
+    const countElement = document.querySelector(
+      `#itemCount--${dataListKey}`
+    ) as HTMLElement
+
+    if (countElement !== null) {
+      countElement.textContent = count.toString()
+    }
+  }
+
   function renderDataListItems(
     dataListKey: string,
     items: DataListItemWithDetails[]
@@ -53,6 +63,9 @@ declare const exports: {
     if (tbodyElement === null) {
       return
     }
+
+    // Update the item count tag
+    updateItemCount(dataListKey, items.length)
 
     if (items.length === 0) {
       tbodyElement.innerHTML = `<tr>
@@ -197,6 +210,15 @@ declare const exports: {
               }
 
               if (responseJSON.success && responseJSON.items !== undefined) {
+                // Open the details panel if it's closed
+                const detailsElement = document.querySelector(
+                  `details[data-data-list-key="${dataListKey}"]`
+                ) as HTMLDetailsElement
+
+                if (detailsElement !== null && !detailsElement.open) {
+                  detailsElement.open = true
+                }
+
                 renderDataListItems(dataListKey, responseJSON.items)
                 bulmaJS.alert({
                   contextualColorName: 'success',
