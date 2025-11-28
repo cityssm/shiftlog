@@ -1,13 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import Debug from 'debug';
-import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import createWorkOrderAttachment from '../../database/workOrders/createWorkOrderAttachment.js';
+import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:workOrders-post:doUploadWorkOrderAttachment`);
 function sanitizeFileName(originalName) {
     // Remove control characters, newlines, and null bytes
-    let sanitized = originalName.replaceAll(/[\u0000-\u001F\u007F-\u009F\n\r]/g, '');
+    // eslint-disable-next-line no-control-regex, sonarjs/no-control-regex
+    let sanitized = originalName.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, '');
     // Remove characters that are problematic in file systems
     sanitized = sanitized.replaceAll(/[<>:"/\\|?*]/g, '_');
     // Remove leading dots to prevent hidden files on Unix
@@ -40,18 +41,18 @@ export default async function handler(request, response) {
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const storagePath = getConfigProperty('application.attachmentStoragePath');
-    const subDir = path.join(year, month);
-    const fullDir = path.join(storagePath, subDir);
+    const subfolderDirectory = path.join(year, month);
+    const fullDirectory = path.join(storagePath, subfolderDirectory);
     // Ensure directory exists
-    if (!fs.existsSync(fullDir)) {
-        fs.mkdirSync(fullDir, { recursive: true });
+    if (!fs.existsSync(fullDirectory)) {
+        fs.mkdirSync(fullDirectory, { recursive: true });
     }
     // Generate unique filename to avoid collisions
     const timestamp = Date.now();
     const sanitizedFileName = sanitizeFileName(file.originalname);
     const uniqueFileName = `${timestamp}_${sanitizedFileName}`;
-    const filePath = path.join(fullDir, uniqueFileName);
-    const fileSystemPath = path.join(subDir, uniqueFileName);
+    const filePath = path.join(fullDirectory, uniqueFileName);
+    const fileSystemPath = path.join(subfolderDirectory, uniqueFileName);
     try {
         // Move file from temp location to permanent storage
         fs.renameSync(file.path, filePath);
