@@ -1,10 +1,18 @@
 (() => {
     const shiftLog = exports.shiftLog;
+    function updateItemCount(dataListKey, count) {
+        const countElement = document.querySelector(`#itemCount--${dataListKey}`);
+        if (countElement !== null) {
+            countElement.textContent = count.toString();
+        }
+    }
     function renderDataListItems(dataListKey, items) {
         const tbodyElement = document.querySelector(`#dataListItems--${dataListKey}`);
         if (tbodyElement === null) {
             return;
         }
+        // Update the item count tag
+        updateItemCount(dataListKey, items.length);
         if (items.length === 0) {
             tbodyElement.innerHTML = `<tr>
         <td colspan="4" class="has-text-centered has-text-grey">
@@ -123,6 +131,11 @@
                     }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.items !== undefined) {
+                            // Open the details panel if it's closed
+                            const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
+                            if (detailsElement !== null && !detailsElement.open) {
+                                detailsElement.open = true;
+                            }
                             renderDataListItems(dataListKey, responseJSON.items);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
