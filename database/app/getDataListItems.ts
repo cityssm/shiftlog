@@ -31,7 +31,7 @@ export default async function getDataListItems(
                 ))
               `
         }
-      order by i.dataListItem
+      order by i.orderNumber, i.dataListItem
     `)
 
   return dataListItemsResult.recordset

@@ -22,7 +22,7 @@ export default async function getDataListItems(dataListKey, user) {
                   where userName = @userName
                 ))
               `}
-      order by i.dataListItem
+      order by i.orderNumber, i.dataListItem
     `);
     return dataListItemsResult.recordset;
 }
