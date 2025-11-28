@@ -148,6 +148,9 @@ interface ConfigApplication {
   maximumProcesses?: number
 
   backgroundImage?: string
+
+  attachmentStoragePath?: string
+  attachmentMaximumFileSizeBytes?: number
 }
 
 interface ConfigSession {

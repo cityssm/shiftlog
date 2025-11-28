@@ -380,6 +380,29 @@ create table ShiftLog.WorkOrderMilestones (
 )
 GO
 
+create table ShiftLog.WorkOrderAttachments (
+  workOrderAttachmentId int not null primary key identity(1,1),
+  workOrderId int not null,
+
+  attachmentFileName varchar(200) not null,
+  attachmentFileType varchar(100) not null,
+  attachmentFileSizeInBytes int not null,
+
+  attachmentDescription varchar(200) not null default '',
+
+  fileSystemPath varchar(500) not null,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  foreign key (workOrderId) references ShiftLog.WorkOrders(workOrderId)
+)
+GO
+
 -- SHIFTS
 
 CREATE TABLE ShiftLog.Shifts (

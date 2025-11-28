@@ -6,6 +6,8 @@ export const configDefaultValues = {
     'application.instance': '',
     'application.httpPort': 9000,
     'application.maximumProcesses': 4,
+    'application.attachmentMaximumFileSizeBytes': 20 * 1024 * 1024, // 20 MB
+    'application.attachmentStoragePath': 'data/attachments',
     'login.authentication': undefined,
     'login.domain': '',
     'reverseProxy.disableCompression': false,

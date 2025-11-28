@@ -9,6 +9,8 @@ export declare const configDefaultValues: {
     'application.instance': string;
     'application.httpPort': number;
     'application.maximumProcesses': number;
+    'application.attachmentMaximumFileSizeBytes': number;
+    'application.attachmentStoragePath': string;
     'login.authentication': {
         config: ActiveDirectoryAuthenticatorConfiguration;
         type: "activeDirectory";
