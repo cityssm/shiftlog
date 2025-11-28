@@ -22,28 +22,28 @@ const shadowSize = [41, 41];
     const openIcon = new L.Icon({
         iconAnchor,
         iconSize,
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+        iconUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-icon-green.png`,
         popupAnchor,
         shadowSize,
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
+        shadowUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-shadow.png`
     });
     // Custom icon for overdue work orders
     const overdueIcon = new L.Icon({
         iconAnchor,
         iconSize,
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+        iconUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-icon-red.png`,
         popupAnchor,
         shadowSize,
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
+        shadowUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-shadow.png`
     });
     // Custom icon for multiple work orders (orange)
     const multipleIcon = new L.Icon({
         iconAnchor,
         iconSize,
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
+        iconUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-icon-orange.png`,
         popupAnchor,
         shadowSize,
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
+        shadowUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-shadow.png`
     });
     function buildWorkOrderPopupContent(workOrder, isOverdue) {
         const workOrderDiv = document.createElement('div');
