@@ -149,8 +149,8 @@ interface ConfigApplication {
 
   backgroundImage?: string
 
-  attachmentStoragePath?: string
   attachmentMaximumFileSizeBytes?: number
+  attachmentStoragePath?: string
 }
 
 interface ConfigSession {

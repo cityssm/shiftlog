@@ -93,8 +93,8 @@ interface ConfigApplication {
     /** The maximum number of concurrent processes */
     maximumProcesses?: number;
     backgroundImage?: string;
-    attachmentStoragePath?: string;
     attachmentMaximumFileSizeBytes?: number;
+    attachmentStoragePath?: string;
 }
 interface ConfigSession {
     cookieName?: string;
