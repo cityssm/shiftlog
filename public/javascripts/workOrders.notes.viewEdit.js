@@ -1,93 +1,135 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
-    var workOrderFormElement = document.querySelector('#form--workOrder');
-    var workOrderId = workOrderFormElement === null
+(() => {
+    const workOrderFormElement = document.querySelector('#form--workOrder');
+    const workOrderId = workOrderFormElement === null
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     /*
      * Notes functionality
      */
-    var notesContainerElement = document.querySelector('#container--notes');
+    const notesContainerElement = document.querySelector('#container--notes');
     if (notesContainerElement !== null) {
         function truncateText(text, maxLength) {
             if (text.length <= maxLength) {
                 return text;
             }
-            return "".concat(text.slice(0, maxLength), "\u2026");
+            return `${text.slice(0, maxLength)}…`;
         }
         function renderNotes(notes) {
             // Update notes count
-            var notesCountElement = document.querySelector('#notesCount');
+            const notesCountElement = document.querySelector('#notesCount');
             if (notesCountElement !== null) {
                 notesCountElement.textContent = notes.length.toString();
             }
             if (notes.length === 0) {
-                notesContainerElement.innerHTML = /* html */ "\n          <div class=\"message is-info\">\n            <p class=\"message-body\">No notes have been added yet.</p>\n          </div>\n        ";
+                notesContainerElement.innerHTML = /* html */ `
+          <div class="message is-info">
+            <p class="message-body">No notes have been added yet.</p>
+          </div>
+        `;
                 return;
             }
             notesContainerElement.innerHTML = '';
-            var _loop_1 = function (note) {
-                var noteElement = document.createElement('div');
+            for (const note of notes) {
+                const noteElement = document.createElement('div');
                 noteElement.className = 'box';
-                var canEdit = exports.shiftLog.userCanManageWorkOrders ||
+                const canEdit = exports.shiftLog.userCanManageWorkOrders ||
                     note.recordCreate_userName === exports.shiftLog.userName;
-                var truncatedText = truncateText(note.noteText, 200);
-                var needsExpand = note.noteText.length > 200;
+                const truncatedText = truncateText(note.noteText, 200);
+                const needsExpand = note.noteText.length > 200;
                 // eslint-disable-next-line no-unsanitized/property
-                noteElement.innerHTML = /* html */ "\n          <article class=\"media\">\n            <div class=\"media-content\">\n              <div class=\"content\">\n                <p>\n                  <strong>".concat(cityssm.escapeHTML(note.recordCreate_userName), "</strong>\n                  <small>").concat(cityssm.dateToString(new Date(note.recordCreate_dateTime)), "</small>\n                  ").concat(note.recordUpdate_dateTime === note.recordCreate_dateTime
+                noteElement.innerHTML = /* html */ `
+          <article class="media">
+            <div class="media-content">
+              <div class="content">
+                <p>
+                  <strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong>
+                  <small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small>
+                  ${note.recordUpdate_dateTime === note.recordCreate_dateTime
                     ? ''
-                    : "<small class=\"has-text-grey\">(edited)</small>", "\n                  <br />\n                  <span class=\"note-text\">").concat(cityssm.escapeHTML(truncatedText), "</span>\n                  ").concat(needsExpand
-                    ? "<a href=\"#\" class=\"view-full-note\" data-note-sequence=\"".concat(note.noteSequence, "\">View Full Note</a>")
-                    : '', "\n                </p>\n              </div>\n              ").concat(canEdit
-                    ? /* html */ "\n                    <nav class=\"level is-mobile\">\n                      <div class=\"level-left\">\n                        <a class=\"level-item edit-note\" data-note-sequence=\"".concat(note.noteSequence, "\">\n                          <span class=\"icon is-small\"><i class=\"fa-solid fa-edit\"></i></span>\n                        </a>\n                        <a class=\"level-item delete-note\" data-note-sequence=\"").concat(note.noteSequence, "\">\n                          <span class=\"icon is-small has-text-danger\"><i class=\"fa-solid fa-trash\"></i></span>\n                        </a>\n                      </div>\n                    </nav>\n                  ")
-                    : '', "\n            </div>\n          </article>\n        ");
+                    : `<small class="has-text-grey">(edited)</small>`}
+                  <br />
+                  <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
+                  ${needsExpand
+                    ? `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>`
+                    : ''}
+                </p>
+              </div>
+              ${canEdit
+                    ? /* html */ `
+                    <nav class="level is-mobile">
+                      <div class="level-left">
+                        <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
+                          <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
+                        </a>
+                        <a class="level-item delete-note" data-note-sequence="${note.noteSequence}">
+                          <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
+                        </a>
+                      </div>
+                    </nav>
+                  `
+                    : ''}
+            </div>
+          </article>
+        `;
                 // Add event listeners
                 if (needsExpand) {
-                    var viewFullLink = noteElement.querySelector('.view-full-note');
-                    viewFullLink.addEventListener('click', function (event) {
+                    const viewFullLink = noteElement.querySelector('.view-full-note');
+                    viewFullLink.addEventListener('click', (event) => {
                         event.preventDefault();
                         showFullNoteModal(note);
                     });
                 }
                 if (canEdit) {
-                    var editLink = noteElement.querySelector('.edit-note');
-                    editLink.addEventListener('click', function (event) {
+                    const editLink = noteElement.querySelector('.edit-note');
+                    editLink.addEventListener('click', (event) => {
                         event.preventDefault();
                         showEditNoteModal(note);
                     });
-                    var deleteLink = noteElement.querySelector('.delete-note');
-                    deleteLink.addEventListener('click', function (event) {
+                    const deleteLink = noteElement.querySelector('.delete-note');
+                    deleteLink.addEventListener('click', (event) => {
                         event.preventDefault();
                         deleteNote(note.noteSequence);
                     });
                 }
                 notesContainerElement.append(noteElement);
-            };
-            for (var _i = 0, notes_1 = notes; _i < notes_1.length; _i++) {
-                var note = notes_1[_i];
-                _loop_1(note);
             }
         }
         function showFullNoteModal(note) {
-            var modalElement = document.createElement('div');
+            const modalElement = document.createElement('div');
             modalElement.className = 'modal is-active';
-            modalElement.innerHTML = /* html */ "\n        <div class=\"modal-background\"></div>\n        <div class=\"modal-card\">\n          <header class=\"modal-card-head\">\n            <p class=\"modal-card-title\">Full Note</p>\n            <button class=\"delete\" aria-label=\"close\"></button>\n          </header>\n          <section class=\"modal-card-body\">\n            <p><strong>".concat(cityssm.escapeHTML(note.recordCreate_userName), "</strong></p>\n            <p><small>").concat(cityssm.dateToString(new Date(note.recordCreate_dateTime)), "</small></p>\n            <div class=\"content mt-3\">\n              <p style=\"white-space: pre-wrap;\">").concat(cityssm.escapeHTML(note.noteText), "</p>\n            </div>\n          </section>\n          <footer class=\"modal-card-foot\">\n            <button class=\"button close-modal\">Close</button>\n          </footer>\n        </div>\n      ");
+            modalElement.innerHTML = /* html */ `
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Full Note</p>
+            <button class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <p><strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong></p>
+            <p><small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small></p>
+            <div class="content mt-3">
+              <p style="white-space: pre-wrap;">${cityssm.escapeHTML(note.noteText)}</p>
+            </div>
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button close-modal">Close</button>
+          </footer>
+        </div>
+      `;
             document.body.append(modalElement);
-            var closeButtons = modalElement.querySelectorAll('.delete, .close-modal, .modal-background');
-            for (var _i = 0, closeButtons_1 = closeButtons; _i < closeButtons_1.length; _i++) {
-                var button = closeButtons_1[_i];
-                button.addEventListener('click', function () {
+            const closeButtons = modalElement.querySelectorAll('.delete, .close-modal, .modal-background');
+            for (const button of closeButtons) {
+                button.addEventListener('click', () => {
                     modalElement.remove();
                 });
             }
         }
         function showEditNoteModal(note) {
-            var closeModalFunction;
+            let closeModalFunction;
             function doUpdateNote(submitEvent) {
                 submitEvent.preventDefault();
-                var formElement = submitEvent.currentTarget;
-                cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doUpdateWorkOrderNote"), formElement, function (responseJSON) {
+                const formElement = submitEvent.currentTarget;
+                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`, formElement, (responseJSON) => {
                     if (responseJSON.success) {
                         closeModalFunction();
                         loadNotes();
@@ -101,30 +143,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 });
             }
             cityssm.openHtmlModal('workOrders-editNote', {
-                onshow: function (modalElement) {
+                onshow(modalElement) {
                     ;
                     modalElement.querySelector('#editWorkOrderNote--workOrderId').value = workOrderId;
                     modalElement.querySelector('#editWorkOrderNote--noteSequence').value = note.noteSequence.toString();
                     modalElement.querySelector('#editWorkOrderNote--noteText').value = note.noteText;
                 },
-                onshown: function (modalElement, _closeModalFunction) {
-                    var _a;
+                onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();
                     closeModalFunction = _closeModalFunction;
-                    (_a = modalElement
-                        .querySelector('form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', doUpdateNote);
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doUpdateNote);
                 },
-                onremoved: function () {
+                onremoved() {
                     bulmaJS.toggleHtmlClipped();
                 }
             });
         }
         function showAddNoteModal() {
-            var closeModalFunction;
+            let closeModalFunction;
             function doAddNote(submitEvent) {
                 submitEvent.preventDefault();
-                var formElement = submitEvent.currentTarget;
-                cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doCreateWorkOrderNote"), formElement, function (responseJSON) {
+                const formElement = submitEvent.currentTarget;
+                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`, formElement, (responseJSON) => {
                     if (responseJSON.success) {
                         closeModalFunction();
                         formElement.reset();
@@ -139,19 +181,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 });
             }
             cityssm.openHtmlModal('workOrders-addNote', {
-                onshow: function (modalElement) {
+                onshow(modalElement) {
                     ;
                     modalElement.querySelector('#addWorkOrderNote--workOrderId').value = workOrderId;
                 },
-                onshown: function (modalElement, _closeModalFunction) {
-                    var _a;
+                onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();
                     closeModalFunction = _closeModalFunction;
-                    (_a = modalElement
-                        .querySelector('form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', doAddNote);
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doAddNote);
                     modalElement.querySelector('#addWorkOrderNote--noteText').focus();
                 },
-                onremoved: function () {
+                onremoved() {
                     bulmaJS.toggleHtmlClipped();
                 }
             });
@@ -163,11 +205,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 message: 'Are you sure you want to delete this note?',
                 okButton: {
                     text: 'Delete',
-                    callbackFunction: function () {
-                        cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doDeleteWorkOrderNote"), {
-                            workOrderId: workOrderId,
-                            noteSequence: noteSequence
-                        }, function (responseJSON) {
+                    callbackFunction: () => {
+                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`, {
+                            workOrderId,
+                            noteSequence
+                        }, (responseJSON) => {
                             if (responseJSON.success) {
                                 loadNotes();
                             }
@@ -183,17 +225,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
             });
         }
         function loadNotes() {
-            cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/").concat(workOrderId, "/doGetWorkOrderNotes"), {}, function (rawResponseJSON) {
-                var responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`, {}, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     renderNotes(responseJSON.notes);
                 }
             });
         }
         // Add note button
-        var addNoteButton = document.querySelector('#button--addNote');
+        const addNoteButton = document.querySelector('#button--addNote');
         if (addNoteButton !== null) {
-            addNoteButton.addEventListener('click', function () {
+            addNoteButton.addEventListener('click', () => {
                 showAddNoteModal();
             });
         }

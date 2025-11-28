@@ -6,6 +6,12 @@ import type { Request, Response } from 'express'
 import getWorkOrderAttachment from '../../database/workOrders/getWorkOrderAttachment.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
+function encodeFilenameForContentDisposition(filename: string): string {
+  // Use RFC 5987 encoding for non-ASCII characters and special chars
+  const encodedFilename = encodeURIComponent(filename).replaceAll("'", '%27')
+  return `filename*=UTF-8''${encodedFilename}`
+}
+
 export default async function handler(
   request: Request<{ workOrderAttachmentId: string }>,
   response: Response
@@ -30,7 +36,7 @@ export default async function handler(
   response.setHeader('Content-Type', attachment.attachmentFileType)
   response.setHeader(
     'Content-Disposition',
-    `attachment; filename="${attachment.attachmentFileName}"`
+    `attachment; ${encodeFilenameForContentDisposition(attachment.attachmentFileName)}`
   )
   response.setHeader('Content-Length', attachment.attachmentFileSizeInBytes)
 
