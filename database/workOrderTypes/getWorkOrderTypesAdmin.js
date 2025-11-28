@@ -1,5 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import getWorkOrderTypeMoreInfoFormNames from './getWorkOrderTypeMoreInfoFormNames.js';
 export default async function getWorkOrderTypesAdmin() {
     const pool = await getShiftLogConnectionPool();
     const workOrderTypesResult = await pool
@@ -20,5 +21,9 @@ export default async function getWorkOrderTypesAdmin() {
         and wt.recordDelete_dateTime is null
       order by wt.orderNumber, wt.workOrderType
     `);
-    return workOrderTypesResult.recordset;
+    const workOrderTypes = workOrderTypesResult.recordset;
+    for (const workOrderType of workOrderTypes) {
+        workOrderType.moreInfoFormNames = await getWorkOrderTypeMoreInfoFormNames(workOrderType.workOrderTypeId);
+    }
+    return workOrderTypes;
 }

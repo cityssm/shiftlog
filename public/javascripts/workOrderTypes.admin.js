@@ -131,6 +131,9 @@
             currentWorkOrderNumberPrefix === undefined) {
             return;
         }
+        // Get the current moreInfoFormNames from the workOrderTypes array
+        const workOrderTypeData = workOrderTypes.find((wot) => wot.workOrderTypeId === Number.parseInt(workOrderTypeId, 10));
+        const currentMoreInfoFormNames = workOrderTypeData?.moreInfoFormNames ?? [];
         let closeModalFunction;
         function doUpdateWorkOrderType(submitEvent) {
             submitEvent.preventDefault();
@@ -176,6 +179,34 @@
                         option.selected = true;
                     }
                     userGroupSelect.append(option);
+                }
+                // Populate more info forms checkboxes
+                const moreInfoFormsContainer = modalElement.querySelector('#editWorkOrderType--moreInfoForms');
+                const availableForms = exports.availableWorkOrderMoreInfoForms;
+                const formKeys = Object.keys(availableForms);
+                if (formKeys.length === 0) {
+                    moreInfoFormsContainer.innerHTML =
+                        '<span class="has-text-grey">No additional forms available.</span>';
+                }
+                else {
+                    let formsHtml = '';
+                    for (const formKey of formKeys) {
+                        const formLabel = availableForms[formKey];
+                        const isChecked = currentMoreInfoFormNames.includes(formKey);
+                        formsHtml += /* html */ `
+              <label class="checkbox is-block mb-2">
+                <input
+                  type="checkbox"
+                  name="moreInfoFormNames"
+                  value="${cityssm.escapeHTML(formKey)}"
+                  ${isChecked ? 'checked' : ''}
+                />
+                ${cityssm.escapeHTML(formLabel)}
+              </label>
+            `;
+                    }
+                    // eslint-disable-next-line no-unsanitized/property
+                    moreInfoFormsContainer.innerHTML = formsHtml;
                 }
             },
             onshown(modalElement, _closeModalFunction) {
