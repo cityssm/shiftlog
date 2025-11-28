@@ -1,6 +1,6 @@
 import { config as baseConfig } from './partialConfig.js';
 export const config = { ...baseConfig };
-config.application.applicationName = 'Public Works Shift Log';
+config.application.applicationName = 'ShiftLog';
 config.application.backgroundImage = 'background.jpg';
 config.application.instance = 'publicWorks';
 config.session.doKeepAlive = true;
