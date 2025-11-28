@@ -4,6 +4,7 @@ const iconSize = [25, 41];
 const iconAnchor = [12, 41];
 const popupAnchor = [1, -34];
 const shadowSize = [41, 41];
+;
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`;
@@ -35,14 +36,17 @@ const shadowSize = [41, 41];
         shadowSize,
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
     });
-    function addMarkerToMap(workOrder, isOverdue, bounds) {
-        const lat = workOrder.locationLatitude;
-        const lng = workOrder.locationLongitude;
-        const icon = isOverdue ? overdueIcon : openIcon;
-        const marker = new L.Marker([lat, lng], { icon });
-        // Build popup content
-        const popupContent = document.createElement('div');
-        popupContent.style.minWidth = '200px';
+    // Custom icon for multiple work orders (orange)
+    const multipleIcon = new L.Icon({
+        iconAnchor,
+        iconSize,
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
+        popupAnchor,
+        shadowSize,
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
+    });
+    function buildWorkOrderPopupContent(workOrder, isOverdue) {
+        const workOrderDiv = document.createElement('div');
         const titleLink = document.createElement('a');
         titleLink.href = shiftLog.buildWorkOrderURL(workOrder.workOrderId);
         titleLink.textContent = workOrder.workOrderNumber;
@@ -77,7 +81,9 @@ const shadowSize = [41, 41];
         const addressLine = document.createElement('div');
         addressLine.style.marginTop = '0.5em';
         addressLine.textContent =
-            workOrder.locationAddress1 === '' ? '(No Address)' : workOrder.locationAddress1;
+            workOrder.locationAddress1 === ''
+                ? '(No Address)'
+                : workOrder.locationAddress1;
         if (workOrder.locationAddress2 !== '') {
             addressLine.textContent += ', ' + workOrder.locationAddress2;
         }
@@ -85,7 +91,52 @@ const shadowSize = [41, 41];
         assignedLine.style.marginTop = '0.5em';
         assignedLine.style.fontSize = '0.9em';
         assignedLine.textContent = `Assigned to: ${workOrder.assignedToDataListItem ?? '(Not Assigned)'}`;
-        popupContent.append(titleLink, typeSpan, statusLine, addressLine, assignedLine);
+        workOrderDiv.append(titleLink, typeSpan, statusLine, addressLine, assignedLine);
+        return workOrderDiv;
+    }
+    function addMarkerToMap(workOrders, bounds) {
+        const firstWorkOrder = workOrders[0].workOrder;
+        const lat = firstWorkOrder.locationLatitude;
+        const lng = firstWorkOrder.locationLongitude;
+        // Determine the icon based on work order count and overdue status
+        let icon;
+        if (workOrders.length > 1) {
+            // Multiple work orders at this location - use orange icon
+            icon = multipleIcon;
+        }
+        else if (workOrders[0].isOverdue) {
+            icon = overdueIcon;
+        }
+        else {
+            icon = openIcon;
+        }
+        const marker = new L.Marker([lat, lng], { icon });
+        // Build popup content
+        const popupContent = document.createElement('div');
+        popupContent.style.minWidth = '200px';
+        popupContent.style.maxHeight = '300px';
+        popupContent.style.overflowY = 'auto';
+        if (workOrders.length > 1) {
+            // Add header for multiple work orders
+            const headerDiv = document.createElement('div');
+            headerDiv.style.marginBottom = '0.5em';
+            headerDiv.style.paddingBottom = '0.5em';
+            headerDiv.style.borderBottom = '1px solid #ccc';
+            headerDiv.style.fontWeight = 'bold';
+            headerDiv.textContent = `${workOrders.length} Work Orders at this Location`;
+            popupContent.append(headerDiv);
+        }
+        // Add each work order to the popup
+        for (const [index, item] of workOrders.entries()) {
+            const workOrderDiv = buildWorkOrderPopupContent(item.workOrder, item.isOverdue);
+            if (workOrders.length > 1 && index < workOrders.length - 1) {
+                // Add separator between work orders
+                workOrderDiv.style.paddingBottom = '0.5em';
+                workOrderDiv.style.marginBottom = '0.5em';
+                workOrderDiv.style.borderBottom = '1px solid #eee';
+            }
+            popupContent.append(workOrderDiv);
+        }
         marker.bindPopup(popupContent);
         markersLayer.addLayer(marker);
         bounds.push([lat, lng]);
@@ -113,6 +164,8 @@ const shadowSize = [41, 41];
             let displayedCount = 0;
             let overdueCount = 0;
             const now = new Date();
+            // Group work orders by their coordinates
+            const workOrdersByLocation = new Map();
             for (const workOrder of responseJSON.workOrders) {
                 // Skip work orders without coordinates
                 if (workOrder.locationLatitude === null ||
@@ -124,14 +177,26 @@ const shadowSize = [41, 41];
                 displayedCount += 1;
                 // Check if overdue
                 let isOverdue = false;
-                if (workOrder.workOrderDueDateTime !== null && workOrder.workOrderDueDateTime !== undefined) {
+                if (workOrder.workOrderDueDateTime !== null &&
+                    workOrder.workOrderDueDateTime !== undefined) {
                     const dueDate = new Date(workOrder.workOrderDueDateTime);
                     isOverdue = dueDate < now;
                 }
                 if (isOverdue) {
                     overdueCount += 1;
                 }
-                addMarkerToMap(workOrder, isOverdue, bounds);
+                // Create a location key from lat/lng
+                const locationKey = `${workOrder.locationLatitude},${workOrder.locationLongitude}`;
+                let locationWorkOrders = workOrdersByLocation.get(locationKey);
+                if (locationWorkOrders === undefined) {
+                    locationWorkOrders = [];
+                    workOrdersByLocation.set(locationKey, locationWorkOrders);
+                }
+                locationWorkOrders.push({ workOrder, isOverdue });
+            }
+            // Add markers for each location (grouped work orders)
+            for (const workOrders of workOrdersByLocation.values()) {
+                addMarkerToMap(workOrders, bounds);
             }
             // Update count display
             if (displayedCount === 0) {
