@@ -27,7 +27,7 @@ import routerTimesheets from '../routes/timesheets.js';
 import routerWorkOrders from '../routes/workOrders.js';
 import { version } from '../version.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:app:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`);
-const sessionCookieName = configFunctions.getConfigProperty('session.cookieName');
+const sessionCookieName = `${configFunctions.getConfigProperty('session.cookieName')}-${configFunctions.getConfigProperty('application.instance')}`;
 function hasSession(request) {
     return (Object.hasOwn(request.session, 'user') &&
         Object.hasOwn(request.cookies, sessionCookieName));
@@ -121,7 +121,7 @@ app.use(session({
         maxAge: configFunctions.getConfigProperty('session.maxAgeMillis'),
         sameSite: 'strict'
     },
-    secret: configFunctions.getConfigProperty('session.secret'),
+    secret: `${configFunctions.getConfigProperty('session.secret')}-${configFunctions.getConfigProperty('application.instance')}`,
     store: new FileStoreSession({
         logFn: Debug(`${DEBUG_NAMESPACE}:session:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`),
         path: './data/sessions',

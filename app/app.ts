@@ -40,8 +40,7 @@ const debug = Debug(
   `${DEBUG_NAMESPACE}:app:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`
 )
 
-const sessionCookieName =
-  configFunctions.getConfigProperty('session.cookieName')
+const sessionCookieName = `${configFunctions.getConfigProperty('session.cookieName')}-${configFunctions.getConfigProperty('application.instance')}`
 
 function hasSession(request: express.Request): boolean {
   return (
@@ -187,7 +186,7 @@ app.use(
       maxAge: configFunctions.getConfigProperty('session.maxAgeMillis'),
       sameSite: 'strict'
     },
-    secret: configFunctions.getConfigProperty('session.secret'),
+    secret: `${configFunctions.getConfigProperty('session.secret')}-${configFunctions.getConfigProperty('application.instance')}`,
     store: new FileStoreSession({
       logFn: Debug(
         `${DEBUG_NAMESPACE}:session:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`
