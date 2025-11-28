@@ -1,5 +1,11 @@
-import { type NextFunction, type Request, type Response, Router } from 'express'
+import os from 'node:os'
 
+import { type NextFunction, type Request, type Response, Router } from 'express'
+import multer from 'multer'
+
+import { getConfigProperty } from '../helpers/config.helpers.js'
+
+import handler_download from '../handlers/workOrders-get/download.js'
 import handler_edit from '../handlers/workOrders-get/edit.js'
 import handler_map from '../handlers/workOrders-get/map.js'
 import handler_new from '../handlers/workOrders-get/new.js'
@@ -12,8 +18,10 @@ import handler_doCreateWorkOrderNote from '../handlers/workOrders-post/doCreateW
 import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkOrder.js'
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js'
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js'
+import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js'
 import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js'
 import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGetRequestorSuggestions.js'
+import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGetWorkOrderAttachments.js'
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js'
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js'
@@ -21,6 +29,14 @@ import handler_doUpdateWorkOrder from '../handlers/workOrders-post/doUpdateWorkO
 import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUpdateWorkOrderMilestone.js'
 import handler_doUpdateWorkOrderMilestoneOrder from '../handlers/workOrders-post/doUpdateWorkOrderMilestoneOrder.js'
 import handler_doUpdateWorkOrderNote from '../handlers/workOrders-post/doUpdateWorkOrderNote.js'
+import handler_doUploadWorkOrderAttachment from '../handlers/workOrders-post/doUploadWorkOrderAttachment.js'
+
+const upload = multer({
+  dest: os.tmpdir(),
+  limits: {
+    fileSize: getConfigProperty('application.attachmentMaximumFileSizeBytes')
+  }
+})
 
 function updateHandler(
   request: Request<unknown, unknown, unknown, { error?: string }>,
@@ -85,6 +101,25 @@ router
     updateHandler,
     handler_doUpdateWorkOrderMilestoneOrder
   )
+
+router
+  .post(
+    '/:workOrderId/doGetWorkOrderAttachments',
+    handler_doGetWorkOrderAttachments
+  )
+  .post(
+    '/doUploadWorkOrderAttachment',
+    updateHandler,
+    upload.single('attachmentFile'),
+    handler_doUploadWorkOrderAttachment
+  )
+  .post(
+    '/doDeleteWorkOrderAttachment',
+    updateHandler,
+    handler_doDeleteWorkOrderAttachment
+  )
+
+router.get('/attachments/:workOrderAttachmentId/download', handler_download)
 
 router.get('/:workOrderId/print', handler_print)
 
