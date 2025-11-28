@@ -16,6 +16,29 @@
 A lightweight and flexible work management system with
 work order recording, shift activity logging, and timesheet tracking.
 
+Built with the following use cases in mind:
+
+- Graffiti cleanup work order tracking
+- Accessibility complaint management
+- Freedom of information request tracking
+- Public works work order management
+
+## Features
+
+### Free Mapping!
+
+![Open Work Order Map](./docs/images/workOrders-map.png)
+
+Thanks to the community at [OpenStreetMap](https://www.openstreetmap.org/about),
+mapping does not need to come with a huge cost.
+
+### Integration Friendly
+
+Currently has data sync integrations with
+[Avanti](https://www.avanti.ca/),
+[CentralSquare](https://www.centralsquare.com/)'s Pearl,
+and [ArcGIS](https://www.esri.com/en-us/arcgis/products/arcgis-online/overview).
+
 ## About this Project
 
 - 📘 Documentation (Coming Soon)
