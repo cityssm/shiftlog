@@ -1,4 +1,5 @@
 export interface UpdateWorkOrderTypeForm {
+    moreInfoFormNames?: string | string[];
     userGroupId?: number | string;
     workOrderNumberPrefix?: string;
     workOrderType: string;

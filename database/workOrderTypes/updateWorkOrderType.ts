@@ -5,6 +5,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface UpdateWorkOrderTypeForm {
+  moreInfoFormNames?: string | string[]
   userGroupId?: number | string
   workOrderNumberPrefix?: string
   workOrderType: string
@@ -40,5 +41,37 @@ export default async function updateWorkOrderType(
         and recordDelete_dateTime is null
     `)
 
-  return result.rowsAffected[0] > 0
+  if (result.rowsAffected[0] === 0) {
+    return false
+  }
+
+  // Update moreInfoFormNames
+  // First, delete existing form associations
+  await pool.request().input('workOrderTypeId', form.workOrderTypeId)
+    .query(/* sql */ `
+      delete from ShiftLog.WorkOrderTypeMoreInfoForms
+      where workOrderTypeId = @workOrderTypeId
+    `)
+
+  // Then, insert new form associations
+  let formNames: string[] = []
+  if (form.moreInfoFormNames !== undefined) {
+    formNames = Array.isArray(form.moreInfoFormNames)
+      ? form.moreInfoFormNames
+      : [form.moreInfoFormNames]
+  }
+
+  for (const formName of formNames) {
+    if (formName.trim() !== '') {
+      await pool
+        .request()
+        .input('workOrderTypeId', form.workOrderTypeId)
+        .input('formName', formName.trim()).query(/* sql */ `
+          insert into ShiftLog.WorkOrderTypeMoreInfoForms (workOrderTypeId, formName)
+          values (@workOrderTypeId, @formName)
+        `)
+    }
+  }
+
+  return true
 }

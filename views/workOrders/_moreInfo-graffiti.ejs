@@ -19,6 +19,7 @@
         value="<%= workOrder.moreInfoFormData.moreInfo_graffiti_surfaceType || '' %>"
         form="form--workOrder"
         list="datalist--moreInfo_graffiti_surfaceType"
+        <% if (isEdit === false) { %> readonly <% } %>
       />
     </div>
   </div>
@@ -43,6 +44,7 @@
         value="<%= workOrder.moreInfoFormData.moreInfo_graffiti_paintUsed || '' %>"
         form="form--workOrder"
         list="datalist--moreInfo_graffiti_paintUsed"
+        <% if (isEdit === false) { %> readonly <% } %>
       />
     </div>
   </div>

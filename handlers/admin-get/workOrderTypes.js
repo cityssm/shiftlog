@@ -1,9 +1,11 @@
 import getUserGroups from '../../database/users/getUserGroups.js';
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js';
+import { availableWorkOrderMoreInfoForms } from '../../helpers/workOrderMoreInfoForms.helpers.js';
 export default async function handler(_request, response) {
     const userGroups = await getUserGroups();
     const workOrderTypes = await getWorkOrderTypesAdmin();
     response.render('admin/workOrderTypes', {
+        availableWorkOrderMoreInfoForms,
         headTitle: 'Work Order Type Maintenance',
         userGroups,
         workOrderTypes
