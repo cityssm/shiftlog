@@ -4,6 +4,7 @@ const iconSize = [25, 41];
 const iconAnchor = [12, 41];
 const popupAnchor = [1, -34];
 const shadowSize = [41, 41];
+;
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`;
@@ -80,7 +81,9 @@ const shadowSize = [41, 41];
         const addressLine = document.createElement('div');
         addressLine.style.marginTop = '0.5em';
         addressLine.textContent =
-            workOrder.locationAddress1 === '' ? '(No Address)' : workOrder.locationAddress1;
+            workOrder.locationAddress1 === ''
+                ? '(No Address)'
+                : workOrder.locationAddress1;
         if (workOrder.locationAddress2 !== '') {
             addressLine.textContent += ', ' + workOrder.locationAddress2;
         }
@@ -124,7 +127,7 @@ const shadowSize = [41, 41];
             popupContent.append(headerDiv);
         }
         // Add each work order to the popup
-        workOrders.forEach((item, index) => {
+        for (const [index, item] of workOrders.entries()) {
             const workOrderDiv = buildWorkOrderPopupContent(item.workOrder, item.isOverdue);
             if (workOrders.length > 1 && index < workOrders.length - 1) {
                 // Add separator between work orders
@@ -133,7 +136,7 @@ const shadowSize = [41, 41];
                 workOrderDiv.style.borderBottom = '1px solid #eee';
             }
             popupContent.append(workOrderDiv);
-        });
+        }
         marker.bindPopup(popupContent);
         markersLayer.addLayer(marker);
         bounds.push([lat, lng]);
@@ -174,7 +177,8 @@ const shadowSize = [41, 41];
                 displayedCount += 1;
                 // Check if overdue
                 let isOverdue = false;
-                if (workOrder.workOrderDueDateTime !== null && workOrder.workOrderDueDateTime !== undefined) {
+                if (workOrder.workOrderDueDateTime !== null &&
+                    workOrder.workOrderDueDateTime !== undefined) {
                     const dueDate = new Date(workOrder.workOrderDueDateTime);
                     isOverdue = dueDate < now;
                 }

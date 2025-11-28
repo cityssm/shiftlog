@@ -138,7 +138,9 @@ interface WorkOrderWithOverdue {
     const addressLine = document.createElement('div')
     addressLine.style.marginTop = '0.5em'
     addressLine.textContent =
-      workOrder.locationAddress1 === '' ? '(No Address)' : workOrder.locationAddress1
+      workOrder.locationAddress1 === ''
+        ? '(No Address)'
+        : workOrder.locationAddress1
     if (workOrder.locationAddress2 !== '') {
       addressLine.textContent += ', ' + workOrder.locationAddress2
     }
@@ -148,7 +150,13 @@ interface WorkOrderWithOverdue {
     assignedLine.style.fontSize = '0.9em'
     assignedLine.textContent = `Assigned to: ${workOrder.assignedToDataListItem ?? '(Not Assigned)'}`
 
-    workOrderDiv.append(titleLink, typeSpan, statusLine, addressLine, assignedLine)
+    workOrderDiv.append(
+      titleLink,
+      typeSpan,
+      statusLine,
+      addressLine,
+      assignedLine
+    )
 
     return workOrderDiv
   }
@@ -192,8 +200,11 @@ interface WorkOrderWithOverdue {
     }
 
     // Add each work order to the popup
-    workOrders.forEach((item, index) => {
-      const workOrderDiv = buildWorkOrderPopupContent(item.workOrder, item.isOverdue)
+    for (const [index, item] of workOrders.entries()) {
+      const workOrderDiv = buildWorkOrderPopupContent(
+        item.workOrder,
+        item.isOverdue
+      )
 
       if (workOrders.length > 1 && index < workOrders.length - 1) {
         // Add separator between work orders
@@ -203,7 +214,7 @@ interface WorkOrderWithOverdue {
       }
 
       popupContent.append(workOrderDiv)
-    })
+    }
 
     marker.bindPopup(popupContent)
 
@@ -264,7 +275,10 @@ interface WorkOrderWithOverdue {
 
           // Check if overdue
           let isOverdue = false
-          if (workOrder.workOrderDueDateTime !== null && workOrder.workOrderDueDateTime !== undefined) {
+          if (
+            workOrder.workOrderDueDateTime !== null &&
+            workOrder.workOrderDueDateTime !== undefined
+          ) {
             const dueDate = new Date(workOrder.workOrderDueDateTime as string)
             isOverdue = dueDate < now
           }
