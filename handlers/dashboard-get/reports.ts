@@ -7,7 +7,7 @@ export default function handler(
   const activeTab = request.query.tab ?? ''
 
   response.render('dashboard/reports', {
-    headTitle: 'Reports',
+    headTitle: 'Reports and Exports',
 
     activeTab
   })

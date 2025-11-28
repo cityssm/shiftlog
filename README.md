@@ -9,8 +9,11 @@
 
 🚧 **Under Development** 🚧
 
-A lightweight and flexible work management system with
-work order recording, shift activity logging, and timesheet tracking.
+A lightweight and flexible work management system with:
+
+- ✔️ Work order recording
+- ✏️ Shift activity logging
+- ✏️ Timesheet tracking.
 
 Built with the following use cases in mind:
 

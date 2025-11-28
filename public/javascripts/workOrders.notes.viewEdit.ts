@@ -89,7 +89,7 @@ declare const bulmaJS: BulmaJS
                   ${
                     note.recordUpdate_dateTime === note.recordCreate_dateTime
                       ? ''
-                      : `<small class="has-text-grey">(edited)</small>`
+                      : '<small class="has-text-grey">(edited)</small>'
                   }
                   <br />
                   <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>

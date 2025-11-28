@@ -72,6 +72,7 @@ export interface DataListItem extends BaseRecord {
 
 export interface Equipment extends SyncRecord {
   equipmentNumber: string
+
   equipmentName: string
   equipmentDescription: string
 
@@ -85,8 +86,10 @@ export interface Equipment extends SyncRecord {
 export interface Location extends SyncRecord {
   locationId: number
   locationName: string
+
   latitude?: number | null
   longitude?: number | null
+
   address1: string
   address2: string
   cityProvince: string
@@ -115,6 +118,7 @@ export interface Crew extends BaseRecord {
   crewName: string
   userGroupId?: number | null
   userGroupName?: string
+
   memberCount?: number
 }
 
@@ -240,8 +244,8 @@ export interface TimesheetRow {
 }
 
 export interface TimesheetCell {
-  timesheetRowId: number
   timesheetColumnId: number
+  timesheetRowId: number
 
   recordHours: number
 
@@ -256,7 +260,7 @@ export interface TimesheetCell {
 export interface WorkOrderType extends BaseRecord {
   workOrderTypeId: number
   workOrderType: string
-  
+
   workOrderNumberPrefix: string
   orderNumber: number
 
@@ -286,7 +290,7 @@ export interface WorkOrder extends BaseRecord {
   workOrderDetails: string
 
   workOrderOpenDateTime: Date | string
-  
+
   workOrderDueDateTime?: Date | string | null
   workOrderCloseDateTime?: Date | string | null
 

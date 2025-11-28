@@ -15,7 +15,7 @@ export default async function getWorkOrder(
       w.workOrderId,
       w.workOrderNumberYear,
       w.workOrderNumberSequence,
-      isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(w.workOrderNumberSequence as varchar(6)),6) as workOrderNumber,
+      w.workOrderNumber,
 
       w.workOrderTypeId,
       wType.workOrderType,
@@ -72,30 +72,35 @@ export default async function getWorkOrder(
           `
     }    
   `
-  const workOrdersResult = (await pool
-    .request()
-    .input('workOrderId', workOrderId)
-    .input('instance', getConfigProperty('application.instance'))
-    .input('userName', user?.userName)
-    .query(sql)) as mssql.IResult<WorkOrder>
 
-  if (workOrdersResult.recordset.length === 0) {
+  try {
+    const workOrdersResult = (await pool
+      .request()
+      .input('workOrderId', workOrderId)
+      .input('instance', getConfigProperty('application.instance'))
+      .input('userName', user?.userName)
+      .query(sql)) as mssql.IResult<WorkOrder>
+
+    if (workOrdersResult.recordset.length === 0) {
+      return undefined
+    }
+
+    const workOrder = workOrdersResult.recordset[0]
+
+    if (workOrder.moreInfoFormDataJson === undefined) {
+      workOrder.moreInfoFormData = {}
+    } else {
+      try {
+        workOrder.moreInfoFormData = JSON.parse(
+          workOrder.moreInfoFormDataJson
+        ) as Record<string, unknown>
+      } catch {
+        workOrder.moreInfoFormData = {}
+      }
+    }
+
+    return workOrder
+  } catch {
     return undefined
   }
-
-  const workOrder = workOrdersResult.recordset[0]
-
-  if (workOrder.moreInfoFormDataJson === undefined) {
-    workOrder.moreInfoFormData = {}
-  } else {
-    try {
-      workOrder.moreInfoFormData = JSON.parse(
-        workOrder.moreInfoFormDataJson
-      ) as Record<string, unknown>
-    } catch {
-      workOrder.moreInfoFormData = {}
-    }
-  }
-
-  return workOrder
 }

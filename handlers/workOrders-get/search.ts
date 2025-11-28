@@ -20,6 +20,8 @@ export default async function handler(
   response.render('workOrders/search', {
     headTitle: `${getConfigProperty('workOrders.sectionName')} - Search`,
 
+    error: request.query.error ?? '',
+
     assignedToItems,
     workOrderStatuses,
     workOrderTypes

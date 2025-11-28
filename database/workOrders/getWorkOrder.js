@@ -7,7 +7,7 @@ export default async function getWorkOrder(workOrderId, user) {
       w.workOrderId,
       w.workOrderNumberYear,
       w.workOrderNumberSequence,
-      isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear as varchar(4)) + '-' + right('000000' + cast(w.workOrderNumberSequence as varchar(6)),6) as workOrderNumber,
+      w.workOrderNumber,
 
       w.workOrderTypeId,
       wType.workOrderType,
@@ -62,26 +62,31 @@ export default async function getWorkOrder(workOrderId, user) {
             )
           `}    
   `;
-    const workOrdersResult = (await pool
-        .request()
-        .input('workOrderId', workOrderId)
-        .input('instance', getConfigProperty('application.instance'))
-        .input('userName', user?.userName)
-        .query(sql));
-    if (workOrdersResult.recordset.length === 0) {
-        return undefined;
-    }
-    const workOrder = workOrdersResult.recordset[0];
-    if (workOrder.moreInfoFormDataJson === undefined) {
-        workOrder.moreInfoFormData = {};
-    }
-    else {
-        try {
-            workOrder.moreInfoFormData = JSON.parse(workOrder.moreInfoFormDataJson);
+    try {
+        const workOrdersResult = (await pool
+            .request()
+            .input('workOrderId', workOrderId)
+            .input('instance', getConfigProperty('application.instance'))
+            .input('userName', user?.userName)
+            .query(sql));
+        if (workOrdersResult.recordset.length === 0) {
+            return undefined;
         }
-        catch {
+        const workOrder = workOrdersResult.recordset[0];
+        if (workOrder.moreInfoFormDataJson === undefined) {
             workOrder.moreInfoFormData = {};
         }
+        else {
+            try {
+                workOrder.moreInfoFormData = JSON.parse(workOrder.moreInfoFormDataJson);
+            }
+            catch {
+                workOrder.moreInfoFormData = {};
+            }
+        }
+        return workOrder;
     }
-    return workOrder;
+    catch {
+        return undefined;
+    }
 }

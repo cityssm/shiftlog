@@ -30,11 +30,11 @@ export default async function getTimesheetRows(
   }
 
   if (filters?.onlyEmployees) {
-    whereClause += ` and tr.employeeNumber is not null`
+    whereClause += ' and tr.employeeNumber is not null'
   }
 
   if (filters?.onlyEquipment) {
-    whereClause += ` and tr.equipmentNumber is not null`
+    whereClause += ' and tr.equipmentNumber is not null'
   }
 
   if (filters?.onlyWithData) {

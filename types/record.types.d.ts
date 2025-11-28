@@ -174,8 +174,8 @@ export interface TimesheetRow {
     userGroupId?: number | null;
 }
 export interface TimesheetCell {
-    timesheetRowId: number;
     timesheetColumnId: number;
+    timesheetRowId: number;
     recordHours: number;
     mappedPositionCode?: string | null;
     mappedPayCode?: string | null;

@@ -10,10 +10,10 @@ export default async function getTimesheetRows(timesheetId, filters) {
         whereClause += ` and (tr.equipmentNumber = @equipmentNumberFilter or eq.equipmentName like '%' + @equipmentNumberFilter + '%')`;
     }
     if (filters?.onlyEmployees) {
-        whereClause += ` and tr.employeeNumber is not null`;
+        whereClause += ' and tr.employeeNumber is not null';
     }
     if (filters?.onlyEquipment) {
-        whereClause += ` and tr.equipmentNumber is not null`;
+        whereClause += ' and tr.equipmentNumber is not null';
     }
     if (filters?.onlyWithData) {
         whereClause += ` and exists (

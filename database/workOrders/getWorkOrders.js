@@ -106,7 +106,7 @@ export default async function getWorkOrders(filters, options, user) {
         const countRequest = pool.request();
         applyParameters(countRequest, filters, user);
         const countResult = await countRequest.query(countSql);
-        totalCount = countResult.recordset[0]?.totalCount ?? 0;
+        totalCount = countResult.recordset[0].totalCount;
     }
     // Main query with limit and offset
     let workOrders = [];

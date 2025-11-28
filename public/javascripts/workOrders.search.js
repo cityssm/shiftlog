@@ -21,14 +21,14 @@
                 ? `<a class="pagination-next" href="#" data-page-number="${currentPage + 1}">Next</a>`
                 : '<a class="pagination-next" disabled>Next</a>';
         // Page numbers
-        paginationHTML += `<ul class="pagination-list">`;
+        paginationHTML += '<ul class="pagination-list">';
         for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
             paginationHTML +=
                 pageNumber === currentPage
                     ? `<li><a class="pagination-link is-current" aria-current="page">${pageNumber}</a></li>`
                     : `<li><a class="pagination-link" href="#" data-page-number="${pageNumber}">${pageNumber}</a></li>`;
         }
-        paginationHTML += `</ul>`;
+        paginationHTML += '</ul>';
         // eslint-disable-next-line no-unsanitized/property
         paginationElement.innerHTML = paginationHTML;
         // Event listeners
@@ -71,7 +71,7 @@
           <th>Open Date</th>
           <th>Requestor</th>
           <th>Assigned To</th>
-          <th class="has-width-1">
+          <th class="has-width-1 is-hidden-print">
             <span class="is-sr-only">Actions</span>
           </th>
         </tr>
@@ -117,11 +117,15 @@
           <a href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a><br />
-          <span class="is-size-7">${cityssm.escapeHTML(workOrder.workOrderType ?? '(Unknown Type)')}</span>
+          <span class="is-size-7">
+            ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
+          </span>
         </td>
         <td>
-          ${cityssm.escapeHTML(workOrder.locationAddress1 === '' ? '(No Location)' : workOrder.locationAddress1)}<br />
-          <span class="is-size-7 has-text-grey">${cityssm.escapeHTML(workOrder.locationAddress2)}</span>
+          ${cityssm.escapeHTML(workOrder.locationAddress1 === '' ? '-' : workOrder.locationAddress1)}<br />
+          <span class="is-size-7 has-text-grey">
+            ${cityssm.escapeHTML(workOrder.locationAddress2)}
+          </span>
         </td>
         <td>${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}</td>
         <td>
@@ -136,7 +140,7 @@
         <td>
           ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : (workOrder.assignedToDataListItem ?? ''))}
         </td>
-        <td>
+        <td class="is-hidden-print">
           <a
             class="button is-small is-info is-light"
             href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}/print"

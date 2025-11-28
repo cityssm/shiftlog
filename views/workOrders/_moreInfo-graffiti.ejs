@@ -6,52 +6,57 @@
 />
 
 <div class="box">
-  <div class="field">
-    <label class="label" for="moreInfo_graffiti_surfaceType">
-      Surface Type
-    </label>
-    <div class="control">
-      <input
-        class="input"
-        id="moreInfo_graffiti_surfaceType"
-        name="moreInfo_graffiti_surfaceType"
-        type="text"
-        value="<%= workOrder.moreInfoFormData.moreInfo_graffiti_surfaceType || '' %>"
-        form="form--workOrder"
-        list="datalist--moreInfo_graffiti_surfaceType"
-        <% if (isEdit === false) { %> readonly <% } %>
-      />
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <label class="label" for="moreInfo_graffiti_surfaceType">
+          Surface Type
+        </label>
+        <div class="control">
+          <input
+            class="input"
+            id="moreInfo_graffiti_surfaceType"
+            name="moreInfo_graffiti_surfaceType"
+            type="text"
+            value="<%= workOrder.moreInfoFormData.moreInfo_graffiti_surfaceType || '' %>"
+            form="form--workOrder"
+            list="datalist--moreInfo_graffiti_surfaceType"
+            <% if (isEdit === false) { %> readonly <% } %>
+          />
+        </div>
+      </div>
+    
+      <datalist id="datalist--moreInfo_graffiti_surfaceType">
+        <option value="Brick"></option>
+        <option value="Concrete"></option>
+        <option value="Wood"></option>
+        <option value="Metal"></option>
+        <option value="Glass"></option>
+      </datalist>
+    </div>
+    <div class="column">
+      <div class="field">
+        <label class="label" for="moreInfo_graffiti_paintUsed">Paint Used</label>
+        <div class="control">
+          <input
+            class="input"
+            id="moreInfo_graffiti_paintUsed"
+            name="moreInfo_graffiti_paintUsed"
+            type="text"
+            value="<%= workOrder.moreInfoFormData.moreInfo_graffiti_paintUsed || '' %>"
+            form="form--workOrder"
+            list="datalist--moreInfo_graffiti_paintUsed"
+            <% if (isEdit === false) { %> readonly <% } %>
+          />
+        </div>
+      </div>
+    
+      <datalist id="datalist--moreInfo_graffiti_paintUsed">
+        <option value="Spray Paint"></option>
+        <option value="Marker"></option>
+        <option value="Sticker"></option>
+        <option value="Etching"></option>
+      </datalist>
     </div>
   </div>
-
-  <datalist id="datalist--moreInfo_graffiti_surfaceType">
-    <option value="Brick"></option>
-    <option value="Concrete"></option>
-    <option value="Wood"></option>
-    <option value="Metal"></option>
-    <option value="Glass"></option>
-  </datalist>
-
-  <div class="field">
-    <label class="label" for="moreInfo_graffiti_paintUsed">Paint Used</label>
-    <div class="control">
-      <input
-        class="input"
-        id="moreInfo_graffiti_paintUsed"
-        name="moreInfo_graffiti_paintUsed"
-        type="text"
-        value="<%= workOrder.moreInfoFormData.moreInfo_graffiti_paintUsed || '' %>"
-        form="form--workOrder"
-        list="datalist--moreInfo_graffiti_paintUsed"
-        <% if (isEdit === false) { %> readonly <% } %>
-      />
-    </div>
-  </div>
-
-  <datalist id="datalist--moreInfo_graffiti_paintUsed">
-    <option value="Spray Paint"></option>
-    <option value="Marker"></option>
-    <option value="Sticker"></option>
-    <option value="Etching"></option>
-  </datalist>
 </div>

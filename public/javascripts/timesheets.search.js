@@ -17,7 +17,7 @@
         paginationHTML +=
             currentPage > 1
                 ? `<a class="pagination-previous" href="#" data-page-number="${currentPage - 1}">Previous</a>`
-                : `<a class="pagination-previous" disabled>Previous</a>`;
+                : '<a class="pagination-previous" disabled>Previous</a>';
         // Next button
         paginationHTML +=
             currentPage < totalPages

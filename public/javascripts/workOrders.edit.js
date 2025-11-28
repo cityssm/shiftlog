@@ -332,7 +332,7 @@
             bulmaJS.confirm({
                 contextualColorName: 'danger',
                 title: 'Delete Work Order',
-                message: `Are you sure you want to delete this work order? This action cannot be undone.`,
+                message: 'Are you sure you want to delete this work order? This action cannot be undone.',
                 okButton: {
                     text: 'Delete Work Order',
                     callbackFunction: () => {

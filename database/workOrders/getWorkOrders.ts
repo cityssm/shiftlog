@@ -182,9 +182,11 @@ export default async function getWorkOrders(
 
     applyParameters(countRequest, filters, user)
 
-    const countResult = await countRequest.query(countSql)
+    const countResult = await countRequest.query<{ totalCount: number }>(
+      countSql
+    )
 
-    totalCount = countResult.recordset[0]?.totalCount ?? 0
+    totalCount = countResult.recordset[0].totalCount
   }
 
   // Main query with limit and offset
