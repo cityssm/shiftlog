@@ -276,10 +276,12 @@ interface WorkOrderWithOverdue {
           // Create a location key from lat/lng
           const locationKey = `${workOrder.locationLatitude},${workOrder.locationLongitude}`
 
-          if (!workOrdersByLocation.has(locationKey)) {
-            workOrdersByLocation.set(locationKey, [])
+          let locationWorkOrders = workOrdersByLocation.get(locationKey)
+          if (locationWorkOrders === undefined) {
+            locationWorkOrders = []
+            workOrdersByLocation.set(locationKey, locationWorkOrders)
           }
-          workOrdersByLocation.get(locationKey)!.push({ workOrder, isOverdue })
+          locationWorkOrders.push({ workOrder, isOverdue })
         }
 
         // Add markers for each location (grouped work orders)
