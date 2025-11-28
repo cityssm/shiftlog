@@ -37,7 +37,7 @@ and [ArcGIS](https://www.esri.com/en-us/arcgis/products/arcgis-online/overview).
 
 ## About this Project
 
-- 📘 Documentation (Coming Soon)
+- 📘 [Documentation](./docs/README.md) (Coming Soon)
 - 🤗 [Code of Conduct](CODE_OF_CONDUCT.md)
 - 🥰 [Contributing Guidelines](CONTRIBUTING.md)
 - 🛡️ [Security Policy](SECURITY.md)
