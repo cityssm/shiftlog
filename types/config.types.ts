@@ -113,8 +113,6 @@ export type ConfigLocations =
       whereClause?: string
 
       mappings: {
-        locationName?: ((record: unknown) => string | undefined) | string
-
         latitude?: ((record: unknown) => number | undefined) | string
         longitude?: ((record: unknown) => number | undefined) | string
 

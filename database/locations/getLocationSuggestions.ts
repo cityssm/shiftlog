@@ -14,10 +14,10 @@ export default async function getLocationSuggestions(
     .input('searchString', searchString)
     .input('userName', user?.userName).query<Location>(/* sql */ `
       SELECT
-        locationId, locationName, address1, address2, cityProvince, latitude, longitude
+        locationId, address1, address2, cityProvince, latitude, longitude
       FROM ShiftLog.Locations
       WHERE instance = @instance and recordDelete_dateTime IS NULL
-        AND (locationName LIKE '%' + @searchString + '%' or address1 LIKE '%' + @searchString + '%')
+        AND address1 LIKE '%' + @searchString + '%'
         ${
           user === undefined
             ? ''
@@ -31,7 +31,7 @@ export default async function getLocationSuggestions(
               )
             `
         }
-      ORDER BY locationName
+      ORDER BY address1
     `)
 
   return result.recordset

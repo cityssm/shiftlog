@@ -61,7 +61,6 @@ export interface Equipment extends SyncRecord {
 }
 export interface Location extends SyncRecord {
     locationId: number;
-    locationName: string;
     latitude?: number | null;
     longitude?: number | null;
     address1: string;

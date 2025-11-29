@@ -69,7 +69,6 @@ export type ConfigLocations = {
     layerURL: string;
     whereClause?: string;
     mappings: {
-        locationName?: ((record: unknown) => string | undefined) | string;
         latitude?: ((record: unknown) => number | undefined) | string;
         longitude?: ((record: unknown) => number | undefined) | string;
         address1: ((record: unknown) => string | undefined) | string;

@@ -8,13 +8,13 @@ export default async function getLocations(): Promise<Location[]> {
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .query<Location>(/* sql */ `
-    SELECT locationId, locationName, latitude, longitude,
+    SELECT locationId, latitude, longitude,
            address1, address2, cityProvince,
            recordCreate_userName, recordCreate_dateTime,
            recordUpdate_userName, recordUpdate_dateTime
     FROM ShiftLog.Locations
     WHERE instance = @instance and recordDelete_dateTime IS NULL
-    ORDER BY locationName, address1
+    ORDER BY address1
   `)
 
   return result.recordset as Location[]

@@ -7,7 +7,6 @@ export default async function addLocation(locationFields, user) {
         await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
-            .input('locationName', locationFields.locationName)
             .input('address1', locationFields.address1)
             .input('address2', locationFields.address2)
             .input('cityProvince', locationFields.cityProvince)
@@ -18,12 +17,12 @@ export default async function addLocation(locationFields, user) {
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         INSERT INTO ShiftLog.Locations (
-          instance, locationName, address1, address2, cityProvince,
+          instance, address1, address2, cityProvince,
           latitude, longitude,
           recordCreate_userName, recordCreate_dateTime,
           recordUpdate_userName, recordUpdate_dateTime
         ) VALUES (
-          @instance, @locationName, @address1, @address2, @cityProvince,
+          @instance, @address1, @address2, @cityProvince,
           @latitude, @longitude,
           @recordCreate_userName, @recordCreate_dateTime,
           @recordUpdate_userName, @recordUpdate_dateTime
