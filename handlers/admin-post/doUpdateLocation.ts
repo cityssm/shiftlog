@@ -8,7 +8,6 @@ export default async function handler(
   response: Response
 ): Promise<void> {
   const locationId = Number(request.body.locationId)
-  const locationName = request.body.locationName as string
   const address1 = (request.body.address1 as string) || ''
   const address2 = (request.body.address2 as string) || ''
   const cityProvince = (request.body.cityProvince as string) || ''
@@ -22,7 +21,6 @@ export default async function handler(
   const success = await updateLocation(
     {
       locationId,
-      locationName,
       address1,
       address2,
       cityProvince,

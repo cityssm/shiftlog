@@ -144,8 +144,7 @@
         // Handle location selection
         locationAddress1Input.addEventListener('change', () => {
             const selectedAddress = locationAddress1Input.value;
-            const matchingLocation = locationsData.find((possibleLocation) => possibleLocation.locationName === selectedAddress ||
-                possibleLocation.address1 === selectedAddress);
+            const matchingLocation = locationsData.find((possibleLocation) => possibleLocation.address1 === selectedAddress);
             if (matchingLocation !== undefined) {
                 // Check if other location fields are already set
                 const hasExistingData = locationAddress2Input.value !== '' ||
@@ -167,6 +166,39 @@
                 else {
                     applyLocationData(matchingLocation);
                 }
+            }
+            else if (selectedAddress.trim().length >= 3) {
+                // Selection wasn't from the datalist (e.g., browser history)
+                // Refresh the datalist with the selected value as the search string
+                locationSearchString = selectedAddress.trim().slice(0, 3);
+                cityssm.postJSON(`${urlPrefix}/doGetLocationSuggestions`, { searchString: locationSearchString }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success && responseJSON.locations) {
+                        locationsData = responseJSON.locations;
+                        locationDatalist.replaceChildren();
+                        for (const location of responseJSON.locations) {
+                            const option = document.createElement('option');
+                            option.value = location.address1;
+                            option.dataset.locationId = location.locationId.toString();
+                            option.dataset.address2 = location.address2;
+                            option.dataset.cityProvince = location.cityProvince;
+                            option.dataset.latitude =
+                                typeof location.latitude === 'number'
+                                    ? location.latitude.toString()
+                                    : '';
+                            option.dataset.longitude =
+                                typeof location.longitude === 'number'
+                                    ? location.longitude.toString()
+                                    : '';
+                            locationDatalist.append(option);
+                        }
+                        // Check if the newly fetched data includes the selected address
+                        const newMatchingLocation = locationsData.find((possibleLocation) => possibleLocation.address1 === selectedAddress);
+                        if (newMatchingLocation !== undefined) {
+                            applyLocationData(newMatchingLocation);
+                        }
+                    }
+                });
             }
         });
         function applyLocationData(location) {
@@ -358,3 +390,4 @@
         });
     }
 })();
+export {};

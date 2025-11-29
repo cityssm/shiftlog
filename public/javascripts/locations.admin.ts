@@ -246,7 +246,7 @@ declare const exports: {
       contextualColorName: 'warning',
       title: 'Delete Location',
 
-      message: `Are you sure you want to delete location "${location?.locationName ?? ''}"? This action cannot be undone.`,
+      message: `Are you sure you want to delete location "${location?.address1 ?? ''}"? This action cannot be undone.`,
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete Location',
@@ -358,11 +358,6 @@ declare const exports: {
         ).value = location.locationId.toString()
         ;(
           modalElement.querySelector(
-            '#editLocation--locationName'
-          ) as HTMLInputElement
-        ).value = location.locationName
-        ;(
-          modalElement.querySelector(
             '#editLocation--address1'
           ) as HTMLInputElement
         ).value = location.address1
@@ -424,7 +419,6 @@ declare const exports: {
     rowElement.dataset.locationId = location.locationId.toString()
     // eslint-disable-next-line no-unsanitized/property
     rowElement.innerHTML = /* html */ `
-      <td>${cityssm.escapeHTML(location.locationName)}</td>
       <td>${cityssm.escapeHTML(location.address1)}</td>
       <td>${cityssm.escapeHTML(location.address2)}</td>
       <td>${cityssm.escapeHTML(location.cityProvince)}</td>
@@ -469,7 +463,6 @@ declare const exports: {
     tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
-          <th>Location Name</th>
           <th>Address Line 1</th>
           <th>Address Line 2</th>
           <th>City/Province</th>
@@ -578,7 +571,7 @@ declare const exports: {
             ?.addEventListener('submit', doAddLocation)
           ;(
             modalElement.querySelector(
-              '#addLocation--locationName'
+              '#addLocation--address1'
             ) as HTMLInputElement
           ).focus()
 
@@ -632,7 +625,7 @@ declare const exports: {
         } else {
           const filteredLocations = exports.locations.filter((location) => {
             const searchText =
-              `${location.locationName} ${location.address1} ${location.address2} ${location.cityProvince}`.toLowerCase()
+              `${location.address1} ${location.address2} ${location.cityProvince}`.toLowerCase()
             return searchText.includes(filterText)
           })
 

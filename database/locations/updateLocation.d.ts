@@ -1,6 +1,5 @@
 interface UpdateLocationForm {
     locationId: number;
-    locationName: string;
     address1: string;
     address2: string;
     cityProvince: string;
