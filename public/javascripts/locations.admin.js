@@ -273,14 +273,23 @@
         rowElement.dataset.locationId = location.locationId.toString();
         // eslint-disable-next-line no-unsanitized/property
         rowElement.innerHTML = /* html */ `
+      <td>
+        ${location.recordSync_isSynced
+            ? /* html */ `
+              <span class="is-size-7 has-text-grey" title="Synchronized">
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </span>
+            `
+            : ''}
+      </td>
       <td>${cityssm.escapeHTML(location.address1)}</td>
       <td>${cityssm.escapeHTML(location.address2)}</td>
       <td>${cityssm.escapeHTML(location.cityProvince)}</td>
       <td class="has-text-centered">
         ${location.latitude !== null && location.longitude !== null ? '<i class="fa-solid fa-check"></i>' : '-'}
       </td>
-      <td class="has-text-centered">
-        <div class="buttons is-justify-content-center">
+      <td class="has-text-right">
+        <div class="buttons is-right">
           <button
             class="button is-small is-info edit-location"
             data-location-id="${location.locationId}"
@@ -296,7 +305,10 @@
             data-location-id="${location.locationId}"
             title="Delete Location"
           >
-            Delete
+            <span class="icon is-small">
+              <i class="fa-solid fa-trash"></i>
+            </span>
+            <span>Delete</span>
           </button>
         </div>
       </td>
@@ -314,6 +326,9 @@
         tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
+          <th>
+            <span class="is-sr-only">Sync Status</span>
+          </th>
           <th>Address Line 1</th>
           <th>Address Line 2</th>
           <th>City/Province</th>
@@ -412,6 +427,7 @@
      * Filter locations with debouncing
      */
     const filterInput = document.querySelector('#filter--locations');
+    // eslint-disable-next-line unicorn/no-null
     let filterTimeout = null;
     if (filterInput !== null) {
         filterInput.addEventListener('input', () => {

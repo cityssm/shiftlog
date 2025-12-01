@@ -366,17 +366,18 @@ declare const exports: {
     // eslint-disable-next-line no-unsanitized/property
     rowElement.innerHTML = /*html*/ `
       <td>
-        ${cityssm.escapeHTML(employee.employeeNumber)}
         ${
           employee.recordSync_isSynced
             ? /* html */ `
-              <span class="tag">
-                <span class="icon"><i class="fa-solid fa-arrows-rotate" title="Synchronized"></i></span>
-                <span>Synced</span>
+              <span class="is-size-7 has-text-grey" title="Synchronized">
+                <i class="fa-solid fa-arrows-rotate"></i>
               </span>
             `
             : ''
         }
+      </td>
+      <td>
+        ${cityssm.escapeHTML(employee.employeeNumber)}
       </td>
       <td>${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}</td>
       <td class="has-text-centered">
@@ -434,6 +435,9 @@ declare const exports: {
     tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
+          <th>
+            <span class="is-sr-only">Sync Status</span>
+          </th>
           <th>Employee Number</th>
           <th>Name</th>
           <th class="has-text-centered">Supervisor</th>

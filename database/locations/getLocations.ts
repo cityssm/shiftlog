@@ -10,6 +10,7 @@ export default async function getLocations(): Promise<Location[]> {
     .query<Location>(/* sql */ `
     SELECT locationId, latitude, longitude,
            address1, address2, cityProvince,
+           recordSync_isSynced, recordSync_source, recordSync_dateTime,
            recordCreate_userName, recordCreate_dateTime,
            recordUpdate_userName, recordUpdate_dateTime
     FROM ShiftLog.Locations

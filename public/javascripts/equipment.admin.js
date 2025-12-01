@@ -239,6 +239,9 @@
         tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
+          <th>
+            <span class="is-sr-only">Sync Status</span>
+          </th>
           <th>Equipment Number</th>
           <th>Equipment Name</th>
           <th>Description</th>
@@ -257,15 +260,16 @@
             // eslint-disable-next-line no-unsanitized/property
             rowElement.innerHTML = /*html*/ `
         <td>
-          ${cityssm.escapeHTML(equipment.equipmentNumber)}
           ${equipment.recordSync_isSynced
                 ? /* html */ `
-                <span class="tag">
-                  <span class="icon"><i class="fa-solid fa-arrows-rotate" title="Synchronized"></i></span>
-                  <span>Synced</span>
+                <span class="is-size-7 has-text-grey" title="Synchronized">
+                  <i class="fa-solid fa-arrows-rotate"></i>
                 </span>
               `
                 : ''}
+        </td>
+        <td>
+          ${cityssm.escapeHTML(equipment.equipmentNumber)}
         </td>
         <td>${cityssm.escapeHTML(equipment.equipmentName)}</td>
         <td>${cityssm.escapeHTML(equipment.equipmentDescription)}</td>
