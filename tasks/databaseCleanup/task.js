@@ -32,6 +32,8 @@ async function runCleanup() {
 }
 debug('Starting database cleanup task');
 // Run the cleanup task daily at 2:00 AM
+// The task is automatically started and managed by the ScheduledTask class
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const scheduledTask = new ScheduledTask('Database Cleanup', runCleanup, {
     schedule: {
         hour: 2,
