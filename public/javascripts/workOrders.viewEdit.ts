@@ -13,19 +13,19 @@ declare const cityssm: {
 }
 
 declare const bulmaJS: {
-  confirm: (options: {
-    contextualColorName: string
-    title: string
-    message: string
-    okButton: {
-      text: string
-      callbackFunction: () => void
-    }
-  }) => void
   alert: (options: {
     contextualColorName: string
     message?: string
     title?: string
+  }) => void
+  confirm: (options: {
+    contextualColorName: string
+    message: string
+    okButton: {
+      callbackFunction: () => void
+      text: string
+    }
+    title: string
   }) => void
 }
 ;(() => {
@@ -52,11 +52,9 @@ declare const bulmaJS: {
     reopenWorkOrderButton.addEventListener('click', () => {
       bulmaJS.confirm({
         contextualColorName: 'warning',
-        title: 'Reopen Work Order',
         message:
           'Are you sure you want to reopen this work order? This will clear the close date.',
         okButton: {
-          text: 'Reopen Work Order',
           callbackFunction: () => {
             const workOrderIdElement = document.querySelector(
               '#workOrder--workOrderId'
@@ -69,9 +67,9 @@ declare const bulmaJS: {
               },
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
-                  success: boolean
-                  redirectUrl?: string
                   errorMessage?: string
+                  redirectUrl?: string
+                  success: boolean
                 }
 
                 if (
@@ -82,15 +80,17 @@ declare const bulmaJS: {
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
-                    title: 'Reopen Error',
                     message:
-                      responseJSON.errorMessage ?? 'An unknown error occurred.'
+                      responseJSON.errorMessage ?? 'An unknown error occurred.',
+                    title: 'Reopen Error'
                   })
                 }
               }
             )
-          }
-        }
+          },
+          text: 'Reopen Work Order'
+        },
+        title: 'Reopen Work Order'
       })
     })
   }

@@ -50,8 +50,10 @@ export default async function handler(
     if (reopenWindowDays > 0) {
       const closeDateTime = new Date(workOrder.workOrderCloseDateTime)
       const now = new Date()
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      const millisecondsPerDay = 1000 * 60 * 60 * 24
       const daysSinceClosed =
-        (now.getTime() - closeDateTime.getTime()) / (1000 * 60 * 60 * 24)
+        (now.getTime() - closeDateTime.getTime()) / millisecondsPerDay
 
       canReopen = daysSinceClosed <= reopenWindowDays
     }
@@ -65,11 +67,11 @@ export default async function handler(
     isCreate: false,
     isEdit: false,
 
-    workOrder,
     canReopen,
+    workOrder,
 
-    workOrderTypes: [workOrderType],
+    assignedToOptions: [],
     workOrderStatuses: [],
-    assignedToOptions: []
+    workOrderTypes: [workOrderType]
   } satisfies WorkOrderEditResponse)
 }

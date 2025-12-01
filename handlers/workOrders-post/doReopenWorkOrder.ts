@@ -16,14 +16,14 @@ export default async function handler(
 
   if (success) {
     response.json({
-      success: true,
       message: 'Work order reopened successfully.',
-      redirectUrl: `${redirectRoot}/${request.body.workOrderId}`
+      redirectUrl: `${redirectRoot}/${request.body.workOrderId}`,
+      success: true
     })
   } else {
     response.json({
-      success: false,
-      errorMessage: 'Failed to reopen work order.'
+      errorMessage: 'Failed to reopen work order.',
+      success: false
     })
   }
 }
