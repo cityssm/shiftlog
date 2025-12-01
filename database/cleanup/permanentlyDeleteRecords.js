@@ -15,7 +15,7 @@ export default async function permanentlyDeleteRecords() {
         const pool = await getShiftLogConnectionPool();
         // Get the minimum days before permanent delete setting
         const daysBeforeDeleteStr = await getCachedSettingValue('cleanup.daysBeforePermanentDelete');
-        const daysBeforeDelete = Number.parseInt(daysBeforeDeleteStr || '60', 10);
+        const daysBeforeDelete = Math.max(1, Number.parseInt(daysBeforeDeleteStr || '60', 10) || 60);
         debug(`Starting cleanup task with ${daysBeforeDelete} days before permanent delete`);
         // Calculate the cutoff date
         const cutoffDate = new Date();
@@ -117,7 +117,7 @@ export default async function permanentlyDeleteRecords() {
             debug(`Permanently deleted ${workOrdersResult.rowsAffected[0]} WorkOrders records`);
         }
         // Step 4: Clean up other tables with no foreign key dependencies
-        // Locations - check for references from active WorkOrders
+        // Locations - no foreign key references from other tables
         const locationsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
@@ -126,12 +126,6 @@ export default async function permanentlyDeleteRecords() {
         FROM ShiftLog.Locations l
         WHERE l.recordDelete_dateTime IS NOT NULL
           AND l.recordDelete_dateTime < @cutoffDate
-          AND NOT EXISTS (
-            SELECT 1 FROM ShiftLog.WorkOrders wo
-            WHERE (wo.locationAddress1 = l.locationAddress1
-              OR wo.locationAddress2 = l.locationAddress2)
-              AND wo.recordDelete_dateTime IS NULL
-          )
       `);
         if (locationsResult.rowsAffected[0] > 0) {
             deletedCount += locationsResult.rowsAffected[0];
