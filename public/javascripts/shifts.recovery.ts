@@ -1,9 +1,11 @@
+import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { Shift } from '../../types/record.types.js'
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
+declare const bulmaJS: BulmaJS
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
@@ -85,36 +87,40 @@ declare const exports: {
   }
 
   function recoverShift(shiftId: number): void {
-    cityssm.confirmModal(
-      'Recover Shift?',
-      'Are you sure you want to recover this shift?',
-      'Yes, Recover',
-      'warning',
-      async () => {
-        cityssm.postJSON(
-          `${exports.shiftLog.urlPrefix}/shifts/doRecoverShift`,
-          { shiftId },
-          (response) => {
-            if (response.success) {
-              cityssm.alertModal(
-                'Shift Recovered',
-                'The shift has been recovered successfully.',
-                'success',
-                () => {
-                  window.location.href = response.redirectUrl as string
-                }
-              )
-            } else {
-              cityssm.alertModal(
-                'Error',
-                response.errorMessage ?? 'Failed to recover shift.',
-                'danger'
-              )
+    bulmaJS.confirm({
+      title: 'Recover Shift?',
+      message: 'Are you sure you want to recover this shift?',
+      contextualColorName: 'warning',
+      okButton: {
+        text: 'Yes, Recover',
+        callbackFunction: () => {
+          cityssm.postJSON(
+            `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doRecoverShift`,
+            { shiftId },
+            (response) => {
+              if (response.success) {
+                bulmaJS.alert({
+                  title: 'Shift Recovered',
+                  message: 'The shift has been recovered successfully.',
+                  contextualColorName: 'success',
+                  okButton: {
+                    callbackFunction: () => {
+                      window.location.href = response.redirectUrl as string
+                    }
+                  }
+                })
+              } else {
+                bulmaJS.alert({
+                  title: 'Error',
+                  message: response.errorMessage ?? 'Failed to recover shift.',
+                  contextualColorName: 'danger'
+                })
+              }
             }
-          }
-        )
+          )
+        }
       }
-    )
+    })
   }
 
   function renderDeletedRecordsTable(data: {
@@ -221,7 +227,7 @@ declare const exports: {
     const formData = new FormData(filtersFormElement)
 
     cityssm.postJSON(
-      `${exports.shiftLog.urlPrefix}/shifts/doGetDeletedShifts`,
+      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doGetDeletedShifts`,
       formData,
       renderDeletedRecordsTable
     )

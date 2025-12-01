@@ -1,9 +1,11 @@
+import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { Timesheet } from '../../types/record.types.js'
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
+declare const bulmaJS: BulmaJS
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
@@ -85,36 +87,40 @@ declare const exports: {
   }
 
   function recoverTimesheet(timesheetId: number): void {
-    cityssm.confirmModal(
-      'Recover Timesheet?',
-      'Are you sure you want to recover this timesheet?',
-      'Yes, Recover',
-      'warning',
-      async () => {
-        cityssm.postJSON(
-          `${exports.shiftLog.urlPrefix}/timesheets/doRecoverTimesheet`,
-          { timesheetId },
-          (response) => {
-            if (response.success) {
-              cityssm.alertModal(
-                'Timesheet Recovered',
-                'The timesheet has been recovered successfully.',
-                'success',
-                () => {
-                  window.location.href = response.redirectUrl as string
-                }
-              )
-            } else {
-              cityssm.alertModal(
-                'Error',
-                response.errorMessage ?? 'Failed to recover timesheet.',
-                'danger'
-              )
+    bulmaJS.confirm({
+      title: 'Recover Timesheet?',
+      message: 'Are you sure you want to recover this timesheet?',
+      contextualColorName: 'warning',
+      okButton: {
+        text: 'Yes, Recover',
+        callbackFunction: () => {
+          cityssm.postJSON(
+            `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doRecoverTimesheet`,
+            { timesheetId },
+            (response) => {
+              if (response.success) {
+                bulmaJS.alert({
+                  title: 'Timesheet Recovered',
+                  message: 'The timesheet has been recovered successfully.',
+                  contextualColorName: 'success',
+                  okButton: {
+                    callbackFunction: () => {
+                      window.location.href = response.redirectUrl as string
+                    }
+                  }
+                })
+              } else {
+                bulmaJS.alert({
+                  title: 'Error',
+                  message: response.errorMessage ?? 'Failed to recover timesheet.',
+                  contextualColorName: 'danger'
+                })
+              }
             }
-          }
-        )
+          )
+        }
       }
-    )
+    })
   }
 
   function renderDeletedRecordsTable(data: {
@@ -226,7 +232,7 @@ declare const exports: {
     const formData = new FormData(filtersFormElement)
 
     cityssm.postJSON(
-      `${exports.shiftLog.urlPrefix}/timesheets/doGetDeletedTimesheets`,
+      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doGetDeletedTimesheets`,
       formData,
       renderDeletedRecordsTable
     )
