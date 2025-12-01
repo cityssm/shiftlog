@@ -1,74 +1,32 @@
 (() => {
-    const filtersFormElement = document.querySelector('#form--deletedRecordSearch');
-    const offsetInputElement = document.querySelector('#deletedRecordSearch--offset');
     const resultsContainerElement = document.querySelector('#container--deletedRecordResults');
-    function buildPaginationControls(totalCount, limit, offset) {
-        const paginationElement = document.createElement('nav');
-        paginationElement.className = 'pagination is-centered';
-        paginationElement.setAttribute('role', 'navigation');
-        paginationElement.setAttribute('aria-label', 'pagination');
-        const totalPages = Math.ceil(totalCount / limit);
-        const currentPage = Math.floor(offset / limit) + 1;
-        let paginationHTML = '';
-        paginationHTML +=
-            currentPage > 1
-                ? `<a class="pagination-previous" href="#" data-page-number="${currentPage - 1}">Previous</a>`
-                : '<a class="pagination-previous" disabled>Previous</a>';
-        paginationHTML +=
-            currentPage < totalPages
-                ? `<a class="pagination-next" href="#" data-page-number="${currentPage + 1}">Next</a>`
-                : '<a class="pagination-next" disabled>Next</a>';
-        paginationHTML += '<ul class="pagination-list">';
-        for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
-            paginationHTML +=
-                pageNumber === currentPage
-                    ? `<li><a class="pagination-link is-current" aria-current="page">${pageNumber}</a></li>`
-                    : `<li><a class="pagination-link" href="#" data-page-number="${pageNumber}">${pageNumber}</a></li>`;
-        }
-        paginationHTML += '</ul>';
-        // eslint-disable-next-line no-unsanitized/property
-        paginationElement.innerHTML = paginationHTML;
-        const pageLinks = paginationElement.querySelectorAll('a.pagination-previous, a.pagination-next, a.pagination-link');
-        for (const pageLink of pageLinks) {
-            pageLink.addEventListener('click', (event) => {
-                event.preventDefault();
-                const target = event.currentTarget;
-                const pageNumberString = target.dataset.pageNumber;
-                if (pageNumberString !== undefined) {
-                    const pageNumber = Number.parseInt(pageNumberString, 10);
-                    offsetInputElement.value = ((pageNumber - 1) * limit).toString();
-                    getDeletedRecords();
-                }
-            });
-        }
-        return paginationElement;
-    }
     function recoverShift(shiftId) {
         bulmaJS.confirm({
+            contextualColorName: 'warning',
             title: 'Recover Shift?',
             message: 'Are you sure you want to recover this shift?',
-            contextualColorName: 'warning',
             okButton: {
                 text: 'Yes, Recover',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doRecoverShift`, { shiftId }, (response) => {
+                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doRecoverShift`, { shiftId }, (rawResponseJSON) => {
+                        const response = rawResponseJSON;
                         if (response.success) {
                             bulmaJS.alert({
+                                contextualColorName: 'success',
                                 title: 'Shift Recovered',
                                 message: 'The shift has been recovered successfully.',
-                                contextualColorName: 'success',
                                 okButton: {
                                     callbackFunction: () => {
-                                        window.location.href = response.redirectUrl;
+                                        globalThis.location.href = response.redirectUrl;
                                     }
                                 }
                             });
                         }
                         else {
                             bulmaJS.alert({
+                                contextualColorName: 'danger',
                                 title: 'Error',
-                                message: response.errorMessage ?? 'Failed to recover shift.',
-                                contextualColorName: 'danger'
+                                message: response.errorMessage ?? 'Failed to recover shift.'
                             });
                         }
                     });
@@ -123,7 +81,8 @@
           <button
             class="button is-small is-success is-light"
             data-shift-id="${shift.shiftId}"
-            type="button">
+            type="button"
+          >
             <span class="icon is-small">
               <i class="fa-solid fa-undo"></i>
             </span>
@@ -139,14 +98,8 @@
         }
         resultsContainerElement.innerHTML = '';
         resultsContainerElement.append(tableElement);
-        const formData = new FormData(filtersFormElement);
-        const limit = Number.parseInt(formData.get('limit'), 10);
-        const offset = Number.parseInt(formData.get('offset'), 10);
-        if (data.totalCount > limit) {
-            resultsContainerElement.append(buildPaginationControls(data.totalCount, limit, offset));
-        }
     }
-    async function getDeletedRecords() {
+    function getDeletedRecords() {
         resultsContainerElement.innerHTML = /* html */ `
       <div class="message">
         <p class="message-body has-text-centered">
@@ -155,8 +108,7 @@
         </p>
       </div>
     `;
-        const formData = new FormData(filtersFormElement);
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doGetDeletedShifts`, formData, renderDeletedRecordsTable);
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doGetDeletedShifts`, {}, renderDeletedRecordsTable);
     }
     getDeletedRecords();
 })();
