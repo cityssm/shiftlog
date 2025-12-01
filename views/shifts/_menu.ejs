@@ -47,6 +47,7 @@
     <% if (user.userProperties.shifts.canManage) { %>
     <li>
       <a
+        class="<%= headTitle.endsWith(' - Record Recovery') ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/recovery"
         title="Record Recovery">
         <div class="columns is-mobile is-1">

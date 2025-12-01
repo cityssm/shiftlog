@@ -29,7 +29,9 @@
     </li>
     <% if (user.userProperties.timesheets.canManage) { %>
     <li>
-      <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/recovery">
+      <a
+        class="<%= headTitle.endsWith(' - Record Recovery') ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/recovery">
         <span class="icon"><i class="fa-solid fa-trash-arrow-up"></i></span>
         <span>Record Recovery</span>
       </a>

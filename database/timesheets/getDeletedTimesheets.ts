@@ -61,7 +61,7 @@ export default async function getDeletedTimesheets(
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('userName', user?.userName)
-      .query(countSql)
+      .query<{ totalCount: number }>(countSql)
 
     totalCount = countResult.recordset[0]?.totalCount ?? 0
   }
