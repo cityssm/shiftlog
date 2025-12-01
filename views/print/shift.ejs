@@ -1,0 +1,213 @@
+<%- await include('_header-print'); -%>
+
+<h1 class="title is-2 has-text-centered">
+  <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> #<%= shift.shiftId %>
+</h1>
+
+<div class="columns">
+  <div class="column">
+    <div class="box avoid-page-break">
+      <div class="columns">
+        <div class="column">
+          <div class="field">
+            <label class="label"><%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Type</label>
+            <p><%= shift.shiftTypeDataListItem ?? '(Not Set)' %></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="field">
+            <label class="label">Supervisor</label>
+            <p>
+              <% if (shift.supervisorLastName && shift.supervisorFirstName) { %>
+              <%= shift.supervisorLastName %>, <%= shift.supervisorFirstName %>
+              <% } else { %>
+              (Not Set)
+              <% } %>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column">
+          <div class="field">
+            <label class="label">Date</label>
+            <p>
+              <% if (shift.shiftDate) { %>
+              <%= dateTimeFunctions.dateToString(shift.shiftDate) %>
+              <% } else { %>
+              (Not set)
+              <% } %>
+            </p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="field">
+            <label class="label">Time</label>
+            <p><%= shift.shiftTimeDataListItem ?? '(Not Set)' %></p>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Description</label>
+        <p style="white-space: pre-wrap;"><%= shift.shiftDescription || '(No description)' %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if (shiftCrews.length > 0) { %>
+<div class="box avoid-page-break">
+  <h2 class="title is-4">Crews</h2>
+  <table class="table is-fullwidth is-striped">
+    <thead>
+      <tr>
+        <th>Crew</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const crew of shiftCrews) { %>
+      <tr>
+        <td><%= crew.crewName ?? '' %></td>
+        <td><%= crew.shiftCrewNote %></td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<% if (shiftEmployees.length > 0) { %>
+<div class="box avoid-page-break">
+  <h2 class="title is-4">Employees</h2>
+  <table class="table is-fullwidth is-striped">
+    <thead>
+      <tr>
+        <th>Employee</th>
+        <th>Crew</th>
+        <th>Hours Worked</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const employee of shiftEmployees) { %>
+      <tr>
+        <td>
+          <% if (employee.employeeLastName && employee.employeeFirstName) { %>
+          <%= employee.employeeLastName %>, <%= employee.employeeFirstName %>
+          <% } else { %>
+          <%= employee.employeeNumber %>
+          <% } %>
+        </td>
+        <td><%= employee.crewName ?? '' %></td>
+        <td><%= employee.hoursWorked ?? '' %></td>
+        <td><%= employee.shiftEmployeeNote %></td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<% if (shiftEquipment.length > 0) { %>
+<div class="box avoid-page-break">
+  <h2 class="title is-4">Equipment</h2>
+  <table class="table is-fullwidth is-striped">
+    <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>Employee</th>
+        <th>Hours Used</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const equipment of shiftEquipment) { %>
+      <tr>
+        <td><%= equipment.equipmentName ?? '' %></td>
+        <td>
+          <% if (equipment.employeeLastName && equipment.employeeFirstName) { %>
+          <%= equipment.employeeLastName %>, <%= equipment.employeeFirstName %>
+          <% } else if (equipment.employeeNumber) { %>
+          <%= equipment.employeeNumber %>
+          <% } %>
+        </td>
+        <td><%= equipment.hoursUsed ?? '' %></td>
+        <td><%= equipment.shiftEquipmentNote %></td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<% if (shiftWorkOrders.length > 0) { %>
+<div class="box avoid-page-break">
+  <h2 class="title is-4">Work Orders</h2>
+  <table class="table is-fullwidth is-striped">
+    <thead>
+      <tr>
+        <th>Work Order #</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Details</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const workOrder of shiftWorkOrders) { %>
+      <tr>
+        <td>#<%= workOrder.workOrderNumber %></td>
+        <td><%= workOrder.workOrderType ?? '' %></td>
+        <td><%= workOrder.workOrderStatusDataListItem ?? '' %></td>
+        <td><%= workOrder.workOrderDetails.substring(0, 100) %><%= workOrder.workOrderDetails.length > 100 ? '...' : '' %></td>
+        <td><%= workOrder.shiftWorkOrderNote %></td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<% if (allMilestones.length > 0) { %>
+<div class="box avoid-page-break">
+  <h2 class="title is-4">Work Order Milestones</h2>
+  <table class="table is-fullwidth is-striped">
+    <thead>
+      <tr>
+        <th>Work Order #</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Due Date</th>
+        <th>Completed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const milestone of allMilestones) { %>
+      <%
+        const workOrder = shiftWorkOrders.find(wo => wo.workOrderId === milestone.workOrderId);
+      %>
+      <tr>
+        <td><%= workOrder ? '#' + workOrder.workOrderNumber : '' %></td>
+        <td><%= milestone.milestoneTitle %></td>
+        <td><%= milestone.milestoneDescription %></td>
+        <td>
+          <% if (milestone.milestoneDueDateTime) { %>
+          <%= dateTimeFunctions.dateToString(milestone.milestoneDueDateTime) %>
+          <%= dateTimeFunctions.dateToTimeString(milestone.milestoneDueDateTime) %>
+          <% } %>
+        </td>
+        <td>
+          <% if (milestone.milestoneCompleteDateTime) { %>
+          <%= dateTimeFunctions.dateToString(milestone.milestoneCompleteDateTime) %>
+          <%= dateTimeFunctions.dateToTimeString(milestone.milestoneCompleteDateTime) %>
+          <% } %>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<%- await include('_footer-print'); -%>

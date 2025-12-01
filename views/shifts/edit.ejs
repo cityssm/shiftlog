@@ -410,8 +410,12 @@
   exports.shiftCrews = <%- JSON.stringify(shiftCrews) %>;
   exports.shiftEmployees = <%- JSON.stringify(shiftEmployees) %>;  
   exports.shiftEquipment = <%- JSON.stringify(shiftEquipment) %>;
+  exports.shiftWorkOrders = <%- JSON.stringify(shiftWorkOrders) %>;
 </script>
 <script src="<%= urlPrefix %>/javascripts/shifts.employees.js"></script>
+<% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+<script src="<%= urlPrefix %>/javascripts/shifts.workOrders.js"></script>
+<% } %>
 <% } %>
 
 <%- await include('../_footerB'); -%>

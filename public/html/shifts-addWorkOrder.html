@@ -1,0 +1,50 @@
+<div id="modal-shifts-addWorkOrder" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Add Work Order to Shift</p>
+      <button class="delete" type="button" aria-label="Close"></button>
+    </header>
+    <section class="modal-card-body">
+      <form>
+        <input type="hidden" name="shiftId" />
+        
+        <div class="field">
+          <label class="label" for="addWorkOrder--workOrderId">Work Order ID</label>
+          <div class="control">
+            <input
+              class="input"
+              id="addWorkOrder--workOrderId"
+              name="workOrderId"
+              type="number"
+              min="1"
+              required
+              placeholder="Enter Work Order ID"
+            />
+          </div>
+          <p class="help">Enter the ID of an open work order to add to this shift.</p>
+        </div>
+        
+        <div class="field">
+          <label class="label" for="addWorkOrder--shiftWorkOrderNote">Note</label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="addWorkOrder--shiftWorkOrderNote"
+              name="shiftWorkOrderNote"
+              rows="3"
+              maxlength="200"
+              placeholder="Optional note about this work order's relation to the shift"
+            ></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-end">
+      <button class="button is-link" type="submit" form="addWorkOrder--form">
+        <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
+        <span>Add Work Order</span>
+      </button>
+    </footer>
+  </div>
+</div>

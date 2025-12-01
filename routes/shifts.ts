@@ -2,23 +2,27 @@ import { type NextFunction, type Request, type Response, Router } from 'express'
 
 import handler_edit from '../handlers/shifts-get/edit.js'
 import handler_new from '../handlers/shifts-get/new.js'
+import handler_print from '../handlers/shifts-get/print.js'
 import handler_recovery from '../handlers/shifts-get/recovery.js'
 import handler_search from '../handlers/shifts-get/search.js'
 import handler_view from '../handlers/shifts-get/view.js'
 import handler_doAddShiftCrew from '../handlers/shifts-post/doAddShiftCrew.js'
 import handler_doAddShiftEmployee from '../handlers/shifts-post/doAddShiftEmployee.js'
 import handler_doAddShiftEquipment from '../handlers/shifts-post/doAddShiftEquipment.js'
+import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkOrder.js'
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js'
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js'
 import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js'
 import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew.js'
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js'
 import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShiftEquipment.js'
+import handler_doDeleteShiftWorkOrder from '../handlers/shifts-post/doDeleteShiftWorkOrder.js'
 import handler_doGetAvailableCrewsEmployeesEquipment from '../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js'
 import handler_doGetDeletedShifts from '../handlers/shifts-post/doGetDeletedShifts.js'
 import handler_doGetShiftCrews from '../handlers/shifts-post/doGetShiftCrews.js'
 import handler_doGetShiftEmployees from '../handlers/shifts-post/doGetShiftEmployees.js'
 import handler_doGetShiftEquipment from '../handlers/shifts-post/doGetShiftEquipment.js'
+import handler_doGetShiftWorkOrders from '../handlers/shifts-post/doGetShiftWorkOrders.js'
 import handler_doRecoverShift from '../handlers/shifts-post/doRecoverShift.js'
 import handler_doSearchShifts from '../handlers/shifts-post/doSearchShifts.js'
 import handler_doUpdateShift from '../handlers/shifts-post/doUpdateShift.js'
@@ -27,6 +31,7 @@ import handler_doUpdateShiftEmployee from '../handlers/shifts-post/doUpdateShift
 import handler_doUpdateShiftEmployeeNote from '../handlers/shifts-post/doUpdateShiftEmployeeNote.js'
 import handler_doUpdateShiftEquipment from '../handlers/shifts-post/doUpdateShiftEquipment.js'
 import handler_doUpdateShiftEquipmentNote from '../handlers/shifts-post/doUpdateShiftEquipmentNote.js'
+import handler_doUpdateShiftWorkOrderNote from '../handlers/shifts-post/doUpdateShiftWorkOrderNote.js'
 
 function updateHandler(
   request: Request<unknown, unknown, unknown, { error?: string }>,
@@ -119,6 +124,20 @@ router.post(
   handler_doDeleteShiftEquipment
 )
 
+// Shift work orders endpoints
+router.post('/doGetShiftWorkOrders', handler_doGetShiftWorkOrders)
+router.post('/doAddShiftWorkOrder', updateHandler, handler_doAddShiftWorkOrder)
+router.post(
+  '/doUpdateShiftWorkOrderNote',
+  updateHandler,
+  handler_doUpdateShiftWorkOrderNote
+)
+router.post(
+  '/doDeleteShiftWorkOrder',
+  updateHandler,
+  handler_doDeleteShiftWorkOrder
+)
+
 router.post(
   '/doCopyFromPreviousShift',
   updateHandler,
@@ -130,6 +149,7 @@ router
   .post('/doGetDeletedShifts', manageHandler, handler_doGetDeletedShifts)
   .post('/doRecoverShift', manageHandler, handler_doRecoverShift)
 
+router.get('/:shiftId/print', handler_print)
 router.get('/:shiftId', handler_view)
 
 export default router

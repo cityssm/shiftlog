@@ -5,17 +5,25 @@ import getShiftCrews from '../../database/shifts/getShiftCrews.js'
 import getShiftEmployees from '../../database/shifts/getShiftEmployees.js'
 import getShiftEquipment from '../../database/shifts/getShiftEquipment.js'
 import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js'
+import getWorkOrderMilestones from '../../database/workOrders/getWorkOrderMilestones.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
-
-import type { ShiftEditResponse } from './types.js'
+import type { WorkOrderMilestone } from '../../types/record.types.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('shifts.router')}`
 
 export default async function handler(
-  request: Request<{ shiftId: string }, unknown, unknown, { error?: string }>,
+  request: Request<
+    { shiftId: string },
+    unknown,
+    unknown,
+    { error?: string }
+  >,
   response: Response
 ): Promise<void> {
-  const shift = await getShift(request.params.shiftId, request.session.user)
+  const shift = await getShift(
+    request.params.shiftId,
+    request.session.user
+  )
 
   if (shift === undefined) {
     response.redirect(`${redirectRoot}/?error=notFound`)
@@ -27,22 +35,20 @@ export default async function handler(
   const shiftEquipment = await getShiftEquipment(request.params.shiftId)
   const shiftWorkOrders = await getShiftWorkOrders(request.params.shiftId)
 
-  response.render('shifts/edit', {
-    headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${
-      request.params.shiftId
-    }`,
+  // Load milestones for all work orders
+  const allMilestones: WorkOrderMilestone[] = []
+  for (const workOrder of shiftWorkOrders) {
+    const milestones = await getWorkOrderMilestones(workOrder.workOrderId.toString())
+    allMilestones.push(...milestones)
+  }
 
-    isCreate: false,
-    isEdit: false,
-
+  response.render('print/shift', {
+    headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${shift.shiftId}`,
     shift,
     shiftCrews,
     shiftEmployees,
     shiftEquipment,
     shiftWorkOrders,
-
-    shiftTimes: [],
-    shiftTypes: [],
-    supervisors: []
-  } satisfies ShiftEditResponse)
+    allMilestones
+  })
 }
