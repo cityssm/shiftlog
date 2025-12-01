@@ -3,6 +3,8 @@ import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`;
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 export default async function handler(request, response) {
     const workOrder = await getWorkOrder(request.params.workOrderId, request.session.user);
     if (workOrder === undefined) {
@@ -19,9 +21,7 @@ export default async function handler(request, response) {
         if (reopenWindowDays > 0) {
             const closeDateTime = new Date(workOrder.workOrderCloseDateTime);
             const now = new Date();
-            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-            const millisecondsPerDay = 1000 * 60 * 60 * 24;
-            const daysSinceClosed = (now.getTime() - closeDateTime.getTime()) / millisecondsPerDay;
+            const daysSinceClosed = (now.getTime() - closeDateTime.getTime()) / MILLISECONDS_PER_DAY;
             canReopen = daysSinceClosed <= reopenWindowDays;
         }
     }

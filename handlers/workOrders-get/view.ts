@@ -10,6 +10,9 @@ import type { WorkOrderEditResponse } from './types.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`
 
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
+
 export default async function handler(
   request: Request<
     { workOrderId: string },
@@ -50,10 +53,8 @@ export default async function handler(
     if (reopenWindowDays > 0) {
       const closeDateTime = new Date(workOrder.workOrderCloseDateTime)
       const now = new Date()
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      const millisecondsPerDay = 1000 * 60 * 60 * 24
       const daysSinceClosed =
-        (now.getTime() - closeDateTime.getTime()) / millisecondsPerDay
+        (now.getTime() - closeDateTime.getTime()) / MILLISECONDS_PER_DAY
 
       canReopen = daysSinceClosed <= reopenWindowDays
     }
