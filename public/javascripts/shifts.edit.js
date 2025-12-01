@@ -29,4 +29,39 @@
         });
     }
     shiftFormElement.addEventListener('submit', updateShift);
+    /*
+     * Delete shift
+     */
+    const deleteShiftButton = document.querySelector('#button--deleteShift');
+    if (deleteShiftButton !== null) {
+        deleteShiftButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            bulmaJS.confirm({
+                contextualColorName: 'danger',
+                title: 'Delete Shift',
+                message: 'Are you sure you want to delete this shift? This action cannot be undone.',
+                okButton: {
+                    text: 'Delete Shift',
+                    callbackFunction: () => {
+                        cityssm.postJSON(`${urlPrefix}/doDeleteShift`, {
+                            shiftId
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
+                            if (responseJSON.success &&
+                                responseJSON.redirectUrl !== undefined) {
+                                globalThis.location.href = responseJSON.redirectUrl;
+                            }
+                            else {
+                                bulmaJS.alert({
+                                    contextualColorName: 'danger',
+                                    title: 'Delete Error',
+                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    }
 })();
