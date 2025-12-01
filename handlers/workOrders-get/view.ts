@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
 import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js'
+import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
@@ -34,6 +35,28 @@ export default async function handler(
     true
   )) as WorkOrderType
 
+  // Check if work order can be reopened
+  let canReopen = false
+  if (
+    workOrder.workOrderCloseDateTime !== null &&
+    workOrder.workOrderCloseDateTime !== undefined &&
+    (request.session.user?.userProperties.workOrders.canUpdate ?? false)
+  ) {
+    const reopenWindowDays = Number.parseInt(
+      await getCachedSettingValue('workOrders.reopenWindowDays'),
+      10
+    )
+
+    if (reopenWindowDays > 0) {
+      const closeDateTime = new Date(workOrder.workOrderCloseDateTime)
+      const now = new Date()
+      const daysSinceClosed =
+        (now.getTime() - closeDateTime.getTime()) / (1000 * 60 * 60 * 24)
+
+      canReopen = daysSinceClosed <= reopenWindowDays
+    }
+  }
+
   response.render('workOrders/edit', {
     headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${
       workOrder.workOrderNumber
@@ -43,6 +66,7 @@ export default async function handler(
     isEdit: false,
 
     workOrder,
+    canReopen,
 
     workOrderTypes: [workOrderType],
     workOrderStatuses: [],

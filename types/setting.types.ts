@@ -7,6 +7,7 @@ export type SettingKey =
   | 'locations.defaultCityProvince'
   | 'locations.defaultLatitude'
   | 'locations.defaultLongitude'
+  | 'workOrders.reopenWindowDays'
 
 export interface SettingProperties {
   settingKey: SettingKey
@@ -63,5 +64,14 @@ export const settingProperties: SettingProperties[] = [
     type: 'string',
     defaultValue: '',
     isUserConfigurable: false
+  },
+  {
+    settingKey: 'workOrders.reopenWindowDays',
+    settingName: 'Work Orders - Reopen Window (Days)',
+    description:
+      'The number of days after closing a work order that it can be reopened by users with update permissions. Set to 0 to disable reopening.',
+    type: 'number',
+    defaultValue: '7',
+    isUserConfigurable: true
   }
 ]

@@ -485,6 +485,14 @@
             <span class="is-hidden-mobile"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
           </span>
         </a>
+        <% } else if (canReopen) { %>
+        <button class="button is-warning is-light" type="button" id="button--reopenWorkOrder">
+          <span class="icon is-small"><i class="fa-solid fa-folder-open"></i></span>
+          <span>
+            Reopen
+            <span class="is-hidden-mobile"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
+          </span>
+        </button>
         <% } %>
       </div>
     </div>
