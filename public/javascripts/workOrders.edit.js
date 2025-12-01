@@ -149,7 +149,9 @@
             });
         }
         locationAddress1Input.addEventListener('keyup', () => {
-            const newSearchString = locationAddress1Input.value.trim().slice(0, LOCATION_SEARCH_MIN_LENGTH);
+            const newSearchString = locationAddress1Input.value
+                .trim()
+                .slice(0, LOCATION_SEARCH_MIN_LENGTH);
             if (newSearchString.length >= LOCATION_SEARCH_MIN_LENGTH &&
                 newSearchString !== locationSearchString) {
                 locationSearchString = newSearchString;
@@ -186,7 +188,9 @@
             else if (selectedAddress.trim().length >= LOCATION_SEARCH_MIN_LENGTH) {
                 // Selection wasn't from the datalist (e.g., browser history)
                 // Refresh the datalist with the selected value as the search string
-                locationSearchString = selectedAddress.trim().slice(0, LOCATION_SEARCH_MIN_LENGTH);
+                locationSearchString = selectedAddress
+                    .trim()
+                    .slice(0, LOCATION_SEARCH_MIN_LENGTH);
                 fetchLocationSuggestions(locationSearchString, () => {
                     // Check if the newly fetched data includes the selected address
                     const newMatchingLocation = locationsData.find((possibleLocation) => possibleLocation.address1 === selectedAddress);
@@ -385,4 +389,3 @@
         });
     }
 })();
-export {};
