@@ -53,7 +53,9 @@ router
 router.post('/doGetShiftCrews', handler_doGetShiftCrews);
 router.post('/doGetShiftEmployees', handler_doGetShiftEmployees);
 router.post('/doGetShiftEquipment', handler_doGetShiftEquipment);
-router.post('/doGetAvailableCrewsEmployeesEquipment', handler_doGetAvailableCrewsEmployeesEquipment);
+router.post(
+// eslint-disable-next-line no-secrets/no-secrets
+'/doGetAvailableCrewsEmployeesEquipment', handler_doGetAvailableCrewsEmployeesEquipment);
 router.post('/doAddShiftCrew', updateHandler, handler_doAddShiftCrew);
 router.post('/doAddShiftEmployee', updateHandler, handler_doAddShiftEmployee);
 router.post('/doAddShiftEquipment', updateHandler, handler_doAddShiftEquipment);

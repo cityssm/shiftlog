@@ -8,12 +8,14 @@
     <nav class="breadcrumb">
       <ul>
         <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
-        <li><a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
-          <span class="icon is-small">
-            <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
-          </span>
-          <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
-        </a></li>
+        <li>
+          <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+            </span>
+            <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
+          </a>
+        </li>
         <li class="is-active">
           <a href="#" aria-current="page">Record Recovery</a>
         </li>
@@ -36,13 +38,6 @@
         <p>This page allows you to recover recently deleted <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.</p>
         <p>Records are listed in order of deletion, with the most recently deleted appearing first.</p>
       </div>
-    </div>
-
-    <div class="box">
-      <form id="form--deletedRecordSearch">
-        <input id="deletedRecordSearch--limit" name="limit" type="hidden" value="50" />
-        <input id="deletedRecordSearch--offset" name="offset" type="hidden" value="0" />
-      </form>
     </div>
 
     <div id="container--deletedRecordResults">

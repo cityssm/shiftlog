@@ -67,24 +67,61 @@ router
 router.post('/doGetShiftCrews', handler_doGetShiftCrews)
 router.post('/doGetShiftEmployees', handler_doGetShiftEmployees)
 router.post('/doGetShiftEquipment', handler_doGetShiftEquipment)
-router.post('/doGetAvailableCrewsEmployeesEquipment', handler_doGetAvailableCrewsEmployeesEquipment)
+
+router.post(
+  // eslint-disable-next-line no-secrets/no-secrets
+  '/doGetAvailableCrewsEmployeesEquipment',
+  handler_doGetAvailableCrewsEmployeesEquipment
+)
 
 router.post('/doAddShiftCrew', updateHandler, handler_doAddShiftCrew)
 router.post('/doAddShiftEmployee', updateHandler, handler_doAddShiftEmployee)
 router.post('/doAddShiftEquipment', updateHandler, handler_doAddShiftEquipment)
 
-router.post('/doUpdateShiftEmployee', updateHandler, handler_doUpdateShiftEmployee)
-router.post('/doUpdateShiftEquipment', updateHandler, handler_doUpdateShiftEquipment)
+router.post(
+  '/doUpdateShiftEmployee',
+  updateHandler,
+  handler_doUpdateShiftEmployee
+)
+router.post(
+  '/doUpdateShiftEquipment',
+  updateHandler,
+  handler_doUpdateShiftEquipment
+)
 
-router.post('/doUpdateShiftCrewNote', updateHandler, handler_doUpdateShiftCrewNote)
-router.post('/doUpdateShiftEmployeeNote', updateHandler, handler_doUpdateShiftEmployeeNote)
-router.post('/doUpdateShiftEquipmentNote', updateHandler, handler_doUpdateShiftEquipmentNote)
+router.post(
+  '/doUpdateShiftCrewNote',
+  updateHandler,
+  handler_doUpdateShiftCrewNote
+)
+router.post(
+  '/doUpdateShiftEmployeeNote',
+  updateHandler,
+  handler_doUpdateShiftEmployeeNote
+)
+router.post(
+  '/doUpdateShiftEquipmentNote',
+  updateHandler,
+  handler_doUpdateShiftEquipmentNote
+)
 
 router.post('/doDeleteShiftCrew', updateHandler, handler_doDeleteShiftCrew)
-router.post('/doDeleteShiftEmployee', updateHandler, handler_doDeleteShiftEmployee)
-router.post('/doDeleteShiftEquipment', updateHandler, handler_doDeleteShiftEquipment)
+router.post(
+  '/doDeleteShiftEmployee',
+  updateHandler,
+  handler_doDeleteShiftEmployee
+)
+router.post(
+  '/doDeleteShiftEquipment',
+  updateHandler,
+  handler_doDeleteShiftEquipment
+)
 
-router.post('/doCopyFromPreviousShift', updateHandler, handler_doCopyFromPreviousShift)
+router.post(
+  '/doCopyFromPreviousShift',
+  updateHandler,
+  handler_doCopyFromPreviousShift
+)
 
 router
   .get('/recovery', manageHandler, handler_recovery)
