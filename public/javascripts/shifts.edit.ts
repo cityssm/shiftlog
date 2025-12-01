@@ -1,10 +1,12 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type FlatPickr from 'flatpickr'
 
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const flatpickr: typeof FlatPickr
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
@@ -23,6 +25,24 @@ declare const exports: {
   ).value
 
   const isCreate = shiftId === ''
+
+  /*
+   * Set up date picker
+   */
+
+  const shiftDateStringElement = shiftFormElement.querySelector(
+    '#shift--shiftDateString'
+  ) as HTMLInputElement
+
+  if (shiftDateStringElement !== null) {
+    flatpickr(shiftDateStringElement, {
+      allowInput: true,
+      dateFormat: 'Y-m-d',
+      
+      nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+      prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+    })
+  }
 
   function updateShift(formEvent: Event): void {
     formEvent.preventDefault()
