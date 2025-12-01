@@ -5,6 +5,7 @@ import getShiftEmployees from '../../database/shifts/getShiftEmployees.js';
 import getShiftEquipment from '../../database/shifts/getShiftEquipment.js';
 import getShiftTimeDataListItems from '../../database/shifts/getShiftTimeDataListItems.js';
 import getShiftTypeDataListItems from '../../database/shifts/getShiftTypeDataListItems.js';
+import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('shifts.router')}`;
 export default async function handler(request, response) {
@@ -27,6 +28,7 @@ export default async function handler(request, response) {
     const shiftCrews = await getShiftCrews(request.params.shiftId);
     const shiftEmployees = await getShiftEmployees(request.params.shiftId);
     const shiftEquipment = await getShiftEquipment(request.params.shiftId);
+    const shiftWorkOrders = await getShiftWorkOrders(request.params.shiftId);
     let supervisors = await getEmployees({ isSupervisor: true });
     if (!(request.session.user?.userProperties.shifts.canManage ?? false)) {
         supervisors = supervisors.filter((supervisor) => supervisor.userName === request.session.user?.userName);
@@ -41,6 +43,7 @@ export default async function handler(request, response) {
         shiftCrews,
         shiftEmployees,
         shiftEquipment,
+        shiftWorkOrders,
         shiftTimes,
         shiftTypes,
         supervisors
