@@ -1,4 +1,4 @@
-export type SettingKey = 'application.csrfSecret' | 'locations.defaultCityProvince' | 'locations.defaultLatitude' | 'locations.defaultLongitude';
+export type SettingKey = 'application.csrfSecret' | 'cleanup.daysBeforePermanentDelete' | 'locations.defaultCityProvince' | 'locations.defaultLatitude' | 'locations.defaultLongitude';
 export interface SettingProperties {
     settingKey: SettingKey;
     settingName: string;

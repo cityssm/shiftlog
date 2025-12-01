@@ -15,6 +15,8 @@ data/backups/*
 
 data/sessions/
 
+data/test-attachments/
+
 node_modules/
 
 data/config.d.ts

@@ -2,6 +2,14 @@
 /* eslint-disable perfectionist/sort-objects */
 export const settingProperties = [
     {
+        settingKey: 'cleanup.daysBeforePermanentDelete',
+        settingName: 'Cleanup - Days Before Permanent Delete',
+        description: 'The number of days a record must be marked as deleted before it is permanently removed from the database.',
+        type: 'number',
+        defaultValue: '60',
+        isUserConfigurable: true
+    },
+    {
         settingKey: 'locations.defaultCityProvince',
         settingName: 'Locations - Default City/Province',
         description: 'The default city/province to use when creating new work orders and locations.',
