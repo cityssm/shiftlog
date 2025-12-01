@@ -8,12 +8,6 @@ import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:database:cleanup`)
 
-interface DeletedRecord {
-  tableName: string
-  recordId: number
-  recordDelete_dateTime: Date
-}
-
 interface DeletedAttachment {
   workOrderAttachmentId: number
   fileSystemPath: string
