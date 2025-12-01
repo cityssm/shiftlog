@@ -8,6 +8,7 @@ import handler_edit from '../handlers/workOrders-get/edit.js'
 import handler_map from '../handlers/workOrders-get/map.js'
 import handler_new from '../handlers/workOrders-get/new.js'
 import handler_print from '../handlers/workOrders-get/print.js'
+import handler_recovery from '../handlers/workOrders-get/recovery.js'
 import handler_search from '../handlers/workOrders-get/search.js'
 import handler_view from '../handlers/workOrders-get/view.js'
 import handler_doCreateWorkOrder from '../handlers/workOrders-post/doCreateWorkOrder.js'
@@ -17,11 +18,13 @@ import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkO
 import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js'
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js'
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js'
+import handler_doGetDeletedWorkOrders from '../handlers/workOrders-post/doGetDeletedWorkOrders.js'
 import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js'
 import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGetRequestorSuggestions.js'
 import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGetWorkOrderAttachments.js'
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js'
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js'
+import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js'
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js'
 import handler_doUpdateWorkOrder from '../handlers/workOrders-post/doUpdateWorkOrder.js'
 import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUpdateWorkOrderMilestone.js'
@@ -43,6 +46,18 @@ function updateHandler(
   next: NextFunction
 ): void {
   if (request.session.user?.userProperties.workOrders.canUpdate ?? false) {
+    next()
+  } else {
+    response.status(403).send('Forbidden')
+  }
+}
+
+function manageHandler(
+  request: Request<unknown, unknown, unknown, { error?: string }>,
+  response: Response,
+  next: NextFunction
+): void {
+  if (request.session.user?.userProperties.workOrders.canManage ?? false) {
     next()
   } else {
     response.status(403).send('Forbidden')
@@ -119,6 +134,11 @@ router
   )
 
 router.get('/attachments/:workOrderAttachmentId/download', handler_download)
+
+router
+  .get('/recovery', manageHandler, handler_recovery)
+  .post('/doGetDeletedWorkOrders', manageHandler, handler_doGetDeletedWorkOrders)
+  .post('/doRecoverWorkOrder', manageHandler, handler_doRecoverWorkOrder)
 
 router.get('/:workOrderId/print', handler_print)
 

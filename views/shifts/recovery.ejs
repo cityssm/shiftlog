@@ -1,0 +1,51 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <nav class="breadcrumb">
+      <ul>
+        <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+        <li><a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
+          <span class="icon is-small">
+            <i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i>
+          </span>
+          <span><%= configFunctions.getConfigProperty('shifts.sectionName') %></span>
+        </a></li>
+        <li class="is-active">
+          <a href="#" aria-current="page">Record Recovery</a>
+        </li>
+      </ul>
+    </nav>
+
+    <% if (error !== '') { %>
+    <div class="notification is-danger is-light">
+      <button class="delete"></button>
+      <strong>Error:</strong> <%= error %>
+    </div>
+    <% } %>
+
+    <h1 class="title is-1">
+      <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Record Recovery
+    </h1>
+
+    <div class="message is-info">
+      <div class="message-body">
+        <p>This page allows you to recover recently deleted <%= configFunctions.getConfigProperty('shifts.sectionName').toLowerCase() %>.</p>
+        <p>Records are listed in order of deletion, with the most recently deleted appearing first.</p>
+      </div>
+    </div>
+
+    <div id="container--deletedRecordResults">
+      <!-- Filled dynamically -->
+    </div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/shifts.recovery.js"></script>
+
+<%- await include('../_footerB'); -%>

@@ -27,6 +27,17 @@
         <span><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Reports</span>
       </a>
     </li>
+    <% if (user.userProperties.timesheets.canManage) { %>
+    <li>
+      <a
+        class="<%= headTitle.endsWith(' - Record Recovery') ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/recovery"
+        title="Record Recovery">
+        <span class="icon"><i class="fa-solid fa-trash-arrow-up"></i></span>
+        <span>Record Recovery</span>
+      </a>
+    </li>
+    <% } %>
     <li>
       <a
         href="https://cityssm.github.io/shiftlog/docs/timesheets.html"
