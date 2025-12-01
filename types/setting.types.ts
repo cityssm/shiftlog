@@ -3,6 +3,7 @@
 
 export type SettingKey =
   | 'application.csrfSecret'
+  | 'cleanup.daysBeforePermanentDelete'
   | 'locations.defaultCityProvince'
   | 'locations.defaultLatitude'
   | 'locations.defaultLongitude'
@@ -21,6 +22,15 @@ export interface SettingProperties {
 }
 
 export const settingProperties: SettingProperties[] = [
+  {
+    settingKey: 'cleanup.daysBeforePermanentDelete',
+    settingName: 'Cleanup - Days Before Permanent Delete',
+    description:
+      'The number of days a record must be marked as deleted before it is permanently removed from the database.',
+    type: 'number',
+    defaultValue: '60',
+    isUserConfigurable: true
+  },
   {
     settingKey: 'locations.defaultCityProvince',
     settingName: 'Locations - Default City/Province',

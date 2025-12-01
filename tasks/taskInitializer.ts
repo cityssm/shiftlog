@@ -47,5 +47,17 @@ export function initializeTasks(): ChildProcess[] {
     childProcesses.push(childProcess)
   }
 
+  /*
+   * Database Cleanup Task
+   */
+
+  const cleanupTask = fork('./tasks/databaseCleanup/task.js', {
+    cwd: process.cwd(),
+    env: process.env,
+    stdio: 'inherit'
+  })
+
+  childProcesses.push(cleanupTask)
+
   return childProcesses
 }
