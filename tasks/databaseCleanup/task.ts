@@ -1,6 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-
 import { ScheduledTask } from '@cityssm/scheduled-task'
 import { daysToMillis } from '@cityssm/to-millis'
 import Debug from 'debug'
@@ -17,17 +14,21 @@ async function runCleanup(): Promise<void> {
     const result = await permanentlyDeleteRecords()
 
     if (result.success) {
-      debug(`Database cleanup completed successfully. Deleted ${result.deletedCount} records.`)
-      
+      debug(
+        `Database cleanup completed successfully. Deleted ${result.deletedCount} records.`
+      )
+
       if (result.errors.length > 0) {
-        debug(`Cleanup completed with ${result.errors.length} non-critical errors:`)
+        debug(
+          `Cleanup completed with ${result.errors.length} non-critical errors:`
+        )
         for (const error of result.errors) {
           debug(`  - ${error}`)
         }
       }
     } else {
       debug('Database cleanup failed')
-      
+
       for (const error of result.errors) {
         debug(`  - ${error}`)
       }
@@ -39,24 +40,23 @@ async function runCleanup(): Promise<void> {
 
 debug('Starting database cleanup task')
 
-// Run the cleanup task daily at 2:00 AM
+// Run the cleanup task on Monday at 2:00 AM
 // The task is automatically started and managed by the ScheduledTask class
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const scheduledTask = new ScheduledTask(
-  'Database Cleanup',
-  runCleanup,
-  {
-    schedule: {
-      hour: 2,
-      minute: 0,
-      second: 0
-    },
+const scheduledTask = new ScheduledTask('Database Cleanup', runCleanup, {
+  schedule: {
+    dayOfWeek: 1, // Monday
+    hour: 2,
+    minute: 0,
+    second: 0
+  },
 
-    // Run at least once per day
-    minimumIntervalMillis: daysToMillis(1),
+  // Do not run more than once a day
+  minimumIntervalMillis: daysToMillis(1),
 
-    startTask: true
-  }
+  startTask: true
+})
+
+debug(
+  'Database cleanup task initialized and scheduled for weekly execution on Monday at 2:00 AM'
 )
-
-debug('Database cleanup task initialized and scheduled for daily execution at 2:00 AM')

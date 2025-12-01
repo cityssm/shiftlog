@@ -1,5 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { ScheduledTask } from '@cityssm/scheduled-task';
 import { daysToMillis } from '@cityssm/to-millis';
 import Debug from 'debug';
@@ -31,17 +29,18 @@ async function runCleanup() {
     }
 }
 debug('Starting database cleanup task');
-// Run the cleanup task daily at 2:00 AM
+// Run the cleanup task on Monday at 2:00 AM
 // The task is automatically started and managed by the ScheduledTask class
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const scheduledTask = new ScheduledTask('Database Cleanup', runCleanup, {
     schedule: {
+        dayOfWeek: 1, // Monday
         hour: 2,
         minute: 0,
         second: 0
     },
-    // Run at least once per day
+    // Do not run more than once a day
     minimumIntervalMillis: daysToMillis(1),
     startTask: true
 });
-debug('Database cleanup task initialized and scheduled for daily execution at 2:00 AM');
+debug('Database cleanup task initialized and scheduled for weekly execution on Monday at 2:00 AM');

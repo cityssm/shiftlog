@@ -1,10 +1,13 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable no-await-in-loop */
+
 import { unlink } from 'node:fs/promises'
 
 import Debug from 'debug'
 
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
-import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:database:cleanup`)
 
@@ -17,6 +20,7 @@ interface DeletedAttachment {
 /**
  * Permanently deletes records that have been marked as deleted for a minimum number of days
  * and have no foreign key relationships to active records.
+ * @returns An object containing the success status, count of deleted records, and any errors encountered.
  */
 export default async function permanentlyDeleteRecords(): Promise<{
   success: boolean
@@ -30,12 +34,12 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const pool = await getShiftLogConnectionPool()
 
     // Get the minimum days before permanent delete setting
-    const daysBeforeDeleteStr = await getCachedSettingValue(
+    const daysBeforeDeleteString = await getCachedSettingValue(
       'cleanup.daysBeforePermanentDelete'
     )
     const daysBeforeDelete = Math.max(
       1,
-      Number.parseInt(daysBeforeDeleteStr || '60', 10) || 60
+      Number.parseInt(daysBeforeDeleteString || '60', 10) || 60
     )
 
     debug(
@@ -49,8 +53,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     // Step 1: Handle WorkOrderAttachments - delete files first, then records
     const attachmentsResult = await pool
       .request()
-      .input('cutoffDate', cutoffDate)
-      .query<DeletedAttachment>(/* sql */ `
+      .input('cutoffDate', cutoffDate).query<DeletedAttachment>(/* sql */ `
         SELECT workOrderAttachmentId, fileSystemPath, recordDelete_dateTime
         FROM ShiftLog.WorkOrderAttachments
         WHERE recordDelete_dateTime IS NOT NULL
@@ -60,7 +63,9 @@ export default async function permanentlyDeleteRecords(): Promise<{
     for (const attachment of attachmentsResult.recordset) {
       try {
         // Delete the file from the filesystem
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
         await unlink(attachment.fileSystemPath)
+
         debug(
           `Deleted file: ${attachment.fileSystemPath} for attachment ${attachment.workOrderAttachmentId}`
         )
@@ -80,7 +85,9 @@ export default async function permanentlyDeleteRecords(): Promise<{
             DELETE FROM ShiftLog.WorkOrderAttachments
             WHERE workOrderAttachmentId = @workOrderAttachmentId
           `)
-        deletedCount++
+
+        deletedCount += 1
+
         debug(
           `Permanently deleted attachment record: ${attachment.workOrderAttachmentId}`
         )
@@ -93,9 +100,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
 
     // Step 2: Clean up child records of WorkOrders
     // WorkOrderNotes - no foreign keys to check
-    const notesResult = await pool
-      .request()
-      .input('cutoffDate', cutoffDate)
+    const notesResult = await pool.request().input('cutoffDate', cutoffDate)
       .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderNotes
         WHERE recordDelete_dateTime IS NOT NULL
@@ -111,8 +116,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     // WorkOrderMilestones - no foreign keys to check
     const milestonesResult = await pool
       .request()
-      .input('cutoffDate', cutoffDate)
-      .query(/* sql */ `
+      .input('cutoffDate', cutoffDate).query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderMilestones
         WHERE recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
@@ -127,8 +131,8 @@ export default async function permanentlyDeleteRecords(): Promise<{
     // Step 3: Clean up WorkOrders that have no active child records
     const workOrdersResult = await pool
       .request()
-      .input('cutoffDate', cutoffDate)
-      .query(/* sql */ `
+      // eslint-disable-next-line no-secrets/no-secrets
+      .input('cutoffDate', cutoffDate).query(/* sql */ `
         DELETE wo
         FROM ShiftLog.WorkOrders wo
         WHERE wo.recordDelete_dateTime IS NOT NULL
@@ -136,17 +140,14 @@ export default async function permanentlyDeleteRecords(): Promise<{
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.WorkOrderNotes wn
             WHERE wn.workOrderId = wo.workOrderId
-              AND wn.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.WorkOrderMilestones wm
             WHERE wm.workOrderId = wo.workOrderId
-              AND wm.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.WorkOrderAttachments wa
             WHERE wa.workOrderId = wo.workOrderId
-              AND wa.recordDelete_dateTime IS NULL
           )
       `)
     if (workOrdersResult.rowsAffected[0] > 0) {
@@ -158,9 +159,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
 
     // Step 4: Clean up other tables with no foreign key dependencies
     // Locations - no foreign key references from other tables
-    const locationsResult = await pool
-      .request()
-      .input('cutoffDate', cutoffDate)
+    const locationsResult = await pool.request().input('cutoffDate', cutoffDate)
       .query(/* sql */ `
         DELETE l
         FROM ShiftLog.Locations l
@@ -177,8 +176,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     // WorkOrderTypes - check for references from active WorkOrders
     const workOrderTypesResult = await pool
       .request()
-      .input('cutoffDate', cutoffDate)
-      .query(/* sql */ `
+      .input('cutoffDate', cutoffDate).query(/* sql */ `
         DELETE wot
         FROM ShiftLog.WorkOrderTypes wot
         WHERE wot.recordDelete_dateTime IS NOT NULL
@@ -186,7 +184,6 @@ export default async function permanentlyDeleteRecords(): Promise<{
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.WorkOrders wo
             WHERE wo.workOrderTypeId = wot.workOrderTypeId
-              AND wo.recordDelete_dateTime IS NULL
           )
       `)
     if (workOrderTypesResult.rowsAffected[0] > 0) {
@@ -199,8 +196,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     // DataListItems - check for references from active records
     const dataListItemsResult = await pool
       .request()
-      .input('cutoffDate', cutoffDate)
-      .query(/* sql */ `
+      .input('cutoffDate', cutoffDate).query(/* sql */ `
         DELETE dli
         FROM ShiftLog.DataListItems dli
         WHERE dli.recordDelete_dateTime IS NOT NULL
@@ -209,23 +205,19 @@ export default async function permanentlyDeleteRecords(): Promise<{
             SELECT 1 FROM ShiftLog.WorkOrders wo
             WHERE (wo.workOrderStatusDataListItemId = dli.dataListItemId
               OR wo.assignedToDataListItemId = dli.dataListItemId)
-              AND wo.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.WorkOrderMilestones wm
             WHERE wm.assignedToDataListItemId = dli.dataListItemId
-              AND wm.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.Equipment e
             WHERE e.equipmentTypeDataListItemId = dli.dataListItemId
-              AND e.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.Shifts s
             WHERE (s.shiftTimeDataListItemId = dli.dataListItemId
               OR s.shiftTypeDataListItemId = dli.dataListItemId)
-              AND s.recordDelete_dateTime IS NULL
           )
       `)
     if (dataListItemsResult.rowsAffected[0] > 0) {
@@ -236,19 +228,17 @@ export default async function permanentlyDeleteRecords(): Promise<{
     }
 
     // DataLists - check for references from active DataListItems
-    const dataListsResult = await pool
-      .request()
-      .input('cutoffDate', cutoffDate)
+    const dataListsResult = await pool.request().input('cutoffDate', cutoffDate)
       .query(/* sql */ `
         DELETE dl
         FROM ShiftLog.DataLists dl
         WHERE dl.recordDelete_dateTime IS NOT NULL
           AND dl.recordDelete_dateTime < @cutoffDate
+          and dl.isSystemList = 0
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.DataListItems dli
             WHERE dli.instance = dl.instance
               AND dli.dataListKey = dl.dataListKey
-              AND dli.recordDelete_dateTime IS NULL
           )
       `)
     if (dataListsResult.rowsAffected[0] > 0) {
@@ -259,9 +249,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     }
 
     // Crews - check for references from active records
-    const crewsResult = await pool
-      .request()
-      .input('cutoffDate', cutoffDate)
+    const crewsResult = await pool.request().input('cutoffDate', cutoffDate)
       .query(/* sql */ `
         DELETE c
         FROM ShiftLog.Crews c
@@ -282,15 +270,11 @@ export default async function permanentlyDeleteRecords(): Promise<{
       `)
     if (crewsResult.rowsAffected[0] > 0) {
       deletedCount += crewsResult.rowsAffected[0]
-      debug(
-        `Permanently deleted ${crewsResult.rowsAffected[0]} Crews records`
-      )
+      debug(`Permanently deleted ${crewsResult.rowsAffected[0]} Crews records`)
     }
 
     // Employees - check for references from active records
-    const employeesResult = await pool
-      .request()
-      .input('cutoffDate', cutoffDate)
+    const employeesResult = await pool.request().input('cutoffDate', cutoffDate)
       .query(/* sql */ `
         DELETE e
         FROM ShiftLog.Employees e
@@ -305,7 +289,6 @@ export default async function permanentlyDeleteRecords(): Promise<{
             SELECT 1 FROM ShiftLog.Shifts s
             WHERE s.instance = e.instance
               AND s.supervisorEmployeeNumber = e.employeeNumber
-              AND s.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.ShiftEmployees se
@@ -326,9 +309,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     }
 
     // Equipment - check for references from active records
-    const equipmentResult = await pool
-      .request()
-      .input('cutoffDate', cutoffDate)
+    const equipmentResult = await pool.request().input('cutoffDate', cutoffDate)
       .query(/* sql */ `
         DELETE eq
         FROM ShiftLog.Equipment eq
@@ -348,9 +329,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     }
 
     // Shifts - check for references from active child records
-    const shiftsResult = await pool
-      .request()
-      .input('cutoffDate', cutoffDate)
+    const shiftsResult = await pool.request().input('cutoffDate', cutoffDate)
       .query(/* sql */ `
         DELETE s
         FROM ShiftLog.Shifts s
@@ -379,8 +358,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     // Timesheets - check for references from active child records
     const timesheetsResult = await pool
       .request()
-      .input('cutoffDate', cutoffDate)
-      .query(/* sql */ `
+      .input('cutoffDate', cutoffDate).query(/* sql */ `
         DELETE t
         FROM ShiftLog.Timesheets t
         WHERE t.recordDelete_dateTime IS NOT NULL
@@ -404,8 +382,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     // UserGroups - check for references from active records
     const userGroupsResult = await pool
       .request()
-      .input('cutoffDate', cutoffDate)
-      .query(/* sql */ `
+      .input('cutoffDate', cutoffDate).query(/* sql */ `
         DELETE ug
         FROM ShiftLog.UserGroups ug
         WHERE ug.recordDelete_dateTime IS NOT NULL
@@ -417,27 +394,22 @@ export default async function permanentlyDeleteRecords(): Promise<{
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.DataListItems dli
             WHERE dli.userGroupId = ug.userGroupId
-              AND dli.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.Employees e
             WHERE e.userGroupId = ug.userGroupId
-              AND e.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.Equipment eq
             WHERE eq.userGroupId = ug.userGroupId
-              AND eq.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.Locations l
             WHERE l.userGroupId = ug.userGroupId
-              AND l.recordDelete_dateTime IS NULL
           )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.WorkOrderTypes wot
             WHERE wot.userGroupId = ug.userGroupId
-              AND wot.recordDelete_dateTime IS NULL
           )
       `)
     if (userGroupsResult.rowsAffected[0] > 0) {
@@ -448,9 +420,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     }
 
     // Users - only delete if they have no related records
-    const usersResult = await pool
-      .request()
-      .input('cutoffDate', cutoffDate)
+    const usersResult = await pool.request().input('cutoffDate', cutoffDate)
       .query(/* sql */ `
         DELETE u
         FROM ShiftLog.Users u
@@ -469,15 +439,14 @@ export default async function permanentlyDeleteRecords(): Promise<{
       `)
     if (usersResult.rowsAffected[0] > 0) {
       deletedCount += usersResult.rowsAffected[0]
-      debug(
-        `Permanently deleted ${usersResult.rowsAffected[0]} Users records`
-      )
+      debug(`Permanently deleted ${usersResult.rowsAffected[0]} Users records`)
     }
 
     debug(`Cleanup task completed. Total records deleted: ${deletedCount}`)
 
     return {
       success: true,
+
       deletedCount,
       errors
     }
@@ -488,6 +457,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
 
     return {
       success: false,
+
       deletedCount,
       errors
     }
