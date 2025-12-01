@@ -289,6 +289,185 @@ declare const exports: {
     clickEvent.preventDefault()
 
     let closeModalFunction: () => void
+    let modalElement: HTMLElement
+
+    function doSearch(formEvent: Event): void {
+      formEvent.preventDefault()
+
+      const searchForm = formEvent.currentTarget as HTMLFormElement
+      const searchString = (
+        searchForm.querySelector('#addWorkOrder--searchString') as HTMLInputElement
+      ).value.trim()
+
+      if (searchString.length < 2) {
+        bulmaJS.alert({
+          contextualColorName: 'warning',
+          message: 'Please enter at least 2 characters to search.'
+        })
+        return
+      }
+
+      const resultsContainer = modalElement.querySelector(
+        '#addWorkOrder--results'
+      ) as HTMLElement
+
+      resultsContainer.innerHTML = /* html */ `
+        <div class="message is-info">
+          <div class="message-body">Searching...</div>
+        </div>
+      `
+
+      cityssm.postJSON(
+        `${workOrdersUrlPrefix}/doSearchWorkOrders`,
+        {
+          workOrderNumber: searchString,
+          requestor: searchString,
+          openClosedFilter: 'open',
+          limit: 20,
+          offset: 0
+        },
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            workOrders: ShiftWorkOrder[]
+            totalCount: number
+          }
+
+          if (!responseJSON.success || responseJSON.workOrders.length === 0) {
+            resultsContainer.innerHTML = /* html */ `
+              <div class="message is-warning">
+                <div class="message-body">No open work orders found matching your search.</div>
+              </div>
+            `
+            return
+          }
+
+          // Render search results
+          const tableElement = document.createElement('table')
+          tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+
+          // eslint-disable-next-line no-unsanitized/property
+          tableElement.innerHTML = /* html */ `
+            <thead>
+              <tr>
+                <th>Work Order #</th>
+                <th>Type</th>
+                <th>Requestor</th>
+                <th>Details</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          `
+
+          const tbodyElement = tableElement.querySelector(
+            'tbody'
+          ) as HTMLTableSectionElement
+
+          for (const workOrder of responseJSON.workOrders) {
+            const trElement = document.createElement('tr')
+
+            // eslint-disable-next-line no-unsanitized/property
+            trElement.innerHTML = /* html */ `
+              <td>${cityssm.escapeHTML(workOrder.workOrderNumber)}</td>
+              <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
+              <td>${cityssm.escapeHTML(workOrder.requestorName ?? '')}</td>
+              <td>${cityssm.escapeHTML(workOrder.workOrderDetails.substring(0, 50))}${workOrder.workOrderDetails.length > 50 ? '...' : ''}</td>
+              <td class="has-text-right">
+                <button class="button is-small is-success button--select" data-work-order-id="${workOrder.workOrderId}" type="button">
+                  <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+                  <span>Select</span>
+                </button>
+              </td>
+            `
+
+            tbodyElement.append(trElement)
+          }
+
+          resultsContainer.replaceChildren(tableElement)
+
+          if (responseJSON.totalCount > 20) {
+            const messageElement = document.createElement('div')
+            messageElement.className = 'message is-info mt-2'
+            messageElement.innerHTML = /* html */ `
+              <div class="message-body">
+                Showing 20 of ${responseJSON.totalCount} results. Refine your search to see more specific results.
+              </div>
+            `
+            resultsContainer.append(messageElement)
+          }
+
+          // Add event listeners to select buttons
+          const selectButtons = resultsContainer.querySelectorAll('.button--select')
+          for (const button of selectButtons) {
+            button.addEventListener('click', (selectEvent) => {
+              selectEvent.preventDefault()
+              const selectedWorkOrderId = (selectEvent.currentTarget as HTMLButtonElement).dataset.workOrderId
+
+              const selectedWorkOrder = responseJSON.workOrders.find(
+                (wo) => wo.workOrderId.toString() === selectedWorkOrderId
+              )
+
+              if (selectedWorkOrder !== undefined) {
+                selectWorkOrder(selectedWorkOrder)
+              }
+            })
+          }
+        }
+      )
+    }
+
+    function selectWorkOrder(workOrder: ShiftWorkOrder): void {
+      // Hide search results and show the form
+      const resultsContainer = modalElement.querySelector(
+        '#addWorkOrder--results'
+      ) as HTMLElement
+      resultsContainer.classList.add('is-hidden')
+
+      const addForm = modalElement.querySelector(
+        '#addWorkOrder--form'
+      ) as HTMLFormElement
+      addForm.classList.remove('is-hidden')
+
+      const submitButton = modalElement.querySelector(
+        '#addWorkOrder--submitButton'
+      ) as HTMLButtonElement
+      submitButton.classList.remove('is-hidden')
+
+      // Populate selected work order info
+      ;(
+        modalElement.querySelector(
+          '#addWorkOrder--selectedWorkOrderId'
+        ) as HTMLInputElement
+      ).value = workOrder.workOrderId.toString()
+
+      const selectedWorkOrderDiv = modalElement.querySelector(
+        '#addWorkOrder--selectedWorkOrder'
+      ) as HTMLElement
+
+      // eslint-disable-next-line no-unsanitized/property
+      selectedWorkOrderDiv.innerHTML = /* html */ `
+        <p class="mb-2">
+          <strong>Work Order #${cityssm.escapeHTML(workOrder.workOrderNumber)}</strong>
+        </p>
+        <p class="mb-2">
+          <strong>Type:</strong> ${cityssm.escapeHTML(workOrder.workOrderType ?? '')}
+        </p>
+        <p class="mb-2">
+          <strong>Requestor:</strong> ${cityssm.escapeHTML(workOrder.requestorName ?? '')}
+        </p>
+        <p>
+          <strong>Details:</strong> ${cityssm.escapeHTML(workOrder.workOrderDetails)}
+        </p>
+      `
+
+      // Focus on note field
+      ;(
+        modalElement.querySelector(
+          '#addWorkOrder--shiftWorkOrderNote'
+        ) as HTMLTextAreaElement
+      ).focus()
+    }
 
     function doAdd(formEvent: Event): void {
       formEvent.preventDefault()
@@ -321,24 +500,29 @@ declare const exports: {
     }
 
     cityssm.openHtmlModal('shifts-addWorkOrder', {
-      onshow(modalElement) {
+      onshow(modalElementParam) {
+        modalElement = modalElementParam
         ;(
           modalElement.querySelector(
             'input[name="shiftId"]'
           ) as HTMLInputElement
         ).value = shiftId
       },
-      onshown(modalElement, _closeModalFunction) {
+      onshown(modalElementParam, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = _closeModalFunction
+        modalElement = modalElementParam
 
-        const formElement = modalElement.querySelector('form') as HTMLFormElement
-        formElement.addEventListener('submit', doAdd)
+        const searchForm = modalElement.querySelector('#addWorkOrder--searchForm') as HTMLFormElement
+        searchForm.addEventListener('submit', doSearch)
 
-        // Focus on work order ID input
+        const addForm = modalElement.querySelector('#addWorkOrder--form') as HTMLFormElement
+        addForm.addEventListener('submit', doAdd)
+
+        // Focus on search input
         ;(
           modalElement.querySelector(
-            'input[name="workOrderId"]'
+            '#addWorkOrder--searchString'
           ) as HTMLInputElement
         ).focus()
       },
