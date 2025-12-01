@@ -1,3 +1,18 @@
-export const availableWorkOrderMoreInfoForms = {
-  graffiti: 'Graffiti Incident Details'
+export interface WorkOrderMoreInfoForm {
+  formName: string
+  formFields: Record<`moreInfo_${string}`, string>
+}
+
+export const availableWorkOrderMoreInfoForms: Record<
+  string,
+  WorkOrderMoreInfoForm
+> = {
+  graffiti: {
+    formName: 'Graffiti Incident Details',
+    
+    formFields: {
+      moreInfo_graffiti_surfaceType: 'Surface Type',
+      moreInfo_graffiti_paintUsed: 'Paint Used'
+    }
+  }
 }

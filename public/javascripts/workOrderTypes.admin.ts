@@ -1,6 +1,8 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { WorkOrderMoreInfoForm } from '../../helpers/workOrderMoreInfoForms.helpers.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -20,7 +22,7 @@ interface WorkOrderType {
   moreInfoFormNames?: string[]
   orderNumber: number
   userGroupId: number | null
-  userGroupName?: string
+  userGroupName?: string | null
   workOrderNumberPrefix: string
   workOrderType: string
   workOrderTypeId: number
@@ -33,7 +35,7 @@ interface UserGroup {
 }
 
 declare const exports: {
-  availableWorkOrderMoreInfoForms: Record<string, string>
+  availableWorkOrderMoreInfoForms: Record<string, WorkOrderMoreInfoForm>
   shiftLog: ShiftLogGlobal
   userGroups: UserGroup[]
   workOrderTypes: WorkOrderType[]
@@ -56,65 +58,74 @@ declare const exports: {
       return
     }
 
-    let html = ''
+    // Clear existing
+    tbodyElement.innerHTML = ''
 
     for (const workOrderType of workOrderTypes) {
       const userGroupDisplay =
-        workOrderType.userGroupName !== undefined &&
-        workOrderType.userGroupName !== ''
-          ? `<span class="tag is-info">${cityssm.escapeHTML(workOrderType.userGroupName)}</span>`
-          : '<span class="has-text-grey-light">-</span>'
+        (workOrderType.userGroupName ?? '') === ''
+          ? '<span class="has-text-grey-light">-</span>'
+          : `<span class="tag is-info">${cityssm.escapeHTML(workOrderType.userGroupName ?? '')}</span>`
 
-      html += /* html */ `
-        <tr data-work-order-type-id="${workOrderType.workOrderTypeId}">
-          <td class="has-text-centered">
-            <span class="icon is-small has-text-grey handle" style="cursor: move;">
-              <i class="fa-solid fa-grip-vertical"></i>
-            </span>
-          </td>
-          <td>
-            <span class="work-order-type-name">${cityssm.escapeHTML(workOrderType.workOrderType)}</span>
-          </td>
-          <td>
-            <span class="work-order-number-prefix">${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}</span>
-          </td>
-          <td>
-            ${userGroupDisplay}
-          </td>
-          <td>
-            <div class="buttons are-small">
-              <button
-                class="button is-info button--editWorkOrderType"
-                data-work-order-type-id="${workOrderType.workOrderTypeId}"
-                data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
-                data-work-order-number-prefix="${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}"
-                data-user-group-id="${workOrderType.userGroupId ?? ''}"
-                type="button"
-              >
-                <span class="icon">
-                  <i class="fa-solid fa-pencil"></i>
-                </span>
-                <span>Edit</span>
-              </button>
-              <button
-                class="button is-danger button--deleteWorkOrderType"
-                data-work-order-type-id="${workOrderType.workOrderTypeId}"
-                data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
-                type="button"
-              >
-                <span class="icon">
-                  <i class="fa-solid fa-trash"></i>
-                </span>
-                <span>Delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
+      const rowElement = document.createElement('tr')
+
+      rowElement.dataset.workOrderTypeId =
+        workOrderType.workOrderTypeId.toString()
+
+      // eslint-disable-next-line no-unsanitized/property
+      rowElement.innerHTML = /* html */ `
+        <td class="has-text-centered">
+          <span class="icon is-small has-text-grey handle" style="cursor: move;">
+            <i class="fa-solid fa-grip-vertical"></i>
+          </span>
+        </td>
+        <td>
+          <span class="work-order-type-name">
+            ${cityssm.escapeHTML(workOrderType.workOrderType)}
+          </span>
+        </td>
+        <td>
+          <span class="work-order-number-prefix">
+            ${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}
+          </span>
+        </td>
+        <td>
+          ${userGroupDisplay}
+        </td>
+        <td>
+          <div class="buttons are-small">
+            <button
+              class="button is-info button--editWorkOrderType"
+              data-work-order-type-id="${workOrderType.workOrderTypeId}"
+              data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
+              data-work-order-number-prefix="${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}"
+              data-user-group-id="${workOrderType.userGroupId ?? ''}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-pencil"></i>
+              </span>
+              <span>Edit</span>
+            </button>
+            <button
+              class="button is-danger button--deleteWorkOrderType"
+              data-work-order-type-id="${workOrderType.workOrderTypeId}"
+              data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-trash"></i>
+              </span>
+              <span>Delete</span>
+            </button>
+          </div>
+        </td>
       `
+
+      tbodyElement.append(rowElement)
     }
 
     // eslint-disable-next-line no-unsanitized/property
-    tbodyElement.innerHTML = html
     attachEventListeners()
     initializeSortable()
   }
@@ -143,7 +154,7 @@ declare const exports: {
             closeModalFunction()
             workOrderTypes = responseJSON.workOrderTypes
             renderWorkOrderTypes()
-            
+
             bulmaJS.alert({
               contextualColorName: 'success',
               message: 'The work order type has been successfully added.',
@@ -308,13 +319,15 @@ declare const exports: {
         } else {
           let formsHtml = ''
           for (const formKey of formKeys) {
-            const formLabel = availableForms[formKey]
+            const formLabel = availableForms[formKey].formName
+
             const isChecked = currentMoreInfoFormNames.includes(formKey)
+
             formsHtml += /* html */ `
               <label class="checkbox is-block mb-2">
                 <input
-                  type="checkbox"
                   name="moreInfoFormNames"
+                  type="checkbox"
                   value="${cityssm.escapeHTML(formKey)}"
                   ${isChecked ? 'checked' : ''}
                 />

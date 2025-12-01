@@ -99,6 +99,33 @@
   </div>
 </div>
 
+<!-- eslint-disable html/indent -->
+<% 
+  if (Object.keys(workOrder.moreInfoFormData).length > 0) {
+    const formNames = typeof workOrder.moreInfoFormData.moreInfo_formName === 'string' ? [workOrder.moreInfoFormData.moreInfo_formName] : workOrder.moreInfoFormData.moreInfo_formName;
+    for (const formName of formNames) {
+      const formConfig = availableWorkOrderMoreInfoForms[formName];
+      if (!formConfig) {
+        continue;
+      }
+      
+%>
+<div class="box avoid-page-break">
+  <h2 class="title is-4"><%= formConfig.formName %></h2>
+  <% for (const [fieldKey, fieldName] of Object.entries(formConfig.formFields)) { %>
+    <div class="field">
+      <label class="label"><%= fieldName %></label>
+      <p>
+        <%= workOrder.moreInfoFormData[fieldKey] ?? '-' %>
+      </p>
+    </div>
+  <% } %>
+</div>
+<%  }
+  }
+%>
+
+
 <div class="box avoid-page-break">
   <h2 class="title is-4">Milestones</h2>
   <% if (milestones.length === 0) { %>
