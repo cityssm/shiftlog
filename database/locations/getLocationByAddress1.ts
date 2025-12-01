@@ -12,7 +12,6 @@ export default async function getLocationByAddress1(
     .input('instance', getConfigProperty('application.instance'))
     .input('address1', address1).query<Location>(/* sql */ `
       select locationId,
-        locationName,
         address1,
         address2,
         cityProvince,

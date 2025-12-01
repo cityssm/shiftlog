@@ -3,7 +3,6 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 interface UpdateLocationForm {
   locationId: number
-  locationName: string
 
   address1: string
   address2: string
@@ -26,7 +25,6 @@ export default async function updateLocation(
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('locationId', updateLocationForm.locationId)
-      .input('locationName', updateLocationForm.locationName)
       .input('address1', updateLocationForm.address1)
       .input('address2', updateLocationForm.address2)
       .input('cityProvince', updateLocationForm.cityProvince)
@@ -35,8 +33,7 @@ export default async function updateLocation(
       .input('recordUpdate_userName', user.userName)
       .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         UPDATE ShiftLog.Locations
-        SET locationName = @locationName,
-            address1 = @address1,
+        SET address1 = @address1,
             address2 = @address2,
             cityProvince = @cityProvince,
             latitude = @latitude,

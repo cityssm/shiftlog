@@ -168,7 +168,7 @@
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Location',
-            message: `Are you sure you want to delete location "${location?.locationName ?? ''}"? This action cannot be undone.`,
+            message: `Are you sure you want to delete location "${location?.address1 ?? ''}"? This action cannot be undone.`,
             okButton: {
                 contextualColorName: 'warning',
                 text: 'Delete Location',
@@ -245,7 +245,6 @@
             onshow(modalElement) {
                 ;
                 modalElement.querySelector('#editLocation--locationId').value = location.locationId.toString();
-                modalElement.querySelector('#editLocation--locationName').value = location.locationName;
                 modalElement.querySelector('#editLocation--address1').value = location.address1;
                 modalElement.querySelector('#editLocation--address2').value = location.address2;
                 modalElement.querySelector('#editLocation--cityProvince').value = location.cityProvince;
@@ -274,7 +273,6 @@
         rowElement.dataset.locationId = location.locationId.toString();
         // eslint-disable-next-line no-unsanitized/property
         rowElement.innerHTML = /* html */ `
-      <td>${cityssm.escapeHTML(location.locationName)}</td>
       <td>${cityssm.escapeHTML(location.address1)}</td>
       <td>${cityssm.escapeHTML(location.address2)}</td>
       <td>${cityssm.escapeHTML(location.cityProvince)}</td>
@@ -316,7 +314,6 @@
         tableElement.innerHTML = /*html*/ `
       <thead>
         <tr>
-          <th>Location Name</th>
           <th>Address Line 1</th>
           <th>Address Line 2</th>
           <th>City/Province</th>
@@ -398,7 +395,7 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddLocation);
-                modalElement.querySelector('#addLocation--locationName').focus();
+                modalElement.querySelector('#addLocation--address1').focus();
                 // Initialize map picker
                 const mapPickerElement = modalElement.querySelector('#map--addLocationPicker');
                 if (mapPickerElement !== null) {
@@ -432,7 +429,7 @@
                 }
                 else {
                     const filteredLocations = exports.locations.filter((location) => {
-                        const searchText = `${location.locationName} ${location.address1} ${location.address2} ${location.cityProvince}`.toLowerCase();
+                        const searchText = `${location.address1} ${location.address2} ${location.cityProvince}`.toLowerCase();
                         return searchText.includes(filterText);
                     });
                     currentFilteredLocations = filteredLocations;

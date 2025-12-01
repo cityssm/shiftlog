@@ -21,7 +21,6 @@ async function addSyncedLocation(
   await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('locationName', partialLocation.locationName ?? '')
     .input('address1', partialLocation.address1 ?? '')
     .input('address2', partialLocation.address2 ?? '')
     .input('cityProvince', partialLocation.cityProvince ?? '')
@@ -39,13 +38,13 @@ async function addSyncedLocation(
     .input('recordUpdate_userName', syncUserName)
     .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
       insert into ShiftLog.Locations (
-        instance, locationName, address1, address2,
+        instance, address1, address2,
         cityProvince, latitude, longitude, userGroupId,
         recordSync_isSynced, recordSync_source, recordSync_dateTime,
         recordCreate_userName, recordCreate_dateTime,
         recordUpdate_userName, recordUpdate_dateTime
       ) values (
-        @instance, @locationName, @address1, @address2,
+        @instance, @address1, @address2,
         @cityProvince, @latitude, @longitude, @userGroupId,
         @recordSync_isSynced, @recordSync_source, @recordSync_dateTime,
         @recordCreate_userName, @recordCreate_dateTime,
@@ -61,11 +60,6 @@ async function updateSyncedLocation(
 ): Promise<void> {
   const updateLocation: Location = {
     locationId: currentLocation.locationId,
-    locationName:
-      usePartialOrCurrentValue(
-        partialLocation.locationName,
-        currentLocation.locationName
-      ) ?? '',
 
     address1:
       usePartialOrCurrentValue(
@@ -112,7 +106,6 @@ async function updateSyncedLocation(
   await pool
     .request()
     .input('locationId', updateLocation.locationId)
-    .input('locationName', updateLocation.locationName)
     .input('address1', updateLocation.address1)
     .input('address2', updateLocation.address2)
     .input('cityProvince', updateLocation.cityProvince)
@@ -125,8 +118,7 @@ async function updateSyncedLocation(
     .input('recordUpdate_userName', syncUserName)
     .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
       update ShiftLog.Locations
-      set locationName = @locationName,
-        address1 = @address1,
+      set address1 = @address1,
         address2 = @address2,
         cityProvince = @cityProvince,
         latitude = @latitude,

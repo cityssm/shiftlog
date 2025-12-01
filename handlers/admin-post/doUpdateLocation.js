@@ -2,7 +2,6 @@ import getLocations from '../../database/locations/getLocations.js';
 import updateLocation from '../../database/locations/updateLocation.js';
 export default async function handler(request, response) {
     const locationId = Number(request.body.locationId);
-    const locationName = request.body.locationName;
     const address1 = request.body.address1 || '';
     const address2 = request.body.address2 || '';
     const cityProvince = request.body.cityProvince || '';
@@ -10,7 +9,6 @@ export default async function handler(request, response) {
     const longitude = request.body.longitude === '' ? undefined : Number(request.body.longitude);
     const success = await updateLocation({
         locationId,
-        locationName,
         address1,
         address2,
         cityProvince,

@@ -108,44 +108,61 @@
     const locationLongitudeInput = workOrderFormElement.querySelector('#workOrder--locationLongitude');
     const locationDatalist = document.querySelector('#datalist--locations');
     if (locationDatalist !== null) {
+        const LOCATION_SEARCH_MIN_LENGTH = 3;
         let locationSearchString = '';
         let locationsData = [];
+        /**
+         * Populate the location datalist with the provided locations
+         */
+        function populateLocationDatalist(locations) {
+            locationDatalist.replaceChildren();
+            for (const location of locations) {
+                const option = document.createElement('option');
+                option.value = location.address1;
+                option.dataset.locationId = location.locationId.toString();
+                option.dataset.address2 = location.address2;
+                option.dataset.cityProvince = location.cityProvince;
+                option.dataset.latitude =
+                    typeof location.latitude === 'number'
+                        ? location.latitude.toString()
+                        : '';
+                option.dataset.longitude =
+                    typeof location.longitude === 'number'
+                        ? location.longitude.toString()
+                        : '';
+                locationDatalist.append(option);
+            }
+        }
+        /**
+         * Fetch location suggestions from the server
+         */
+        function fetchLocationSuggestions(searchString, callback) {
+            cityssm.postJSON(`${urlPrefix}/doGetLocationSuggestions`, { searchString }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success && responseJSON.locations) {
+                    locationsData = responseJSON.locations;
+                    populateLocationDatalist(responseJSON.locations);
+                    if (callback !== undefined) {
+                        callback(responseJSON.locations);
+                    }
+                }
+            });
+        }
         locationAddress1Input.addEventListener('keyup', () => {
-            const newSearchString = locationAddress1Input.value.trim().slice(0, 3);
-            if (newSearchString.length >= 3 &&
+            const newSearchString = locationAddress1Input.value
+                .trim()
+                .slice(0, LOCATION_SEARCH_MIN_LENGTH);
+            if (newSearchString.length >= LOCATION_SEARCH_MIN_LENGTH &&
                 newSearchString !== locationSearchString) {
                 locationSearchString = newSearchString;
                 // Load location suggestions
-                cityssm.postJSON(`${urlPrefix}/doGetLocationSuggestions`, { searchString: locationSearchString }, (rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
-                    if (responseJSON.success && responseJSON.locations) {
-                        locationsData = responseJSON.locations;
-                        locationDatalist.replaceChildren();
-                        for (const location of responseJSON.locations) {
-                            const option = document.createElement('option');
-                            option.value = location.address1;
-                            option.dataset.locationId = location.locationId.toString();
-                            option.dataset.address2 = location.address2;
-                            option.dataset.cityProvince = location.cityProvince;
-                            option.dataset.latitude =
-                                typeof location.latitude === 'number'
-                                    ? location.latitude.toString()
-                                    : '';
-                            option.dataset.longitude =
-                                typeof location.longitude === 'number'
-                                    ? location.longitude.toString()
-                                    : '';
-                            locationDatalist.append(option);
-                        }
-                    }
-                });
+                fetchLocationSuggestions(locationSearchString);
             }
         });
         // Handle location selection
         locationAddress1Input.addEventListener('change', () => {
             const selectedAddress = locationAddress1Input.value;
-            const matchingLocation = locationsData.find((possibleLocation) => possibleLocation.locationName === selectedAddress ||
-                possibleLocation.address1 === selectedAddress);
+            const matchingLocation = locationsData.find((possibleLocation) => possibleLocation.address1 === selectedAddress);
             if (matchingLocation !== undefined) {
                 // Check if other location fields are already set
                 const hasExistingData = locationAddress2Input.value !== '' ||
@@ -167,6 +184,20 @@
                 else {
                     applyLocationData(matchingLocation);
                 }
+            }
+            else if (selectedAddress.trim().length >= LOCATION_SEARCH_MIN_LENGTH) {
+                // Selection wasn't from the datalist (e.g., browser history)
+                // Refresh the datalist with the selected value as the search string
+                locationSearchString = selectedAddress
+                    .trim()
+                    .slice(0, LOCATION_SEARCH_MIN_LENGTH);
+                fetchLocationSuggestions(locationSearchString, () => {
+                    // Check if the newly fetched data includes the selected address
+                    const newMatchingLocation = locationsData.find((possibleLocation) => possibleLocation.address1 === selectedAddress);
+                    if (newMatchingLocation !== undefined) {
+                        applyLocationData(newMatchingLocation);
+                    }
+                });
             }
         });
         function applyLocationData(location) {
