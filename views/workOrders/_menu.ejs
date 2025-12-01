@@ -50,26 +50,6 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
         </div>
       </a>
     </li>
-  </ul>
-  <p class="menu-label">Links</p>
-  <ul class="menu-list">
-    <li>
-      <a
-        href="<%= urlPrefix %>/dashboard/reports/?tab=workOrders"
-        title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Reports"
-      >
-        <div class="columns is-mobile is-1">
-          <div class="column is-narrow">
-            <span class="icon is-small">
-              <i class="fa-solid fa-file-lines"></i>
-            </span>
-          </div>
-          <div class="column is-hidden-touch">
-            Reports
-          </div>
-        </div>
-      </a>
-    </li>
     <% if (user.userProperties.workOrders.canManage) { %>
     <li>
       <a
@@ -90,7 +70,27 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       </a>
     </li>
     <% } %>
-   <li>
+  </ul>
+  <p class="menu-label">Links</p>
+  <ul class="menu-list">
+    <li>
+      <a
+        href="<%= urlPrefix %>/dashboard/reports/?tab=workOrders"
+        title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Reports"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-file-lines"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Reports
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
       <a
         href="https://cityssm.github.io/shiftlog/docs/workOrders.html"
         title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Help"

@@ -44,17 +44,36 @@
         return paginationElement;
     }
     function recoverTimesheet(timesheetId) {
-        cityssm.confirmModal('Recover Timesheet?', 'Are you sure you want to recover this timesheet?', 'Yes, Recover', 'warning', async () => {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/timesheets/doRecoverTimesheet`, { timesheetId }, (response) => {
-                if (response.success) {
-                    cityssm.alertModal('Timesheet Recovered', 'The timesheet has been recovered successfully.', 'success', () => {
-                        window.location.href = response.redirectUrl;
+        bulmaJS.confirm({
+            title: 'Recover Timesheet?',
+            message: 'Are you sure you want to recover this timesheet?',
+            contextualColorName: 'warning',
+            okButton: {
+                text: 'Yes, Recover',
+                callbackFunction: () => {
+                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doRecoverTimesheet`, { timesheetId }, (response) => {
+                        if (response.success) {
+                            bulmaJS.alert({
+                                title: 'Timesheet Recovered',
+                                message: 'The timesheet has been recovered successfully.',
+                                contextualColorName: 'success',
+                                okButton: {
+                                    callbackFunction: () => {
+                                        window.location.href = response.redirectUrl;
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            bulmaJS.alert({
+                                title: 'Error',
+                                message: response.errorMessage ?? 'Failed to recover timesheet.',
+                                contextualColorName: 'danger'
+                            });
+                        }
                     });
                 }
-                else {
-                    cityssm.alertModal('Error', response.errorMessage ?? 'Failed to recover timesheet.', 'danger');
-                }
-            });
+            }
         });
     }
     function renderDeletedRecordsTable(data) {
@@ -140,7 +159,7 @@
       </div>
     `;
         const formData = new FormData(filtersFormElement);
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/timesheets/doGetDeletedTimesheets`, formData, renderDeletedRecordsTable);
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doGetDeletedTimesheets`, formData, renderDeletedRecordsTable);
     }
     getDeletedRecords();
 })();
