@@ -35,7 +35,10 @@ export default async function getDeletedShifts(
         s.shiftTypeDataListItemId,
         sType.dataListItem as shiftTypeDataListItem,
 
-        s.shiftDetails,
+        s.supervisorEmployeeNumber,
+        e.firstName as supervisorFirstName,
+        e.lastName as supervisorLastName,
+        e.userName as supervisorUserName,
 
         s.recordDelete_userName,
         s.recordDelete_dateTime
@@ -47,6 +50,10 @@ export default async function getDeletedShifts(
 
       left join ShiftLog.DataListItems sType
         on s.shiftTypeDataListItemId = sType.dataListItemId
+
+      left join ShiftLog.Employees e
+          on s.instance = e.instance
+          and s.supervisorEmployeeNumber = e.employeeNumber
 
       ${whereClause}
 
