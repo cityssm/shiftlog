@@ -1,22 +1,10 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable unicorn/no-null */
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Timesheet } from '../../types/record.types.js'
 
-export interface GetDeletedTimesheetsOptions {
-  limit: number | string
-  offset: number | string
-}
-
 export default async function getDeletedTimesheets(
-  options: GetDeletedTimesheetsOptions,
   user?: User
-): Promise<{
-  timesheets: Timesheet[]
-  totalCount: number
-}> {
+): Promise<Timesheet[]> {
   const pool = await getShiftLogConnectionPool()
 
   let whereClause =
@@ -34,89 +22,41 @@ export default async function getDeletedTimesheets(
     `
   }
 
-  const limit =
-    typeof options.limit === 'string'
-      ? Number.parseInt(options.limit, 10)
-      : options.limit
+  const timesheetsResult = await pool
+    .request()
+    .input('instance', getConfigProperty('application.instance'))
+    .input('userName', user?.userName).query<Timesheet>(/* sql */ `
+      select
+        t.timesheetId,
+        t.timesheetDate,
 
-  const offset =
-    typeof options.offset === 'string'
-      ? Number.parseInt(options.offset, 10)
-      : options.offset
+        t.timesheetTypeDataListItemId,
+        tType.dataListItem as timesheetTypeDataListItem,
 
-  // Get total count if limit === -1
+        t.supervisorEmployeeNumber,
+        supervisor.employeeSurname as supervisorEmployeeSurname,
+        supervisor.employeeGivenName as supervisorEmployeeGivenName,
 
-  let totalCount = 0
+        t.timesheetDetails,
 
-  if (limit !== -1) {
-    const countSql = /* sql */ `
-      select count(*) as totalCount
+        t.recordDelete_userName,
+        t.recordDelete_dateTime
+
       from ShiftLog.Timesheets t
+
       left join ShiftLog.DataListItems tType
         on t.timesheetTypeDataListItemId = tType.dataListItemId
+
+      left join ShiftLog.Employees supervisor
+        on t.supervisorEmployeeNumber = supervisor.employeeNumber
+          and t.instance = supervisor.instance
+
       ${whereClause}
-    `
 
-    const countResult = await pool
-      .request()
-      .input('instance', getConfigProperty('application.instance'))
-      .input('userName', user?.userName)
-      .query<{ totalCount: number }>(countSql)
+      order by t.recordDelete_dateTime desc
+    `)
 
-    totalCount = countResult.recordset[0]?.totalCount ?? 0
-  }
+  const timesheets = timesheetsResult.recordset
 
-  // Main query with limit and offset
-
-  let timesheets: Timesheet[] = []
-
-  if (totalCount > 0 || limit === -1) {
-    const timesheetsResult = await pool
-      .request()
-      .input('instance', getConfigProperty('application.instance'))
-      .input('userName', user?.userName).query<Timesheet>(/* sql */ `
-        select
-          t.timesheetId,
-          t.timesheetDate,
-
-          t.timesheetTypeDataListItemId,
-          tType.dataListItem as timesheetTypeDataListItem,
-
-          t.supervisorEmployeeNumber,
-          supervisor.employeeSurname as supervisorEmployeeSurname,
-          supervisor.employeeGivenName as supervisorEmployeeGivenName,
-
-          t.timesheetDetails,
-
-          t.recordDelete_userName,
-          t.recordDelete_dateTime
-
-        from ShiftLog.Timesheets t
-
-        left join ShiftLog.DataListItems tType
-          on t.timesheetTypeDataListItemId = tType.dataListItemId
-
-        left join ShiftLog.Employees supervisor
-          on t.supervisorEmployeeNumber = supervisor.employeeNumber
-            and t.instance = supervisor.instance
-
-        ${whereClause}
-
-        order by t.recordDelete_dateTime desc
-
-        ${limit === -1 ? '' : ` offset ${offset} rows`}
-        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
-      `)
-
-    timesheets = timesheetsResult.recordset
-
-    if (limit === -1) {
-      totalCount = timesheets.length
-    }
-  }
-
-  return {
-    timesheets,
-    totalCount
-  }
+  return timesheets
 }

@@ -1,22 +1,10 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable unicorn/no-null */
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Shift } from '../../types/record.types.js'
 
-export interface GetDeletedShiftsOptions {
-  limit: number | string
-  offset: number | string
-}
-
 export default async function getDeletedShifts(
-  options: GetDeletedShiftsOptions,
   user?: User
-): Promise<{
-  shifts: Shift[]
-  totalCount: number
-}> {
+): Promise<Shift[]> {
   const pool = await getShiftLogConnectionPool()
 
   let whereClause =
@@ -34,86 +22,38 @@ export default async function getDeletedShifts(
     `
   }
 
-  const limit =
-    typeof options.limit === 'string'
-      ? Number.parseInt(options.limit, 10)
-      : options.limit
+  const shiftsResult = await pool
+    .request()
+    .input('instance', getConfigProperty('application.instance'))
+    .input('userName', user?.userName).query<Shift>(/* sql */ `
+      select
+        s.shiftId, s.shiftDate,
 
-  const offset =
-    typeof options.offset === 'string'
-      ? Number.parseInt(options.offset, 10)
-      : options.offset
+        s.shiftTimeDataListItemId,
+        sTime.dataListItem as shiftTimeDataListItem,
 
-  // Get total count if limit === -1
+        s.shiftTypeDataListItemId,
+        sType.dataListItem as shiftTypeDataListItem,
 
-  let totalCount = 0
+        s.shiftDetails,
 
-  if (limit !== -1) {
-    const countSql = /* sql */ `
-      select count(*) as totalCount
+        s.recordDelete_userName,
+        s.recordDelete_dateTime
+
       from ShiftLog.Shifts s
+
+      left join ShiftLog.DataListItems sTime
+        on s.shiftTimeDataListItemId = sTime.dataListItemId
+
       left join ShiftLog.DataListItems sType
         on s.shiftTypeDataListItemId = sType.dataListItemId
+
       ${whereClause}
-    `
 
-    const countResult = await pool
-      .request()
-      .input('instance', getConfigProperty('application.instance'))
-      .input('userName', user?.userName)
-      .query<{ totalCount: number }>(countSql)
+      order by s.recordDelete_dateTime desc
+    `)
 
-    totalCount = countResult.recordset[0]?.totalCount ?? 0
-  }
+  const shifts = shiftsResult.recordset
 
-  // Main query with limit and offset
-
-  let shifts: Shift[] = []
-
-  if (totalCount > 0 || limit === -1) {
-    const shiftsResult = await pool
-      .request()
-      .input('instance', getConfigProperty('application.instance'))
-      .input('userName', user?.userName).query<Shift>(/* sql */ `
-        select
-          s.shiftId, s.shiftDate,
-
-          s.shiftTimeDataListItemId,
-          sTime.dataListItem as shiftTimeDataListItem,
-
-          s.shiftTypeDataListItemId,
-          sType.dataListItem as shiftTypeDataListItem,
-
-          s.shiftDetails,
-
-          s.recordDelete_userName,
-          s.recordDelete_dateTime
-
-        from ShiftLog.Shifts s
-
-        left join ShiftLog.DataListItems sTime
-          on s.shiftTimeDataListItemId = sTime.dataListItemId
-
-        left join ShiftLog.DataListItems sType
-          on s.shiftTypeDataListItemId = sType.dataListItemId
-
-        ${whereClause}
-
-        order by s.recordDelete_dateTime desc
-
-        ${limit === -1 ? '' : ` offset ${offset} rows`}
-        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
-      `)
-
-    shifts = shiftsResult.recordset
-
-    if (limit === -1) {
-      totalCount = shifts.length
-    }
-  }
-
-  return {
-    shifts,
-    totalCount
-  }
+  return shifts
 }
