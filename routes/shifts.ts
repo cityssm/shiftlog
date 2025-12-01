@@ -10,6 +10,7 @@ import handler_doAddShiftEmployee from '../handlers/shifts-post/doAddShiftEmploy
 import handler_doAddShiftEquipment from '../handlers/shifts-post/doAddShiftEquipment.js'
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js'
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js'
+import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js'
 import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew.js'
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js'
 import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShiftEquipment.js'
@@ -62,6 +63,7 @@ router
 router
   .get('/:shiftId/edit', updateHandler, handler_edit)
   .post('/doUpdateShift', updateHandler, handler_doUpdateShift)
+  .post('/doDeleteShift', updateHandler, handler_doDeleteShift)
 
 // Shift crews, employees, and equipment endpoints
 router.post('/doGetShiftCrews', handler_doGetShiftCrews)

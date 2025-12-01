@@ -44,6 +44,40 @@ declare const exports: {
   let availableEmployees: Employee[] = []
   let availableEquipment: Equipment[] = []
 
+  function updateCounts(): void {
+    // Update count badges
+    const crewsCountElement = document.querySelector('#crewsCount')
+    if (crewsCountElement !== null) {
+      crewsCountElement.textContent = shiftCrews.length.toString()
+    }
+
+    const employeesCountElement = document.querySelector('#employeesCount')
+    if (employeesCountElement !== null) {
+      employeesCountElement.textContent = shiftEmployees.length.toString()
+    }
+
+    const equipmentCountElement = document.querySelector('#equipmentCount')
+    if (equipmentCountElement !== null) {
+      equipmentCountElement.textContent = shiftEquipment.length.toString()
+    }
+
+    // Show/hide checkmark icon on main tab
+    const hasEmployeesEquipmentIcon = document.querySelector(
+      '#icon--hasEmployeesEquipment'
+    )
+    if (hasEmployeesEquipmentIcon !== null) {
+      if (
+        shiftCrews.length > 0 ||
+        shiftEmployees.length > 0 ||
+        shiftEquipment.length > 0
+      ) {
+        hasEmployeesEquipmentIcon.classList.remove('is-hidden')
+      } else {
+        hasEmployeesEquipmentIcon.classList.add('is-hidden')
+      }
+    }
+  }
+
   function renderShiftCrews(): void {
     const containerElement = document.querySelector(
       '#container--shiftCrews'
@@ -371,6 +405,7 @@ declare const exports: {
         }
         shiftCrews = responseJSON.shiftCrews
         renderShiftCrews()
+        updateCounts()
       }
     )
   }
@@ -386,6 +421,7 @@ declare const exports: {
         }
         shiftEmployees = responseJSON.shiftEmployees
         renderShiftEmployees()
+        updateCounts()
       }
     )
   }
@@ -401,6 +437,7 @@ declare const exports: {
         }
         shiftEquipment = responseJSON.shiftEquipment
         renderShiftEquipment()
+        updateCounts()
       }
     )
   }
@@ -1291,4 +1328,5 @@ declare const exports: {
   renderShiftCrews()
   renderShiftEmployees()
   renderShiftEquipment()
+  updateCounts()
 })()
