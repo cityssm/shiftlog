@@ -2,6 +2,7 @@ import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { Timesheet } from '../../types/record.types.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -11,109 +12,50 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 }
 ;(() => {
-  const filtersFormElement = document.querySelector(
-    '#form--deletedRecordSearch'
-  ) as HTMLFormElement
-
-  const offsetInputElement = document.querySelector(
-    '#deletedRecordSearch--offset'
-  ) as HTMLInputElement
-
   const resultsContainerElement = document.querySelector(
     '#container--deletedRecordResults'
   ) as HTMLDivElement
 
-  function buildPaginationControls(
-    totalCount: number,
-    limit: number,
-    offset: number
-  ): HTMLElement {
-    const paginationElement = document.createElement('nav')
-    paginationElement.className = 'pagination is-centered'
-    paginationElement.setAttribute('role', 'navigation')
-    paginationElement.setAttribute('aria-label', 'pagination')
-
-    const totalPages = Math.ceil(totalCount / limit)
-    const currentPage = Math.floor(offset / limit) + 1
-    let paginationHTML = ''
-
-    paginationHTML +=
-      currentPage > 1
-        ? `<a class="pagination-previous" href="#" data-page-number="${
-            currentPage - 1
-          }">Previous</a>`
-        : '<a class="pagination-previous" disabled>Previous</a>'
-
-    paginationHTML +=
-      currentPage < totalPages
-        ? `<a class="pagination-next" href="#" data-page-number="${
-            currentPage + 1
-          }">Next</a>`
-        : '<a class="pagination-next" disabled>Next</a>'
-
-    paginationHTML += '<ul class="pagination-list">'
-
-    for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
-      paginationHTML +=
-        pageNumber === currentPage
-          ? `<li><a class="pagination-link is-current" aria-current="page">${pageNumber}</a></li>`
-          : `<li><a class="pagination-link" href="#" data-page-number="${pageNumber}">${pageNumber}</a></li>`
-    }
-
-    paginationHTML += '</ul>'
-
-    // eslint-disable-next-line no-unsanitized/property
-    paginationElement.innerHTML = paginationHTML
-
-    const pageLinks = paginationElement.querySelectorAll(
-      'a.pagination-previous, a.pagination-next, a.pagination-link'
-    )
-
-    for (const pageLink of pageLinks) {
-      pageLink.addEventListener('click', (event) => {
-        event.preventDefault()
-        const target = event.currentTarget as HTMLElement
-        const pageNumberString = target.dataset.pageNumber
-
-        if (pageNumberString !== undefined) {
-          const pageNumber = Number.parseInt(pageNumberString, 10)
-          offsetInputElement.value = ((pageNumber - 1) * limit).toString()
-          getDeletedRecords()
-        }
-      })
-    }
-
-    return paginationElement
-  }
-
   function recoverTimesheet(timesheetId: number): void {
     bulmaJS.confirm({
-      title: 'Recover Timesheet?',
-      message: 'Are you sure you want to recover this timesheet?',
       contextualColorName: 'warning',
+      title: 'Recover Timesheet?',
+
+      message: 'Are you sure you want to recover this timesheet?',
       okButton: {
         text: 'Yes, Recover',
+
         callbackFunction: () => {
           cityssm.postJSON(
             `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doRecoverTimesheet`,
             { timesheetId },
-            (response) => {
+            (rawResponseJSON) => {
+              const response = rawResponseJSON as {
+                success: boolean
+                message?: string
+                redirectUrl?: string
+                errorMessage?: string
+              }
+
               if (response.success) {
                 bulmaJS.alert({
-                  title: 'Timesheet Recovered',
-                  message: 'The timesheet has been recovered successfully.',
                   contextualColorName: 'success',
+                  title: 'Timesheet Recovered',
+
+                  message: 'The timesheet has been recovered successfully.',
                   okButton: {
                     callbackFunction: () => {
-                      window.location.href = response.redirectUrl as string
+                      globalThis.location.href = response.redirectUrl as string
                     }
                   }
                 })
               } else {
                 bulmaJS.alert({
+                  contextualColorName: 'danger',
                   title: 'Error',
-                  message: response.errorMessage ?? 'Failed to recover timesheet.',
-                  contextualColorName: 'danger'
+
+                  message:
+                    response.errorMessage ?? 'Failed to recover timesheet.'
                 })
               }
             }
@@ -126,7 +68,6 @@ declare const exports: {
   function renderDeletedRecordsTable(data: {
     success: boolean
     timesheets: Timesheet[]
-    totalCount: number
   }): void {
     if (data.timesheets.length === 0) {
       resultsContainerElement.innerHTML = /* html */ `
@@ -140,6 +81,7 @@ declare const exports: {
     const tableElement = document.createElement('table')
     tableElement.className =
       'table is-fullwidth is-striped is-hoverable is-narrow'
+
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
@@ -165,7 +107,8 @@ declare const exports: {
       const tableRowElement = document.createElement('tr')
 
       const supervisorName =
-        timesheet.supervisorEmployeeSurname || timesheet.supervisorEmployeeGivenName
+        timesheet.supervisorEmployeeSurname ||
+        timesheet.supervisorEmployeeGivenName
           ? `${timesheet.supervisorEmployeeSurname ?? ''}, ${timesheet.supervisorEmployeeGivenName ?? ''}`
           : timesheet.supervisorEmployeeNumber ?? '-'
 
@@ -185,7 +128,8 @@ declare const exports: {
           <button
             class="button is-small is-success is-light"
             data-timesheet-id="${timesheet.timesheetId}"
-            type="button">
+            type="button"
+          >
             <span class="icon is-small">
               <i class="fa-solid fa-undo"></i>
             </span>
@@ -207,19 +151,9 @@ declare const exports: {
 
     resultsContainerElement.innerHTML = ''
     resultsContainerElement.append(tableElement)
-
-    const formData = new FormData(filtersFormElement)
-    const limit = Number.parseInt(formData.get('limit') as string, 10)
-    const offset = Number.parseInt(formData.get('offset') as string, 10)
-
-    if (data.totalCount > limit) {
-      resultsContainerElement.append(
-        buildPaginationControls(data.totalCount, limit, offset)
-      )
-    }
   }
 
-  async function getDeletedRecords(): Promise<void> {
+  function getDeletedRecords(): void {
     resultsContainerElement.innerHTML = /* html */ `
       <div class="message">
         <p class="message-body has-text-centered">
@@ -229,11 +163,9 @@ declare const exports: {
       </div>
     `
 
-    const formData = new FormData(filtersFormElement)
-
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doGetDeletedTimesheets`,
-      formData,
+      {},
       renderDeletedRecordsTable
     )
   }
