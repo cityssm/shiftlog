@@ -473,6 +473,17 @@ create table ShiftLog.ShiftEquipment (
 )
 GO
 
+create table ShiftLog.ShiftWorkOrders (
+  shiftId int not null,
+  workOrderId int not null,
+  shiftWorkOrderNote varchar(200) not null default '',
+
+  primary key (shiftId, workOrderId),
+  foreign key (shiftId) references ShiftLog.Shifts(shiftId),
+  foreign key (workOrderId) references ShiftLog.WorkOrders(workOrderId)
+)
+GO
+
 -- TIMESHEETS
 
 CREATE TABLE ShiftLog.Timesheets (

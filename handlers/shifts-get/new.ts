@@ -26,8 +26,8 @@ export default async function handler(
 
   const shift = {
     shiftDate: new Date(),
-    shiftTimeDataListItemId: -1,
-    shiftTypeDataListItemId: -1,
+    shiftTimeDataListItemId: shiftTimes.length === 1 ? shiftTimes[0].dataListItemId : -1,
+    shiftTypeDataListItemId: shiftTypes.length === 1 ? shiftTypes[0].dataListItemId : -1,
     supervisorEmployeeNumber: '',
     shiftDescription: ''
   } satisfies Partial<Shift>

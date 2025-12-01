@@ -4,7 +4,11 @@ config.application.applicationName = 'Graffiti Incident Tracking';
 config.application.backgroundImage = 'background-graffiti.jpg';
 config.application.instance = 'graffiti';
 config.shifts = {
-    isEnabled: false
+    isEnabled: true,
+    router: 'logs',
+    sectionName: 'Workday Logs',
+    sectionNameSingular: 'Workday Log',
+    iconClass: 'fa-calendar-day'
 };
 config.workOrders = {
     isEnabled: true,

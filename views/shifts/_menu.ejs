@@ -30,20 +30,6 @@
       </ul>
       <% } %>
     </li>
-    <li>
-      <a
-        href="<%= urlPrefix %>/dashboard/reports/?tab=shifts"
-        title="<%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Reports">
-        <div class="columns is-mobile is-1">
-          <div class="column is-narrow">
-            <span class="icon"><i class="fa-solid fa-file-lines"></i></span>
-          </div>
-          <div class="column is-hidden-touch">
-            <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Reports
-          </div>
-        </div>
-      </a>
-    </li>
     <% if (user.userProperties.shifts.canManage) { %>
     <li>
       <a
@@ -52,7 +38,7 @@
         title="Record Recovery">
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon"><i class="fa-solid fa-trash-arrow-up"></i></span>
+            <span class="icon is-small"><i class="fa-solid fa-trash-arrow-up"></i></span>
           </div>
           <div class="column is-hidden-touch">
             Record Recovery
@@ -61,6 +47,26 @@
       </a>
     </li>
     <% } %>
+  </ul>
+  <p class="menu-label is-hidden-touch">
+    Links
+  </p>
+  <ul class="menu-list">
+    <li>
+      <a
+        href="<%= urlPrefix %>/dashboard/reports/?tab=shifts"
+        title="<%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Reports">
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small"><i class="fa-solid fa-file-lines"></i></span>
+          </div>
+          <div class="column is-hidden-touch">
+            Reports
+          </div>
+        </div>
+      </a>
+    </li>
+
     <li>
       <a
         href="https://cityssm.github.io/shiftlog/docs/shifts.html"
@@ -75,7 +81,7 @@
             </span>
           </div>
           <div class="column is-hidden-touch">
-            <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Help
+            Help
           </div>
         </div>
       </a>
