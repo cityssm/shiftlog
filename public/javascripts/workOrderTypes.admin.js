@@ -71,7 +71,6 @@
       `;
             tbodyElement.append(rowElement);
         }
-        // eslint-disable-next-line no-unsanitized/property
         attachEventListeners();
         initializeSortable();
     }
