@@ -2,6 +2,7 @@ import { type NextFunction, type Request, type Response, Router } from 'express'
 
 import handler_edit from '../handlers/shifts-get/edit.js'
 import handler_new from '../handlers/shifts-get/new.js'
+import handler_recovery from '../handlers/shifts-get/recovery.js'
 import handler_search from '../handlers/shifts-get/search.js'
 import handler_view from '../handlers/shifts-get/view.js'
 import handler_doAddShiftCrew from '../handlers/shifts-post/doAddShiftCrew.js'
@@ -13,6 +14,8 @@ import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js'
 import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShiftEquipment.js'
 import handler_doGetAvailableCrewsEmployeesEquipment from '../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js'
+import handler_doGetDeletedShifts from '../handlers/shifts-post/doGetDeletedShifts.js'
+import handler_doRecoverShift from '../handlers/shifts-post/doRecoverShift.js'
 import handler_doGetShiftCrews from '../handlers/shifts-post/doGetShiftCrews.js'
 import handler_doGetShiftEmployees from '../handlers/shifts-post/doGetShiftEmployees.js'
 import handler_doGetShiftEquipment from '../handlers/shifts-post/doGetShiftEquipment.js'
@@ -30,6 +33,18 @@ function updateHandler(
   next: NextFunction
 ): void {
   if (request.session.user?.userProperties.shifts.canUpdate ?? false) {
+    next()
+  } else {
+    response.status(403).send('Forbidden')
+  }
+}
+
+function manageHandler(
+  request: Request<unknown, unknown, unknown, { error?: string }>,
+  response: Response,
+  next: NextFunction
+): void {
+  if (request.session.user?.userProperties.shifts.canManage ?? false) {
     next()
   } else {
     response.status(403).send('Forbidden')
@@ -70,6 +85,11 @@ router.post('/doDeleteShiftEmployee', updateHandler, handler_doDeleteShiftEmploy
 router.post('/doDeleteShiftEquipment', updateHandler, handler_doDeleteShiftEquipment)
 
 router.post('/doCopyFromPreviousShift', updateHandler, handler_doCopyFromPreviousShift)
+
+router
+  .get('/recovery', manageHandler, handler_recovery)
+  .post('/doGetDeletedShifts', manageHandler, handler_doGetDeletedShifts)
+  .post('/doRecoverShift', manageHandler, handler_doRecoverShift)
 
 router.get('/:shiftId', handler_view)
 

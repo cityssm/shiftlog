@@ -67,5 +67,25 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
         </div>
       </a>
     </li>
+    <% if (user.userProperties.workOrders.canManage) { %>
+    <li>
+      <a
+        class="<%= headTitle.endsWith(' - Record Recovery') ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/<%= workOrdersRouter %>/recovery"
+        title="Record Recovery"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-trash-arrow-up"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Record Recovery
+          </div>
+        </div>
+      </a>
+    </li>
+    <% } %>
   </ul>
 </aside>

@@ -27,5 +27,13 @@
         <span><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Reports</span>
       </a>
     </li>
+    <% if (user.userProperties.timesheets.canManage) { %>
+    <li>
+      <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/recovery">
+        <span class="icon"><i class="fa-solid fa-trash-arrow-up"></i></span>
+        <span>Record Recovery</span>
+      </a>
+    </li>
+    <% } %>
   </ul>
 </div>

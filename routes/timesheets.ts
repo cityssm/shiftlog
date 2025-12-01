@@ -2,6 +2,7 @@ import { type NextFunction, type Request, type Response, Router } from 'express'
 
 import handler_edit from '../handlers/timesheets-get/edit.js'
 import handler_new from '../handlers/timesheets-get/new.js'
+import handler_recovery from '../handlers/timesheets-get/recovery.js'
 import handler_search from '../handlers/timesheets-get/search.js'
 import handler_view from '../handlers/timesheets-get/view.js'
 import handler_doAddTimesheetColumn from '../handlers/timesheets-post/doAddTimesheetColumn.js'
@@ -11,6 +12,8 @@ import handler_doCopyFromShift from '../handlers/timesheets-post/doCopyFromShift
 import handler_doCreateTimesheet from '../handlers/timesheets-post/doCreateTimesheet.js'
 import handler_doDeleteTimesheetColumn from '../handlers/timesheets-post/doDeleteTimesheetColumn.js'
 import handler_doDeleteTimesheetRow from '../handlers/timesheets-post/doDeleteTimesheetRow.js'
+import handler_doGetDeletedTimesheets from '../handlers/timesheets-post/doGetDeletedTimesheets.js'
+import handler_doRecoverTimesheet from '../handlers/timesheets-post/doRecoverTimesheet.js'
 import handler_doGetTimesheetCells from '../handlers/timesheets-post/doGetTimesheetCells.js'
 import handler_doGetTimesheetColumns from '../handlers/timesheets-post/doGetTimesheetColumns.js'
 import handler_doGetTimesheetRows from '../handlers/timesheets-post/doGetTimesheetRows.js'
@@ -30,6 +33,18 @@ function updateHandler(
   next: NextFunction
 ): void {
   if (request.session.user?.userProperties.timesheets.canUpdate ?? false) {
+    next()
+  } else {
+    response.status(403).send('Forbidden')
+  }
+}
+
+function manageHandler(
+  request: Request<unknown, unknown, unknown, { error?: string }>,
+  response: Response,
+  next: NextFunction
+): void {
+  if (request.session.user?.userProperties.timesheets.canManage ?? false) {
     next()
   } else {
     response.status(403).send('Forbidden')
@@ -71,6 +86,11 @@ router.post('/doCopyFromShift', updateHandler, handler_doCopyFromShift)
 router.post('/doMarkTimesheetAsSubmitted', updateHandler, handler_doMarkTimesheetAsSubmitted)
 router.post('/doMarkEmployeesAsEntered', handler_doMarkEmployeesAsEntered)
 router.post('/doMarkEquipmentAsEntered', handler_doMarkEquipmentAsEntered)
+
+router
+  .get('/recovery', manageHandler, handler_recovery)
+  .post('/doGetDeletedTimesheets', manageHandler, handler_doGetDeletedTimesheets)
+  .post('/doRecoverTimesheet', manageHandler, handler_doRecoverTimesheet)
 
 router.get('/:timesheetId', handler_view)
 

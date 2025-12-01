@@ -44,5 +44,21 @@
         </div>
       </a>
     </li>
+    <% if (user.userProperties.shifts.canManage) { %>
+    <li>
+      <a
+        href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/recovery"
+        title="Record Recovery">
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon"><i class="fa-solid fa-trash-arrow-up"></i></span>
+          </div>
+          <div class="column is-hidden-touch">
+            Record Recovery
+          </div>
+        </div>
+      </a>
+    </li>
+    <% } %>
   </ul>
 </aside>
