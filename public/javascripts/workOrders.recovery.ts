@@ -214,7 +214,7 @@ declare const exports: {
     }
   }
 
-  async function getDeletedRecords(): Promise<void> {
+  function getDeletedRecords(): void {
     resultsContainerElement.innerHTML = /* html */ `
       <div class="message">
         <p class="message-body has-text-centered">
