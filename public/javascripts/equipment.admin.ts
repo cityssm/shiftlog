@@ -298,8 +298,6 @@ declare const exports: {
         const equipmentTypeSelect = modalElement.querySelector(
           '[name="equipmentTypeDataListItemId"]'
         ) as HTMLSelectElement
-        equipmentTypeSelect.innerHTML =
-          '<option value="">Select Equipment Type</option>'
 
         for (const equipmentType of exports.equipmentTypes) {
           const option = document.createElement('option')
@@ -315,8 +313,6 @@ declare const exports: {
         const userGroupSelect = modalElement.querySelector(
           '[name="userGroupId"]'
         ) as HTMLSelectElement
-
-        userGroupSelect.innerHTML = '<option value="">No User Group</option>'
 
         for (const userGroup of exports.userGroups) {
           const option = document.createElement('option')
@@ -366,7 +362,9 @@ declare const exports: {
           <th>Description</th>
           <th>Type</th>
           <th>User Group</th>
-          <th class="has-text-right">Actions</th>
+          <th>
+            <span class="is-sr-only">Actions</span>
+          </th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -377,8 +375,21 @@ declare const exports: {
     for (const equipment of equipmentList) {
       const rowElement = document.createElement('tr')
 
+      // eslint-disable-next-line no-unsanitized/property
       rowElement.innerHTML = /*html*/ `
-        <td>${cityssm.escapeHTML(equipment.equipmentNumber)}</td>
+        <td>
+          ${cityssm.escapeHTML(equipment.equipmentNumber)}
+          ${
+            equipment.recordSync_isSynced
+              ? /* html */ `
+                <span class="tag">
+                  <span class="icon"><i class="fa-solid fa-arrows-rotate" title="Synchronized"></i></span>
+                  <span>Synced</span>
+                </span>
+              `
+              : ''
+          }
+        </td>
         <td>${cityssm.escapeHTML(equipment.equipmentName)}</td>
         <td>${cityssm.escapeHTML(equipment.equipmentDescription)}</td>
         <td>${cityssm.escapeHTML(equipment.equipmentTypeDataListItem ?? '')}</td>
@@ -515,9 +526,6 @@ declare const exports: {
           '[name="equipmentTypeDataListItemId"]'
         ) as HTMLSelectElement
 
-        equipmentTypeSelect.innerHTML =
-          '<option value="">Select Equipment Type</option>'
-
         for (const equipmentType of exports.equipmentTypes) {
           const option = document.createElement('option')
           option.value = equipmentType.dataListItemId.toString()
@@ -529,8 +537,6 @@ declare const exports: {
         const userGroupSelect = modalElement.querySelector(
           '[name="userGroupId"]'
         ) as HTMLSelectElement
-
-        userGroupSelect.innerHTML = '<option value="">No User Group</option>'
 
         for (const userGroup of exports.userGroups) {
           const option = document.createElement('option')

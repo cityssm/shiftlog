@@ -227,7 +227,17 @@
         const userGroup = exports.userGroups.find((ug) => ug.userGroupId === employee.userGroupId);
         // eslint-disable-next-line no-unsanitized/property
         rowElement.innerHTML = /*html*/ `
-      <td>${cityssm.escapeHTML(employee.employeeNumber)}</td>
+      <td>
+        ${cityssm.escapeHTML(employee.employeeNumber)}
+        ${employee.recordSync_isSynced
+            ? /* html */ `
+              <span class="tag">
+                <span class="icon"><i class="fa-solid fa-arrows-rotate" title="Synchronized"></i></span>
+                <span>Synced</span>
+              </span>
+            `
+            : ''}
+      </td>
       <td>${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}</td>
       <td class="has-text-centered">
         ${employee.isSupervisor ? '<i class="fa-solid fa-check"></i>' : '-'}
@@ -236,8 +246,8 @@
       <td>${cityssm.escapeHTML(employee.phoneNumber ?? '')}</td>
       <td>${cityssm.escapeHTML(employee.emailAddress ?? '')}</td>
       <td>${userGroup === undefined ? '' : cityssm.escapeHTML(userGroup.userGroupName)}</td>
-      <td class="has-text-centered">
-        <div class="buttons is-justify-content-center">
+      <td class="has-text-right">
+        <div class="buttons is-right">
           <button
             class="button is-small is-info edit-employee"
             data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
@@ -253,7 +263,10 @@
             data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
             title="Delete Employee"
           >
-            Delete
+            <span class="icon is-small">
+              <i class="fa-solid fa-trash"></i>
+            </span>
+            <span>Delete</span>
           </button>
         </div>
       </td>
@@ -284,7 +297,7 @@
           <th>Phone</th>
           <th>Email</th>
           <th>User Group</th>
-          <th class="has-text-centered">
+          <th>
             <span class="is-sr-only">Actions</span>
           </th>
         </tr>

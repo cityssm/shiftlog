@@ -192,8 +192,6 @@
                 modalElement.querySelector('[name="equipmentDescription"]').value = equipment.equipmentDescription;
                 // Populate equipment types dropdown
                 const equipmentTypeSelect = modalElement.querySelector('[name="equipmentTypeDataListItemId"]');
-                equipmentTypeSelect.innerHTML =
-                    '<option value="">Select Equipment Type</option>';
                 for (const equipmentType of exports.equipmentTypes) {
                     const option = document.createElement('option');
                     option.value = equipmentType.dataListItemId.toString();
@@ -204,7 +202,6 @@
                     equipment.equipmentTypeDataListItemId.toString();
                 // Populate user groups dropdown
                 const userGroupSelect = modalElement.querySelector('[name="userGroupId"]');
-                userGroupSelect.innerHTML = '<option value="">No User Group</option>';
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
                     option.value = userGroup.userGroupId.toString();
@@ -247,7 +244,9 @@
           <th>Description</th>
           <th>Type</th>
           <th>User Group</th>
-          <th class="has-text-right">Actions</th>
+          <th>
+            <span class="is-sr-only">Actions</span>
+          </th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -255,8 +254,19 @@
         const tbodyElement = tableElement.querySelector('tbody');
         for (const equipment of equipmentList) {
             const rowElement = document.createElement('tr');
+            // eslint-disable-next-line no-unsanitized/property
             rowElement.innerHTML = /*html*/ `
-        <td>${cityssm.escapeHTML(equipment.equipmentNumber)}</td>
+        <td>
+          ${cityssm.escapeHTML(equipment.equipmentNumber)}
+          ${equipment.recordSync_isSynced
+                ? /* html */ `
+                <span class="tag">
+                  <span class="icon"><i class="fa-solid fa-arrows-rotate" title="Synchronized"></i></span>
+                  <span>Synced</span>
+                </span>
+              `
+                : ''}
+        </td>
         <td>${cityssm.escapeHTML(equipment.equipmentName)}</td>
         <td>${cityssm.escapeHTML(equipment.equipmentDescription)}</td>
         <td>${cityssm.escapeHTML(equipment.equipmentTypeDataListItem ?? '')}</td>
@@ -350,8 +360,6 @@
                 modalElement.querySelector('[name="equipmentDescription"]').value = '';
                 // Populate equipment types dropdown
                 const equipmentTypeSelect = modalElement.querySelector('[name="equipmentTypeDataListItemId"]');
-                equipmentTypeSelect.innerHTML =
-                    '<option value="">Select Equipment Type</option>';
                 for (const equipmentType of exports.equipmentTypes) {
                     const option = document.createElement('option');
                     option.value = equipmentType.dataListItemId.toString();
@@ -360,7 +368,6 @@
                 }
                 // Populate user groups dropdown
                 const userGroupSelect = modalElement.querySelector('[name="userGroupId"]');
-                userGroupSelect.innerHTML = '<option value="">No User Group</option>';
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
                     option.value = userGroup.userGroupId.toString();
