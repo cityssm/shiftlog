@@ -1,7 +1,6 @@
 import os from 'node:os';
 import { Router } from 'express';
 import multer from 'multer';
-import { getConfigProperty } from '../helpers/config.helpers.js';
 import handler_download from '../handlers/workOrders-get/download.js';
 import handler_edit from '../handlers/workOrders-get/edit.js';
 import handler_map from '../handlers/workOrders-get/map.js';
@@ -13,9 +12,9 @@ import handler_doCreateWorkOrder from '../handlers/workOrders-post/doCreateWorkO
 import handler_doCreateWorkOrderMilestone from '../handlers/workOrders-post/doCreateWorkOrderMilestone.js';
 import handler_doCreateWorkOrderNote from '../handlers/workOrders-post/doCreateWorkOrderNote.js';
 import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkOrder.js';
+import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js';
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js';
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js';
-import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js';
 import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js';
 import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGetRequestorSuggestions.js';
 import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGetWorkOrderAttachments.js';
@@ -27,6 +26,7 @@ import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUp
 import handler_doUpdateWorkOrderMilestoneOrder from '../handlers/workOrders-post/doUpdateWorkOrderMilestoneOrder.js';
 import handler_doUpdateWorkOrderNote from '../handlers/workOrders-post/doUpdateWorkOrderNote.js';
 import handler_doUploadWorkOrderAttachment from '../handlers/workOrders-post/doUploadWorkOrderAttachment.js';
+import { getConfigProperty } from '../helpers/config.helpers.js';
 const upload = multer({
     dest: os.tmpdir(),
     limits: {
