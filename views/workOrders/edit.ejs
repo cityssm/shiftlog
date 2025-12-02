@@ -595,6 +595,9 @@
   exports.attachmentMaximumFileSizeBytes = <%= configFunctions.getConfigProperty('application.attachmentMaximumFileSizeBytes') %>;
 </script>
 
+<% if (isEdit) { %>
+<script src="<%= urlPrefix %>/lib/sortablejs/Sortable.min.js"></script>
+<% } %>
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.notes.viewEdit.js"></script>
