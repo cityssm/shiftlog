@@ -34,13 +34,20 @@ open an issue and use the closest template.
 
 ## Financial Contributions
 
-**The City of Sault Ste. Marie does not accept financial contributions for its freely available open source work.**
+**The City of Sault Ste. Marie does not accept financial contributions**
+**for its freely available open source work.**
 
 However, this project relies on several packages that do accept donations.
 Some of the main ones:
 
+- [Leaflet](https://github.com/sponsors/Leaflet)
+  - The mapping engine.
+
 - [Bulma](https://bulma.io/become-a-bulma-sponsor/)
   - The CSS framework.
+
+- [OpenStreetMap](https://welcome.openstreetmap.org/about-osm-community/donate-to-osm/)
+  - The database of map tiles used by ShiftLog.
 
 - [Sindre Sorhus](https://github.com/sponsors/sindresorhus)
   - Developer of many packages used in this project.

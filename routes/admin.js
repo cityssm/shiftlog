@@ -4,7 +4,6 @@ import handler_employees from '../handlers/admin-get/employees.js';
 import handler_equipment from '../handlers/admin-get/equipment.js';
 import handler_locations from '../handlers/admin-get/locations.js';
 import handler_settings from '../handlers/admin-get/settings.js';
-import handler_userGroup from '../handlers/admin-get/userGroup.js';
 import handler_userGroups from '../handlers/admin-get/userGroups.js';
 import handler_users from '../handlers/admin-get/users.js';
 import handler_workOrderTypes from '../handlers/admin-get/workOrderTypes.js';
@@ -24,6 +23,7 @@ import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js';
 import handler_doDeleteUserGroup from '../handlers/admin-post/doDeleteUserGroup.js';
 import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUserGroupMember.js';
 import handler_doDeleteWorkOrderType from '../handlers/admin-post/doDeleteWorkOrderType.js';
+import handler_doGetUserGroup from '../handlers/admin-post/doGetUserGroup.js';
 import handler_doReorderDataListItems from '../handlers/admin-post/doReorderDataListItems.js';
 import handler_doReorderWorkOrderTypes from '../handlers/admin-post/doReorderWorkOrderTypes.js';
 import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js';
@@ -52,7 +52,7 @@ router
  */
 router
     .get('/userGroups', handler_userGroups)
-    .get('/userGroup/:userGroupId', handler_userGroup)
+    .post('/doGetUserGroup', handler_doGetUserGroup)
     .post('/doAddUserGroup', handler_doAddUserGroup)
     .post('/doUpdateUserGroup', handler_doUpdateUserGroup)
     .post('/doDeleteUserGroup', handler_doDeleteUserGroup)

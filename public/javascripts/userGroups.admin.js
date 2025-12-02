@@ -263,16 +263,12 @@
               `)
                             .join('');
                 // Get current members
-                fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
-                    .then(async (response) => await response.json())
-                    .then((responseJSON) => {
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetUserGroup`, { userGroupId }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.userGroup !== undefined) {
                         currentMembers = responseJSON.userGroup.members ?? [];
                         renderMembersList();
                     }
-                })
-                    .catch(() => {
-                    // Error handling
                 });
             },
             onshown(modalElement, _closeModalFunction) {
@@ -293,8 +289,8 @@
         rowElement.innerHTML = /*html*/ `
       <td>${cityssm.escapeHTML(userGroup.userGroupName)}</td>
       <td class="has-text-centered">${userGroup.memberCount ?? 0}</td>
-      <td class="has-text-centered">
-        <div class="buttons is-justify-content-center">
+      <td class="has-text-right">
+        <div class="buttons is-right">
           <button
             class="button is-small is-info manage-members"
             data-user-group-id="${userGroup.userGroupId}"
@@ -346,7 +342,9 @@
         <tr>
           <th>Group Name</th>
           <th class="has-text-centered">Members</th>
-          <th class="has-text-centered">Actions</th>
+          <th>
+            <span class="is-sr-only">Actions</span>
+          </th>
         </tr>
       </thead>
       <tbody></tbody>
