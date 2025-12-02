@@ -34,6 +34,7 @@
             }
             const tableElement = document.createElement('table');
             tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+            // eslint-disable-next-line no-unsanitized/property
             tableElement.innerHTML = /* html */ `
         <thead>
           <tr>

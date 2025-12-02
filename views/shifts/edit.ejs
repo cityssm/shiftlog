@@ -9,17 +9,36 @@
         <span><%= configFunctions.getConfigProperty('shifts.sectionName') %></span>
       </a>
     </li>
-    <li class="is-active">
-      <a href="#" aria-current="page">
-        <span>
-          <% if (isCreate) { %>
-          Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
-          <% } else { %>
-          <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> #<%= shift.shiftId %>
-          <% } %>
-        </span>
-      </a>
-    </li>
+    <% if (isCreate) { %>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          <span>
+            Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
+          </span>
+        </a>
+      </li>
+    <% } else if (isEdit) { %>
+      <li>
+        <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/<%= shift.shiftId %>">
+          <span>
+            <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> #<%= shift.shiftId %>
+          </span>
+        </a>
+      </li>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          <span>Edit <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
+        </a>
+      </li>
+    <% } else { %>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          <span>
+            <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> #<%= shift.shiftId %>
+          </span>
+        </a>
+      </li>
+    <% } %>
   </ul>
 </nav>
 
@@ -174,9 +193,10 @@
                 class="input"
                 id="shift--shiftDateString"
                 name="shiftDateString"
-                type="date"
+                type="text"
                 value="<%= shift.shiftDate ? shift.shiftDate.toISOString().split('T')[0] : '' %>"
                 required
+                placeholder="YYYY-MM-DD"
               />
             </div>
           </div>
@@ -230,30 +250,63 @@
         </div>
       </div>
     </div>
-    <div class="panel-block is-justify-content-end">
+
+  </div>
+
+  <div class="columns is-vcentered is-fixed-bottom has-background-white has-shadow is-hidden-print">
+    <div class="column">
+      <% if (!isCreate) { %>
+      #<%= shift.shiftId %>
+      <% } %>
+    </div>
+    <div class="column is-narrow has-text-right">
       <div class="buttons is-right">
         <% if (isCreate) { %>
         <a class="button is-danger is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
           Cancel
         </a>
+        <% } else { %>
+        <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/<%= shift.shiftId %>/print" target="_blank">
+          <span class="icon is-small"><i class="fa-solid fa-print"></i></span>
+          <span>Print</span>
+        </a>
         <% } %>
         <% if (isEdit) { %>
-        <button class="button is-primary is-light" type="submit" form="form--shift">
-          <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
-          <span>
-            <%= (isCreate ? "Create": "Update") %>
-            <span class="is-hidden-mobile">
-              <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
-            </span>
-          </span>
-        </button>
-        <% 
-          } else if (
-            user.userProperties.shifts.canUpdate && 
-            (shift.recordLock_dateTime === null || Date.now() <= shift.recordLock_dateTime.getTime()) &&
-            (shift.supervisorEmployeeNumber === user.employeeNumber || user.userProperties.shifts.canManage)) 
-          { 
-        %>
+        <div class="field has-addons">
+          <p class="control">
+            <button class="button is-primary is-light" type="submit" form="form--shift">
+              <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
+              <span>
+                <%= (isCreate ? "Create": "Update") %>
+                <span class="is-hidden-mobile">
+                  <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
+                </span>
+              </span>
+            </button>
+          </p>
+          <% if (!isCreate) { %>
+          <p class="control">
+            <div class="dropdown is-up is-right">
+              <div class="dropdown-trigger">
+                <button class="button is-primary is-light" aria-haspopup="true" aria-controls="dropdown-shift-actions" type="button">
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-angle-up"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown-menu" id="dropdown-shift-actions" role="menu">
+                <div class="dropdown-content">
+                  <a href="#" class="dropdown-item" id="button--deleteShift">
+                    <span class="icon has-text-danger"><i class="fa-solid fa-trash"></i></span>
+                    <span>Delete Shift</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </p>
+          <% } %>
+        </div>
+        <% } else if (user.userProperties.shifts.canUpdate && (shift.recordLock_dateTime === null || Date.now() <= shift.recordLock_dateTime.getTime()) && (shift.supervisorEmployeeNumber === user.employeeNumber || user.userProperties.shifts.canManage)) { %>
         <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/<%= shift.shiftId %>/edit">
           <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
           <span>
@@ -278,7 +331,12 @@
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-users"></i></span>
               </div>
-              <div class="column is-hidden-touch">Employees and Equipment</div>
+              <div class="column is-hidden-touch">
+                Employees and Equipment
+                <span class="icon is-small has-text-success ml-2 is-hidden" id="icon--hasEmployeesEquipment">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+              </div>
             </div>
           </a>
         </li>
@@ -353,8 +411,12 @@
   exports.shiftCrews = <%- JSON.stringify(shiftCrews) %>;
   exports.shiftEmployees = <%- JSON.stringify(shiftEmployees) %>;  
   exports.shiftEquipment = <%- JSON.stringify(shiftEquipment) %>;
+  exports.shiftWorkOrders = <%- JSON.stringify(shiftWorkOrders) %>;
 </script>
 <script src="<%= urlPrefix %>/javascripts/shifts.employees.js"></script>
+<% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+<script src="<%= urlPrefix %>/javascripts/shifts.workOrders.js"></script>
+<% } %>
 <% } %>
 
 <%- await include('../_footerB'); -%>

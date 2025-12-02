@@ -1,1 +1,48 @@
-<h2 class="title is-4">Tasks</h2>
+<div class="columns">
+  <div class="column">
+    <h2 class="title is-4">Tasks</h2>
+  </div>
+  <% if (isEdit && configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+  <div class="column is-narrow">
+    <div class="buttons">
+      <button class="button is-small is-link" id="button--addWorkOrder" type="button">
+        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+        <span>Add Work Order</span>
+      </button>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+<div class="tabs is-small">
+  <ul>
+    <li class="is-active">
+      <a href="#tab-content--workOrders">
+        <span class="icon is-small"><i class="fa-solid fa-clipboard-list"></i></span>
+        <span>Work Orders</span>
+        <span class="tag is-rounded ml-2" id="workOrdersCount">0</span>
+      </a>
+    </li>
+    <li>
+      <a href="#tab-content--milestones">
+        <span class="icon is-small"><i class="fa-solid fa-list-check"></i></span>
+        <span>Milestones</span>
+        <span class="tag is-rounded ml-2" id="milestonesCount">0</span>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<div id="tab-content--workOrders">
+  <div id="container--shiftWorkOrders"></div>
+</div>
+
+<div id="tab-content--milestones" class="is-hidden">
+  <div id="container--shiftMilestones"></div>
+</div>
+<% } else { %>
+<div class="message">
+  <div class="message-body">Work order functionality is not enabled.</div>
+</div>
+<% } %>

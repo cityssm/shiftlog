@@ -1,10 +1,12 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type FlatPickr from 'flatpickr'
 
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const flatpickr: typeof FlatPickr
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
@@ -23,6 +25,24 @@ declare const exports: {
   ).value
 
   const isCreate = shiftId === ''
+
+  /*
+   * Set up date picker
+   */
+
+  const shiftDateStringElement = shiftFormElement.querySelector(
+    '#shift--shiftDateString'
+  ) as HTMLInputElement
+
+  if (shiftDateStringElement !== null) {
+    flatpickr(shiftDateStringElement, {
+      allowInput: true,
+      dateFormat: 'Y-m-d',
+      
+      nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+      prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+    })
+  }
 
   function updateShift(formEvent: Event): void {
     formEvent.preventDefault()
@@ -59,4 +79,59 @@ declare const exports: {
   }
 
   shiftFormElement.addEventListener('submit', updateShift)
+
+  /*
+   * Delete shift
+   */
+
+  const deleteShiftButton = document.querySelector(
+    '#button--deleteShift'
+  ) as HTMLAnchorElement | null
+
+  if (deleteShiftButton !== null) {
+    deleteShiftButton.addEventListener('click', (event) => {
+      event.preventDefault()
+
+      bulmaJS.confirm({
+        contextualColorName: 'danger',
+        title: 'Delete Shift',
+
+        message: 'Are you sure you want to delete this shift? This action cannot be undone.',
+        okButton: {
+          text: 'Delete Shift',
+
+          callbackFunction: () => {
+            cityssm.postJSON(
+              `${urlPrefix}/doDeleteShift`,
+              {
+                shiftId
+              },
+              (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON as {
+                  success: boolean
+                  redirectUrl?: string
+                  errorMessage?: string
+                }
+
+                if (
+                  responseJSON.success &&
+                  responseJSON.redirectUrl !== undefined
+                ) {
+                  globalThis.location.href = responseJSON.redirectUrl
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Delete Error',
+
+                    message:
+                      responseJSON.errorMessage ?? 'An unknown error occurred.'
+                  })
+                }
+              }
+            )
+          }
+        }
+      })
+    })
+  }
 })()
