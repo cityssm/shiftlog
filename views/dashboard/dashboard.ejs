@@ -407,6 +407,7 @@
   </div>
   <div class="column">
     <div class="panel">
+      <% if (configFunctions.getConfigProperty('workOrders.isEnabled')) { %>
       <a class="panel-block" href="<%= urlPrefix %>/admin/workOrderTypes">
         <div class="media">
           <div class="media-left">
@@ -425,6 +426,7 @@
           </div>
         </div>
       </a>
+      <% } %>
       <a class="panel-block" href="<%= urlPrefix %>/admin/dataLists">
         <div class="media">
           <div class="media-left">

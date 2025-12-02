@@ -9,7 +9,7 @@ config.application.backgroundImage = 'background-graffiti.jpg'
 config.application.instance = 'graffiti'
 
 config.shifts = {
-  isEnabled: true,
+  isEnabled: false,
 
   router: 'logs',
 

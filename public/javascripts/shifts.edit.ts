@@ -59,7 +59,7 @@ declare const exports: {
 
         if (responseJSON.success) {
           if (isCreate && responseJSON.shiftId !== undefined) {
-            globalThis.location.href = `${urlPrefix}/${responseJSON.shiftId.toString()}`
+            globalThis.location.href = exports.shiftLog.buildShiftURL(responseJSON.shiftId, true)
           } else {
             bulmaJS.alert({
               contextualColorName: 'success',

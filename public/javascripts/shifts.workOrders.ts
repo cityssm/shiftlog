@@ -398,7 +398,7 @@ declare const exports: {
               <td>${cityssm.escapeHTML(workOrder.workOrderNumber)}</td>
               <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
               <td>${cityssm.escapeHTML(workOrder.requestorName ?? '')}</td>
-              <td>${cityssm.escapeHTML(workOrder.workOrderDetails.substring(0, 50))}${workOrder.workOrderDetails.length > 50 ? '...' : ''}</td>
+              <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 50))}${workOrder.workOrderDetails.length > 50 ? '...' : ''}</td>
               <td class="has-text-right">
                 <button class="button is-small is-success button--select" data-work-order-id="${workOrder.workOrderId}" type="button">
                   <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
@@ -437,7 +437,7 @@ declare const exports: {
               ).dataset.workOrderId
 
               const selectedWorkOrder = responseJSON.workOrders.find(
-                (wo) => wo.workOrderId.toString() === selectedWorkOrderId
+                (possibleWorkOrder) => possibleWorkOrder.workOrderId.toString() === selectedWorkOrderId
               )
 
               if (selectedWorkOrder !== undefined) {
@@ -532,18 +532,18 @@ declare const exports: {
     }
 
     cityssm.openHtmlModal('shifts-addWorkOrder', {
-      onshow(modalElementParam) {
-        modalElement = modalElementParam
+      onshow(modalElementParameter) {
+        modalElement = modalElementParameter
         ;(
           modalElement.querySelector(
             'input[name="shiftId"]'
           ) as HTMLInputElement
         ).value = shiftId
       },
-      onshown(modalElementParam, _closeModalFunction) {
+      onshown(modalElementParameter, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = _closeModalFunction
-        modalElement = modalElementParam
+        modalElement = modalElementParameter
 
         const searchForm = modalElement.querySelector(
           '#addWorkOrder--searchForm'

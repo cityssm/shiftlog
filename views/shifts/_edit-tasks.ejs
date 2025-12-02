@@ -7,7 +7,7 @@
     <div class="buttons">
       <button class="button is-small is-link" id="button--addWorkOrder" type="button">
         <span class="icon"><i class="fa-solid fa-plus"></i></span>
-        <span>Add Work Order</span>
+        <span>Add <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
       </button>
     </div>
   </div>
@@ -20,7 +20,7 @@
     <li class="is-active">
       <a href="#tab-content--workOrders">
         <span class="icon is-small"><i class="fa-solid fa-clipboard-list"></i></span>
-        <span>Work Orders</span>
+        <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
         <span class="tag is-rounded ml-2" id="workOrdersCount">0</span>
       </a>
     </li>

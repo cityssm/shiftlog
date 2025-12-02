@@ -275,7 +275,7 @@
               <td>${cityssm.escapeHTML(workOrder.workOrderNumber)}</td>
               <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
               <td>${cityssm.escapeHTML(workOrder.requestorName ?? '')}</td>
-              <td>${cityssm.escapeHTML(workOrder.workOrderDetails.substring(0, 50))}${workOrder.workOrderDetails.length > 50 ? '...' : ''}</td>
+              <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 50))}${workOrder.workOrderDetails.length > 50 ? '...' : ''}</td>
               <td class="has-text-right">
                 <button class="button is-small is-success button--select" data-work-order-id="${workOrder.workOrderId}" type="button">
                   <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
@@ -303,7 +303,7 @@
                     button.addEventListener('click', (selectEvent) => {
                         selectEvent.preventDefault();
                         const selectedWorkOrderId = selectEvent.currentTarget.dataset.workOrderId;
-                        const selectedWorkOrder = responseJSON.workOrders.find((wo) => wo.workOrderId.toString() === selectedWorkOrderId);
+                        const selectedWorkOrder = responseJSON.workOrders.find((possibleWorkOrder) => possibleWorkOrder.workOrderId.toString() === selectedWorkOrderId);
                         if (selectedWorkOrder !== undefined) {
                             selectWorkOrder(selectedWorkOrder);
                         }
@@ -359,14 +359,14 @@
             });
         }
         cityssm.openHtmlModal('shifts-addWorkOrder', {
-            onshow(modalElementParam) {
-                modalElement = modalElementParam;
+            onshow(modalElementParameter) {
+                modalElement = modalElementParameter;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
             },
-            onshown(modalElementParam, _closeModalFunction) {
+            onshown(modalElementParameter, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = _closeModalFunction;
-                modalElement = modalElementParam;
+                modalElement = modalElementParameter;
                 const searchForm = modalElement.querySelector('#addWorkOrder--searchForm');
                 searchForm.addEventListener('submit', doSearch);
                 const addForm = modalElement.querySelector('#addWorkOrder--form');

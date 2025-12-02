@@ -4,7 +4,7 @@ config.application.applicationName = 'Graffiti Incident Tracking';
 config.application.backgroundImage = 'background-graffiti.jpg';
 config.application.instance = 'graffiti';
 config.shifts = {
-    isEnabled: true,
+    isEnabled: false,
     router: 'logs',
     sectionName: 'Workday Logs',
     sectionNameSingular: 'Workday Log',
