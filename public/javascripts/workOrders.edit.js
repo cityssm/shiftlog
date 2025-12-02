@@ -117,7 +117,7 @@
          * Populate the location datalist with the provided locations
          */
         function populateLocationDatalist(locations) {
-            locationDatalist.replaceChildren();
+            locationDatalist?.replaceChildren();
             for (const location of locations) {
                 const option = document.createElement('option');
                 option.value = location.address1;
@@ -132,7 +132,7 @@
                     typeof location.longitude === 'number'
                         ? location.longitude.toString()
                         : '';
-                locationDatalist.append(option);
+                locationDatalist?.append(option);
             }
         }
         /**
@@ -228,16 +228,20 @@
     };
     const workOrderOpenDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderOpenDateTimeString');
     const workOrderDueDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderDueDateTimeString');
-    const workOrderDueDateTimePicker = flatpickr(workOrderDueDateTimeStringElement, {
-        ...dateTimePickerOptions,
-        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? ''
-    });
     const workOrderCloseDateTimePicker = flatpickr(workOrderCloseDateTimeStringElement, {
         ...dateTimePickerOptions,
         maxDate: new Date(),
         minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
         onOpen: () => {
             workOrderCloseDateTimePicker.set('maxDate', new Date());
+        }
+    });
+    const workOrderDueDateTimePicker = flatpickr(workOrderDueDateTimeStringElement, {
+        ...dateTimePickerOptions,
+        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
+        onChange: (selectedDates) => {
+            const selectedDate = selectedDates.length > 0 ? selectedDates[0] : undefined;
+            workOrderDueDateTimeStringElement.classList.toggle('is-danger', selectedDate !== undefined && selectedDate.getTime() < Date.now());
         }
     });
     flatpickr(workOrderOpenDateTimeStringElement, {

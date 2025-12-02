@@ -348,7 +348,7 @@
         <div class="field has-addons">
           <div class="control is-expanded has-icons-left">
             <input
-              class="input"
+              class="input <%= (workOrder.workOrderDueDateTime !== null && workOrder.workOrderCloseDateTime === null && workOrder.workOrderDueDateTime.getTime() < Date.now()) ? 'is-danger' : '' %>"
               id="workOrder--workOrderDueDateTimeString"
               name="workOrderDueDateTimeString"
               type="datetime-local"

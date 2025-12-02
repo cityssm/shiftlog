@@ -52,14 +52,15 @@
         <div class="columns">
           <div class="column">
             <div class="field">
-              <label class="label" for="workOrderSearch--workOrderNumber">Work Order Number</label>
+              <label class="label" for="workOrderSearch--workOrderNumber">
+                <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Number
+              </label>
               <div class="control">
                 <input
                   class="input"
                   id="workOrderSearch--workOrderNumber"
                   name="workOrderNumber"
                   type="text"
-                  placeholder="Search by work order number"
                 />
               </div>
             </div>
@@ -126,7 +127,7 @@
                   id="workOrderSearch--requestor"
                   name="requestor"
                   type="text"
-                  placeholder="Search by requestor name or contact info"
+                  placeholder="Name or contact info"
                 />
               </div>
             </div>

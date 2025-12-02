@@ -223,7 +223,7 @@ declare const exports: {
      * Populate the location datalist with the provided locations
      */
     function populateLocationDatalist(locations: Location[]): void {
-      locationDatalist.replaceChildren()
+      locationDatalist?.replaceChildren()
 
       for (const location of locations) {
         const option = document.createElement('option')
@@ -243,7 +243,7 @@ declare const exports: {
             ? location.longitude.toString()
             : ''
 
-        locationDatalist.append(option)
+        locationDatalist?.append(option)
       }
     }
 
@@ -335,8 +335,7 @@ declare const exports: {
         fetchLocationSuggestions(locationSearchString, () => {
           // Check if the newly fetched data includes the selected address
           const newMatchingLocation = locationsData.find(
-            (possibleLocation) =>
-              possibleLocation.address1 === selectedAddress
+            (possibleLocation) => possibleLocation.address1 === selectedAddress
           )
 
           if (newMatchingLocation !== undefined) {
@@ -387,14 +386,6 @@ declare const exports: {
     '#workOrder--workOrderDueDateTimeString'
   ) as HTMLInputElement
 
-  const workOrderDueDateTimePicker = flatpickr(
-    workOrderDueDateTimeStringElement,
-    {
-      ...dateTimePickerOptions,
-      minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? ''
-    }
-  )
-
   const workOrderCloseDateTimePicker = flatpickr(
     workOrderCloseDateTimeStringElement,
     {
@@ -403,6 +394,23 @@ declare const exports: {
       minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
       onOpen: () => {
         workOrderCloseDateTimePicker.set('maxDate', new Date())
+      }
+    }
+  )
+
+  const workOrderDueDateTimePicker = flatpickr(
+    workOrderDueDateTimeStringElement,
+    {
+      ...dateTimePickerOptions,
+      minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
+      onChange: (selectedDates) => {
+        const selectedDate =
+          selectedDates.length > 0 ? selectedDates[0] : undefined
+
+        workOrderDueDateTimeStringElement.classList.toggle(
+          'is-danger',
+          selectedDate !== undefined && selectedDate.getTime() < Date.now()
+        )
       }
     }
   )
@@ -593,7 +601,8 @@ declare const exports: {
         contextualColorName: 'danger',
         title: 'Delete Work Order',
 
-        message: 'Are you sure you want to delete this work order? This action cannot be undone.',
+        message:
+          'Are you sure you want to delete this work order? This action cannot be undone.',
         okButton: {
           text: 'Delete Work Order',
 
