@@ -6,6 +6,7 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 
 import type { ShiftLogGlobal } from './types.js'
+import { WorkOrderMilestone } from '../../types/record.types.js'
 
 interface DataListItem {
   dataListItemId: number
@@ -56,28 +57,6 @@ declare const Sortable: {
   ) as HTMLElement | null
 
   if (milestonesContainerElement !== null) {
-    interface WorkOrderMilestone {
-      workOrderMilestoneId: number
-
-      workOrderId: number
-
-      milestoneTitle: string
-      milestoneDescription: string
-
-      milestoneDueDateTime: string | null
-      milestoneCompleteDateTime: string | null
-
-      assignedToDataListItem: string | null
-      assignedToDataListItemId: number | null
-
-      orderNumber: number
-
-      recordCreate_dateTime: string
-      recordCreate_userName: string
-
-      recordUpdate_dateTime: string
-      recordUpdate_userName: string
-    }
 
     function formatDateTime(dateTimeString: string | null): string {
       if (dateTimeString === null) {
@@ -109,6 +88,7 @@ declare const Sortable: {
       const tableElement = document.createElement('table')
       tableElement.className = 'table is-fullwidth is-striped is-hoverable'
 
+      // eslint-disable-next-line no-unsanitized/property
       tableElement.innerHTML = /* html */ `
         <thead>
           <tr>
@@ -135,6 +115,7 @@ declare const Sortable: {
           milestone.workOrderMilestoneId.toString()
 
         const isComplete = milestone.milestoneCompleteDateTime !== null
+
         const isOverdue =
           !isComplete &&
           milestone.milestoneDueDateTime !== null &&
@@ -440,6 +421,7 @@ declare const Sortable: {
           const completeDateInput = modalElement.querySelector(
             '#editWorkOrderMilestone--milestoneCompleteDateTimeString'
           ) as HTMLInputElement
+
           const completeDatePicker = flatpickr(completeDateInput, {
             ...dateTimePickerOptions,
 

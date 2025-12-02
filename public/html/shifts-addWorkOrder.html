@@ -1,4 +1,4 @@
-<div id="modal-shifts-addWorkOrder" class="modal">
+<div class="modal" id="modal-shifts-addWorkOrder">
   <div class="modal-background"></div>
   <div class="modal-card">
     <header class="modal-card-head">
@@ -26,7 +26,7 @@
         </div>
       </form>
       
-      <div id="addWorkOrder--results" class="mt-4">
+      <div class="mt-4" id="addWorkOrder--results">
         <div class="message is-info">
           <div class="message-body">
             Enter search terms above to find open work orders.
@@ -34,9 +34,9 @@
         </div>
       </div>
 
-      <form id="addWorkOrder--form" class="is-hidden">
-        <input type="hidden" name="shiftId" />
-        <input type="hidden" name="workOrderId" id="addWorkOrder--selectedWorkOrderId" />
+      <form class="is-hidden" id="addWorkOrder--form">
+        <input name="shiftId" type="hidden" />
+        <input id="addWorkOrder--selectedWorkOrderId" name="workOrderId" type="hidden" />
         
         <div class="field">
           <label class="label">Selected Work Order</label>
@@ -52,16 +52,21 @@
               class="textarea"
               id="addWorkOrder--shiftWorkOrderNote"
               name="shiftWorkOrderNote"
-              rows="3"
               maxlength="200"
               placeholder="Optional note about this work order's relation to the shift"
+              rows="3"
             ></textarea>
           </div>
         </div>
       </form>
     </section>
     <footer class="modal-card-foot is-justify-content-end">
-      <button class="button is-link is-hidden" type="submit" form="addWorkOrder--form" id="addWorkOrder--submitButton">
+      <button
+        class="button is-link is-hidden"
+        id="addWorkOrder--submitButton"
+        type="submit"
+        form="addWorkOrder--form"
+      >
         <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
         <span>Add Work Order</span>
       </button>

@@ -4,6 +4,18 @@
     const shiftFormElement = document.querySelector('#form--shift');
     const shiftId = shiftFormElement.querySelector('#shift--shiftId').value;
     const isCreate = shiftId === '';
+    /*
+     * Set up date picker
+     */
+    const shiftDateStringElement = shiftFormElement.querySelector('#shift--shiftDateString');
+    if (shiftDateStringElement !== null) {
+        flatpickr(shiftDateStringElement, {
+            allowInput: true,
+            dateFormat: 'Y-m-d',
+            nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+            prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+        });
+    }
     function updateShift(formEvent) {
         formEvent.preventDefault();
         cityssm.postJSON(`${urlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`, shiftFormElement, (rawResponseJSON) => {

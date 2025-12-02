@@ -58,6 +58,14 @@ function buildWhereClause(filters, user) {
             }
         }
     }
+    if (filters.searchString !== undefined && filters.searchString !== '') {
+        whereClause += ` and (
+      w.workOrderNumber like @searchString
+      or w.requestorName like @searchString
+      or w.requestorContactInfo like @searchString
+      or w.workOrderDetails like @searchString
+    )`;
+    }
     if (user !== undefined) {
         whereClause += `
       and (
@@ -82,6 +90,7 @@ function applyParameters(sqlRequest, filters, user) {
         .input('requestorName', filters.requestorName === undefined ? null : `%${filters.requestorName}%`)
         .input('requestor', filters.requestor === undefined ? null : `%${filters.requestor}%`)
         .input('assignedToDataListItemId', filters.assignedToDataListItemId ?? null)
+        .input('searchString', filters.searchString === undefined ? null : `%${filters.searchString}%`)
         .input('userName', user?.userName);
 }
 export default async function getWorkOrders(filters, options, user) {

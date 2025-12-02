@@ -10,6 +10,9 @@ import type { WorkOrder } from '../../types/record.types.js'
 export interface GetWorkOrdersFilters {
   assignedToDataListItemId?: number | string
   openClosedFilter?: '' | 'closed' | 'open' | 'overdue'
+
+  searchString?: string
+
   requestor?: string
   requestorName?: string
   workOrderNumber?: string
@@ -98,6 +101,15 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
     }
   }
 
+  if (filters.searchString !== undefined && filters.searchString !== '') {
+    whereClause += ` and (
+      w.workOrderNumber like @searchString
+      or w.requestorName like @searchString
+      or w.requestorContactInfo like @searchString
+      or w.workOrderDetails like @searchString
+    )`
+  }
+
   if (user !== undefined) {
     whereClause += `
       and (
@@ -140,6 +152,10 @@ function applyParameters(
       filters.requestor === undefined ? null : `%${filters.requestor}%`
     )
     .input('assignedToDataListItemId', filters.assignedToDataListItemId ?? null)
+    .input(
+      'searchString',
+      filters.searchString === undefined ? null : `%${filters.searchString}%`
+    )
     .input('userName', user?.userName)
 }
 

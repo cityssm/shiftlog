@@ -92,22 +92,32 @@ declare const exports: {
         </td>
         <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
         <td>${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '')}</td>
-        <td>${cityssm.escapeHTML(workOrder.workOrderDetails.substring(0, 100))}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
+        <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 100))}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
         <td>${cityssm.escapeHTML(workOrder.shiftWorkOrderNote)}</td>
         ${
           isEdit
             ? /* html */ `
-          <td class="has-text-right">
-            <div class="buttons is-right">
-              <button class="button is-small is-info button--editNote" data-work-order-id="${workOrder.workOrderId}" type="button" aria-label="Edit Note">
-                <span class="icon is-small"><i class="fa-solid fa-pencil"></i></span>
-              </button>
-              <button class="button is-small is-danger is-light button--delete" data-work-order-id="${workOrder.workOrderId}" type="button" aria-label="Remove">
-                <span class="icon is-small"><i class="fa-solid fa-trash"></i></span>
-              </button>
-            </div>
-          </td>
-        `
+              <td class="has-text-right">
+                <div class="buttons is-right">
+                  <button
+                    class="button is-small is-info button--editNote"
+                    data-work-order-id="${workOrder.workOrderId}"
+                    type="button"
+                    aria-label="Edit Note"
+                  >
+                    <span class="icon is-small"><i class="fa-solid fa-pencil"></i></span>
+                  </button>
+                  <button
+                    class="button is-small is-danger is-light button--delete"
+                    data-work-order-id="${workOrder.workOrderId}"
+                    type="button"
+                    aria-label="Remove"
+                  >
+                    <span class="icon is-small"><i class="fa-solid fa-trash"></i></span>
+                  </button>
+                </div>
+              </td>
+            `
             : ''
         }
       `
@@ -118,9 +128,8 @@ declare const exports: {
     containerElement.replaceChildren(tableElement)
 
     if (isEdit) {
-      const editNoteButtons = containerElement.querySelectorAll(
-        '.button--editNote'
-      )
+      const editNoteButtons =
+        containerElement.querySelectorAll('.button--editNote')
       for (const button of editNoteButtons) {
         button.addEventListener('click', editWorkOrderNote)
       }
@@ -175,15 +184,17 @@ declare const exports: {
 
       const trElement = document.createElement('tr')
 
-      const isComplete = milestone.milestoneCompleteDateTime !== null && milestone.milestoneCompleteDateTime !== undefined
+      const isComplete =
+        milestone.milestoneCompleteDateTime !== null &&
+        milestone.milestoneCompleteDateTime !== undefined
 
       // eslint-disable-next-line no-unsanitized/property
       trElement.innerHTML = /* html */ `
         <td>
           ${
-            workOrder !== undefined
-              ? /* html */ `<a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">#${cityssm.escapeHTML(workOrder.workOrderNumber)}</a>`
-              : ''
+            workOrder === undefined
+              ? ''
+              : /* html */ `<a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">#${cityssm.escapeHTML(workOrder.workOrderNumber)}</a>`
           }
         </td>
         <td>${cityssm.escapeHTML(milestone.milestoneTitle)}</td>
@@ -199,13 +210,17 @@ declare const exports: {
         ${
           isEdit && !isComplete
             ? /* html */ `
-          <td class="has-text-right">
-            <button class="button is-small is-success button--complete" data-milestone-id="${milestone.milestoneId}" type="button">
-              <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
-              <span>Complete</span>
-            </button>
-          </td>
-        `
+              <td class="has-text-right">
+                <button
+                  class="button is-small is-success button--complete"
+                  data-work-order-milestone-id="${milestone.workOrderMilestoneId}"
+                  type="button"
+                >
+                  <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+                  <span>Complete</span>
+                </button>
+              </td>
+            `
             : isEdit
               ? '<td></td>'
               : ''
@@ -218,9 +233,8 @@ declare const exports: {
     containerElement.replaceChildren(tableElement)
 
     if (isEdit) {
-      const completeButtons = containerElement.querySelectorAll(
-        '.button--complete'
-      )
+      const completeButtons =
+        containerElement.querySelectorAll('.button--complete')
       for (const button of completeButtons) {
         button.addEventListener('click', completeMilestone)
       }
@@ -273,9 +287,20 @@ declare const exports: {
           if (loadedCount === shiftWorkOrders.length) {
             // Sort milestones by due date
             allMilestones.sort((a, b) => {
-              if (a.milestoneDueDateTime === null || a.milestoneDueDateTime === undefined) return 1
-              if (b.milestoneDueDateTime === null || b.milestoneDueDateTime === undefined) return -1
-              return new Date(a.milestoneDueDateTime).getTime() - new Date(b.milestoneDueDateTime).getTime()
+              if (
+                a.milestoneDueDateTime === null ||
+                a.milestoneDueDateTime === undefined
+              )
+                return 1
+              if (
+                b.milestoneDueDateTime === null ||
+                b.milestoneDueDateTime === undefined
+              )
+                return -1
+              return (
+                new Date(a.milestoneDueDateTime).getTime() -
+                new Date(b.milestoneDueDateTime).getTime()
+              )
             })
             renderMilestones()
             updateCounts()
@@ -295,8 +320,11 @@ declare const exports: {
       formEvent.preventDefault()
 
       const searchForm = formEvent.currentTarget as HTMLFormElement
+
       const searchString = (
-        searchForm.querySelector('#addWorkOrder--searchString') as HTMLInputElement
+        searchForm.querySelector(
+          '#addWorkOrder--searchString'
+        ) as HTMLInputElement
       ).value.trim()
 
       if (searchString.length < 2) {
@@ -320,8 +348,7 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrdersUrlPrefix}/doSearchWorkOrders`,
         {
-          workOrderNumber: searchString,
-          requestor: searchString,
+          searchString,
           openClosedFilter: 'open',
           limit: 20,
           offset: 0
@@ -346,7 +373,6 @@ declare const exports: {
           const tableElement = document.createElement('table')
           tableElement.className = 'table is-fullwidth is-striped is-hoverable'
 
-          // eslint-disable-next-line no-unsanitized/property
           tableElement.innerHTML = /* html */ `
             <thead>
               <tr>
@@ -389,20 +415,26 @@ declare const exports: {
           if (responseJSON.totalCount > 20) {
             const messageElement = document.createElement('div')
             messageElement.className = 'message is-info mt-2'
+
             messageElement.innerHTML = /* html */ `
               <div class="message-body">
-                Showing 20 of ${responseJSON.totalCount} results. Refine your search to see more specific results.
+                Showing 20 of ${cityssm.escapeHTML(responseJSON.totalCount.toString())} results.
+                Refine your search to see more specific results.
               </div>
             `
+
             resultsContainer.append(messageElement)
           }
 
           // Add event listeners to select buttons
-          const selectButtons = resultsContainer.querySelectorAll('.button--select')
+          const selectButtons =
+            resultsContainer.querySelectorAll('.button--select')
           for (const button of selectButtons) {
             button.addEventListener('click', (selectEvent) => {
               selectEvent.preventDefault()
-              const selectedWorkOrderId = (selectEvent.currentTarget as HTMLButtonElement).dataset.workOrderId
+              const selectedWorkOrderId = (
+                selectEvent.currentTarget as HTMLButtonElement
+              ).dataset.workOrderId
 
               const selectedWorkOrder = responseJSON.workOrders.find(
                 (wo) => wo.workOrderId.toString() === selectedWorkOrderId
@@ -513,10 +545,15 @@ declare const exports: {
         closeModalFunction = _closeModalFunction
         modalElement = modalElementParam
 
-        const searchForm = modalElement.querySelector('#addWorkOrder--searchForm') as HTMLFormElement
+        const searchForm = modalElement.querySelector(
+          '#addWorkOrder--searchForm'
+        ) as HTMLFormElement
         searchForm.addEventListener('submit', doSearch)
 
-        const addForm = modalElement.querySelector('#addWorkOrder--form') as HTMLFormElement
+        const addForm = modalElement.querySelector(
+          '#addWorkOrder--form'
+        ) as HTMLFormElement
+
         addForm.addEventListener('submit', doAdd)
 
         // Focus on search input
@@ -526,6 +563,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -551,6 +589,12 @@ declare const exports: {
     function doUpdate(formEvent: Event): void {
       formEvent.preventDefault()
 
+      const note = (
+        (formEvent.currentTarget as HTMLFormElement).querySelector(
+          '[name="shiftWorkOrderNote"]'
+        ) as HTMLTextAreaElement
+      ).value
+
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftWorkOrderNote`,
         formEvent.currentTarget,
@@ -561,19 +605,15 @@ declare const exports: {
           }
 
           if (responseJSON.success) {
-            const note = (
-              (formEvent.currentTarget as HTMLFormElement).querySelector(
-                '[name="shiftWorkOrderNote"]'
-              ) as HTMLTextAreaElement
-            ).value
+            ;(workOrder as ShiftWorkOrder).shiftWorkOrderNote = note
 
-            workOrder.shiftWorkOrderNote = note
             renderShiftWorkOrders()
             closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Note',
+
               message: responseJSON.errorMessage ?? 'An unknown error occurred.'
             })
           }
@@ -603,15 +643,17 @@ declare const exports: {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = _closeModalFunction
 
-        const formElement = modalElement.querySelector('form') as HTMLFormElement
+        const formElement = modalElement.querySelector(
+          'form'
+        ) as HTMLFormElement
         formElement.addEventListener('submit', doUpdate)
-
         ;(
           modalElement.querySelector(
             'textarea[name="shiftWorkOrderNote"]'
           ) as HTMLTextAreaElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -635,9 +677,11 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Remove Work Order from Shift',
+
       message: `Are you sure you want to remove Work Order #${workOrder.workOrderNumber} from this shift?`,
       okButton: {
         text: 'Remove',
+
         callbackFunction: () => {
           cityssm.postJSON(
             `${urlPrefix}/doDeleteShiftWorkOrder`,
@@ -658,6 +702,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Removing Work Order',
+
                   message:
                     responseJSON.errorMessage ?? 'An unknown error occurred.'
                 })
@@ -672,11 +717,13 @@ declare const exports: {
   function completeMilestone(clickEvent: Event): void {
     clickEvent.preventDefault()
 
-    const milestoneId = (clickEvent.currentTarget as HTMLButtonElement).dataset
-      .milestoneId
+    const workOrderMilestoneId = (clickEvent.currentTarget as HTMLButtonElement)
+      .dataset.workOrderMilestoneId
 
     const milestone = allMilestones.find(
-      (m) => m.milestoneId.toString() === milestoneId
+      (possibleMilestone) =>
+        possibleMilestone.workOrderMilestoneId.toString() ===
+        workOrderMilestoneId
     )
 
     if (milestone === undefined) {
@@ -686,20 +733,30 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'success',
       title: 'Complete Milestone',
+
       message: `Mark milestone "${milestone.milestoneTitle}" as complete?`,
       okButton: {
         text: 'Complete',
+
         callbackFunction: () => {
+          const currentDate = new Date()
+          const currentDateString =
+            cityssm.dateToString(currentDate) +
+            ' ' +
+            cityssm.dateToTimeString(currentDate)
+
           cityssm.postJSON(
             `${workOrdersUrlPrefix}/doUpdateWorkOrderMilestone`,
             {
               workOrderId: milestone.workOrderId,
-              milestoneId: milestone.milestoneId,
+              workOrderMilestoneId: milestone.workOrderMilestoneId,
+
               milestoneTitle: milestone.milestoneTitle,
               milestoneDescription: milestone.milestoneDescription,
-              milestoneDueDateTimeString: '',
+              milestoneDueDateTimeString: milestone.milestoneDueDateTime,
               assignedToDataListItemId: milestone.assignedToDataListItemId,
-              milestoneCompleteDateTimeString: new Date().toISOString().slice(0, 16)
+
+              milestoneCompleteDateTimeString: currentDateString
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
@@ -713,6 +770,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Completing Milestone',
+
                   message:
                     responseJSON.errorMessage ?? 'An unknown error occurred.'
                 })
@@ -728,7 +786,9 @@ declare const exports: {
    * Initialize tabs
    */
 
-  const tabsContainerElement = document.querySelector('#tab-content--workOrders')
+  const tabsContainerElement = document.querySelector(
+    '#tab-content--workOrders'
+  )
   if (tabsContainerElement !== null) {
     const tabLinks = document.querySelectorAll(
       '#tab--tasks .tabs a'
@@ -742,11 +802,10 @@ declare const exports: {
 
         // Update active link
         for (const link of tabLinks) {
-          if (link.getAttribute('href') === targetId) {
-            link.parentElement?.classList.add('is-active')
-          } else {
-            link.parentElement?.classList.remove('is-active')
-          }
+          link.parentElement?.classList.toggle(
+            'is-active',
+            link.getAttribute('href') === targetId
+          )
         }
 
         // Show/hide tabs
@@ -755,11 +814,10 @@ declare const exports: {
         ) as NodeListOf<HTMLElement>
 
         for (const tabContent of allTabContent) {
-          if (`#${tabContent.id}` === targetId) {
-            tabContent.classList.remove('is-hidden')
-          } else {
-            tabContent.classList.add('is-hidden')
-          }
+          tabContent.classList.toggle(
+            'is-hidden',
+            `#${tabContent.id}` !== targetId
+          )
         }
       })
     }
