@@ -4,6 +4,7 @@ export interface WorkOrderEditResponse {
     isCreate: boolean;
     isEdit: boolean;
     workOrder: Partial<WorkOrder>;
+    canReopen?: boolean;
     workOrderTypes: WorkOrderType[];
     workOrderStatuses: DataListItem[];
     assignedToOptions: DataListItem[];

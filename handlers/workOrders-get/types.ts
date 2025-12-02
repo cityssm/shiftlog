@@ -7,6 +7,7 @@ export interface WorkOrderEditResponse {
   isEdit: boolean
 
   workOrder: Partial<WorkOrder>
+  canReopen?: boolean
 
   workOrderTypes: WorkOrderType[]
   workOrderStatuses: DataListItem[]

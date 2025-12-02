@@ -23,6 +23,7 @@ import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGet
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js';
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js';
 import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js';
+import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkOrder.js';
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js';
 import handler_doUpdateWorkOrder from '../handlers/workOrders-post/doUpdateWorkOrder.js';
 import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUpdateWorkOrderMilestone.js';
@@ -66,7 +67,8 @@ router
 router
     .get('/:workOrderId/edit', updateHandler, handler_edit)
     .post('/doUpdateWorkOrder', updateHandler, handler_doUpdateWorkOrder)
-    .post('/doDeleteWorkOrder', updateHandler, handler_doDeleteWorkOrder);
+    .post('/doDeleteWorkOrder', updateHandler, handler_doDeleteWorkOrder)
+    .post('/doReopenWorkOrder', updateHandler, handler_doReopenWorkOrder);
 router
     .post('/:workOrderId/doGetWorkOrderNotes', handler_doGetWorkOrderNotes)
     .post('/doCreateWorkOrderNote', updateHandler, handler_doCreateWorkOrderNote)
