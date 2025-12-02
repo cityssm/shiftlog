@@ -28,7 +28,8 @@ Built with the following use cases in mind:
 
 ![Open Work Order Map](./docs/images/workOrders-map.png)
 
-Thanks to the community at [OpenStreetMap](https://www.openstreetmap.org/about),
+Thanks to the powerful [Leaflet](https://leafletjs.com/) plugin
+and the community at [OpenStreetMap](https://www.openstreetmap.org/about),
 mapping does not need to come with a huge cost.
 
 ### Integration Friendly

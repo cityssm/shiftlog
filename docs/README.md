@@ -28,8 +28,12 @@ It may be possible that "Timesheets" are not included in your installation.
 
 ## User Documentation
 
-[**Work Orders**](./workOrders.md)
+[**Work Orders**](./workOrders.md)<br />
+Track pieces of work, including custom fields, progression milestones, and attachments.
 
-[**Shifts**](./shifts.md)
+[**Shifts**](./shifts.md)<br />
+Track workday details, like supervisors, employees, and work orders related to
+the shift.
 
-[**Timesheets**](./timesheets.md)
+[**Timesheets**](./timesheets.md)<br />
+Record hours for employees and equipment.
