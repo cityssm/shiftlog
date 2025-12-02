@@ -68,6 +68,10 @@
      */
     function buildPaginationControls(options) {
         const { totalCount, currentPageOrOffset, itemsPerPageOrLimit, clickHandler } = options;
+        // Validate itemsPerPageOrLimit to prevent division by zero
+        if (itemsPerPageOrLimit <= 0) {
+            throw new Error('itemsPerPageOrLimit must be greater than 0');
+        }
         const paginationElement = document.createElement('nav');
         paginationElement.className = 'pagination is-centered mt-4';
         paginationElement.setAttribute('role', 'navigation');
