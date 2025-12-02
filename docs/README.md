@@ -6,8 +6,6 @@
 
 ![ShiftLog Login](./images/login.png)
 
-**Coming Soon**
-
 ## ⚠️ Important Note
 
 ShiftLog supports the ability to define aliases for sections,
@@ -33,3 +31,7 @@ It may be possible that "Timesheets" are not included in your installation.
 [**Shifts**](./shifts.md)
 
 [**Timesheets**](./timesheets.md)
+
+## Administrator Documentation
+
+[**Administrator Tools**](./admin.md)
