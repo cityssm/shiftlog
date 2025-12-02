@@ -38,4 +38,11 @@ export interface ShiftLogGlobal {
   setUnsavedChanges: () => void
 
   initializeRecordTabs: (tabsContainerElement: HTMLElement) => void
+
+  buildPaginationControls: (
+    totalCount: number,
+    currentPageOrOffset: number,
+    itemsPerPageOrLimit: number,
+    clickHandler: (pageNumber: number) => void
+  ) => HTMLElement
 }
