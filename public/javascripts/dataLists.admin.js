@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     function updateItemCount(dataListKey, count) {
@@ -21,44 +23,54 @@
       </tr>`;
             return;
         }
-        let html = '';
+        // Clear existing items
+        tbodyElement.innerHTML = '';
         for (const item of items) {
             const userGroup = item.userGroupId
-                ? exports.userGroups.find(ug => ug.userGroupId === item.userGroupId)
+                ? exports.userGroups.find((ug) => ug.userGroupId === item.userGroupId)
                 : null;
             const userGroupDisplay = userGroup
                 ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
                 : '<span class="has-text-grey-light">-</span>';
-            html += `<tr data-data-list-item-id="${item.dataListItemId}">
+            const tableRowElement = document.createElement('tr');
+            tableRowElement.dataset.dataListItemId = item.dataListItemId.toString();
+            // eslint-disable-next-line no-unsanitized/property
+            tableRowElement.innerHTML = /* html */ `
         <td class="has-text-centered">
           <span class="icon is-small has-text-grey handle" style="cursor: move;">
             <i class="fa-solid fa-grip-vertical"></i>
           </span>
         </td>
         <td>
-          <span class="item-text">${cityssm.escapeHTML(item.dataListItem)}</span>
+          <span class="item-text">
+            ${cityssm.escapeHTML(item.dataListItem)}
+          </span>
         </td>
         <td>
           ${userGroupDisplay}
         </td>
         <td class="has-text-right">
           <div class="buttons are-small is-right">
-            <button class="button is-info button--editItem" 
-                    type="button"
-                    data-data-list-key="${dataListKey}"
-                    data-data-list-item-id="${item.dataListItemId}"
-                    data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
-                    data-user-group-id="${item.userGroupId ?? ''}">
+            <button
+              class="button is-info button--editItem"
+              data-data-list-key="${cityssm.escapeHTML(dataListKey)}"
+              data-data-list-item-id="${item.dataListItemId}"
+              data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+              data-user-group-id="${item.userGroupId ?? ''}"
+              type="button"
+            >
               <span class="icon">
                 <i class="fa-solid fa-pencil"></i>
               </span>
               <span>Edit</span>
             </button>
-            <button class="button is-danger button--deleteItem" 
-                    type="button"
-                    data-data-list-key="${dataListKey}"
-                    data-data-list-item-id="${item.dataListItemId}"
-                    data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}">
+            <button
+              class="button is-danger button--deleteItem"
+              data-data-list-key="${cityssm.escapeHTML(dataListKey)}"
+              data-data-list-item-id="${item.dataListItemId}"
+              data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+              type="button"
+            >
               <span class="icon">
                 <i class="fa-solid fa-trash"></i>
               </span>
@@ -66,9 +78,9 @@
             </button>
           </div>
         </td>
-      </tr>`;
+      `;
+            tbodyElement.append(tableRowElement);
         }
-        tbodyElement.innerHTML = html;
         // Re-attach event listeners
         attachEventListeners(dataListKey);
     }
@@ -90,26 +102,32 @@
             userGroupOptions += `<option value="${userGroup.userGroupId}">${cityssm.escapeHTML(userGroup.userGroupName)}</option>`;
         }
         bulmaJS.confirm({
-            title: `Add ${dataList.dataListName} Item`,
-            message: `<div class="field">
-        <label class="label">Item Name</label>
-        <div class="control">
-          <input class="input" id="input--newItem" type="text" required />
-        </div>
-      </div>
-      <div class="field">
-        <label class="label">User Group (Optional)</label>
-        <div class="control">
-          <div class="select is-fullwidth">
-            <select id="select--userGroup">
-              ${userGroupOptions}
-            </select>
+            contextualColorName: 'primary',
+            message: /* html */ `
+        <div class="field">
+          <label class="label">Item Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="input--newItem"
+              type="text"
+              required
+            />
           </div>
         </div>
-        <p class="help">If specified, only members of this user group will see this item.</p>
-      </div>`,
+        <div class="field">
+          <label class="label">User Group (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="select--userGroup">
+                ${userGroupOptions}
+              </select>
+            </div>
+          </div>
+          <p class="help">If specified, only members of this user group will see this item.</p>
+        </div>
+      `,
             messageIsHtml: true,
-            contextualColorName: 'primary',
             okButton: {
                 text: 'Add Item',
                 callbackFunction() {
@@ -123,7 +141,9 @@
                         return;
                     }
                     const userGroupIdValue = userGroupSelectElement.value;
-                    const userGroupId = userGroupIdValue ? Number.parseInt(userGroupIdValue) : null;
+                    const userGroupId = userGroupIdValue
+                        ? Number.parseInt(userGroupIdValue, 10)
+                        : null;
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, {
                         dataListKey,
                         dataListItem,
@@ -152,7 +172,8 @@
                         }
                     });
                 }
-            }
+            },
+            title: `Add ${dataList.dataListName} Item`
         });
         itemInputElement = document.querySelector('#input--newItem');
         userGroupSelectElement = document.querySelector('#select--userGroup');
@@ -178,30 +199,41 @@
         // Build user group options
         let userGroupOptions = '<option value="">None (Available to All)</option>';
         for (const userGroup of exports.userGroups) {
-            const selected = userGroupId && Number.parseInt(userGroupId) === userGroup.userGroupId ? 'selected' : '';
+            const selected = userGroupId &&
+                Number.parseInt(userGroupId, 10) === userGroup.userGroupId
+                ? 'selected'
+                : '';
             userGroupOptions += `<option value="${userGroup.userGroupId}" ${selected}>${cityssm.escapeHTML(userGroup.userGroupName)}</option>`;
         }
         bulmaJS.confirm({
+            contextualColorName: 'info',
             title: `Edit ${dataList.dataListName} Item`,
-            message: `<div class="field">
-        <label class="label">Item Name</label>
-        <div class="control">
-          <input class="input" id="input--editItem" type="text" value="${cityssm.escapeHTML(dataListItem)}" required />
-        </div>
-      </div>
-      <div class="field">
-        <label class="label">User Group (Optional)</label>
-        <div class="control">
-          <div class="select is-fullwidth">
-            <select id="select--editUserGroup">
-              ${userGroupOptions}
-            </select>
+            message: /* html */ `
+        <div class="field">
+          <label class="label">Item Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="input--editItem"
+              type="text"
+              value="${cityssm.escapeHTML(dataListItem)}"
+              required
+            />
           </div>
         </div>
-        <p class="help">If specified, only members of this user group will see this item.</p>
-      </div>`,
+        <div class="field">
+          <label class="label">User Group (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="select--editUserGroup">
+                ${userGroupOptions}
+              </select>
+            </div>
+          </div>
+          <p class="help">If specified, only members of this user group will see this item.</p>
+        </div>
+      `,
             messageIsHtml: true,
-            contextualColorName: 'info',
             okButton: {
                 text: 'Update Item',
                 callbackFunction() {
@@ -215,10 +247,12 @@
                         return;
                     }
                     const userGroupIdValue = userGroupSelectElement.value;
-                    const newUserGroupId = userGroupIdValue ? Number.parseInt(userGroupIdValue) : null;
+                    const newUserGroupId = userGroupIdValue
+                        ? Number.parseInt(userGroupIdValue, 10)
+                        : null;
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, {
                         dataListKey,
-                        dataListItemId: Number.parseInt(dataListItemId),
+                        dataListItemId: Number.parseInt(dataListItemId, 10),
                         dataListItem: newDataListItem,
                         userGroupId: newUserGroupId
                     }, (rawResponseJSON) => {
@@ -262,16 +296,16 @@
             return;
         }
         bulmaJS.confirm({
+            contextualColorName: 'warning',
             title: `Delete ${dataList.dataListName} Item`,
             message: `Are you sure you want to delete "${dataListItem}"? This action cannot be undone.`,
-            contextualColorName: 'warning',
             okButton: {
-                text: 'Delete Item',
                 contextualColorName: 'danger',
+                text: 'Delete Item',
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataListItem`, {
                         dataListKey,
-                        dataListItemId: Number.parseInt(dataListItemId)
+                        dataListItemId: Number.parseInt(dataListItemId, 10)
                     }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.items !== undefined) {
@@ -324,7 +358,7 @@
                     for (const row of rows) {
                         const dataListItemId = row.dataset.dataListItemId;
                         if (dataListItemId !== undefined) {
-                            dataListItemIds.push(Number.parseInt(dataListItemId));
+                            dataListItemIds.push(Number.parseInt(dataListItemId, 10));
                         }
                     }
                     // Send to server
