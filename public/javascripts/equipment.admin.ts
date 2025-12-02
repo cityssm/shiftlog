@@ -405,7 +405,7 @@ declare const exports: {
               type="button"
             >
               <span class="icon is-small">
-                <i class="fa-solid fa-edit"></i>
+                <i class="fa-solid fa-pencil"></i>
               </span>
               <span>Edit</span>
             </button>

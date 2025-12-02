@@ -45,10 +45,12 @@
           <th>Type Name</th>
           <th style="width: 150px;">Number Prefix</th>
           <th style="width: 180px;">User Group</th>
-          <th style="width: 200px;">Actions</th>
+          <th style="width: 200px;">
+            <span class="is-sr-only">Actions</span>
+          </th>
         </tr>
       </thead>
-      <tbody id="tbody--workOrderTypes" class="is-sortable">
+      <tbody class="is-sortable" id="tbody--workOrderTypes">
         <% if (workOrderTypes.length === 0) { %>
         <tr id="tr--noWorkOrderTypes">
           <td class="has-text-centered has-text-grey" colspan="5">
@@ -76,8 +78,8 @@
             <span class="has-text-grey-light">-</span>
             <% } %>
           </td>
-          <td>
-            <div class="buttons are-small">
+          <td class="has-text-right">
+            <div class="buttons are-small is-right">
               <button
                 class="button is-info button--editWorkOrderType" 
                 data-work-order-type-id="<%= workOrderType.workOrderTypeId %>"

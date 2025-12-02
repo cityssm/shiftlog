@@ -258,6 +258,13 @@ declare const exports: {
               currentPage = 1
               renderEmployeesWithPagination(responseJSON.employees)
             }
+
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'Employee Updated',
+
+              message: 'Employee has been successfully updated.'
+            })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',

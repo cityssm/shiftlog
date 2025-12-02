@@ -58,6 +58,7 @@
   </ul>
   <p class="menu-label">Lists</p>
   <ul class="menu-list">
+    <% if (configFunctions.getConfigProperty('workOrders.isEnabled')) { %>
     <li>
       <a
         class="<%= headTitle === configFunctions.getConfigProperty('workOrders.sectionNameSingular') + ' Type Maintenance' ? 'is-active' : '' %>"
@@ -76,6 +77,7 @@
         </div>
       </a>
     </li>
+    <% } %>
     <li>
       <a
         class="<%= headTitle === 'Data List Management' ? 'is-active' : '' %>"

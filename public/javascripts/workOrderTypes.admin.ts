@@ -92,8 +92,8 @@ declare const exports: {
         <td>
           ${userGroupDisplay}
         </td>
-        <td>
-          <div class="buttons are-small">
+        <td class="has-text-right">
+          <div class="buttons are-small is-right">
             <button
               class="button is-info button--editWorkOrderType"
               data-work-order-type-id="${workOrderType.workOrderTypeId}"
