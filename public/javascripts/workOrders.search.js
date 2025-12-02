@@ -1,4 +1,5 @@
 (() => {
+    const shiftLog = exports.shiftLog;
     const filtersFormElement = document.querySelector('#form--workOrderSearch');
     const offsetInputElement = document.querySelector('#workOrderSearch--offset');
     const resultsContainerElement = document.querySelector('#container--workOrderSearchResults');
@@ -69,7 +70,7 @@
                 : ''}
         </td>
         <td>
-          <a href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
+          <a href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a><br />
           <span class="is-size-7">
@@ -98,7 +99,7 @@
         <td class="is-hidden-print">
           <a
             class="button is-small is-info is-light"
-            href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}/print"
+            href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}/print"
             title="Print Work Order"
             target="_blank"
           >
@@ -110,9 +111,14 @@
         }
         resultsContainerElement.replaceChildren(tableElement);
         // Pagination
-        resultsContainerElement.append(exports.shiftLog.buildPaginationControls(data.totalCount, data.offset, data.limit, (pageNumber) => {
-            offsetInputElement.value = ((pageNumber - 1) * data.limit).toString();
-            getSearchResults();
+        resultsContainerElement.append(shiftLog.buildPaginationControls({
+            totalCount: data.totalCount,
+            currentPageOrOffset: data.offset,
+            itemsPerPageOrLimit: data.limit,
+            clickHandler: (pageNumber) => {
+                offsetInputElement.value = ((pageNumber - 1) * data.limit).toString();
+                getSearchResults();
+            }
         }));
     }
     function getSearchResults() {
@@ -123,7 +129,7 @@
         </span>
       </div>
     `;
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doSearchWorkOrders`, filtersFormElement, (rawResponseJSON) => {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`, filtersFormElement, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             renderWorkOrdersTable(responseJSON);
         });

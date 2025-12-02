@@ -39,10 +39,10 @@ export interface ShiftLogGlobal {
 
   initializeRecordTabs: (tabsContainerElement: HTMLElement) => void
 
-  buildPaginationControls: (
-    totalCount: number,
-    currentPageOrOffset: number,
-    itemsPerPageOrLimit: number,
+  buildPaginationControls: (options: {
+    totalCount: number
+    currentPageOrOffset: number
+    itemsPerPageOrLimit: number
     clickHandler: (pageNumber: number) => void
-  ) => HTMLElement
+  }) => HTMLElement
 }

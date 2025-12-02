@@ -88,15 +88,15 @@ declare const exports: {
     // Pagination
 
     searchResultsContainerElement.append(
-      shiftLog.buildPaginationControls(
-        data.totalCount,
-        data.offset,
-        data.limit,
-        (pageNumber) => {
+      shiftLog.buildPaginationControls({
+        totalCount: data.totalCount,
+        currentPageOrOffset: data.offset,
+        itemsPerPageOrLimit: data.limit,
+        clickHandler: (pageNumber) => {
           offsetElement.value = ((pageNumber - 1) * data.limit).toString()
           doSearch()
         }
-      )
+      })
     )
   }
 

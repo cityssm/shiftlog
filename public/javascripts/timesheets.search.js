@@ -51,9 +51,14 @@
         }
         searchResultsContainerElement.replaceChildren(tableElement);
         // Pagination
-        searchResultsContainerElement.append(shiftLog.buildPaginationControls(data.totalCount, data.offset, data.limit, (pageNumber) => {
-            offsetElement.value = ((pageNumber - 1) * data.limit).toString();
-            doSearch();
+        searchResultsContainerElement.append(shiftLog.buildPaginationControls({
+            totalCount: data.totalCount,
+            currentPageOrOffset: data.offset,
+            itemsPerPageOrLimit: data.limit,
+            clickHandler: (pageNumber) => {
+                offsetElement.value = ((pageNumber - 1) * data.limit).toString();
+                doSearch();
+            }
         }));
     }
     function doSearch() {

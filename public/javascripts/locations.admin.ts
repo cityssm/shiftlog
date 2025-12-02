@@ -411,12 +411,12 @@ declare const exports: {
 
     // Add pagination controls if needed
     if (locations.length > ITEMS_PER_PAGE) {
-      const paginationControls = shiftLog.buildPaginationControls(
-        locations.length,
-        currentPage,
-        ITEMS_PER_PAGE,
-        pageSelect
-      )
+      const paginationControls = shiftLog.buildPaginationControls({
+        totalCount: locations.length,
+        currentPageOrOffset: currentPage,
+        itemsPerPageOrLimit: ITEMS_PER_PAGE,
+        clickHandler: pageSelect
+      })
 
       locationsContainerElement.append(paginationControls)
     }

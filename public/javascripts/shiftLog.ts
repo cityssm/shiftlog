@@ -94,18 +94,21 @@ declare const exports: {
   /**
    * Build pagination controls for lists with page navigation
    * Shows up to 10 page links including current page and neighboring pages
-   * @param totalCount Total number of items
-   * @param currentPageOrOffset Current page number (1-indexed) or offset (0-indexed)
-   * @param itemsPerPageOrLimit Number of items per page or limit
-   * @param clickHandler Callback function that receives the page number (1-indexed)
+   * @param options Configuration object for pagination
+   * @param options.totalCount Total number of items
+   * @param options.currentPageOrOffset Current page number (1-indexed) or offset (0-indexed)
+   * @param options.itemsPerPageOrLimit Number of items per page or limit
+   * @param options.clickHandler Callback function that receives the page number (1-indexed)
    * @returns HTMLElement containing the pagination controls
    */
-  function buildPaginationControls(
-    totalCount: number,
-    currentPageOrOffset: number,
-    itemsPerPageOrLimit: number,
+  function buildPaginationControls(options: {
+    totalCount: number
+    currentPageOrOffset: number
+    itemsPerPageOrLimit: number
     clickHandler: (pageNumber: number) => void
-  ): HTMLElement {
+  }): HTMLElement {
+    const { totalCount, currentPageOrOffset, itemsPerPageOrLimit, clickHandler } = options
+    
     const paginationElement = document.createElement('nav')
     paginationElement.className = 'pagination is-centered mt-4'
     paginationElement.setAttribute('role', 'navigation')
@@ -113,10 +116,10 @@ declare const exports: {
 
     const totalPages = Math.ceil(totalCount / itemsPerPageOrLimit)
     
-    // Calculate current page - if currentPageOrOffset is greater than totalPages,
-    // it's likely an offset value, so calculate the page from it
+    // Calculate current page from either page number or offset
+    // If currentPageOrOffset is 0 or greater than totalPages, treat it as an offset
     const currentPage =
-      currentPageOrOffset > totalPages
+      currentPageOrOffset === 0 || currentPageOrOffset > totalPages
         ? Math.floor(currentPageOrOffset / itemsPerPageOrLimit) + 1
         : currentPageOrOffset
 

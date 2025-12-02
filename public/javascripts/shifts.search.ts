@@ -10,6 +10,8 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 }
 ;(() => {
+  const shiftLog = exports.shiftLog
+
   const filtersFormElement = document.querySelector(
     '#form--shiftSearch'
   ) as HTMLFormElement
@@ -57,7 +59,7 @@ declare const exports: {
 
       tableRowElement.innerHTML = /* html */ `
         <td>
-          <a href="${exports.shiftLog.buildShiftURL(shift.shiftId)}">
+          <a href="${shiftLog.buildShiftURL(shift.shiftId)}">
             ${cityssm.escapeHTML(shift.shiftId.toString())}
           </a>
         </td>
@@ -77,15 +79,15 @@ declare const exports: {
     // Pagination
 
     resultsContainerElement.append(
-      exports.shiftLog.buildPaginationControls(
-        data.totalCount,
-        data.offset,
-        data.limit,
-        (pageNumber) => {
+      shiftLog.buildPaginationControls({
+        totalCount: data.totalCount,
+        currentPageOrOffset: data.offset,
+        itemsPerPageOrLimit: data.limit,
+        clickHandler: (pageNumber) => {
           offsetInputElement.value = ((pageNumber - 1) * data.limit).toString()
           getSearchResults()
         }
-      )
+      })
     )
   }
 
@@ -99,7 +101,7 @@ declare const exports: {
     `
 
     cityssm.postJSON(
-      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doSearchShifts`,
+      `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doSearchShifts`,
       filtersFormElement,
       (rawResponseJSON) => {
         const responseJSON =

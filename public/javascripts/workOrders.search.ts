@@ -10,6 +10,8 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 }
 ;(() => {
+  const shiftLog = exports.shiftLog
+
   const filtersFormElement = document.querySelector(
     '#form--workOrderSearch'
   ) as HTMLFormElement
@@ -102,7 +104,7 @@ declare const exports: {
           }
         </td>
         <td>
-          <a href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
+          <a href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a><br />
           <span class="is-size-7">
@@ -131,7 +133,7 @@ declare const exports: {
         <td class="is-hidden-print">
           <a
             class="button is-small is-info is-light"
-            href="${exports.shiftLog.buildWorkOrderURL(workOrder.workOrderId)}/print"
+            href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}/print"
             title="Print Work Order"
             target="_blank"
           >
@@ -148,15 +150,15 @@ declare const exports: {
     // Pagination
 
     resultsContainerElement.append(
-      exports.shiftLog.buildPaginationControls(
-        data.totalCount,
-        data.offset,
-        data.limit,
-        (pageNumber) => {
+      shiftLog.buildPaginationControls({
+        totalCount: data.totalCount,
+        currentPageOrOffset: data.offset,
+        itemsPerPageOrLimit: data.limit,
+        clickHandler: (pageNumber) => {
           offsetInputElement.value = ((pageNumber - 1) * data.limit).toString()
           getSearchResults()
         }
-      )
+      })
     )
   }
 
@@ -170,7 +172,7 @@ declare const exports: {
     `
 
     cityssm.postJSON(
-      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doSearchWorkOrders`,
+      `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`,
       filtersFormElement,
       (rawResponseJSON) => {
         const responseJSON =

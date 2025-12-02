@@ -341,12 +341,12 @@ declare const exports: {
 
     // Add pagination controls if needed
     if (equipmentList.length > ITEMS_PER_PAGE) {
-      const paginationControls = shiftLog.buildPaginationControls(
-        equipmentList.length,
-        currentPage,
-        ITEMS_PER_PAGE,
-        pageSelect
-      )
+      const paginationControls = shiftLog.buildPaginationControls({
+        totalCount: equipmentList.length,
+        currentPageOrOffset: currentPage,
+        itemsPerPageOrLimit: ITEMS_PER_PAGE,
+        clickHandler: pageSelect
+      })
 
       equipmentContainerElement.append(paginationControls)
     }

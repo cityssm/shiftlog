@@ -1,4 +1,5 @@
 (() => {
+    const shiftLog = exports.shiftLog;
     const filtersFormElement = document.querySelector('#form--shiftSearch');
     const offsetInputElement = document.querySelector('#searchSearch--offset');
     const resultsContainerElement = document.querySelector('#container--shiftSearchResults');
@@ -30,7 +31,7 @@
             const tableRowElement = document.createElement('tr');
             tableRowElement.innerHTML = /* html */ `
         <td>
-          <a href="${exports.shiftLog.buildShiftURL(shift.shiftId)}">
+          <a href="${shiftLog.buildShiftURL(shift.shiftId)}">
             ${cityssm.escapeHTML(shift.shiftId.toString())}
           </a>
         </td>
@@ -45,9 +46,14 @@
         }
         resultsContainerElement.replaceChildren(tableElement);
         // Pagination
-        resultsContainerElement.append(exports.shiftLog.buildPaginationControls(data.totalCount, data.offset, data.limit, (pageNumber) => {
-            offsetInputElement.value = ((pageNumber - 1) * data.limit).toString();
-            getSearchResults();
+        resultsContainerElement.append(shiftLog.buildPaginationControls({
+            totalCount: data.totalCount,
+            currentPageOrOffset: data.offset,
+            itemsPerPageOrLimit: data.limit,
+            clickHandler: (pageNumber) => {
+                offsetInputElement.value = ((pageNumber - 1) * data.limit).toString();
+                getSearchResults();
+            }
         }));
     }
     function getSearchResults() {
@@ -58,7 +64,7 @@
         </span>
       </div>
     `;
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doSearchShifts`, filtersFormElement, (rawResponseJSON) => {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doSearchShifts`, filtersFormElement, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             renderShiftsTable(responseJSON);
         });
