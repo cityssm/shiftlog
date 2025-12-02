@@ -1,10 +1,10 @@
-import { testUpdate } from '../../../test/_globals.js'
+import { testInquiry } from '../../../test/_globals.js'
 import { login, logout } from '../../support/index.js'
 
-describe('Admin - Reports', () => {
+describe('Reports', () => {
   beforeEach('Loads page', () => {
     logout()
-    login(testUpdate)
+    login(testInquiry)
     cy.visit('/dashboard/reports')
     cy.location('pathname').should('equal', '/dashboard/reports')
   })
