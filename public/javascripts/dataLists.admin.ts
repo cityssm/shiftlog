@@ -99,8 +99,8 @@ declare const exports: {
         <td>
           ${userGroupDisplay}
         </td>
-        <td>
-          <div class="buttons are-small">
+        <td class="has-text-right">
+          <div class="buttons are-small is-right">
             <button class="button is-info button--editItem" 
                     type="button"
                     data-data-list-key="${dataListKey}"

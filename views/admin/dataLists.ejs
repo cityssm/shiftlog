@@ -33,36 +33,31 @@
     <% for (const dataList of dataLists) { %>
     <details class="panel mb-5 collapsable-panel" data-data-list-key="<%= dataList.dataListKey %>">
       <summary class="panel-heading is-clickable" style="cursor: pointer;">
-        <div class="columns is-vcentered is-mobile">
-          <div class="column">
-            <span class="icon-text">
-              <span class="icon">
-                <i class="fa-solid fa-chevron-right details-chevron"></i>
-              </span>
-              <span class="has-text-weight-semibold mr-2">
-                <%= dataList.dataListName %>
-              </span>
-              <span class="tag is-rounded" id="itemCount--<%= dataList.dataListKey %>">
-                <%= dataList.items.length %>
-              </span>
-            </span>
-          </div>
-          <div class="column is-narrow">
-            <button
-              class="button is-primary is-small button--addItem" 
-              data-data-list-key="<%= dataList.dataListKey %>"
-              type="button"
-              onclick="event.stopPropagation();"
-            >
-              <span class="icon">
-                <i class="fa-solid fa-plus"></i>
-              </span>
-              <span>Add Item</span>
-            </button>
-          </div>
-        </div>
+        <span class="icon-text">
+          <span class="icon">
+            <i class="fa-solid fa-chevron-right details-chevron"></i>
+          </span>
+          <span class="has-text-weight-semibold mr-2">
+            <%= dataList.dataListName %>
+          </span>
+          <span class="tag is-rounded" id="itemCount--<%= dataList.dataListKey %>">
+            <%= dataList.items.length %>
+          </span>
+        </span>
       </summary>
+      <div class="panel-block is-justify-content-flex-end">
+        <button
+          class="button is-primary is-small button--addItem" 
+          data-data-list-key="<%= dataList.dataListKey %>"
+          type="button"
+        >
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Add Item</span>
+        </button>
 
+      </div>
       <div class="panel-block p-0">
         <div class="table-container" style="width: 100%;">
           <table class="table is-striped is-hoverable is-fullwidth mb-0">
@@ -71,7 +66,9 @@
                 <th style="width: 60px;">Order</th>
                 <th>Item</th>
                 <th style="width: 180px;">User Group</th>
-                <th style="width: 200px;">Actions</th>
+                <th>
+                  <span class="is-sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody class="is-sortable" id="dataListItems--<%= dataList.dataListKey %>">
@@ -104,8 +101,8 @@
                   <span class="has-text-grey-light">-</span>
                   <% } %>
                 </td>
-                <td>
-                  <div class="buttons are-small">
+                <td class="has-text-right">
+                  <div class="buttons are-small is-right">
                     <button
                       class="button is-info button--editItem" 
                       data-data-list-key="<%= dataList.dataListKey %>"
