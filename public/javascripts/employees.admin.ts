@@ -107,7 +107,7 @@ declare const exports: {
 
     // Find the employee in the current employees list
     const employee = exports.employees.find(
-      (employee) => employee.employeeNumber === employeeNumber
+      (possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber
     )
 
     if (employee === undefined) {

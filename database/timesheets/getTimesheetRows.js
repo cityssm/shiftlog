@@ -4,10 +4,12 @@ export default async function getTimesheetRows(timesheetId, filters) {
     const pool = await getShiftLogConnectionPool();
     let whereClause = 'where tr.instance = @instance and tr.timesheetId = @timesheetId';
     if (filters?.employeeNumberFilter) {
-        whereClause += ` and (tr.employeeNumber = @employeeNumberFilter or e.firstName + ' ' + e.lastName like '%' + @employeeNumberFilter + '%')`;
+        whereClause +=
+            " and (tr.employeeNumber = @employeeNumberFilter or e.firstName + ' ' + e.lastName like '%' + @employeeNumberFilter + '%')";
     }
     if (filters?.equipmentNumberFilter) {
-        whereClause += ` and (tr.equipmentNumber = @equipmentNumberFilter or eq.equipmentName like '%' + @equipmentNumberFilter + '%')`;
+        whereClause +=
+            " and (tr.equipmentNumber = @equipmentNumberFilter or eq.equipmentName like '%' + @equipmentNumberFilter + '%')";
     }
     if (filters?.onlyEmployees) {
         whereClause += ' and tr.employeeNumber is not null';

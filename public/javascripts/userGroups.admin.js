@@ -109,21 +109,23 @@
         if (userGroup === undefined) {
             return;
         }
-        let closeModalFunction;
+        // let closeModalFunction: () => void
         let currentMembers = [];
-        function refreshMembers() {
-            fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
-                .then(async (response) => await response.json())
-                .then((responseJSON) => {
-                if (responseJSON.userGroup !== undefined) {
-                    currentMembers = responseJSON.userGroup.members ?? [];
-                    renderMembersList();
-                }
+        /*
+        function refreshMembers(): void {
+          fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
+            .then(async (response) => await response.json())
+            .then((responseJSON: { userGroup?: UserGroup }) => {
+              if (responseJSON.userGroup !== undefined) {
+                currentMembers = responseJSON.userGroup.members ?? []
+                renderMembersList()
+              }
             })
-                .catch(() => {
-                // Error handling
-            });
+            .catch(() => {
+              // Error handling
+            })
         }
+        */
         function renderMembersList() {
             const modalElement = document.querySelector('.modal.is-active');
             const membersContainer = modalElement.querySelector('#container--members');
@@ -133,7 +135,7 @@
                 return;
             }
             const listHtml = currentMembers
-                .map((userName) => /*html*/ `
+                .map((userName) => /* html */ `
             <div class="field is-grouped">
               <div class="control is-expanded">
                 <input
@@ -154,6 +156,7 @@
             </div>
           `)
                 .join('');
+            // eslint-disable-next-line no-unsanitized/property
             membersContainer.innerHTML = listHtml;
             // Add event listeners for remove buttons
             const removeButtons = membersContainer.querySelectorAll('.remove-member');
@@ -204,8 +207,8 @@
                 }
             });
         }
-        function removeMember(clickEvent) {
-            const removeButton = clickEvent.currentTarget;
+        function removeMember(removeMemberClickEvent) {
+            const removeButton = removeMemberClickEvent.currentTarget;
             const userName = removeButton.dataset.userName;
             if (userName === undefined) {
                 return;
@@ -249,14 +252,15 @@
                 modalElement.querySelector('#span--groupName').textContent = userGroup.userGroupName;
                 // Populate user dropdown
                 const userSelect = modalElement.querySelector('[name="userName"]');
+                // eslint-disable-next-line no-unsanitized/property
                 userSelect.innerHTML =
                     '<option value="">Select a user...</option>' +
                         exports.users
                             .map((user) => /*html*/ `
-                  <option value="${cityssm.escapeHTML(user.userName)}">
-                    ${cityssm.escapeHTML(user.userName)}
-                  </option>
-                `)
+                <option value="${cityssm.escapeHTML(user.userName)}">
+                  ${cityssm.escapeHTML(user.userName)}
+                </option>
+              `)
                             .join('');
                 // Get current members
                 fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
@@ -273,7 +277,7 @@
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
-                closeModalFunction = _closeModalFunction;
+                // closeModalFunction = _closeModalFunction
                 modalElement
                     .querySelector('#form--addMember')
                     ?.addEventListener('submit', addMember);
@@ -329,15 +333,15 @@
     function renderUserGroups(userGroups) {
         if (userGroups.length === 0) {
             userGroupsContainerElement.innerHTML = /* html */ `
-          <div class="message is-info">
-            <div class="message-body">No user groups found.</div>
-          </div>
-        `;
+        <div class="message is-info">
+          <div class="message-body">No user groups found.</div>
+        </div>
+      `;
             return;
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        tableElement.innerHTML = /*html*/ `
+        tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
           <th>Group Name</th>

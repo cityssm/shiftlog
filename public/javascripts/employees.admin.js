@@ -61,7 +61,7 @@
             return;
         }
         // Find the employee in the current employees list
-        const employee = exports.employees.find((employee) => employee.employeeNumber === employeeNumber);
+        const employee = exports.employees.find((possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber);
         if (employee === undefined) {
             return;
         }
