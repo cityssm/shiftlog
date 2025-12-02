@@ -219,7 +219,7 @@ The Employee Management section maintains a list of employees that can be associ
 3. Click the **Delete** button
 4. Confirm the deletion
 
-**Note**: Employees that are referenced in existing records may not be deletable.
+**Note**: Employees that are referenced in existing records cannot be deleted.
 
 ---
 

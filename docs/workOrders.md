@@ -257,7 +257,7 @@ Attachments allow you to add supporting documents, photos, and files to work ord
 
 The Work Order Map provides a visual, geographic view of work orders.
 
-![Work Order Map](./images/workOrders-map.png)
+![Work Order Map showing geographic distribution of work orders with colored markers](./images/workOrders-map.png)
 
 ### Accessing the Map
 
