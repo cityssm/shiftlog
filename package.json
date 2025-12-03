@@ -23,9 +23,15 @@
     "cy:run": "cypress run --config-file cypress.config.js",
     "cy:run:firefox": "cypress run --config-file cypress.config.js --browser firefox",
     "dev": "cross-env NODE_ENV=development DEBUG=shiftlog:* nodemon ./index.js",
+    "dev:graffiti": "cross-env NODE_ENV=development DEBUG=shiftlog:* nodemon ./index.js -- --config data/graffiti.config.js",
     "start": "cross-env NODE_ENV=production node ./index.js",
+    "start:graffiti": "cross-env NODE_ENV=production node ./index.js --config data/graffiti.config.js",
     "test": "cross-env NODE_ENV=development DEBUG=shiftlog:* TEST_DATABASES=true node --test --test-concurrency 1",
-    "test:startup": "cross-env NODE_ENV=development DEBUG=shiftlog:* TEST_DATABASES=true STARTUP_TEST=true node ./index.js"
+    "test:startup": "cross-env NODE_ENV=development DEBUG=shiftlog:* TEST_DATABASES=true STARTUP_TEST=true node ./index.js",
+    "windows:install": "node ./windowsService-install.js",
+    "windows:install:graffiti": "node ./windowsService-install.js --config data/graffiti.config.js",
+    "windows:uninstall": "node ./windowsService-uninstall.js",
+    "windows:uninstall:graffiti": "node ./windowsService-uninstall.js --config data/graffiti.config.js"
   },
   "dependencies": {
     "@cacheable/node-cache": "^1.7.5",
