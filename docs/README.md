@@ -6,8 +6,6 @@
 
 ![ShiftLog Login](./images/login.png)
 
-**Coming Soon**
-
 ## ⚠️ Important Note
 
 ShiftLog supports the ability to define aliases for sections,
@@ -37,3 +35,9 @@ the shift.
 
 [**Timesheets**](./timesheets.md)<br />
 Record hours for employees and equipment.
+
+## Administrator Documentation
+
+[**Administrator Tools**](./admin.md)<br />
+Front-end tools for adding users, maintaining lists, and configuring other aspects
+of ShiftLog.
