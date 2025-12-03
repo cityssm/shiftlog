@@ -8,6 +8,7 @@ config.login = {
         config: {
             users: {
                 'domain\\~administrator': '~administrator',
+                'domain\\~testinquiry': '~testinquiry',
                 'domain\\~testuser': '~testuser'
             }
         }
