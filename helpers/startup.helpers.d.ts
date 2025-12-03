@@ -3,13 +3,13 @@
  */
 export declare const REQUIRED_SYSTEM_LISTS: {
     readonly equipmentTypes: "Equipment Types";
-    readonly assignedTo: "Assigned To";
-    readonly workOrderStatuses: "Work Order Statuses";
-    readonly shiftTimes: "Shift Times";
-    readonly shiftTypes: "Shift Types";
-    readonly jobClassifications: "Job Classifications";
-    readonly timeCodes: "Time Codes";
-    readonly timesheetTypes: "Timesheet Types";
+    readonly assignedTo: "Work Orders - Assigned To";
+    readonly workOrderStatuses: "Work Orders - Statuses";
+    readonly shiftTimes: "Shifts - Times";
+    readonly shiftTypes: "Shifts - Types";
+    readonly jobClassifications: "Timesheets - Job Classifications";
+    readonly timeCodes: "Timesheets - Time Codes";
+    readonly timesheetTypes: "Timesheets - Types";
 };
 /**
  * Validates that all required system lists exist in the DataLists table.

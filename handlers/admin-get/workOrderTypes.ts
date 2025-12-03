@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 
 import getUserGroups from '../../database/users/getUserGroups.js'
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { availableWorkOrderMoreInfoForms } from '../../helpers/workOrderMoreInfoForms.helpers.js'
 
 export default async function handler(
@@ -13,7 +14,7 @@ export default async function handler(
 
   response.render('admin/workOrderTypes', {
     availableWorkOrderMoreInfoForms,
-    headTitle: 'Work Order Type Maintenance',
+    headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} Type Maintenance`,
     userGroups,
     workOrderTypes
   })

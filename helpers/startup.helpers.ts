@@ -12,15 +12,15 @@ const debug = Debug(`${DEBUG_NAMESPACE}:startup`)
 export const REQUIRED_SYSTEM_LISTS = {
   equipmentTypes: 'Equipment Types',
 
-  assignedTo: 'Assigned To',
-  workOrderStatuses: 'Work Order Statuses',
+  assignedTo: 'Work Orders - Assigned To',
+  workOrderStatuses: 'Work Orders - Statuses',
 
-  shiftTimes: 'Shift Times',
-  shiftTypes: 'Shift Types',
+  shiftTimes: 'Shifts - Times',
+  shiftTypes: 'Shifts - Types',
 
-  jobClassifications: 'Job Classifications',
-  timeCodes: 'Time Codes',
-  timesheetTypes: 'Timesheet Types'
+  jobClassifications: 'Timesheets - Job Classifications',
+  timeCodes: 'Timesheets - Time Codes',
+  timesheetTypes: 'Timesheets - Types'
 } as const
 
 /**
@@ -46,10 +46,12 @@ export async function validateSystemLists(): Promise<void> {
   for (const missingKey of missingSystemLists) {
     const listName =
       REQUIRED_SYSTEM_LISTS[missingKey as keyof typeof REQUIRED_SYSTEM_LISTS]
+
     debug(
       `Missing required system list: ${missingKey} (${listName}), creating...`
     )
 
+    // eslint-disable-next-line no-await-in-loop
     await createDataList(
       {
         dataListKey: missingKey,
@@ -60,5 +62,7 @@ export async function validateSystemLists(): Promise<void> {
     )
   }
 
-  debug(`All ${Object.keys(REQUIRED_SYSTEM_LISTS).length} required system lists are present`)
+  debug(
+    `All ${Object.keys(REQUIRED_SYSTEM_LISTS).length} required system lists are present`
+  )
 }

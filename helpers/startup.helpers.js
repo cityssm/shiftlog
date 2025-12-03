@@ -8,13 +8,13 @@ const debug = Debug(`${DEBUG_NAMESPACE}:startup`);
  */
 export const REQUIRED_SYSTEM_LISTS = {
     equipmentTypes: 'Equipment Types',
-    assignedTo: 'Assigned To',
-    workOrderStatuses: 'Work Order Statuses',
-    shiftTimes: 'Shift Times',
-    shiftTypes: 'Shift Types',
-    jobClassifications: 'Job Classifications',
-    timeCodes: 'Time Codes',
-    timesheetTypes: 'Timesheet Types'
+    assignedTo: 'Work Orders - Assigned To',
+    workOrderStatuses: 'Work Orders - Statuses',
+    shiftTimes: 'Shifts - Times',
+    shiftTypes: 'Shifts - Types',
+    jobClassifications: 'Timesheets - Job Classifications',
+    timeCodes: 'Timesheets - Time Codes',
+    timesheetTypes: 'Timesheets - Types'
 };
 /**
  * Validates that all required system lists exist in the DataLists table.
@@ -31,6 +31,7 @@ export async function validateSystemLists() {
     for (const missingKey of missingSystemLists) {
         const listName = REQUIRED_SYSTEM_LISTS[missingKey];
         debug(`Missing required system list: ${missingKey} (${listName}), creating...`);
+        // eslint-disable-next-line no-await-in-loop
         await createDataList({
             dataListKey: missingKey,
             dataListName: listName,

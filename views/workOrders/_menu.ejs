@@ -2,7 +2,7 @@
 const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
 %>
 <aside class="menu">
-  <p class="menu-label"><%= configFunctions.getConfigProperty('workOrders.sectionName') %></p>
+  <p class="menu-label is-hidden-touch"><%= configFunctions.getConfigProperty('workOrders.sectionName') %></p>
   <ul class="menu-list">
     <li>
       <a
@@ -71,7 +71,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
     </li>
     <% } %>
   </ul>
-  <p class="menu-label">Links</p>
+  <p class="menu-label is-hidden-touch">Links</p>
   <ul class="menu-list">
     <li>
       <a

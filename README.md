@@ -57,52 +57,6 @@ To start the application in development mode with hot reloading:
 npm run dev
 ```
 
-### Custom Configuration File
-
-You can specify a custom configuration file path using the `--config` parameter:
-
-```bash
-# Using a relative path
-npm start -- --config ./path/to/custom-config.js
-
-# Using an absolute path
-npm start -- --config /absolute/path/to/custom-config.js
-```
-
-The same applies to the development mode:
-
-```bash
-npm run dev -- --config ./path/to/custom-config.js
-```
-
-Alternatively, you can set the `CONFIG_FILE` environment variable:
-
-```bash
-CONFIG_FILE=./path/to/custom-config.js npm start
-```
-
-### Windows Service Installation
-
-When installing ShiftLog as a Windows service, you can also specify a custom config file:
-
-```bash
-# Install with default config (data/config.js)
-node windowsService-install.js
-
-# Install with custom config
-node windowsService-install.js --config ./path/to/custom-config.js
-```
-
-To uninstall:
-
-```bash
-# Uninstall service installed with default config
-node windowsService-uninstall.js
-
-# Uninstall service installed with custom config
-node windowsService-uninstall.js --config ./path/to/custom-config.js
-```
-
 ## About this Project
 
 - 📘 [Documentation](./docs/README.md) (Coming Soon)
