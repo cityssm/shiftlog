@@ -15,18 +15,6 @@ import { initializeTasks } from './tasks/taskInitializer.js'
 import type { WorkerMessage } from './types/application.types.js'
 import version from './version.js'
 
-/*
- * Parse command line arguments for --config parameter
- */
-const configArgIndex = process.argv.indexOf('--config')
-if (configArgIndex !== -1 && process.argv[configArgIndex + 1] !== undefined) {
-  const configPath = process.argv[configArgIndex + 1]
-  // Resolve relative paths from current working directory
-  process.env.CONFIG_FILE = configPath.startsWith('/')
-    ? configPath
-    : path.resolve(process.cwd(), configPath)
-}
-
 const debug = Debug(`${DEBUG_NAMESPACE}:index`)
 
 let doShutdown = false
