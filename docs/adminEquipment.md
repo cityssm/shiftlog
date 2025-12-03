@@ -6,34 +6,36 @@
 
 # Equipment Management
 
-The Equipment Management section maintains a list of equipment (vehicles, tools, etc.) that can be associated with work orders and shifts.
+The Equipment Management section maintains a list of equipment
+(vehicles, tools, etc.) that can be associated with work orders, shifts, and timesheets.
 
 ![Equipment Management](./images/adminEquipment.png)
 
 ## Adding Equipment
 
-1. Navigate to **Administrator Tools** > **Equipment**
-2. Click the **Add Equipment** button
+1. Navigate to **Administrator Tools** > **Equipment**.
+2. Click the **Add Equipment** button.
 3. Enter equipment information:
    - Equipment name/number
    - Type/category
    - Description
-   - Other relevant details
-4. Click **Save** to add the equipment
+4. Click **Add Equipment** to add the equipment.
 
 ## Editing Equipment
 
-1. Navigate to **Administrator Tools** > **Equipment**
-2. Click on the equipment you want to edit
-3. Update the information as needed
-4. Click **Save** to apply changes
+**Note:** Edits to synced equipment make be overwritten by the syncing process.
+
+1. Navigate to **Administrator Tools** > **Equipment**.
+2. Click on the equipment you want to edit.
+3. Update the information as needed.
+4. Click **Update Equipment** to apply changes.
 
 ## Deleting Equipment
 
-1. Navigate to **Administrator Tools** > **Equipment**
-2. Click on the equipment you want to delete
-3. Click the **Delete** button
-4. Confirm the deletion
+1. Navigate to **Administrator Tools** > **Equipment**.
+2. Find the equipment you want to delete.
+3. Click the **Delete** button.
+4. Confirm the deletion.
 
 ---
 

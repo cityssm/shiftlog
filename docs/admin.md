@@ -4,7 +4,9 @@
 
 # Administrator Tools
 
-The Administrator Tools provide comprehensive management capabilities for configuring and maintaining your ShiftLog installation. Access to these tools requires administrator permissions.
+The Administrator Tools provide comprehensive management capabilities for
+configuring and maintaining your ShiftLog installation. Access to these tools
+requires administrator permissions.
 
 ## Administration
 
@@ -12,7 +14,7 @@ The Administrator Tools provide comprehensive management capabilities for config
   Create, edit, and manage user accounts and permissions.
 
 - [**User Group Management**](./adminUserGroups.md)<br />
-  Organize users into logical groups for easier management and reporting.
+  Organize users into logical groups for easier more granular permissions.
 
 - [**Application Settings**](./adminSettings.md)<br />
   Configure system-wide options and customize the application.
@@ -40,21 +42,22 @@ The Administrator Tools provide comprehensive management capabilities for config
 
 ### Regular Maintenance
 
-- Review and update user permissions regularly
-- Remove inactive users and equipment
-- Keep data lists current and relevant
-- Archive or delete obsolete work order types
+- Review and update user permissions regularly.
+- Remove inactive users and equipment.
+- Keep data lists current and relevant.
+- Archive or delete obsolete work order types.
 
 ### Data Consistency
 
-- Use descriptive names for all entities
-- Maintain consistent naming conventions
-- Document custom settings and configurations
-- Train users on proper data entry procedures
+- Use descriptive names for all entities.
+- Never change the meaning of list items when updating them.
+- Maintain consistent naming conventions.
+- Document custom settings and configurations.
+- Train users on proper data entry procedures.
 
 ### Security
 
-- Use strong passwords for user accounts
-- Assign minimum necessary permissions
-- Regularly audit user access and activities
-- Keep the application and integrations up to date
+- Use strong passwords for user accounts.
+- Assign minimum necessary permissions.
+- Regularly audit user access and activities.
+- Keep the application and integrations up to date.

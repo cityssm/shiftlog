@@ -6,36 +6,38 @@
 
 # Employee Management
 
-The Employee Management section maintains a list of employees that can be associated with work orders, shifts, and timesheets.
+The Employee Management section maintains a list of employees that can
+be associated with work orders, shifts, and timesheets.
 
 ![Employee Management](./images/adminEmployees.png)
 
 ## Adding an Employee
 
-1. Navigate to **Administrator Tools** > **Employees**
-2. Click the **Add Employee** button
+1. Navigate to **Administrator Tools** > **Employees**.
+2. Click the **Add Employee** button.
 3. Enter employee information:
    - Employee name
    - Employee number or ID
-   - Department
-   - Other relevant details
-4. Click **Save** to add the employee
+4. Click **Save** to add the employee.
 
 ## Editing Employee Information
 
-1. Navigate to **Administrator Tools** > **Employees**
-2. Click on the employee you want to edit
-3. Update the information as needed
-4. Click **Save** to apply changes
+**Note:** Edits to synced employees may be overwritten by the syncing process.
+
+1. Navigate to **Administrator Tools** > **Employees**.
+2. Click on the employee you want to edit.
+3. Update the information as needed.
+4. Click **Save** to apply changes.
 
 ## Deleting an Employee
 
-1. Navigate to **Administrator Tools** > **Employees**
-2. Click on the employee you want to delete
-3. Click the **Delete** button
-4. Confirm the deletion
+**Note**: Deleting an employee will not modify past records for the employee.
+It will only make them unavailable for future records.
 
-**Note**: Employees that are referenced in existing records cannot be deleted.
+1. Navigate to **Administrator Tools** > **Employees**.
+2. Find the employee you want to delete.
+3. Click the **Delete** button.
+4. Confirm the deletion.
 
 ---
 

@@ -38,4 +38,6 @@ Record hours for employees and equipment.
 
 ## Administrator Documentation
 
-[**Administrator Tools**](./admin.md)
+[**Administrator Tools**](./admin.md)<br />
+Front-end tools for adding users, maintaining lists, and configuring other aspects
+of ShiftLog.

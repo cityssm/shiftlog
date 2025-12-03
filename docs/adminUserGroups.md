@@ -6,31 +6,33 @@
 
 # User Group Management
 
-User Groups allow you to organize users into logical groups for easier management and reporting.
+User Groups allow you to organize users into logical groups for more granular permissions.
+
+For example:
+
+- If a work order type has a user group associated with it,
+  only users that are part of that user group can access those work orders.
+
+- If a piece of equipment has a user group associated with it,
+  only users that are part of that user group can **add** the equipment to
+  their records.
 
 ![User Group Management](./images/adminUserGroups.png)
 
 ## Creating a User Group
 
-1. Navigate to **Administrator Tools** > **User Groups**
-2. Click the **Add User Group** button
-3. Enter the group name and description
-4. Click **Save** to create the group
+1. Navigate to **Administrator Tools** > **User Groups**.
+2. Click the **Add User Group** button.
+3. Enter the group name and description.
+4. Click **Add User Group** to create the group.
 
 ## Adding Members to a User Group
 
-1. Navigate to **Administrator Tools** > **User Groups**
-2. Click on the user group
-3. Click **Add Member**
-4. Select the user from the list
-5. Click **Add** to include them in the group
-
-## Managing User Groups
-
-User groups can be used to:
-- Organize users by department or role
-- Filter and report on activities by group
-- Manage permissions collectively
+1. Navigate to **Administrator Tools** > **User Groups**.
+2. Find the user group.
+3. Click **Members**.
+4. Select the user from the list.
+5. Click **Add** to include them in the group.
 
 ---
 

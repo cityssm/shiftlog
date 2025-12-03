@@ -6,42 +6,34 @@
 
 # Location Management
 
-The Location Management section maintains predefined locations that can be quickly selected when creating work orders and other records.
+The Location Management section maintains predefined locations that can be
+quickly selected when creating work orders.
 
 ![Location Management](./images/adminLocations.png)
 
 ## Adding a Location
 
-1. Navigate to **Administrator Tools** > **Locations**
-2. Click the **Add Location** button
+1. Navigate to **Administrator Tools** > **Locations**.
+2. Click the **Add Location** button.
 3. Enter location information:
    - Location name
    - Address
    - Coordinates (optional)
-   - Description
-4. Click **Save** to add the location
+4. Click **Add Location** to add the location.
 
 ## Editing Locations
 
-1. Navigate to **Administrator Tools** > **Locations**
-2. Click on the location you want to edit
-3. Update the information as needed
-4. Click **Save** to apply changes
+1. Navigate to **Administrator Tools** > **Locations**.
+2. Click on the location you want to edit.
+3. Update the information as needed.
+4. Click **Update Location** to apply changes.
 
 ## Deleting Locations
 
-1. Navigate to **Administrator Tools** > **Locations**
-2. Click on the location you want to delete
-3. Click the **Delete** button
-4. Confirm the deletion
-
-## Location Integration
-
-Locations can be:
-- Displayed on maps
-- Auto-suggested during work order creation
-- Used for reporting and analysis
-- Integrated with mapping services
+1. Navigate to **Administrator Tools** > **Locations**.
+2. Find the location you want to delete.
+3. Click the **Delete** button.
+4. Confirm the deletion.
 
 ---
 
