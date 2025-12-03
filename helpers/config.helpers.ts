@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 import { Configurator } from '@cityssm/configurator'
 import { secondsToMillis } from '@cityssm/to-millis'
@@ -40,8 +40,11 @@ const configPath =
 
 debug(`Loading configuration from: ${configPath}`)
 
+// Convert absolute path to file URL for dynamic import (required for Windows compatibility)
+const configUrl = pathToFileURL(configPath).href
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, no-unsanitized/method
-const { config } = await import(configPath)
+const { config } = await import(configUrl)
 
 const configurator = new Configurator(
   configDefaultValues,
