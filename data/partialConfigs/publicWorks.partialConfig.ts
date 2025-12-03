@@ -12,18 +12,14 @@ config.session.doKeepAlive = true
 
 config.shifts = {
   isEnabled: true,
-  sectionName: 'SHifts',
-  sectionNameSingular: 'SHift'
-}
-
-config.workOrders = {
-  isEnabled: false
+  sectionName: 'Shifts',
+  sectionNameSingular: 'Shift'
 }
 
 config.timesheets = {
   isEnabled: true,
-  sectionName: 'TiMesheets',
-  sectionNameSingular: 'TiMesheet'
+  sectionName: 'Timesheets',
+  sectionNameSingular: 'Timesheet'
 }
 
 export default config

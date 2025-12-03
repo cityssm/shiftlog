@@ -12,6 +12,10 @@ config.reverseProxy = {
   urlPrefix: '/publicWorks'
 }
 
+config.workOrders = {
+  isEnabled: false
+}
+
 config.employees = {
   syncSource: 'pearl',
 

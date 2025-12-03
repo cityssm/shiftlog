@@ -6,6 +6,9 @@ config.reverseProxy = {
     trafficIsForwarded: true,
     urlPrefix: '/publicWorks'
 };
+config.workOrders = {
+    isEnabled: false
+};
 config.employees = {
     syncSource: 'pearl',
     filters: {
