@@ -2,11 +2,11 @@
 /* eslint-disable no-secrets/no-secrets */
 import getUserSettings from '../../database/users/getUserSettings.js';
 import updateUserSetting from '../../database/users/updateUserSetting.js';
-const updatableUserSettingKeys = [
+const updatableUserSettingKeys = new Set([
     'workOrders.defaultAssignedToDataListItemId'
-];
+]);
 export default async function handler(request, response) {
-    const success = updatableUserSettingKeys.includes(request.body.settingKey)
+    const success = updatableUserSettingKeys.has(request.body.settingKey)
         ? await updateUserSetting(request.session.user?.userName ?? '', request.body.settingKey, request.body.settingValue)
         : false;
     request.session.user.userSettings = await getUserSettings(request.session.user?.userName ?? '');

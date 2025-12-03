@@ -16,9 +16,15 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editWorkOrderType">
-        <input type="hidden" id="editWorkOrderType--workOrderTypeId" name="workOrderTypeId" />
+        <input
+          id="editWorkOrderType--workOrderTypeId"
+          name="workOrderTypeId"
+          type="hidden"
+        />
         <div class="field">
-          <label class="label" for="editWorkOrderType--workOrderType">Type Name</label>
+          <label class="label" for="editWorkOrderType--workOrderType">
+            Type Name
+          </label>
           <div class="control">
             <input
               class="input"
@@ -31,7 +37,9 @@
           </div>
         </div>
         <div class="field">
-          <label class="label" for="editWorkOrderType--workOrderNumberPrefix">Work Order Number Prefix</label>
+          <label class="label" for="editWorkOrderType--workOrderNumberPrefix">
+            Work Order Number Prefix
+          </label>
           <div class="control">
             <input
               class="input"
@@ -42,10 +50,14 @@
               placeholder="e.g. WO-, PW-, etc."
             />
           </div>
-          <p class="help">This prefix will be added to work order numbers for this type.</p>
+          <p class="help">
+            This prefix will be added to work order numbers for this type.
+          </p>
         </div>
         <div class="field">
-          <label class="label" for="editWorkOrderType--userGroupId">User Group (Optional)</label>
+          <label class="label" for="editWorkOrderType--userGroupId">
+            User Group (Optional)
+          </label>
           <div class="control">
             <div class="select is-fullwidth">
               <select id="editWorkOrderType--userGroupId" name="userGroupId">
@@ -53,20 +65,30 @@
               </select>
             </div>
           </div>
-          <p class="help">If specified, only members of this user group will see this work order type.</p>
+          <p class="help">
+            If specified, only members of this user group will see this work
+            order type.
+          </p>
         </div>
         <div class="field">
           <label class="label">Related More Info Forms (Optional)</label>
-          <div id="editWorkOrderType--moreInfoForms" class="control">
+          <div class="control" id="editWorkOrderType--moreInfoForms">
             <!-- Form checkboxes will be populated dynamically -->
           </div>
-          <p class="help">Select additional forms that should be displayed when creating or editing work orders of this type.</p>
+          <p class="help">
+            Select additional forms that should be displayed when creating or
+            editing work orders of this type.
+          </p>
         </div>
       </form>
     </section>
     <div class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-primary" type="submit" form="form--editWorkOrderType">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--editWorkOrderType"
+        >
           Update Work Order Type
         </button>
         <button class="button is-close-modal-button" type="button">

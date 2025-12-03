@@ -17,7 +17,9 @@
     <section class="modal-card-body">
       <form id="form--addWorkOrderType">
         <div class="field">
-          <label class="label" for="addWorkOrderType--workOrderType">Type Name</label>
+          <label class="label" for="addWorkOrderType--workOrderType">
+            Type Name
+          </label>
           <div class="control">
             <input
               class="input"
@@ -30,7 +32,9 @@
           </div>
         </div>
         <div class="field">
-          <label class="label" for="addWorkOrderType--workOrderNumberPrefix">Work Order Number Prefix</label>
+          <label class="label" for="addWorkOrderType--workOrderNumberPrefix">
+            Work Order Number Prefix
+          </label>
           <div class="control">
             <input
               class="input"
@@ -41,10 +45,14 @@
               placeholder="e.g. WO-, PW-, etc."
             />
           </div>
-          <p class="help">This prefix will be added to work order numbers for this type.</p>
+          <p class="help">
+            This prefix will be added to work order numbers for this type.
+          </p>
         </div>
         <div class="field">
-          <label class="label" for="addWorkOrderType--userGroupId">User Group (Optional)</label>
+          <label class="label" for="addWorkOrderType--userGroupId">
+            User Group (Optional)
+          </label>
           <div class="control">
             <div class="select is-fullwidth">
               <select id="addWorkOrderType--userGroupId" name="userGroupId">
@@ -52,13 +60,20 @@
               </select>
             </div>
           </div>
-          <p class="help">If specified, only members of this user group will see this work order type.</p>
+          <p class="help">
+            If specified, only members of this user group will see this work
+            order type.
+          </p>
         </div>
       </form>
     </section>
     <div class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-primary" type="submit" form="form--addWorkOrderType">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--addWorkOrderType"
+        >
           Add Work Order Type
         </button>
         <button class="button is-close-modal-button" type="button">

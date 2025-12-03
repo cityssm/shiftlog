@@ -16,17 +16,23 @@
     </div>
     <section class="modal-card-body">
       <form id="form--addWorkOrderAttachment" enctype="multipart/form-data">
-        <input type="hidden" name="workOrderId" id="addWorkOrderAttachment--workOrderId" />
+        <input
+          id="addWorkOrderAttachment--workOrderId"
+          name="workOrderId"
+          type="hidden"
+        />
         <div class="field">
-          <label class="label" for="addWorkOrderAttachment--attachmentFile">File</label>
+          <label class="label" for="addWorkOrderAttachment--attachmentFile">
+            File
+          </label>
           <div class="control">
             <div class="file has-name is-fullwidth">
               <label class="file-label">
                 <input
                   class="file-input"
-                  type="file"
-                  name="attachmentFile"
                   id="addWorkOrderAttachment--attachmentFile"
+                  name="attachmentFile"
+                  type="file"
                   required
                 />
                 <span class="file-cta">
@@ -35,20 +41,27 @@
                   </span>
                   <span class="file-label">Choose a file…</span>
                 </span>
-                <span class="file-name" id="addWorkOrderAttachment--fileName">No file selected</span>
+                <span class="file-name" id="addWorkOrderAttachment--fileName">
+                  No file selected
+                </span>
               </label>
             </div>
           </div>
           <p class="help" id="addWorkOrderAttachment--maxSize"></p>
         </div>
         <div class="field">
-          <label class="label" for="addWorkOrderAttachment--attachmentDescription">Description (Optional)</label>
+          <label
+            class="label"
+            for="addWorkOrderAttachment--attachmentDescription"
+          >
+            Description (Optional)
+          </label>
           <div class="control">
             <input
               class="input"
-              type="text"
-              name="attachmentDescription"
               id="addWorkOrderAttachment--attachmentDescription"
+              name="attachmentDescription"
+              type="text"
               maxlength="200"
               placeholder="Enter a description for this attachment..."
             />
@@ -58,7 +71,12 @@
     </section>
     <div class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-success" type="submit" form="form--addWorkOrderAttachment" id="button--submitAttachment">
+        <button
+          class="button is-success"
+          id="button--submitAttachment"
+          type="submit"
+          form="form--addWorkOrderAttachment"
+        >
           <span class="icon"><i class="fa-solid fa-upload"></i></span>
           <span>Upload Attachment</span>
         </button>

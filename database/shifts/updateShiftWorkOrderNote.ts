@@ -1,6 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
-import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function updateShiftWorkOrderNote(
@@ -10,7 +7,7 @@ export default async function updateShiftWorkOrderNote(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('shiftId', shiftId)
     .input('workOrderId', workOrderId)
@@ -19,7 +16,7 @@ export default async function updateShiftWorkOrderNote(
       set shiftWorkOrderNote = @shiftWorkOrderNote
       where shiftId = @shiftId
         and workOrderId = @workOrderId
-    `)) as mssql.IResult<Record<string, never>>
+    `)
 
   return result.rowsAffected[0] > 0
 }

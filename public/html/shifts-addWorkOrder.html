@@ -3,7 +3,11 @@
   <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title">Add Work Order to Shift</p>
-      <button class="delete is-close-modal-button" type="button" aria-label="Close"></button>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="Close"
+      ></button>
     </header>
     <section class="modal-card-body">
       <form id="addWorkOrder--searchForm">
@@ -19,13 +23,15 @@
           </div>
           <div class="control">
             <button class="button is-info" type="submit">
-              <span class="icon is-small"><i class="fa-solid fa-search"></i></span>
+              <span class="icon is-small">
+                <i class="fa-solid fa-search"></i>
+              </span>
               <span>Search</span>
             </button>
           </div>
         </div>
       </form>
-      
+
       <div class="mt-4" id="addWorkOrder--results">
         <div class="message is-info">
           <div class="message-body">
@@ -36,17 +42,23 @@
 
       <form class="is-hidden" id="addWorkOrder--form">
         <input name="shiftId" type="hidden" />
-        <input id="addWorkOrder--selectedWorkOrderId" name="workOrderId" type="hidden" />
-        
+        <input
+          id="addWorkOrder--selectedWorkOrderId"
+          name="workOrderId"
+          type="hidden"
+        />
+
         <div class="field">
           <label class="label">Selected Work Order</label>
           <div class="box">
             <div id="addWorkOrder--selectedWorkOrder"></div>
           </div>
         </div>
-        
+
         <div class="field">
-          <label class="label" for="addWorkOrder--shiftWorkOrderNote">Note</label>
+          <label class="label" for="addWorkOrder--shiftWorkOrderNote">
+            Note
+          </label>
           <div class="control">
             <textarea
               class="textarea"

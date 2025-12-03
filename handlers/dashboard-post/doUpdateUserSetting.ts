@@ -7,9 +7,9 @@ import getUserSettings from '../../database/users/getUserSettings.js'
 import updateUserSetting from '../../database/users/updateUserSetting.js'
 import type { UserSettingKey } from '../../types/user.types.js'
 
-const updatableUserSettingKeys = [
+const updatableUserSettingKeys = new Set<UserSettingKey>([
   'workOrders.defaultAssignedToDataListItemId'
-] as const satisfies UserSettingKey[]
+])
 
 export default async function handler(
   request: Request<
@@ -19,12 +19,12 @@ export default async function handler(
   >,
   response: Response
 ): Promise<void> {
-  const success = updatableUserSettingKeys.includes(
-    request.body.settingKey as (typeof updatableUserSettingKeys)[number]
+  const success = updatableUserSettingKeys.has(
+    request.body.settingKey as UserSettingKey
   )
     ? await updateUserSetting(
         request.session.user?.userName ?? '',
-        request.body.settingKey as (typeof updatableUserSettingKeys)[number],
+        request.body.settingKey as UserSettingKey,
         request.body.settingValue
       )
     : false

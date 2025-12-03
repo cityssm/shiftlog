@@ -16,8 +16,8 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editUserSettings">
-        <input type="hidden" name="userName" />
-        
+        <input name="userName" type="hidden" />
+
         <div class="field">
           <label class="label">User Name</label>
           <div class="control">
@@ -30,7 +30,11 @@
     </section>
     <div class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-primary" type="submit" form="form--editUserSettings">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--editUserSettings"
+        >
           Save Settings
         </button>
         <button class="button is-close-modal-button" type="button">

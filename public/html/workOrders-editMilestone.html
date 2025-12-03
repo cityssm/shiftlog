@@ -16,27 +16,38 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editWorkOrderMilestone">
-        <input type="hidden" name="workOrderMilestoneId" id="editWorkOrderMilestone--workOrderMilestoneId" />
+        <input
+          id="editWorkOrderMilestone--workOrderMilestoneId"
+          name="workOrderMilestoneId"
+          type="hidden"
+        />
         <div class="field">
-          <label class="label" for="editWorkOrderMilestone--milestoneTitle">Title</label>
+          <label class="label" for="editWorkOrderMilestone--milestoneTitle">
+            Title
+          </label>
           <div class="control">
             <input
               class="input"
-              type="text"
-              name="milestoneTitle"
               id="editWorkOrderMilestone--milestoneTitle"
+              name="milestoneTitle"
+              type="text"
               maxlength="100"
               required
             />
           </div>
         </div>
         <div class="field">
-          <label class="label" for="editWorkOrderMilestone--milestoneDescription">Description</label>
+          <label
+            class="label"
+            for="editWorkOrderMilestone--milestoneDescription"
+          >
+            Description
+          </label>
           <div class="control">
             <textarea
               class="textarea"
-              name="milestoneDescription"
               id="editWorkOrderMilestone--milestoneDescription"
+              name="milestoneDescription"
               rows="4"
             ></textarea>
           </div>
@@ -44,13 +55,18 @@
         <div class="columns">
           <div class="column">
             <div class="field">
-              <label class="label" for="editWorkOrderMilestone--milestoneDueDateTimeString">Due Date/Time</label>
+              <label
+                class="label"
+                for="editWorkOrderMilestone--milestoneDueDateTimeString"
+              >
+                Due Date/Time
+              </label>
               <div class="control has-icons-left">
                 <input
                   class="input"
-                  type="datetime-local"
-                  name="milestoneDueDateTimeString"
                   id="editWorkOrderMilestone--milestoneDueDateTimeString"
+                  name="milestoneDueDateTimeString"
+                  type="datetime-local"
                 />
                 <span class="icon is-small is-left">
                   <i class="fa-solid fa-exclamation-triangle"></i>
@@ -60,21 +76,31 @@
           </div>
           <div class="column">
             <div class="field">
-              <label class="label" for="editWorkOrderMilestone--milestoneCompleteDateTimeString">Complete Date/Time</label>
+              <label
+                class="label"
+                for="editWorkOrderMilestone--milestoneCompleteDateTimeString"
+              >
+                Complete Date/Time
+              </label>
               <div class="field has-addons">
                 <div class="control is-expanded has-icons-left">
                   <input
                     class="input"
-                    type="datetime-local"
-                    name="milestoneCompleteDateTimeString"
                     id="editWorkOrderMilestone--milestoneCompleteDateTimeString"
+                    name="milestoneCompleteDateTimeString"
+                    type="datetime-local"
                   />
                   <span class="icon is-small is-left">
                     <i class="fa-solid fa-check"></i>
                   </span>
                 </div>
                 <div class="control">
-                  <button class="button" type="button" id="editWorkOrderMilestone--setCompleteTimeNow" title="Set to Now">
+                  <button
+                    class="button"
+                    id="editWorkOrderMilestone--setCompleteTimeNow"
+                    type="button"
+                    title="Set to Now"
+                  >
                     <span class="icon"><i class="fa-solid fa-clock"></i></span>
                     <span>Now</span>
                   </button>
@@ -84,10 +110,18 @@
           </div>
         </div>
         <div class="field">
-          <label class="label" for="editWorkOrderMilestone--assignedToDataListItemId">Assigned To</label>
+          <label
+            class="label"
+            for="editWorkOrderMilestone--assignedToDataListItemId"
+          >
+            Assigned To
+          </label>
           <div class="control">
             <div class="select is-fullwidth">
-              <select name="assignedToDataListItemId" id="editWorkOrderMilestone--assignedToDataListItemId">
+              <select
+                id="editWorkOrderMilestone--assignedToDataListItemId"
+                name="assignedToDataListItemId"
+              >
                 <option value="">(Not Assigned)</option>
               </select>
             </div>
@@ -97,7 +131,11 @@
     </section>
     <div class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-success" type="submit" form="form--editWorkOrderMilestone">
+        <button
+          class="button is-success"
+          type="submit"
+          form="form--editWorkOrderMilestone"
+        >
           Save
         </button>
         <button class="button is-close-modal-button" type="button">

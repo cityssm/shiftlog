@@ -16,27 +16,35 @@
     </div>
     <section class="modal-card-body">
       <form id="form--import">
-        <input type="hidden" name="currentShiftId" />
+        <input name="currentShiftId" type="hidden" />
         <div class="field">
           <label class="label">Previous Shift ID</label>
           <div class="control">
-            <input class="input" type="number" name="previousShiftId" required />
+            <input
+              class="input"
+              name="previousShiftId"
+              type="number"
+              required
+            />
           </div>
         </div>
         <div class="field">
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="copyCrews" checked /> Import Crews
+              <input name="copyCrews" type="checkbox" checked />
+              Import Crews
             </label>
           </div>
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="copyEmployees" checked /> Import Employees
+              <input name="copyEmployees" type="checkbox" checked />
+              Import Employees
             </label>
           </div>
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="copyEquipment" checked /> Import Equipment
+              <input name="copyEquipment" type="checkbox" checked />
+              Import Equipment
             </label>
           </div>
         </div>

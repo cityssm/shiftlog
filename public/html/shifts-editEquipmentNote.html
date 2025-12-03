@@ -16,19 +16,27 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editEquipmentNote">
-        <input type="hidden" name="shiftId" />
-        <input type="hidden" name="equipmentNumber" />
+        <input name="shiftId" type="hidden" />
+        <input name="equipmentNumber" type="hidden" />
         <div class="field">
           <label class="label">Note</label>
           <div class="control">
-            <textarea class="textarea" name="shiftEquipmentNote" maxlength="200"></textarea>
+            <textarea
+              class="textarea"
+              name="shiftEquipmentNote"
+              maxlength="200"
+            ></textarea>
           </div>
         </div>
       </form>
     </section>
     <div class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-primary" type="submit" form="form--editEquipmentNote">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--editEquipmentNote"
+        >
           Update Note
         </button>
         <button class="button is-close-modal-button" type="button">

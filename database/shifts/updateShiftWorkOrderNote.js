@@ -1,7 +1,7 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateShiftWorkOrderNote(shiftId, workOrderId, shiftWorkOrderNote) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('shiftId', shiftId)
         .input('workOrderId', workOrderId)
@@ -10,6 +10,6 @@ export default async function updateShiftWorkOrderNote(shiftId, workOrderId, shi
       set shiftWorkOrderNote = @shiftWorkOrderNote
       where shiftId = @shiftId
         and workOrderId = @workOrderId
-    `));
+    `);
     return result.rowsAffected[0] > 0;
 }
