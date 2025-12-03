@@ -7,6 +7,8 @@ import { config as baseConfig } from './partialConfigs/publicWorks.partialConfig
 
 export const config: Config = { ...baseConfig }
 
+config.application.instance = ''
+
 config.login = {
   authentication: {
     type: 'plainText',
