@@ -1,1 +1,0 @@
-node windowsService-uninstall.js

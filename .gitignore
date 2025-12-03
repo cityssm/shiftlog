@@ -19,9 +19,9 @@ data/test-attachments/
 
 node_modules/
 
-data/config.d.ts
-data/config.js
-data/config.ts
+data/config.*
+data/*.config.*
+!data/testing.config.*
 
 public/images-custom/*
 

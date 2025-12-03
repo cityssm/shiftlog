@@ -4,9 +4,11 @@ import { getServiceConfig } from './windowsService.js';
 /*
  * Parse command line arguments for --config parameter
  */
-const configArgIndex = process.argv.indexOf('--config');
-const configFilePath = configArgIndex !== -1 && process.argv[configArgIndex + 1] !== undefined
-    ? process.argv[configArgIndex + 1]
+const configArgumentIndex = process.argv.indexOf('--config');
+const configFilePath = configArgumentIndex !== -1 &&
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    process.argv[configArgumentIndex + 1] !== undefined
+    ? process.argv[configArgumentIndex + 1]
     : undefined;
 // Create a new service object
 const svc = new Service(getServiceConfig(configFilePath));
