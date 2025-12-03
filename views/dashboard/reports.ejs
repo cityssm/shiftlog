@@ -17,24 +17,24 @@
 </h1>
 
 <div class="columns is-mobile mt-4" id="container--reportTabs">
-  <div class="column is-3 is-narrow-touch">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
     <div class="menu">
       <ul class="menu-list">
         <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
         <li>
-          <a href="#tab--workOrders" title="<%= configFunctions.getConfigProperty('workOrders.sectionNamePlural') %>">
+          <a href="#tab--workOrders" title="<%= configFunctions.getConfigProperty('workOrders.sectionName') %>">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
               </div>
-              <div class="column"><%= configFunctions.getConfigProperty('workOrders.sectionName') %></div>
+              <div class="column is-hidden-touch"><%= configFunctions.getConfigProperty('workOrders.sectionName') %></div>
             </div>
           </a>
         </li>
         <% } %>
         <% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canView) { %>
         <li>
-          <a href="#tab--shifts" title="<%= configFunctions.getConfigProperty('shifts.sectionNamePlural') %>">
+          <a href="#tab--shifts" title="<%= configFunctions.getConfigProperty('shifts.sectionName') %>">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i></span>
@@ -46,7 +46,7 @@
         <% } %>
         <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
         <li>
-          <a href="#tab--timesheets" title="<%= configFunctions.getConfigProperty('timesheets.sectionNamePlural') %>">
+          <a href="#tab--timesheets" title="<%= configFunctions.getConfigProperty('timesheets.sectionName') %>">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i></span>
