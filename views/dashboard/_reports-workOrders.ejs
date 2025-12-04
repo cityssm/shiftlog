@@ -1,18 +1,22 @@
-<div class="panel">
-  <a class="panel-block" href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/workOrders-open">
-    <div class="media">
-      <div class="media-left">
-        <i class="fa-solid fa-3x fa-file-csv"></i>
-      </div>
-      <div class="media-content">
-        <h2 class="title is-4 mb-0 has-text-link">
-          Open <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
-        </h2>
-        <p>
-          Generate a report of open
-          <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
-        </p>
-      </div>
+<div class="columns">
+  <div class="column">
+    <div class="panel">
+      <a class="panel-block" href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/workOrders-open">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-3x fa-file-csv"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Open <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
+            </h2>
+            <p>
+              Generate a report of open
+              <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
+            </p>
+          </div>
+        </div>
+      </a>
     </div>
-  </a>
+  </div>
 </div>

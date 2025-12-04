@@ -24,14 +24,18 @@
     "cy:run:firefox": "cypress run --config-file cypress.config.js --browser firefox",
     "dev": "cross-env NODE_ENV=development DEBUG=shiftlog:* nodemon ./index.js",
     "dev:graffiti": "cross-env NODE_ENV=development DEBUG=shiftlog:* nodemon ./index.js -- --config data/graffiti.config.js",
+    "dev:legalAgreements": "cross-env NODE_ENV=development DEBUG=shiftlog:* nodemon ./index.js -- --config data/legalAgreements.config.js",
     "start": "cross-env NODE_ENV=production node ./index.js",
     "start:graffiti": "cross-env NODE_ENV=production node ./index.js --config data/graffiti.config.js",
+    "start:legalAgreements": "cross-env NODE_ENV=production node ./index.js --config data/legalAgreements.config.js",
     "test": "cross-env NODE_ENV=development DEBUG=shiftlog:* TEST_DATABASES=true node --test --test-concurrency 1",
     "test:startup": "cross-env NODE_ENV=development DEBUG=shiftlog:* TEST_DATABASES=true STARTUP_TEST=true node ./index.js",
     "windows:install": "node ./windowsService-install.js",
     "windows:install:graffiti": "node ./windowsService-install.js --config data/graffiti.config.js",
+    "windows:install:legalAgreements": "node ./windowsService-install.js --config data/legalAgreements.config.js",
     "windows:uninstall": "node ./windowsService-uninstall.js",
-    "windows:uninstall:graffiti": "node ./windowsService-uninstall.js --config data/graffiti.config.js"
+    "windows:uninstall:graffiti": "node ./windowsService-uninstall.js --config data/graffiti.config.js",
+    "windows:uninstall:legalAgreements": "node ./windowsService-uninstall.js --config data/legalAgreements.config.js"
   },
   "dependencies": {
     "@cacheable/node-cache": "^1.7.5",
@@ -44,6 +48,7 @@
     "@cityssm/esri-mapserver-layer-dl": "^0.1.1",
     "@cityssm/express-abuse-points": "^3.1.0",
     "@cityssm/fa-glow": "^0.1.0",
+    "@cityssm/jsbarcode-svg": "^0.1.1",
     "@cityssm/mssql-multi-pool": "^5.1.1",
     "@cityssm/scheduled-task": "^0.3.0",
     "@cityssm/to-millis": "^1.0.1",

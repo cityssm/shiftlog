@@ -58,8 +58,8 @@
 <% if (workOrderTypes.length === 0) { %>
   <div class="message is-danger">
     <p class="message-body">
-      <strong>No work order types available.</strong><br />
-      Please contact your system administrator to set up work order types before creating
+      <strong>No <%= configFunctions.getConfigProperty('workOrders.sectionName') %> Types available.</strong><br />
+      Please contact your system administrator to set up  <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> types before creating
       <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
     </p>
   </div>

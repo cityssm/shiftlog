@@ -1,8 +1,15 @@
 <%- await include('_header-print'); -%>
 
-<h1 class="title is-2 has-text-centered">
-  <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #<%= workOrder.workOrderNumber %>
-</h1>
+<div class="columns is-vcentered">
+  <div class="column">
+    <h1 class="title is-3">
+      #<%= workOrder.workOrderNumber %>
+    </h1>
+  </div>
+  <div class="column is-narrow">
+    <%- workOrderNumberBarcodeSvg %>
+  </div>
+</div>
 
 <div class="columns">
   <div class="column">
@@ -10,7 +17,7 @@
       <div class="columns">
         <div class="column">
           <div class="field">
-            <label class="label"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type</label>
+            <span class="label"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type</span>
             <p><%= workOrder.workOrderType ?? '(Not Set)' %></p>
           </div>
         </div>

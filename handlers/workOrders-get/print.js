@@ -1,3 +1,4 @@
+import generateBarcodeSvg from '@cityssm/jsbarcode-svg';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderMilestones from '../../database/workOrders/getWorkOrderMilestones.js';
 import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js';
@@ -10,6 +11,13 @@ export default async function handler(request, response) {
         response.redirect(`${redirectRoot}/?error=notFound`);
         return;
     }
+    const workOrderNumberBarcodeSvg = generateBarcodeSvg(workOrder.workOrderNumber, {
+        format: 'CODE128',
+        height: 30,
+        width: 2,
+        displayValue: false,
+        margin: 0
+    });
     const milestones = await getWorkOrderMilestones(request.params.workOrderId);
     const notes = await getWorkOrderNotes(request.params.workOrderId);
     response.render('print/workOrder', {
@@ -17,6 +25,7 @@ export default async function handler(request, response) {
         milestones,
         notes,
         workOrder,
+        workOrderNumberBarcodeSvg,
         availableWorkOrderMoreInfoForms
     });
 }

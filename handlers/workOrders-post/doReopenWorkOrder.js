@@ -15,7 +15,7 @@ export default async function handler(request, response) {
     if (success) {
         response.json({
             message: 'Work order reopened successfully.',
-            redirectUrl: `${redirectRoot}/${workOrderId}`,
+            redirectUrl: `${redirectRoot}/${workOrderId}/edit`,
             success: true
         });
     }

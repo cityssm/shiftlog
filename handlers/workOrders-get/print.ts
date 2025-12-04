@@ -1,3 +1,4 @@
+import generateBarcodeSvg from '@cityssm/jsbarcode-svg'
 import type { Request, Response } from 'express'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
@@ -27,14 +28,29 @@ export default async function handler(
     return
   }
 
+  const workOrderNumberBarcodeSvg = generateBarcodeSvg(
+    workOrder.workOrderNumber,
+    {
+      format: 'CODE128',
+
+      height: 30,
+      width: 2,
+
+      displayValue: false,
+      margin: 0
+    }
+  )
+
   const milestones = await getWorkOrderMilestones(request.params.workOrderId)
   const notes = await getWorkOrderNotes(request.params.workOrderId)
 
   response.render('print/workOrder', {
     headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
+
     milestones,
     notes,
     workOrder,
+    workOrderNumberBarcodeSvg,
 
     availableWorkOrderMoreInfoForms
   })
