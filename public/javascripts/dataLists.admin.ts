@@ -49,9 +49,7 @@ declare const exports: {
   const shiftLog = exports.shiftLog
 
   function updateItemCount(dataListKey: string, count: number): void {
-    const countElement = document.querySelector(
-      `#itemCount--${dataListKey}`
-    ) as HTMLElement | null
+    const countElement = document.querySelector(`#itemCount--${dataListKey}`)
 
     if (countElement !== null) {
       countElement.textContent = count.toString()
@@ -64,7 +62,7 @@ declare const exports: {
   ): void {
     const tbodyElement = document.querySelector(
       `#dataListItems--${dataListKey}`
-    ) as HTMLElement | null
+    )
 
     if (tbodyElement === null) {
       return
@@ -481,7 +479,7 @@ declare const exports: {
   function attachEventListeners(dataListKey: string): void {
     const section = document.querySelector(
       `[data-data-list-key="${dataListKey}"]`
-    ) as HTMLElement | null
+    )
 
     if (section === null) {
       return
@@ -514,11 +512,12 @@ declare const exports: {
           // Get the new order
           const rows = tbodyElement.querySelectorAll(
             'tr[data-data-list-item-id]'
-          )
+          ) as NodeListOf<HTMLElement>
+
           const dataListItemIds: number[] = []
 
           for (const row of rows) {
-            const dataListItemId = (row as HTMLElement).dataset.dataListItemId
+            const dataListItemId = row.dataset.dataListItemId
             if (dataListItemId !== undefined) {
               dataListItemIds.push(Number.parseInt(dataListItemId, 10))
             }

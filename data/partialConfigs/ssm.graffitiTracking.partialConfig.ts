@@ -7,6 +7,8 @@ import { config as baseConfig } from './graffitiTracking.partialConfig.js'
 
 export const config: Config = { ...baseConfig }
 
+config.application.attachmentStoragePath = 'data/attachments/graffiti'
+
 config.reverseProxy = {
   trafficIsForwarded: true,
   urlPrefix: '/graffiti'

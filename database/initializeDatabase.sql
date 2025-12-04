@@ -219,7 +219,6 @@ CREATE TABLE ShiftLog.Locations (
   locationId int not null primary key identity(1,1),
 
   instance varchar(20) not null,
-  locationName varchar(100) not null,
 
   latitude decimal(10,7),
   longitude decimal(10,7),

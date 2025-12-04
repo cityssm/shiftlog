@@ -2,6 +2,7 @@
 /* eslint-disable @cspell/spellchecker */
 import { config as baseConfig } from './graffitiTracking.partialConfig.js';
 export const config = { ...baseConfig };
+config.application.attachmentStoragePath = 'data/attachments/graffiti';
 config.reverseProxy = {
     trafficIsForwarded: true,
     urlPrefix: '/graffiti'
