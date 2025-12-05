@@ -228,54 +228,30 @@ declare const exports: {
     calendarContainerElement.innerHTML = calendarHTML
   }
 
-  async function loadCalendar(): Promise<void> {
+  function loadCalendar(): void {
     updateMonthTitle()
 
-    const formData = new FormData()
-    formData.append('year', currentYear.toString())
-    formData.append('month', currentMonth.toString())
-    formData.append('assignedToDataListItemId', assignedToSelect.value)
-    formData.append('showOpenDates', showOpenDatesCheckbox.checked.toString())
-    formData.append('showDueDates', showDueDatesCheckbox.checked.toString())
-    formData.append('showCloseDates', showCloseDatesCheckbox.checked.toString())
-    formData.append(
-      'showMilestoneDueDates',
-      showMilestoneDueDatesCheckbox.checked.toString()
-    )
-    formData.append(
-      'showMilestoneCompleteDates',
-      showMilestoneCompleteDatesCheckbox.checked.toString()
-    )
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`,
+      {
+        year: currentYear,
+        month: currentMonth,
+        assignedToDataListItemId: assignedToSelect.value,
+        showOpenDates: showOpenDatesCheckbox.checked,
+        showDueDates: showDueDatesCheckbox.checked,
+        showCloseDates: showCloseDatesCheckbox.checked,
+        showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
+        showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
+      },
+      (rawResponseJSON) => {
+        const responseJSON =
+          rawResponseJSON as unknown as DoGetCalendarEventsResponse
 
-    try {
-      const response = await fetch(
-        `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`,
-        {
-          method: 'POST',
-          body: formData
+        if (responseJSON.success) {
+          renderCalendar(responseJSON.events)
         }
-      )
-
-      const data = (await response.json()) as DoGetCalendarEventsResponse
-
-      if (data.success) {
-        renderCalendar(data.events)
-      } else {
-        bulmaJS.alert({
-          contextualColorName: 'danger',
-          title: 'Error',
-
-          message: 'Failed to load calendar events.'
-        })
       }
-    } catch {
-      bulmaJS.alert({
-        contextualColorName: 'danger',
-        title: 'Error',
-
-        message: 'An error occurred while loading the calendar.'
-      })
-    }
+    )
   }
 
   // Event listeners
