@@ -124,7 +124,7 @@ app.use(session({
     secret: `${configFunctions.getConfigProperty('session.secret')}-${configFunctions.getConfigProperty('application.instance')}`,
     store: new FileStoreSession({
         logFn: Debug(`${DEBUG_NAMESPACE}:session:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`),
-        path: './data/sessions',
+        path: `./data/sessions/${configFunctions.getConfigProperty('application.instance')}`,
         retries: 20
     }),
     resave: true,
