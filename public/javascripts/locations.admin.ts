@@ -349,7 +349,13 @@ declare const exports: {
 
   function renderLocations(locations: Location[]): void {
     if (locations.length === 0) {
-      locationsContainerElement.innerHTML = '<p>No locations found.</p>'
+      locationsContainerElement.innerHTML = /*html*/ `
+        <div class="message is-info">
+          <div class="message-body">
+            No locations available.
+          </div>
+        </div>
+      `
       return
     }
 

@@ -38,7 +38,7 @@
             <label class="label" for="workOrderMap--workOrderTypeId">
               <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
             </label>
-            <div class="control">
+            <div class="control has-icons-left">
               <div class="select is-fullwidth">
                 <select id="workOrderMap--workOrderTypeId">
                   <option value="">(All Types)</option>
@@ -49,13 +49,16 @@
                   <% }); %>
                 </select>
               </div>
+              <span class="icon is-small is-left">
+                <i class="fa-solid fa-filter"></i>
+              </span>
             </div>
           </div>
         </div>
         <div class="column">
           <div class="field">
             <label class="label" for="workOrderMap--assignedToDataListItemId">Assigned To</label>
-            <div class="control">
+            <div class="control has-icons-left">
               <div class="select is-fullwidth">
                 <select id="workOrderMap--assignedToDataListItemId">
                   <option value="">(All Assignees)</option>
@@ -66,6 +69,9 @@
                   <% }); %>
                 </select>
               </div>
+              <span class="icon is-small is-left">
+                <i class="fa-solid fa-filter"></i>
+              </span>
             </div>
           </div>
         </div>

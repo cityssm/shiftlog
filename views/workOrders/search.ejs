@@ -55,13 +55,16 @@
               <label class="label" for="workOrderSearch--workOrderNumber">
                 <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Number
               </label>
-              <div class="control">
+              <div class="control has-icons-left">
                 <input
                   class="input"
                   id="workOrderSearch--workOrderNumber"
                   name="workOrderNumber"
                   type="text"
                 />
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
               </div>
             </div>
           </div>
@@ -70,7 +73,7 @@
               <label class="label" for="workOrderSearch--workOrderTypeId">
                 <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
               </label>
-              <div class="control">
+              <div class="control has-icons-left">
                 <div class="select is-fullwidth">
                   <select id="workOrderSearch--workOrderTypeId" name="workOrderTypeId">
                     <option value="">(All Types)</option>
@@ -81,13 +84,16 @@
                     <% }); %>
                   </select>
                 </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
               </div>
             </div>
           </div>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderStatusDataListItemId">Status</label>
-              <div class="control">
+              <div class="control has-icons-left">
                 <div class="select is-fullwidth">
                   <select id="workOrderSearch--workOrderStatusDataListItemId" name="workOrderStatusDataListItemId">
                     <option value="">(All Statuses)</option>
@@ -98,6 +104,9 @@
                     <% }); %>
                   </select>
                 </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
               </div>
             </div>
           </div>
@@ -106,7 +115,7 @@
           <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--openClosedFilter">Open / Closed</label>
-              <div class="control">
+              <div class="control has-icons-left">
                 <div class="select is-fullwidth">
                   <select id="workOrderSearch--openClosedFilter" name="openClosedFilter">
                     <option value="">(All)</option>
@@ -115,13 +124,16 @@
                     <option value="closed">Closed</option>
                   </select>
                 </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
               </div>
             </div>
           </div>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--requestor">Requestor</label>
-              <div class="control">
+              <div class="control has-icons-left">
                 <input
                   class="input"
                   id="workOrderSearch--requestor"
@@ -129,13 +141,16 @@
                   type="text"
                   placeholder="Name or contact info"
                 />
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
               </div>
             </div>
           </div>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--assignedToDataListItemId">Assigned To</label>
-              <div class="control">
+              <div class="control has-icons-left">
                 <div class="select is-fullwidth">
                   <select id="workOrderSearch--assignedToDataListItemId" name="assignedToDataListItemId">
                     <option value="">(All Assignees)</option>
@@ -146,6 +161,9 @@
                     <% }); %>
                   </select>
                 </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
               </div>
             </div>
           </div>

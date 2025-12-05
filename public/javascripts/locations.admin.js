@@ -225,7 +225,13 @@
     }
     function renderLocations(locations) {
         if (locations.length === 0) {
-            locationsContainerElement.innerHTML = '<p>No locations found.</p>';
+            locationsContainerElement.innerHTML = /*html*/ `
+        <div class="message is-info">
+          <div class="message-body">
+            No locations available.
+          </div>
+        </div>
+      `;
             return;
         }
         const tableElement = document.createElement('table');

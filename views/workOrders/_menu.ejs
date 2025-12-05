@@ -13,7 +13,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
             <span class="icon is-small">
-              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+              <i class="fa-solid fa-search"></i>
             </span>
           </div>
           <div class="column is-hidden-touch">
@@ -50,6 +50,9 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
         </div>
       </a>
     </li>
+  </ul>
+  <p class="menu-label is-hidden-touch">Tools</p>
+  <ul class="menu-list">
     <% if (user.userProperties.workOrders.canManage) { %>
     <li>
       <a
@@ -70,9 +73,6 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       </a>
     </li>
     <% } %>
-  </ul>
-  <p class="menu-label is-hidden-touch">Links</p>
-  <ul class="menu-list">
     <li>
       <a
         href="<%= urlPrefix %>/dashboard/reports/?tab=workOrders"
