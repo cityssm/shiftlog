@@ -78,6 +78,15 @@ declare const exports: {
 
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
+  /**
+   * Escapes HTML special characters to prevent XSS
+   */
+  function escapeHtml(text: string): string {
+    const div = document.createElement('div')
+    div.textContent = text
+    return div.innerHTML
+  }
+
   function updateMonthTitle(): void {
     monthTitleElement.textContent = `${monthNames[currentMonth - 1]} ${currentYear}`
   }
@@ -178,7 +187,7 @@ declare const exports: {
                 ? `${event.workOrderNumber} - ${event.milestoneTitle}`
                 : event.workOrderNumber
 
-              calendarHTML += `<a href="${shiftLog.urlPrefix}/${shiftLog.configFunctions.getConfigProperty('workOrders.router')}/${event.workOrderId}" class="tag ${eventClass}" title="${title}">${eventLabel}</a>`
+              calendarHTML += `<a href="${escapeHtml(shiftLog.urlPrefix)}/${escapeHtml(shiftLog.configFunctions.getConfigProperty('workOrders.router'))}/${escapeHtml(String(event.workOrderId))}" class="tag ${eventClass}" title="${escapeHtml(title)}">${escapeHtml(eventLabel)}</a>`
             }
 
             calendarHTML += '</div>'
