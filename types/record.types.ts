@@ -256,6 +256,13 @@ export interface TimesheetCell {
 
 // Work Order Types
 
+export interface WorkOrderTypeDefaultMilestone {
+  workOrderTypeId: number
+  milestoneTitle: string
+  milestoneDescription: string
+  orderNumber: number
+}
+
 export interface WorkOrderType extends BaseRecord {
   workOrderTypeId: number
   workOrderType: string
@@ -267,6 +274,7 @@ export interface WorkOrderType extends BaseRecord {
   userGroupName?: string
 
   moreInfoFormNames?: string[]
+  defaultMilestones?: WorkOrderTypeDefaultMilestone[]
 }
 
 // Work Orders

@@ -2,6 +2,7 @@
 /* eslint-disable unicorn/no-null */
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import updateWorkOrderTypeDefaultMilestones from './updateWorkOrderTypeDefaultMilestones.js';
 export default async function updateWorkOrderType(form, userName) {
     const pool = await getShiftLogConnectionPool();
     const result = await pool
@@ -50,6 +51,14 @@ export default async function updateWorkOrderType(form, userName) {
           values (@workOrderTypeId, @formName)
         `);
         }
+    }
+    // Update default milestones
+    if (form.defaultMilestones !== undefined) {
+        const milestones = JSON.parse(form.defaultMilestones);
+        const workOrderTypeId = typeof form.workOrderTypeId === 'string'
+            ? Number.parseInt(form.workOrderTypeId, 10)
+            : form.workOrderTypeId;
+        await updateWorkOrderTypeDefaultMilestones(workOrderTypeId, milestones);
     }
     return true;
 }

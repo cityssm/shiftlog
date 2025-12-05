@@ -2,6 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
+import getWorkOrderTypeDefaultMilestones from './getWorkOrderTypeDefaultMilestones.js'
 import getWorkOrderTypeMoreInfoFormNames from './getWorkOrderTypeMoreInfoFormNames.js'
 
 export default async function getWorkOrderTypesAdmin(): Promise<
@@ -32,6 +33,9 @@ export default async function getWorkOrderTypesAdmin(): Promise<
 
   for (const workOrderType of workOrderTypes) {
     workOrderType.moreInfoFormNames = await getWorkOrderTypeMoreInfoFormNames(
+      workOrderType.workOrderTypeId
+    )
+    workOrderType.defaultMilestones = await getWorkOrderTypeDefaultMilestones(
       workOrderType.workOrderTypeId
     )
   }

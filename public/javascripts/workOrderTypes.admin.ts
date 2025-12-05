@@ -18,7 +18,14 @@ declare const Sortable: {
   ) => void
 }
 
+interface WorkOrderTypeDefaultMilestone {
+  milestoneTitle: string
+  milestoneDescription: string
+  orderNumber: number
+}
+
 interface WorkOrderType {
+  defaultMilestones?: WorkOrderTypeDefaultMilestone[]
   moreInfoFormNames?: string[]
   orderNumber: number
   userGroupId: number | null
@@ -233,10 +240,37 @@ declare const exports: {
       submitEvent.preventDefault()
 
       const editForm = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(editForm)
+
+      // Collect milestone data
+      const modalElement = editForm.closest('.modal') as HTMLElement
+      const milestoneItems = modalElement.querySelectorAll('.milestone-item')
+      const milestones: WorkOrderTypeDefaultMilestone[] = []
+
+      for (const [index, item] of milestoneItems.entries()) {
+        const titleInput = item.querySelector(
+          '.milestone-title'
+        ) as HTMLInputElement
+        const descriptionInput = item.querySelector(
+          '.milestone-description'
+        ) as HTMLTextAreaElement
+
+        const title = titleInput.value.trim()
+        if (title !== '') {
+          milestones.push({
+            milestoneTitle: title,
+            milestoneDescription: descriptionInput.value.trim(),
+            orderNumber: index
+          })
+        }
+      }
+
+      // Add milestones as JSON string to form data
+      formData.append('defaultMilestones', JSON.stringify(milestones))
 
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`,
-        editForm,
+        formData,
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
@@ -337,6 +371,124 @@ declare const exports: {
           // eslint-disable-next-line no-unsanitized/property
           moreInfoFormsContainer.innerHTML = formsHtml
         }
+
+        // Populate default milestones
+        const currentDefaultMilestones =
+          workOrderTypeData?.defaultMilestones ?? []
+        const defaultMilestonesContainer = modalElement.querySelector(
+          '#editWorkOrderType--defaultMilestones'
+        ) as HTMLElement
+
+        function renderDefaultMilestones(): void {
+          const milestones =
+            defaultMilestonesContainer.querySelectorAll('.milestone-item')
+          if (milestones.length === 0) {
+            defaultMilestonesContainer.innerHTML =
+              '<p class="has-text-grey is-size-7 mb-2">No default milestones. Click "Add Milestone" to create one.</p>'
+          }
+        }
+
+        function addMilestoneItem(
+          title = '',
+          description = '',
+          orderNumber = 0
+        ): void {
+          const milestoneElement = document.createElement('div')
+          milestoneElement.className = 'milestone-item box p-3 mb-2'
+          milestoneElement.dataset.orderNumber = orderNumber.toString()
+
+          // eslint-disable-next-line no-unsanitized/property
+          milestoneElement.innerHTML = /* html */ `
+            <div class="is-flex is-align-items-start">
+              <span class="icon is-small has-text-grey milestone-handle mr-2" style="cursor: move;">
+                <i class="fa-solid fa-grip-vertical"></i>
+              </span>
+              <div class="is-flex-grow-1">
+                <div class="field mb-2">
+                  <label class="label is-size-7">Milestone Title</label>
+                  <div class="control">
+                    <input
+                      class="input is-small milestone-title"
+                      type="text"
+                      maxlength="100"
+                      placeholder="e.g., Design Review, Approval, Completion"
+                      value="${cityssm.escapeHTML(title)}"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="field mb-0">
+                  <label class="label is-size-7">Milestone Description (Optional)</label>
+                  <div class="control">
+                    <textarea
+                      class="textarea is-small milestone-description"
+                      rows="2"
+                      placeholder="Description of this milestone..."
+                    >${cityssm.escapeHTML(description)}</textarea>
+                  </div>
+                </div>
+              </div>
+              <button
+                class="button is-small is-danger ml-2 remove-milestone-button"
+                type="button"
+                title="Remove Milestone"
+              >
+                <span class="icon is-small">
+                  <i class="fa-solid fa-times"></i>
+                </span>
+              </button>
+            </div>
+          `
+
+          // Add remove button event
+          milestoneElement
+            .querySelector('.remove-milestone-button')
+            ?.addEventListener('click', () => {
+              milestoneElement.remove()
+              renderDefaultMilestones()
+            })
+
+          defaultMilestonesContainer.append(milestoneElement)
+        }
+
+        // Clear container and add existing milestones
+        defaultMilestonesContainer.innerHTML = ''
+        for (const [index, milestone] of currentDefaultMilestones.entries()) {
+          addMilestoneItem(
+            milestone.milestoneTitle,
+            milestone.milestoneDescription,
+            index
+          )
+        }
+        renderDefaultMilestones()
+
+        // Initialize sortable for milestones
+        if (currentDefaultMilestones.length > 0) {
+          Sortable.create(defaultMilestonesContainer, {
+            animation: 150,
+            handle: '.milestone-handle',
+            onEnd() {
+              // Update order numbers after sorting
+              const items =
+                defaultMilestonesContainer.querySelectorAll('.milestone-item')
+              for (const [index, item] of items.entries()) {
+                ;(item as HTMLElement).dataset.orderNumber = index.toString()
+              }
+            }
+          })
+        }
+
+        // Add milestone button event
+        modalElement
+          .querySelector('#editWorkOrderType--addMilestoneButton')
+          ?.addEventListener('click', () => {
+            const currentCount =
+              defaultMilestonesContainer.querySelectorAll(
+                '.milestone-item'
+              ).length
+            addMilestoneItem('', '', currentCount)
+            renderDefaultMilestones()
+          })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()

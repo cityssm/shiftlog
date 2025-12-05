@@ -4,6 +4,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
 import getWorkOrderType from '../workOrderTypes/getWorkOrderType.js';
+import getWorkOrderTypeDefaultMilestones from '../workOrderTypes/getWorkOrderTypeDefaultMilestones.js';
 export default async function createWorkOrder(createWorkOrderForm, user) {
     const pool = await getShiftLogConnectionPool();
     const workOrderType = await getWorkOrderType(typeof createWorkOrderForm.workOrderTypeId === 'string'
@@ -108,5 +109,37 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         @userName
       )
     `));
-    return result.recordset[0].workOrderId;
+    const workOrderId = result.recordset[0].workOrderId;
+    // Create default milestones for this work order
+    const workOrderTypeId = typeof createWorkOrderForm.workOrderTypeId === 'string'
+        ? Number.parseInt(createWorkOrderForm.workOrderTypeId, 10)
+        : createWorkOrderForm.workOrderTypeId;
+    const defaultMilestones = await getWorkOrderTypeDefaultMilestones(workOrderTypeId);
+    for (const defaultMilestone of defaultMilestones) {
+        await pool
+            .request()
+            .input('workOrderId', workOrderId)
+            .input('milestoneTitle', defaultMilestone.milestoneTitle)
+            .input('milestoneDescription', defaultMilestone.milestoneDescription)
+            .input('orderNumber', defaultMilestone.orderNumber)
+            .input('userName', user.userName).query(/* sql */ `
+        insert into ShiftLog.WorkOrderMilestones (
+          workOrderId,
+          milestoneTitle,
+          milestoneDescription,
+          orderNumber,
+          recordCreate_userName,
+          recordUpdate_userName
+        )
+        values (
+          @workOrderId,
+          @milestoneTitle,
+          @milestoneDescription,
+          @orderNumber,
+          @userName,
+          @userName
+        )
+      `);
+    }
+    return workOrderId;
 }
