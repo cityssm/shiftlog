@@ -6,6 +6,7 @@ import handler_download from '../handlers/workOrders-get/download.js';
 import handler_edit from '../handlers/workOrders-get/edit.js';
 import handler_map from '../handlers/workOrders-get/map.js';
 import handler_new from '../handlers/workOrders-get/new.js';
+import handler_planner from '../handlers/workOrders-get/planner.js';
 import handler_print from '../handlers/workOrders-get/print.js';
 import handler_recovery from '../handlers/workOrders-get/recovery.js';
 import handler_search from '../handlers/workOrders-get/search.js';
@@ -24,6 +25,7 @@ import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGet
 import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGetWorkOrderAttachments.js';
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js';
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js';
+import handler_doGetWorkOrdersForPlanner from '../handlers/workOrders-post/doGetWorkOrdersForPlanner.js';
 import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js';
 import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkOrder.js';
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js';
@@ -60,8 +62,10 @@ router
     .get('/', handler_search)
     .get('/calendar', handler_calendar)
     .get('/map', handler_map)
+    .get('/planner', handler_planner)
     .post('/doSearchWorkOrders', handler_doSearchWorkOrders)
-    .post('/doGetCalendarEvents', handler_doGetCalendarEvents);
+    .post('/doGetCalendarEvents', handler_doGetCalendarEvents)
+    .post('/doGetWorkOrdersForPlanner', handler_doGetWorkOrdersForPlanner);
 router
     .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)
     .post('/doGetLocationSuggestions', handler_doGetLocationSuggestions);

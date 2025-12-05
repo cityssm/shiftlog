@@ -36,18 +36,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getShiftLogConnectionPool = getShiftLogConnectionPool;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var config_helpers_js_1 = require("./config.helpers.js");
-function getShiftLogConnectionPool() {
+exports.default = handler;
+var getWorkOrdersForPlanner_js_1 = require("../../database/workOrders/getWorkOrdersForPlanner.js");
+function handler(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool;
+        var workOrdersResults;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+                case 0: return [4 /*yield*/, (0, getWorkOrdersForPlanner_js_1.default)(request.body, request.body, request.session.user)];
                 case 1:
-                    pool = _a.sent();
-                    return [2 /*return*/, pool];
+                    workOrdersResults = _a.sent();
+                    response.json({
+                        success: true,
+                        workOrders: workOrdersResults.workOrders,
+                        totalCount: workOrdersResults.totalCount,
+                        limit: typeof request.body.limit === 'number'
+                            ? request.body.limit
+                            : Number.parseInt(request.body.limit, 10),
+                        offset: typeof request.body.offset === 'number'
+                            ? request.body.offset
+                            : Number.parseInt(request.body.offset, 10)
+                    });
+                    return [2 /*return*/];
             }
         });
     });

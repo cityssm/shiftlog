@@ -1,0 +1,179 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <nav class="breadcrumb">
+      <ul>
+        <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+        <li class="is-active">
+          <a href="#" aria-current="page">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+            </span>
+            <span>Work Planner</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <% if (error !== '') { %>
+    <div class="notification is-danger is-light">
+      <button class="delete"></button>
+      <strong>Error:</strong>
+      <% if (error === 'notFound') { %>
+      <span>The requested work order was not found.</span>
+      <% } else { %>
+      <span>An unknown error occurred. (<%= error %>)</span>
+      <% } %>
+    </div>
+    <% } %>
+
+    <h1 class="title is-1">
+      <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Work Planner
+    </h1>
+
+    <div class="message is-info">
+      <div class="message-body">
+        Use the Work Planner to view and manage work orders based on date criteria and assignment status.
+        Filter by overdue items, open duration, or upcoming due dates to prioritize your work.
+      </div>
+    </div>
+
+    <div class="box">
+      <form id="form--workOrderPlanner">
+        <input
+          id="workOrderPlanner--limit"
+          name="limit"
+          type="hidden"
+          value="50"
+        />
+        <input
+          id="workOrderPlanner--offset"
+          name="offset"
+          type="hidden"
+          value="0"
+        />
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderPlanner--dateFilter">Date Filter</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderPlanner--dateFilter" name="dateFilter">
+                    <option value="">(All Open)</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="openForDays">Open for X Days or More</option>
+                    <option value="dueInDays">Due in X Days or Less</option>
+                    <option value="milestonesOverdue">Has Overdue Milestones</option>
+                    <option value="milestonesDueInDays">Has Milestones Due in X Days</option>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-calendar"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderPlanner--daysThreshold">Days Threshold</label>
+              <div class="control has-icons-left">
+                <input
+                  class="input"
+                  id="workOrderPlanner--daysThreshold"
+                  name="daysThreshold"
+                  type="number"
+                  min="0"
+                  placeholder="Enter number of days"
+                  disabled
+                />
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-hashtag"></i>
+                </span>
+              </div>
+              <p class="help">Required for date filters with "X Days"</p>
+            </div>
+          </div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderPlanner--workOrderTypeId">
+                <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
+              </label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderPlanner--workOrderTypeId" name="workOrderTypeId">
+                    <option value="">(All Types)</option>
+                    <% workOrderTypes.forEach(function(workOrderType) { %>
+                    <option value="<%= workOrderType.workOrderTypeId %>">
+                      <%= workOrderType.workOrderType %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderPlanner--workOrderStatusDataListItemId">Status</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderPlanner--workOrderStatusDataListItemId" name="workOrderStatusDataListItemId">
+                    <option value="">(All Statuses)</option>
+                    <% workOrderStatuses.forEach(function(workOrderStatus) { %>
+                    <option value="<%= workOrderStatus.dataListItemId %>">
+                      <%= workOrderStatus.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderPlanner--assignedToDataListItemId">Assigned To</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderPlanner--assignedToDataListItemId" name="assignedToDataListItemId">
+                    <option value="">(All Assignees)</option>
+                    <option value="unassigned">(Unassigned)</option>
+                    <% assignedToItems.forEach(function(assignedToItem) { %>
+                    <option value="<%= assignedToItem.dataListItemId %>">
+                      <%= assignedToItem.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-user"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div id="container--workOrderPlannerResults">
+      <!-- Filled dynamically -->
+    </div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/workOrders.planner.js"></script>
+
+<%- await include('../_footerB'); -%>

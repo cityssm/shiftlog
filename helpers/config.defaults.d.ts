@@ -33,7 +33,7 @@ export declare const configDefaultValues: {
     'reverseProxy.urlPrefix': string;
     'session.cookieName': string;
     'session.doKeepAlive': boolean;
-    'session.maxAgeMillis': number;
+    'session.maxAgeMillis': any;
     'session.secret': string;
     'connectors.shiftLog': MSSQLConfig;
     'connectors.avanti': AvantiApiConfiguration | undefined;

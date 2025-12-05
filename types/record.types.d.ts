@@ -220,6 +220,7 @@ export interface WorkOrder extends BaseRecord {
     userGroupName?: string;
     milestonesCount?: number;
     milestonesCompletedCount?: number;
+    overdueMilestonesCount?: number;
 }
 export interface WorkOrderMilestone extends BaseRecord {
     workOrderMilestoneId: number;
