@@ -10,7 +10,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
     var resultsContainerElement = document.querySelector('#container--workOrderPlannerResults');
     // Enable/disable days threshold based on date filter selection
     dateFilterElement.addEventListener('change', function () {
-        var requiresDays = ['openForDays', 'dueInDays', 'milestonesDueInDays'].includes(dateFilterElement.value);
+        var requiresDays = [
+            'openForDays',
+            'dueInDays',
+            'noUpdatesForDays',
+            'milestonesDueInDays'
+        ].includes(dateFilterElement.value);
         daysThresholdElement.disabled = !requiresDays;
         if (requiresDays && daysThresholdElement.value === '') {
             daysThresholdElement.value = '7';
@@ -47,7 +52,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 ? cityssm.dateToString(new Date(workOrder.workOrderDueDateTime))
                 : '-';
             var milestonesHTML = workOrder.milestonesCount && workOrder.milestonesCount > 0
-                ? /* html */ "\n              <span class=\"tag ".concat(workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info', "\">\n                ").concat(workOrder.milestonesCompletedCount, " / ").concat(workOrder.milestonesCount, "\n              </span>\n            ")
+                ? /* html */ "\n              <span class=\"tag ".concat(workOrder.overdueMilestonesCount && workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info', "\">\n                ").concat(workOrder.milestonesCompletedCount, " / ").concat(workOrder.milestonesCount, "\n              </span>\n            ")
                 : '';
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ "\n        <td class=\"has-text-centered\">\n          ".concat(priorityIconHTML, "<br />\n          ").concat(milestonesHTML, "\n        </td>\n        <td>\n          <a href=\"").concat(shiftLog.buildWorkOrderURL(workOrder.workOrderId), "\">\n            ").concat(cityssm.escapeHTML(workOrder.workOrderNumber), "\n          </a><br />\n          <span class=\"is-size-7\">\n            ").concat(cityssm.escapeHTML((_a = workOrder.workOrderType) !== null && _a !== void 0 ? _a : '-'), "\n          </span>\n        </td>\n        <td>\n          ").concat(cityssm.escapeHTML(workOrder.locationAddress1 === '' ? '-' : workOrder.locationAddress1), "<br />\n          <span class=\"is-size-7 has-text-grey\">\n            ").concat(cityssm.escapeHTML(workOrder.locationAddress2), "\n          </span>\n        </td>\n        <td>").concat(cityssm.escapeHTML((_b = workOrder.workOrderStatusDataListItem) !== null && _b !== void 0 ? _b : '(No Status)'), "</td>\n        <td>\n          ").concat(openDate, "<br />\n          <span class=\"is-size-7 has-text-grey\">\n            (").concat(daysOpen, " ").concat(daysOpen === 1 ? 'day' : 'days', " ago)\n          </span>\n        </td>\n        <td class=\"").concat(isOverdue ? 'has-text-danger has-text-weight-bold' : '', "\">\n          ").concat(dueDateHTML, "\n        </td>\n        <td>\n          ").concat(cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName), "\n        </td>\n        <td>\n          ").concat(cityssm.escapeHTML(((_c = workOrder.assignedToDataListItem) !== null && _c !== void 0 ? _c : '') === '' ? '(Unassigned)' : ((_d = workOrder.assignedToDataListItem) !== null && _d !== void 0 ? _d : '')), "\n        </td>\n        <td class=\"is-hidden-print\">\n          <a\n            class=\"button is-small is-info is-light\"\n            href=\"").concat(shiftLog.buildWorkOrderURL(workOrder.workOrderId), "/print\"\n            title=\"Print Work Order\"\n            target=\"_blank\"\n          >\n            <span class=\"icon is-small\"><i class=\"fa-solid fa-print\"></i></span>\n          </a>\n        </td>\n      ");

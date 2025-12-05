@@ -4,7 +4,7 @@ export interface GetWorkOrdersForPlannerFilters {
     includeUnassigned?: boolean;
     workOrderTypeId?: number | string;
     workOrderStatusDataListItemId?: number | string;
-    dateFilter?: '' | 'overdue' | 'openForDays' | 'dueInDays' | 'milestonesOverdue' | 'milestonesDueInDays';
+    dateFilter?: '' | 'overdue' | 'openForDays' | 'dueInDays' | 'noUpdatesForDays' | 'milestonesOverdue' | 'milestonesDueInDays';
     daysThreshold?: number | string;
 }
 export interface GetWorkOrdersForPlannerOptions {

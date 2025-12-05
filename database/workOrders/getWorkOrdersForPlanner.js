@@ -77,6 +77,10 @@ function buildWhereClause(filters, user) {
                 whereClause += " and w.workOrderDueDateTime is not null\n          and datediff(day, getdate(), w.workOrderDueDateTime) <= @daysThreshold\n          and w.workOrderDueDateTime >= getdate()";
                 break;
             }
+            case 'noUpdatesForDays': {
+                whereClause += " and (\n          w.recordUpdate_dateTime is null\n          or datediff(day, w.recordUpdate_dateTime, getdate()) >= @daysThreshold\n        )";
+                break;
+            }
             case 'milestonesOverdue': {
                 whereClause += " and exists (\n          select 1 from ShiftLog.WorkOrderMilestones\n          where workOrderId = w.workOrderId\n            and milestoneCompleteDateTime is null\n            and milestoneDueDateTime < getdate()\n            and recordDelete_dateTime is null\n        )";
                 break;
