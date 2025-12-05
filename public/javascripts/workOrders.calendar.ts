@@ -100,7 +100,7 @@ declare const exports: {
     if (eventType.startsWith('milestone')) {
       return '<i class="fa-solid fa-check"></i>'
     }
-    return `<i class="fa-solid ${shiftLog.configFunctions.getConfigProperty('workOrders.iconClass')}"></i>`
+    return `<i class="fa-solid ${shiftLog.workOrdersIconClass}"></i>`
   }
 
   /**
@@ -108,15 +108,11 @@ declare const exports: {
    */
   function getEventTypeStatusIcon(eventType: string): string {
     switch (eventType) {
-      case 'milestoneComplete': {
-        return '<i class="fa-solid fa-stop"></i>'
-      }
-      case 'milestoneDue': {
-        return '<i class="fa-solid fa-exclamation-triangle"></i>'
-      }
+      case 'milestoneComplete':
       case 'workOrderClose': {
         return '<i class="fa-solid fa-stop"></i>'
       }
+      case 'milestoneDue':
       case 'workOrderDue': {
         return '<i class="fa-solid fa-exclamation-triangle"></i>'
       }
@@ -131,15 +127,11 @@ declare const exports: {
 
   function getEventTypeClass(eventType: string): string {
     switch (eventType) {
-      case 'milestoneComplete': {
-        return 'is-primary'
-      }
-      case 'milestoneDue': {
-        return 'is-link'
-      }
+      case 'milestoneComplete':
       case 'workOrderClose': {
         return 'is-info'
       }
+      case 'milestoneDue':
       case 'workOrderDue': {
         return 'is-warning'
       }

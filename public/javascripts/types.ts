@@ -17,6 +17,7 @@ export interface ShiftLogGlobal {
   workOrdersRouter: string
   workOrdersSectionName: string
   workOrdersSectionNameSingular: string
+  workOrdersIconClass: string
   
   userCanManageWorkOrders: boolean
   userCanUpdateWorkOrders: boolean

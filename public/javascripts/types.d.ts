@@ -13,6 +13,7 @@ export interface ShiftLogGlobal {
     workOrdersRouter: string;
     workOrdersSectionName: string;
     workOrdersSectionNameSingular: string;
+    workOrdersIconClass: string;
     userCanManageWorkOrders: boolean;
     userCanUpdateWorkOrders: boolean;
     buildWorkOrderURL: (workOrderId: number, edit?: boolean) => string;

@@ -162,24 +162,40 @@
     <div class="box">
       <div class="content">
         <h3 class="title is-5">Legend</h3>
-        <div class="columns is-multiline">
-          <div class="column is-half">
-            <span class="tag is-success">Open</span> 
+        <div class="columns">
+          <div class="column">
+            <span class="tag is-success">
+              <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-play"></i></span>
+            </span> 
             <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Open Date
           </div>
-          <div class="column is-half">
-            <span class="tag is-warning">Due</span>
-            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Due Date
+          <div class="column">
+            <span class="tag is-warning">
+              <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
+            </span>
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Due Date<br />
+
+            <span class="tag is-warning">
+              <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
+            </span>
+            Milestone Due Date
           </div>
-          <div class="column is-half">
-            <span class="tag is-info">Close</span>
-            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Close Date
-          </div>
-          <div class="column is-half">
-            <span class="tag is-link">M Due</span> Milestone Due Date
-          </div>
-          <div class="column is-half">
-            <span class="tag is-primary">M Done</span> Milestone Complete Date
+          <div class="column">
+            <span class="tag is-info">
+              <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-stop"></i></span>
+            </span>
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+            Close Date<br />
+
+            <span class="tag is-info">
+              <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-stop"></i></span>
+            </span>
+            Milestone Complete Date
           </div>
         </div>
       </div>
