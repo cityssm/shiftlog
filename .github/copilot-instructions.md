@@ -35,6 +35,7 @@ ShiftLog is a lightweight and flexible work management system built with Node.js
 ### Coding Conventions
 
 1. **Imports**: Use ES Module syntax (`import`/`export`) with `.js` extensions for local files
+
    ```typescript
    import { something } from './helpers/something.js'
    ```
@@ -44,15 +45,17 @@ ShiftLog is a lightweight and flexible work management system built with Node.js
 
 3. **No Magic Numbers**: Use the `@typescript-eslint/no-magic-numbers` rule; define constants for numeric values
 
-4. **Escaping and Sanitization**: 
+4. **Escaping and Sanitization**:
    - Use `cityssm.escapeHTML()` for user-generated content in templates
    - Use approved sanitization methods: `cityssm.dateToString`, `cityssm.escapeHTML`
    - URL builders are considered safe: `buildShiftURL`, `buildWorkOrderURL`, `buildTimesheetURL`
 
 5. **Debug Logging**: Use `debug` package with namespace pattern:
+
    ```typescript
    import Debug from 'debug'
-   const debug = Debug('shiftlog:module-name')
+   import { DEBUG_NAMESPACE } from './debug.config.js'
+   const debug = Debug(`${DEBUG_NAMESPACE}:module-name`)
    ```
 
 6. **Async/Await**: Prefer `async/await` over Promise chains
@@ -63,14 +66,24 @@ ShiftLog is a lightweight and flexible work management system built with Node.js
 
 ```
 ├── app/                    # Express application setup and middleware
+├── data/                   # Data files and configuration
 ├── handlers/               # Route handlers organized by feature
-│   ├── workOrders-get/    # GET handlers for work orders
-│   ├── workOrders-post/   # POST handlers for work orders
+│   ├── admin-get/          # GET handlers for admin endpoints, only accessible to authenticated users with admin role
+│   ├── admin-post/         # POST handlers for admin endpoints, only accessible to authenticated users with admin role
+│   ├── api-get/            # GET handlers for API endpoints, authenticated by parameter in the URL
+│   ├── dashboard-get/      # GET handlers for dashboard views
+│   ├── dashboard-post/     # POST handlers for dashboard actions
+│   ├── shifts-get/         # GET handlers for shifts
+│   ├── shifts-post/        # POST handlers for shifts
+│   ├── timesheets-get/     # GET handlers for timesheets
+│   ├── timesheets-post/    # POST handlers for timesheets
+│   ├── workOrders-get/     # GET handlers for work orders
+│   ├── workOrders-post/    # POST handlers for work orders
 │   └── ...
 ├── helpers/                # Utility functions and shared logic
 ├── database/               # SQL queries and database operations
-│   ├── app/               # Application-level database operations
-│   ├── workOrders/        # Work order database operations
+│   ├── app/                # Application-level database operations
+│   ├── workOrders/         # Work order database operations
 │   └── ...
 ├── routes/                 # Express route definitions
 ├── views/                  # EJS templates
@@ -95,7 +108,6 @@ ShiftLog is a lightweight and flexible work management system built with Node.js
 - Test files use `.test.ts` extension
 - Use `node:test` for test utilities (`describe`, `it`, `before`, `after`, etc.)
 - Integration tests may use Cypress for end-to-end testing
-- Tests require `TEST_DATABASES=true` environment variable for database tests
 
 ### Database
 
@@ -106,7 +118,7 @@ ShiftLog is a lightweight and flexible work management system built with Node.js
 
 ## Security Practices
 
-1. **CSRF Protection**: Use `csrf-csrf` middleware for form submissions
+1. **CSRF Protection**: Use `csrf-csrf` middleware for form submissions. Disabled for API routes. Can be fully disabled in config if needed.
 2. **Input Sanitization**: Always escape user input with `cityssm.escapeHTML()` before rendering
 3. **No Direct SQL**: Use parameterized queries via the database helpers
 4. **Rate Limiting**: Use `express-rate-limit` for API endpoints
@@ -116,6 +128,7 @@ ShiftLog is a lightweight and flexible work management system built with Node.js
 ## API Integrations
 
 ShiftLog integrates with several external systems:
+
 - **Avanti**: Employee management via `@cityssm/avanti-api`
 - **Worktech**: Work order sync via `@cityssm/worktech-api`
 - **ArcGIS**: GIS data via `@cityssm/esri-mapserver-layer-dl`
@@ -151,6 +164,7 @@ ShiftLog integrates with several external systems:
 ## Common Patterns
 
 ### Express Route Handler Pattern
+
 ```typescript
 import type { Request, Response } from 'express'
 
@@ -161,20 +175,23 @@ export function handler(request: Request, response: Response): void {
 ```
 
 ### Database Query Pattern
+
 ```typescript
-import { acquireDatabasePool } from '../helpers/database.helpers.js'
+import { getShiftLogConnectionPool } from '../helpers/database.helpers.js'
 
 export async function getSomething(id: number): Promise<SomeType | undefined> {
-  const pool = await acquireDatabasePool()
-  const result = await pool.request()
+  const pool = await getShiftLogConnectionPool()
+  const result = await pool
+    .request()
     .input('id', id)
     .query('SELECT * FROM TableName WHERE id = @id')
-  
+
   return result.recordset[0]
 }
 ```
 
 ### Helper Module Pattern
+
 ```typescript
 // helpers/something.helpers.ts
 export function doSomething(): void {
@@ -190,4 +207,3 @@ export function doSomething(): void {
 - Import local modules with `.js` extension, even in TypeScript files
 - Follow the established patterns for organizing code by feature
 - Respect the security practices, especially around input sanitization
-- Test database operations require `TEST_DATABASES=true` environment variable
