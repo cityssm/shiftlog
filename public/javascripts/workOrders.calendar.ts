@@ -93,25 +93,38 @@ declare const exports: {
     monthTitleElement.textContent = `${monthNames[currentMonth - 1]} ${currentYear}`
   }
 
-  function getEventTypeLabel(eventType: string): string {
+  /**
+   * Get the left icon HTML for an event type (work order icon or check icon)
+   */
+  function getEventTypeLeftIcon(eventType: string): string {
+    if (eventType.startsWith('milestone')) {
+      return '<i class="fa-solid fa-check"></i>'
+    }
+    return `<i class="fa-solid ${shiftLog.configFunctions.getConfigProperty('workOrders.iconClass')}"></i>`
+  }
+
+  /**
+   * Get the status icon HTML for an event type (play/exclamation-triangle/stop)
+   */
+  function getEventTypeStatusIcon(eventType: string): string {
     switch (eventType) {
       case 'milestoneComplete': {
-        return 'M Done'
+        return '<i class="fa-solid fa-stop"></i>'
       }
       case 'milestoneDue': {
-        return 'M Due'
+        return '<i class="fa-solid fa-exclamation-triangle"></i>'
       }
       case 'workOrderClose': {
-        return 'Close'
+        return '<i class="fa-solid fa-stop"></i>'
       }
       case 'workOrderDue': {
-        return 'Due'
+        return '<i class="fa-solid fa-exclamation-triangle"></i>'
       }
       case 'workOrderOpen': {
-        return 'Open'
+        return '<i class="fa-solid fa-play"></i>'
       }
       default: {
-        return eventType
+        return ''
       }
     }
   }
@@ -193,20 +206,26 @@ declare const exports: {
           calendarHTML += `<div class="has-text-weight-bold mb-2">${calendarDay}</div>`
 
           if (dayEvents.length > 0) {
-            calendarHTML += '<div class="tags">'
-
             for (const event of dayEvents) {
-              const eventLabel = getEventTypeLabel(event.eventType)
               const eventClass = getEventTypeClass(event.eventType)
+              const leftIcon = getEventTypeLeftIcon(event.eventType)
+              const statusIcon = getEventTypeStatusIcon(event.eventType)
 
               const title = event.milestoneTitle
                 ? `${event.workOrderNumber} - ${event.milestoneTitle}`
                 : event.workOrderNumber
 
-              calendarHTML += `<a href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" class="tag ${eventClass}" title="${escapeHtml(title)}">${escapeHtml(eventLabel)}</a>`
+              // Create a tag with addons: left side has icons, right side has work order number
+              calendarHTML += `<div class="tags has-addons mb-1">
+                <a href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" class="tag ${eventClass}" title="${escapeHtml(title)}">
+                  <span class="icon is-small">${leftIcon}</span>
+                  <span class="icon is-small">${statusIcon}</span>
+                </a>
+                <a href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" class="tag is-light" title="${escapeHtml(title)}">
+                  ${escapeHtml(event.workOrderNumber)}
+                </a>
+              </div>`
             }
-
-            calendarHTML += '</div>'
           }
 
           calendarHTML += '</td>'
