@@ -36,7 +36,9 @@ export default async function getCalendarEvents(filters, user) {
           w.assignedToDataListItemId,
           dt.dataListItem as assignedToDataListItem,
           null as milestoneId,
-          null as milestoneTitle
+          null as milestoneTitle,
+          w.workOrderCloseDateTime,
+          null as milestoneCompleteDateTime
         from ShiftLog.WorkOrders w
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
         left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
@@ -58,7 +60,9 @@ export default async function getCalendarEvents(filters, user) {
           w.assignedToDataListItemId,
           dt.dataListItem as assignedToDataListItem,
           null as milestoneId,
-          null as milestoneTitle
+          null as milestoneTitle,
+          w.workOrderCloseDateTime,
+          null as milestoneCompleteDateTime
         from ShiftLog.WorkOrders w
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
         left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
@@ -81,7 +85,9 @@ export default async function getCalendarEvents(filters, user) {
           w.assignedToDataListItemId,
           dt.dataListItem as assignedToDataListItem,
           null as milestoneId,
-          null as milestoneTitle
+          null as milestoneTitle,
+          w.workOrderCloseDateTime,
+          null as milestoneCompleteDateTime
         from ShiftLog.WorkOrders w
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
         left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
@@ -123,7 +129,9 @@ export default async function getCalendarEvents(filters, user) {
           coalesce(m.assignedToDataListItemId, w.assignedToDataListItemId) as assignedToDataListItemId,
           coalesce(mdt.dataListItem, wdt.dataListItem) as assignedToDataListItem,
           m.workOrderMilestoneId as milestoneId,
-          m.milestoneTitle
+          m.milestoneTitle,
+          w.workOrderCloseDateTime,
+          m.milestoneCompleteDateTime
         from ShiftLog.WorkOrderMilestones m
         inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
@@ -152,7 +160,9 @@ export default async function getCalendarEvents(filters, user) {
           coalesce(m.assignedToDataListItemId, w.assignedToDataListItemId) as assignedToDataListItemId,
           coalesce(mdt.dataListItem, wdt.dataListItem) as assignedToDataListItem,
           m.workOrderMilestoneId as milestoneId,
-          m.milestoneTitle
+          m.milestoneTitle,
+          w.workOrderCloseDateTime,
+          m.milestoneCompleteDateTime
         from ShiftLog.WorkOrderMilestones m
         inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId

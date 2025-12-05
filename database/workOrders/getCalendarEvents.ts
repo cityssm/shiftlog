@@ -31,7 +31,7 @@ export interface WorkOrderCalendarEvent {
 
   milestoneId?: number | null
   milestoneTitle?: string | null
-  
+
   workOrderCloseDateTime?: Date | string | null
   milestoneCompleteDateTime?: Date | string | null
 }

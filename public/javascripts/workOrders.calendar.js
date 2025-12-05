@@ -138,16 +138,32 @@
                             const title = event.milestoneTitle
                                 ? `${event.workOrderNumber} - ${event.milestoneTitle}`
                                 : event.workOrderNumber;
+                            // Determine if the item is currently open
+                            let rightTagClass = 'is-light';
+                            if (event.eventType.startsWith('workOrder')) {
+                                // Work order is open if workOrderCloseDateTime is null
+                                if (event.workOrderCloseDateTime === null) {
+                                    rightTagClass = 'is-light is-success';
+                                }
+                            }
+                            else {
+                                // Milestone is open if milestoneCompleteDateTime is null
+                                if (event.milestoneCompleteDateTime === null) {
+                                    rightTagClass = 'is-light is-success';
+                                }
+                            }
                             // Create a tag with addons: left side has icons, right side has work order number
-                            calendarHTML += `<div class="tags has-addons mb-1">
-                <a href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" class="tag ${eventClass}" title="${escapeHtml(title)}">
-                  <span class="icon is-small">${leftIcon}</span>
-                  <span class="icon is-small">${statusIcon}</span>
-                </a>
-                <a href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" class="tag is-light" title="${escapeHtml(title)}">
-                  ${escapeHtml(event.workOrderNumber)}
-                </a>
-              </div>`;
+                            calendarHTML += /* html */ `
+                <div class="tags has-addons mb-1">
+                  <a class="tag ${eventClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
+                    <span class="icon is-small">${leftIcon}</span>
+                    <span class="icon is-small">${statusIcon}</span>
+                  </a>
+                  <a class="tag ${rightTagClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
+                    ${escapeHtml(event.workOrderNumber)}
+                  </a>
+                </div>
+              `;
                         }
                     }
                     calendarHTML += '</td>';
