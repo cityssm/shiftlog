@@ -1,0 +1,227 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
+import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+function buildWhereClause(filters, user) {
+    let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
+    // Only include open work orders
+    whereClause += ' and w.workOrderCloseDateTime is null';
+    if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
+        whereClause += ' and w.workOrderTypeId = @workOrderTypeId';
+    }
+    if (filters.workOrderStatusDataListItemId !== undefined &&
+        filters.workOrderStatusDataListItemId !== '') {
+        whereClause +=
+            ' and w.workOrderStatusDataListItemId = @workOrderStatusDataListItemId';
+    }
+    // Handle assigned/unassigned filter
+    if (filters.includeUnassigned === true) {
+        whereClause += ` and (
+      w.assignedToDataListItemId is null
+      or exists (
+        select 1 from ShiftLog.WorkOrderMilestones
+        where workOrderId = w.workOrderId
+          and assignedToDataListItemId is null
+          and recordDelete_dateTime is null
+      )
+    )`;
+    }
+    else if (filters.assignedToDataListItemId !== undefined &&
+        filters.assignedToDataListItemId !== '') {
+        whereClause += ` and (
+      w.assignedToDataListItemId = @assignedToDataListItemId
+      or exists (
+        select 1 from ShiftLog.WorkOrderMilestones
+        where workOrderId = w.workOrderId
+          and assignedToDataListItemId = @assignedToDataListItemId
+          and recordDelete_dateTime is null
+      )
+    )`;
+    }
+    // Handle date filters
+    if (filters.dateFilter !== undefined && filters.dateFilter !== '') {
+        switch (filters.dateFilter) {
+            case 'overdue': {
+                whereClause += ' and w.workOrderDueDateTime < getdate()';
+                break;
+            }
+            case 'openForDays': {
+                whereClause +=
+                    ' and datediff(day, w.workOrderOpenDateTime, getdate()) >= @daysThreshold';
+                break;
+            }
+            case 'dueInDays': {
+                whereClause += ` and w.workOrderDueDateTime is not null
+          and datediff(day, getdate(), w.workOrderDueDateTime) <= @daysThreshold
+          and w.workOrderDueDateTime >= getdate()`;
+                break;
+            }
+            case 'noUpdatesForDays': {
+                whereClause += ` and (
+          w.recordUpdate_dateTime is null
+          or datediff(day, w.recordUpdate_dateTime, getdate()) >= @daysThreshold
+        )`;
+                break;
+            }
+            case 'milestonesOverdue': {
+                whereClause += ` and exists (
+          select 1 from ShiftLog.WorkOrderMilestones
+          where workOrderId = w.workOrderId
+            and milestoneCompleteDateTime is null
+            and milestoneDueDateTime < getdate()
+            and recordDelete_dateTime is null
+        )`;
+                break;
+            }
+            case 'milestonesDueInDays': {
+                whereClause += ` and exists (
+          select 1 from ShiftLog.WorkOrderMilestones
+          where workOrderId = w.workOrderId
+            and milestoneCompleteDateTime is null
+            and milestoneDueDateTime is not null
+            and datediff(day, getdate(), milestoneDueDateTime) <= @daysThreshold
+            and milestoneDueDateTime >= getdate()
+            and recordDelete_dateTime is null
+        )`;
+                break;
+            }
+        }
+    }
+    if (user !== undefined) {
+        whereClause += `
+      and (
+        wType.userGroupId is null or wType.userGroupId in (
+          select userGroupId
+          from ShiftLog.UserGroupMembers
+          where userName = @userName
+        )
+      )
+    `;
+    }
+    return whereClause;
+}
+function applyParameters(sqlRequest, filters, user) {
+    sqlRequest
+        .input('instance', getConfigProperty('application.instance'))
+        .input('workOrderTypeId', filters.workOrderTypeId ?? null)
+        .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
+        .input('assignedToDataListItemId', filters.assignedToDataListItemId ?? null)
+        .input('daysThreshold', filters.daysThreshold === undefined
+        ? null
+        : typeof filters.daysThreshold === 'string'
+            ? Number.parseInt(filters.daysThreshold, 10)
+            : filters.daysThreshold)
+        .input('userName', user?.userName);
+}
+export default async function getWorkOrdersForPlanner(filters, options, user) {
+    const pool = await getShiftLogConnectionPool();
+    const whereClause = buildWhereClause(filters, user);
+    const limit = typeof options.limit === 'string'
+        ? Number.parseInt(options.limit, 10)
+        : options.limit;
+    const offset = typeof options.offset === 'string'
+        ? Number.parseInt(options.offset, 10)
+        : options.offset;
+    // Get total count if limit !== -1
+    let totalCount = 0;
+    if (limit !== -1) {
+        const countSql = /* sql */ `
+      select count(*) as totalCount
+      from ShiftLog.WorkOrders w
+      left join ShiftLog.WorkOrderTypes wType
+        on w.workOrderTypeId = wType.workOrderTypeId
+      ${whereClause}
+    `;
+        const countRequest = pool.request();
+        applyParameters(countRequest, filters, user);
+        const countResult = await countRequest.query(countSql);
+        totalCount = countResult.recordset[0].totalCount;
+    }
+    // Main query with limit and offset
+    let workOrders = [];
+    if (totalCount > 0 || limit === -1) {
+        const workOrdersRequest = pool.request();
+        applyParameters(workOrdersRequest, filters, user);
+        const workOrdersResult = await workOrdersRequest.query(/* sql */ `
+        select
+          w.workOrderId,
+
+          w.workOrderNumberPrefix,
+          w.workOrderNumberYear,
+          w.workOrderNumberSequence,
+          w.workOrderNumberOverride,
+          w.workOrderNumber,
+
+          w.workOrderTypeId,
+          wType.workOrderType,
+
+          w.workOrderStatusDataListItemId,
+          wStatus.dataListItem as workOrderStatusDataListItem,
+
+          w.workOrderDetails,
+
+          w.workOrderOpenDateTime,
+          w.workOrderDueDateTime,
+          w.workOrderCloseDateTime,
+
+          w.requestorName,
+          w.requestorContactInfo,
+
+          w.locationLatitude,
+          w.locationLongitude,
+          w.locationAddress1,
+          w.locationAddress2,
+          w.locationCityProvince,
+
+          w.assignedToDataListItemId,
+          assignedTo.dataListItem as assignedToDataListItem,
+
+          milestones.milestonesCount,
+          milestones.milestonesCompletedCount,
+          milestones.overdueMilestonesCount
+          
+        from ShiftLog.WorkOrders w
+
+        left join ShiftLog.WorkOrderTypes wType
+          on w.workOrderTypeId = wType.workOrderTypeId
+
+        left join ShiftLog.DataListItems wStatus
+          on w.workOrderStatusDataListItemId = wStatus.dataListItemId
+
+        left join ShiftLog.DataListItems assignedTo
+          on w.assignedToDataListItemId = assignedTo.dataListItemId
+
+        left join (
+          select workOrderId,
+            count(*) as milestonesCount,
+            sum(
+              case when milestoneCompleteDateTime is null then 0 else 1 end
+            ) as milestonesCompletedCount,
+            sum(
+              case when milestoneCompleteDateTime is null and milestoneDueDateTime < getdate() then 1 else 0 end
+            ) as overdueMilestonesCount
+          from ShiftLog.WorkOrderMilestones
+          where recordDelete_dateTime is null
+          group by workOrderId
+        ) as milestones on milestones.workOrderId = w.workOrderId
+
+        ${whereClause}    
+
+        order by 
+          case when w.workOrderDueDateTime < getdate() then 0 else 1 end,
+          w.workOrderDueDateTime,
+          w.workOrderOpenDateTime desc
+
+        ${limit === -1 ? '' : ` offset ${offset} rows`}
+        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
+      `);
+        workOrders = workOrdersResult.recordset;
+        if (limit === -1) {
+            totalCount = workOrders.length;
+        }
+    }
+    return {
+        workOrders,
+        totalCount
+    };
+}

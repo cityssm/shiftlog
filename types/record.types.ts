@@ -314,6 +314,7 @@ export interface WorkOrder extends BaseRecord {
 
   milestonesCount?: number
   milestonesCompletedCount?: number
+  overdueMilestonesCount?: number
 }
 
 export interface WorkOrderMilestone extends BaseRecord {

@@ -34,6 +34,24 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
     </li>
     <li>
       <a
+        class="<%= headTitle.endsWith(' - Work Planner') ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/<%= workOrdersRouter %>/planner"
+        title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Work Planner"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Work Planner
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
         class="<%= headTitle.endsWith(' - Calendar') ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/<%= workOrdersRouter %>/calendar"
         title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Calendar"
