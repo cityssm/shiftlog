@@ -238,23 +238,6 @@
           </div>
         </div>
       </a>
-      <a class="panel-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/map">
-        <div class="media">
-          <div class="media-left">
-            <span class="fa-layers fa-4x">
-              <i class="fa-solid fa-map"></i>
-            </span>
-          </div>
-          <div class="media-content">
-            <h2 class="title is-4 mb-0 has-text-link">
-              Open <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Map
-            </h2>
-            <p>
-              View <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> on an interactive map.
-            </p>
-          </div>
-        </div>
-      </a>
       <% if (user.userProperties.workOrders.canUpdate) { %>
       <div class="panel-block">
         <a class="button is-success is-fullwidth" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/new">
@@ -263,6 +246,28 @@
         </a>
       </div>
       <% } %>
+      <div class="panel-block is-block">
+        <div class="columns is-mobile">
+          <div class="column">
+            <a class="button is-fullwidth is-link is-light is-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/planner">
+              <i class="fa-solid fa-3x fa-clipboard-list"></i><br />
+              Planner
+            </a>
+          </div>
+          <div class="column">
+            <a class="button is-fullwidth is-link is-light is-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/calendar">
+              <i class="fa-solid fa-3x fa-calendar"></i><br />
+              Calendar
+            </a>
+          </div>
+          <div class="column">
+            <a class="button is-fullwidth is-link is-light is-block" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/map">
+              <i class="fa-solid fa-3x fa-map"></i><br />
+              Open Map
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

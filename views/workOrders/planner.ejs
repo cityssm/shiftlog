@@ -8,11 +8,16 @@
     <nav class="breadcrumb">
       <ul>
         <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
-        <li class="is-active">
-          <a href="#" aria-current="page">
+        <li>
+          <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
             <span class="icon is-small">
               <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
             </span>
+            <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
+          </a>
+        </li>
+        <li class="is-active">
+          <a href="#" aria-current="page">
             <span>Work Planner</span>
           </a>
         </li>
