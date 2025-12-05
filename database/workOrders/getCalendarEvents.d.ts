@@ -10,18 +10,17 @@ export interface GetCalendarEventsFilters {
 }
 export interface WorkOrderCalendarEvent {
     eventDate: Date | string;
-    eventType: 'workOrderOpen' | 'workOrderDue' | 'workOrderClose' | 'milestoneDue' | 'milestoneComplete';
+    eventType: 'milestoneComplete' | 'milestoneDue' | 'workOrderClose' | 'workOrderDue' | 'workOrderOpen';
     workOrderId: number;
     workOrderNumber: string;
     workOrderDetails: string;
-    assignedToDataListItemId?: number | null;
     assignedToDataListItem?: string | null;
+    assignedToDataListItemId?: number | null;
     milestoneId?: number | null;
     milestoneTitle?: string | null;
 }
 /**
  * Retrieves calendar events for work orders and milestones within a specified month.
- *
  * @param filters - Filter parameters including year, month, date type toggles, and assigned to filter
  * @param user - Optional user object for applying user group security filtering.
  *               When provided, only work orders from work order types accessible to the user's groups are returned.

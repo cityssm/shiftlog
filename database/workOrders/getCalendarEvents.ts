@@ -1,6 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable unicorn/no-null */
-
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -20,23 +17,24 @@ export interface GetCalendarEventsFilters {
 export interface WorkOrderCalendarEvent {
   eventDate: Date | string
   eventType:
-    | 'workOrderOpen'
-    | 'workOrderDue'
-    | 'workOrderClose'
-    | 'milestoneDue'
     | 'milestoneComplete'
+    | 'milestoneDue'
+    | 'workOrderClose'
+    | 'workOrderDue'
+    | 'workOrderOpen'
   workOrderId: number
   workOrderNumber: string
   workOrderDetails: string
-  assignedToDataListItemId?: number | null
+
   assignedToDataListItem?: string | null
+  assignedToDataListItemId?: number | null
+
   milestoneId?: number | null
   milestoneTitle?: string | null
 }
 
 /**
  * Retrieves calendar events for work orders and milestones within a specified month.
- * 
  * @param filters - Filter parameters including year, month, date type toggles, and assigned to filter
  * @param user - Optional user object for applying user group security filtering.
  *               When provided, only work orders from work order types accessible to the user's groups are returned.
@@ -48,7 +46,7 @@ export default async function getCalendarEvents(
 ): Promise<WorkOrderCalendarEvent[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const instance = getConfigProperty('application.instanceKey')
+  const instance = getConfigProperty('application.instance')
 
   // Calculate date range for the month
   const startDate = new Date(filters.year, filters.month - 1, 1)
@@ -58,13 +56,13 @@ export default async function getCalendarEvents(
 
   // Build user group WHERE clause for security
   const userGroupWhereClause =
-    user !== undefined
-      ? `and (wType.userGroupId is null or wType.userGroupId in (
+    user === undefined
+      ? ''
+      : `and (wType.userGroupId is null or wType.userGroupId in (
           select userGroupId
           from ShiftLog.UserGroupMembers
           where userName = @userName
         ))`
-      : ''
 
   // Query for work order dates
   if (filters.showOpenDates || filters.showDueDates || filters.showCloseDates) {
@@ -88,7 +86,7 @@ export default async function getCalendarEvents(
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and w.workOrderOpenDateTime between @startDate and @endDate
-          ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+          ${filters.assignedToDataListItemId === undefined ? '' : 'and w.assignedToDataListItemId = @assignedToDataListItemId'}
           ${userGroupWhereClause}
       `)
     }
@@ -112,7 +110,7 @@ export default async function getCalendarEvents(
           and w.recordDelete_dateTime is null
           and w.workOrderDueDateTime is not null
           and w.workOrderDueDateTime between @startDate and @endDate
-          ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+          ${filters.assignedToDataListItemId === undefined ? '' : 'and w.assignedToDataListItemId = @assignedToDataListItemId'}
           ${userGroupWhereClause}
       `)
     }
@@ -136,7 +134,7 @@ export default async function getCalendarEvents(
           and w.recordDelete_dateTime is null
           and w.workOrderCloseDateTime is not null
           and w.workOrderCloseDateTime between @startDate and @endDate
-          ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+          ${filters.assignedToDataListItemId === undefined ? '' : 'and w.assignedToDataListItemId = @assignedToDataListItemId'}
           ${userGroupWhereClause}
       `)
     }
@@ -194,10 +192,10 @@ export default async function getCalendarEvents(
           and m.milestoneDueDateTime is not null
           and m.milestoneDueDateTime between @startDate and @endDate
           ${
-            filters.assignedToDataListItemId !== undefined
-              ? `and (m.assignedToDataListItemId = @assignedToDataListItemId
+            filters.assignedToDataListItemId === undefined
+              ? ''
+              : `and (m.assignedToDataListItemId = @assignedToDataListItemId
                    or (m.assignedToDataListItemId is null and w.assignedToDataListItemId = @assignedToDataListItemId))`
-              : ''
           }
           ${userGroupWhereClause}
       `)
@@ -226,10 +224,10 @@ export default async function getCalendarEvents(
           and m.milestoneCompleteDateTime is not null
           and m.milestoneCompleteDateTime between @startDate and @endDate
           ${
-            filters.assignedToDataListItemId !== undefined
-              ? `and (m.assignedToDataListItemId = @assignedToDataListItemId
+            filters.assignedToDataListItemId === undefined
+              ? ''
+              : `and (m.assignedToDataListItemId = @assignedToDataListItemId
                    or (m.assignedToDataListItemId is null and w.assignedToDataListItemId = @assignedToDataListItemId))`
-              : ''
           }
           ${userGroupWhereClause}
       `)

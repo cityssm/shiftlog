@@ -151,41 +151,23 @@
         // eslint-disable-next-line no-unsanitized/property
         calendarContainerElement.innerHTML = calendarHTML;
     }
-    async function loadCalendar() {
+    function loadCalendar() {
         updateMonthTitle();
-        const formData = new FormData();
-        formData.append('year', currentYear.toString());
-        formData.append('month', currentMonth.toString());
-        formData.append('assignedToDataListItemId', assignedToSelect.value);
-        formData.append('showOpenDates', showOpenDatesCheckbox.checked.toString());
-        formData.append('showDueDates', showDueDatesCheckbox.checked.toString());
-        formData.append('showCloseDates', showCloseDatesCheckbox.checked.toString());
-        formData.append('showMilestoneDueDates', showMilestoneDueDatesCheckbox.checked.toString());
-        formData.append('showMilestoneCompleteDates', showMilestoneCompleteDatesCheckbox.checked.toString());
-        try {
-            const response = await fetch(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`, {
-                method: 'POST',
-                body: formData
-            });
-            const data = (await response.json());
-            if (data.success) {
-                renderCalendar(data.events);
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`, {
+            year: currentYear,
+            month: currentMonth,
+            assignedToDataListItemId: assignedToSelect.value,
+            showOpenDates: showOpenDatesCheckbox.checked,
+            showDueDates: showDueDatesCheckbox.checked,
+            showCloseDates: showCloseDatesCheckbox.checked,
+            showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
+            showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success) {
+                renderCalendar(responseJSON.events);
             }
-            else {
-                bulmaJS.alert({
-                    contextualColorName: 'danger',
-                    title: 'Error',
-                    message: 'Failed to load calendar events.'
-                });
-            }
-        }
-        catch {
-            bulmaJS.alert({
-                contextualColorName: 'danger',
-                title: 'Error',
-                message: 'An error occurred while loading the calendar.'
-            });
-        }
+        });
     }
     // Event listeners
     previousMonthButtonElement.addEventListener('click', () => {
@@ -201,10 +183,10 @@
     nextMonthButtonElement.addEventListener('click', () => {
         if (currentMonth === 12) {
             currentMonth = 1;
-            currentYear++;
+            currentYear += 1;
         }
         else {
-            currentMonth++;
+            currentMonth += 1;
         }
         loadCalendar();
     });

@@ -41,59 +41,83 @@
 
     <div class="box">
       <form id="form--calendarFilters">
-        <div class="columns">
-          <div class="column">
-            <div class="field">
-              <label class="label" for="calendar--assignedToDataListItemId">Assigned To</label>
-              <div class="control has-icons-left">
-                <div class="select is-fullwidth">
-                  <select id="calendar--assignedToDataListItemId" name="assignedToDataListItemId">
-                    <option value="">(All Assignees)</option>
-                    <% assignedToItems.forEach(function(assignedToItem) { %>
-                    <option value="<%= assignedToItem.dataListItemId %>">
-                      <%= assignedToItem.dataListItem %>
-                    </option>
-                    <% }); %>
-                  </select>
-                </div>
-                <span class="icon is-small is-left">
-                  <i class="fa-solid fa-filter"></i>
-                </span>
-              </div>
+        <div class="field">
+          <label class="label" for="calendar--assignedToDataListItemId">Assigned To</label>
+          <div class="control has-icons-left">
+            <div class="select is-fullwidth">
+              <select id="calendar--assignedToDataListItemId" name="assignedToDataListItemId">
+                <option value="">(All Assignees)</option>
+                <% assignedToItems.forEach(function(assignedToItem) { %>
+                <option value="<%= assignedToItem.dataListItemId %>">
+                  <%= assignedToItem.dataListItem %>
+                </option>
+                <% }); %>
+              </select>
             </div>
+            <span class="icon is-small is-left">
+              <i class="fa-solid fa-filter"></i>
+            </span>
           </div>
         </div>
-        <div class="columns">
-          <div class="column">
-            <div class="field">
-              <label class="label">Show Dates</label>
+        <div class="field">
+          <div class="columns">
+            <div class="column">
+              <strong><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Dates</strong>
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" id="calendar--showOpenDates" name="showOpenDates" checked />
-                  Work Order Open Dates
+                  <input
+                    id="calendar--showOpenDates"
+                    name="showOpenDates"
+                    type="checkbox"
+                    checked
+                  />
+                  Open Dates
                 </label>
               </div>
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" id="calendar--showDueDates" name="showDueDates" checked />
-                  Work Order Due Dates
+                  <input
+                    id="calendar--showDueDates"
+                    name="showDueDates"
+                    type="checkbox"
+                    checked
+                  />
+                  Due Dates
                 </label>
               </div>
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" id="calendar--showCloseDates" name="showCloseDates" checked />
-                  Work Order Close Dates
+                  <input
+                    id="calendar--showCloseDates"
+                    name="showCloseDates"
+                    type="checkbox"
+                    checked
+                  />
+                  Close Dates
                 </label>
               </div>
+            </div>
+            <div class="column">
+              <strong>Milestone Dates</strong>
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" id="calendar--showMilestoneDueDates" name="showMilestoneDueDates" checked />
+                  <input
+                    id="calendar--showMilestoneDueDates"
+                    name="showMilestoneDueDates"
+                    type="checkbox"
+                    checked
+                  />
                   Milestone Due Dates
                 </label>
               </div>
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" id="calendar--showMilestoneCompleteDates" name="showMilestoneCompleteDates" checked />
+                  <input
+                    id="calendar--showMilestoneCompleteDates"
+                    name="showMilestoneCompleteDates"
+                    type="checkbox"
+                    checked
+                  />
                   Milestone Complete Dates
                 </label>
               </div>
@@ -140,13 +164,16 @@
         <h3 class="title is-5">Legend</h3>
         <div class="columns is-multiline">
           <div class="column is-half">
-            <span class="tag is-success">Open</span> Work Order Open Date
+            <span class="tag is-success">Open</span> 
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Open Date
           </div>
           <div class="column is-half">
-            <span class="tag is-warning">Due</span> Work Order Due Date
+            <span class="tag is-warning">Due</span>
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Due Date
           </div>
           <div class="column is-half">
-            <span class="tag is-info">Close</span> Work Order Close Date
+            <span class="tag is-info">Close</span>
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Close Date
           </div>
           <div class="column is-half">
             <span class="tag is-link">M Due</span> Milestone Due Date
