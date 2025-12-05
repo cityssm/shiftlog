@@ -1,0 +1,236 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
+
+import type { mssql } from '@cityssm/mssql-multi-pool'
+
+import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+
+export interface GetCalendarEventsFilters {
+  year: number
+  month: number
+  assignedToDataListItemId?: number
+  showOpenDates: boolean
+  showDueDates: boolean
+  showCloseDates: boolean
+  showMilestoneDueDates: boolean
+  showMilestoneCompleteDates: boolean
+}
+
+export interface WorkOrderCalendarEvent {
+  eventDate: Date | string
+  eventType:
+    | 'workOrderOpen'
+    | 'workOrderDue'
+    | 'workOrderClose'
+    | 'milestoneDue'
+    | 'milestoneComplete'
+  workOrderId: number
+  workOrderNumber: string
+  workOrderDetails: string
+  assignedToDataListItemId?: number | null
+  assignedToDataListItem?: string | null
+  milestoneId?: number | null
+  milestoneTitle?: string | null
+}
+
+export default async function getCalendarEvents(
+  filters: GetCalendarEventsFilters,
+  user?: User
+): Promise<WorkOrderCalendarEvent[]> {
+  const pool = await getShiftLogConnectionPool()
+
+  const instance = getConfigProperty('application.instanceKey')
+
+  // Calculate date range for the month
+  const startDate = new Date(filters.year, filters.month - 1, 1)
+  const endDate = new Date(filters.year, filters.month, 0, 23, 59, 59)
+
+  const events: WorkOrderCalendarEvent[] = []
+
+  // Build WHERE clause for assigned to filter
+  let assignedToWhereClause = ''
+  if (filters.assignedToDataListItemId !== undefined) {
+    assignedToWhereClause = ` and (w.assignedToDataListItemId = @assignedToDataListItemId
+      or m.assignedToDataListItemId = @assignedToDataListItemId)`
+  }
+
+  // Query for work order dates
+  if (filters.showOpenDates || filters.showDueDates || filters.showCloseDates) {
+    const workOrderDateQueries: string[] = []
+
+    if (filters.showOpenDates) {
+      workOrderDateQueries.push(/* sql */ `
+        select
+          w.workOrderOpenDateTime as eventDate,
+          'workOrderOpen' as eventType,
+          w.workOrderId,
+          w.workOrderNumber,
+          w.workOrderDetails,
+          w.assignedToDataListItemId,
+          dt.dataListItem as assignedToDataListItem,
+          null as milestoneId,
+          null as milestoneTitle
+        from ShiftLog.WorkOrders w
+        left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
+        where w.instance = @instance
+          and w.recordDelete_dateTime is null
+          and w.workOrderOpenDateTime between @startDate and @endDate
+          ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+      `)
+    }
+
+    if (filters.showDueDates) {
+      workOrderDateQueries.push(/* sql */ `
+        select
+          w.workOrderDueDateTime as eventDate,
+          'workOrderDue' as eventType,
+          w.workOrderId,
+          w.workOrderNumber,
+          w.workOrderDetails,
+          w.assignedToDataListItemId,
+          dt.dataListItem as assignedToDataListItem,
+          null as milestoneId,
+          null as milestoneTitle
+        from ShiftLog.WorkOrders w
+        left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
+        where w.instance = @instance
+          and w.recordDelete_dateTime is null
+          and w.workOrderDueDateTime is not null
+          and w.workOrderDueDateTime between @startDate and @endDate
+          ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+      `)
+    }
+
+    if (filters.showCloseDates) {
+      workOrderDateQueries.push(/* sql */ `
+        select
+          w.workOrderCloseDateTime as eventDate,
+          'workOrderClose' as eventType,
+          w.workOrderId,
+          w.workOrderNumber,
+          w.workOrderDetails,
+          w.assignedToDataListItemId,
+          dt.dataListItem as assignedToDataListItem,
+          null as milestoneId,
+          null as milestoneTitle
+        from ShiftLog.WorkOrders w
+        left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
+        where w.instance = @instance
+          and w.recordDelete_dateTime is null
+          and w.workOrderCloseDateTime is not null
+          and w.workOrderCloseDateTime between @startDate and @endDate
+          ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+      `)
+    }
+
+    if (workOrderDateQueries.length > 0) {
+      const workOrderQuery = workOrderDateQueries.join(' union all ')
+
+      const request = pool.request() as mssql.Request
+
+      request.input('instance', instance)
+      request.input('startDate', startDate)
+      request.input('endDate', endDate)
+
+      if (filters.assignedToDataListItemId !== undefined) {
+        request.input(
+          'assignedToDataListItemId',
+          filters.assignedToDataListItemId
+        )
+      }
+
+      const workOrderResults = await request.query(workOrderQuery)
+
+      events.push(...(workOrderResults.recordset as WorkOrderCalendarEvent[]))
+    }
+  }
+
+  // Query for milestone dates
+  if (filters.showMilestoneDueDates || filters.showMilestoneCompleteDates) {
+    const milestoneQueries: string[] = []
+
+    if (filters.showMilestoneDueDates) {
+      milestoneQueries.push(/* sql */ `
+        select
+          m.milestoneDueDateTime as eventDate,
+          'milestoneDue' as eventType,
+          w.workOrderId,
+          w.workOrderNumber,
+          w.workOrderDetails,
+          coalesce(m.assignedToDataListItemId, w.assignedToDataListItemId) as assignedToDataListItemId,
+          coalesce(mdt.dataListItem, wdt.dataListItem) as assignedToDataListItem,
+          m.workOrderMilestoneId as milestoneId,
+          m.milestoneTitle
+        from ShiftLog.WorkOrderMilestones m
+        inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
+        left join ShiftLog.DataListItems mdt on m.assignedToDataListItemId = mdt.dataListItemId
+        left join ShiftLog.DataListItems wdt on w.assignedToDataListItemId = wdt.dataListItemId
+        where w.instance = @instance
+          and w.recordDelete_dateTime is null
+          and m.recordDelete_dateTime is null
+          and m.milestoneDueDateTime is not null
+          and m.milestoneDueDateTime between @startDate and @endDate
+          ${
+            filters.assignedToDataListItemId !== undefined
+              ? `and (m.assignedToDataListItemId = @assignedToDataListItemId
+                   or (m.assignedToDataListItemId is null and w.assignedToDataListItemId = @assignedToDataListItemId))`
+              : ''
+          }
+      `)
+    }
+
+    if (filters.showMilestoneCompleteDates) {
+      milestoneQueries.push(/* sql */ `
+        select
+          m.milestoneCompleteDateTime as eventDate,
+          'milestoneComplete' as eventType,
+          w.workOrderId,
+          w.workOrderNumber,
+          w.workOrderDetails,
+          coalesce(m.assignedToDataListItemId, w.assignedToDataListItemId) as assignedToDataListItemId,
+          coalesce(mdt.dataListItem, wdt.dataListItem) as assignedToDataListItem,
+          m.workOrderMilestoneId as milestoneId,
+          m.milestoneTitle
+        from ShiftLog.WorkOrderMilestones m
+        inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
+        left join ShiftLog.DataListItems mdt on m.assignedToDataListItemId = mdt.dataListItemId
+        left join ShiftLog.DataListItems wdt on w.assignedToDataListItemId = wdt.dataListItemId
+        where w.instance = @instance
+          and w.recordDelete_dateTime is null
+          and m.recordDelete_dateTime is null
+          and m.milestoneCompleteDateTime is not null
+          and m.milestoneCompleteDateTime between @startDate and @endDate
+          ${
+            filters.assignedToDataListItemId !== undefined
+              ? `and (m.assignedToDataListItemId = @assignedToDataListItemId
+                   or (m.assignedToDataListItemId is null and w.assignedToDataListItemId = @assignedToDataListItemId))`
+              : ''
+          }
+      `)
+    }
+
+    if (milestoneQueries.length > 0) {
+      const milestoneQuery = milestoneQueries.join(' union all ')
+
+      const request = pool.request() as mssql.Request
+
+      request.input('instance', instance)
+      request.input('startDate', startDate)
+      request.input('endDate', endDate)
+
+      if (filters.assignedToDataListItemId !== undefined) {
+        request.input(
+          'assignedToDataListItemId',
+          filters.assignedToDataListItemId
+        )
+      }
+
+      const milestoneResults = await request.query(milestoneQuery)
+
+      events.push(...(milestoneResults.recordset as WorkOrderCalendarEvent[]))
+    }
+  }
+
+  return events
+}

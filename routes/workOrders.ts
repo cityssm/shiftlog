@@ -3,6 +3,7 @@ import os from 'node:os'
 import { type NextFunction, type Request, type Response, Router } from 'express'
 import multer from 'multer'
 
+import handler_calendar from '../handlers/workOrders-get/calendar.js'
 import handler_download from '../handlers/workOrders-get/download.js'
 import handler_edit from '../handlers/workOrders-get/edit.js'
 import handler_map from '../handlers/workOrders-get/map.js'
@@ -18,6 +19,7 @@ import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkO
 import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js'
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js'
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js'
+import handler_doGetCalendarEvents from '../handlers/workOrders-post/doGetCalendarEvents.js'
 import handler_doGetDeletedWorkOrders from '../handlers/workOrders-post/doGetDeletedWorkOrders.js'
 import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js'
 import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGetRequestorSuggestions.js'
@@ -69,8 +71,10 @@ export const router = Router()
 
 router
   .get('/', handler_search)
+  .get('/calendar', handler_calendar)
   .get('/map', handler_map)
   .post('/doSearchWorkOrders', handler_doSearchWorkOrders)
+  .post('/doGetCalendarEvents', handler_doGetCalendarEvents)
 
 router
   .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)
