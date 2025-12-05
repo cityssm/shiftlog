@@ -20,7 +20,7 @@ export default async function handler(
 ): Promise<void> {
   const workOrder = await getWorkOrder(
     request.params.workOrderId,
-    request.session.user
+    request.session.user?.userName
   )
 
   if (workOrder === undefined) {

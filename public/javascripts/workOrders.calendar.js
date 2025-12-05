@@ -1,6 +1,5 @@
 (() => {
     const shiftLog = exports.shiftLog;
-    const filtersFormElement = document.querySelector('#form--calendarFilters');
     const calendarContainerElement = document.querySelector('#container--calendar');
     const monthTitleElement = document.querySelector('#calendar--monthTitle');
     const previousMonthButtonElement = document.querySelector('#btn--previousMonth');
@@ -104,32 +103,35 @@
         const lastDay = new Date(currentYear, currentMonth, 0);
         const daysInMonth = lastDay.getDate();
         const startingDayOfWeek = firstDay.getDay();
-        // Build calendar HTML
-        let calendarHTML = '<table class="table is-fullwidth is-bordered">';
+        const calendarElement = document.createElement('table');
+        calendarElement.className = 'table is-fullwidth is-bordered';
+        calendarElement.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
         // Header row
-        calendarHTML += '<thead><tr>';
         for (const dayName of dayNames) {
-            calendarHTML += `<th class="has-text-centered">${dayName}</th>`;
+            calendarElement
+                .querySelector('thead tr')
+                ?.insertAdjacentHTML('beforeend', `<th class="has-text-centered">${cityssm.escapeHTML(dayName)}</th>`);
         }
-        calendarHTML += '</tr></thead>';
-        // Calendar body
-        calendarHTML += '<tbody>';
         let dayCounter = 1;
         let calendarDay = 1 - startingDayOfWeek;
         // Generate weeks
         while (dayCounter <= daysInMonth) {
-            calendarHTML += '<tr>';
+            const weekRowElement = document.createElement('tr');
             // Generate days in week
             for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek += 1) {
                 if (calendarDay < 1 || calendarDay > daysInMonth) {
-                    calendarHTML += '<td class="has-background-light"></td>';
+                    const emptyCell = document.createElement('td');
+                    emptyCell.className = 'has-background-light';
+                    weekRowElement.append(emptyCell);
                 }
                 else {
                     const dateKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(calendarDay).padStart(2, '0')}`;
                     const dayEvents = eventsByDate.get(dateKey) ?? [];
-                    calendarHTML +=
-                        '<td class="is-vcentered" style="vertical-align: top; min-height: 120px;">';
-                    calendarHTML += `<div class="has-text-weight-bold mb-2">${calendarDay}</div>`;
+                    const dayCell = document.createElement('td');
+                    dayCell.className = 'is-vcentered';
+                    dayCell.style.verticalAlign = 'top';
+                    dayCell.style.minHeight = '120px';
+                    dayCell.innerHTML = `<div class="has-text-weight-bold mb-2">${cityssm.escapeHTML(String(calendarDay))}</div>`;
                     if (dayEvents.length > 0) {
                         for (const event of dayEvents) {
                             const eventClass = getEventTypeClass(event.eventType);
@@ -138,46 +140,45 @@
                             const title = event.milestoneTitle
                                 ? `${event.workOrderNumber} - ${event.milestoneTitle}`
                                 : event.workOrderNumber;
-                            // Determine if the item is currently open
+                            // Determine if the item is open
                             let rightTagClass = 'is-light';
+                            // eslint-disable-next-line max-depth
                             if (event.eventType.startsWith('workOrder')) {
                                 // Work order is open if workOrderCloseDateTime is null
+                                // eslint-disable-next-line max-depth
                                 if (event.workOrderCloseDateTime === null) {
                                     rightTagClass = 'is-light is-success';
                                 }
                             }
-                            else {
-                                // Milestone is open if milestoneCompleteDateTime is null
-                                if (event.milestoneCompleteDateTime === null) {
-                                    rightTagClass = 'is-light is-success';
-                                }
+                            else if (event.milestoneCompleteDateTime === null) {
+                                rightTagClass = 'is-light is-success';
                             }
                             // Create a tag with addons: left side has icons, right side has work order number
-                            calendarHTML += /* html */ `
-                <div class="tags has-addons mb-1">
-                  <a class="tag ${eventClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
-                    <span class="icon is-small">${leftIcon}</span>
-                    <span class="icon is-small">${statusIcon}</span>
-                  </a>
-                  <a class="tag ${rightTagClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
-                    ${escapeHtml(event.workOrderNumber)}
-                  </a>
-                </div>
-              `;
+                            // eslint-disable-next-line no-unsanitized/method
+                            dayCell.insertAdjacentHTML('beforeend', 
+                            /* html */ `
+                  <div class="tags has-addons mb-1">
+                    <a class="tag ${eventClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
+                      <span class="icon is-small">${leftIcon}</span>
+                      <span class="icon is-small">${statusIcon}</span>
+                    </a>
+                    <a class="tag ${rightTagClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
+                      ${escapeHtml(event.workOrderNumber)}
+                    </a>
+                  </div>
+                `);
                         }
                     }
-                    calendarHTML += '</td>';
+                    weekRowElement.append(dayCell);
                     if (calendarDay >= 1 && calendarDay <= daysInMonth) {
                         dayCounter += 1;
                     }
                 }
                 calendarDay += 1;
             }
-            calendarHTML += '</tr>';
+            calendarElement.querySelector('tbody')?.append(weekRowElement);
         }
-        calendarHTML += '</tbody></table>';
-        // eslint-disable-next-line no-unsanitized/property
-        calendarContainerElement.innerHTML = calendarHTML;
+        calendarContainerElement.replaceChildren(calendarElement);
     }
     function loadCalendar() {
         updateMonthTitle();

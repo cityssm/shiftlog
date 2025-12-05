@@ -6,7 +6,7 @@ import type { WorkOrder } from '../../types/record.types.js'
 
 export default async function getWorkOrder(
   workOrderId: number | string,
-  user?: User
+  userName?: string
 ): Promise<WorkOrder | undefined> {
   const pool = await getShiftLogConnectionPool()
 
@@ -59,7 +59,7 @@ export default async function getWorkOrder(
       and w.instance = @instance
 
     ${
-      user === undefined
+      userName === undefined
         ? ''
         : `
             and (
@@ -78,7 +78,7 @@ export default async function getWorkOrder(
       .request()
       .input('workOrderId', workOrderId)
       .input('instance', getConfigProperty('application.instance'))
-      .input('userName', user?.userName)
+      .input('userName', userName)
       .query(sql)) as mssql.IResult<WorkOrder>
 
     if (workOrdersResult.recordset.length === 0) {

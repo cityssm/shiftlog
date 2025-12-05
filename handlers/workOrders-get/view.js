@@ -6,7 +6,7 @@ const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfig
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 export default async function handler(request, response) {
-    const workOrder = await getWorkOrder(request.params.workOrderId, request.session.user);
+    const workOrder = await getWorkOrder(request.params.workOrderId, request.session.user?.userName);
     if (workOrder === undefined) {
         response.redirect(`${redirectRoot}/?error=notFound`);
         return;

@@ -41,28 +41,30 @@
 
     <div class="box">
       <form id="form--calendarFilters">
-        <div class="field">
-          <label class="label" for="calendar--assignedToDataListItemId">Assigned To</label>
-          <div class="control has-icons-left">
-            <div class="select is-fullwidth">
-              <select id="calendar--assignedToDataListItemId" name="assignedToDataListItemId">
-                <option value="">(All Assignees)</option>
-                <% assignedToItems.forEach(function(assignedToItem) { %>
-                <option value="<%= assignedToItem.dataListItemId %>">
-                  <%= assignedToItem.dataListItem %>
-                </option>
-                <% }); %>
-              </select>
+        <div class="columns">
+          <div class="column is-half">
+            <div class="field">
+              <label class="label" for="calendar--assignedToDataListItemId">Assigned To</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="calendar--assignedToDataListItemId" name="assignedToDataListItemId">
+                    <option value="">(All Assignees)</option>
+                    <% assignedToItems.forEach(function(assignedToItem) { %>
+                    <option value="<%= assignedToItem.dataListItemId %>">
+                      <%= assignedToItem.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
+              </div>
             </div>
-            <span class="icon is-small is-left">
-              <i class="fa-solid fa-filter"></i>
-            </span>
           </div>
-        </div>
-        <div class="field">
-          <div class="columns">
-            <div class="column">
-              <strong><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Dates</strong>
+          <div class="column">
+            <fieldset>
+              <legend class="has-text-weight-semibold"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Dates</legend>
               <div class="control">
                 <label class="checkbox">
                   <input
@@ -96,9 +98,11 @@
                   Close Dates
                 </label>
               </div>
-            </div>
-            <div class="column">
-              <strong>Milestone Dates</strong>
+            </fieldset>
+          </div>
+          <div class="column">
+            <fieldset>
+              <legend class="has-text-weight-semibold">Milestone Dates</legend>
               <div class="control">
                 <label class="checkbox">
                   <input
@@ -121,9 +125,10 @@
                   Milestone Complete Dates
                 </label>
               </div>
-            </div>
+            </fieldset>
           </div>
         </div>
+
       </form>
     </div>
 

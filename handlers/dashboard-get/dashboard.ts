@@ -15,7 +15,7 @@ export default async function handler(
 
   const shiftsResult =
     getConfigProperty('shifts.isEnabled') &&
-    request.session.user?.userProperties.shifts.canView
+    (request.session.user?.userProperties.shifts.canView ?? false)
       ? await getShifts(
           { shiftDateString: todayString },
           { limit: -1, offset: 0 },
@@ -25,7 +25,7 @@ export default async function handler(
 
   const timesheetsResult =
     getConfigProperty('timesheets.isEnabled') &&
-    request.session.user?.userProperties.timesheets.canView
+    (request.session.user?.userProperties.timesheets.canView ?? false)
       ? await getTimesheets(
           { timesheetDateString: todayString },
           { limit: -1, offset: 0 },
@@ -35,13 +35,13 @@ export default async function handler(
 
   const recentWorkOrders =
     getConfigProperty('workOrders.isEnabled') &&
-    request.session.user?.userProperties.workOrders.canView
+    (request.session.user?.userProperties.workOrders.canView ?? false)
       ? await getRecentWorkOrders(10, request.session.user)
       : []
 
   const overdueWorkOrders =
     getConfigProperty('workOrders.isEnabled') &&
-    request.session.user?.userProperties.workOrders.canView
+    (request.session.user?.userProperties.workOrders.canView ?? false)
       ? await getOverdueWorkOrders(10, request.session.user)
       : []
 
@@ -50,7 +50,8 @@ export default async function handler(
 
     shifts: shiftsResult.shifts,
     timesheets: timesheetsResult.timesheets,
-    recentWorkOrders,
-    overdueWorkOrders
+
+    overdueWorkOrders,
+    recentWorkOrders
   })
 }

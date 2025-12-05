@@ -1,6 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-export default async function getWorkOrder(workOrderId, user) {
+export default async function getWorkOrder(workOrderId, userName) {
     const pool = await getShiftLogConnectionPool();
     const sql = /* sql */ `
     select
@@ -50,7 +50,7 @@ export default async function getWorkOrder(workOrderId, user) {
       and w.workOrderId = @workOrderId
       and w.instance = @instance
 
-    ${user === undefined
+    ${userName === undefined
         ? ''
         : `
             and (
@@ -67,7 +67,7 @@ export default async function getWorkOrder(workOrderId, user) {
             .request()
             .input('workOrderId', workOrderId)
             .input('instance', getConfigProperty('application.instance'))
-            .input('userName', user?.userName)
+            .input('userName', userName)
             .query(sql));
         if (workOrdersResult.recordset.length === 0) {
             return undefined;

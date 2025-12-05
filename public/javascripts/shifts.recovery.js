@@ -72,7 +72,7 @@
         </td>
         <td>${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '-')}</td>
         <td>${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '-')}</td>
-        <td>${cityssm.escapeHTML((shift.shiftDetails ?? '').substring(0, 100))}${(shift.shiftDetails ?? '').length > 100 ? '...' : ''}</td>
+        <td>${cityssm.escapeHTML(shift.shiftDescription.slice(0, 100))}${shift.shiftDescription.length > 100 ? '...' : ''}</td>
         <td>${cityssm.escapeHTML(shift.recordDelete_userName ?? '')}</td>
         <td>
           ${shift.recordDelete_dateTime ? cityssm.dateToString(new Date(shift.recordDelete_dateTime)) : ''}

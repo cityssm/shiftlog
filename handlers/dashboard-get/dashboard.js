@@ -7,26 +7,26 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
     const todayString = dateToString(new Date());
     const shiftsResult = getConfigProperty('shifts.isEnabled') &&
-        request.session.user?.userProperties.shifts.canView
+        (request.session.user?.userProperties.shifts.canView ?? false)
         ? await getShifts({ shiftDateString: todayString }, { limit: -1, offset: 0 }, request.session.user)
         : { shifts: [], totalCount: 0 };
     const timesheetsResult = getConfigProperty('timesheets.isEnabled') &&
-        request.session.user?.userProperties.timesheets.canView
+        (request.session.user?.userProperties.timesheets.canView ?? false)
         ? await getTimesheets({ timesheetDateString: todayString }, { limit: -1, offset: 0 }, request.session.user)
         : { timesheets: [], totalCount: 0 };
     const recentWorkOrders = getConfigProperty('workOrders.isEnabled') &&
-        request.session.user?.userProperties.workOrders.canView
+        (request.session.user?.userProperties.workOrders.canView ?? false)
         ? await getRecentWorkOrders(10, request.session.user)
         : [];
     const overdueWorkOrders = getConfigProperty('workOrders.isEnabled') &&
-        request.session.user?.userProperties.workOrders.canView
+        (request.session.user?.userProperties.workOrders.canView ?? false)
         ? await getOverdueWorkOrders(10, request.session.user)
         : [];
     response.render('dashboard/dashboard', {
         headTitle: 'Dashboard',
         shifts: shiftsResult.shifts,
         timesheets: timesheetsResult.timesheets,
-        recentWorkOrders,
-        overdueWorkOrders
+        overdueWorkOrders,
+        recentWorkOrders
     });
 }

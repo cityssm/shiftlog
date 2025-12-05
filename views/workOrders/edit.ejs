@@ -154,7 +154,7 @@
       <div class="box">
         <div class="field">
           <label class="label" for="workOrder--requestorName">Requestor Name</label>
-          <div class="control">
+          <div class="control has-icons-right">
             <input
               class="input"
               id="workOrder--requestorName"
@@ -166,6 +166,9 @@
               <% if (isEdit) { %>list="datalist--requestorNames"<% } %>
               <% if (!isEdit) { %>readonly<% } %>
             />
+            <span class="icon is-small is-right">
+              <i class="fa-solid fa-asterisk"></i>
+            </span>
             <% if (isEdit) { %>
             <datalist id="datalist--requestorNames"></datalist>
             <% } %>
@@ -437,10 +440,33 @@
           Cancel
         </a>
         <% } else { %>
-        <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>/print" target="_blank">
-          <span class="icon is-small"><i class="fa-solid fa-print"></i></span>
-          <span>Print</span>
-        </a>
+          <div class="field mb-0 has-addons">
+            <div class="control">
+              <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>/print" target="_blank">
+                <span class="icon is-small"><i class="fa-solid fa-print"></i></span>
+                <span>Print</span>
+              </a>
+            </div>
+            <div class="control">
+              <div class="dropdown is-up is-right">
+                <div class="dropdown-trigger">
+                  <button class="button is-info is-light" aria-haspopup="true" type="button">
+                    <span class="icon is-small">
+                      <i class="fa-solid fa-angle-up"></i>
+                    </span>
+                  </button>
+                </div>
+                <div class="dropdown-menu" role="menu">
+                  <div class="dropdown-content">
+                    <a href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/workOrders/<%= workOrder.workOrderId %>.ics" class="dropdown-item" target="_blank">
+                      <span class="icon"><i class="fa-solid fa-calendar"></i></span>
+                      <span>Export as iCalendar</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         <% } %>
         <% if (isEdit) { %>
         <div class="field has-addons">
