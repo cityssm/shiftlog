@@ -124,7 +124,7 @@ declare const exports: {
       const milestonesHTML =
         workOrder.milestonesCount && workOrder.milestonesCount > 0
           ? /* html */ `
-              <span class="tag ${(workOrder as any).overdueMilestonesCount > 0 ? 'is-danger' : 'is-info'}">
+              <span class="tag ${workOrder.overdueMilestonesCount && workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info'}">
                 ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
               </span>
             `
