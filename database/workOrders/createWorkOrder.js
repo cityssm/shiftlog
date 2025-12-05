@@ -7,9 +7,10 @@ import getWorkOrderType from '../workOrderTypes/getWorkOrderType.js';
 import getWorkOrderTypeDefaultMilestones from '../workOrderTypes/getWorkOrderTypeDefaultMilestones.js';
 export default async function createWorkOrder(createWorkOrderForm, user) {
     const pool = await getShiftLogConnectionPool();
-    const workOrderType = await getWorkOrderType(typeof createWorkOrderForm.workOrderTypeId === 'string'
+    const workOrderTypeId = typeof createWorkOrderForm.workOrderTypeId === 'string'
         ? Number.parseInt(createWorkOrderForm.workOrderTypeId, 10)
-        : createWorkOrderForm.workOrderTypeId, user);
+        : createWorkOrderForm.workOrderTypeId;
+    const workOrderType = await getWorkOrderType(workOrderTypeId, user);
     if (workOrderType === undefined) {
         throw new Error('Invalid work order type.');
     }
@@ -111,9 +112,6 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
     `));
     const workOrderId = result.recordset[0].workOrderId;
     // Create default milestones for this work order
-    const workOrderTypeId = typeof createWorkOrderForm.workOrderTypeId === 'string'
-        ? Number.parseInt(createWorkOrderForm.workOrderTypeId, 10)
-        : createWorkOrderForm.workOrderTypeId;
     const defaultMilestones = await getWorkOrderTypeDefaultMilestones(workOrderTypeId);
     for (const defaultMilestone of defaultMilestones) {
         await pool

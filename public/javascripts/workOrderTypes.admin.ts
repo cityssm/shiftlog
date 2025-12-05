@@ -463,20 +463,18 @@ declare const exports: {
         renderDefaultMilestones()
 
         // Initialize sortable for milestones
-        if (currentDefaultMilestones.length > 0) {
-          Sortable.create(defaultMilestonesContainer, {
-            animation: 150,
-            handle: '.milestone-handle',
-            onEnd() {
-              // Update order numbers after sorting
-              const items =
-                defaultMilestonesContainer.querySelectorAll('.milestone-item')
-              for (const [index, item] of items.entries()) {
-                ;(item as HTMLElement).dataset.orderNumber = index.toString()
-              }
+        Sortable.create(defaultMilestonesContainer, {
+          animation: 150,
+          handle: '.milestone-handle',
+          onEnd() {
+            // Update order numbers after sorting
+            const items =
+              defaultMilestonesContainer.querySelectorAll('.milestone-item')
+            for (const [index, item] of items.entries()) {
+              ;(item as HTMLElement).dataset.orderNumber = index.toString()
             }
-          })
-        }
+          }
+        })
 
         // Add milestone button event
         modalElement

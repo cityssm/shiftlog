@@ -48,12 +48,12 @@ export default async function createWorkOrder(
 ): Promise<number> {
   const pool = await getShiftLogConnectionPool()
 
-  const workOrderType = await getWorkOrderType(
+  const workOrderTypeId =
     typeof createWorkOrderForm.workOrderTypeId === 'string'
       ? Number.parseInt(createWorkOrderForm.workOrderTypeId, 10)
-      : createWorkOrderForm.workOrderTypeId,
-    user
-  )
+      : createWorkOrderForm.workOrderTypeId
+
+  const workOrderType = await getWorkOrderType(workOrderTypeId, user)
 
   if (workOrderType === undefined) {
     throw new Error('Invalid work order type.')
@@ -189,11 +189,6 @@ export default async function createWorkOrder(
   const workOrderId = result.recordset[0].workOrderId
 
   // Create default milestones for this work order
-  const workOrderTypeId =
-    typeof createWorkOrderForm.workOrderTypeId === 'string'
-      ? Number.parseInt(createWorkOrderForm.workOrderTypeId, 10)
-      : createWorkOrderForm.workOrderTypeId
-
   const defaultMilestones =
     await getWorkOrderTypeDefaultMilestones(workOrderTypeId)
 

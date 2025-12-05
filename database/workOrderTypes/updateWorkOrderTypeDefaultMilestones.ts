@@ -23,12 +23,15 @@ export default async function updateWorkOrderTypeDefaultMilestones(
 
   // Insert new default milestones
   for (const milestone of defaultMilestones) {
-    if (milestone.milestoneTitle.trim() !== '') {
+    const trimmedTitle = milestone.milestoneTitle.trim()
+    const trimmedDescription = milestone.milestoneDescription.trim()
+
+    if (trimmedTitle !== '' && trimmedTitle.length <= 100) {
       await pool
         .request()
         .input('workOrderTypeId', workOrderTypeId)
-        .input('milestoneTitle', milestone.milestoneTitle.trim())
-        .input('milestoneDescription', milestone.milestoneDescription.trim())
+        .input('milestoneTitle', trimmedTitle)
+        .input('milestoneDescription', trimmedDescription)
         .input('orderNumber', milestone.orderNumber)
         .query(/* sql */ `
           insert into ShiftLog.WorkOrderTypeMilestones (
