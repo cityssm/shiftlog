@@ -19,6 +19,7 @@ export interface GetWorkOrdersForPlannerFilters {
     | 'overdue'
     | 'openForDays'
     | 'dueInDays'
+    | 'noUpdatesForDays'
     | 'milestonesOverdue'
     | 'milestonesDueInDays'
   daysThreshold?: number | string
@@ -93,6 +94,13 @@ function buildWhereClause(
         whereClause += ` and w.workOrderDueDateTime is not null
           and datediff(day, getdate(), w.workOrderDueDateTime) <= @daysThreshold
           and w.workOrderDueDateTime >= getdate()`
+        break
+      }
+      case 'noUpdatesForDays': {
+        whereClause += ` and (
+          w.recordUpdate_dateTime is null
+          or datediff(day, w.recordUpdate_dateTime, getdate()) >= @daysThreshold
+        )`
         break
       }
       case 'milestonesOverdue': {

@@ -38,9 +38,12 @@ declare const exports: {
 
   // Enable/disable days threshold based on date filter selection
   dateFilterElement.addEventListener('change', () => {
-    const requiresDays = ['openForDays', 'dueInDays', 'milestonesDueInDays'].includes(
-      dateFilterElement.value
-    )
+    const requiresDays = [
+      'openForDays',
+      'dueInDays',
+      'noUpdatesForDays',
+      'milestonesDueInDays'
+    ].includes(dateFilterElement.value)
     daysThresholdElement.disabled = !requiresDays
     if (requiresDays && daysThresholdElement.value === '') {
       daysThresholdElement.value = '7'
