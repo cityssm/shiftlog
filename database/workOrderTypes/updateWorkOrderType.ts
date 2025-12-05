@@ -4,12 +4,17 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+import updateWorkOrderTypeDefaultMilestones, {
+  type DefaultMilestoneUpdate
+} from './updateWorkOrderTypeDefaultMilestones.js'
+
 export interface UpdateWorkOrderTypeForm {
   moreInfoFormNames?: string | string[]
   userGroupId?: number | string
   workOrderNumberPrefix?: string
   workOrderType: string
   workOrderTypeId: number | string
+  defaultMilestones?: string
 }
 
 export default async function updateWorkOrderType(
@@ -71,6 +76,19 @@ export default async function updateWorkOrderType(
           values (@workOrderTypeId, @formName)
         `)
     }
+  }
+
+  // Update default milestones
+  if (form.defaultMilestones !== undefined) {
+    const milestones: DefaultMilestoneUpdate[] = JSON.parse(
+      form.defaultMilestones
+    )
+    const workOrderTypeId =
+      typeof form.workOrderTypeId === 'string'
+        ? Number.parseInt(form.workOrderTypeId, 10)
+        : form.workOrderTypeId
+
+    await updateWorkOrderTypeDefaultMilestones(workOrderTypeId, milestones)
   }
 
   return true

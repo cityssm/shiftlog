@@ -4,5 +4,6 @@ export interface UpdateWorkOrderTypeForm {
     workOrderNumberPrefix?: string;
     workOrderType: string;
     workOrderTypeId: number | string;
+    defaultMilestones?: string;
 }
 export default function updateWorkOrderType(form: UpdateWorkOrderTypeForm, userName: string): Promise<boolean>;

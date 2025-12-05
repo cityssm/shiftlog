@@ -181,6 +181,12 @@ export interface TimesheetCell {
     mappedTimeCode?: string | null;
     mappingConfidence: number;
 }
+export interface WorkOrderTypeDefaultMilestone {
+    workOrderTypeId: number;
+    milestoneTitle: string;
+    milestoneDescription: string;
+    orderNumber: number;
+}
 export interface WorkOrderType extends BaseRecord {
     workOrderTypeId: number;
     workOrderType: string;
@@ -189,6 +195,7 @@ export interface WorkOrderType extends BaseRecord {
     userGroupId?: number | null;
     userGroupName?: string;
     moreInfoFormNames?: string[];
+    defaultMilestones?: WorkOrderTypeDefaultMilestone[];
 }
 export interface WorkOrder extends BaseRecord {
     workOrderId: number;
