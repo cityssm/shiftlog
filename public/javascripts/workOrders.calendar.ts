@@ -1,11 +1,13 @@
+import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { DoGetCalendarEventsResponse } from '../../handlers/workOrders-post/doGetCalendarEvents.js'
 import type { WorkOrderCalendarEvent } from '../../database/workOrders/getCalendarEvents.js'
+import type { DoGetCalendarEventsResponse } from '../../handlers/workOrders-post/doGetCalendarEvents.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
+declare const bulmaJS: BulmaJS
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
@@ -93,35 +95,47 @@ declare const exports: {
 
   function getEventTypeLabel(eventType: string): string {
     switch (eventType) {
-      case 'workOrderOpen':
-        return 'Open'
-      case 'workOrderDue':
-        return 'Due'
-      case 'workOrderClose':
-        return 'Close'
-      case 'milestoneDue':
-        return 'M Due'
-      case 'milestoneComplete':
+      case 'milestoneComplete': {
         return 'M Done'
-      default:
+      }
+      case 'milestoneDue': {
+        return 'M Due'
+      }
+      case 'workOrderClose': {
+        return 'Close'
+      }
+      case 'workOrderDue': {
+        return 'Due'
+      }
+      case 'workOrderOpen': {
+        return 'Open'
+      }
+      default: {
         return eventType
+      }
     }
   }
 
   function getEventTypeClass(eventType: string): string {
     switch (eventType) {
-      case 'workOrderOpen':
-        return 'is-success'
-      case 'workOrderDue':
-        return 'is-warning'
-      case 'workOrderClose':
-        return 'is-info'
-      case 'milestoneDue':
-        return 'is-link'
-      case 'milestoneComplete':
+      case 'milestoneComplete': {
         return 'is-primary'
-      default:
+      }
+      case 'milestoneDue': {
+        return 'is-link'
+      }
+      case 'workOrderClose': {
+        return 'is-info'
+      }
+      case 'workOrderDue': {
+        return 'is-warning'
+      }
+      case 'workOrderOpen': {
+        return 'is-success'
+      }
+      default: {
         return ''
+      }
     }
   }
 
@@ -167,14 +181,15 @@ declare const exports: {
       calendarHTML += '<tr>'
 
       // Generate days in week
-      for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+      for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek += 1) {
         if (calendarDay < 1 || calendarDay > daysInMonth) {
           calendarHTML += '<td class="has-background-light"></td>'
         } else {
           const dateKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(calendarDay).padStart(2, '0')}`
           const dayEvents = eventsByDate.get(dateKey) ?? []
 
-          calendarHTML += '<td class="is-vcentered" style="vertical-align: top; min-height: 120px;">'
+          calendarHTML +=
+            '<td class="is-vcentered" style="vertical-align: top; min-height: 120px;">'
           calendarHTML += `<div class="has-text-weight-bold mb-2">${calendarDay}</div>`
 
           if (dayEvents.length > 0) {
@@ -183,11 +198,12 @@ declare const exports: {
             for (const event of dayEvents) {
               const eventLabel = getEventTypeLabel(event.eventType)
               const eventClass = getEventTypeClass(event.eventType)
+
               const title = event.milestoneTitle
                 ? `${event.workOrderNumber} - ${event.milestoneTitle}`
                 : event.workOrderNumber
 
-              calendarHTML += `<a href="${escapeHtml(shiftLog.urlPrefix)}/${escapeHtml(shiftLog.configFunctions.getConfigProperty('workOrders.router'))}/${escapeHtml(String(event.workOrderId))}" class="tag ${eventClass}" title="${escapeHtml(title)}">${escapeHtml(eventLabel)}</a>`
+              calendarHTML += `<a href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" class="tag ${eventClass}" title="${escapeHtml(title)}">${escapeHtml(eventLabel)}</a>`
             }
 
             calendarHTML += '</div>'
@@ -196,11 +212,11 @@ declare const exports: {
           calendarHTML += '</td>'
 
           if (calendarDay >= 1 && calendarDay <= daysInMonth) {
-            dayCounter++
+            dayCounter += 1
           }
         }
 
-        calendarDay++
+        calendarDay += 1
       }
 
       calendarHTML += '</tr>'
@@ -218,10 +234,7 @@ declare const exports: {
     const formData = new FormData()
     formData.append('year', currentYear.toString())
     formData.append('month', currentMonth.toString())
-    formData.append(
-      'assignedToDataListItemId',
-      assignedToSelect.value
-    )
+    formData.append('assignedToDataListItemId', assignedToSelect.value)
     formData.append('showOpenDates', showOpenDatesCheckbox.checked.toString())
     formData.append('showDueDates', showDueDatesCheckbox.checked.toString())
     formData.append('showCloseDates', showCloseDatesCheckbox.checked.toString())
@@ -236,7 +249,7 @@ declare const exports: {
 
     try {
       const response = await fetch(
-        `${shiftLog.urlPrefix}/${shiftLog.configFunctions.getConfigProperty('workOrders.router')}/doGetCalendarEvents`,
+        `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`,
         {
           method: 'POST',
           body: formData
@@ -248,16 +261,20 @@ declare const exports: {
       if (data.success) {
         renderCalendar(data.events)
       } else {
-        cityssm.alertModal('Error', 'Failed to load calendar events.', 'OK', 'danger')
+        bulmaJS.alert({
+          contextualColorName: 'danger',
+          title: 'Error',
+
+          message: 'Failed to load calendar events.'
+        })
       }
-    } catch (error) {
-      console.error('Error loading calendar:', error)
-      cityssm.alertModal(
-        'Error',
-        'An error occurred while loading the calendar.',
-        'OK',
-        'danger'
-      )
+    } catch {
+      bulmaJS.alert({
+        contextualColorName: 'danger',
+        title: 'Error',
+
+        message: 'An error occurred while loading the calendar.'
+      })
     }
   }
 
@@ -265,10 +282,11 @@ declare const exports: {
   previousMonthButtonElement.addEventListener('click', () => {
     if (currentMonth === 1) {
       currentMonth = 12
-      currentYear--
+      currentYear -= 1
     } else {
-      currentMonth--
+      currentMonth -= 1
     }
+    
     loadCalendar()
   })
 
