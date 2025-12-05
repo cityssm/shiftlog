@@ -48,12 +48,15 @@ export default async function getCalendarEvents(
 
   const events: WorkOrderCalendarEvent[] = []
 
-  // Build WHERE clause for assigned to filter
-  let assignedToWhereClause = ''
-  if (filters.assignedToDataListItemId !== undefined) {
-    assignedToWhereClause = ` and (w.assignedToDataListItemId = @assignedToDataListItemId
-      or m.assignedToDataListItemId = @assignedToDataListItemId)`
-  }
+  // Build user group WHERE clause for security
+  const userGroupWhereClause =
+    user !== undefined
+      ? `and (wType.userGroupId is null or wType.userGroupId in (
+          select userGroupId
+          from ShiftLog.UserGroupMembers
+          where userName = @userName
+        ))`
+      : ''
 
   // Query for work order dates
   if (filters.showOpenDates || filters.showDueDates || filters.showCloseDates) {
@@ -72,11 +75,13 @@ export default async function getCalendarEvents(
           null as milestoneId,
           null as milestoneTitle
         from ShiftLog.WorkOrders w
+        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
         left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and w.workOrderOpenDateTime between @startDate and @endDate
           ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+          ${userGroupWhereClause}
       `)
     }
 
@@ -93,12 +98,14 @@ export default async function getCalendarEvents(
           null as milestoneId,
           null as milestoneTitle
         from ShiftLog.WorkOrders w
+        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
         left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and w.workOrderDueDateTime is not null
           and w.workOrderDueDateTime between @startDate and @endDate
           ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+          ${userGroupWhereClause}
       `)
     }
 
@@ -115,12 +122,14 @@ export default async function getCalendarEvents(
           null as milestoneId,
           null as milestoneTitle
         from ShiftLog.WorkOrders w
+        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
         left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and w.workOrderCloseDateTime is not null
           and w.workOrderCloseDateTime between @startDate and @endDate
           ${filters.assignedToDataListItemId !== undefined ? 'and w.assignedToDataListItemId = @assignedToDataListItemId' : ''}
+          ${userGroupWhereClause}
       `)
     }
 
@@ -138,6 +147,10 @@ export default async function getCalendarEvents(
           'assignedToDataListItemId',
           filters.assignedToDataListItemId
         )
+      }
+
+      if (user !== undefined) {
+        request.input('userName', user.userName)
       }
 
       const workOrderResults = await request.query(workOrderQuery)
@@ -164,6 +177,7 @@ export default async function getCalendarEvents(
           m.milestoneTitle
         from ShiftLog.WorkOrderMilestones m
         inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
+        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
         left join ShiftLog.DataListItems mdt on m.assignedToDataListItemId = mdt.dataListItemId
         left join ShiftLog.DataListItems wdt on w.assignedToDataListItemId = wdt.dataListItemId
         where w.instance = @instance
@@ -177,6 +191,7 @@ export default async function getCalendarEvents(
                    or (m.assignedToDataListItemId is null and w.assignedToDataListItemId = @assignedToDataListItemId))`
               : ''
           }
+          ${userGroupWhereClause}
       `)
     }
 
@@ -194,6 +209,7 @@ export default async function getCalendarEvents(
           m.milestoneTitle
         from ShiftLog.WorkOrderMilestones m
         inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
+        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
         left join ShiftLog.DataListItems mdt on m.assignedToDataListItemId = mdt.dataListItemId
         left join ShiftLog.DataListItems wdt on w.assignedToDataListItemId = wdt.dataListItemId
         where w.instance = @instance
@@ -207,6 +223,7 @@ export default async function getCalendarEvents(
                    or (m.assignedToDataListItemId is null and w.assignedToDataListItemId = @assignedToDataListItemId))`
               : ''
           }
+          ${userGroupWhereClause}
       `)
     }
 
@@ -224,6 +241,10 @@ export default async function getCalendarEvents(
           'assignedToDataListItemId',
           filters.assignedToDataListItemId
         )
+      }
+
+      if (user !== undefined) {
+        request.input('userName', user.userName)
       }
 
       const milestoneResults = await request.query(milestoneQuery)
