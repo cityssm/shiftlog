@@ -265,6 +265,17 @@ CREATE TABLE ShiftLog.WorkOrderTypes (
 )
 GO
 
+CREATE TABLE ShiftLog.WorkOrderTypeMilestones (
+  workOrderTypeId int not null,
+  milestoneTitle varchar(100) not null,
+  milestoneDescription varchar(max) not null default '',
+  orderNumber smallint not null default 0,
+
+  primary key (workOrderTypeId, milestoneTitle),
+  foreign key (workOrderTypeId) references ShiftLog.WorkOrderTypes(workOrderTypeId)
+)
+GO
+
 CREATE TABLE ShiftLog.WorkOrderTypeMoreInfoForms (
   workOrderTypeId int not null,
   formName varchar(100) not null,
