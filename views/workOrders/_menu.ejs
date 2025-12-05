@@ -34,6 +34,24 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
     </li>
     <li>
       <a
+        class="<%= headTitle.endsWith(' - Calendar') ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/<%= workOrdersRouter %>/calendar"
+        title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Calendar"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-calendar"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Calendar
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
         class="<%= headTitle.endsWith(' - Map') ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/<%= workOrdersRouter %>/map"
         title="Open <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Map"

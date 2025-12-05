@@ -1,0 +1,210 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <nav class="breadcrumb">
+      <ul>
+        <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+        <li>
+          <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+            </span>
+            <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
+          </a>
+        </li>
+        <li class="is-active">
+          <a href="#" aria-current="page">
+            <span class="icon is-small">
+              <i class="fa-solid fa-calendar"></i>
+            </span>
+            <span>Calendar</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <% if (error !== '') { %>
+    <div class="notification is-danger is-light">
+      <button class="delete"></button>
+      <strong>Error:</strong>
+      <span>An unknown error occurred. (<%= error %>)</span>
+    </div>
+    <% } %>
+
+    <h1 class="title is-1">
+      <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Calendar
+    </h1>
+
+    <div class="box">
+      <form id="form--calendarFilters">
+        <div class="field">
+          <label class="label" for="calendar--assignedToDataListItemId">Assigned To</label>
+          <div class="control has-icons-left">
+            <div class="select is-fullwidth">
+              <select id="calendar--assignedToDataListItemId" name="assignedToDataListItemId">
+                <option value="">(All Assignees)</option>
+                <% assignedToItems.forEach(function(assignedToItem) { %>
+                <option value="<%= assignedToItem.dataListItemId %>">
+                  <%= assignedToItem.dataListItem %>
+                </option>
+                <% }); %>
+              </select>
+            </div>
+            <span class="icon is-small is-left">
+              <i class="fa-solid fa-filter"></i>
+            </span>
+          </div>
+        </div>
+        <div class="field">
+          <div class="columns">
+            <div class="column">
+              <strong><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Dates</strong>
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="calendar--showOpenDates"
+                    name="showOpenDates"
+                    type="checkbox"
+                    checked
+                  />
+                  Open Dates
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="calendar--showDueDates"
+                    name="showDueDates"
+                    type="checkbox"
+                    checked
+                  />
+                  Due Dates
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="calendar--showCloseDates"
+                    name="showCloseDates"
+                    type="checkbox"
+                    checked
+                  />
+                  Close Dates
+                </label>
+              </div>
+            </div>
+            <div class="column">
+              <strong>Milestone Dates</strong>
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="calendar--showMilestoneDueDates"
+                    name="showMilestoneDueDates"
+                    type="checkbox"
+                    checked
+                  />
+                  Milestone Due Dates
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    id="calendar--showMilestoneCompleteDates"
+                    name="showMilestoneCompleteDates"
+                    type="checkbox"
+                    checked
+                  />
+                  Milestone Complete Dates
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="box">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <button class="button" id="btn--previousMonth" type="button">
+              <span class="icon">
+                <i class="fa-solid fa-chevron-left"></i>
+              </span>
+              <span>Previous</span>
+            </button>
+          </div>
+        </div>
+        <div class="level-item">
+          <h2 class="title is-3" id="calendar--monthTitle"></h2>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <button class="button" id="btn--nextMonth" type="button">
+              <span>Next</span>
+              <span class="icon">
+                <i class="fa-solid fa-chevron-right"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="container--calendar">
+        <!-- Calendar will be rendered here -->
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="content">
+        <h3 class="title is-5">Legend</h3>
+        <div class="columns">
+          <div class="column">
+            <span class="tag is-success">
+              <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-play"></i></span>
+            </span> 
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Open Date
+          </div>
+          <div class="column">
+            <span class="tag is-warning">
+              <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
+            </span>
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Due Date<br />
+
+            <span class="tag is-warning">
+              <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
+            </span>
+            Milestone Due Date
+          </div>
+          <div class="column">
+            <span class="tag is-info">
+              <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-stop"></i></span>
+            </span>
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+            Close Date<br />
+
+            <span class="tag is-info">
+              <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+              <span class="icon is-small"><i class="fa-solid fa-stop"></i></span>
+            </span>
+            Milestone Complete Date
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/workOrders.calendar.js"></script>
+
+<%- await include('../_footerB'); -%>
