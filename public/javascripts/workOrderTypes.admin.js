@@ -443,4 +443,3 @@
     attachEventListeners();
     initializeSortable();
 })();
-export {};
