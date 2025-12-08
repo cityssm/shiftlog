@@ -24,10 +24,6 @@ declare const exports: {
     '#workOrderPlanner--daysThreshold'
   ) as HTMLInputElement
 
-  const assignedToElement = document.querySelector(
-    '#workOrderPlanner--assignedToDataListItemId'
-  ) as HTMLSelectElement
-
   const offsetInputElement = document.querySelector(
     '#workOrderPlanner--offset'
   ) as HTMLInputElement
@@ -39,10 +35,10 @@ declare const exports: {
   // Enable/disable days threshold based on date filter selection
   dateFilterElement.addEventListener('change', () => {
     const requiresDays = [
-      'openForDays',
       'dueInDays',
+      'milestonesDueInDays',
       'noUpdatesForDays',
-      'milestonesDueInDays'
+      'openForDays'
     ].includes(dateFilterElement.value)
     daysThresholdElement.disabled = !requiresDays
     if (requiresDays && daysThresholdElement.value === '') {
@@ -118,19 +114,19 @@ declare const exports: {
       )
 
       const dueDateHTML =
-        workOrder.workOrderDueDateTime !== null
-          ? cityssm.dateToString(
+        workOrder.workOrderDueDateTime === null
+          ? '-'
+          : cityssm.dateToString(
               new Date(workOrder.workOrderDueDateTime as string)
             )
-          : '-'
 
       const milestonesHTML =
         workOrder.milestonesCount && workOrder.milestonesCount > 0
           ? /* html */ `
-              <span class="tag ${workOrder.overdueMilestonesCount && workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info'}">
-                ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
-              </span>
-            `
+            <span class="tag ${workOrder.overdueMilestonesCount && workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info'}">
+              ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
+            </span>
+          `
           : ''
 
       // eslint-disable-next-line no-unsanitized/property
@@ -213,9 +209,8 @@ declare const exports: {
 
     // Handle "unassigned" special value
     const formData = new FormData(filtersFormElement)
-    const requestData: Record<string, string | boolean> = {}
+    const requestData: Record<string, boolean | string> = {}
 
-    // @ts-expect-error - FormData.entries() is available in modern browsers
     for (const [key, value] of formData.entries()) {
       if (key === 'assignedToDataListItemId' && value === 'unassigned') {
         requestData.includeUnassigned = true
@@ -242,7 +237,6 @@ declare const exports: {
 
   const formElements = filtersFormElement.querySelectorAll('input, select')
 
-  // @ts-expect-error - NodeListOf is iterable in modern browsers
   for (const formElement of formElements) {
     formElement.addEventListener('change', () => {
       offsetInputElement.value = '0'

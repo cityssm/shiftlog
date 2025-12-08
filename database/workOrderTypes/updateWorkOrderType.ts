@@ -1,5 +1,5 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable unicorn/no-null */
+/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
@@ -32,9 +32,7 @@ export default async function updateWorkOrderType(
     .input('workOrderNumberPrefix', form.workOrderNumberPrefix ?? '')
     .input(
       'dueDays',
-      form.dueDays === '' || form.dueDays === undefined
-        ? null
-        : form.dueDays
+      form.dueDays === '' || form.dueDays === undefined ? null : form.dueDays
     )
     .input(
       'userGroupId',
@@ -89,9 +87,10 @@ export default async function updateWorkOrderType(
 
   // Update default milestones
   if (form.defaultMilestones !== undefined) {
-    const milestones: DefaultMilestoneUpdate[] = JSON.parse(
+    const milestones = JSON.parse(
       form.defaultMilestones
-    )
+    ) as DefaultMilestoneUpdate[]
+
     const workOrderTypeId =
       typeof form.workOrderTypeId === 'string'
         ? Number.parseInt(form.workOrderTypeId, 10)

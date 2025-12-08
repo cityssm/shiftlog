@@ -3,16 +3,15 @@
     const filtersFormElement = document.querySelector('#form--workOrderPlanner');
     const dateFilterElement = document.querySelector('#workOrderPlanner--dateFilter');
     const daysThresholdElement = document.querySelector('#workOrderPlanner--daysThreshold');
-    const assignedToElement = document.querySelector('#workOrderPlanner--assignedToDataListItemId');
     const offsetInputElement = document.querySelector('#workOrderPlanner--offset');
     const resultsContainerElement = document.querySelector('#container--workOrderPlannerResults');
     // Enable/disable days threshold based on date filter selection
     dateFilterElement.addEventListener('change', () => {
         const requiresDays = [
-            'openForDays',
             'dueInDays',
+            'milestonesDueInDays',
             'noUpdatesForDays',
-            'milestonesDueInDays'
+            'openForDays'
         ].includes(dateFilterElement.value);
         daysThresholdElement.disabled = !requiresDays;
         if (requiresDays && daysThresholdElement.value === '') {
@@ -67,15 +66,15 @@
             const daysOpen = Math.floor((now.getTime() -
                 new Date(workOrder.workOrderOpenDateTime).getTime()) /
                 (1000 * 60 * 60 * 24));
-            const dueDateHTML = workOrder.workOrderDueDateTime !== null
-                ? cityssm.dateToString(new Date(workOrder.workOrderDueDateTime))
-                : '-';
+            const dueDateHTML = workOrder.workOrderDueDateTime === null
+                ? '-'
+                : cityssm.dateToString(new Date(workOrder.workOrderDueDateTime));
             const milestonesHTML = workOrder.milestonesCount && workOrder.milestonesCount > 0
                 ? /* html */ `
-              <span class="tag ${workOrder.overdueMilestonesCount && workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info'}">
-                ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
-              </span>
-            `
+            <span class="tag ${workOrder.overdueMilestonesCount && workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info'}">
+              ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
+            </span>
+          `
                 : '';
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ `
@@ -149,7 +148,6 @@
         // Handle "unassigned" special value
         const formData = new FormData(filtersFormElement);
         const requestData = {};
-        // @ts-expect-error - FormData.entries() is available in modern browsers
         for (const [key, value] of formData.entries()) {
             if (key === 'assignedToDataListItemId' && value === 'unassigned') {
                 requestData.includeUnassigned = true;
@@ -167,7 +165,6 @@
         event.preventDefault();
     });
     const formElements = filtersFormElement.querySelectorAll('input, select');
-    // @ts-expect-error - NodeListOf is iterable in modern browsers
     for (const formElement of formElements) {
         formElement.addEventListener('change', () => {
             offsetInputElement.value = '0';

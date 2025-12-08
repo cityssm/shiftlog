@@ -36,12 +36,15 @@ declare const bulmaJS: BulmaJS
     interface WorkOrderAttachment {
       workOrderAttachmentId: number
       workOrderId: number
-      attachmentFileName: string
-      attachmentFileType: string
-      attachmentFileSizeInBytes: number
+
       attachmentDescription: string
-      recordCreate_userName: string
+
+      attachmentFileName: string
+      attachmentFileSizeInBytes: number
+      attachmentFileType: string
+
       recordCreate_dateTime: string
+      recordCreate_userName: string
     }
 
     function formatFileSize(bytes: number): string {
@@ -57,10 +60,7 @@ declare const bulmaJS: BulmaJS
         return 'fa-file-image'
       } else if (fileType === 'application/pdf') {
         return 'fa-file-pdf'
-      } else if (
-        fileType.includes('word') ||
-        fileType.includes('document')
-      ) {
+      } else if (fileType.includes('word') || fileType.includes('document')) {
         return 'fa-file-word'
       } else if (
         fileType.includes('excel') ||
@@ -330,6 +330,7 @@ declare const bulmaJS: BulmaJS
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+            
             attachments: WorkOrderAttachment[]
           }
 

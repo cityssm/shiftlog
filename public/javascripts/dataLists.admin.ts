@@ -210,6 +210,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'warning',
               title: 'Item Name Required',
+
               message: 'Please enter an item name.'
             })
             return
@@ -237,13 +238,14 @@ declare const exports: {
                 // Open the details panel if it's closed
                 const detailsElement = document.querySelector(
                   `details[data-data-list-key="${dataListKey}"]`
-                ) as HTMLDetailsElement
+                ) as HTMLDetailsElement | null
 
                 if (detailsElement !== null && !detailsElement.open) {
                   detailsElement.open = true
                 }
 
                 renderDataListItems(dataListKey, responseJSON.items)
+
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Item Added',

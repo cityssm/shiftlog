@@ -23,8 +23,7 @@
             else if (fileType === 'application/pdf') {
                 return 'fa-file-pdf';
             }
-            else if (fileType.includes('word') ||
-                fileType.includes('document')) {
+            else if (fileType.includes('word') || fileType.includes('document')) {
                 return 'fa-file-word';
             }
             else if (fileType.includes('excel') ||

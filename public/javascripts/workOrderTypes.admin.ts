@@ -441,9 +441,9 @@ declare const exports: {
                     <input
                       class="input is-small milestone-title"
                       type="text"
+                      value="${cityssm.escapeHTML(title)}"
                       maxlength="100"
                       placeholder="e.g., Design Review, Approval, Completion"
-                      value="${cityssm.escapeHTML(title)}"
                       required
                     />
                   </div>
@@ -453,8 +453,8 @@ declare const exports: {
                   <div class="control">
                     <textarea
                       class="textarea is-small milestone-description"
-                      rows="2"
                       placeholder="Description of this milestone..."
+                      rows="2"
                     >${cityssm.escapeHTML(description)}</textarea>
                   </div>
                 </div>
@@ -464,10 +464,10 @@ declare const exports: {
                     <input
                       class="input is-small milestone-due-days"
                       type="number"
+                      value="${dueDays ?? ''}"
                       min="0"
                       step="1"
                       placeholder="Number of days"
-                      value="${dueDays ?? ''}"
                     />
                   </div>
                   <p class="help is-size-7">
