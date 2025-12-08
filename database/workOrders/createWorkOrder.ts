@@ -67,7 +67,8 @@ export default async function createWorkOrder(
   if (
     createWorkOrderForm.workOrderDueDateTimeString === '' &&
     workOrderType.dueDays !== null &&
-    workOrderType.dueDays !== undefined
+    workOrderType.dueDays !== undefined &&
+    workOrderType.dueDays > 0
   ) {
     calculatedDueDateTime = new Date(openDateTime)
     calculatedDueDateTime.setDate(
@@ -210,7 +211,8 @@ export default async function createWorkOrder(
     let milestoneDueDateTime: Date | null = null
     if (
       defaultMilestone.dueDays !== null &&
-      defaultMilestone.dueDays !== undefined
+      defaultMilestone.dueDays !== undefined &&
+      defaultMilestone.dueDays > 0
     ) {
       milestoneDueDateTime = new Date(openDateTime)
       milestoneDueDateTime.setDate(
