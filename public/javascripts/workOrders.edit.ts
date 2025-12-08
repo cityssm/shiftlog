@@ -40,6 +40,46 @@ declare const exports: {
 
   const isCreate = workOrderId === ''
 
+  // Track original work order type for change detection
+  const workOrderTypeSelect = workOrderFormElement.querySelector(
+    '#workOrder--workOrderTypeId'
+  ) as HTMLSelectElement
+
+  let originalWorkOrderTypeId = ''
+  let workOrderTypeChanged = false
+
+  if (!isCreate && workOrderTypeSelect !== null) {
+    originalWorkOrderTypeId = workOrderTypeSelect.value
+
+    workOrderTypeSelect.addEventListener('change', () => {
+      const newTypeId = workOrderTypeSelect.value
+      workOrderTypeChanged = newTypeId !== originalWorkOrderTypeId
+
+      if (workOrderTypeChanged && newTypeId !== '') {
+        bulmaJS.confirm({
+          title: 'Work Order Type Changed',
+          message:
+            'Changing the work order type may affect the permissions and additional information associated with this work order. Are you sure you want to continue?',
+          contextualColorName: 'warning',
+          okButton: {
+            text: 'Continue',
+            callbackFunction() {
+              // User confirmed the change, keep the new value
+            }
+          },
+          cancelButton: {
+            text: 'Revert',
+            callbackFunction() {
+              // Revert to original value
+              workOrderTypeSelect.value = originalWorkOrderTypeId
+              workOrderTypeChanged = false
+            }
+          }
+        })
+      }
+    })
+  }
+
   function updateWorkOrder(formEvent: Event): void {
     formEvent.preventDefault()
 
@@ -60,10 +100,18 @@ declare const exports: {
               true
             )
           } else if (workOrderCloseDateTimeStringElement.value === '') {
-            bulmaJS.alert({
-              contextualColorName: 'success',
-              message: 'Updated Successfully'
-            })
+            // If work order type changed, refresh the page to show updated form
+            if (workOrderTypeChanged) {
+              globalThis.location.href = shiftLog.buildWorkOrderURL(
+                Number(workOrderId),
+                true
+              )
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Updated Successfully'
+              })
+            }
           } else {
             globalThis.location.href = shiftLog.buildWorkOrderURL(
               Number(workOrderId)
