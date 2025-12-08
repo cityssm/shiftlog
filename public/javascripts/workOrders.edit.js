@@ -1,9 +1,6 @@
-"use strict";
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable max-lines */
-Object.defineProperty(exports, "__esModule", { value: true });
 (() => {
-    var _a, _b, _c, _d, _e;
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`;
     const workOrderFormElement = document.querySelector('#form--workOrder');
@@ -45,7 +42,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
     function updateWorkOrder(formEvent) {
         formEvent.preventDefault();
         cityssm.postJSON(`${urlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (rawResponseJSON) => {
-            var _a;
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 if (isCreate && responseJSON.workOrderId !== undefined) {
@@ -71,7 +67,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Update Error',
-                    message: (_a = responseJSON.errorMessage) !== null && _a !== void 0 ? _a : 'An unknown error occurred.'
+                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
                 });
             }
         });
@@ -95,7 +91,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 cityssm.postJSON(`${urlPrefix}/doGetRequestorSuggestions`, {
                     searchString: requestorSearchString
                 }, (rawResponseJSON) => {
-                    var _a;
                     const responseJSON = rawResponseJSON;
                     if (responseJSON.success && responseJSON.requestors) {
                         requestorsData = responseJSON.requestors;
@@ -108,7 +103,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
                                         ? ` (${requestor.requestorContactInfo})`
                                         : '');
                             option.dataset.contactInfo =
-                                (_a = requestor.requestorContactInfo) !== null && _a !== void 0 ? _a : '';
+                                requestor.requestorContactInfo ?? '';
                             requestorDatalist.append(option);
                         }
                     }
@@ -119,7 +114,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
         requestorNameInput.addEventListener('change', () => {
             const selectedName = requestorNameInput.value;
             const matchingRequestor = requestorsData.find((possibleRequestor) => possibleRequestor.requestorName === selectedName);
-            if ((matchingRequestor === null || matchingRequestor === void 0 ? void 0 : matchingRequestor.requestorContactInfo) !== undefined) {
+            if (matchingRequestor?.requestorContactInfo !== undefined) {
                 // Check if contact info is already set
                 if (requestorContactInfoInput.value !== '' &&
                     requestorContactInfoInput.value !==
@@ -130,9 +125,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
                         okButton: {
                             text: 'Update',
                             callbackFunction: () => {
-                                var _a;
                                 requestorContactInfoInput.value =
-                                    (_a = matchingRequestor.requestorContactInfo) !== null && _a !== void 0 ? _a : '';
+                                    matchingRequestor.requestorContactInfo ?? '';
                             }
                         }
                     });
@@ -161,7 +155,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
          * Populate the location datalist with the provided locations
          */
         function populateLocationDatalist(locations) {
-            locationDatalist === null || locationDatalist === void 0 ? void 0 : locationDatalist.replaceChildren();
+            locationDatalist?.replaceChildren();
             for (const location of locations) {
                 const option = document.createElement('option');
                 option.value = location.address1;
@@ -176,7 +170,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     typeof location.longitude === 'number'
                         ? location.longitude.toString()
                         : '';
-                locationDatalist === null || locationDatalist === void 0 ? void 0 : locationDatalist.append(option);
+                locationDatalist?.append(option);
             }
         }
         /**
@@ -272,14 +266,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
     };
     const workOrderOpenDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderOpenDateTimeString');
     const workOrderDueDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderDueDateTimeString');
-    const workOrderCloseDateTimePicker = flatpickr(workOrderCloseDateTimeStringElement, Object.assign(Object.assign({}, dateTimePickerOptions), { maxDate: new Date(), minDate: (_a = workOrderOpenDateTimeStringElement.valueAsDate) !== null && _a !== void 0 ? _a : '', onOpen: () => {
+    const workOrderCloseDateTimePicker = flatpickr(workOrderCloseDateTimeStringElement, {
+        ...dateTimePickerOptions,
+        maxDate: new Date(),
+        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
+        onOpen: () => {
             workOrderCloseDateTimePicker.set('maxDate', new Date());
-        } }));
-    const workOrderDueDateTimePicker = flatpickr(workOrderDueDateTimeStringElement, Object.assign(Object.assign({}, dateTimePickerOptions), { minDate: (_b = workOrderOpenDateTimeStringElement.valueAsDate) !== null && _b !== void 0 ? _b : '', onChange: (selectedDates) => {
+        }
+    });
+    const workOrderDueDateTimePicker = flatpickr(workOrderDueDateTimeStringElement, {
+        ...dateTimePickerOptions,
+        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
+        onChange: (selectedDates) => {
             const selectedDate = selectedDates.length > 0 ? selectedDates[0] : undefined;
             workOrderDueDateTimeStringElement.classList.toggle('is-danger', selectedDate !== undefined && selectedDate.getTime() < Date.now());
-        } }));
-    flatpickr(workOrderOpenDateTimeStringElement, Object.assign(Object.assign({}, dateTimePickerOptions), { maxDate: new Date(), onChange: (selectedDates) => {
+        }
+    });
+    flatpickr(workOrderOpenDateTimeStringElement, {
+        ...dateTimePickerOptions,
+        maxDate: new Date(),
+        onChange: (selectedDates) => {
             if (selectedDates.length > 0) {
                 const selectedDate = selectedDates[0];
                 if (workOrderDueDateTimePicker.selectedDates.length > 0) {
@@ -295,7 +301,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 workOrderDueDateTimePicker.set('minDate', selectedDate);
                 workOrderCloseDateTimePicker.set('minDate', selectedDate);
             }
-        } }));
+        }
+    });
     /*
      * Set Due Date Options
      */
@@ -317,8 +324,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
     /*
      * Set Close Time to Now Button
      */
-    (_c = document
-        .querySelector('#button--setCloseTimeNow')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => {
+    document
+        .querySelector('#button--setCloseTimeNow')
+        ?.addEventListener('click', () => {
         const now = new Date();
         workOrderCloseDateTimePicker.set('maxDate', now);
         workOrderCloseDateTimePicker.setDate(now, true);
@@ -381,8 +389,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
     // View-only map
     const mapViewElement = document.querySelector('#map--locationView');
     if (mapViewElement !== null) {
-        const lat = Number.parseFloat((_d = mapViewElement.dataset.lat) !== null && _d !== void 0 ? _d : '0');
-        const lng = Number.parseFloat((_e = mapViewElement.dataset.lng) !== null && _e !== void 0 ? _e : '0');
+        const lat = Number.parseFloat(mapViewElement.dataset.lat ?? '0');
+        const lng = Number.parseFloat(mapViewElement.dataset.lng ?? '0');
         const map = new L.Map('map--locationView').setView([lat, lng], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -406,7 +414,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
                         cityssm.postJSON(`${urlPrefix}/doDeleteWorkOrder`, {
                             workOrderId
                         }, (rawResponseJSON) => {
-                            var _a;
                             const responseJSON = rawResponseJSON;
                             if (responseJSON.success &&
                                 responseJSON.redirectUrl !== undefined) {
@@ -416,7 +423,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Delete Error',
-                                    message: (_a = responseJSON.errorMessage) !== null && _a !== void 0 ? _a : 'An unknown error occurred.'
+                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
                                 });
                             }
                         });

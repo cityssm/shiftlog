@@ -76,6 +76,7 @@ export default async function updateWorkOrderType(
 
   for (const formName of formNames) {
     if (formName.trim() !== '') {
+      // eslint-disable-next-line no-await-in-loop
       await pool
         .request()
         .input('workOrderTypeId', form.workOrderTypeId)

@@ -102,7 +102,8 @@
                 data-work-order-type-id="<%= workOrderType.workOrderTypeId %>"
                 data-work-order-type="<%= workOrderType.workOrderType %>"
                 data-work-order-number-prefix="<%= workOrderType.workOrderNumberPrefix %>"
-                data-user-group-id="<%= workOrderType.userGroupId || '' %>"
+                data-due-days="<%= workOrderType.dueDays ?? '' %>"
+                data-user-group-id="<%= workOrderType.userGroupId ?? '' %>"
                 type="button"
               >
                 <span class="icon">

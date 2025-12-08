@@ -9,12 +9,16 @@ export default async function addWorkOrderType(form, userName) {
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderType', form.workOrderType)
         .input('workOrderNumberPrefix', form.workOrderNumberPrefix ?? '')
+        .input('dueDays', form.dueDays === '' || form.dueDays === undefined
+        ? null
+        : form.dueDays)
         .input('userGroupId', form.userGroupId === '' ? null : (form.userGroupId ?? null))
         .input('userName', userName).query(/* sql */ `
       insert into ShiftLog.WorkOrderTypes (
         instance,
         workOrderType,
         workOrderNumberPrefix,
+        dueDays,
         userGroupId,
         orderNumber,
         recordCreate_userName,
@@ -25,6 +29,7 @@ export default async function addWorkOrderType(form, userName) {
         @instance,
         @workOrderType,
         @workOrderNumberPrefix,
+        @dueDays,
         @userGroupId,
         (
           select isnull(max(orderNumber), 0) + 1

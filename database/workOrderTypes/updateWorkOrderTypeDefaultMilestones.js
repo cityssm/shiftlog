@@ -19,18 +19,21 @@ export default async function updateWorkOrderTypeDefaultMilestones(workOrderType
                 .input('workOrderTypeId', workOrderTypeId)
                 .input('milestoneTitle', trimmedTitle)
                 .input('milestoneDescription', trimmedDescription)
+                .input('dueDays', milestone.dueDays ?? null)
                 .input('orderNumber', milestone.orderNumber)
                 .query(/* sql */ `
           insert into ShiftLog.WorkOrderTypeMilestones (
             workOrderTypeId,
             milestoneTitle,
             milestoneDescription,
+            dueDays,
             orderNumber
           )
           values (
             @workOrderTypeId,
             @milestoneTitle,
             @milestoneDescription,
+            @dueDays,
             @orderNumber
           )
         `);

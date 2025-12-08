@@ -11,6 +11,7 @@ export default async function getWorkOrderTypes(user) {
         wt.workOrderTypeId,
         wt.workOrderType,
         wt.workOrderNumberPrefix,
+        wt.dueDays,
         wt.orderNumber,
         wt.userGroupId,
         ug.userGroupName
@@ -32,6 +33,7 @@ export default async function getWorkOrderTypes(user) {
     `);
     const workOrderTypes = workOrderTypesResult.recordset;
     for (const workOrderType of workOrderTypes) {
+        // eslint-disable-next-line no-await-in-loop
         workOrderType.moreInfoFormNames = await getWorkOrderTypeMoreInfoFormNames(workOrderType.workOrderTypeId);
     }
     return workOrderTypes;

@@ -111,8 +111,8 @@ declare const exports: {
               data-work-order-type-id="${workOrderType.workOrderTypeId}"
               data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
               data-work-order-number-prefix="${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}"
-              data-due-days="${workOrderType.dueDays ?? ''}"
               data-user-group-id="${workOrderType.userGroupId ?? ''}"
+              data-due-days="${workOrderType.dueDays ?? ''}"
               type="button"
             >
               <span class="icon">

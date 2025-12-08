@@ -11,12 +11,16 @@ export default async function updateWorkOrderType(form, userName) {
         .input('workOrderTypeId', form.workOrderTypeId)
         .input('workOrderType', form.workOrderType)
         .input('workOrderNumberPrefix', form.workOrderNumberPrefix ?? '')
+        .input('dueDays', form.dueDays === '' || form.dueDays === undefined
+        ? null
+        : form.dueDays)
         .input('userGroupId', form.userGroupId === '' ? null : (form.userGroupId ?? null))
         .input('userName', userName).query(/* sql */ `
       update ShiftLog.WorkOrderTypes
       set
         workOrderType = @workOrderType,
         workOrderNumberPrefix = @workOrderNumberPrefix,
+        dueDays = @dueDays,
         userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
@@ -43,6 +47,7 @@ export default async function updateWorkOrderType(form, userName) {
     }
     for (const formName of formNames) {
         if (formName.trim() !== '') {
+            // eslint-disable-next-line no-await-in-loop
             await pool
                 .request()
                 .input('workOrderTypeId', form.workOrderTypeId)
