@@ -118,7 +118,9 @@ ShiftLog is a lightweight and flexible work management system built with Node.js
 
 ## Security Practices
 
-1. **CSRF Protection**: Use `csrf-csrf` middleware for form submissions. Disabled for API routes. Can be fully disabled in config if needed.
+1. **CSRF Protection**: Use `csrf-csrf` middleware for form submissions. Disabled for API routes.
+   Handled automatically when `cityssm.postJSON()` is used.
+   Can be fully disabled in config if needed.
 2. **Input Sanitization**: Always escape user input with `cityssm.escapeHTML()` before rendering
 3. **No Direct SQL**: Use parameterized queries via the database helpers
 4. **Rate Limiting**: Use `express-rate-limit` for API endpoints
@@ -197,6 +199,42 @@ export async function getSomething(id: number): Promise<SomeType | undefined> {
 export function doSomething(): void {
   // Implementation
 }
+```
+
+### AJAX Request Pattern
+
+```typescript
+cityssm.postJSON(
+  `${shiftLog.urlPrefix}/section/doActionWithObject`,
+  {
+    objectKey: someValue
+  },
+  (rawResponseJSON) => {
+    const responseJSON = rawResponseJSON as {
+      success: boolean
+      errorMessage?: string
+      responseKey1?: any
+      responseKey2?: any
+    }
+
+    // Handle response
+  }
+)
+
+cityssm.postJSON(
+  `${shiftLog.urlPrefix}/section/doActionWithFormElement`,
+  formElement,
+  (rawResponseJSON) => {
+    const responseJSON = rawResponseJSON as {
+      success: boolean
+      errorMessage?: string
+      responseKey1?: any
+      responseKey2?: any
+    }
+
+    // Handle response
+  }
+)
 ```
 
 ## Notes for AI Assistants
