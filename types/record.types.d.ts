@@ -182,22 +182,20 @@ export interface TimesheetCell {
     mappingConfidence: number;
 }
 export interface WorkOrderTypeDefaultMilestone {
-    dueDays?: number | null;
-    milestoneDescription: string;
-    milestoneTitle: string;
-    orderNumber: number;
     workOrderTypeId: number;
+    milestoneTitle: string;
+    milestoneDescription: string;
+    orderNumber: number;
 }
 export interface WorkOrderType extends BaseRecord {
-    defaultMilestones?: WorkOrderTypeDefaultMilestone[];
-    dueDays?: number | null;
-    moreInfoFormNames?: string[];
+    workOrderTypeId: number;
+    workOrderType: string;
+    workOrderNumberPrefix: string;
     orderNumber: number;
     userGroupId?: number | null;
     userGroupName?: string;
-    workOrderNumberPrefix: string;
-    workOrderType: string;
-    workOrderTypeId: number;
+    moreInfoFormNames?: string[];
+    defaultMilestones?: WorkOrderTypeDefaultMilestone[];
 }
 export interface WorkOrder extends BaseRecord {
     workOrderId: number;
