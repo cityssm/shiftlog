@@ -243,7 +243,6 @@ declare const exports: {
       submitEvent.preventDefault()
 
       const editForm = submitEvent.currentTarget as HTMLFormElement
-      const formData = new FormData(editForm)
 
       // Collect milestone data
       const modalElement = editForm.closest('.modal') as HTMLElement
@@ -269,12 +268,23 @@ declare const exports: {
         }
       }
 
-      // Add milestones as JSON string to form data
-      formData.append('defaultMilestones', JSON.stringify(milestones))
+      // Add milestones as hidden input to form
+      const existingMilestonesInput = editForm.querySelector(
+        'input[name="defaultMilestones"]'
+      )
+      if (existingMilestonesInput !== null) {
+        existingMilestonesInput.remove()
+      }
+
+      const milestonesInput = document.createElement('input')
+      milestonesInput.type = 'hidden'
+      milestonesInput.name = 'defaultMilestones'
+      milestonesInput.value = JSON.stringify(milestones)
+      editForm.append(milestonesInput)
 
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`,
-        formData,
+        editForm,
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean

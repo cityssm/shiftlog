@@ -145,7 +145,6 @@
         function doUpdateWorkOrderType(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            const formData = new FormData(editForm);
             // Collect milestone data
             const modalElement = editForm.closest('.modal');
             const milestoneItems = modalElement.querySelectorAll('.milestone-item');
@@ -162,9 +161,17 @@
                     });
                 }
             }
-            // Add milestones as JSON string to form data
-            formData.append('defaultMilestones', JSON.stringify(milestones));
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, formData, (rawResponseJSON) => {
+            // Add milestones as hidden input to form
+            const existingMilestonesInput = editForm.querySelector('input[name="defaultMilestones"]');
+            if (existingMilestonesInput !== null) {
+                existingMilestonesInput.remove();
+            }
+            const milestonesInput = document.createElement('input');
+            milestonesInput.type = 'hidden';
+            milestonesInput.name = 'defaultMilestones';
+            milestonesInput.value = JSON.stringify(milestones);
+            editForm.append(milestonesInput);
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, editForm, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success &&
                     responseJSON.workOrderTypes !== undefined) {
@@ -436,3 +443,4 @@
     attachEventListeners();
     initializeSortable();
 })();
+export {};
