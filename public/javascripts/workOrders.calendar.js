@@ -149,10 +149,11 @@
                                 if (event.workOrderCloseDateTime === null) {
                                     // Work order is open
                                     statusText = 'Open';
-                                    // Check if overdue: open and event type is due and due date is in the past
+                                    // Check if overdue: open and has due date and due date is in the past
                                     // eslint-disable-next-line max-depth
-                                    if (event.eventType === 'workOrderDue') {
-                                        const dueDate = new Date(event.eventDate);
+                                    if (event.workOrderDueDateTime !== null &&
+                                        event.workOrderDueDateTime !== undefined) {
+                                        const dueDate = new Date(event.workOrderDueDateTime);
                                         dueDate.setHours(0, 0, 0, 0);
                                         // eslint-disable-next-line max-depth
                                         if (dueDate < currentDate) {
@@ -178,10 +179,11 @@
                                 if (event.milestoneCompleteDateTime === null) {
                                     // Milestone is open
                                     statusText = 'Open';
-                                    // Check if overdue: open and event type is due and due date is in the past
+                                    // Check if overdue: open and has due date and due date is in the past
                                     // eslint-disable-next-line max-depth
-                                    if (event.eventType === 'milestoneDue') {
-                                        const dueDate = new Date(event.eventDate);
+                                    if (event.milestoneDueDateTime !== null &&
+                                        event.milestoneDueDateTime !== undefined) {
+                                        const dueDate = new Date(event.milestoneDueDateTime);
                                         dueDate.setHours(0, 0, 0, 0);
                                         // eslint-disable-next-line max-depth
                                         if (dueDate < currentDate) {
