@@ -252,6 +252,7 @@ CREATE TABLE ShiftLog.WorkOrderTypes (
   workOrderType varchar(100) not null,
   workOrderNumberPrefix varchar(10) not null default '',
   orderNumber smallint not null default 0,
+  dueDays int,
   userGroupId int,
 
   recordCreate_userName varchar(30) not null,
@@ -269,6 +270,7 @@ CREATE TABLE ShiftLog.WorkOrderTypeMilestones (
   workOrderTypeId int not null,
   milestoneTitle varchar(100) not null,
   milestoneDescription varchar(max) not null default '',
+  dueDays int,
   orderNumber smallint not null default 0,
 
   primary key (workOrderTypeId, milestoneTitle),
