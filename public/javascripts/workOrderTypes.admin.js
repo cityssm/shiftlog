@@ -50,6 +50,7 @@
               data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
               data-work-order-number-prefix="${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}"
               data-user-group-id="${workOrderType.userGroupId ?? ''}"
+              data-due-days="${workOrderType.dueDays ?? ''}"
               type="button"
             >
               <span class="icon">
@@ -132,6 +133,7 @@
         const workOrderTypeId = buttonElement.dataset.workOrderTypeId;
         const currentWorkOrderType = buttonElement.dataset.workOrderType;
         const currentWorkOrderNumberPrefix = buttonElement.dataset.workOrderNumberPrefix;
+        const currentDueDays = buttonElement.dataset.dueDays;
         const currentUserGroupId = buttonElement.dataset.userGroupId;
         if (workOrderTypeId === undefined ||
             currentWorkOrderType === undefined ||
@@ -152,11 +154,14 @@
             for (const [index, item] of milestoneItems.entries()) {
                 const titleInput = item.querySelector('.milestone-title');
                 const descriptionInput = item.querySelector('.milestone-description');
+                const dueDaysInput = item.querySelector('.milestone-due-days');
                 const title = titleInput.value.trim();
                 if (title !== '') {
+                    const dueDaysValue = dueDaysInput.value.trim();
                     milestones.push({
                         milestoneTitle: title,
                         milestoneDescription: descriptionInput.value.trim(),
+                        dueDays: dueDaysValue === '' ? null : Number.parseInt(dueDaysValue, 10),
                         orderNumber: index
                     });
                 }
@@ -200,6 +205,7 @@
                 modalElement.querySelector('#editWorkOrderType--workOrderTypeId').value = workOrderTypeId;
                 modalElement.querySelector('#editWorkOrderType--workOrderType').value = currentWorkOrderType;
                 modalElement.querySelector('#editWorkOrderType--workOrderNumberPrefix').value = currentWorkOrderNumberPrefix;
+                modalElement.querySelector('#editWorkOrderType--dueDays').value = currentDueDays ?? '';
                 // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#editWorkOrderType--userGroupId');
                 for (const userGroup of exports.userGroups) {
@@ -251,7 +257,7 @@
                             '<p class="has-text-grey is-size-7 mb-2">No default milestones. Click "Add Milestone" to create one.</p>';
                     }
                 }
-                function addMilestoneItem(title = '', description = '', orderNumber = 0) {
+                function addMilestoneItem(title = '', description = '', dueDays = null, orderNumber = 0) {
                     const milestoneElement = document.createElement('div');
                     milestoneElement.className = 'milestone-item box p-3 mb-2';
                     milestoneElement.dataset.orderNumber = orderNumber.toString();
@@ -275,7 +281,7 @@
                     />
                   </div>
                 </div>
-                <div class="field mb-0">
+                <div class="field mb-2">
                   <label class="label is-size-7">Milestone Description (Optional)</label>
                   <div class="control">
                     <textarea
@@ -284,6 +290,22 @@
                       placeholder="Description of this milestone..."
                     >${cityssm.escapeHTML(description)}</textarea>
                   </div>
+                </div>
+                <div class="field mb-0">
+                  <label class="label is-size-7">Days Until Due (Optional)</label>
+                  <div class="control">
+                    <input
+                      class="input is-small milestone-due-days"
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="Number of days"
+                      value="${dueDays ?? ''}"
+                    />
+                  </div>
+                  <p class="help is-size-7">
+                    If specified, the milestone due date will be automatically set this many days after the work order open date.
+                  </p>
                 </div>
               </div>
               <button
@@ -309,7 +331,7 @@
                 // Clear container and add existing milestones
                 defaultMilestonesContainer.innerHTML = '';
                 for (const [index, milestone] of currentDefaultMilestones.entries()) {
-                    addMilestoneItem(milestone.milestoneTitle, milestone.milestoneDescription, index);
+                    addMilestoneItem(milestone.milestoneTitle, milestone.milestoneDescription, milestone.dueDays, index);
                 }
                 renderDefaultMilestones();
                 // Initialize sortable for milestones
@@ -330,7 +352,7 @@
                     .querySelector('#editWorkOrderType--addMilestoneButton')
                     ?.addEventListener('click', () => {
                     const currentCount = defaultMilestonesContainer.querySelectorAll('.milestone-item').length;
-                    addMilestoneItem('', '', currentCount);
+                    addMilestoneItem('', '', null, currentCount);
                     renderDefaultMilestones();
                 });
             },

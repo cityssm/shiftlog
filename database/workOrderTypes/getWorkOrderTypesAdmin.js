@@ -12,6 +12,7 @@ export default async function getWorkOrderTypesAdmin() {
         wt.workOrderTypeId,
         wt.workOrderType,
         wt.workOrderNumberPrefix,
+        wt.dueDays,
         wt.orderNumber,
         wt.userGroupId,
         ug.userGroupName

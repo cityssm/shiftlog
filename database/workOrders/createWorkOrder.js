@@ -16,6 +16,15 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
     }
     const openDateTime = new Date(createWorkOrderForm.workOrderOpenDateTimeString);
     const currentYear = openDateTime.getFullYear();
+    // Calculate due date if not provided and dueDays is set
+    let calculatedDueDateTime = null;
+    if (createWorkOrderForm.workOrderDueDateTimeString === '' &&
+        workOrderType.dueDays !== null &&
+        workOrderType.dueDays !== undefined &&
+        workOrderType.dueDays > 0) {
+        calculatedDueDateTime = new Date(openDateTime);
+        calculatedDueDateTime.setDate(calculatedDueDateTime.getDate() + workOrderType.dueDays);
+    }
     // Get the next sequence number for the current year and work order type
     const sequenceResult = (await pool
         .request()
@@ -44,7 +53,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         .input('workOrderDetails', createWorkOrderForm.workOrderDetails)
         .input('workOrderOpenDateTime', dateTimeInputToSqlDateTime(createWorkOrderForm.workOrderOpenDateTimeString))
         .input('workOrderDueDateTime', createWorkOrderForm.workOrderDueDateTimeString === ''
-        ? null
+        ? calculatedDueDateTime
         : dateTimeInputToSqlDateTime(createWorkOrderForm.workOrderDueDateTimeString))
         .input('workOrderCloseDateTime', createWorkOrderForm.workOrderCloseDateTimeString
         ? dateTimeInputToSqlDateTime(createWorkOrderForm.workOrderCloseDateTimeString)
@@ -114,17 +123,28 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
     // Create default milestones for this work order
     const defaultMilestones = await getWorkOrderTypeDefaultMilestones(workOrderTypeId);
     for (const defaultMilestone of defaultMilestones) {
+        // Calculate milestone due date if dueDays is set
+        let milestoneDueDateTime = null;
+        if (defaultMilestone.dueDays !== null &&
+            defaultMilestone.dueDays !== undefined &&
+            defaultMilestone.dueDays > 0) {
+            milestoneDueDateTime = new Date(openDateTime);
+            milestoneDueDateTime.setDate(milestoneDueDateTime.getDate() + defaultMilestone.dueDays);
+        }
+        // eslint-disable-next-line no-await-in-loop
         await pool
             .request()
             .input('workOrderId', workOrderId)
             .input('milestoneTitle', defaultMilestone.milestoneTitle)
             .input('milestoneDescription', defaultMilestone.milestoneDescription)
+            .input('milestoneDueDateTime', milestoneDueDateTime)
             .input('orderNumber', defaultMilestone.orderNumber)
             .input('userName', user.userName).query(/* sql */ `
         insert into ShiftLog.WorkOrderMilestones (
           workOrderId,
           milestoneTitle,
           milestoneDescription,
+          milestoneDueDateTime,
           orderNumber,
           recordCreate_userName,
           recordUpdate_userName
@@ -133,6 +153,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           @workOrderId,
           @milestoneTitle,
           @milestoneDescription,
+          @milestoneDueDateTime,
           @orderNumber,
           @userName,
           @userName

@@ -204,23 +204,74 @@ declare const exports: {
               const leftIcon = getEventTypeLeftIcon(event.eventType)
               const statusIcon = getEventTypeStatusIcon(event.eventType)
 
-              const title = event.milestoneTitle
-                ? `${event.workOrderNumber} - ${event.milestoneTitle}`
-                : event.workOrderNumber
-
-              // Determine if the item is open
+              // Determine status text and if item is overdue
+              let statusText = ''
               let rightTagClass = 'is-light'
+              const currentDate = new Date()
+              currentDate.setHours(0, 0, 0, 0) // Reset to midnight for date comparison
 
               // eslint-disable-next-line max-depth
               if (event.eventType.startsWith('workOrder')) {
-                // Work order is open if workOrderCloseDateTime is null
+                // Work order logic
                 // eslint-disable-next-line max-depth
                 if (event.workOrderCloseDateTime === null) {
-                  rightTagClass = 'is-light is-success'
+                  // Work order is open
+                  statusText = 'Open'
+                  // Check if overdue: open and has due date and due date is in the past
+                  // eslint-disable-next-line max-depth
+                  if (
+                    event.workOrderDueDateTime !== null &&
+                    event.workOrderDueDateTime !== undefined
+                  ) {
+                    const dueDate = new Date(event.workOrderDueDateTime as string)
+                    dueDate.setHours(0, 0, 0, 0)
+                    // eslint-disable-next-line max-depth
+                    if (dueDate < currentDate) {
+                      statusText = 'Overdue'
+                      rightTagClass = 'is-light is-danger'
+                    } else {
+                      rightTagClass = 'is-light is-success'
+                    }
+                  } else {
+                    rightTagClass = 'is-light is-success'
+                  }
+                } else {
+                  statusText = 'Closed'
+                  rightTagClass = 'is-light'
                 }
-              } else if (event.milestoneCompleteDateTime === null) {
-                rightTagClass = 'is-light is-success'
+              } else {
+                // Milestone logic
+                // eslint-disable-next-line max-depth
+                if (event.milestoneCompleteDateTime === null) {
+                  // Milestone is open
+                  statusText = 'Open'
+                  // Check if overdue: open and has due date and due date is in the past
+                  // eslint-disable-next-line max-depth
+                  if (
+                    event.milestoneDueDateTime !== null &&
+                    event.milestoneDueDateTime !== undefined
+                  ) {
+                    const dueDate = new Date(event.milestoneDueDateTime as string)
+                    dueDate.setHours(0, 0, 0, 0)
+                    // eslint-disable-next-line max-depth
+                    if (dueDate < currentDate) {
+                      statusText = 'Overdue'
+                      rightTagClass = 'is-light is-danger'
+                    } else {
+                      rightTagClass = 'is-light is-success'
+                    }
+                  } else {
+                    rightTagClass = 'is-light is-success'
+                  }
+                } else {
+                  statusText = 'Closed'
+                  rightTagClass = 'is-light'
+                }
               }
+
+              const titleWithStatus = event.milestoneTitle
+                ? `${event.workOrderNumber} - ${event.milestoneTitle} (${statusText})`
+                : `${event.workOrderNumber} (${statusText})`
 
               // Create a tag with addons: left side has icons, right side has work order number
               // eslint-disable-next-line no-unsanitized/method
@@ -228,11 +279,11 @@ declare const exports: {
                 'beforeend',
                 /* html */ `
                   <div class="tags has-addons mb-1">
-                    <a class="tag ${eventClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
+                    <a class="tag ${eventClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(titleWithStatus)}">
                       <span class="icon is-small">${leftIcon}</span>
                       <span class="icon is-small">${statusIcon}</span>
                     </a>
-                    <a class="tag ${rightTagClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
+                    <a class="tag ${rightTagClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(titleWithStatus)}">
                       ${escapeHtml(event.workOrderNumber)}
                     </a>
                   </div>

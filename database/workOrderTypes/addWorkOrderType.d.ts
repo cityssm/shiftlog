@@ -1,4 +1,5 @@
 export interface AddWorkOrderTypeForm {
+    dueDays?: number | string;
     userGroupId?: number | string;
     workOrderNumberPrefix?: string;
     workOrderType: string;

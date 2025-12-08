@@ -19,7 +19,9 @@ export interface WorkOrderCalendarEvent {
     milestoneId?: number | null;
     milestoneTitle?: string | null;
     workOrderCloseDateTime?: Date | string | null;
+    workOrderDueDateTime?: Date | string | null;
     milestoneCompleteDateTime?: Date | string | null;
+    milestoneDueDateTime?: Date | string | null;
 }
 /**
  * Retrieves calendar events for work orders and milestones within a specified month.

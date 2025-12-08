@@ -50,6 +50,25 @@
           </p>
         </div>
         <div class="field">
+          <label class="label" for="addWorkOrderType--dueDays">
+            Default Days Until Due (Optional)
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addWorkOrderType--dueDays"
+              name="dueDays"
+              type="number"
+              min="0"
+              step="1"
+              placeholder="Number of days"
+            />
+          </div>
+          <p class="help">
+            If specified, work orders of this type will automatically have a due date set this many days after the open date.
+          </p>
+        </div>
+        <div class="field">
           <label class="label" for="addWorkOrderType--userGroupId">
             User Group (Optional)
           </label>

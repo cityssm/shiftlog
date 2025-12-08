@@ -1,8 +1,9 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface DefaultMilestoneUpdate {
-  milestoneTitle: string
+  dueDays?: number | null
   milestoneDescription: string
+  milestoneTitle: string
   orderNumber: number
 }
 
@@ -32,18 +33,21 @@ export default async function updateWorkOrderTypeDefaultMilestones(
         .input('workOrderTypeId', workOrderTypeId)
         .input('milestoneTitle', trimmedTitle)
         .input('milestoneDescription', trimmedDescription)
+        .input('dueDays', milestone.dueDays ?? null)
         .input('orderNumber', milestone.orderNumber)
         .query(/* sql */ `
           insert into ShiftLog.WorkOrderTypeMilestones (
             workOrderTypeId,
             milestoneTitle,
             milestoneDescription,
+            dueDays,
             orderNumber
           )
           values (
             @workOrderTypeId,
             @milestoneTitle,
             @milestoneDescription,
+            @dueDays,
             @orderNumber
           )
         `)

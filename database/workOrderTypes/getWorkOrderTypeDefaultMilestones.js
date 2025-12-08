@@ -9,6 +9,7 @@ export default async function getWorkOrderTypeDefaultMilestones(workOrderTypeId)
         workOrderTypeId,
         milestoneTitle,
         milestoneDescription,
+        dueDays,
         orderNumber
       from ShiftLog.WorkOrderTypeMilestones
       where workOrderTypeId = @workOrderTypeId
