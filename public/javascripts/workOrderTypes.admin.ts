@@ -24,11 +24,13 @@ declare const Sortable: {
 interface WorkOrderTypeDefaultMilestone {
   milestoneTitle: string
   milestoneDescription: string
+  dueDays?: number | null
   orderNumber: number
 }
 
 interface WorkOrderType {
   defaultMilestones?: WorkOrderTypeDefaultMilestone[]
+  dueDays?: number | null
   moreInfoFormNames?: string[]
   orderNumber: number
   userGroupId: number | null
@@ -109,6 +111,7 @@ declare const exports: {
               data-work-order-type-id="${workOrderType.workOrderTypeId}"
               data-work-order-type="${cityssm.escapeHTML(workOrderType.workOrderType)}"
               data-work-order-number-prefix="${cityssm.escapeHTML(workOrderType.workOrderNumberPrefix)}"
+              data-due-days="${workOrderType.dueDays ?? ''}"
               data-user-group-id="${workOrderType.userGroupId ?? ''}"
               type="button"
             >
@@ -221,6 +224,7 @@ declare const exports: {
     const currentWorkOrderType = buttonElement.dataset.workOrderType
     const currentWorkOrderNumberPrefix =
       buttonElement.dataset.workOrderNumberPrefix
+    const currentDueDays = buttonElement.dataset.dueDays
     const currentUserGroupId = buttonElement.dataset.userGroupId
 
     if (
@@ -258,11 +262,18 @@ declare const exports: {
           '.milestone-description'
         ) as HTMLTextAreaElement
 
+        const dueDaysInput = item.querySelector(
+          '.milestone-due-days'
+        ) as HTMLInputElement
+
         const title = titleInput.value.trim()
         if (title !== '') {
+          const dueDaysValue = dueDaysInput.value.trim()
           milestones.push({
             milestoneTitle: title,
             milestoneDescription: descriptionInput.value.trim(),
+            dueDays:
+              dueDaysValue === '' ? null : Number.parseInt(dueDaysValue, 10),
             orderNumber: index
           })
         }
@@ -332,6 +343,11 @@ declare const exports: {
             '#editWorkOrderType--workOrderNumberPrefix'
           ) as HTMLInputElement
         ).value = currentWorkOrderNumberPrefix
+        ;(
+          modalElement.querySelector(
+            '#editWorkOrderType--dueDays'
+          ) as HTMLInputElement
+        ).value = currentDueDays ?? ''
 
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
@@ -405,6 +421,7 @@ declare const exports: {
         function addMilestoneItem(
           title = '',
           description = '',
+          dueDays: number | null | undefined = null,
           orderNumber = 0
         ): void {
           const milestoneElement = document.createElement('div')
@@ -431,7 +448,7 @@ declare const exports: {
                     />
                   </div>
                 </div>
-                <div class="field mb-0">
+                <div class="field mb-2">
                   <label class="label is-size-7">Milestone Description (Optional)</label>
                   <div class="control">
                     <textarea
@@ -440,6 +457,22 @@ declare const exports: {
                       placeholder="Description of this milestone..."
                     >${cityssm.escapeHTML(description)}</textarea>
                   </div>
+                </div>
+                <div class="field mb-0">
+                  <label class="label is-size-7">Days Until Due (Optional)</label>
+                  <div class="control">
+                    <input
+                      class="input is-small milestone-due-days"
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="Number of days"
+                      value="${dueDays ?? ''}"
+                    />
+                  </div>
+                  <p class="help is-size-7">
+                    If specified, the milestone due date will be automatically set this many days after the work order open date.
+                  </p>
                 </div>
               </div>
               <button
@@ -471,6 +504,7 @@ declare const exports: {
           addMilestoneItem(
             milestone.milestoneTitle,
             milestone.milestoneDescription,
+            milestone.dueDays,
             index
           )
         }
@@ -498,7 +532,7 @@ declare const exports: {
               defaultMilestonesContainer.querySelectorAll(
                 '.milestone-item'
               ).length
-            addMilestoneItem('', '', currentCount)
+            addMilestoneItem('', '', null, currentCount)
             renderDefaultMilestones()
           })
       },

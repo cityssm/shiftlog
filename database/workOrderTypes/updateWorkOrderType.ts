@@ -9,12 +9,13 @@ import updateWorkOrderTypeDefaultMilestones, {
 } from './updateWorkOrderTypeDefaultMilestones.js'
 
 export interface UpdateWorkOrderTypeForm {
+  defaultMilestones?: string
+  dueDays?: number | string
   moreInfoFormNames?: string | string[]
   userGroupId?: number | string
   workOrderNumberPrefix?: string
   workOrderType: string
   workOrderTypeId: number | string
-  defaultMilestones?: string
 }
 
 export default async function updateWorkOrderType(
@@ -30,6 +31,12 @@ export default async function updateWorkOrderType(
     .input('workOrderType', form.workOrderType)
     .input('workOrderNumberPrefix', form.workOrderNumberPrefix ?? '')
     .input(
+      'dueDays',
+      form.dueDays === '' || form.dueDays === undefined
+        ? null
+        : form.dueDays
+    )
+    .input(
       'userGroupId',
       form.userGroupId === '' ? null : (form.userGroupId ?? null)
     )
@@ -38,6 +45,7 @@ export default async function updateWorkOrderType(
       set
         workOrderType = @workOrderType,
         workOrderNumberPrefix = @workOrderNumberPrefix,
+        dueDays = @dueDays,
         userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()

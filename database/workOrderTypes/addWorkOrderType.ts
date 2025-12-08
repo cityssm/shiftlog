@@ -7,6 +7,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface AddWorkOrderTypeForm {
+  dueDays?: number | string
   userGroupId?: number | string
   workOrderNumberPrefix?: string
   workOrderType: string
@@ -24,6 +25,12 @@ export default async function addWorkOrderType(
     .input('workOrderType', form.workOrderType)
     .input('workOrderNumberPrefix', form.workOrderNumberPrefix ?? '')
     .input(
+      'dueDays',
+      form.dueDays === '' || form.dueDays === undefined
+        ? null
+        : form.dueDays
+    )
+    .input(
       'userGroupId',
       form.userGroupId === '' ? null : (form.userGroupId ?? null)
     )
@@ -32,6 +39,7 @@ export default async function addWorkOrderType(
         instance,
         workOrderType,
         workOrderNumberPrefix,
+        dueDays,
         userGroupId,
         orderNumber,
         recordCreate_userName,
@@ -42,6 +50,7 @@ export default async function addWorkOrderType(
         @instance,
         @workOrderType,
         @workOrderNumberPrefix,
+        @dueDays,
         @userGroupId,
         (
           select isnull(max(orderNumber), 0) + 1

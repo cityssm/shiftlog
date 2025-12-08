@@ -1,19 +1,21 @@
-(() => {
-    const shiftLog = exports.shiftLog;
-    const calendarContainerElement = document.querySelector('#container--calendar');
-    const monthTitleElement = document.querySelector('#calendar--monthTitle');
-    const previousMonthButtonElement = document.querySelector('#btn--previousMonth');
-    const nextMonthButtonElement = document.querySelector('#btn--nextMonth');
-    const assignedToSelect = document.querySelector('#calendar--assignedToDataListItemId');
-    const showOpenDatesCheckbox = document.querySelector('#calendar--showOpenDates');
-    const showDueDatesCheckbox = document.querySelector('#calendar--showDueDates');
-    const showCloseDatesCheckbox = document.querySelector('#calendar--showCloseDates');
-    const showMilestoneDueDatesCheckbox = document.querySelector('#calendar--showMilestoneDueDates');
-    const showMilestoneCompleteDatesCheckbox = document.querySelector('#calendar--showMilestoneCompleteDates');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(function () {
+    var shiftLog = exports.shiftLog;
+    var calendarContainerElement = document.querySelector('#container--calendar');
+    var monthTitleElement = document.querySelector('#calendar--monthTitle');
+    var previousMonthButtonElement = document.querySelector('#btn--previousMonth');
+    var nextMonthButtonElement = document.querySelector('#btn--nextMonth');
+    var assignedToSelect = document.querySelector('#calendar--assignedToDataListItemId');
+    var showOpenDatesCheckbox = document.querySelector('#calendar--showOpenDates');
+    var showDueDatesCheckbox = document.querySelector('#calendar--showDueDates');
+    var showCloseDatesCheckbox = document.querySelector('#calendar--showCloseDates');
+    var showMilestoneDueDatesCheckbox = document.querySelector('#calendar--showMilestoneDueDates');
+    var showMilestoneCompleteDatesCheckbox = document.querySelector('#calendar--showMilestoneCompleteDates');
     // Current date state
-    let currentYear = new Date().getFullYear();
-    let currentMonth = new Date().getMonth() + 1; // 1-12
-    const monthNames = [
+    var currentYear = new Date().getFullYear();
+    var currentMonth = new Date().getMonth() + 1; // 1-12
+    var monthNames = [
         'January',
         'February',
         'March',
@@ -27,17 +29,17 @@
         'November',
         'December'
     ];
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     /**
      * Escapes HTML special characters to prevent XSS
      */
     function escapeHtml(text) {
-        const div = document.createElement('div');
+        var div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
     function updateMonthTitle() {
-        monthTitleElement.textContent = `${monthNames[currentMonth - 1]} ${currentYear}`;
+        monthTitleElement.textContent = "".concat(monthNames[currentMonth - 1], " ").concat(currentYear);
     }
     /**
      * Get the left icon HTML for an event type (work order icon or check icon)
@@ -46,7 +48,7 @@
         if (eventType.startsWith('milestone')) {
             return '<i class="fa-solid fa-check"></i>';
         }
-        return `<i class="fa-solid ${shiftLog.workOrdersIconClass}"></i>`;
+        return "<i class=\"fa-solid ".concat(shiftLog.workOrdersIconClass, "\"></i>");
     }
     /**
      * Get the status icon HTML for an event type (play/exclamation-triangle/stop)
@@ -88,85 +90,129 @@
         }
     }
     function renderCalendar(events) {
+        var _a, _b, _c, _d;
         // Group events by date
-        const eventsByDate = new Map();
-        for (const event of events) {
-            const eventDate = new Date(event.eventDate);
-            const dateKey = eventDate.toISOString().split('T')[0];
+        var eventsByDate = new Map();
+        for (var _i = 0, events_1 = events; _i < events_1.length; _i++) {
+            var event_1 = events_1[_i];
+            var eventDate = new Date(event_1.eventDate);
+            var dateKey = eventDate.toISOString().split('T')[0];
             if (!eventsByDate.has(dateKey)) {
                 eventsByDate.set(dateKey, []);
             }
-            eventsByDate.get(dateKey)?.push(event);
+            (_a = eventsByDate.get(dateKey)) === null || _a === void 0 ? void 0 : _a.push(event_1);
         }
         // Calculate calendar grid
-        const firstDay = new Date(currentYear, currentMonth - 1, 1);
-        const lastDay = new Date(currentYear, currentMonth, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDayOfWeek = firstDay.getDay();
-        const calendarElement = document.createElement('table');
+        var firstDay = new Date(currentYear, currentMonth - 1, 1);
+        var lastDay = new Date(currentYear, currentMonth, 0);
+        var daysInMonth = lastDay.getDate();
+        var startingDayOfWeek = firstDay.getDay();
+        var calendarElement = document.createElement('table');
         calendarElement.className = 'table is-fullwidth is-bordered';
         calendarElement.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
         // Header row
-        for (const dayName of dayNames) {
-            calendarElement
-                .querySelector('thead tr')
-                ?.insertAdjacentHTML('beforeend', `<th class="has-text-centered">${cityssm.escapeHTML(dayName)}</th>`);
+        for (var _e = 0, dayNames_1 = dayNames; _e < dayNames_1.length; _e++) {
+            var dayName = dayNames_1[_e];
+            (_b = calendarElement
+                .querySelector('thead tr')) === null || _b === void 0 ? void 0 : _b.insertAdjacentHTML('beforeend', "<th class=\"has-text-centered\">".concat(cityssm.escapeHTML(dayName), "</th>"));
         }
-        let dayCounter = 1;
-        let calendarDay = 1 - startingDayOfWeek;
+        var dayCounter = 1;
+        var calendarDay = 1 - startingDayOfWeek;
         // Generate weeks
         while (dayCounter <= daysInMonth) {
-            const weekRowElement = document.createElement('tr');
+            var weekRowElement = document.createElement('tr');
             // Generate days in week
-            for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek += 1) {
+            for (var dayOfWeek = 0; dayOfWeek < 7; dayOfWeek += 1) {
                 if (calendarDay < 1 || calendarDay > daysInMonth) {
-                    const emptyCell = document.createElement('td');
+                    var emptyCell = document.createElement('td');
                     emptyCell.className = 'has-background-light';
                     weekRowElement.append(emptyCell);
                 }
                 else {
-                    const dateKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(calendarDay).padStart(2, '0')}`;
-                    const dayEvents = eventsByDate.get(dateKey) ?? [];
-                    const dayCell = document.createElement('td');
+                    var dateKey = "".concat(currentYear, "-").concat(String(currentMonth).padStart(2, '0'), "-").concat(String(calendarDay).padStart(2, '0'));
+                    var dayEvents = (_c = eventsByDate.get(dateKey)) !== null && _c !== void 0 ? _c : [];
+                    var dayCell = document.createElement('td');
                     dayCell.className = 'is-vcentered';
                     dayCell.style.verticalAlign = 'top';
                     dayCell.style.minHeight = '120px';
-                    dayCell.innerHTML = `<div class="has-text-weight-bold mb-2">${cityssm.escapeHTML(String(calendarDay))}</div>`;
+                    dayCell.innerHTML = "<div class=\"has-text-weight-bold mb-2\">".concat(cityssm.escapeHTML(String(calendarDay)), "</div>");
                     if (dayEvents.length > 0) {
-                        for (const event of dayEvents) {
-                            const eventClass = getEventTypeClass(event.eventType);
-                            const leftIcon = getEventTypeLeftIcon(event.eventType);
-                            const statusIcon = getEventTypeStatusIcon(event.eventType);
-                            const title = event.milestoneTitle
-                                ? `${event.workOrderNumber} - ${event.milestoneTitle}`
-                                : event.workOrderNumber;
-                            // Determine if the item is open
-                            let rightTagClass = 'is-light';
+                        for (var _f = 0, dayEvents_1 = dayEvents; _f < dayEvents_1.length; _f++) {
+                            var event_2 = dayEvents_1[_f];
+                            var eventClass = getEventTypeClass(event_2.eventType);
+                            var leftIcon = getEventTypeLeftIcon(event_2.eventType);
+                            var statusIcon = getEventTypeStatusIcon(event_2.eventType);
+                            // Determine status text and if item is overdue
+                            var statusText = '';
+                            var rightTagClass = 'is-light';
+                            var currentDate = new Date();
+                            currentDate.setHours(0, 0, 0, 0); // Reset to midnight for date comparison
                             // eslint-disable-next-line max-depth
-                            if (event.eventType.startsWith('workOrder')) {
-                                // Work order is open if workOrderCloseDateTime is null
+                            if (event_2.eventType.startsWith('workOrder')) {
+                                // Work order logic
                                 // eslint-disable-next-line max-depth
-                                if (event.workOrderCloseDateTime === null) {
-                                    rightTagClass = 'is-light is-success';
+                                if (event_2.workOrderCloseDateTime === null) {
+                                    // Work order is open
+                                    statusText = 'Open';
+                                    // Check if overdue: open and event type is due and due date is in the past
+                                    // eslint-disable-next-line max-depth
+                                    if (event_2.eventType === 'workOrderDue') {
+                                        var dueDate = new Date(event_2.eventDate);
+                                        dueDate.setHours(0, 0, 0, 0);
+                                        // eslint-disable-next-line max-depth
+                                        if (dueDate < currentDate) {
+                                            statusText = 'Overdue';
+                                            rightTagClass = 'is-light is-danger';
+                                        }
+                                        else {
+                                            rightTagClass = 'is-light is-success';
+                                        }
+                                    }
+                                    else {
+                                        rightTagClass = 'is-light is-success';
+                                    }
+                                }
+                                else {
+                                    statusText = 'Closed';
+                                    rightTagClass = 'is-light';
                                 }
                             }
-                            else if (event.milestoneCompleteDateTime === null) {
-                                rightTagClass = 'is-light is-success';
+                            else {
+                                // Milestone logic
+                                // eslint-disable-next-line max-depth
+                                if (event_2.milestoneCompleteDateTime === null) {
+                                    // Milestone is open
+                                    statusText = 'Open';
+                                    // Check if overdue: open and event type is due and due date is in the past
+                                    // eslint-disable-next-line max-depth
+                                    if (event_2.eventType === 'milestoneDue') {
+                                        var dueDate = new Date(event_2.eventDate);
+                                        dueDate.setHours(0, 0, 0, 0);
+                                        // eslint-disable-next-line max-depth
+                                        if (dueDate < currentDate) {
+                                            statusText = 'Overdue';
+                                            rightTagClass = 'is-light is-danger';
+                                        }
+                                        else {
+                                            rightTagClass = 'is-light is-success';
+                                        }
+                                    }
+                                    else {
+                                        rightTagClass = 'is-light is-success';
+                                    }
+                                }
+                                else {
+                                    statusText = 'Closed';
+                                    rightTagClass = 'is-light';
+                                }
                             }
+                            var titleWithStatus = event_2.milestoneTitle
+                                ? "".concat(event_2.workOrderNumber, " - ").concat(event_2.milestoneTitle, " (").concat(statusText, ")")
+                                : "".concat(event_2.workOrderNumber, " (").concat(statusText, ")");
                             // Create a tag with addons: left side has icons, right side has work order number
                             // eslint-disable-next-line no-unsanitized/method
                             dayCell.insertAdjacentHTML('beforeend', 
-                            /* html */ `
-                  <div class="tags has-addons mb-1">
-                    <a class="tag ${eventClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
-                      <span class="icon is-small">${leftIcon}</span>
-                      <span class="icon is-small">${statusIcon}</span>
-                    </a>
-                    <a class="tag ${rightTagClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(title)}">
-                      ${escapeHtml(event.workOrderNumber)}
-                    </a>
-                  </div>
-                `);
+                            /* html */ "\n                  <div class=\"tags has-addons mb-1\">\n                    <a class=\"tag ".concat(eventClass, "\" href=\"").concat(shiftLog.buildWorkOrderURL(event_2.workOrderId), "\" title=\"").concat(escapeHtml(titleWithStatus), "\">\n                      <span class=\"icon is-small\">").concat(leftIcon, "</span>\n                      <span class=\"icon is-small\">").concat(statusIcon, "</span>\n                    </a>\n                    <a class=\"tag ").concat(rightTagClass, "\" href=\"").concat(shiftLog.buildWorkOrderURL(event_2.workOrderId), "\" title=\"").concat(escapeHtml(titleWithStatus), "\">\n                      ").concat(escapeHtml(event_2.workOrderNumber), "\n                    </a>\n                  </div>\n                "));
                         }
                     }
                     weekRowElement.append(dayCell);
@@ -176,13 +222,13 @@
                 }
                 calendarDay += 1;
             }
-            calendarElement.querySelector('tbody')?.append(weekRowElement);
+            (_d = calendarElement.querySelector('tbody')) === null || _d === void 0 ? void 0 : _d.append(weekRowElement);
         }
         calendarContainerElement.replaceChildren(calendarElement);
     }
     function loadCalendar() {
         updateMonthTitle();
-        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`, {
+        cityssm.postJSON("".concat(shiftLog.urlPrefix, "/").concat(shiftLog.workOrdersRouter, "/doGetCalendarEvents"), {
             year: currentYear,
             month: currentMonth,
             assignedToDataListItemId: assignedToSelect.value,
@@ -191,15 +237,15 @@
             showCloseDates: showCloseDatesCheckbox.checked,
             showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
             showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, function (rawResponseJSON) {
+            var responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 renderCalendar(responseJSON.events);
             }
         });
     }
     // Event listeners
-    previousMonthButtonElement.addEventListener('click', () => {
+    previousMonthButtonElement.addEventListener('click', function () {
         if (currentMonth === 1) {
             currentMonth = 12;
             currentYear -= 1;
@@ -209,7 +255,7 @@
         }
         loadCalendar();
     });
-    nextMonthButtonElement.addEventListener('click', () => {
+    nextMonthButtonElement.addEventListener('click', function () {
         if (currentMonth === 12) {
             currentMonth = 1;
             currentYear += 1;
@@ -219,22 +265,22 @@
         }
         loadCalendar();
     });
-    assignedToSelect.addEventListener('change', () => {
+    assignedToSelect.addEventListener('change', function () {
         loadCalendar();
     });
-    showOpenDatesCheckbox.addEventListener('change', () => {
+    showOpenDatesCheckbox.addEventListener('change', function () {
         loadCalendar();
     });
-    showDueDatesCheckbox.addEventListener('change', () => {
+    showDueDatesCheckbox.addEventListener('change', function () {
         loadCalendar();
     });
-    showCloseDatesCheckbox.addEventListener('change', () => {
+    showCloseDatesCheckbox.addEventListener('change', function () {
         loadCalendar();
     });
-    showMilestoneDueDatesCheckbox.addEventListener('change', () => {
+    showMilestoneDueDatesCheckbox.addEventListener('change', function () {
         loadCalendar();
     });
-    showMilestoneCompleteDatesCheckbox.addEventListener('change', () => {
+    showMilestoneCompleteDatesCheckbox.addEventListener('change', function () {
         loadCalendar();
     });
     // Initial load
