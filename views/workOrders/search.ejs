@@ -114,24 +114,6 @@
         <div class="columns">
           <div class="column">
             <div class="field">
-              <label class="label" for="workOrderSearch--openClosedFilter">Open / Closed</label>
-              <div class="control has-icons-left">
-                <div class="select is-fullwidth">
-                  <select id="workOrderSearch--openClosedFilter" name="openClosedFilter">
-                    <option value="">(All)</option>
-                    <option value="open" selected>Open</option>
-                    <option value="overdue">Overdue</option>
-                    <option value="closed">Closed</option>
-                  </select>
-                </div>
-                <span class="icon is-small is-left">
-                  <i class="fa-solid fa-filter"></i>
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <div class="field">
               <label class="label" for="workOrderSearch--requestor">Requestor</label>
               <div class="control has-icons-left">
                 <input
@@ -159,6 +141,26 @@
                       <%= assignedToItem.dataListItem %>
                     </option>
                     <% }); %>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--openClosedFilter">Open / Closed</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderSearch--openClosedFilter" name="openClosedFilter">
+                    <option value="">(All)</option>
+                    <option value="open" selected>Open</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="closed">Closed</option>
                   </select>
                 </div>
                 <span class="icon is-small is-left">

@@ -49,6 +49,9 @@ declare const exports: {
           <th>Open Date</th>
           <th>Requestor</th>
           <th>Assigned To</th>
+          <th class="has-width-1">
+            <span class="is-sr-only">Properties</span>
+          </th>
           <th class="has-width-1 is-hidden-print">
             <span class="is-sr-only">Actions</span>
           </th>
@@ -90,6 +93,7 @@ declare const exports: {
 
       // Build tags HTML
       let tagsHTML = ''
+
       if (workOrder.tags && workOrder.tags.length > 0) {
         const tagsElements = workOrder.tags
           .map((tag) => {
@@ -117,7 +121,11 @@ declare const exports: {
       // Build attachment icon HTML
       const attachmentIconHTML =
         workOrder.attachmentsCount && workOrder.attachmentsCount > 0
-          ? `<span class="icon has-text-info" title="${workOrder.attachmentsCount} attachment(s)"><i class="fa-solid fa-paperclip"></i></span>`
+          ? /* html */ `
+            <span class="icon" title="${workOrder.attachmentsCount} attachment(s)">
+              <i class="fa-solid fa-paperclip"></i>
+            </span>
+          `
           : ''
 
       // eslint-disable-next-line no-unsanitized/property
@@ -137,8 +145,7 @@ declare const exports: {
         <td>
           <a href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
-          </a>
-          ${attachmentIconHTML}<br />
+          </a><br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -
@@ -163,6 +170,9 @@ declare const exports: {
         </td>
         <td>
           ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : (workOrder.assignedToDataListItem ?? ''))}
+        </td>
+        <td>
+          ${attachmentIconHTML}
         </td>
         <td class="is-hidden-print">
           <a
