@@ -36,8 +36,10 @@ declare const exports: {
     }
 
     const tableElement = document.createElement('table')
+
     tableElement.className =
       'table is-fullwidth is-striped is-hoverable is-narrow'
+
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
@@ -86,8 +88,7 @@ declare const exports: {
 
       if (workOrder.workOrderCloseDateTime !== null) {
         extraDateHTML = `<i class="fa-solid fa-stop" title="Close Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderCloseDateTime ?? ''))}`
-      }
-      else if (workOrder.workOrderDueDateTime !== null) {
+      } else if (workOrder.workOrderDueDateTime !== null) {
         extraDateHTML = `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`
       }
 
@@ -209,7 +210,7 @@ declare const exports: {
         totalCount: data.totalCount,
         currentPageOrOffset: data.offset,
         itemsPerPageOrLimit: data.limit,
-        
+
         clickHandler: (pageNumber) => {
           offsetInputElement.value = ((pageNumber - 1) * data.limit).toString()
           getSearchResults()
@@ -243,14 +244,20 @@ declare const exports: {
     event.preventDefault()
   })
 
+  function resetOffsetAndGetResults(): void {
+    offsetInputElement.value = '0'
+    getSearchResults()
+  }
+
   const formElements = filtersFormElement.querySelectorAll('input, select')
 
   for (const formElement of formElements) {
-    formElement.addEventListener('change', () => {
-      offsetInputElement.value = '0'
-      getSearchResults()
-    })
+    formElement.addEventListener('change', resetOffsetAndGetResults)
   }
+
+  document
+    .querySelector('#workOrderSearch--limit')
+    ?.addEventListener('change', resetOffsetAndGetResults)
 
   getSearchResults()
 })()

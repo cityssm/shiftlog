@@ -183,12 +183,16 @@
     filtersFormElement.addEventListener('submit', (event) => {
         event.preventDefault();
     });
+    function resetOffsetAndGetResults() {
+        offsetInputElement.value = '0';
+        getSearchResults();
+    }
     const formElements = filtersFormElement.querySelectorAll('input, select');
     for (const formElement of formElements) {
-        formElement.addEventListener('change', () => {
-            offsetInputElement.value = '0';
-            getSearchResults();
-        });
+        formElement.addEventListener('change', resetOffsetAndGetResults);
     }
+    document
+        .querySelector('#workOrderSearch--limit')
+        ?.addEventListener('change', resetOffsetAndGetResults);
     getSearchResults();
 })();
