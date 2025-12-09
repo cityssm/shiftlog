@@ -57,7 +57,7 @@ Tags created in the Tag Management interface can be applied to work orders:
 - **System Tags**: Tags that exist in the Tag Management interface display
   with their configured background and text colors.
 - **Ad-hoc Tags**: Tags that don't exist in the system display with default
-  Bulma styling.
+  styling.
 
 ---
 
