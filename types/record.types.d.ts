@@ -80,6 +80,11 @@ export interface Employee extends SyncRecord {
     emailAddress?: string | null;
     userGroupId?: number | null;
 }
+export interface Tag extends BaseRecord {
+    tagName: string;
+    tagBackgroundColor: string;
+    tagTextColor: string;
+}
 export interface Crew extends BaseRecord {
     crewId: number;
     crewName: string;
