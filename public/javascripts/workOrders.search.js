@@ -61,10 +61,14 @@
             if (workOrder.tags && workOrder.tags.length > 0) {
                 const tagsElements = workOrder.tags
                     .map((tag) => {
-                    const backgroundColor = tag.tagBackgroundColor
+                    // Validate hex color format (6 characters, alphanumeric)
+                    const isValidHex = (color) => color !== undefined && /^[0-9a-fA-F]{6}$/.test(color);
+                    const backgroundColor = isValidHex(tag.tagBackgroundColor)
                         ? `#${tag.tagBackgroundColor}`
                         : '';
-                    const textColor = tag.tagTextColor ? `#${tag.tagTextColor}` : '';
+                    const textColor = isValidHex(tag.tagTextColor)
+                        ? `#${tag.tagTextColor}`
+                        : '';
                     // Only apply custom styling if both colors are present to ensure consistency
                     const style = backgroundColor && textColor
                         ? `style="background-color: ${backgroundColor}; color: ${textColor};"`
