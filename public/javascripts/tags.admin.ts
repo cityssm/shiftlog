@@ -237,8 +237,8 @@ declare const exports: {
 
     if (tags.length === 0) {
       tagsContainerElement.innerHTML = `
-        <div class="message">
-          <p class="message-body has-text-centered">
+        <div class="message is-info">
+          <p class="message-body">
             No tags found.
           </p>
         </div>

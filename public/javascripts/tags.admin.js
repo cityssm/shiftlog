@@ -1,36 +1,31 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
-    var _a;
-    var shiftLog = exports.shiftLog;
-    var tagsContainerElement = document.querySelector('#container--tags');
+(() => {
+    const shiftLog = exports.shiftLog;
+    const tagsContainerElement = document.querySelector('#container--tags');
     // Pagination settings
-    var ITEMS_PER_PAGE = 20;
-    var currentPage = 1;
-    var currentFilteredTags = exports.tags;
+    const ITEMS_PER_PAGE = 20;
+    let currentPage = 1;
+    let currentFilteredTags = exports.tags;
     function pageSelect(pageNumber) {
         currentPage = pageNumber;
         renderTagsWithPagination(currentFilteredTags);
     }
     function deleteTag(clickEvent) {
-        var _a;
-        var buttonElement = clickEvent.currentTarget;
-        var tagName = buttonElement.dataset.tagName;
+        const buttonElement = clickEvent.currentTarget;
+        const tagName = buttonElement.dataset.tagName;
         if (tagName === undefined) {
             return;
         }
-        var tag = exports.tags.find(function (possibleTag) { return possibleTag.tagName === tagName; });
+        const tag = exports.tags.find((possibleTag) => possibleTag.tagName === tagName);
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Tag',
-            message: "Are you sure you want to delete tag \"".concat((_a = tag === null || tag === void 0 ? void 0 : tag.tagName) !== null && _a !== void 0 ? _a : '', "\"? This action cannot be undone."),
+            message: `Are you sure you want to delete tag "${tag?.tagName ?? ''}"? This action cannot be undone.`,
             okButton: {
                 contextualColorName: 'warning',
                 text: 'Delete Tag',
-                callbackFunction: function () {
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doDeleteTag"), { tagName: tagName }, function (rawResponseJSON) {
-                        var _a;
-                        var responseJSON = rawResponseJSON;
+                callbackFunction() {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteTag`, { tagName }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             if (responseJSON.tags !== undefined) {
                                 exports.tags = responseJSON.tags;
@@ -48,7 +43,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Deleting Tag',
-                                message: (_a = responseJSON.message) !== null && _a !== void 0 ? _a : 'Please try again.'
+                                message: responseJSON.message ?? 'Please try again.'
                             });
                         }
                     });
@@ -57,22 +52,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
         });
     }
     function editTag(clickEvent) {
-        var buttonElement = clickEvent.currentTarget;
-        var tagName = buttonElement.dataset.tagName;
+        const buttonElement = clickEvent.currentTarget;
+        const tagName = buttonElement.dataset.tagName;
         if (tagName === undefined) {
             return;
         }
-        var tag = exports.tags.find(function (possibleTag) { return possibleTag.tagName === tagName; });
+        const tag = exports.tags.find((possibleTag) => possibleTag.tagName === tagName);
         if (tag === undefined) {
             return;
         }
-        var closeModalFunction;
+        let closeModalFunction;
         function doUpdateTag(submitEvent) {
             submitEvent.preventDefault();
-            var editForm = submitEvent.currentTarget;
-            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doUpdateTag"), editForm, function (rawResponseJSON) {
-                var _a;
-                var responseJSON = rawResponseJSON;
+            const editForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateTag`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     if (responseJSON.tags !== undefined) {
@@ -91,40 +85,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Tag',
-                        message: (_a = responseJSON.message) !== null && _a !== void 0 ? _a : 'Please try again.'
+                        message: responseJSON.message ?? 'Please try again.'
                     });
                 }
             });
         }
         cityssm.openHtmlModal('adminTags-edit', {
-            onshow: function (modalElement) {
-                var _a;
+            onshow(modalElement) {
                 ;
                 modalElement.querySelector('#editTag--tagName').value = tag.tagName;
                 modalElement.querySelector('#editTag--tagNameDisplay').value = tag.tagName;
-                modalElement.querySelector('#editTag--tagBackgroundColor').value = "#".concat(tag.tagBackgroundColor);
-                modalElement.querySelector('#editTag--tagTextColor').value = "#".concat(tag.tagTextColor);
-                (_a = modalElement
-                    .querySelector('form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', doUpdateTag);
+                modalElement.querySelector('#editTag--tagBackgroundColor').value = `#${tag.tagBackgroundColor}`;
+                modalElement.querySelector('#editTag--tagTextColor').value = `#${tag.tagTextColor}`;
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doUpdateTag);
             },
-            onshown: function (_modalElement, closeFunction) {
+            onshown(_modalElement, closeFunction) {
                 closeModalFunction = closeFunction;
             },
-            onremoved: function () {
-                var _a;
-                (_a = document
-                    .querySelector('#button--addTag')) === null || _a === void 0 ? void 0 : _a.removeEventListener('click', editTag);
+            onremoved() {
+                document
+                    .querySelector('#button--addTag')
+                    ?.removeEventListener('click', editTag);
             }
         });
     }
     function addTag() {
-        var closeModalFunction;
+        let closeModalFunction;
         function doAddTag(submitEvent) {
             submitEvent.preventDefault();
-            var addForm = submitEvent.currentTarget;
-            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doAddTag"), addForm, function (rawResponseJSON) {
-                var _a;
-                var responseJSON = rawResponseJSON;
+            const addForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTag`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     if (responseJSON.tags !== undefined) {
@@ -143,66 +136,115 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Tag',
-                        message: (_a = responseJSON.message) !== null && _a !== void 0 ? _a : 'Please try again.'
+                        message: responseJSON.message ?? 'Please try again.'
                     });
                 }
             });
         }
         cityssm.openHtmlModal('adminTags-add', {
-            onshow: function (modalElement) {
-                var _a;
-                (_a = modalElement.querySelector('form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', doAddTag);
+            onshow(modalElement) {
+                modalElement.querySelector('form')?.addEventListener('submit', doAddTag);
             },
-            onshown: function (_modalElement, closeFunction) {
+            onshown(_modalElement, closeFunction) {
                 closeModalFunction = closeFunction;
             }
         });
     }
     function renderTagsWithPagination(tags) {
-        var _a, _b;
-        var totalItems = tags.length;
-        var totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-        var startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-        var endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+        const totalItems = tags.length;
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
         // Clear container
         tagsContainerElement.innerHTML = '';
         if (tags.length === 0) {
-            tagsContainerElement.innerHTML = "\n        <div class=\"message\">\n          <p class=\"message-body has-text-centered\">\n            No tags found.\n          </p>\n        </div>\n      ";
+            tagsContainerElement.innerHTML = `
+        <div class="message is-info">
+          <p class="message-body">
+            No tags found.
+          </p>
+        </div>
+      `;
             return;
         }
         // Create table
-        var tableElement = document.createElement('table');
+        const tableElement = document.createElement('table');
         tableElement.className = 'table is-striped is-hoverable is-fullwidth';
-        var thead = document.createElement('thead');
-        thead.innerHTML = "\n      <tr>\n        <th>Tag Name</th>\n        <th style=\"width: 200px;\">Preview</th>\n        <th style=\"width: 150px;\">Background</th>\n        <th style=\"width: 150px;\">Text Color</th>\n        <th style=\"width: 150px;\"><span class=\"is-sr-only\">Actions</span></th>\n      </tr>\n    ";
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+      <tr>
+        <th>Tag Name</th>
+        <th style="width: 200px;">Preview</th>
+        <th style="width: 150px;">Background</th>
+        <th style="width: 150px;">Text Color</th>
+        <th style="width: 150px;"><span class="is-sr-only">Actions</span></th>
+      </tr>
+    `;
         tableElement.appendChild(thead);
-        var tbody = document.createElement('tbody');
-        for (var index = startIndex; index < endIndex; index += 1) {
-            var tag = tags[index];
-            var tr = document.createElement('tr');
-            tr.innerHTML = "\n        <td>".concat(cityssm.escapeHTML(tag.tagName), "</td>\n        <td>\n          <span class=\"tag\" style=\"background-color: #").concat(cityssm.escapeHTML(tag.tagBackgroundColor), "; color: #").concat(cityssm.escapeHTML(tag.tagTextColor), ";\">\n            ").concat(cityssm.escapeHTML(tag.tagName), "\n          </span>\n        </td>\n        <td>\n          <span style=\"color: #").concat(cityssm.escapeHTML(tag.tagBackgroundColor), ";\">\n            #").concat(cityssm.escapeHTML(tag.tagBackgroundColor), "\n          </span>\n        </td>\n        <td>\n          <span style=\"color: #").concat(cityssm.escapeHTML(tag.tagTextColor), ";\">\n            #").concat(cityssm.escapeHTML(tag.tagTextColor), "\n          </span>\n        </td>\n        <td class=\"has-text-right\">\n          <div class=\"buttons are-small is-right\">\n            <button class=\"button is-warning\" data-tag-name=\"").concat(cityssm.escapeHTML(tag.tagName), "\" type=\"button\">\n              <span class=\"icon\"><i class=\"fa-solid fa-pencil\"></i></span>\n              <span>Edit</span>\n            </button>\n            <button class=\"button is-danger\" data-tag-name=\"").concat(cityssm.escapeHTML(tag.tagName), "\" type=\"button\">\n              <span class=\"icon\"><i class=\"fa-solid fa-trash\"></i></span>\n              <span>Delete</span>\n            </button>\n          </div>\n        </td>\n      ");
-            (_a = tr.querySelector('.button.is-warning')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', editTag);
-            (_b = tr.querySelector('.button.is-danger')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', deleteTag);
+        const tbody = document.createElement('tbody');
+        for (let index = startIndex; index < endIndex; index += 1) {
+            const tag = tags[index];
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+        <td>${cityssm.escapeHTML(tag.tagName)}</td>
+        <td>
+          <span class="tag" style="background-color: #${cityssm.escapeHTML(tag.tagBackgroundColor)}; color: #${cityssm.escapeHTML(tag.tagTextColor)};">
+            ${cityssm.escapeHTML(tag.tagName)}
+          </span>
+        </td>
+        <td>
+          <span style="color: #${cityssm.escapeHTML(tag.tagBackgroundColor)};">
+            #${cityssm.escapeHTML(tag.tagBackgroundColor)}
+          </span>
+        </td>
+        <td>
+          <span style="color: #${cityssm.escapeHTML(tag.tagTextColor)};">
+            #${cityssm.escapeHTML(tag.tagTextColor)}
+          </span>
+        </td>
+        <td class="has-text-right">
+          <div class="buttons are-small is-right">
+            <button class="button is-warning" data-tag-name="${cityssm.escapeHTML(tag.tagName)}" type="button">
+              <span class="icon"><i class="fa-solid fa-pencil"></i></span>
+              <span>Edit</span>
+            </button>
+            <button class="button is-danger" data-tag-name="${cityssm.escapeHTML(tag.tagName)}" type="button">
+              <span class="icon"><i class="fa-solid fa-trash"></i></span>
+              <span>Delete</span>
+            </button>
+          </div>
+        </td>
+      `;
+            tr.querySelector('.button.is-warning')?.addEventListener('click', editTag);
+            tr.querySelector('.button.is-danger')?.addEventListener('click', deleteTag);
             tbody.appendChild(tr);
         }
         tableElement.appendChild(tbody);
         tagsContainerElement.appendChild(tableElement);
         // Add pagination if needed
         if (totalPages > 1) {
-            var paginationElement = document.createElement('nav');
+            const paginationElement = document.createElement('nav');
             paginationElement.className = 'pagination is-centered';
             paginationElement.setAttribute('role', 'navigation');
             paginationElement.setAttribute('aria-label', 'pagination');
-            var paginationHTML = '<ul class="pagination-list">';
-            for (var pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
-                paginationHTML += "\n          <li>\n            <a class=\"pagination-link ".concat(pageNumber === currentPage ? 'is-current' : '', "\" \n               aria-label=\"Page ").concat(pageNumber, "\" \n               data-page=\"").concat(pageNumber, "\">\n              ").concat(pageNumber, "\n            </a>\n          </li>\n        ");
+            let paginationHTML = '<ul class="pagination-list">';
+            for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+                paginationHTML += `
+          <li>
+            <a class="pagination-link ${pageNumber === currentPage ? 'is-current' : ''}" 
+               aria-label="Page ${pageNumber}" 
+               data-page="${pageNumber}">
+              ${pageNumber}
+            </a>
+          </li>
+        `;
             }
             paginationHTML += '</ul>';
             paginationElement.innerHTML = paginationHTML;
-            paginationElement.querySelectorAll('.pagination-link').forEach(function (link) {
-                link.addEventListener('click', function (clickEvent) {
-                    var target = clickEvent.currentTarget;
-                    var pageNumber = Number(target.dataset.page);
+            paginationElement.querySelectorAll('.pagination-link').forEach((link) => {
+                link.addEventListener('click', (clickEvent) => {
+                    const target = clickEvent.currentTarget;
+                    const pageNumber = Number(target.dataset.page);
                     pageSelect(pageNumber);
                 });
             });
@@ -210,17 +252,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
         }
     }
     // Filter functionality
-    var filterInput = document.querySelector('#filter--tags');
-    filterInput === null || filterInput === void 0 ? void 0 : filterInput.addEventListener('keyup', function () {
-        var filterValue = filterInput.value.toLowerCase();
-        currentFilteredTags = exports.tags.filter(function (tag) {
-            return tag.tagName.toLowerCase().includes(filterValue);
-        });
+    const filterInput = document.querySelector('#filter--tags');
+    filterInput?.addEventListener('keyup', () => {
+        const filterValue = filterInput.value.toLowerCase();
+        currentFilteredTags = exports.tags.filter((tag) => tag.tagName.toLowerCase().includes(filterValue));
         currentPage = 1;
         renderTagsWithPagination(currentFilteredTags);
     });
     // Add tag button
-    (_a = document.querySelector('#button--addTag')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', addTag);
+    document.querySelector('#button--addTag')?.addEventListener('click', addTag);
     // Initial render
     renderTagsWithPagination(exports.tags);
 })();

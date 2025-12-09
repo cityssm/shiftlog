@@ -16,7 +16,7 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editTag">
-        <input type="hidden" id="editTag--tagName" name="tagName" />
+        <input id="editTag--tagName" name="tagName" type="hidden" />
         <div class="field">
           <label class="label">
             Tag Name
@@ -24,10 +24,10 @@
           <div class="control">
             <input
               class="input"
+              id="editTag--tagNameDisplay"
               type="text"
               readonly
               disabled
-              id="editTag--tagNameDisplay"
             />
           </div>
           <p class="help">Tag name cannot be changed after creation</p>
@@ -64,14 +64,16 @@
         </div>
       </form>
     </section>
-    <footer class="modal-card-foot is-justify-content-end">
-      <button class="button is-close-modal-button" type="button">
-        Cancel
-      </button>
-      <button class="button is-primary" type="submit" form="form--editTag">
-        <span class="icon"><i class="fa-solid fa-save"></i></span>
-        <span>Save Changes</span>
-      </button>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+        <button class="button is-primary" type="submit" form="form--editTag">
+          <span class="icon"><i class="fa-solid fa-save"></i></span>
+          <span>Save Changes</span>
+        </button>
+      </div>
     </footer>
   </div>
 </div>

@@ -1,56 +1,54 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
-    var workOrderFormElement = document.querySelector('#form--workOrder');
-    var workOrderId = workOrderFormElement === null
+(() => {
+    const workOrderFormElement = document.querySelector('#form--workOrder');
+    const workOrderId = workOrderFormElement === null
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     /*
      * Tags functionality
      */
-    var tagsContainerElement = document.querySelector('#container--tags');
+    const tagsContainerElement = document.querySelector('#container--tags');
     if (tagsContainerElement !== null) {
         function renderTags(tags) {
             // Update tags count
-            var tagsCountElement = document.querySelector('#tagsCount');
+            const tagsCountElement = document.querySelector('#tagsCount');
             if (tagsCountElement !== null) {
                 tagsCountElement.textContent = tags.length.toString();
             }
             if (tags.length === 0) {
-                tagsContainerElement.innerHTML = /* html */ "\n          <div class=\"message is-info\">\n            <p class=\"message-body\">No tags have been added yet.</p>\n          </div>\n        ";
+                tagsContainerElement.innerHTML = /* html */ `
+          <div class="message is-info">
+            <p class="message-body">No tags have been added yet.</p>
+          </div>
+        `;
                 return;
             }
             tagsContainerElement.innerHTML = '';
-            var tagsElement = document.createElement('div');
+            const tagsElement = document.createElement('div');
             tagsElement.className = 'tags';
-            var _loop_1 = function (tag) {
-                var tagElement = document.createElement('span');
+            for (const tag of tags) {
+                const tagElement = document.createElement('span');
                 tagElement.className = 'tag is-medium';
                 // Apply colors if available
                 if (tag.tagBackgroundColor && tag.tagTextColor) {
-                    tagElement.style.backgroundColor = "#".concat(tag.tagBackgroundColor);
-                    tagElement.style.color = "#".concat(tag.tagTextColor);
+                    tagElement.style.backgroundColor = `#${tag.tagBackgroundColor}`;
+                    tagElement.style.color = `#${tag.tagTextColor}`;
                 }
-                var tagTextElement = document.createElement('span');
+                const tagTextElement = document.createElement('span');
                 tagTextElement.textContent = tag.tagName;
                 tagElement.appendChild(tagTextElement);
                 // Add delete button if in edit mode
                 if (exports.isEdit) {
-                    var deleteButton = document.createElement('button');
+                    const deleteButton = document.createElement('button');
                     deleteButton.className = 'delete is-small';
                     deleteButton.type = 'button';
                     deleteButton.setAttribute('data-tag-name', tag.tagName);
-                    deleteButton.setAttribute('aria-label', "Remove tag ".concat(tag.tagName));
-                    deleteButton.addEventListener('click', function () {
+                    deleteButton.setAttribute('aria-label', `Remove tag ${tag.tagName}`);
+                    deleteButton.addEventListener('click', () => {
                         deleteTag(tag.tagName);
                     });
                     tagElement.appendChild(deleteButton);
                 }
                 tagsElement.appendChild(tagElement);
-            };
-            for (var _i = 0, tags_1 = tags; _i < tags_1.length; _i++) {
-                var tag = tags_1[_i];
-                _loop_1(tag);
             }
             tagsContainerElement.appendChild(tagsElement);
         }
@@ -58,17 +56,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
             bulmaJS.confirm({
                 contextualColorName: 'warning',
                 title: 'Remove Tag',
-                message: "Are you sure you want to remove the tag \"".concat(tagName, "\" from this work order?"),
+                message: `Are you sure you want to remove the tag "${tagName}" from this work order?`,
                 okButton: {
                     contextualColorName: 'warning',
                     text: 'Remove Tag',
-                    callbackFunction: function () {
-                        cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doDeleteWorkOrderTag"), {
+                    callbackFunction() {
+                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderTag`, {
                             workOrderId: Number.parseInt(workOrderId, 10),
-                            tagName: tagName
-                        }, function (rawResponseJSON) {
-                            var _a;
-                            var responseJSON = rawResponseJSON;
+                            tagName
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success && responseJSON.tags !== undefined) {
                                 renderTags(responseJSON.tags);
                                 bulmaJS.alert({
@@ -81,7 +78,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Error Removing Tag',
-                                    message: (_a = responseJSON.message) !== null && _a !== void 0 ? _a : 'An error occurred while removing the tag.'
+                                    message: responseJSON.message ??
+                                        'An error occurred while removing the tag.'
                                 });
                             }
                         });
@@ -90,17 +88,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
             });
         }
         function addTag() {
-            var closeModalFunction;
+            let closeModalFunction;
             function doAddTag(submitEvent) {
                 submitEvent.preventDefault();
-                var formElement = submitEvent.currentTarget;
-                var tagNameInput = formElement.querySelector('#addWorkOrderTag--tagName');
-                cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doAddWorkOrderTag"), {
+                const formElement = submitEvent.currentTarget;
+                const tagNameInput = formElement.querySelector('#addWorkOrderTag--tagName');
+                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`, {
                     workOrderId: Number.parseInt(workOrderId, 10),
                     tagName: tagNameInput.value
-                }, function (rawResponseJSON) {
-                    var _a;
-                    var responseJSON = rawResponseJSON;
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.success && responseJSON.tags !== undefined) {
                         closeModalFunction();
                         renderTags(responseJSON.tags);
@@ -114,32 +111,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
                         bulmaJS.alert({
                             contextualColorName: 'danger',
                             title: 'Error Adding Tag',
-                            message: (_a = responseJSON.message) !== null && _a !== void 0 ? _a : 'An error occurred while adding the tag.'
+                            message: responseJSON.message ??
+                                'An error occurred while adding the tag.'
                         });
                     }
                 });
             }
             cityssm.openHtmlModal('workOrders-addTag', {
-                onshow: function (modalElement) {
-                    var _a;
-                    (_a = modalElement
-                        .querySelector('form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', doAddTag);
+                onshow(modalElement) {
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doAddTag);
                 },
-                onshown: function (_modalElement, closeFunction) {
+                onshown(_modalElement, closeFunction) {
                     closeModalFunction = closeFunction;
                 }
             });
         }
         function getTags() {
-            cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/").concat(workOrderId, "/doGetWorkOrderTags"), {}, function (rawResponseJSON) {
-                var responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`, {}, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.tags !== undefined) {
                     renderTags(responseJSON.tags);
                 }
             });
         }
         // Add tag button
-        var addTagButton = document.querySelector('#button--addTag');
+        const addTagButton = document.querySelector('#button--addTag');
         if (addTagButton !== null) {
             addTagButton.addEventListener('click', addTag);
         }
