@@ -18,6 +18,7 @@ export interface GetWorkOrdersFilters {
   workOrderNumber?: string
   workOrderStatusDataListItemId?: number | string
   workOrderTypeId?: number | string
+  tagName?: string
 }
 
 export interface GetWorkOrdersOptions {
@@ -110,6 +111,14 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
     )`
   }
 
+  if (filters.tagName !== undefined && filters.tagName !== '') {
+    whereClause += ` and w.workOrderId in (
+      select workOrderId
+      from ShiftLog.WorkOrderTags
+      where tagName = @tagName
+    )`
+  }
+
   if (user !== undefined) {
     whereClause += `
       and (
@@ -156,6 +165,7 @@ function applyParameters(
       'searchString',
       filters.searchString === undefined ? null : `%${filters.searchString}%`
     )
+    .input('tagName', filters.tagName ?? null)
     .input('userName', user?.userName)
 }
 
@@ -256,7 +266,10 @@ export default async function getWorkOrders(
           }
 
           milestones.milestonesCount,
-          milestones.milestonesCompletedCount
+          milestones.milestonesCompletedCount,
+
+          attachments.attachmentsCount,
+          notes.notesCount
           
         from ShiftLog.WorkOrders w
 
@@ -279,6 +292,22 @@ export default async function getWorkOrders(
           where recordDelete_dateTime is null
           group by workOrderId
         ) as milestones on milestones.workOrderId = w.workOrderId
+
+        left join (
+          select workOrderId,
+            count(*) as attachmentsCount
+          from ShiftLog.WorkOrderAttachments
+          where recordDelete_dateTime is null
+          group by workOrderId
+        ) as attachments on attachments.workOrderId = w.workOrderId
+
+        left join (
+          select workOrderId,
+            count(*) as notesCount
+          from ShiftLog.WorkOrderNotes
+          where recordDelete_dateTime is null
+          group by workOrderId
+        ) as notes on notes.workOrderId = w.workOrderId
 
         ${whereClause}    
 
@@ -307,6 +336,56 @@ export default async function getWorkOrders(
             workOrder.moreInfoFormData = {}
           }
         }
+      }
+    }
+
+    // Fetch tags for all work orders
+    if (workOrders.length > 0) {
+      const workOrderIds = workOrders.map((wo) => wo.workOrderId)
+      const tagsRequest = pool.request()
+      tagsRequest.input('instance', getConfigProperty('application.instance'))
+
+      // Build parameterized IN clause
+      const parameterNames = workOrderIds.map((_, index) => `@workOrderId${index}`)
+      workOrderIds.forEach((id, index) => {
+        tagsRequest.input(`workOrderId${index}`, id)
+      })
+
+      const tagsResult = await tagsRequest.query<{
+        workOrderId: number
+        tagName: string
+        tagBackgroundColor?: string
+        tagTextColor?: string
+      }>(/* sql */ `
+        SELECT wot.workOrderId, wot.tagName,
+               t.tagBackgroundColor, t.tagTextColor
+        FROM ShiftLog.WorkOrderTags wot
+        LEFT JOIN ShiftLog.Tags t ON wot.tagName = t.tagName AND t.instance = @instance AND t.recordDelete_dateTime IS NULL
+        WHERE wot.workOrderId IN (${parameterNames.join(',')})
+        ORDER BY wot.workOrderId, wot.tagName
+      `)
+
+      // Group tags by workOrderId
+      const tagsByWorkOrder = new Map<
+        number,
+        Array<{
+          workOrderId: number
+          tagName: string
+          tagBackgroundColor?: string
+          tagTextColor?: string
+        }>
+      >()
+
+      for (const tag of tagsResult.recordset) {
+        if (!tagsByWorkOrder.has(tag.workOrderId)) {
+          tagsByWorkOrder.set(tag.workOrderId, [])
+        }
+        tagsByWorkOrder.get(tag.workOrderId)?.push(tag)
+      }
+
+      // Assign tags to work orders
+      for (const workOrder of workOrders) {
+        workOrder.tags = tagsByWorkOrder.get(workOrder.workOrderId) ?? []
       }
     }
   }

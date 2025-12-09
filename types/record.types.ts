@@ -329,6 +329,9 @@ export interface WorkOrder extends BaseRecord {
   milestonesCompletedCount?: number
   overdueMilestonesCount?: number
 
+  attachmentsCount?: number
+  notesCount?: number
+
   tags?: WorkOrderTag[]
 }
 
