@@ -531,7 +531,7 @@
     const hasMoreInfoForm = (workOrderType && Array.isArray(workOrderType.moreInfoFormNames) && workOrderType.moreInfoFormNames.length > 0) || Object.keys(workOrder.moreInfoFormData).length > 0;
   %>
 <div class="columns is-mobile mt-4" id="container--workOrderTabs">
-  <div class="column is-narrow">
+  <div class="column is-3-desktop is-narrow-touch">
     <div class="menu">
       <ul class="menu-list">
         <% if (hasMoreInfoForm) { %>
