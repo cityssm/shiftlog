@@ -1,47 +1,87 @@
-"use strict";
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable max-lines, unicorn/no-null */
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
-    var shiftLog = exports.shiftLog;
+(() => {
+    const shiftLog = exports.shiftLog;
     // Track Sortable instances to prevent duplicates
-    var sortableInstances = new Map();
+    const sortableInstances = new Map();
     function updateItemCount(dataListKey, count) {
-        var countElement = document.querySelector("#itemCount--".concat(dataListKey));
+        const countElement = document.querySelector(`#itemCount--${dataListKey}`);
         if (countElement !== null) {
             countElement.textContent = count.toString();
         }
     }
     function renderDataListItems(dataListKey, items) {
-        var _a;
-        var tbodyElement = document.querySelector("#dataListItems--".concat(dataListKey));
+        const tbodyElement = document.querySelector(`#dataListItems--${dataListKey}`);
         if (tbodyElement === null) {
             return;
         }
         // Update the item count tag
         updateItemCount(dataListKey, items.length);
         if (items.length === 0) {
-            tbodyElement.innerHTML = "<tr>\n        <td colspan=\"4\" class=\"has-text-centered has-text-grey\">\n          No items in this list. Click \"Add Item\" to create one.\n        </td>\n      </tr>";
+            tbodyElement.innerHTML = `<tr>
+        <td colspan="4" class="has-text-centered has-text-grey">
+          No items in this list. Click "Add Item" to create one.
+        </td>
+      </tr>`;
             return;
         }
         // Clear existing items
         tbodyElement.innerHTML = '';
-        var _loop_1 = function (item) {
-            var userGroup = item.userGroupId
-                ? exports.userGroups.find(function (ug) { return ug.userGroupId === item.userGroupId; })
+        for (const item of items) {
+            const userGroup = item.userGroupId
+                ? exports.userGroups.find((ug) => ug.userGroupId === item.userGroupId)
                 : null;
-            var userGroupDisplay = userGroup
-                ? "<span class=\"tag is-info\">".concat(cityssm.escapeHTML(userGroup.userGroupName), "</span>")
+            const userGroupDisplay = userGroup
+                ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
                 : '<span class="has-text-grey-light">-</span>';
-            var tableRowElement = document.createElement('tr');
+            const tableRowElement = document.createElement('tr');
             tableRowElement.dataset.dataListItemId = item.dataListItemId.toString();
             // eslint-disable-next-line no-unsanitized/property
-            tableRowElement.innerHTML = /* html */ "\n        <td class=\"has-text-centered\">\n          <span class=\"icon is-small has-text-grey handle\" style=\"cursor: move;\">\n            <i class=\"fa-solid fa-grip-vertical\"></i>\n          </span>\n        </td>\n        <td>\n          <span class=\"item-text\">\n            ".concat(cityssm.escapeHTML(item.dataListItem), "\n          </span>\n        </td>\n        <td>\n          ").concat(userGroupDisplay, "\n        </td>\n        <td class=\"has-text-right\">\n          <div class=\"buttons are-small is-right\">\n            <button\n              class=\"button is-info button--editItem\"\n              data-data-list-key=\"").concat(cityssm.escapeHTML(dataListKey), "\"\n              data-data-list-item-id=\"").concat(item.dataListItemId, "\"\n              data-data-list-item=\"").concat(cityssm.escapeHTML(item.dataListItem), "\"\n              data-user-group-id=\"").concat((_a = item.userGroupId) !== null && _a !== void 0 ? _a : '', "\"\n              type=\"button\"\n            >\n              <span class=\"icon\">\n                <i class=\"fa-solid fa-pencil\"></i>\n              </span>\n              <span>Edit</span>\n            </button>\n            <button\n              class=\"button is-danger button--deleteItem\"\n              data-data-list-key=\"").concat(cityssm.escapeHTML(dataListKey), "\"\n              data-data-list-item-id=\"").concat(item.dataListItemId, "\"\n              data-data-list-item=\"").concat(cityssm.escapeHTML(item.dataListItem), "\"\n              type=\"button\"\n            >\n              <span class=\"icon\">\n                <i class=\"fa-solid fa-trash\"></i>\n              </span>\n              <span>Delete</span>\n            </button>\n          </div>\n        </td>\n      ");
+            tableRowElement.innerHTML = /* html */ `
+        <td class="has-text-centered">
+          <span class="icon is-small has-text-grey handle" style="cursor: move;">
+            <i class="fa-solid fa-grip-vertical"></i>
+          </span>
+        </td>
+        <td>
+          <span class="item-text">
+            ${cityssm.escapeHTML(item.dataListItem)}
+          </span>
+        </td>
+        <td>
+          ${userGroupDisplay}
+        </td>
+        <td class="has-text-right">
+          <div class="buttons are-small is-right">
+            <button
+              class="button is-info button--editItem"
+              data-data-list-key="${cityssm.escapeHTML(dataListKey)}"
+              data-data-list-item-id="${item.dataListItemId}"
+              data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+              data-user-group-id="${item.userGroupId ?? ''}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-pencil"></i>
+              </span>
+              <span>Edit</span>
+            </button>
+            <button
+              class="button is-danger button--deleteItem"
+              data-data-list-key="${cityssm.escapeHTML(dataListKey)}"
+              data-data-list-item-id="${item.dataListItemId}"
+              data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-trash"></i>
+              </span>
+              <span>Delete</span>
+            </button>
+          </div>
+        </td>
+      `;
             tbodyElement.append(tableRowElement);
-        };
-        for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
-            var item = items_1[_i];
-            _loop_1(item);
         }
         // Re-attach event listeners
         attachEventListeners(dataListKey);
@@ -49,31 +89,53 @@ Object.defineProperty(exports, "__esModule", { value: true });
         initializeSortable(dataListKey);
     }
     function addDataListItem(clickEvent) {
-        var buttonElement = clickEvent.currentTarget;
-        var dataListKey = buttonElement.dataset.dataListKey;
+        const buttonElement = clickEvent.currentTarget;
+        const dataListKey = buttonElement.dataset.dataListKey;
         if (dataListKey === undefined) {
             return;
         }
-        var dataList = exports.dataLists.find(function (dl) { return dl.dataListKey === dataListKey; });
+        const dataList = exports.dataLists.find((dl) => dl.dataListKey === dataListKey);
         if (dataList === undefined) {
             return;
         }
-        var itemInputElement;
-        var userGroupSelectElement;
+        let itemInputElement;
+        let userGroupSelectElement;
         // Build user group options
-        var userGroupOptions = '<option value="">None (Available to All)</option>';
-        for (var _i = 0, _a = exports.userGroups; _i < _a.length; _i++) {
-            var userGroup = _a[_i];
-            userGroupOptions += "<option value=\"".concat(userGroup.userGroupId, "\">").concat(cityssm.escapeHTML(userGroup.userGroupName), "</option>");
+        let userGroupOptions = '<option value="">None (Available to All)</option>';
+        for (const userGroup of exports.userGroups) {
+            userGroupOptions += `<option value="${userGroup.userGroupId}">${cityssm.escapeHTML(userGroup.userGroupName)}</option>`;
         }
         bulmaJS.confirm({
             contextualColorName: 'primary',
-            message: /* html */ "\n        <div class=\"field\">\n          <label class=\"label\">Item Name</label>\n          <div class=\"control\">\n            <input\n              class=\"input\"\n              id=\"input--newItem\"\n              type=\"text\"\n              required\n            />\n          </div>\n        </div>\n        <div class=\"field\">\n          <label class=\"label\">User Group (Optional)</label>\n          <div class=\"control\">\n            <div class=\"select is-fullwidth\">\n              <select id=\"select--userGroup\">\n                ".concat(userGroupOptions, "\n              </select>\n            </div>\n          </div>\n          <p class=\"help\">If specified, only members of this user group will see this item.</p>\n        </div>\n      "),
+            message: /* html */ `
+        <div class="field">
+          <label class="label">Item Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="input--newItem"
+              type="text"
+              required
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">User Group (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="select--userGroup">
+                ${userGroupOptions}
+              </select>
+            </div>
+          </div>
+          <p class="help">If specified, only members of this user group will see this item.</p>
+        </div>
+      `,
             messageIsHtml: true,
             okButton: {
                 text: 'Add Item',
-                callbackFunction: function () {
-                    var dataListItem = itemInputElement.value.trim();
+                callbackFunction() {
+                    const dataListItem = itemInputElement.value.trim();
                     if (dataListItem === '') {
                         bulmaJS.alert({
                             contextualColorName: 'warning',
@@ -82,19 +144,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
                         });
                         return;
                     }
-                    var userGroupIdValue = userGroupSelectElement.value;
-                    var userGroupId = userGroupIdValue
+                    const userGroupIdValue = userGroupSelectElement.value;
+                    const userGroupId = userGroupIdValue
                         ? Number.parseInt(userGroupIdValue, 10)
                         : null;
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doAddDataListItem"), {
-                        dataListKey: dataListKey,
-                        dataListItem: dataListItem,
-                        userGroupId: userGroupId
-                    }, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, {
+                        dataListKey,
+                        dataListItem,
+                        userGroupId
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.items !== undefined) {
                             // Open the details panel if it's closed
-                            var detailsElement = document.querySelector("details[data-data-list-key=\"".concat(dataListKey, "\"]"));
+                            const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
                             if (detailsElement !== null && !detailsElement.open) {
                                 detailsElement.open = true;
                             }
@@ -115,48 +177,71 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     });
                 }
             },
-            title: "Add ".concat(dataList.dataListName, " Item")
+            title: `Add ${dataList.dataListName} Item`
         });
         itemInputElement = document.querySelector('#input--newItem');
         userGroupSelectElement = document.querySelector('#select--userGroup');
         itemInputElement.focus();
     }
     function editDataListItem(clickEvent) {
-        var buttonElement = clickEvent.currentTarget;
-        var dataListKey = buttonElement.dataset.dataListKey;
-        var dataListItemId = buttonElement.dataset.dataListItemId;
-        var dataListItem = buttonElement.dataset.dataListItem;
-        var userGroupId = buttonElement.dataset.userGroupId;
+        const buttonElement = clickEvent.currentTarget;
+        const dataListKey = buttonElement.dataset.dataListKey;
+        const dataListItemId = buttonElement.dataset.dataListItemId;
+        const dataListItem = buttonElement.dataset.dataListItem;
+        const userGroupId = buttonElement.dataset.userGroupId;
         if (dataListKey === undefined ||
             dataListItemId === undefined ||
             dataListItem === undefined) {
             return;
         }
-        var dataList = exports.dataLists.find(function (dl) { return dl.dataListKey === dataListKey; });
+        const dataList = exports.dataLists.find((dl) => dl.dataListKey === dataListKey);
         if (dataList === undefined) {
             return;
         }
-        var itemInputElement;
-        var userGroupSelectElement;
+        let itemInputElement;
+        let userGroupSelectElement;
         // Build user group options
-        var userGroupOptions = '<option value="">None (Available to All)</option>';
-        for (var _i = 0, _a = exports.userGroups; _i < _a.length; _i++) {
-            var userGroup = _a[_i];
-            var selected = userGroupId &&
+        let userGroupOptions = '<option value="">None (Available to All)</option>';
+        for (const userGroup of exports.userGroups) {
+            const selected = userGroupId &&
                 Number.parseInt(userGroupId, 10) === userGroup.userGroupId
                 ? 'selected'
                 : '';
-            userGroupOptions += "<option value=\"".concat(userGroup.userGroupId, "\" ").concat(selected, ">").concat(cityssm.escapeHTML(userGroup.userGroupName), "</option>");
+            userGroupOptions += `<option value="${userGroup.userGroupId}" ${selected}>${cityssm.escapeHTML(userGroup.userGroupName)}</option>`;
         }
         bulmaJS.confirm({
             contextualColorName: 'info',
-            title: "Edit ".concat(dataList.dataListName, " Item"),
-            message: /* html */ "\n        <div class=\"field\">\n          <label class=\"label\">Item Name</label>\n          <div class=\"control\">\n            <input\n              class=\"input\"\n              id=\"input--editItem\"\n              type=\"text\"\n              value=\"".concat(cityssm.escapeHTML(dataListItem), "\"\n              required\n            />\n          </div>\n        </div>\n        <div class=\"field\">\n          <label class=\"label\">User Group (Optional)</label>\n          <div class=\"control\">\n            <div class=\"select is-fullwidth\">\n              <select id=\"select--editUserGroup\">\n                ").concat(userGroupOptions, "\n              </select>\n            </div>\n          </div>\n          <p class=\"help\">If specified, only members of this user group will see this item.</p>\n        </div>\n      "),
+            title: `Edit ${dataList.dataListName} Item`,
+            message: /* html */ `
+        <div class="field">
+          <label class="label">Item Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="input--editItem"
+              type="text"
+              value="${cityssm.escapeHTML(dataListItem)}"
+              required
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">User Group (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="select--editUserGroup">
+                ${userGroupOptions}
+              </select>
+            </div>
+          </div>
+          <p class="help">If specified, only members of this user group will see this item.</p>
+        </div>
+      `,
             messageIsHtml: true,
             okButton: {
                 text: 'Update Item',
-                callbackFunction: function () {
-                    var newDataListItem = itemInputElement.value.trim();
+                callbackFunction() {
+                    const newDataListItem = itemInputElement.value.trim();
                     if (newDataListItem === '') {
                         bulmaJS.alert({
                             contextualColorName: 'warning',
@@ -165,17 +250,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
                         });
                         return;
                     }
-                    var userGroupIdValue = userGroupSelectElement.value;
-                    var newUserGroupId = userGroupIdValue
+                    const userGroupIdValue = userGroupSelectElement.value;
+                    const newUserGroupId = userGroupIdValue
                         ? Number.parseInt(userGroupIdValue, 10)
                         : null;
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doUpdateDataListItem"), {
-                        dataListKey: dataListKey,
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, {
+                        dataListKey,
                         dataListItemId: Number.parseInt(dataListItemId, 10),
                         dataListItem: newDataListItem,
                         userGroupId: newUserGroupId
-                    }, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.items !== undefined) {
                             renderDataListItems(dataListKey, responseJSON.items);
                             bulmaJS.alert({
@@ -201,32 +286,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
         itemInputElement.select();
     }
     function deleteDataListItem(clickEvent) {
-        var buttonElement = clickEvent.currentTarget;
-        var dataListKey = buttonElement.dataset.dataListKey;
-        var dataListItemId = buttonElement.dataset.dataListItemId;
-        var dataListItem = buttonElement.dataset.dataListItem;
+        const buttonElement = clickEvent.currentTarget;
+        const dataListKey = buttonElement.dataset.dataListKey;
+        const dataListItemId = buttonElement.dataset.dataListItemId;
+        const dataListItem = buttonElement.dataset.dataListItem;
         if (dataListKey === undefined ||
             dataListItemId === undefined ||
             dataListItem === undefined) {
             return;
         }
-        var dataList = exports.dataLists.find(function (dl) { return dl.dataListKey === dataListKey; });
+        const dataList = exports.dataLists.find((dl) => dl.dataListKey === dataListKey);
         if (dataList === undefined) {
             return;
         }
         bulmaJS.confirm({
             contextualColorName: 'warning',
-            title: "Delete ".concat(dataList.dataListName, " Item"),
-            message: "Are you sure you want to delete \"".concat(dataListItem, "\"? This action cannot be undone."),
+            title: `Delete ${dataList.dataListName} Item`,
+            message: `Are you sure you want to delete "${dataListItem}"? This action cannot be undone.`,
             okButton: {
                 contextualColorName: 'danger',
                 text: 'Delete Item',
-                callbackFunction: function () {
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doDeleteDataListItem"), {
-                        dataListKey: dataListKey,
+                callbackFunction() {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataListItem`, {
+                        dataListKey,
                         dataListItemId: Number.parseInt(dataListItemId, 10)
-                    }, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.items !== undefined) {
                             renderDataListItems(dataListKey, responseJSON.items);
                             bulmaJS.alert({
@@ -248,65 +333,62 @@ Object.defineProperty(exports, "__esModule", { value: true });
         });
     }
     function attachEventListeners(dataListKey) {
-        var section = document.querySelector("[data-data-list-key=\"".concat(dataListKey, "\"]"));
+        const section = document.querySelector(`[data-data-list-key="${dataListKey}"]`);
         if (section === null) {
             return;
         }
         // Edit buttons
-        var editButtons = section.querySelectorAll('.button--editItem');
-        for (var _i = 0, editButtons_1 = editButtons; _i < editButtons_1.length; _i++) {
-            var button = editButtons_1[_i];
+        const editButtons = section.querySelectorAll('.button--editItem');
+        for (const button of editButtons) {
             button.addEventListener('click', editDataListItem);
         }
         // Delete buttons
-        var deleteButtons = section.querySelectorAll('.button--deleteItem');
-        for (var _a = 0, deleteButtons_1 = deleteButtons; _a < deleteButtons_1.length; _a++) {
-            var button = deleteButtons_1[_a];
+        const deleteButtons = section.querySelectorAll('.button--deleteItem');
+        for (const button of deleteButtons) {
             button.addEventListener('click', deleteDataListItem);
         }
     }
     function initializeSortable(dataListKey) {
-        var tbodyElement = document.querySelector("#dataListItems--".concat(dataListKey));
+        const tbodyElement = document.querySelector(`#dataListItems--${dataListKey}`);
         if (tbodyElement === null) {
             return;
         }
         // Check if the tbody has any sortable items (rows with data-data-list-item-id)
-        var hasItems = tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0;
+        const hasItems = tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0;
         if (!hasItems) {
             // Destroy existing instance if no items
-            var existingInstance_1 = sortableInstances.get(dataListKey);
-            if (existingInstance_1 !== undefined) {
-                existingInstance_1.destroy();
+            const existingInstance = sortableInstances.get(dataListKey);
+            if (existingInstance !== undefined) {
+                existingInstance.destroy();
                 sortableInstances.delete(dataListKey);
             }
             return;
         }
         // Destroy existing Sortable instance before creating a new one
-        var existingInstance = sortableInstances.get(dataListKey);
+        const existingInstance = sortableInstances.get(dataListKey);
         if (existingInstance !== undefined) {
             existingInstance.destroy();
         }
         // Create new Sortable instance
-        var sortableInstance = Sortable.create(tbodyElement, {
+        const sortableInstance = Sortable.create(tbodyElement, {
             handle: '.handle',
             animation: 150,
-            onEnd: function () {
+            onEnd() {
                 // Get the new order
-                var rows = tbodyElement.querySelectorAll('tr[data-data-list-item-id]');
-                var dataListItemIds = [];
-                for (var _i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
-                    var row = rows_1[_i];
-                    var dataListItemId = row.dataset.dataListItemId;
+                const rows = tbodyElement.querySelectorAll('tr[data-data-list-item-id]');
+                const dataListItemIds = [];
+                for (const row of rows) {
+                    const dataListItemId = row.dataset.dataListItemId;
                     if (dataListItemId !== undefined) {
                         dataListItemIds.push(Number.parseInt(dataListItemId, 10));
                     }
                 }
                 // Send to server
-                cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doReorderDataListItems"), {
-                    dataListKey: dataListKey,
-                    dataListItemIds: dataListItemIds
-                }, function (rawResponseJSON) {
-                    var responseJSON = rawResponseJSON;
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderDataListItems`, {
+                    dataListKey,
+                    dataListItemIds
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (!responseJSON.success) {
                         bulmaJS.alert({
                             contextualColorName: 'danger',
@@ -321,16 +403,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
         sortableInstances.set(dataListKey, sortableInstance);
     }
     // Initialize sortable for each data list
-    for (var _i = 0, _a = exports.dataLists; _i < _a.length; _i++) {
-        var dataList = _a[_i];
+    for (const dataList of exports.dataLists) {
         initializeSortable(dataList.dataListKey);
         // Attach event listeners for this data list
         attachEventListeners(dataList.dataListKey);
     }
     // Add item buttons
-    var addButtons = document.querySelectorAll('.button--addItem');
-    for (var _b = 0, addButtons_1 = addButtons; _b < addButtons_1.length; _b++) {
-        var button = addButtons_1[_b];
+    const addButtons = document.querySelectorAll('.button--addItem');
+    for (const button of addButtons) {
         button.addEventListener('click', addDataListItem);
     }
 })();
