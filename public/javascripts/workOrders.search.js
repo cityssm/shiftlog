@@ -112,8 +112,7 @@
         <td>
           <a href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
-          </a>
-          ${attachmentIconHTML}${notesIconHTML}<br />
+          </a><br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -
@@ -140,6 +139,7 @@
           ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : (workOrder.assignedToDataListItem ?? ''))}
         </td>
         <td>
+          ${notesIconHTML}
           ${attachmentIconHTML}
         </td>
         <td class="is-hidden-print">
