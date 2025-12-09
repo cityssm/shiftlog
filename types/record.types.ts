@@ -328,6 +328,15 @@ export interface WorkOrder extends BaseRecord {
   milestonesCount?: number
   milestonesCompletedCount?: number
   overdueMilestonesCount?: number
+
+  tags?: WorkOrderTag[]
+}
+
+export interface WorkOrderTag {
+  workOrderId: number
+  tagName: string
+  tagBackgroundColor?: string
+  tagTextColor?: string
 }
 
 export interface WorkOrderMilestone extends BaseRecord {

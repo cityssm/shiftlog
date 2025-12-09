@@ -14,10 +14,12 @@ import handler_view from '../handlers/workOrders-get/view.js';
 import handler_doCreateWorkOrder from '../handlers/workOrders-post/doCreateWorkOrder.js';
 import handler_doCreateWorkOrderMilestone from '../handlers/workOrders-post/doCreateWorkOrderMilestone.js';
 import handler_doCreateWorkOrderNote from '../handlers/workOrders-post/doCreateWorkOrderNote.js';
+import handler_doAddWorkOrderTag from '../handlers/workOrders-post/doAddWorkOrderTag.js';
 import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkOrder.js';
 import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js';
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js';
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js';
+import handler_doDeleteWorkOrderTag from '../handlers/workOrders-post/doDeleteWorkOrderTag.js';
 import handler_doGetCalendarEvents from '../handlers/workOrders-post/doGetCalendarEvents.js';
 import handler_doGetDeletedWorkOrders from '../handlers/workOrders-post/doGetDeletedWorkOrders.js';
 import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js';
@@ -25,6 +27,7 @@ import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGet
 import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGetWorkOrderAttachments.js';
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js';
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js';
+import handler_doGetWorkOrderTags from '../handlers/workOrders-post/doGetWorkOrderTags.js';
 import handler_doGetWorkOrdersForPlanner from '../handlers/workOrders-post/doGetWorkOrdersForPlanner.js';
 import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js';
 import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkOrder.js';
@@ -92,6 +95,10 @@ router
     .post('/:workOrderId/doGetWorkOrderAttachments', handler_doGetWorkOrderAttachments)
     .post('/doUploadWorkOrderAttachment', updateHandler, upload.single('attachmentFile'), handler_doUploadWorkOrderAttachment)
     .post('/doDeleteWorkOrderAttachment', updateHandler, handler_doDeleteWorkOrderAttachment);
+router
+    .post('/:workOrderId/doGetWorkOrderTags', handler_doGetWorkOrderTags)
+    .post('/doAddWorkOrderTag', updateHandler, handler_doAddWorkOrderTag)
+    .post('/doDeleteWorkOrderTag', updateHandler, handler_doDeleteWorkOrderTag);
 router.get('/attachments/:workOrderAttachmentId/download', handler_download);
 router
     .get('/recovery', manageHandler, handler_recovery)
