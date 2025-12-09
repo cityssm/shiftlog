@@ -128,6 +128,16 @@ declare const exports: {
           `
           : ''
 
+      // Build notes icon HTML
+      const notesIconHTML =
+        workOrder.notesCount && workOrder.notesCount > 0
+          ? /* html */ `
+            <span class="icon" title="${workOrder.notesCount} note(s)">
+              <i class="fa-solid fa-note-sticky"></i>
+            </span>
+          `
+          : ''
+
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
         <td class="has-text-centered">
@@ -145,7 +155,8 @@ declare const exports: {
         <td>
           <a href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
-          </a><br />
+          </a>
+          ${attachmentIconHTML}${notesIconHTML}<br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -
