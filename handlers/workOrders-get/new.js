@@ -12,7 +12,7 @@ export default async function handler(request, response) {
         workOrderDetails: '',
         workOrderOpenDateTime: new Date(),
         requestorContactInfo: '',
-        requestorName: `${request.session.user?.firstName} ${request.session.user?.lastName}`,
+        requestorName: `${request.session.user?.firstName} ${request.session.user?.lastName}`.trim(),
         locationAddress1: '',
         locationAddress2: '',
         locationCityProvince: await getCachedSettingValue('locations.defaultCityProvince'),
