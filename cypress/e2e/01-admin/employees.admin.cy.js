@@ -18,15 +18,19 @@ describe('Admin - Employee Management', () => {
         // Wait for modal to appear
         cy.get('#modal--addEmployee').should('be.visible');
         // Fill in the employee details
-        const testEmployeeName = `Test Employee ${Date.now()}`;
-        cy.get('#addEmployee--employeeName').type(testEmployeeName);
+        const testEmployeeNumber = Date.now().toString();
+        const testEmployeeFirstName = `Test First ${testEmployeeNumber}`;
+        const testEmployeeLastName = `Test Last ${testEmployeeNumber}`;
+        cy.get('#addEmployee--employeeNumber').type(testEmployeeNumber);
+        cy.get('#addEmployee--firstName').type(testEmployeeFirstName);
+        cy.get('#addEmployee--lastName').type(testEmployeeLastName);
         // Submit the form
         cy.get('#form--addEmployee').submit();
         // Wait for AJAX response
         cy.wait(ajaxDelayMillis);
         // Verify the employee appears in the container
         cy.get('#container--employees')
-            .contains(testEmployeeName)
+            .contains(testEmployeeNumber)
             .should('exist');
     });
     it('Can update an employee', () => {
@@ -39,10 +43,10 @@ describe('Admin - Employee Management', () => {
         cy.get('#modal--editEmployee').should('be.visible');
         // Update the employee name
         const updatedText = ` - Updated ${Date.now()}`;
-        cy.get('#editEmployee--employeeName')
+        cy.get('#editEmployee--lastName')
             .invoke('val')
             .then((originalValue) => {
-            cy.get('#editEmployee--employeeName')
+            cy.get('#editEmployee--lastName')
                 .clear()
                 .type(originalValue + updatedText);
         });
@@ -58,14 +62,19 @@ describe('Admin - Employee Management', () => {
     it('Can delete an employee', () => {
         // First, add an employee to delete
         cy.get('#button--addEmployee').click();
-        const testEmployeeName = `Delete Employee ${Date.now()}`;
-        cy.get('#addEmployee--employeeName').type(testEmployeeName);
+        const testEmployeeNumber = Date.now().toString();
+        const testEmployeeFirstName = `Delete First ${testEmployeeNumber}`;
+        const testEmployeeLastName = `Delete Last ${testEmployeeNumber}`;
+        cy.get('#addEmployee--employeeNumber').type(testEmployeeNumber);
+        cy.get('#addEmployee--firstName').type(testEmployeeFirstName);
+        cy.get('#addEmployee--lastName').type(testEmployeeLastName);
         cy.get('#form--addEmployee').submit();
         cy.wait(ajaxDelayMillis);
+        cy.get('.modal button[data-cy="ok"]').click();
         // Find and click the delete button
         cy.get('#container--employees')
-            .contains(testEmployeeName)
-            .parents('.panel-block')
+            .contains(testEmployeeNumber)
+            .parents('tr')
             .find('button[title*="Delete"]')
             .click();
         // Wait for confirmation modal
@@ -78,7 +87,7 @@ describe('Admin - Employee Management', () => {
         cy.wait(ajaxDelayMillis);
         // Verify the employee is removed
         cy.get('#container--employees')
-            .contains(testEmployeeName)
+            .contains(testEmployeeNumber)
             .should('not.exist');
     });
 });
