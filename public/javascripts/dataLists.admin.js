@@ -4,6 +4,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 (function () {
     var shiftLog = exports.shiftLog;
+    // Track Sortable instances to prevent duplicates
+    var sortableInstances = new Map();
     function updateItemCount(dataListKey, count) {
         var countElement = document.querySelector("#itemCount--".concat(dataListKey));
         if (countElement !== null) {
@@ -271,9 +273,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
         // Check if the tbody has any sortable items (rows with data-data-list-item-id)
         var hasItems = tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0;
         if (!hasItems) {
+            // Destroy existing instance if no items
+            var existingInstance_1 = sortableInstances.get(dataListKey);
+            if (existingInstance_1 !== undefined) {
+                existingInstance_1.destroy();
+                sortableInstances.delete(dataListKey);
+            }
             return;
         }
-        Sortable.create(tbodyElement, {
+        // Destroy existing Sortable instance before creating a new one
+        var existingInstance = sortableInstances.get(dataListKey);
+        if (existingInstance !== undefined) {
+            existingInstance.destroy();
+        }
+        // Create new Sortable instance
+        var sortableInstance = Sortable.create(tbodyElement, {
             handle: '.handle',
             animation: 150,
             onEnd: function () {
@@ -303,6 +317,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 });
             }
         });
+        // Store the instance for future reference
+        sortableInstances.set(dataListKey, sortableInstance);
     }
     // Initialize sortable for each data list
     for (var _i = 0, _a = exports.dataLists; _i < _a.length; _i++) {

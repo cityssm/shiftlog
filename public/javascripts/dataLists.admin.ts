@@ -8,6 +8,11 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+
+interface SortableInstance {
+  destroy: () => void
+}
+
 declare const Sortable: {
   create: (
     element: HTMLElement,
@@ -16,7 +21,7 @@ declare const Sortable: {
       animation: number
       onEnd: () => void
     }
-  ) => void
+  ) => SortableInstance
 }
 
 interface DataListItemWithDetails {
@@ -47,6 +52,9 @@ declare const exports: {
 }
 ;(() => {
   const shiftLog = exports.shiftLog
+
+  // Track Sortable instances to prevent duplicates
+  const sortableInstances = new Map<string, SortableInstance>()
 
   function updateItemCount(dataListKey: string, count: number): void {
     const countElement = document.querySelector(`#itemCount--${dataListKey}`)
@@ -516,10 +524,23 @@ declare const exports: {
       tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0
 
     if (!hasItems) {
+      // Destroy existing instance if no items
+      const existingInstance = sortableInstances.get(dataListKey)
+      if (existingInstance !== undefined) {
+        existingInstance.destroy()
+        sortableInstances.delete(dataListKey)
+      }
       return
     }
 
-    Sortable.create(tbodyElement, {
+    // Destroy existing Sortable instance before creating a new one
+    const existingInstance = sortableInstances.get(dataListKey)
+    if (existingInstance !== undefined) {
+      existingInstance.destroy()
+    }
+
+    // Create new Sortable instance
+    const sortableInstance = Sortable.create(tbodyElement, {
       handle: '.handle',
       animation: 150,
       onEnd() {
@@ -562,6 +583,9 @@ declare const exports: {
         )
       }
     })
+
+    // Store the instance for future reference
+    sortableInstances.set(dataListKey, sortableInstance)
   }
 
   // Initialize sortable for each data list
