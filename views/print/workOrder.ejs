@@ -1,6 +1,6 @@
 <%- await include('_header-print'); -%>
 
-<div class="columns is-vcentered">
+<div class="columns is-vcentered" id="pageHeader">
   <div class="column">
     <h1 class="title is-3">
       #<%= workOrder.workOrderNumber %>
@@ -11,192 +11,193 @@
   </div>
 </div>
 
-<div class="columns">
-  <div class="column">
-    <div class="box avoid-page-break">
-      <div class="columns">
-        <div class="column">
-          <div class="field">
-            <span class="label"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type</span>
-            <p><%= workOrder.workOrderType ?? '(Not Set)' %></p>
+<div id="pageContent">
+  <div class="columns">
+    <div class="column">
+      <div class="box avoid-page-break">
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <span class="label"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type</span>
+              <p><%= workOrder.workOrderType ?? '(Not Set)' %></p>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label">Status</label>
+              <p><%= workOrder.workOrderStatusDataListItem ?? '(No Status)' %></p>
+            </div>
           </div>
         </div>
-        <div class="column">
-          <div class="field">
-            <label class="label">Status</label>
-            <p><%= workOrder.workOrderStatusDataListItem ?? '(No Status)' %></p>
-          </div>
+        <div class="field">
+          <label class="label">Details</label>
+          <p style="white-space: pre-wrap;"><%= workOrder.workOrderDetails || '(No details)' %></p>
         </div>
       </div>
-      <div class="field">
-        <label class="label">Details</label>
-        <p style="white-space: pre-wrap;"><%= workOrder.workOrderDetails || '(No details)' %></p>
+      <div class="box avoid-page-break">
+        <div class="field">
+          <label class="label">Requestor Name</label>
+          <p><%= workOrder.requestorName || '(Not provided)' %></p>
+        </div>
+        <div class="field">
+          <label class="label">Requestor Contact Info</label>
+          <p><%= workOrder.requestorContactInfo || '(Not provided)' %></p>
+        </div>
+        <div class="field">
+          <label class="label">Assigned To</label>
+          <p><%= workOrder.assignedToDataListItem ?? '(Not Assigned)' %></p>
+        </div>
       </div>
     </div>
-    <div class="box avoid-page-break">
-      <div class="field">
-        <label class="label">Requestor Name</label>
-        <p><%= workOrder.requestorName || '(Not provided)' %></p>
+    <div class="column">
+      <div class="box avoid-page-break">
+        <div class="field">
+          <label class="label">Location Address</label>
+          <p>
+            <% if (workOrder.locationAddress1) { %>
+            <%= workOrder.locationAddress1 %><br />
+            <% } %>
+            <% if (workOrder.locationAddress2) { %>
+            <%= workOrder.locationAddress2 %><br />
+            <% } %>
+            <% if (workOrder.locationCityProvince) { %>
+            <%= workOrder.locationCityProvince %>
+            <% } %>
+            <% if (!workOrder.locationAddress1 && !workOrder.locationAddress2 && !workOrder.locationCityProvince) { %>
+            (No address)
+            <% } %>
+          </p>
+        </div>
       </div>
-      <div class="field">
-        <label class="label">Requestor Contact Info</label>
-        <p><%= workOrder.requestorContactInfo || '(Not provided)' %></p>
-      </div>
-      <div class="field">
-        <label class="label">Assigned To</label>
-        <p><%= workOrder.assignedToDataListItem ?? '(Not Assigned)' %></p>
-      </div>
-    </div>
-  </div>
-  <div class="column">
-    <div class="box avoid-page-break">
-      <div class="field">
-        <label class="label">Location Address</label>
-        <p>
-          <% if (workOrder.locationAddress1) { %>
-          <%= workOrder.locationAddress1 %><br />
-          <% } %>
-          <% if (workOrder.locationAddress2) { %>
-          <%= workOrder.locationAddress2 %><br />
-          <% } %>
-          <% if (workOrder.locationCityProvince) { %>
-          <%= workOrder.locationCityProvince %>
-          <% } %>
-          <% if (!workOrder.locationAddress1 && !workOrder.locationAddress2 && !workOrder.locationCityProvince) { %>
-          (No address)
-          <% } %>
-        </p>
-      </div>
-    </div>
-    <div class="box avoid-page-break">
-      <div class="field">
-        <label class="label">Open Date/Time</label>
-        <p>
-          <% if (workOrder.workOrderOpenDateTime) { %>
-          <%= dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) %>
-          <%= dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) %>
-          <% } else { %>
-          (Not set)
-          <% } %>
-        </p>
-      </div>
-      <div class="field">
-        <label class="label">Due Date/Time</label>
-        <p>
-          <% if (workOrder.workOrderDueDateTime) { %>
-          <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>
-          <%= dateTimeFunctions.dateToTimeString(workOrder.workOrderDueDateTime) %>
-          <% } else { %>
-          (Not set)
-          <% } %>
-        </p>
-      </div>
-      <div class="field">
-        <label class="label">Close Date/Time</label>
-        <p>
-          <% if (workOrder.workOrderCloseDateTime) { %>
-          <%= dateTimeFunctions.dateToString(workOrder.workOrderCloseDateTime) %>
-          <%= dateTimeFunctions.dateToTimeString(workOrder.workOrderCloseDateTime) %>
-          <% } else { %>
-          (Not closed)
-          <% } %>
-        </p>
+      <div class="box avoid-page-break">
+        <div class="field">
+          <label class="label">Open Date/Time</label>
+          <p>
+            <% if (workOrder.workOrderOpenDateTime) { %>
+            <%= dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) %>
+            <%= dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) %>
+            <% } else { %>
+            (Not set)
+            <% } %>
+          </p>
+        </div>
+        <div class="field">
+          <label class="label">Due Date/Time</label>
+          <p>
+            <% if (workOrder.workOrderDueDateTime) { %>
+            <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>
+            <%= dateTimeFunctions.dateToTimeString(workOrder.workOrderDueDateTime) %>
+            <% } else { %>
+            (Not set)
+            <% } %>
+          </p>
+        </div>
+        <div class="field">
+          <label class="label">Close Date/Time</label>
+          <p>
+            <% if (workOrder.workOrderCloseDateTime) { %>
+            <%= dateTimeFunctions.dateToString(workOrder.workOrderCloseDateTime) %>
+            <%= dateTimeFunctions.dateToTimeString(workOrder.workOrderCloseDateTime) %>
+            <% } else { %>
+            (Not closed)
+            <% } %>
+          </p>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- eslint-disable html/indent -->
-<% 
-  if (Object.keys(workOrder.moreInfoFormData).length > 0) {
-    const formNames = typeof workOrder.moreInfoFormData.moreInfo_formName === 'string' ? [workOrder.moreInfoFormData.moreInfo_formName] : workOrder.moreInfoFormData.moreInfo_formName;
-    for (const formName of formNames) {
-      const formConfig = availableWorkOrderMoreInfoForms[formName];
-      if (!formConfig) {
-        continue;
-      }
-      
-%>
-<div class="box avoid-page-break">
-  <h2 class="title is-4"><%= formConfig.formName %></h2>
-  <% for (const [fieldKey, fieldName] of Object.entries(formConfig.formFields)) { %>
-    <div class="field">
-      <label class="label"><%= fieldName %></label>
-      <p>
-        <%= workOrder.moreInfoFormData[fieldKey] ?? '-' %>
-      </p>
+  <!-- eslint-disable html/indent -->
+  <% 
+    if (Object.keys(workOrder.moreInfoFormData).length > 0) {
+      const formNames = typeof workOrder.moreInfoFormData.moreInfo_formName === 'string' ? [workOrder.moreInfoFormData.moreInfo_formName] : workOrder.moreInfoFormData.moreInfo_formName;
+      for (const formName of formNames) {
+        const formConfig = availableWorkOrderMoreInfoForms[formName];
+        if (!formConfig) {
+          continue;
+        }
+        
+  %>
+  <div class="box avoid-page-break">
+    <h2 class="title is-4"><%= formConfig.formName %></h2>
+    <% for (const [fieldKey, fieldName] of Object.entries(formConfig.formFields)) { %>
+      <div class="field">
+        <label class="label"><%= fieldName %></label>
+        <p>
+          <%= workOrder.moreInfoFormData[fieldKey] ?? '-' %>
+        </p>
+      </div>
+    <% } %>
+  </div>
+  <%  }
+    }
+  %>
+
+  <div class="box avoid-page-break">
+    <h2 class="title is-4">Milestones</h2>
+    <% if (milestones.length === 0) { %>
+    <p class="has-text-grey-light">(No milestones)</p>
+    <% } else { %>
+    <table class="table is-fullwidth is-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Assigned To</th>
+          <th>Due Date</th>
+          <th>Completed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const milestone of milestones) { %>
+        <tr>
+          <td><%= milestone.milestoneTitle %></td>
+          <td><%= milestone.milestoneDescription %></td>
+          <td><%= milestone.assignedToDataListItem ?? '' %></td>
+          <td>
+            <% if (milestone.milestoneDueDateTime) { %>
+            <%= dateTimeFunctions.dateToString(milestone.milestoneDueDateTime) %>
+            <%= dateTimeFunctions.dateToTimeString(milestone.milestoneDueDateTime) %>
+            <% } %>
+          </td>
+          <td>
+            <% if (milestone.milestoneCompleteDateTime) { %>
+            <%= dateTimeFunctions.dateToString(milestone.milestoneCompleteDateTime) %>
+            <%= dateTimeFunctions.dateToTimeString(milestone.milestoneCompleteDateTime) %>
+            <% } %>
+          </td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <% } %>
+  </div>
+
+  <% if (notes.length > 0) { %>
+  <div style="page-break-before: always;"></div>
+
+  <h2 class="title is-3">Notes</h2>
+  <% for (const note of notes) { %>
+  <div class="box avoid-page-break">
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <span class="has-text-weight-bold"><%= note.recordCreate_userName %></span>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item">
+          <span class="has-text-grey is-size-7">
+            <%= dateTimeFunctions.dateToString(note.recordCreate_dateTime) %>
+            <%= dateTimeFunctions.dateToTimeString(note.recordCreate_dateTime) %>
+          </span>
+        </div>
+      </div>
     </div>
+    <p style="white-space: pre-wrap;"><%= note.noteText %></p>
+  </div>
+  <% } %>
   <% } %>
 </div>
-<%  }
-  }
-%>
-
-
-<div class="box avoid-page-break">
-  <h2 class="title is-4">Milestones</h2>
-  <% if (milestones.length === 0) { %>
-  <p class="has-text-grey-light">(No milestones)</p>
-  <% } else { %>
-  <table class="table is-fullwidth is-striped">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Assigned To</th>
-        <th>Due Date</th>
-        <th>Completed</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% for (const milestone of milestones) { %>
-      <tr>
-        <td><%= milestone.milestoneTitle %></td>
-        <td><%= milestone.milestoneDescription %></td>
-        <td><%= milestone.assignedToDataListItem ?? '' %></td>
-        <td>
-          <% if (milestone.milestoneDueDateTime) { %>
-          <%= dateTimeFunctions.dateToString(milestone.milestoneDueDateTime) %>
-          <%= dateTimeFunctions.dateToTimeString(milestone.milestoneDueDateTime) %>
-          <% } %>
-        </td>
-        <td>
-          <% if (milestone.milestoneCompleteDateTime) { %>
-          <%= dateTimeFunctions.dateToString(milestone.milestoneCompleteDateTime) %>
-          <%= dateTimeFunctions.dateToTimeString(milestone.milestoneCompleteDateTime) %>
-          <% } %>
-        </td>
-      </tr>
-      <% } %>
-    </tbody>
-  </table>
-  <% } %>
-</div>
-
-<% if (notes.length > 0) { %>
-<div style="page-break-before: always;"></div>
-
-<h2 class="title is-3">Notes</h2>
-<% for (const note of notes) { %>
-<div class="box avoid-page-break">
-  <div class="level">
-    <div class="level-left">
-      <div class="level-item">
-        <span class="has-text-weight-bold"><%= note.recordCreate_userName %></span>
-      </div>
-    </div>
-    <div class="level-right">
-      <div class="level-item">
-        <span class="has-text-grey is-size-7">
-          <%= dateTimeFunctions.dateToString(note.recordCreate_dateTime) %>
-          <%= dateTimeFunctions.dateToTimeString(note.recordCreate_dateTime) %>
-        </span>
-      </div>
-    </div>
-  </div>
-  <p style="white-space: pre-wrap;"><%= note.noteText %></p>
-</div>
-<% } %>
-<% } %>
 
 <%- await include('_footer-print'); -%>

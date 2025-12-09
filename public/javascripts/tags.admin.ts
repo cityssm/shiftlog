@@ -43,10 +43,12 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete Tag',
+      
       message: `Are you sure you want to delete tag "${tag?.tagName ?? ''}"? This action cannot be undone.`,
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete Tag',
+
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteTag`,
@@ -146,7 +148,9 @@ declare const exports: {
           modalElement.querySelector('#editTag--tagName') as HTMLInputElement
         ).value = tag.tagName
         ;(
-          modalElement.querySelector('#editTag--tagNameDisplay') as HTMLInputElement
+          modalElement.querySelector(
+            '#editTag--tagNameDisplay'
+          ) as HTMLInputElement
         ).value = tag.tagName
         ;(
           modalElement.querySelector(
@@ -260,7 +264,7 @@ declare const exports: {
         <th style="width: 150px;"><span class="is-sr-only">Actions</span></th>
       </tr>
     `
-    tableElement.appendChild(thead)
+    tableElement.append(thead)
 
     const tbody = document.createElement('tbody')
 
@@ -301,13 +305,16 @@ declare const exports: {
       `
 
       tr.querySelector('.button.is-warning')?.addEventListener('click', editTag)
-      tr.querySelector('.button.is-danger')?.addEventListener('click', deleteTag)
+      tr.querySelector('.button.is-danger')?.addEventListener(
+        'click',
+        deleteTag
+      )
 
-      tbody.appendChild(tr)
+      tbody.append(tr)
     }
 
-    tableElement.appendChild(tbody)
-    tagsContainerElement.appendChild(tableElement)
+    tableElement.append(tbody)
+    tagsContainerElement.append(tableElement)
 
     // Add pagination if needed
     if (totalPages > 1) {
@@ -333,20 +340,24 @@ declare const exports: {
       paginationHTML += '</ul>'
       paginationElement.innerHTML = paginationHTML
 
-      paginationElement.querySelectorAll('.pagination-link').forEach((link) => {
+      for (const link of paginationElement.querySelectorAll(
+        '.pagination-link'
+      )) {
         link.addEventListener('click', (clickEvent) => {
           const target = clickEvent.currentTarget as HTMLAnchorElement
           const pageNumber = Number(target.dataset.page)
           pageSelect(pageNumber)
         })
-      })
+      }
 
-      tagsContainerElement.appendChild(paginationElement)
+      tagsContainerElement.append(paginationElement)
     }
   }
 
   // Filter functionality
-  const filterInput = document.querySelector('#filter--tags') as HTMLInputElement
+  const filterInput = document.querySelector(
+    '#filter--tags'
+  ) as HTMLInputElement
   filterInput?.addEventListener('keyup', () => {
     const filterValue = filterInput.value.toLowerCase()
     currentFilteredTags = exports.tags.filter((tag) =>

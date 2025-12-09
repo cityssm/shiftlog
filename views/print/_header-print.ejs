@@ -15,6 +15,19 @@
     <link href="<%= urlPrefix %>/lib/bulma/bulma.min.css" rel="stylesheet" />
     <link href="<%= urlPrefix %>/stylesheets/style.css" rel="stylesheet" />
     <link href="<%= urlPrefix %>/lib/fa/css/all.min.css" rel="stylesheet" />
+
+    <style>
+      @media print {
+        html.has-background-dark,
+        body {
+          background-color: #ffffff !important;
+        }
+        
+        .container.is-page {
+          margin: 0;
+        }
+      }
+    </style>
   </head>
   
   <!-- eslint-disable-next-line html/require-closing-tags -->

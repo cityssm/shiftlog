@@ -23,7 +23,6 @@
           </th>
           <th>Number</th>
           <th>Location</th>
-          <th>Status</th>
           <th>Open Date</th>
           <th>Requestor</th>
           <th>Assigned To</th>
@@ -75,6 +74,8 @@
           </a><br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
+            -
+            ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}
           </span>
         </td>
         <td>
@@ -83,7 +84,6 @@
             ${cityssm.escapeHTML(workOrder.locationAddress2)}
           </span>
         </td>
-        <td>${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}</td>
         <td>
           ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}<br />
           <span class="is-size-7 has-text-grey">

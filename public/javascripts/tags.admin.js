@@ -180,7 +180,7 @@
         <th style="width: 150px;"><span class="is-sr-only">Actions</span></th>
       </tr>
     `;
-        tableElement.appendChild(thead);
+        tableElement.append(thead);
         const tbody = document.createElement('tbody');
         for (let index = startIndex; index < endIndex; index += 1) {
             const tag = tags[index];
@@ -217,10 +217,10 @@
       `;
             tr.querySelector('.button.is-warning')?.addEventListener('click', editTag);
             tr.querySelector('.button.is-danger')?.addEventListener('click', deleteTag);
-            tbody.appendChild(tr);
+            tbody.append(tr);
         }
-        tableElement.appendChild(tbody);
-        tagsContainerElement.appendChild(tableElement);
+        tableElement.append(tbody);
+        tagsContainerElement.append(tableElement);
         // Add pagination if needed
         if (totalPages > 1) {
             const paginationElement = document.createElement('nav');
@@ -241,14 +241,14 @@
             }
             paginationHTML += '</ul>';
             paginationElement.innerHTML = paginationHTML;
-            paginationElement.querySelectorAll('.pagination-link').forEach((link) => {
+            for (const link of paginationElement.querySelectorAll('.pagination-link')) {
                 link.addEventListener('click', (clickEvent) => {
                     const target = clickEvent.currentTarget;
                     const pageNumber = Number(target.dataset.page);
                     pageSelect(pageNumber);
                 });
-            });
-            tagsContainerElement.appendChild(paginationElement);
+            }
+            tagsContainerElement.append(paginationElement);
         }
     }
     // Filter functionality
