@@ -26,6 +26,7 @@ system-wide options.
 - [User Management](./adminUsers.md)
 - [User Group Management](./adminUserGroups.md)
 - [Work Order Types](./adminWorkOrderTypes.md)
+- [Tag Management](./adminTags.md)
 - [Data Lists](./adminDataLists.md)
 - [Employee Management](./adminEmployees.md)
 - [Equipment Management](./adminEquipment.md)

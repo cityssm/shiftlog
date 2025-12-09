@@ -24,6 +24,9 @@ requires administrator permissions.
 - [**Work Order Types**](./adminWorkOrderTypes.md)<br />
   Define and manage categories of work orders.
 
+- [**Tag Management**](./adminTags.md)<br />
+  Create and manage color-coded tags for organizing work orders.
+
 - [**Data Lists**](./adminDataLists.md)<br />
   Manage customizable dropdown lists used throughout the application.
 

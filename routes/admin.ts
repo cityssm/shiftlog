@@ -5,6 +5,7 @@ import handler_employees from '../handlers/admin-get/employees.js'
 import handler_equipment from '../handlers/admin-get/equipment.js'
 import handler_locations from '../handlers/admin-get/locations.js'
 import handler_settings from '../handlers/admin-get/settings.js'
+import handler_tags from '../handlers/admin-get/tags.js'
 import handler_userGroups from '../handlers/admin-get/userGroups.js'
 import handler_users from '../handlers/admin-get/users.js'
 import handler_workOrderTypes from '../handlers/admin-get/workOrderTypes.js'
@@ -12,6 +13,7 @@ import handler_doAddDataListItem from '../handlers/admin-post/doAddDataListItem.
 import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js'
 import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js'
 import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js'
+import handler_doAddTag from '../handlers/admin-post/doAddTag.js'
 import handler_doAddUser from '../handlers/admin-post/doAddUser.js'
 import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js'
 import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupMember.js'
@@ -20,6 +22,7 @@ import handler_doDeleteDataListItem from '../handlers/admin-post/doDeleteDataLis
 import handler_doDeleteEmployee from '../handlers/admin-post/doDeleteEmployee.js'
 import handler_doDeleteEquipment from '../handlers/admin-post/doDeleteEquipment.js'
 import handler_doDeleteLocation from '../handlers/admin-post/doDeleteLocation.js'
+import handler_doDeleteTag from '../handlers/admin-post/doDeleteTag.js'
 import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js'
 import handler_doDeleteUserGroup from '../handlers/admin-post/doDeleteUserGroup.js'
 import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUserGroupMember.js'
@@ -33,6 +36,7 @@ import handler_doUpdateEmployee from '../handlers/admin-post/doUpdateEmployee.js
 import handler_doUpdateEquipment from '../handlers/admin-post/doUpdateEquipment.js'
 import handler_doUpdateLocation from '../handlers/admin-post/doUpdateLocation.js'
 import handler_doUpdateSetting from '../handlers/admin-post/doUpdateSetting.js'
+import handler_doUpdateTag from '../handlers/admin-post/doUpdateTag.js'
 import handler_doUpdateUser from '../handlers/admin-post/doUpdateUser.js'
 import handler_doUpdateUserGroup from '../handlers/admin-post/doUpdateUserGroup.js'
 import handler_doUpdateUserSettings from '../handlers/admin-post/doUpdateUserSettings.js'
@@ -124,5 +128,15 @@ router
   .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
   .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
   .post('/doReorderDataListItems', handler_doReorderDataListItems)
+
+/*
+ * Tag Management
+ */
+
+router
+  .get('/tags', handler_tags)
+  .post('/doAddTag', handler_doAddTag)
+  .post('/doUpdateTag', handler_doUpdateTag)
+  .post('/doDeleteTag', handler_doDeleteTag)
 
 export default router

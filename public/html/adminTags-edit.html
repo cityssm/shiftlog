@@ -1,0 +1,79 @@
+<div
+  class="modal"
+  id="modal--editTag"
+  role="dialog"
+  aria-label="Edit Tag"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Tag</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editTag">
+        <input id="editTag--tagName" name="tagName" type="hidden" />
+        <div class="field">
+          <label class="label">
+            Tag Name
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="editTag--tagNameDisplay"
+              type="text"
+              readonly
+              disabled
+            />
+          </div>
+          <p class="help">Tag name cannot be changed after creation</p>
+        </div>
+        <div class="field">
+          <label class="label" for="editTag--tagBackgroundColor">
+            Background Color
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="editTag--tagBackgroundColor"
+              name="tagBackgroundColor"
+              type="color"
+              required
+            />
+          </div>
+          <p class="help">Choose the background color for the tag</p>
+        </div>
+        <div class="field">
+          <label class="label" for="editTag--tagTextColor">
+            Text Color
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="editTag--tagTextColor"
+              name="tagTextColor"
+              type="color"
+              required
+            />
+          </div>
+          <p class="help">Choose the text color for the tag</p>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+        <button class="button is-primary" type="submit" form="form--editTag">
+          <span class="icon"><i class="fa-solid fa-save"></i></span>
+          <span>Save Changes</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

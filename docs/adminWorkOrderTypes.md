@@ -51,6 +51,7 @@ It will only prevent future use of the type.
 - [User Management](./adminUsers.md)
 - [User Group Management](./adminUserGroups.md)
 - [Application Settings](./adminSettings.md)
+- [Tag Management](./adminTags.md)
 - [Data Lists](./adminDataLists.md)
 - [Employee Management](./adminEmployees.md)
 - [Equipment Management](./adminEquipment.md)
