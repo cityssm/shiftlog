@@ -1,0 +1,106 @@
+<input
+  name="moreInfo_formName"
+  type="hidden"
+  value="accessibility"
+  form="form--workOrder"
+/>
+
+<div class="box">
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <label class="label" for="moreInfo_accessibility_barrierType">
+          Barrier Type
+        </label>
+        <div class="control">
+          <input
+            class="input"
+            id="moreInfo_accessibility_barrierType"
+            name="moreInfo_accessibility_barrierType"
+            type="text"
+            value="<%= workOrder.moreInfoFormData.moreInfo_accessibility_barrierType || '' %>"
+            form="form--workOrder"
+            list="datalist--moreInfo_accessibility_barrierType"
+            <% if (isEdit === false) { %> readonly <% } %>
+          />
+        </div>
+      </div>
+    
+      <datalist id="datalist--moreInfo_accessibility_barrierType">
+        <option value="Step"></option>
+        <option value="Narrow Doorway"></option>
+        <option value="No Accessible Restroom"></option>
+        <option value="Obstructed Pathways"></option>
+        <option value="Inadequate Signage"></option>
+      </datalist>
+    </div>
+
+    <div class="column">
+      <div class="field">
+        <label class="label" for="moreInfo_accessibility_assistiveTechnologyUsed">
+          Assistive Technology Used
+        </label>
+        <div class="control">
+          <input
+            class="input"
+            id="moreInfo_accessibility_assistiveTechnologyUsed"
+            name="moreInfo_accessibility_assistiveTechnologyUsed"
+            type="text"
+            value="<%= workOrder.moreInfoFormData.moreInfo_accessibility_assistiveTechnologyUsed || '' %>"
+            form="form--workOrder"
+            list="datalist--moreInfo_accessibility_assistiveTechnologyUsed"
+            <% if (isEdit === false) { %> readonly <% } %>
+          />
+        </div>
+      </div>
+
+      <datalist id="datalist--moreInfo_accessibility_assistiveTechnologyUsed">
+        <option value="Wheelchair"></option>
+        <option value="Walker"></option>
+        <option value="Cane"></option>
+        <option value="Hearing Aid"></option>
+        <option value="Service Animal"></option>
+      </datalist>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label" for="moreInfo_accessibility_assistiveDevicesNeeded">
+      Recommended Assistive Devices Needed
+    </label>
+    <div class="control">
+      <input
+        class="input"
+        id="moreInfo_accessibility_assistiveDevicesNeeded"
+        name="moreInfo_accessibility_assistiveDevicesNeeded"
+        type="text"
+        value="<%= workOrder.moreInfoFormData.moreInfo_accessibility_assistiveDevicesNeeded || '' %>"
+        form="form--workOrder"
+        list="datalist--moreInfo_accessibility_assistiveDevicesNeeded"
+        <% if (isEdit === false) { %> readonly <% } %>
+      />
+    </div>
+  </div>
+
+  <datalist id="datalist--moreInfo_accessibility_assistiveDevicesNeeded">
+    <option value="Ramp"></option>
+    <option value="Handrails"></option>
+    <option value="Braille Signage"></option>
+    <option value="Automatic Doors"></option>
+  </datalist>
+    
+  <div class="field">
+    <label class="label" for="moreInfo_accessibility_temporarySolutions">
+      Temporary Solutions Provided
+    </label>
+    <div class="control">
+      <textarea
+        class="textarea"
+        id="moreInfo_accessibility_temporarySolutions"
+        name="moreInfo_accessibility_temporarySolutions"
+        form="form--workOrder"
+        <% if (isEdit === false) { %> readonly <% } %>
+      ><%= workOrder.moreInfoFormData.moreInfo_accessibility_temporarySolutions || '' %></textarea>
+    </div>
+  </div>
+</div>
