@@ -76,7 +76,7 @@
         </td>
         <td>${cityssm.escapeHTML(timesheet.timesheetTypeDataListItem ?? '-')}</td>
         <td>${cityssm.escapeHTML(supervisorName)}</td>
-        <td>${cityssm.escapeHTML((timesheet.timesheetDetails ?? '').substring(0, 100))}${(timesheet.timesheetDetails ?? '').length > 100 ? '...' : ''}</td>
+        <td>${cityssm.escapeHTML((timesheet.timesheetDetails ?? '').slice(0, 100))}${(timesheet.timesheetDetails ?? '').length > 100 ? '...' : ''}</td>
         <td>${cityssm.escapeHTML(timesheet.recordDelete_userName ?? '')}</td>
         <td>
           ${timesheet.recordDelete_dateTime ? cityssm.dateToString(new Date(timesheet.recordDelete_dateTime)) : ''}

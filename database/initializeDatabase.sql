@@ -123,6 +123,26 @@ CREATE TABLE ShiftLog.DataListItems (
 )
 GO
 
+-- TAGS
+
+create table ShiftLog.Tags (
+  tagName varchar(50) not null,
+  instance varchar(20) not null,
+
+  tagBackgroundColor char(6) not null default '000000',
+  tagTextColor char(6) not null default 'FFFFFF',
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  primary key (instance, tagName)
+)
+GO
+
 -- EMPLOYEES
 
 CREATE TABLE ShiftLog.Employees (
@@ -345,6 +365,15 @@ create table ShiftLog.WorkOrders (
   foreign key (workOrderTypeId) references ShiftLog.WorkOrderTypes(workOrderTypeId),
   foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+)
+GO
+
+create table ShiftLog.WorkOrderTags (
+  workOrderId int not null,
+  tagName varchar(50) not null,
+
+  primary key (workOrderId, tagName),
+  foreign key (workOrderId) references ShiftLog.WorkOrders(workOrderId)
 )
 GO
 

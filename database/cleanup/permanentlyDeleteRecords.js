@@ -64,6 +64,20 @@ export default async function permanentlyDeleteRecords() {
             }
         }
         // Step 2: Clean up child records of WorkOrders
+        // WorkOrderTags - no foreign keys to check
+        const tagsResult = await pool.request().input('cutoffDate', cutoffDate)
+            .query(/* sql */ `
+        DELETE FROM ShiftLog.WorkOrderTags
+        WHERE workOrderId in (
+          SELECT workOrderId FROM ShiftLog.WorkOrders
+          WHERE recordDelete_dateTime IS NOT NULL
+            AND recordDelete_dateTime < @cutoffDate
+        )
+      `);
+        if (tagsResult.rowsAffected[0] > 0) {
+            deletedCount += tagsResult.rowsAffected[0];
+            debug(`Permanently deleted ${tagsResult.rowsAffected[0]} WorkOrderTags records`);
+        }
         // WorkOrderNotes - no foreign keys to check
         const notesResult = await pool.request().input('cutoffDate', cutoffDate)
             .query(/* sql */ `
@@ -96,6 +110,10 @@ export default async function permanentlyDeleteRecords() {
         FROM ShiftLog.WorkOrders wo
         WHERE wo.recordDelete_dateTime IS NOT NULL
           AND wo.recordDelete_dateTime < @cutoffDate
+          AND NOT EXISTS (
+            SELECT 1 FROM ShiftLog.WorkOrderTags wt
+            WHERE wt.workOrderId = wo.workOrderId
+          )
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.WorkOrderNotes wn
             WHERE wn.workOrderId = wo.workOrderId
