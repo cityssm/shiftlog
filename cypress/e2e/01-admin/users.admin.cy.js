@@ -1,43 +1,41 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var _globals_js_1 = require("../../../test/_globals.js");
-var index_js_1 = require("../../support/index.js");
-describe('Admin - User Management', function () {
-    beforeEach('Loads page', function () {
-        (0, index_js_1.logout)();
-        (0, index_js_1.login)(_globals_js_1.testAdmin);
+import { testAdmin } from '../../../test/_globals.js';
+import { ajaxDelayMillis, login, logout } from '../../support/index.js';
+describe('Admin - User Management', () => {
+    beforeEach('Loads page', () => {
+        logout();
+        login(testAdmin);
         cy.visit('/admin/users');
         cy.location('pathname').should('equal', '/admin/users');
     });
-    afterEach(index_js_1.logout);
-    it('Has no detectable accessibility issues', function () {
+    afterEach(logout);
+    it('Has no detectable accessibility issues', () => {
         cy.injectAxe();
         cy.checkA11y();
     });
-    it('Can add a user', function () {
+    it('Can add a user', () => {
         // Click the Add User button
         cy.get('#button--addUser').click();
         // Wait for modal to appear
         cy.get('#modal--addUser').should('be.visible');
         // Fill in the username
-        var testUserName = "testuser".concat(Date.now());
+        const testUserName = `testuser${Date.now()}`;
         cy.get('#userName').type(testUserName);
         // Submit the form
         cy.get('#form--addUser').submit();
         // Wait for AJAX response
-        cy.wait(index_js_1.ajaxDelayMillis);
+        cy.wait(ajaxDelayMillis);
         // Verify the user appears in the table
         cy.get('#container--users')
             .contains('td', testUserName)
             .should('exist');
     });
-    it('Can delete a user', function () {
+    it('Can delete a user', () => {
         // First, add a user to delete
         cy.get('#button--addUser').click();
-        var testUserName = "deleteuser".concat(Date.now());
+        const testUserName = `deleteuser${Date.now()}`;
         cy.get('#userName').type(testUserName);
         cy.get('#form--addUser').submit();
-        cy.wait(index_js_1.ajaxDelayMillis);
+        cy.wait(ajaxDelayMillis);
         // Find and click the delete button for this user
         cy.get('#container--users')
             .contains('tr', testUserName)
@@ -50,23 +48,23 @@ describe('Admin - User Management', function () {
             .contains('button', 'Delete User')
             .click();
         // Wait for AJAX response
-        cy.wait(index_js_1.ajaxDelayMillis);
+        cy.wait(ajaxDelayMillis);
         // Verify the user is removed from the table
         cy.get('#container--users')
             .contains('td', testUserName)
             .should('not.exist');
     });
-    it('Can toggle user permissions', function () {
+    it('Can toggle user permissions', () => {
         // Find the first user in the table and toggle a permission
         cy.get('#container--users')
             .find('button.permission-toggle')
             .first()
-            .then(function ($button) {
-            var initialClass = $button.hasClass('is-success') ? 'is-success' : 'is-light';
+            .then(($button) => {
+            const initialClass = $button.hasClass('is-success') ? 'is-success' : 'is-light';
             // Click the button
             cy.wrap($button).click();
             // Wait for AJAX response
-            cy.wait(index_js_1.ajaxDelayMillis);
+            cy.wait(ajaxDelayMillis);
             // Verify the button class changed
             cy.wrap($button).should('not.have.class', initialClass);
         });

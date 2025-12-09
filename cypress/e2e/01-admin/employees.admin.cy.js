@@ -1,37 +1,35 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var _globals_js_1 = require("../../../test/_globals.js");
-var index_js_1 = require("../../support/index.js");
-describe('Admin - Employee Management', function () {
-    beforeEach('Loads page', function () {
-        (0, index_js_1.logout)();
-        (0, index_js_1.login)(_globals_js_1.testAdmin);
+import { testAdmin } from '../../../test/_globals.js';
+import { ajaxDelayMillis, login, logout } from '../../support/index.js';
+describe('Admin - Employee Management', () => {
+    beforeEach('Loads page', () => {
+        logout();
+        login(testAdmin);
         cy.visit('/admin/employees');
         cy.location('pathname').should('equal', '/admin/employees');
     });
-    afterEach(index_js_1.logout);
-    it('Has no detectable accessibility issues', function () {
+    afterEach(logout);
+    it('Has no detectable accessibility issues', () => {
         cy.injectAxe();
         cy.checkA11y();
     });
-    it('Can add an employee', function () {
+    it('Can add an employee', () => {
         // Click the Add Employee button
         cy.get('#button--addEmployee').click();
         // Wait for modal to appear
         cy.get('#modal--addEmployee').should('be.visible');
         // Fill in the employee details
-        var testEmployeeName = "Test Employee ".concat(Date.now());
+        const testEmployeeName = `Test Employee ${Date.now()}`;
         cy.get('#addEmployee--employeeName').type(testEmployeeName);
         // Submit the form
         cy.get('#form--addEmployee').submit();
         // Wait for AJAX response
-        cy.wait(index_js_1.ajaxDelayMillis);
+        cy.wait(ajaxDelayMillis);
         // Verify the employee appears in the container
         cy.get('#container--employees')
             .contains(testEmployeeName)
             .should('exist');
     });
-    it('Can update an employee', function () {
+    it('Can update an employee', () => {
         // Find the first edit button and click it
         cy.get('#container--employees')
             .find('button[title*="Edit"]')
@@ -40,10 +38,10 @@ describe('Admin - Employee Management', function () {
         // Wait for modal to appear
         cy.get('#modal--editEmployee').should('be.visible');
         // Update the employee name
-        var updatedText = " - Updated ".concat(Date.now());
+        const updatedText = ` - Updated ${Date.now()}`;
         cy.get('#editEmployee--employeeName')
             .invoke('val')
-            .then(function (originalValue) {
+            .then((originalValue) => {
             cy.get('#editEmployee--employeeName')
                 .clear()
                 .type(originalValue + updatedText);
@@ -51,19 +49,19 @@ describe('Admin - Employee Management', function () {
         // Submit the form
         cy.get('#form--editEmployee').submit();
         // Wait for AJAX response
-        cy.wait(index_js_1.ajaxDelayMillis);
+        cy.wait(ajaxDelayMillis);
         // Verify the updated employee appears
         cy.get('#container--employees')
             .contains(updatedText)
             .should('exist');
     });
-    it('Can delete an employee', function () {
+    it('Can delete an employee', () => {
         // First, add an employee to delete
         cy.get('#button--addEmployee').click();
-        var testEmployeeName = "Delete Employee ".concat(Date.now());
+        const testEmployeeName = `Delete Employee ${Date.now()}`;
         cy.get('#addEmployee--employeeName').type(testEmployeeName);
         cy.get('#form--addEmployee').submit();
-        cy.wait(index_js_1.ajaxDelayMillis);
+        cy.wait(ajaxDelayMillis);
         // Find and click the delete button
         cy.get('#container--employees')
             .contains(testEmployeeName)
@@ -77,7 +75,7 @@ describe('Admin - Employee Management', function () {
             .contains('button', 'Delete Employee')
             .click();
         // Wait for AJAX response
-        cy.wait(index_js_1.ajaxDelayMillis);
+        cy.wait(ajaxDelayMillis);
         // Verify the employee is removed
         cy.get('#container--employees')
             .contains(testEmployeeName)
