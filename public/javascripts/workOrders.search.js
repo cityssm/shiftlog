@@ -26,6 +26,9 @@
           <th>Open Date</th>
           <th>Requestor</th>
           <th>Assigned To</th>
+          <th class="has-width-1">
+            <span class="is-sr-only">Properties</span>
+          </th>
           <th class="has-width-1 is-hidden-print">
             <span class="is-sr-only">Actions</span>
           </th>
@@ -56,6 +59,44 @@
             else if (workOrder.workOrderDueDateTime !== null) {
                 extraDateHTML = `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`;
             }
+            // Build tags HTML
+            let tagsHTML = '';
+            if (workOrder.tags && workOrder.tags.length > 0) {
+                const tagsElements = workOrder.tags
+                    .map((tag) => {
+                    // Validate hex color format (6 characters, alphanumeric)
+                    const isValidHex = (color) => color !== undefined && /^[0-9a-fA-F]{6}$/.test(color);
+                    const backgroundColor = isValidHex(tag.tagBackgroundColor)
+                        ? `#${tag.tagBackgroundColor}`
+                        : '';
+                    const textColor = isValidHex(tag.tagTextColor)
+                        ? `#${tag.tagTextColor}`
+                        : '';
+                    // Only apply custom styling if both colors are present to ensure consistency
+                    const style = backgroundColor && textColor
+                        ? `style="background-color: ${backgroundColor}; color: ${textColor};"`
+                        : '';
+                    return `<span class="tag is-small" ${style}>${cityssm.escapeHTML(tag.tagName)}</span>`;
+                })
+                    .join(' ');
+                tagsHTML = `<div class="tags" style="margin-top: 0.25rem;">${tagsElements}</div>`;
+            }
+            // Build attachment icon HTML
+            const attachmentIconHTML = workOrder.attachmentsCount && workOrder.attachmentsCount > 0
+                ? /* html */ `
+            <span class="icon" title="${workOrder.attachmentsCount} attachment(s)">
+              <i class="fa-solid fa-paperclip"></i>
+            </span>
+          `
+                : '';
+            // Build notes icon HTML
+            const notesIconHTML = workOrder.notesCount && workOrder.notesCount > 0
+                ? /* html */ `
+            <span class="icon" title="${workOrder.notesCount} note(s)">
+              <i class="fa-solid fa-note-sticky"></i>
+            </span>
+          `
+                : '';
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ `
         <td class="has-text-centered">
@@ -77,6 +118,7 @@
             -
             ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}
           </span>
+          ${tagsHTML}
         </td>
         <td>
           ${cityssm.escapeHTML(workOrder.locationAddress1 === '' ? '-' : workOrder.locationAddress1)}<br />
@@ -95,6 +137,10 @@
         </td>
         <td>
           ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : (workOrder.assignedToDataListItem ?? ''))}
+        </td>
+        <td>
+          ${notesIconHTML}
+          ${attachmentIconHTML}
         </td>
         <td class="is-hidden-print">
           <a
@@ -137,12 +183,16 @@
     filtersFormElement.addEventListener('submit', (event) => {
         event.preventDefault();
     });
+    function resetOffsetAndGetResults() {
+        offsetInputElement.value = '0';
+        getSearchResults();
+    }
     const formElements = filtersFormElement.querySelectorAll('input, select');
     for (const formElement of formElements) {
-        formElement.addEventListener('change', () => {
-            offsetInputElement.value = '0';
-            getSearchResults();
-        });
+        formElement.addEventListener('change', resetOffsetAndGetResults);
     }
+    document
+        .querySelector('#workOrderSearch--limit')
+        ?.addEventListener('change', resetOffsetAndGetResults);
     getSearchResults();
 })();

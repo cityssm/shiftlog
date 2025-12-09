@@ -3,6 +3,7 @@ import type { Request, Response } from 'express'
 import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js'
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js'
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js'
+import getTags from '../../database/tags/getTags.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 export default async function handler(
@@ -17,6 +18,8 @@ export default async function handler(
 
   const workOrderTypes = await getWorkOrderTypes(request.session.user)
 
+  const tags = await getTags()
+
   response.render('workOrders/search', {
     headTitle: `${getConfigProperty('workOrders.sectionName')} - Search`,
 
@@ -24,6 +27,7 @@ export default async function handler(
 
     assignedToItems,
     workOrderStatuses,
-    workOrderTypes
+    workOrderTypes,
+    tags
   })
 }
