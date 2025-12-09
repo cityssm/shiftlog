@@ -31,18 +31,35 @@
     </div>
     <% } %>
 
-    <h1 class="title is-1">
-      <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search
-    </h1>
+    <div class="columns is-vcentered">
+      <div class="column">
+        <h1 class="title is-1">
+          <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search
+        </h1>
+      </div>
+      <div class="column is-narrow">
+        <div class="field has-addons">
+          <div class="control">
+            <label class="button is-small is-static" for="workOrderSearch--limit">Limit</label>
+          </div>
+          <div class="control">
+            <div class="select is-small">
+              <select id="workOrderSearch--limit" name="limit" form="form--workOrderSearch">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50" selected>50</option>
+                <option value="100">100</option>
+                <option value="250">250</option>
+                <option value="500">500</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="box">
       <form id="form--workOrderSearch">
-        <input
-          id="workOrderSearch--limit"
-          name="limit"
-          type="hidden"
-          value="50"
-        />
         <input
           id="workOrderSearch--offset"
           name="offset"
@@ -114,24 +131,6 @@
         <div class="columns">
           <div class="column">
             <div class="field">
-              <label class="label" for="workOrderSearch--openClosedFilter">Open / Closed</label>
-              <div class="control has-icons-left">
-                <div class="select is-fullwidth">
-                  <select id="workOrderSearch--openClosedFilter" name="openClosedFilter">
-                    <option value="">(All)</option>
-                    <option value="open" selected>Open</option>
-                    <option value="overdue">Overdue</option>
-                    <option value="closed">Closed</option>
-                  </select>
-                </div>
-                <span class="icon is-small is-left">
-                  <i class="fa-solid fa-filter"></i>
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <div class="field">
               <label class="label" for="workOrderSearch--requestor">Requestor</label>
               <div class="control has-icons-left">
                 <input
@@ -157,6 +156,46 @@
                     <% assignedToItems.forEach(function(assignedToItem) { %>
                     <option value="<%= assignedToItem.dataListItemId %>">
                       <%= assignedToItem.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--openClosedFilter">Open / Closed</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderSearch--openClosedFilter" name="openClosedFilter">
+                    <option value="">(All)</option>
+                    <option value="open" selected>Open</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="closed">Closed</option>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--tagName">Tag</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderSearch--tagName" name="tagName">
+                    <option value="">(All Tags)</option>
+                    <% tags.forEach(function(tag) { %>
+                    <option value="<%= tag.tagName %>">
+                      <%= tag.tagName %>
                     </option>
                     <% }); %>
                   </select>
