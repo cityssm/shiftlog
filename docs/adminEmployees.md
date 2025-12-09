@@ -48,6 +48,7 @@ It will only make them unavailable for future records.
 - [User Group Management](./adminUserGroups.md)
 - [Application Settings](./adminSettings.md)
 - [Work Order Types](./adminWorkOrderTypes.md)
+- [Tag Management](./adminTags.md)
 - [Data Lists](./adminDataLists.md)
 - [Equipment Management](./adminEquipment.md)
 - [Location Management](./adminLocations.md)
