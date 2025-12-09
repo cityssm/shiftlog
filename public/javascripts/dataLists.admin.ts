@@ -8,6 +8,11 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+
+interface SortableInstance {
+  destroy: () => void
+}
+
 declare const Sortable: {
   create: (
     element: HTMLElement,
@@ -16,7 +21,7 @@ declare const Sortable: {
       animation: number
       onEnd: () => void
     }
-  ) => void
+  ) => SortableInstance
 }
 
 interface DataListItemWithDetails {
@@ -47,6 +52,9 @@ declare const exports: {
 }
 ;(() => {
   const shiftLog = exports.shiftLog
+
+  // Track Sortable instances to prevent duplicates
+  const sortableInstances = new Map<string, SortableInstance>()
 
   function updateItemCount(dataListKey: string, count: number): void {
     const countElement = document.querySelector(`#itemCount--${dataListKey}`)
@@ -146,6 +154,8 @@ declare const exports: {
 
     // Re-attach event listeners
     attachEventListeners(dataListKey)
+    // Re-initialize sortable
+    initializeSortable(dataListKey)
   }
 
   function addDataListItem(clickEvent: Event): void {
@@ -500,57 +510,87 @@ declare const exports: {
     }
   }
 
-  // Initialize sortable for each data list
-  for (const dataList of exports.dataLists) {
+  function initializeSortable(dataListKey: string): void {
     const tbodyElement = document.querySelector(
-      `#dataListItems--${dataList.dataListKey}`
+      `#dataListItems--${dataListKey}`
     ) as HTMLElement | null
 
-    if (tbodyElement !== null && dataList.items.length > 0) {
-      Sortable.create(tbodyElement, {
-        handle: '.handle',
-        animation: 150,
-        onEnd() {
-          // Get the new order
-          const rows = tbodyElement.querySelectorAll(
-            'tr[data-data-list-item-id]'
-          ) as NodeListOf<HTMLElement>
+    if (tbodyElement === null) {
+      return
+    }
 
-          const dataListItemIds: number[] = []
+    // Check if the tbody has any sortable items (rows with data-data-list-item-id)
+    const hasItems =
+      tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0
 
-          for (const row of rows) {
-            const dataListItemId = row.dataset.dataListItemId
-            if (dataListItemId !== undefined) {
-              dataListItemIds.push(Number.parseInt(dataListItemId, 10))
+    if (!hasItems) {
+      // Destroy existing instance if no items
+      const existingInstance = sortableInstances.get(dataListKey)
+      if (existingInstance !== undefined) {
+        existingInstance.destroy()
+        sortableInstances.delete(dataListKey)
+      }
+      return
+    }
+
+    // Destroy existing Sortable instance before creating a new one
+    const existingInstance = sortableInstances.get(dataListKey)
+    if (existingInstance !== undefined) {
+      existingInstance.destroy()
+    }
+
+    // Create new Sortable instance
+    const sortableInstance = Sortable.create(tbodyElement, {
+      handle: '.handle',
+      animation: 150,
+      onEnd() {
+        // Get the new order
+        const rows = tbodyElement.querySelectorAll(
+          'tr[data-data-list-item-id]'
+        ) as NodeListOf<HTMLElement>
+
+        const dataListItemIds: number[] = []
+
+        for (const row of rows) {
+          const dataListItemId = row.dataset.dataListItemId
+          if (dataListItemId !== undefined) {
+            dataListItemIds.push(Number.parseInt(dataListItemId, 10))
+          }
+        }
+
+        // Send to server
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/admin/doReorderDataListItems`,
+          {
+            dataListKey,
+            dataListItemIds
+          },
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as {
+              success: boolean
+              items?: DataListItemWithDetails[]
+            }
+
+            if (!responseJSON.success) {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                title: 'Error Reordering Items',
+
+                message: 'Please refresh the page and try again.'
+              })
             }
           }
+        )
+      }
+    })
 
-          // Send to server
-          cityssm.postJSON(
-            `${shiftLog.urlPrefix}/admin/doReorderDataListItems`,
-            {
-              dataListKey: dataList.dataListKey,
-              dataListItemIds
-            },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                success: boolean
-                items?: DataListItemWithDetails[]
-              }
+    // Store the instance for future reference
+    sortableInstances.set(dataListKey, sortableInstance)
+  }
 
-              if (!responseJSON.success) {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error Reordering Items',
-
-                  message: 'Please refresh the page and try again.'
-                })
-              }
-            }
-          )
-        }
-      })
-    }
+  // Initialize sortable for each data list
+  for (const dataList of exports.dataLists) {
+    initializeSortable(dataList.dataListKey)
 
     // Attach event listeners for this data list
     attachEventListeners(dataList.dataListKey)

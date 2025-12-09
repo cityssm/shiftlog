@@ -2,6 +2,8 @@
 /* eslint-disable max-lines, unicorn/no-null */
 (() => {
     const shiftLog = exports.shiftLog;
+    // Track Sortable instances to prevent duplicates
+    const sortableInstances = new Map();
     function updateItemCount(dataListKey, count) {
         const countElement = document.querySelector(`#itemCount--${dataListKey}`);
         if (countElement !== null) {
@@ -83,6 +85,8 @@
         }
         // Re-attach event listeners
         attachEventListeners(dataListKey);
+        // Re-initialize sortable
+        initializeSortable(dataListKey);
     }
     function addDataListItem(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
@@ -344,40 +348,63 @@
             button.addEventListener('click', deleteDataListItem);
         }
     }
+    function initializeSortable(dataListKey) {
+        const tbodyElement = document.querySelector(`#dataListItems--${dataListKey}`);
+        if (tbodyElement === null) {
+            return;
+        }
+        // Check if the tbody has any sortable items (rows with data-data-list-item-id)
+        const hasItems = tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0;
+        if (!hasItems) {
+            // Destroy existing instance if no items
+            const existingInstance = sortableInstances.get(dataListKey);
+            if (existingInstance !== undefined) {
+                existingInstance.destroy();
+                sortableInstances.delete(dataListKey);
+            }
+            return;
+        }
+        // Destroy existing Sortable instance before creating a new one
+        const existingInstance = sortableInstances.get(dataListKey);
+        if (existingInstance !== undefined) {
+            existingInstance.destroy();
+        }
+        // Create new Sortable instance
+        const sortableInstance = Sortable.create(tbodyElement, {
+            handle: '.handle',
+            animation: 150,
+            onEnd() {
+                // Get the new order
+                const rows = tbodyElement.querySelectorAll('tr[data-data-list-item-id]');
+                const dataListItemIds = [];
+                for (const row of rows) {
+                    const dataListItemId = row.dataset.dataListItemId;
+                    if (dataListItemId !== undefined) {
+                        dataListItemIds.push(Number.parseInt(dataListItemId, 10));
+                    }
+                }
+                // Send to server
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderDataListItems`, {
+                    dataListKey,
+                    dataListItemIds
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (!responseJSON.success) {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            title: 'Error Reordering Items',
+                            message: 'Please refresh the page and try again.'
+                        });
+                    }
+                });
+            }
+        });
+        // Store the instance for future reference
+        sortableInstances.set(dataListKey, sortableInstance);
+    }
     // Initialize sortable for each data list
     for (const dataList of exports.dataLists) {
-        const tbodyElement = document.querySelector(`#dataListItems--${dataList.dataListKey}`);
-        if (tbodyElement !== null && dataList.items.length > 0) {
-            Sortable.create(tbodyElement, {
-                handle: '.handle',
-                animation: 150,
-                onEnd() {
-                    // Get the new order
-                    const rows = tbodyElement.querySelectorAll('tr[data-data-list-item-id]');
-                    const dataListItemIds = [];
-                    for (const row of rows) {
-                        const dataListItemId = row.dataset.dataListItemId;
-                        if (dataListItemId !== undefined) {
-                            dataListItemIds.push(Number.parseInt(dataListItemId, 10));
-                        }
-                    }
-                    // Send to server
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderDataListItems`, {
-                        dataListKey: dataList.dataListKey,
-                        dataListItemIds
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (!responseJSON.success) {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error Reordering Items',
-                                message: 'Please refresh the page and try again.'
-                            });
-                        }
-                    });
-                }
-            });
-        }
+        initializeSortable(dataList.dataListKey);
         // Attach event listeners for this data list
         attachEventListeners(dataList.dataListKey);
     }
