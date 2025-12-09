@@ -167,6 +167,26 @@
               </div>
             </div>
           </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--tagName">Tag</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderSearch--tagName" name="tagName">
+                    <option value="">(All Tags)</option>
+                    <% tags.forEach(function(tag) { %>
+                    <option value="<%= tag.tagName %>">
+                      <%= tag.tagName %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-tag"></i>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </form>
     </div>

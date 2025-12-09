@@ -88,6 +88,31 @@ declare const exports: {
         extraDateHTML = `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`
       }
 
+      // Build tags HTML
+      let tagsHTML = ''
+      if (workOrder.tags && workOrder.tags.length > 0) {
+        const tagsElements = workOrder.tags
+          .map((tag) => {
+            const backgroundColor = tag.tagBackgroundColor
+              ? `#${tag.tagBackgroundColor}`
+              : ''
+            const textColor = tag.tagTextColor ? `#${tag.tagTextColor}` : ''
+            const style =
+              backgroundColor && textColor
+                ? `style="background-color: ${backgroundColor}; color: ${textColor};"`
+                : ''
+            return `<span class="tag is-small" ${style}>${cityssm.escapeHTML(tag.tagName)}</span>`
+          })
+          .join(' ')
+        tagsHTML = `<div class="tags" style="margin-top: 0.25rem;">${tagsElements}</div>`
+      }
+
+      // Build attachment icon HTML
+      const attachmentIconHTML =
+        workOrder.attachmentsCount && workOrder.attachmentsCount > 0
+          ? `<span class="icon has-text-info" title="${workOrder.attachmentsCount} attachment(s)"><i class="fa-solid fa-paperclip"></i></span>`
+          : ''
+
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
         <td class="has-text-centered">
@@ -105,12 +130,14 @@ declare const exports: {
         <td>
           <a href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
-          </a><br />
+          </a>
+          ${attachmentIconHTML}<br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -
             ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}
           </span>
+          ${tagsHTML}
         </td>
         <td>
           ${cityssm.escapeHTML(workOrder.locationAddress1 === '' ? '-' : workOrder.locationAddress1)}<br />

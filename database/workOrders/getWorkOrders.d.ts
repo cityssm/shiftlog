@@ -8,6 +8,7 @@ export interface GetWorkOrdersFilters {
     workOrderNumber?: string;
     workOrderStatusDataListItemId?: number | string;
     workOrderTypeId?: number | string;
+    tagName?: string;
 }
 export interface GetWorkOrdersOptions {
     limit: number | string;
