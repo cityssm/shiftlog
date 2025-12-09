@@ -336,6 +336,12 @@ export default async function getWorkOrders(
       const tagsRequest = pool.request()
       tagsRequest.input('instance', getConfigProperty('application.instance'))
 
+      // Build parameterized IN clause
+      const parameterNames = workOrderIds.map((_, index) => `@workOrderId${index}`)
+      workOrderIds.forEach((id, index) => {
+        tagsRequest.input(`workOrderId${index}`, id)
+      })
+
       const tagsResult = await tagsRequest.query<{
         workOrderId: number
         tagName: string
@@ -346,7 +352,7 @@ export default async function getWorkOrders(
                t.tagBackgroundColor, t.tagTextColor
         FROM ShiftLog.WorkOrderTags wot
         LEFT JOIN ShiftLog.Tags t ON wot.tagName = t.tagName AND t.instance = @instance AND t.recordDelete_dateTime IS NULL
-        WHERE wot.workOrderId IN (${workOrderIds.join(',')})
+        WHERE wot.workOrderId IN (${parameterNames.join(',')})
         ORDER BY wot.workOrderId, wot.tagName
       `)
 

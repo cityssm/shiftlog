@@ -97,6 +97,7 @@ declare const exports: {
               ? `#${tag.tagBackgroundColor}`
               : ''
             const textColor = tag.tagTextColor ? `#${tag.tagTextColor}` : ''
+            // Only apply custom styling if both colors are present to ensure consistency
             const style =
               backgroundColor && textColor
                 ? `style="background-color: ${backgroundColor}; color: ${textColor};"`
