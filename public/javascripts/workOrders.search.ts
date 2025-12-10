@@ -141,9 +141,9 @@ declare const exports: {
 
       // Build costs icon HTML
       const costsIconHTML =
-        workOrder.costsCount && workOrder.costsCount > 0
+        workOrder.costsCount && workOrder.costsCount > 0 && workOrder.costsTotal !== undefined
           ? /* html */ `
-            <span class="icon" title="${workOrder.costsCount} cost(s)">
+            <span class="icon" title="$${workOrder.costsTotal.toFixed(2)}">
               <i class="fa-solid fa-dollar-sign"></i>
             </span>
           `

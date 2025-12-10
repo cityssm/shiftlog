@@ -270,7 +270,8 @@ export default async function getWorkOrders(
 
           attachments.attachmentsCount,
           notes.notesCount,
-          costs.costsCount
+          costs.costsCount,
+          costs.costsTotal
           
         from ShiftLog.WorkOrders w
 
@@ -312,7 +313,8 @@ export default async function getWorkOrders(
 
         left join (
           select workOrderId,
-            count(*) as costsCount
+            count(*) as costsCount,
+            sum(costAmount) as costsTotal
           from ShiftLog.WorkOrderCosts
           where recordDelete_dateTime is null
           group by workOrderId
