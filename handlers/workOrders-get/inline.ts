@@ -44,7 +44,7 @@ export default async function handler(
 
   const fileStream = fs.createReadStream(filePath)
   
-  fileStream.on('error', (error) => {
+  fileStream.on('error', () => {
     if (!response.headersSent) {
       response.status(500).send('Error reading file')
     }
