@@ -456,7 +456,7 @@ create table ShiftLog.WorkOrderCosts (
   recordUpdate_userName varchar(30) not null,
   recordUpdate_dateTime datetime not null default getdate(),
   recordDelete_userName varchar(30),
-  recordDelete_dateTime dateime,
+  recordDelete_dateTime datetime,
 
   foreign key (workOrderId) references ShiftLog.WorkOrders(workOrderId)
 )
