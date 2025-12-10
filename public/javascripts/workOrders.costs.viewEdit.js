@@ -28,8 +28,8 @@
             tableElement.innerHTML = /* html */ `
         <thead>
           <tr>
-            <th>Amount</th>
             <th>Description</th>
+            <th class="has-text-right">Amount</th>
             <th class="is-hidden-touch">Added By</th>
             <th class="is-hidden-touch">Added On</th>
             ${exports.isEdit ? '<th class="is-hidden-print" style="width: 80px;"></th>' : ''}
@@ -39,7 +39,8 @@
         <tfoot>
           <tr>
             <th>Total</th>
-            <th colspan="${exports.isEdit ? '4' : '3'}" id="costs--total">$0.00</th>
+            <th id="costs--total" class="has-text-right">$0.00</th>
+            <th colspan="${exports.isEdit ? '3' : '2'}"></th>
           </tr>
         </tfoot>
       `;
@@ -52,18 +53,28 @@
                 total += cost.costAmount;
                 // eslint-disable-next-line no-unsanitized/property
                 tableRowElement.innerHTML = /* html */ `
-          <td>$${cost.costAmount.toFixed(2)}</td>
           <td>${cityssm.escapeHTML(cost.costDescription)}</td>
+          <td class="has-text-right">$${cost.costAmount.toFixed(2)}</td>
           <td class="is-hidden-touch">${cityssm.escapeHTML(cost.recordCreate_userName)}</td>
           <td class="is-hidden-touch">${cityssm.dateToString(new Date(cost.recordCreate_dateTime))}</td>
           ${exports.isEdit && canEdit
                     ? /* html */ `
                 <td class="is-hidden-print">
                   <div class="buttons are-small">
-                    <button class="button is-info is-light edit-cost" data-cost-id="${cost.workOrderCostId}" type="button" title="Edit">
+                    <button
+                      class="button edit-cost"
+                      data-cost-id="${cost.workOrderCostId}"
+                      type="button"
+                      title="Edit"
+                    >
                       <span class="icon"><i class="fa-solid fa-edit"></i></span>
                     </button>
-                    <button class="button is-danger is-light delete-cost" data-cost-id="${cost.workOrderCostId}" type="button" title="Delete">
+                    <button
+                      class="button is-danger is-light delete-cost"
+                      data-cost-id="${cost.workOrderCostId}"
+                      type="button"
+                      title="Delete"
+                    >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
                     </button>
                   </div>
