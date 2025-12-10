@@ -283,11 +283,10 @@ declare const bulmaJS: BulmaJS
           ) as HTMLSpanElement
 
           fileInput.addEventListener('change', () => {
-            if (fileInput.files && fileInput.files.length > 0) {
-              fileNameSpan.textContent = fileInput.files[0].name
-            } else {
-              fileNameSpan.textContent = 'No file selected'
-            }
+            fileNameSpan.textContent =
+              fileInput.files && fileInput.files.length > 0
+                ? fileInput.files[0].name
+                : 'No file selected'
           })
         },
         onshown(modalElement, _closeModalFunction) {
