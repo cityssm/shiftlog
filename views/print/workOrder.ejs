@@ -144,7 +144,6 @@
     <thead>
       <tr>
         <th>Title</th>
-        <th>Description</th>
         <th>Assigned To</th>
         <th>Due Date</th>
         <th>Completed</th>
@@ -153,8 +152,10 @@
     <tbody>
       <% for (const milestone of milestones) { %>
       <tr>
-        <td><%= milestone.milestoneTitle %></td>
-        <td><%= milestone.milestoneDescription %></td>
+        <td>
+          <%= milestone.milestoneTitle %><br />
+          <span class="is-size-7"><%= milestone.milestoneDescription %></span>
+        </td>
         <td><%= milestone.assignedToDataListItem ?? '' %></td>
         <td>
           <% if (milestone.milestoneDueDateTime) { %>
