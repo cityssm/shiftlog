@@ -237,6 +237,7 @@ export interface WorkOrder extends BaseRecord {
     overdueMilestonesCount?: number;
     attachmentsCount?: number;
     notesCount?: number;
+    costsCount?: number;
     tags?: WorkOrderTag[];
 }
 export interface WorkOrderTag {
