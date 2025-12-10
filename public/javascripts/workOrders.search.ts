@@ -154,7 +154,7 @@ declare const exports: {
           }
         </td>
         <td>
-          <a href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
+          <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a><br />
           <span class="is-size-7">
