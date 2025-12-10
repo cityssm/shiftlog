@@ -103,15 +103,20 @@ declare const bulmaJS: BulmaJS
           attachment.recordCreate_userName === exports.shiftLog.userName
 
         const fileIcon = getFileIcon(attachment.attachmentFileType)
+        const isImage = attachment.attachmentFileType.startsWith('image/')
 
         // eslint-disable-next-line no-unsanitized/property
         attachmentElement.innerHTML = /* html */ `
           <article class="media">
             <figure class="media-left">
               <p class="image is-48x48">
-                <span class="icon is-large has-text-grey">
-                  <i class="fa-solid ${fileIcon} fa-2x"></i>
-                </span>
+                ${
+                  isImage
+                    ? `<img src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline" alt="${cityssm.escapeHTML(attachment.attachmentFileName)}" style="object-fit: cover; width: 48px; height: 48px;" />`
+                    : `<span class="icon is-large has-text-grey">
+                         <i class="fa-solid ${fileIcon} fa-2x"></i>
+                       </span>`
+                }
               </p>
             </figure>
             <div class="media-content">
