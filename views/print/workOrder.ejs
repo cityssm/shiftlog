@@ -219,8 +219,8 @@
   <table class="table is-fullwidth">
     <thead>
       <tr>
-        <th>Amount</th>
         <th>Description</th>
+        <th class="has-text-right">Amount</th>
         <th>Added By</th>
         <th>Date/Time</th>
       </tr>
@@ -232,8 +232,8 @@
           totalCost += cost.costAmount;
       %>
       <tr>
-        <td>$<%= cost.costAmount.toFixed(2) %></td>
         <td><%= cost.costDescription %></td>
+        <td class="has-text-right">$<%= cost.costAmount.toFixed(2) %></td>
         <td><%= cost.recordCreate_userName %></td>
         <td>
           <%= dateTimeFunctions.dateToString(cost.recordCreate_dateTime) %>
@@ -244,8 +244,9 @@
     </tbody>
     <tfoot>
       <tr>
-        <th>$<%= totalCost.toFixed(2) %></th>
-        <th colspan="3">Total</th>
+        <th>Total</th>
+        <th class="has-text-right">$<%= totalCost.toFixed(2) %></th>
+        <th colspan="2"></th>
       </tr>
     </tfoot>
   </table>
