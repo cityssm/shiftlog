@@ -1,0 +1,23 @@
+.report-block {
+  position: relative;
+}
+
+.is-delete-report-block-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.report-block .is-delete-report-block-button {
+  display: none;
+}
+
+.report-block:hover .is-delete-report-block-button {
+  display: block;
+}
+
+@media print {
+  .is-delete-report-block-button {
+    display: none !important;
+  }
+}

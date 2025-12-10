@@ -133,7 +133,12 @@
 %>
 
 <% if (milestones.length > 0) { %>
-<div class="box avoid-page-break">
+<div class="box avoid-page-break report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Milestones section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
   <h2 class="title is-4">Milestones</h2>
   <table class="table is-fullwidth">
     <thead>
@@ -171,7 +176,12 @@
 <% } %>
 
 <% if (notes.length > 0) { %>
-<div class="box">
+<div class="box report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Notes section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
   <h2 class="title is-4">Notes</h2>
   <table class="table is-fullwidth">
     <thead>
