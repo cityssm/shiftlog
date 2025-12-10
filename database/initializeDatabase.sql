@@ -444,6 +444,24 @@ create table ShiftLog.WorkOrderAttachments (
 )
 GO
 
+create table ShiftLog.WorkOrderCosts (
+  workOrderCostId int not null primary key identity(1,1),
+  workOrderId int not null,
+
+  costAmount decimal(18,2) not null default 0,
+  costDescription varchar(200) not null default '',
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime dateime,
+
+  foreign key (workOrderId) references ShiftLog.WorkOrders(workOrderId)
+)
+GO
+
 -- SHIFTS
 
 CREATE TABLE ShiftLog.Shifts (
