@@ -1,5 +1,6 @@
 import generateBarcodeSvg from '@cityssm/jsbarcode-svg';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
+import getWorkOrderCosts from '../../database/workOrders/getWorkOrderCosts.js';
 import getWorkOrderMilestones from '../../database/workOrders/getWorkOrderMilestones.js';
 import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
@@ -20,8 +21,10 @@ export default async function handler(request, response) {
     });
     const milestones = await getWorkOrderMilestones(request.params.workOrderId);
     const notes = await getWorkOrderNotes(request.params.workOrderId);
+    const costs = await getWorkOrderCosts(request.params.workOrderId);
     response.render('print/workOrder', {
         headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
+        costs,
         milestones,
         notes,
         workOrder,

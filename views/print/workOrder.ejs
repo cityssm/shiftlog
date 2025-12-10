@@ -208,4 +208,49 @@
 </div>
 <% } %>
 
+<% if (costs.length > 0) { %>
+<div class="box avoid-page-break report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Costs section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
+  <h2 class="title is-4">Costs</h2>
+  <table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th class="has-text-right">Amount</th>
+        <th>Added By</th>
+        <th>Date/Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% 
+        let totalCost = 0;
+        for (const cost of costs) {
+          totalCost += cost.costAmount;
+      %>
+      <tr>
+        <td><%= cost.costDescription %></td>
+        <td class="has-text-right">$<%= cost.costAmount.toFixed(2) %></td>
+        <td><%= cost.recordCreate_userName %></td>
+        <td>
+          <%= dateTimeFunctions.dateToString(cost.recordCreate_dateTime) %>
+          <%= dateTimeFunctions.dateToTimeString(cost.recordCreate_dateTime) %>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Total</th>
+        <th class="has-text-right">$<%= totalCost.toFixed(2) %></th>
+        <th colspan="2"></th>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+<% } %>
+
 <%- await include('_footer-print'); -%>

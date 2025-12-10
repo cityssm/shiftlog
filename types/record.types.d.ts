@@ -237,6 +237,8 @@ export interface WorkOrder extends BaseRecord {
     overdueMilestonesCount?: number;
     attachmentsCount?: number;
     notesCount?: number;
+    costsCount?: number;
+    costsTotal?: number;
     tags?: WorkOrderTag[];
 }
 export interface WorkOrderTag {
@@ -255,6 +257,12 @@ export interface WorkOrderMilestone extends BaseRecord {
     assignedToDataListItemId?: number | null;
     assignedToDataListItem?: string;
     orderNumber: number;
+}
+export interface WorkOrderCost extends BaseRecord {
+    workOrderCostId: number;
+    workOrderId: number;
+    costAmount: number;
+    costDescription: string;
 }
 export interface WorkOrderAttachment extends BaseRecord {
     workOrderAttachmentId: number;

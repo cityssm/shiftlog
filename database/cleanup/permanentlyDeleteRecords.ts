@@ -148,6 +148,22 @@ export default async function permanentlyDeleteRecords(): Promise<{
       )
     }
 
+    // WorkOrderCosts - no foreign keys to check
+    const costsResult = await pool
+      .request()
+      .input('cutoffDate', cutoffDate).query(/* sql */ `
+        DELETE FROM ShiftLog.WorkOrderCosts
+        WHERE recordDelete_dateTime IS NOT NULL
+          AND recordDelete_dateTime < @cutoffDate
+      `)
+
+    if (costsResult.rowsAffected[0] > 0) {
+      deletedCount += costsResult.rowsAffected[0]
+      debug(
+        `Permanently deleted ${costsResult.rowsAffected[0]} WorkOrderCosts records`
+      )
+    }
+
     // Step 3: Clean up WorkOrders that have no active child records
     const workOrdersResult = await pool
       .request()
@@ -172,6 +188,10 @@ export default async function permanentlyDeleteRecords(): Promise<{
           AND NOT EXISTS (
             SELECT 1 FROM ShiftLog.WorkOrderAttachments wa
             WHERE wa.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM ShiftLog.WorkOrderCosts wc
+            WHERE wc.workOrderId = wo.workOrderId
           )
       `)
     if (workOrdersResult.rowsAffected[0] > 0) {

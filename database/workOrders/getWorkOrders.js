@@ -172,7 +172,9 @@ export default async function getWorkOrders(filters, options, user) {
           milestones.milestonesCompletedCount,
 
           attachments.attachmentsCount,
-          notes.notesCount
+          notes.notesCount,
+          costs.costsCount,
+          costs.costsTotal
           
         from ShiftLog.WorkOrders w
 
@@ -211,6 +213,15 @@ export default async function getWorkOrders(filters, options, user) {
           where recordDelete_dateTime is null
           group by workOrderId
         ) as notes on notes.workOrderId = w.workOrderId
+
+        left join (
+          select workOrderId,
+            count(*) as costsCount,
+            sum(costAmount) as costsTotal
+          from ShiftLog.WorkOrderCosts
+          where recordDelete_dateTime is null
+          group by workOrderId
+        ) as costs on costs.workOrderId = w.workOrderId
 
         ${whereClause}    
 
