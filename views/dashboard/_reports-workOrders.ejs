@@ -1,18 +1,50 @@
 <div class="columns">
-  <div class="column">
+  <div class="column is-7">
     <div class="panel">
-      <a class="panel-block" href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/workOrders-open">
+      <a
+        class="panel-block"
+        href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/workOrders-open"
+      >
         <div class="media">
           <div class="media-left">
             <i class="fa-solid fa-3x fa-file-csv"></i>
           </div>
           <div class="media-content">
             <h2 class="title is-4 mb-0 has-text-link">
-              Open <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
+              Open <%=
+              configFunctions.getConfigProperty('workOrders.sectionName') %>
             </h2>
             <p>
-              Generate a report of open
-              <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
+              Generate a report of open <%=
+              configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase()
+              %>.
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="column">
+    <div class="panel is-info">
+      <div class="panel-heading">Data Integrity Reports</div>
+      <a
+        class="panel-block"
+        href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/workOrders-workOrderTags-unmanaged"
+      >
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-2x fa-file-csv"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-5 mb-0 has-text-link">
+              Unmanaged Tags on <%=
+              configFunctions.getConfigProperty('workOrders.sectionName') %>
+            </h2>
+            <p class="is-size-7">
+              Unmanaged tags are tags that are not defined by the system
+              administrator. While not bad for one offs, these tags may be more
+              prone to errors and inconsistencies, and be more difficult to
+              report on.
             </p>
           </div>
         </div>

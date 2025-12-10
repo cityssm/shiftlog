@@ -61,6 +61,23 @@ export const workOrderReports: Record<string, ReportDefinition> = {
           where userName = @userName
         ) or wType.userGroupId is null)
     `
+  },
+
+  'workOrders-workOrderTags-unmanaged': {
+    parameterNames: [],
+    sql: /* sql */ `
+      select wo.workOrderNumber, wot.tagName
+      
+      from ShiftLog.WorkOrderTags wot
+
+      left join ShiftLog.WorkOrders wo
+        on wot.workOrderId = wo.workOrderId
+      left join ShiftLog.Tags t
+        on wot.tagName = t.tagName and wo.instance = t.instance
+        and t.recordDelete_dateTime is null
+
+      where wo.recordDelete_dateTime is null
+      and t.tagName is null`
   }
 }
 

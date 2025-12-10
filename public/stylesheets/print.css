@@ -18,6 +18,7 @@
 
 @media print {
   .is-delete-report-block-button {
+    /* eslint-disable-next-line css/no-important */
     display: none !important;
   }
 }
