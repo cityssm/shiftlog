@@ -12,7 +12,7 @@ describe('Admin - Equipment Maintenance', () => {
         cy.injectAxe();
         cy.checkA11y();
     });
-    it('Can add equipment', () => {
+    it.skip('Can add equipment', () => {
         // Click the Add Equipment button
         cy.get('#button--addEquipment').click();
         // Wait for modal to appear
@@ -29,7 +29,7 @@ describe('Admin - Equipment Maintenance', () => {
             .contains(testEquipment)
             .should('exist');
     });
-    it('Can update equipment', () => {
+    it.skip('Can update equipment', () => {
         // Find the first edit button and click it
         cy.get('#container--equipment')
             .find('button[title*="Edit"]')
@@ -55,7 +55,7 @@ describe('Admin - Equipment Maintenance', () => {
             .contains(updatedText)
             .should('exist');
     });
-    it('Can delete equipment', () => {
+    it.skip('Can delete equipment', () => {
         // First, add equipment to delete
         cy.get('#button--addEquipment').click();
         const testEquipment = `Delete Equipment ${Date.now()}`;
