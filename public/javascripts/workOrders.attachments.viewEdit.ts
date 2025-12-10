@@ -103,15 +103,27 @@ declare const bulmaJS: BulmaJS
           attachment.recordCreate_userName === exports.shiftLog.userName
 
         const fileIcon = getFileIcon(attachment.attachmentFileType)
+        const isImage = attachment.attachmentFileType.startsWith('image/')
 
         // eslint-disable-next-line no-unsanitized/property
         attachmentElement.innerHTML = /* html */ `
           <article class="media">
             <figure class="media-left">
               <p class="image is-48x48">
-                <span class="icon is-large has-text-grey">
-                  <i class="fa-solid ${fileIcon} fa-2x"></i>
-                </span>
+                ${
+                  isImage
+                    ? /* html */ `
+                      <img
+                        src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline"
+                        alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
+                        style="object-fit: cover; width: 48px; height: 48px;"
+                        loading="lazy"
+                      />
+                    `
+                    : `<span class="icon is-large has-text-grey">
+                         <i class="fa-solid ${fileIcon} fa-2x"></i>
+                       </span>`
+                }
               </p>
             </figure>
             <div class="media-content">
@@ -271,11 +283,10 @@ declare const bulmaJS: BulmaJS
           ) as HTMLSpanElement
 
           fileInput.addEventListener('change', () => {
-            if (fileInput.files && fileInput.files.length > 0) {
-              fileNameSpan.textContent = fileInput.files[0].name
-            } else {
-              fileNameSpan.textContent = 'No file selected'
-            }
+            fileNameSpan.textContent =
+              fileInput.files && fileInput.files.length > 0
+                ? fileInput.files[0].name
+                : 'No file selected'
           })
         },
         onshown(modalElement, _closeModalFunction) {
@@ -330,7 +341,7 @@ declare const bulmaJS: BulmaJS
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
-            
+
             attachments: WorkOrderAttachment[]
           }
 
