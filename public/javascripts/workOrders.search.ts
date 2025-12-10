@@ -139,6 +139,16 @@ declare const exports: {
           `
           : ''
 
+      // Build costs icon HTML
+      const costsIconHTML =
+        workOrder.costsCount && workOrder.costsCount > 0
+          ? /* html */ `
+            <span class="icon" title="${workOrder.costsCount} cost(s)">
+              <i class="fa-solid fa-dollar-sign"></i>
+            </span>
+          `
+          : ''
+
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
         <td class="has-text-centered">
@@ -185,6 +195,7 @@ declare const exports: {
         <td>
           ${notesIconHTML}
           ${attachmentIconHTML}
+          ${costsIconHTML}
         </td>
         <td class="is-hidden-print">
           <a

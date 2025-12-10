@@ -600,6 +600,19 @@
             </div>
           </a>
         </li>
+        <li>
+          <a href="#tab--costs" title="Costs">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-dollar-sign"></i></span>
+              </div>
+              <div class="column is-hidden-touch">
+                Costs
+                <span class="tag is-rounded ml-2" id="costsCount">0</span>
+              </div>
+            </div>
+          </a>
+        </li>
       </ul>  
     </div>
   </div>
@@ -618,6 +631,9 @@
       </div>
       <div id="tab--attachments" class="is-hidden">
         <%- await include('_edit-attachments'); -%>
+      </div>
+      <div id="tab--costs" class="is-hidden">
+        <%- await include('_edit-costs'); -%>
       </div>
       <div id="tab--tags" class="is-hidden">
         <%- await include('_edit-tags'); -%>
@@ -644,6 +660,7 @@
 <script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.notes.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.attachments.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.costs.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.tags.viewEdit.js"></script>
 
 <% if (isEdit) { %>

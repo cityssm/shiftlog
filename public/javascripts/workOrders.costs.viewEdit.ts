@@ -1,0 +1,324 @@
+import type { BulmaJS } from '@cityssm/bulma-js/types.js'
+import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+
+import type { ShiftLogGlobal } from './types.js'
+
+declare const exports: {
+  shiftLog: ShiftLogGlobal
+  isEdit: boolean
+}
+
+declare const cityssm: cityssmGlobal
+declare const bulmaJS: BulmaJS
+;(() => {
+  const workOrderFormElement = document.querySelector(
+    '#form--workOrder'
+  ) as HTMLFormElement | null
+
+  const workOrderId =
+    workOrderFormElement === null
+      ? ''
+      : (
+          workOrderFormElement.querySelector(
+            '#workOrder--workOrderId'
+          ) as HTMLInputElement
+        ).value
+
+  /*
+   * Costs functionality
+   */
+
+  const costsContainerElement = document.querySelector(
+    '#container--costs'
+  ) as HTMLElement | null
+
+  if (costsContainerElement !== null) {
+    interface WorkOrderCost {
+      workOrderCostId: number
+      workOrderId: number
+      costAmount: number
+      costDescription: string
+      recordCreate_userName: string
+      recordCreate_dateTime: string
+      recordUpdate_userName: string
+      recordUpdate_dateTime: string
+    }
+
+    function renderCosts(costs: WorkOrderCost[]): void {
+      // Update costs count
+      const costsCountElement = document.querySelector('#costsCount')
+      if (costsCountElement !== null) {
+        costsCountElement.textContent = costs.length.toString()
+      }
+
+      if (costs.length === 0) {
+        costsContainerElement.innerHTML = /* html */ `
+          <div class="message is-info">
+            <p class="message-body">No costs have been added yet.</p>
+          </div>
+        `
+        return
+      }
+
+      const tableElement = document.createElement('table')
+      tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+
+      // eslint-disable-next-line no-unsanitized/property
+      tableElement.innerHTML = /* html */ `
+        <thead>
+          <tr>
+            <th>Amount</th>
+            <th>Description</th>
+            <th class="is-hidden-touch">Added By</th>
+            <th class="is-hidden-touch">Added On</th>
+            ${exports.isEdit ? '<th class="is-hidden-print" style="width: 80px;"></th>' : ''}
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <th>Total</th>
+            <th colspan="${exports.isEdit ? '4' : '3'}" id="costs--total">$0.00</th>
+          </tr>
+        </tfoot>
+      `
+
+      const tableBodyElement = tableElement.querySelector(
+        'tbody'
+      ) as HTMLTableSectionElement
+
+      let total = 0
+
+      for (const cost of costs) {
+        const tableRowElement = document.createElement('tr')
+
+        const canEdit =
+          exports.shiftLog.userCanManageWorkOrders ||
+          cost.recordCreate_userName === exports.shiftLog.userName
+
+        total += cost.costAmount
+
+        // eslint-disable-next-line no-unsanitized/property
+        tableRowElement.innerHTML = /* html */ `
+          <td>$${cost.costAmount.toFixed(2)}</td>
+          <td>${cityssm.escapeHTML(cost.costDescription)}</td>
+          <td class="is-hidden-touch">${cityssm.escapeHTML(cost.recordCreate_userName)}</td>
+          <td class="is-hidden-touch">${cityssm.dateToString(new Date(cost.recordCreate_dateTime))}</td>
+          ${
+            exports.isEdit && canEdit
+              ? /* html */ `
+                <td class="is-hidden-print">
+                  <div class="buttons are-small">
+                    <button class="button is-info is-light edit-cost" data-cost-id="${cost.workOrderCostId}" type="button" title="Edit">
+                      <span class="icon"><i class="fa-solid fa-edit"></i></span>
+                    </button>
+                    <button class="button is-danger is-light delete-cost" data-cost-id="${cost.workOrderCostId}" type="button" title="Delete">
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
+                </td>
+              `
+              : exports.isEdit
+                ? '<td></td>'
+                : ''
+          }
+        `
+
+        if (exports.isEdit && canEdit) {
+          const editButton = tableRowElement.querySelector(
+            '.edit-cost'
+          ) as HTMLButtonElement
+          editButton.addEventListener('click', () => {
+            showEditCostModal(cost)
+          })
+
+          const deleteButton = tableRowElement.querySelector(
+            '.delete-cost'
+          ) as HTMLButtonElement
+          deleteButton.addEventListener('click', () => {
+            deleteCost(cost.workOrderCostId)
+          })
+        }
+
+        tableBodyElement.append(tableRowElement)
+      }
+
+      // Update total
+      const totalElement = tableElement.querySelector('#costs--total')
+      if (totalElement !== null) {
+        totalElement.textContent = `$${total.toFixed(2)}`
+      }
+
+      costsContainerElement.replaceChildren(tableElement)
+    }
+
+    function showEditCostModal(cost: WorkOrderCost): void {
+      let closeModalFunction: () => void
+
+      function doUpdateCost(submitEvent: Event): void {
+        submitEvent.preventDefault()
+        const formElement = submitEvent.currentTarget as HTMLFormElement
+
+        cityssm.postJSON(
+          `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderCost`,
+          formElement,
+          (responseJSON) => {
+            if (responseJSON.success) {
+              closeModalFunction()
+              loadCosts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to update cost.'
+              })
+            }
+          }
+        )
+      }
+
+      cityssm.openHtmlModal('workOrders-editCost', {
+        onshow(modalElement) {
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderCost--workOrderCostId'
+            ) as HTMLInputElement
+          ).value = cost.workOrderCostId.toString()
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderCost--costAmount'
+            ) as HTMLInputElement
+          ).value = cost.costAmount.toString()
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderCost--costDescription'
+            ) as HTMLInputElement
+          ).value = cost.costDescription
+        },
+        onshown(modalElement, _closeModalFunction) {
+          bulmaJS.toggleHtmlClipped()
+          closeModalFunction = _closeModalFunction
+          modalElement
+            .querySelector('form')
+            ?.addEventListener('submit', doUpdateCost)
+        },
+
+        onremoved() {
+          bulmaJS.toggleHtmlClipped()
+        }
+      })
+    }
+
+    function showAddCostModal(): void {
+      let closeModalFunction: () => void
+
+      function doAddCost(submitEvent: Event): void {
+        submitEvent.preventDefault()
+        const formElement = submitEvent.currentTarget as HTMLFormElement
+
+        cityssm.postJSON(
+          `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderCost`,
+          formElement,
+          (responseJSON) => {
+            if (responseJSON.success) {
+              closeModalFunction()
+              formElement.reset()
+              loadCosts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to add cost.'
+              })
+            }
+          }
+        )
+      }
+
+      cityssm.openHtmlModal('workOrders-addCost', {
+        onshow(modalElement) {
+          ;(
+            modalElement.querySelector(
+              '#addWorkOrderCost--workOrderId'
+            ) as HTMLInputElement
+          ).value = workOrderId
+        },
+        onshown(modalElement, _closeModalFunction) {
+          bulmaJS.toggleHtmlClipped()
+          closeModalFunction = _closeModalFunction
+          modalElement
+            .querySelector('form')
+            ?.addEventListener('submit', doAddCost)
+          ;(
+            modalElement.querySelector(
+              '#addWorkOrderCost--costAmount'
+            ) as HTMLInputElement
+          ).focus()
+        },
+
+        onremoved() {
+          bulmaJS.toggleHtmlClipped()
+        }
+      })
+    }
+
+    function deleteCost(workOrderCostId: number): void {
+      bulmaJS.confirm({
+        contextualColorName: 'danger',
+        title: 'Delete Cost',
+
+        message: 'Are you sure you want to delete this cost?',
+        okButton: {
+          text: 'Delete',
+
+          callbackFunction: () => {
+            cityssm.postJSON(
+              `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderCost`,
+              {
+                workOrderCostId
+              },
+              (responseJSON) => {
+                if (responseJSON.success) {
+                  loadCosts()
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: 'Failed to delete cost.'
+                  })
+                }
+              }
+            )
+          }
+        }
+      })
+    }
+
+    function loadCosts(): void {
+      cityssm.postJSON(
+        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderCosts`,
+        {},
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            costs: WorkOrderCost[]
+          }
+
+          if (responseJSON.success) {
+            renderCosts(responseJSON.costs)
+          }
+        }
+      )
+    }
+
+    // Add cost button
+    const addCostButton = document.querySelector(
+      '#button--addCost'
+    ) as HTMLButtonElement | null
+    if (addCostButton !== null) {
+      addCostButton.addEventListener('click', () => {
+        showAddCostModal()
+      })
+    }
+
+    // Load costs initially
+    loadCosts()
+  }
+})()

@@ -1,0 +1,65 @@
+<div
+  class="modal"
+  id="modal--addWorkOrderCost"
+  role="dialog"
+  aria-label="Add Cost"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Cost</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addWorkOrderCost">
+        <input id="addWorkOrderCost--workOrderId" name="workOrderId" type="hidden" />
+        <div class="field">
+          <label class="label" for="addWorkOrderCost--costAmount">Amount</label>
+          <div class="control has-icons-left">
+            <input
+              class="input"
+              id="addWorkOrderCost--costAmount"
+              name="costAmount"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              required
+            />
+            <span class="icon is-small is-left">
+              <i class="fa-solid fa-dollar-sign"></i>
+            </span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addWorkOrderCost--costDescription">Description</label>
+          <div class="control">
+            <input
+              class="input"
+              id="addWorkOrderCost--costDescription"
+              name="costDescription"
+              type="text"
+              maxlength="200"
+              placeholder="Enter cost description..."
+              required
+            />
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-success" type="submit" form="form--addWorkOrderCost">
+          Add Cost
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

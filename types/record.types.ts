@@ -358,6 +358,14 @@ export interface WorkOrderMilestone extends BaseRecord {
   orderNumber: number
 }
 
+export interface WorkOrderCost extends BaseRecord {
+  workOrderCostId: number
+  workOrderId: number
+
+  costAmount: number
+  costDescription: string
+}
+
 export interface WorkOrderAttachment extends BaseRecord {
   workOrderAttachmentId: number
   workOrderId: number
