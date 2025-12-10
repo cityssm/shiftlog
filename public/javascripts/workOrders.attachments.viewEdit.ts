@@ -112,7 +112,14 @@ declare const bulmaJS: BulmaJS
               <p class="image is-48x48">
                 ${
                   isImage
-                    ? `<img src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline" alt="${cityssm.escapeHTML(attachment.attachmentFileName)}" style="object-fit: cover; width: 48px; height: 48px;" />`
+                    ? /* html */ `
+                      <img
+                        src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline"
+                        alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
+                        style="object-fit: cover; width: 48px; height: 48px;"
+                        loading="lazy"
+                      />
+                    `
                     : `<span class="icon is-large has-text-grey">
                          <i class="fa-solid ${fileIcon} fa-2x"></i>
                        </span>`
@@ -335,7 +342,7 @@ declare const bulmaJS: BulmaJS
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
-            
+
             attachments: WorkOrderAttachment[]
           }
 
