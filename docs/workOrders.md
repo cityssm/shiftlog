@@ -18,7 +18,9 @@ to accessibility complaints to public works maintenance.
 - [Work Order Features](#work-order-features)
   - [Notes](#notes)
   - [Milestones](#milestones)
+  - [Tags](#tags)
   - [Attachments](#attachments)
+  - [Costs](#costs)
 - [Work Order Map](#work-order-map)
 - [Record Recovery](#record-recovery)
 
@@ -207,7 +209,7 @@ Milestones track significant events or progress points in completing a work orde
    - Milestone name/description
    - Due date and time
    - Completed date and time
-5. Click **SavAdd Milestone**.
+5. Click **Add Milestone**.
 
 #### Managing Milestones
 
@@ -224,6 +226,49 @@ Milestones track significant events or progress points in completing a work orde
 - Parts ordered
 - Work completed
 - Quality check passed
+
+### Tags
+
+Tags provide a flexible way to categorize, label, and organize work orders with
+customizable color-coding. Tags can be used to indicate status, priority,
+categories, or any other classification that helps organize your work.
+
+#### Adding a Tag
+
+1. View the work order. Switch to Edit mode.
+2. Navigate to the **Tags** tab.
+3. Click **Add Tag**.
+4. Enter the tag name.
+5. Click **Add Tag** to save.
+
+#### Tag Features
+
+- **System Tags**: Tags that exist in the Tag Management system display with
+  their configured background and text colors.
+- **Ad-hoc Tags**: Tags that don't exist in the system can still be added and
+  will display with default styling.
+- Multiple tags can be added to a single work order.
+- Tags can be deleted from the work order at any time.
+- Tags display on the work order view and in search results.
+
+#### Managing System Tags
+
+To create and manage system-wide tags with custom colors:
+
+1. Navigate to **Administrator Tools** > **Tags** (requires Admin permission).
+2. Create tags with custom background and text colors.
+3. These tags will automatically display with their configured colors when used on work orders.
+
+See [Tag Management](./adminTags.md) for more information on creating and
+managing system tags.
+
+#### Tag Best Practices
+
+- Use consistent tag names across work orders.
+- Create system tags for commonly used labels.
+- Use tags to filter and organize work orders in searches.
+- Choose meaningful tag names that convey information at a glance.
+- Use colors strategically (e.g., red for urgent, green for completed).
 
 ### Attachments
 
@@ -251,6 +296,55 @@ Attachments allow you to add supporting documents, photos, and files to work ord
 - Attach relevant permits or approvals.
 - Include diagrams or sketches.
 - Add supporting documentation or correspondence.
+
+### Costs
+
+The Costs feature allows you to track expenses associated with a work order,
+including materials, labor, equipment, and other costs. This helps with budget
+tracking, reporting, and cost analysis.
+
+#### Adding a Cost
+
+1. View the work order. Switch to Edit mode.
+2. Navigate to the **Costs** tab.
+3. Click **Add Cost**.
+4. Enter cost details:
+   - **Cost Amount**: The monetary value of the cost
+   - **Description**: Details about what the cost represents
+5. Click **Add Cost** to save.
+
+#### Managing Costs
+
+- Multiple costs can be added to track different expenses.
+- Costs are timestamped with the date and author.
+- Edit costs to update the amount or description.
+- Delete costs if they were entered in error.
+- The total of all costs is displayed in the Costs tab.
+
+#### Cost Tracking Features
+
+- Track all expenses related to a work order in one place.
+- Generate cost reports and summaries.
+- Monitor budget vs. actual costs.
+- Analyze cost trends across work order types.
+
+#### Common Cost Examples
+
+- Materials and supplies
+- Labor costs
+- Equipment rental
+- Contractor fees
+- Permit fees
+- Parts and components
+- Third-party services
+
+#### Best Practices for Costs
+
+- Enter costs promptly to maintain accurate records.
+- Use clear, descriptive cost descriptions.
+- Break down costs into specific categories for better tracking.
+- Review costs regularly for accuracy.
+- Use consistent naming conventions for similar cost types.
 
 ---
 
@@ -318,7 +412,7 @@ Different permission levels control what users can do with work orders:
 
 - View work orders
 - Search and filter work orders
-- View work order details, notes, milestones, and attachments
+- View work order details, notes, milestones, tags, attachments, and costs
 - Print work orders
 
 ### Update
@@ -328,7 +422,9 @@ Different permission levels control what users can do with work orders:
 - Edit existing work orders
 - Add/edit/delete notes
 - Add/edit/delete milestones
+- Add/delete tags
 - Upload and delete attachments
+- Add/edit/delete costs
 - Close and reopen work orders
 - Delete work orders
 
@@ -365,12 +461,27 @@ Different permission levels control what users can do with work orders:
 - Update milestone status promptly.
 - Use milestones to track approval workflows.
 
+### Using Tags Effectively
+
+- Apply tags consistently across similar work orders.
+- Use system tags for commonly used categories.
+- Tag work orders as status changes occur.
+- Use tags to filter and group work orders in searches.
+
 ### Managing Attachments
 
 - Use descriptive file names.
 - Take clear, well-lit photos.
 - Keep file sizes reasonable.
 - Remove obsolete attachments.
+
+### Tracking Costs
+
+- Enter costs as they are incurred.
+- Use detailed descriptions for each cost.
+- Break down large expenses into specific items.
+- Review cost totals regularly for accuracy.
+- Use cost data for budgeting and reporting.
 
 ### Leveraging the Map
 
