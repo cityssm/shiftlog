@@ -69,12 +69,26 @@ export const workOrderReports = {
 
       left join ShiftLog.WorkOrders wo
         on wot.workOrderId = wo.workOrderId
+
+      left join ShiftLog.WorkOrderTypes woType
+        on wo.workOrderTypeId = woType.workOrderTypeId
+
       left join ShiftLog.Tags t
         on wot.tagName = t.tagName and wo.instance = t.instance
         and t.recordDelete_dateTime is null
 
       where wo.recordDelete_dateTime is null
-      and t.tagName is null`
+        and t.tagName is null
+        and wo.instance = @instance
+
+        and (
+          woType.userGroupId in (
+            select userGroupId
+            from ShiftLog.UserGroupMembers
+            where userName = @userName
+          ) or woType.userGroupId is null
+        )
+    `
     }
 };
 export default workOrderReports;
