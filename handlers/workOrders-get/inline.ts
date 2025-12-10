@@ -39,7 +39,17 @@ export default async function handler(
     `inline; ${encodeFilenameForContentDisposition(attachment.attachmentFileName)}`
   )
   response.setHeader('Content-Length', attachment.attachmentFileSizeInBytes)
+  response.setHeader('X-Content-Type-Options', 'nosniff')
+  response.setHeader('Cache-Control', 'private, max-age=3600')
 
   const fileStream = fs.createReadStream(filePath)
+  
+  fileStream.on('error', (error) => {
+    if (!response.headersSent) {
+      response.status(500).send('Error reading file')
+    }
+    fileStream.destroy()
+  })
+
   fileStream.pipe(response)
 }
