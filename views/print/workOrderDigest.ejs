@@ -51,7 +51,7 @@
         <td><%= workOrder.workOrderType ?? '' %></td>
         <td><%= workOrder.workOrderStatusDataListItem ?? '' %></td>
         <td style="white-space: pre-wrap; max-width: 300px;">
-          <%= workOrder.workOrderDetails.length > 100 ? workOrder.workOrderDetails.substring(0, 100) + '...' : workOrder.workOrderDetails %>
+          <%= (workOrder.workOrderDetails && workOrder.workOrderDetails.length > 100) ? workOrder.workOrderDetails.substring(0, 100) + '...' : (workOrder.workOrderDetails || '') %>
         </td>
         <td>
           <% if (workOrder.workOrderDueDateTime) { %>
