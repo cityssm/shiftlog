@@ -1,7 +1,9 @@
 import type { DateString } from '@cityssm/utils-datetime';
 import type { Shift } from '../../types/record.types.js';
 export interface GetShiftsFilters {
-    shiftDateString?: DateString;
+    shiftDateString?: '' | DateString;
+    shiftTypeDataListItemId?: number | string;
+    supervisorEmployeeNumber?: string;
 }
 export interface GetShiftsOptions {
     limit: number | string;

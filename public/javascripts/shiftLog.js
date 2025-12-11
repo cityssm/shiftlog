@@ -169,6 +169,7 @@
      */
     exports.shiftLog = {
         ...exports.shiftLog,
+        daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
         clearUnsavedChanges,
         hasUnsavedChanges,
         setUnsavedChanges,

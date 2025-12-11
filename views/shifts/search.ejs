@@ -40,23 +40,6 @@
         <div class="columns">
           <div class="column">
             <div class="field">
-              <label class="label" for="shiftSearch--supervisorEmployeeNumber">Supervisor</label>
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select id="shiftSearch--supervisorEmployeeNumber" name="supervisorEmployeeNumber">
-                    <option value="">(All Supervisors)</option>
-                    <% supervisors.forEach(function(supervisor) { %>
-                    <option value="<%= supervisor.employeeNumber %>">
-                      <%= supervisor.lastName %>, <%= supervisor.firstName %> (<%= supervisor.employeeNumber %>)
-                    </option>
-                    <% }); %>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <div class="field">
               <label class="label" for="shiftSearch--shiftTypeDataListItemId">
                 <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Type
               </label>
@@ -67,6 +50,23 @@
                     <% shiftTypes.forEach(function(shiftType) { %>
                     <option value="<%= shiftType.dataListItemId %>">
                       <%= shiftType.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="shiftSearch--supervisorEmployeeNumber">Supervisor</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="shiftSearch--supervisorEmployeeNumber" name="supervisorEmployeeNumber">
+                    <option value="">(All Supervisors)</option>
+                    <% supervisors.forEach(function(supervisor) { %>
+                    <option value="<%= supervisor.employeeNumber %>">
+                      <%= supervisor.lastName %>, <%= supervisor.firstName %> (<%= supervisor.employeeNumber %>)
                     </option>
                     <% }); %>
                   </select>

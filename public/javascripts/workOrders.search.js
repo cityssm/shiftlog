@@ -26,7 +26,7 @@
           <th>Open Date</th>
           <th>Requestor</th>
           <th>Assigned To</th>
-          <th class="has-width-1">
+          <th>
             <span class="is-sr-only">Properties</span>
           </th>
           <th class="has-width-1 is-hidden-print">
@@ -146,7 +146,7 @@
         <td>
           ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : (workOrder.assignedToDataListItem ?? ''))}
         </td>
-        <td>
+        <td class="has-text-right">
           ${notesIconHTML}
           ${attachmentIconHTML}
           ${costsIconHTML}

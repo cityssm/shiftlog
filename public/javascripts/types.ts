@@ -1,4 +1,6 @@
 export interface ShiftLogGlobal {
+  daysOfWeek: string[]
+
   apiKey: string
   sessionKeepAliveMillis: number
   urlPrefix: string
