@@ -4,7 +4,10 @@
 
 # Shifts
 
-Shifts are a core feature of ShiftLog, allowing you to track and manage work performed during specific time periods. The system provides a comprehensive framework for documenting shift activities, including employees, crews, equipment, tasks (work orders), notes, and timesheets.
+Shifts are a core feature of ShiftLog, allowing you to track and manage work
+performed during specific time periods. The system provides a comprehensive
+framework for documenting shift activities, including employees, crews,
+equipment, tasks (work orders), notes, and timesheets.
 
 ## Table of Contents
 
@@ -26,11 +29,15 @@ Shifts are a core feature of ShiftLog, allowing you to track and manage work per
 
 ## Overview
 
-Shifts in ShiftLog are used to record work activities performed by employees and equipment during a specific date and time period. Each shift is assigned to a supervisor who is responsible for documenting the work performed, resources used, and any relevant notes.
+Shifts in ShiftLog are used to record work activities performed by employees
+and equipment during a specific date and time period. Each shift is assigned to
+a supervisor who is responsible for documenting the work performed,
+resources used, and any relevant notes.
 
 ### Key Features
 
-- **Shift Types and Times**: Organize shifts by type (e.g., Day Shift, Night Shift) and predefined time periods
+- **Shift Types and Times**: Organize shifts by type (e.g., Day Shift, Night Shift)
+  and predefined time periods
 - **Supervisor Assignment**: Each shift is managed by a designated supervisor
 - **Crew Management**: Group employees into crews for easier organization
 - **Equipment Tracking**: Record equipment usage and operator assignments
@@ -81,7 +88,8 @@ Click on any shift in the results to view its full details.
 
 ## Creating a New Shift
 
-Creating a new shift establishes the basic information for tracking work performed during a specific time period.
+Creating a new shift establishes the basic information for tracking work
+performed during a specific time period.
 
 ### Steps to Create a Shift
 
@@ -98,7 +106,8 @@ Fill in the required information:
 - **Supervisor**: Select the employee responsible for the shift (required)
 - **Description**: Add optional notes about the shift
 
-Click **Create Shift** to create the shift. You will then be redirected to the shift view page where you can add employees, equipment, work orders, and other details.
+Click **Create Shift** to create the shift. You will then be redirected to the
+shift view page where you can add employees, equipment, work orders, and other details.
 
 ---
 
@@ -135,7 +144,8 @@ From the view page, you can:
 
 ## Editing Shifts
 
-The shift edit page allows authorized users to modify shift information and manage associated resources.
+The shift edit page allows authorized users to modify shift information
+and manage associated resources.
 
 ### Permission Requirements
 
@@ -163,11 +173,13 @@ Click **Update Shift** to save your changes.
 
 ### Employees and Equipment
 
-The Employees and Equipment tab allows you to track who worked on the shift and what resources were used.
+The Employees and Equipment tab allows you to track who worked on the shift
+and what resources were used.
 
 #### Managing Crews
 
 **Adding a Crew**:
+
 1. Click the **Add** dropdown button
 2. Select **Add Crew**
 3. Choose a crew from the list
@@ -177,16 +189,19 @@ The Employees and Equipment tab allows you to track who worked on the shift and 
 The system will automatically switch to the Crews tab to show your addition.
 
 **Crew Details**:
+
 - Crew name
 - Notes about the crew's activities
 
 **Actions**:
+
 - **Edit Note**: Update crew notes
 - **Remove**: Remove the crew from the shift
 
 #### Managing Employees
 
 **Adding an Employee**:
+
 1. Click the **Add** dropdown button
 2. Select **Add Employee**
 3. Choose an employee from the list
@@ -197,17 +212,20 @@ The system will automatically switch to the Crews tab to show your addition.
 The system will automatically switch to the Employees tab to show your addition.
 
 **Employee Details**:
+
 - Employee name and number
 - Assigned crew (if applicable)
 - Notes about the employee's work
 
 **Actions**:
+
 - **Edit Note**: Update employee notes
 - **Remove**: Remove the employee from the shift
 
 #### Managing Equipment
 
 **Adding Equipment**:
+
 1. Click the **Add** dropdown button
 2. Select **Add Equipment**
 3. Choose equipment from the list
@@ -218,11 +236,13 @@ The system will automatically switch to the Employees tab to show your addition.
 The system will automatically switch to the Equipment tab to show your addition.
 
 **Equipment Details**:
+
 - Equipment number and name
 - Assigned operator (if applicable)
 - Notes about equipment usage
 
 **Actions**:
+
 - **Assign Operator**: Assign or change the equipment operator
 - **Edit Note**: Update equipment notes
 - **Remove**: Remove the equipment from the shift
@@ -230,22 +250,26 @@ The system will automatically switch to the Equipment tab to show your addition.
 #### Import from Previous Shift
 
 You can quickly populate the shift with resources from a previous shift:
+
 1. Click the **Add** dropdown button
 2. Select **Import from Previous Shift**
 3. The system will load crews, employees, and equipment from the most recent shift
 
 ### Tasks (Work Orders)
 
-The Tasks tab allows you to link work orders to the shift, documenting what work was completed.
+The Tasks tab allows you to link work orders to the shift, documenting what
+work was completed.
 
 #### Adding Work Orders
 
 **Requirements**:
+
 - Work orders must be enabled in the system
 - User must have "View" permission for work orders
 - User must have "Update" permission for shifts
 
 **Steps to Add**:
+
 1. Click **Add Work Order**
 2. Search for the work order by number, location, or description
 3. Select the work order from the search results
@@ -253,25 +277,30 @@ The Tasks tab allows you to link work orders to the shift, documenting what work
 5. Click **Add**
 
 **Work Order Details**:
+
 - Work order number (linked)
 - Type and status
 - Details
 - Notes about work performed on this shift
 
 **Actions**:
+
 - **Edit Note**: Update notes about the work
 - **Remove**: Unlink the work order from the shift
 
 #### Milestones
 
 When work orders with milestones are added to a shift, you can:
+
 - View all milestones from related work orders
 - See milestone due dates and completion status
 - Mark milestones as complete directly from the shift view
 
 ### Notes
 
-The Notes tab provides space to document important information about the shift. This could include:
+The Notes tab provides space to document important information about the shift.
+This could include:
+
 - Incidents or issues that occurred
 - Special instructions or conditions
 - General observations
@@ -279,7 +308,8 @@ The Notes tab provides space to document important information about the shift. 
 
 ### Timesheets
 
-If timesheet functionality is enabled, the Timesheets tab displays timesheets associated with this shift, allowing you to track employee hours for payroll purposes.
+If timesheet functionality is enabled, the Timesheets tab displays timesheets
+associated with this shift, allowing you to track employee hours for payroll purposes.
 
 ---
 
@@ -294,6 +324,7 @@ Shifts can be printed for record-keeping or distribution.
 3. From the shift search results, click the print icon in the Actions column
 
 The print view includes:
+
 - Shift details (date, type, time, supervisor)
 - All crews assigned to the shift
 - All employees assigned to the shift
@@ -307,9 +338,12 @@ The print view includes:
 
 ### Shift Documentation
 
-- **Document promptly**: Add employees, equipment, and work orders as soon as possible while details are fresh
-- **Use notes effectively**: Document important information that might be useful later
-- **Link work orders**: Always link work orders to shifts to maintain accurate work history
+- **Document promptly**: Add employees, equipment, and work orders as soon as
+  possible while details are fresh
+- **Use notes effectively**: Document important information that might be
+  useful later
+- **Link work orders**: Always link work orders to shifts to maintain accurate
+  work history
 - **Review before closing**: Check that all employees, equipment, and tasks are documented
 
 ### Crew Organization
@@ -333,6 +367,7 @@ The print view includes:
 ### Supervisor Responsibilities
 
 As a shift supervisor, you should:
+
 - Create the shift at the beginning of your shift
 - Add employees and equipment as they report
 - Link work orders as tasks are completed
@@ -356,4 +391,5 @@ Deleted shifts can be recovered within a configurable retention period.
 2. Click the **Recover** button
 3. The shift will be restored with all associated data
 
-**Note**: Once the retention period expires, deleted shifts are permanently removed and cannot be recovered.
+**Note**: Once the retention period expires, deleted shifts are permanently
+removed and cannot be recovered.
