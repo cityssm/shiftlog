@@ -24,6 +24,8 @@ function getTransporter(): Transporter<SMTPTransport.SentMessageInfo> | undefine
 
   if (transporterInstance === undefined) {
     debug('Creating nodemailer transporter')
+
+    // eslint-disable-next-line sonarjs/no-clear-text-protocols
     transporterInstance = nodemailer.createTransport(emailConfig)
   }
 
@@ -51,7 +53,7 @@ export async function sendEmail(
     return { success: false, error }
   }
 
-  const emailConfig = getConfigProperty('email')
+  const emailConfig = getConfigProperty('connectors.email')
   
   try {
     const info = await transporter.sendMail({

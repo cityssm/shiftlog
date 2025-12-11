@@ -15,6 +15,7 @@ function getTransporter() {
     }
     if (transporterInstance === undefined) {
         debug('Creating nodemailer transporter');
+        // eslint-disable-next-line sonarjs/no-clear-text-protocols
         transporterInstance = nodemailer.createTransport(emailConfig);
     }
     return transporterInstance;
@@ -29,7 +30,7 @@ export async function sendEmail(options) {
         debug(error);
         return { success: false, error };
     }
-    const emailConfig = getConfigProperty('email');
+    const emailConfig = getConfigProperty('connectors.email');
     try {
         const info = await transporter.sendMail({
             from: emailConfig?.from ?? 'noreply@example.com',
