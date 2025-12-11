@@ -74,7 +74,7 @@
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ `
         <td>
-          <a href="${shiftLog.buildShiftURL(shift.shiftId)}">
+          <a class="has-text-weight-semibold" href="${shiftLog.buildShiftURL(shift.shiftId)}">
             ${cityssm.escapeHTML(shift.shiftId.toString())}
           </a>
         </td>
