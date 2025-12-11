@@ -1,0 +1,139 @@
+<div
+  class="modal"
+  id="modal--editScheduledReport"
+  role="dialog"
+  aria-label="Edit Scheduled Report"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Scheduled Report</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editScheduledReport">
+        <input type="hidden" name="scheduledReportId" id="editScheduledReport--scheduledReportId" />
+        
+        <div class="field">
+          <label class="label" for="editScheduledReport--reportType">Report Type</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="editScheduledReport--reportType"
+                name="reportType"
+                disabled
+              >
+                <option value="workOrderDigest">Work Order Digest</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="editScheduledReport--reportTitle">Report Title</label>
+          <div class="control">
+            <input
+              class="input"
+              id="editScheduledReport--reportTitle"
+              name="reportTitle"
+              type="text"
+              maxlength="100"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="editScheduledReport--assignedTo">Assigned To Filter</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="editScheduledReport--assignedTo"
+                name="assignedToDataListItemId"
+                required
+              ></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Days of Week</label>
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="day" value="0" />
+              Sunday
+            </label>
+            <label class="checkbox ml-3">
+              <input type="checkbox" name="day" value="1" />
+              Monday
+            </label>
+            <label class="checkbox ml-3">
+              <input type="checkbox" name="day" value="2" />
+              Tuesday
+            </label>
+            <label class="checkbox ml-3">
+              <input type="checkbox" name="day" value="3" />
+              Wednesday
+            </label>
+            <label class="checkbox ml-3">
+              <input type="checkbox" name="day" value="4" />
+              Thursday
+            </label>
+            <label class="checkbox ml-3">
+              <input type="checkbox" name="day" value="5" />
+              Friday
+            </label>
+            <label class="checkbox ml-3">
+              <input type="checkbox" name="day" value="6" />
+              Saturday
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="editScheduledReport--scheduleTime">Time of Day</label>
+          <div class="control">
+            <input
+              class="input"
+              id="editScheduledReport--scheduleTime"
+              name="scheduleTimeOfDay"
+              type="time"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="checkbox">
+            <input
+              type="checkbox"
+              name="isActive"
+              id="editScheduledReport--isActive"
+              value="1"
+            />
+            Active
+          </label>
+          <p class="help">Uncheck to temporarily disable this scheduled report</p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-space-between">
+      <button class="button is-danger is-delete-button" type="button" data-tooltip="Delete">
+        <i class="fa-solid fa-trash"></i>
+        <span>Delete</span>
+      </button>
+      <div class="buttons">
+        <button class="button is-primary" type="submit" form="form--editScheduledReport">
+          Update Scheduled Report
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
