@@ -1,6 +1,22 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateEmployeeContactByUserName(userName, contactFields, user) {
+    // Basic validation
+    if (contactFields.phoneNumber !== undefined && contactFields.phoneNumber !== null) {
+        if (contactFields.phoneNumber.length > 20) {
+            return false;
+        }
+    }
+    if (contactFields.phoneNumberAlternate !== undefined && contactFields.phoneNumberAlternate !== null) {
+        if (contactFields.phoneNumberAlternate.length > 20) {
+            return false;
+        }
+    }
+    if (contactFields.emailAddress !== undefined && contactFields.emailAddress !== null) {
+        if (contactFields.emailAddress.length > 100) {
+            return false;
+        }
+    }
     const currentDate = new Date();
     const pool = await getShiftLogConnectionPool();
     const result = await pool

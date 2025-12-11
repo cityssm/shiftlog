@@ -6,10 +6,15 @@ import getAssignedToDataListItems from '../../database/workOrders/getAssignedToD
 export default async function handler(request: Request, response: Response): Promise<void> {
   const assignedToDataListItems = await getAssignedToDataListItems(request.session.user)
   
-  // Get employee information if available
-  const employee = request.session.user?.employeeNumber
+  // Get employee information if available and userName matches
+  let employee = request.session.user?.employeeNumber
     ? await getEmployee(request.session.user.employeeNumber)
     : undefined
+  
+  // Verify that the employee's userName matches the current user's userName
+  if (employee !== undefined && employee.userName !== request.session.user?.userName) {
+    employee = undefined
+  }
 
   response.render('dashboard/userSettings', {
     headTitle: 'User Settings',
