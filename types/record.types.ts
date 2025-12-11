@@ -64,8 +64,9 @@ export interface UserScheduledReport extends BaseRecord {
   reportParametersJson?: Record<string, unknown>
 
   scheduleDaysOfWeek: string
-  scheduleTimeOfDay: string | Date
+  scheduleTimeOfDay: Date | string
 
+  // eslint-disable-next-line sonarjs/use-type-alias
   lastSentDate?: Date | string | null
   lastSentDateTime?: Date | string | null
   nextScheduledDateTime?: Date | string | null

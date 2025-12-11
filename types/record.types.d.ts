@@ -45,7 +45,7 @@ export interface UserScheduledReport extends BaseRecord {
     reportParameters?: string | null;
     reportParametersJson?: Record<string, unknown>;
     scheduleDaysOfWeek: string;
-    scheduleTimeOfDay: string | Date;
+    scheduleTimeOfDay: Date | string;
     lastSentDate?: Date | string | null;
     lastSentDateTime?: Date | string | null;
     nextScheduledDateTime?: Date | string | null;

@@ -6,6 +6,7 @@ import getAllActiveScheduledReports from '../../database/users/getAllActiveSched
 import updateScheduledReportLastSent from '../../database/users/updateScheduledReportLastSent.js'
 import { getWorkOrdersForDigest } from '../../database/workOrders/getWorkOrdersForDigest.js'
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
+import { getApplicationUrl } from '../../helpers/application.helpers.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { sendEmail } from '../../helpers/email.helpers.js'
 import type { UserScheduledReport } from '../../types/record.types.js'
@@ -150,7 +151,7 @@ async function generateWorkOrderDigestEmail(
   apiKey: string,
   applicationUrl: string
 ): Promise<{ html: string; overdueCount: number; newCount: number }> {
-  const assignedToDataListItemId = reportParameters.assignedToDataListItemId
+  const assignedToDataListItemId = reportParameters.assignedToDataListItemId as number | string | undefined
 
   if (!assignedToDataListItemId) {
     return {
@@ -182,6 +183,7 @@ async function generateWorkOrderDigestEmail(
   const totalNewCount = newWorkOrdersCount + newMilestonesCount
 
   // Build the report URL
+  // eslint-disable-next-line no-secrets/no-secrets
   const reportUrl = `${applicationUrl}${getConfigProperty('reverseProxy.urlPrefix')}/api/${apiKey}/workOrderDigest?assignedToDataListItemId=${assignedToDataListItemId}`
 
   // Generate simple HTML email with link
@@ -276,16 +278,15 @@ async function processScheduledReport(
     debug(`Processing report: ${report.reportTitle} for ${report.userName}`)
 
     // Ensure the user has an API key
-    let apiKey = report.apiKey
+    const apiKey = report.apiKey
     if (!apiKey) {
-      debug(`User ${report.userName} missing API key, generating one`)
-      apiKey = generateApiKey(report.userName)
-      await updateUserSetting(report.userName, 'apiKey', apiKey)
+      debug(`User ${report.userName} missing API key`)
+      return
+
     }
 
     // Get application URL
-    const applicationUrl =
-      getConfigProperty('application.applicationUrl') || 'http://localhost:3000'
+    const applicationUrl = getApplicationUrl()
 
     let html = ''
     let subject = report.reportTitle
