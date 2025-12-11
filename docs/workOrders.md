@@ -257,7 +257,8 @@ To create and manage system-wide tags with custom colors:
 
 1. Navigate to **Administrator Tools** > **Tags** (requires Admin permission).
 2. Create tags with custom background and text colors.
-3. These tags will automatically display with their configured colors when used on work orders.
+3. These tags will automatically display with their configured colors when used
+   on work orders.
 
 See [Tag Management](./adminTags.md) for more information on creating and
 managing system tags.
