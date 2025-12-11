@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
@@ -43,7 +44,7 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete Tag',
-      
+
       message: `Are you sure you want to delete tag "${tag?.tagName ?? ''}"? This action cannot be undone.`,
       okButton: {
         contextualColorName: 'warning',
@@ -170,6 +171,7 @@ declare const exports: {
       onshown(_modalElement, closeFunction) {
         closeModalFunction = closeFunction
       },
+
       onremoved() {
         document
           .querySelector('#button--addTag')
@@ -225,7 +227,12 @@ declare const exports: {
         modalElement.querySelector('form')?.addEventListener('submit', doAddTag)
       },
       onshown(_modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -292,7 +299,7 @@ declare const exports: {
         </td>
         <td class="has-text-right">
           <div class="buttons are-small is-right">
-            <button class="button is-warning" data-tag-name="${cityssm.escapeHTML(tag.tagName)}" type="button">
+            <button class="button is-info" data-tag-name="${cityssm.escapeHTML(tag.tagName)}" type="button">
               <span class="icon"><i class="fa-solid fa-pencil"></i></span>
               <span>Edit</span>
             </button>
@@ -381,47 +388,54 @@ declare const exports: {
             modalElement.querySelector('#addTag--tagName') as HTMLInputElement
           ).readOnly = true
 
-          modalElement.querySelector('form')?.addEventListener('submit', (submitEvent) => {
-            submitEvent.preventDefault()
+          modalElement
+            .querySelector('form')
+            ?.addEventListener('submit', (submitEvent) => {
+              submitEvent.preventDefault()
 
-            const addForm = submitEvent.currentTarget as HTMLFormElement
+              const addForm = submitEvent.currentTarget as HTMLFormElement
 
-            cityssm.postJSON(
-              `${shiftLog.urlPrefix}/admin/doAddTag`,
-              addForm,
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as {
-                  success: boolean
-                  message?: string
-                  tags?: Tag[]
-                }
-
-                if (responseJSON.success) {
-                  closeAddModalFunction()
-                  if (responseJSON.tags !== undefined) {
-                    exports.tags = responseJSON.tags
-                    currentFilteredTags = responseJSON.tags
-                    currentPage = 1
-                    renderTagsWithPagination(responseJSON.tags)
+              cityssm.postJSON(
+                `${shiftLog.urlPrefix}/admin/doAddTag`,
+                addForm,
+                (rawResponseJSON) => {
+                  const responseJSON = rawResponseJSON as {
+                    success: boolean
+                    message?: string
+                    tags?: Tag[]
                   }
-                  bulmaJS.alert({
-                    contextualColorName: 'success',
-                    title: 'Tag Added',
-                    message: 'Tag has been successfully added to the system.'
-                  })
-                } else {
-                  bulmaJS.alert({
-                    contextualColorName: 'danger',
-                    title: 'Error Adding Tag',
-                    message: responseJSON.message ?? 'Please try again.'
-                  })
+
+                  if (responseJSON.success) {
+                    closeAddModalFunction()
+                    if (responseJSON.tags !== undefined) {
+                      exports.tags = responseJSON.tags
+                      currentFilteredTags = responseJSON.tags
+                      currentPage = 1
+                      renderTagsWithPagination(responseJSON.tags)
+                    }
+                    bulmaJS.alert({
+                      contextualColorName: 'success',
+                      title: 'Tag Added',
+                      message: 'Tag has been successfully added to the system.'
+                    })
+                  } else {
+                    bulmaJS.alert({
+                      contextualColorName: 'danger',
+                      title: 'Error Adding Tag',
+                      message: responseJSON.message ?? 'Please try again.'
+                    })
+                  }
                 }
-              }
-            )
-          })
+              )
+            })
         },
         onshown(_modalElement, closeFunction) {
+          bulmaJS.toggleHtmlClipped()
           closeAddModalFunction = closeFunction
+        },
+
+        onremoved() {
+          bulmaJS.toggleHtmlClipped()
         }
       })
     }
@@ -450,7 +464,10 @@ declare const exports: {
               orphanedTags?: Array<{ tagName: string; usageCount: number }>
             }
 
-            if (responseJSON.success && responseJSON.orphanedTags !== undefined) {
+            if (
+              responseJSON.success &&
+              responseJSON.orphanedTags !== undefined
+            ) {
               if (responseJSON.orphanedTags.length === 0) {
                 containerElement.innerHTML = `
                   <div class="message is-success">
@@ -462,13 +479,14 @@ declare const exports: {
                 `
               } else {
                 const tableElement = document.createElement('table')
-                tableElement.className = 'table is-striped is-hoverable is-fullwidth'
+                tableElement.className =
+                  'table is-striped is-hoverable is-fullwidth'
 
-                tableElement.innerHTML = `
+                tableElement.innerHTML = /* html */ `
                   <thead>
                     <tr>
                       <th>Tag Name</th>
-                      <th style="width: 120px;">Usage Count</th>
+                      <th class="has-text-right" style="width: 120px;">Usage Count</th>
                       <th style="width: 100px;"><span class="is-sr-only">Actions</span></th>
                     </tr>
                   </thead>
@@ -479,9 +497,15 @@ declare const exports: {
                 for (const orphanedTag of responseJSON.orphanedTags) {
                   const tr = document.createElement('tr')
 
-                  tr.innerHTML = `
-                    <td>${cityssm.escapeHTML(orphanedTag.tagName)}</td>
-                    <td>${orphanedTag.usageCount}</td>
+                  tr.innerHTML = /* html */ `
+                    <td>
+                      <span class="tag is-light">
+                        ${cityssm.escapeHTML(orphanedTag.tagName)}
+                      </span>
+                    </td>
+                    <td class="has-text-right">
+                      ${cityssm.escapeHTML(orphanedTag.usageCount.toString())}
+                    </td>
                     <td class="has-text-right">
                       <button class="button is-primary is-small" data-tag-name="${cityssm.escapeHTML(orphanedTag.tagName)}" type="button">
                         <span class="icon"><i class="fa-solid fa-plus"></i></span>
@@ -490,7 +514,10 @@ declare const exports: {
                     </td>
                   `
 
-                  tr.querySelector('button')?.addEventListener('click', selectOrphanedTag)
+                  tr.querySelector('button')?.addEventListener(
+                    'click',
+                    selectOrphanedTag
+                  )
                   tbody.append(tr)
                 }
 
@@ -499,7 +526,7 @@ declare const exports: {
                 containerElement.append(tableElement)
               }
             } else {
-              containerElement.innerHTML = `
+              containerElement.innerHTML = /* html */ `
                 <div class="message is-danger">
                   <p class="message-body">
                     <span class="icon"><i class="fa-solid fa-exclamation-triangle"></i></span>
@@ -512,7 +539,12 @@ declare const exports: {
         )
       },
       onshown(_modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -534,7 +566,9 @@ declare const exports: {
   document.querySelector('#button--addTag')?.addEventListener('click', addTag)
 
   // Add tag from work order button
-  document.querySelector('#button--addTagFromWorkOrder')?.addEventListener('click', addTagFromWorkOrder)
+  document
+    .querySelector('#button--addTagFromWorkOrder')
+    ?.addEventListener('click', addTagFromWorkOrder)
 
   // Initial render
   renderTagsWithPagination(exports.tags)

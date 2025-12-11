@@ -1,9 +1,6 @@
-"use strict";
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable perfectionist/sort-objects */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.settingProperties = void 0;
-exports.settingProperties = [
+export const settingProperties = [
     {
         settingKey: 'cleanup.daysBeforePermanentDelete',
         settingName: 'Cleanup - Days Before Permanent Delete',
