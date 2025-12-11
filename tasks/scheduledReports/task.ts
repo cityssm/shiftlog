@@ -143,15 +143,21 @@ function shouldSendReport(report: UserScheduledReport): boolean {
 }
 
 /**
- * Generates HTML content for the work order digest report
+ * Generates digest counts and email content for the work order digest report
  */
-async function generateWorkOrderDigestHTML(
-  reportParameters: Record<string, unknown>
-): Promise<string> {
+async function generateWorkOrderDigestEmail(
+  reportParameters: Record<string, unknown>,
+  apiKey: string,
+  applicationUrl: string
+): Promise<{ html: string; overdueCount: number; newCount: number }> {
   const assignedToDataListItemId = reportParameters.assignedToDataListItemId
 
   if (!assignedToDataListItemId) {
-    return '<p>Error: Missing assignedToDataListItemId parameter</p>'
+    return {
+      html: '<p>Error: Missing assignedToDataListItemId parameter</p>',
+      overdueCount: 0,
+      newCount: 0
+    }
   }
 
   const digestData = await getWorkOrdersForDigest(
@@ -159,13 +165,29 @@ async function generateWorkOrderDigestHTML(
   )
 
   const workOrdersSectionName = getConfigProperty('workOrders.sectionName')
-  const workOrderSingularName = getConfigProperty(
-    'workOrders.sectionNameSingular'
-  )
 
+  // Calculate counts
+  const overdueWorkOrdersCount = digestData.workOrders.filter(
+    (wo) => wo.isOverdue
+  ).length
+  const newWorkOrdersCount = digestData.workOrders.filter(
+    (wo) => wo.isNew
+  ).length
+  const overdueMilestonesCount = digestData.milestones.filter(
+    (m) => m.isOverdue
+  ).length
+  const newMilestonesCount = digestData.milestones.filter((m) => m.isNew).length
+
+  const totalOverdueCount = overdueWorkOrdersCount + overdueMilestonesCount
+  const totalNewCount = newWorkOrdersCount + newMilestonesCount
+
+  // Build the report URL
+  const reportUrl = `${applicationUrl}${getConfigProperty('reverseProxy.urlPrefix')}/api/${apiKey}/workOrderDigest?assignedToDataListItemId=${assignedToDataListItemId}`
+
+  // Generate simple HTML email with link
   let html = `
-    <h1>${workOrdersSectionName} Digest</h1>
-    <p><em>Generated: ${new Date().toLocaleString()}</em></p>
+    <h2>${workOrdersSectionName} Digest</h2>
+    <p>Your scheduled ${workOrdersSectionName.toLowerCase()} digest is ready.</p>
   `
 
   if (
@@ -173,90 +195,75 @@ async function generateWorkOrderDigestHTML(
     digestData.milestones.length === 0
   ) {
     html += `<p>No open ${workOrdersSectionName.toLowerCase()} or milestones assigned.</p>`
-    return html
-  }
+  } else {
+    html += '<ul style="list-style: none; padding: 0;">'
 
-  if (digestData.workOrders.length > 0) {
-    html += `<h2>Open ${workOrdersSectionName}</h2><table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
-      <thead style="background-color: #f5f5f5;">
-        <tr>
-          <th>${workOrderSingularName} #</th>
-          <th>Type</th>
-          <th>Status</th>
-          <th>Details</th>
-          <th>Due Date</th>
-        </tr>
-      </thead>
-      <tbody>`
+    if (digestData.workOrders.length > 0) {
+      html += `<li style="margin: 10px 0;">
+        <strong>${digestData.workOrders.length}</strong> open ${workOrdersSectionName.toLowerCase()}`
 
-    for (const workOrder of digestData.workOrders) {
-      const bgColor = workOrder.isOverdue
-        ? '#ffdddd'
-        : workOrder.isNew
-          ? '#ddeeff'
-          : '#ffffff'
-          
-      const badge = workOrder.isOverdue
-        ? '<span style="background-color: #ff3860; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">Overdue</span>'
-        : workOrder.isNew
-          ? '<span style="background-color: #3298dc; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">New</span>'
-          : ''
+      if (overdueWorkOrdersCount > 0 || newWorkOrdersCount > 0) {
+        const parts: string[] = []
+        if (overdueWorkOrdersCount > 0) {
+          parts.push(
+            `<span style="color: #ff3860; font-weight: bold;">${overdueWorkOrdersCount} overdue</span>`
+          )
+        }
+        if (newWorkOrdersCount > 0) {
+          parts.push(
+            `<span style="color: #3298dc; font-weight: bold;">${newWorkOrdersCount} new</span>`
+          )
+        }
+        html += ` (${parts.join(', ')})`
+      }
 
-      html += `<tr style="background-color: ${bgColor};">
-          <td><strong>${workOrder.workOrderNumber}</strong> ${badge}</td>
-          <td>${workOrder.workOrderType ?? ''}</td>
-          <td>${workOrder.workOrderStatusDataListItem ?? ''}</td>
-          <td>${workOrder.workOrderDetails.slice(0, 100)}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
-          <td>${workOrder.workOrderDueDateTime ? new Date(workOrder.workOrderDueDateTime).toLocaleString() : '(Not set)'}</td>
-        </tr>`
+      html += '</li>'
     }
 
-    html += '</tbody></table><br/>'
-  }
+    if (digestData.milestones.length > 0) {
+      html += `<li style="margin: 10px 0;">
+        <strong>${digestData.milestones.length}</strong> open milestones`
 
-  if (digestData.milestones.length > 0) {
-    html += `<h2>Open Milestones</h2><table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
-      <thead style="background-color: #f5f5f5;">
-        <tr>
-          <th>${workOrderSingularName} #</th>
-          <th>Milestone</th>
-          <th>Description</th>
-          <th>Due Date</th>
-        </tr>
-      </thead>
-      <tbody>`
+      if (overdueMilestonesCount > 0 || newMilestonesCount > 0) {
+        const parts: string[] = []
+        if (overdueMilestonesCount > 0) {
+          parts.push(
+            `<span style="color: #ff3860; font-weight: bold;">${overdueMilestonesCount} overdue</span>`
+          )
+        }
+        if (newMilestonesCount > 0) {
+          parts.push(
+            `<span style="color: #3298dc; font-weight: bold;">${newMilestonesCount} new</span>`
+          )
+        }
+        html += ` (${parts.join(', ')})`
+      }
 
-    for (const milestone of digestData.milestones) {
-      const bgColor = milestone.isOverdue
-        ? '#ffdddd'
-        : milestone.isNew
-          ? '#ddeeff'
-          : '#ffffff'
-          
-      const badge = milestone.isOverdue
-        ? '<span style="background-color: #ff3860; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">Overdue</span>'
-        : milestone.isNew
-          ? '<span style="background-color: #3298dc; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">New</span>'
-          : ''
-
-      html += `<tr style="background-color: ${bgColor};">
-          <td>${milestone.workOrderNumber}</td>
-          <td>${milestone.milestoneTitle} ${badge}</td>
-          <td>${milestone.milestoneDescription || ''}</td>
-          <td>${milestone.milestoneDueDateTime ? new Date(milestone.milestoneDueDateTime).toLocaleString() : '(Not set)'}</td>
-        </tr>`
+      html += '</li>'
     }
 
-    html += '</tbody></table><br/>'
+    html += '</ul>'
+
+    html += `
+      <p style="margin-top: 20px;">
+        <a href="${reportUrl}" style="display: inline-block; padding: 10px 20px; background-color: #3298dc; color: white; text-decoration: none; border-radius: 4px;">
+          View Full Digest Report
+        </a>
+      </p>
+    `
   }
 
-  html += `<p style="color: #666; font-size: 0.9em;">
-    <strong>Legend:</strong>
-    <span style="background-color: #ff3860; color: white; padding: 2px 6px; border-radius: 3px;">Overdue</span> Items past their due date &nbsp;
-    <span style="background-color: #3298dc; color: white; padding: 2px 6px; border-radius: 3px;">New</span> Items created within the last 48 hours
-  </p>`
+  html += `
+    <p style="color: #666; font-size: 0.9em; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px;">
+      <em>This is an automated digest from ${getConfigProperty('application.applicationName')}.</em>
+    </p>
+  `
 
-  return html
+  return {
+    html,
+    overdueCount: totalOverdueCount,
+    newCount: totalNewCount
+  }
 }
 
 /**
@@ -268,15 +275,46 @@ async function processScheduledReport(
   try {
     debug(`Processing report: ${report.reportTitle} for ${report.userName}`)
 
+    // Ensure the user has an API key
+    let apiKey = report.apiKey
+    if (!apiKey) {
+      debug(`User ${report.userName} missing API key, generating one`)
+      apiKey = generateApiKey(report.userName)
+      await updateUserSetting(report.userName, 'apiKey', apiKey)
+    }
+
+    // Get application URL
+    const applicationUrl =
+      getConfigProperty('application.applicationUrl') || 'http://localhost:3000'
+
     let html = ''
     let subject = report.reportTitle
+    let overdueCount = 0
+    let newCount = 0
 
     // Generate report content based on type
     switch (report.reportType) {
       case 'workOrderDigest': {
-        html = await generateWorkOrderDigestHTML(
-          report.reportParametersJson ?? {}
+        const emailData = await generateWorkOrderDigestEmail(
+          report.reportParametersJson ?? {},
+          apiKey,
+          applicationUrl
         )
+        html = emailData.html
+        overdueCount = emailData.overdueCount
+        newCount = emailData.newCount
+
+        // Update subject line with counts
+        const counts: string[] = []
+        if (overdueCount > 0) {
+          counts.push(`${overdueCount} overdue`)
+        }
+        if (newCount > 0) {
+          counts.push(`${newCount} new`)
+        }
+        if (counts.length > 0) {
+          subject = `${report.reportTitle} - ${counts.join(', ')}`
+        }
         break
       }
       default: {

@@ -5,6 +5,7 @@ export default async function getAllActiveScheduledReports() {
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
+        .input('apiKeySettingKey', 'apiKey')
         .query(/* sql */ `
       select
         r.scheduledReportId,
@@ -24,11 +25,16 @@ export default async function getAllActiveScheduledReports() {
         r.recordUpdate_dateTime,
         u.employeeNumber,
         u.firstName,
-        u.lastName
+        u.lastName,
+        us.settingValue as apiKey
       from ShiftLog.UserScheduledReports r
       inner join ShiftLog.Users u
         on r.instance = u.instance
         and r.userName = u.userName
+      left join ShiftLog.UserSettings us
+        on r.instance = us.instance
+        and r.userName = us.userName
+        and us.settingKey = @apiKeySettingKey
       where r.instance = @instance
         and r.isActive = 1
         and r.recordDelete_dateTime is null

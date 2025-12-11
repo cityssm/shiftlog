@@ -71,6 +71,8 @@ export interface UserScheduledReport extends BaseRecord {
   nextScheduledDateTime?: Date | string | null
 
   isActive: boolean
+
+  apiKey?: string | null
 }
 
 export interface UserGroup extends BaseRecord {

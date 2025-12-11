@@ -50,6 +50,7 @@ export interface UserScheduledReport extends BaseRecord {
     lastSentDateTime?: Date | string | null;
     nextScheduledDateTime?: Date | string | null;
     isActive: boolean;
+    apiKey?: string | null;
 }
 export interface UserGroup extends BaseRecord {
     userGroupId: number;
