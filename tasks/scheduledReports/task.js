@@ -5,8 +5,8 @@ import getAllActiveScheduledReports from '../../database/users/getAllActiveSched
 import updateScheduledReportLastSent from '../../database/users/updateScheduledReportLastSent.js';
 import { getWorkOrdersForDigest } from '../../database/workOrders/getWorkOrdersForDigest.js';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
-import { sendEmail } from '../../helpers/email.helpers.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { sendEmail } from '../../helpers/email.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks:scheduledReports`);
 const checkIntervalMinutes = 15;
 /**
@@ -22,16 +22,16 @@ function calculateNextScheduledDateTime(report) {
         return undefined;
     }
     // Parse time
-    const timeStr = typeof report.scheduleTimeOfDay === 'string'
+    const timeString = typeof report.scheduleTimeOfDay === 'string'
         ? report.scheduleTimeOfDay
         : report.scheduleTimeOfDay.toISOString().slice(11, 19);
-    const timeParts = timeStr.split(':');
+    const timeParts = timeString.split(':');
     if (timeParts.length < 2) {
         return undefined;
     }
     const [hours, minutes] = timeParts.map((n) => Number.parseInt(n, 10));
     // Find the next occurrence (check up to 7 days ahead)
-    for (let daysAhead = 0; daysAhead < 7; daysAhead++) {
+    for (let daysAhead = 0; daysAhead < 7; daysAhead += 1) {
         const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysAhead, hours, minutes, 0, 0);
         if (candidate <= now) {
             continue;
@@ -68,15 +68,14 @@ function shouldSendReport(report) {
         }
     }
     // Check if it's time to send
-    const timeStr = typeof report.scheduleTimeOfDay === 'string'
+    const timeString = typeof report.scheduleTimeOfDay === 'string'
         ? report.scheduleTimeOfDay
         : report.scheduleTimeOfDay.toISOString().slice(11, 19);
-    const timeParts = timeStr.split(':');
+    const timeParts = timeString.split(':');
     if (timeParts.length < 2) {
         return false;
     }
-    const [scheduleHours, scheduleMinutes] = timeParts
-        .map((n) => Number.parseInt(n, 10));
+    const [scheduleHours, scheduleMinutes] = timeParts.map((n) => Number.parseInt(n, 10));
     const currentHours = now.getHours();
     const currentMinutes = now.getMinutes();
     // Send if current time is at or past the scheduled time
@@ -105,7 +104,8 @@ async function generateWorkOrderDigestHTML(reportParameters) {
     <h1>${workOrdersSectionName} Digest</h1>
     <p><em>Generated: ${new Date().toLocaleString()}</em></p>
   `;
-    if (digestData.workOrders.length === 0 && digestData.milestones.length === 0) {
+    if (digestData.workOrders.length === 0 &&
+        digestData.milestones.length === 0) {
         html += `<p>No open ${workOrdersSectionName.toLowerCase()} or milestones assigned.</p>`;
         return html;
     }
@@ -136,7 +136,7 @@ async function generateWorkOrderDigestHTML(reportParameters) {
           <td><strong>${workOrder.workOrderNumber}</strong> ${badge}</td>
           <td>${workOrder.workOrderType ?? ''}</td>
           <td>${workOrder.workOrderStatusDataListItem ?? ''}</td>
-          <td>${workOrder.workOrderDetails.substring(0, 100)}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
+          <td>${workOrder.workOrderDetails.slice(0, 100)}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
           <td>${workOrder.workOrderDueDateTime ? new Date(workOrder.workOrderDueDateTime).toLocaleString() : '(Not set)'}</td>
         </tr>`;
         }

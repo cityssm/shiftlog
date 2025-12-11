@@ -6,8 +6,8 @@ import getAllActiveScheduledReports from '../../database/users/getAllActiveSched
 import updateScheduledReportLastSent from '../../database/users/updateScheduledReportLastSent.js'
 import { getWorkOrdersForDigest } from '../../database/workOrders/getWorkOrdersForDigest.js'
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
-import { sendEmail } from '../../helpers/email.helpers.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { sendEmail } from '../../helpers/email.helpers.js'
 import type { UserScheduledReport } from '../../types/record.types.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks:scheduledReports`)
@@ -31,20 +31,20 @@ function calculateNextScheduledDateTime(
   }
 
   // Parse time
-  const timeStr =
+  const timeString =
     typeof report.scheduleTimeOfDay === 'string'
       ? report.scheduleTimeOfDay
       : report.scheduleTimeOfDay.toISOString().slice(11, 19)
-  
-  const timeParts = timeStr.split(':')
+
+  const timeParts = timeString.split(':')
   if (timeParts.length < 2) {
     return undefined
   }
-  
+
   const [hours, minutes] = timeParts.map((n) => Number.parseInt(n, 10))
 
   // Find the next occurrence (check up to 7 days ahead)
-  for (let daysAhead = 0; daysAhead < 7; daysAhead++) {
+  for (let daysAhead = 0; daysAhead < 7; daysAhead += 1) {
     const candidate = new Date(
       now.getFullYear(),
       now.getMonth(),
@@ -101,18 +101,19 @@ function shouldSendReport(report: UserScheduledReport): boolean {
   }
 
   // Check if it's time to send
-  const timeStr =
+  const timeString =
     typeof report.scheduleTimeOfDay === 'string'
       ? report.scheduleTimeOfDay
       : report.scheduleTimeOfDay.toISOString().slice(11, 19)
 
-  const timeParts = timeStr.split(':')
+  const timeParts = timeString.split(':')
   if (timeParts.length < 2) {
     return false
   }
 
-  const [scheduleHours, scheduleMinutes] = timeParts
-    .map((n) => Number.parseInt(n, 10))
+  const [scheduleHours, scheduleMinutes] = timeParts.map((n) =>
+    Number.parseInt(n, 10)
+  )
 
   const currentHours = now.getHours()
   const currentMinutes = now.getMinutes()
@@ -154,7 +155,7 @@ async function generateWorkOrderDigestHTML(
   }
 
   const digestData = await getWorkOrdersForDigest(
-    assignedToDataListItemId as string | number
+    assignedToDataListItemId as number | string
   )
 
   const workOrdersSectionName = getConfigProperty('workOrders.sectionName')
@@ -167,7 +168,10 @@ async function generateWorkOrderDigestHTML(
     <p><em>Generated: ${new Date().toLocaleString()}</em></p>
   `
 
-  if (digestData.workOrders.length === 0 && digestData.milestones.length === 0) {
+  if (
+    digestData.workOrders.length === 0 &&
+    digestData.milestones.length === 0
+  ) {
     html += `<p>No open ${workOrdersSectionName.toLowerCase()} or milestones assigned.</p>`
     return html
   }
@@ -191,6 +195,7 @@ async function generateWorkOrderDigestHTML(
         : workOrder.isNew
           ? '#ddeeff'
           : '#ffffff'
+          
       const badge = workOrder.isOverdue
         ? '<span style="background-color: #ff3860; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">Overdue</span>'
         : workOrder.isNew
@@ -201,7 +206,7 @@ async function generateWorkOrderDigestHTML(
           <td><strong>${workOrder.workOrderNumber}</strong> ${badge}</td>
           <td>${workOrder.workOrderType ?? ''}</td>
           <td>${workOrder.workOrderStatusDataListItem ?? ''}</td>
-          <td>${workOrder.workOrderDetails.substring(0, 100)}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
+          <td>${workOrder.workOrderDetails.slice(0, 100)}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
           <td>${workOrder.workOrderDueDateTime ? new Date(workOrder.workOrderDueDateTime).toLocaleString() : '(Not set)'}</td>
         </tr>`
     }
@@ -227,6 +232,7 @@ async function generateWorkOrderDigestHTML(
         : milestone.isNew
           ? '#ddeeff'
           : '#ffffff'
+          
       const badge = milestone.isOverdue
         ? '<span style="background-color: #ff3860; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">Overdue</span>'
         : milestone.isNew
@@ -284,7 +290,9 @@ async function processScheduledReport(
     // In production, you should validate the email format or look up the user's email
     // from a separate email field in the Users table
     if (!report.userName || !report.userName.includes('@')) {
-      debug(`Invalid email address for user ${report.userName}, skipping report`)
+      debug(
+        `Invalid email address for user ${report.userName}, skipping report`
+      )
       return
     }
 

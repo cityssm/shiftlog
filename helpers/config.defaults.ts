@@ -7,6 +7,7 @@ import type {
 import type { AvantiApiConfiguration } from '@cityssm/avanti-api'
 import { hoursToMillis } from '@cityssm/to-millis'
 import type { config as MSSQLConfig } from 'mssql'
+import type { TransportOptions } from 'nodemailer'
 
 import type {
   ConfigEmployees,
@@ -66,6 +67,8 @@ export const configDefaultValues = {
     | AvantiApiConfiguration
     | undefined,
   'connectors.pearl': undefined as unknown as MSSQLConfig | undefined,
+
+  'connectors.email': undefined as unknown as TransportOptions & { from?: string } | undefined,
 
   // Shifts
 

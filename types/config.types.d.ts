@@ -2,6 +2,7 @@ import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorC
 import type { AvantiApiConfiguration, GetEmployeesRequest } from '@cityssm/avanti-api/types.js';
 import type { GetEmployeesFilters, GetEquipmentFilters } from '@cityssm/worktech-api';
 import type { config as MSSQLConfig } from 'mssql';
+import type { TransportOptions } from 'nodemailer';
 export interface Config {
     application: ConfigApplication;
     session: ConfigSession;
@@ -18,17 +19,6 @@ export interface Config {
         /** URL Prefix, should start with a slash, but have no trailing slash */
         urlPrefix?: string;
         disableCsrf?: boolean;
-    };
-    /** Email Configuration for Scheduled Reports */
-    email?: {
-        host: string;
-        port: number;
-        secure?: boolean;
-        auth?: {
-            user: string;
-            pass: string;
-        };
-        from: string;
     };
     login?: {
         authentication: {
@@ -50,6 +40,10 @@ export interface Config {
         shiftLog: MSSQLConfig;
         avanti?: AvantiApiConfiguration;
         pearl?: MSSQLConfig;
+        /** Email Configuration for Scheduled Reports */
+        email?: TransportOptions & {
+            from?: string;
+        };
     };
     shifts?: ConfigSection;
     timesheets?: ConfigSection;

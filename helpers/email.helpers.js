@@ -1,26 +1,21 @@
-import nodemailer from 'nodemailer';
 import Debug from 'debug';
-import { getConfigProperty } from './config.helpers.js';
+import nodemailer from 'nodemailer';
 import { DEBUG_NAMESPACE } from '../debug.config.js';
+import { getConfigProperty } from './config.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:email`);
 let transporterInstance;
 /**
  * Gets or creates the nodemailer transporter instance
  */
 function getTransporter() {
-    const emailConfig = getConfigProperty('email');
-    if (!emailConfig || !emailConfig.host) {
+    const emailConfig = getConfigProperty('connectors.email');
+    if (!emailConfig) {
         debug('Email configuration not found or incomplete');
         return undefined;
     }
     if (transporterInstance === undefined) {
         debug('Creating nodemailer transporter');
-        transporterInstance = nodemailer.createTransport({
-            host: emailConfig.host,
-            port: emailConfig.port,
-            secure: emailConfig.secure ?? false,
-            auth: emailConfig.auth
-        });
+        transporterInstance = nodemailer.createTransport(emailConfig);
     }
     return transporterInstance;
 }
