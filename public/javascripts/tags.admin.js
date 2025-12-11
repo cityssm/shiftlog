@@ -211,7 +211,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
         }
     }
     function addTagFromWorkOrder() {
-        var closeModalFunction;
+        var closeModalFunction = function () {
+            // Initialized with no-op, will be assigned in onshown
+        };
         function selectOrphanedTag(clickEvent) {
             var buttonElement = clickEvent.currentTarget;
             var tagName = buttonElement.dataset.tagName;

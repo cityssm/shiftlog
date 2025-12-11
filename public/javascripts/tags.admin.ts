@@ -355,7 +355,9 @@ declare const exports: {
   }
 
   function addTagFromWorkOrder(): void {
-    let closeModalFunction: () => void
+    let closeModalFunction: () => void = () => {
+      // Initialized with no-op, will be assigned in onshown
+    }
 
     function selectOrphanedTag(clickEvent: Event): void {
       const buttonElement = clickEvent.currentTarget as HTMLButtonElement
