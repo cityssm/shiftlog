@@ -14,6 +14,8 @@ prioritize, and organize work orders with customizable color-coding.
 
 ## Adding a Tag
 
+### Adding a New Tag
+
 1. Navigate to **Administrator Tools** > **Tags**.
 2. Click the **Add Tag** button.
 3. Enter tag information:
@@ -21,6 +23,26 @@ prioritize, and organize work orders with customizable color-coding.
    - **Background Color**: Choose a background color for the tag
    - **Text Color**: Choose a text color for optimal readability
 4. Click **Add Tag** to create the tag.
+
+### Adding a Tag from Work Order
+
+Work orders can have tags applied to them directly, even if those tags don't exist
+in the Tag Management system. These "ad-hoc" tags will display with default styling
+instead of custom colors. The **Add Tag from Work Order** feature allows you to easily
+promote these ad-hoc tags to system tags with custom colors.
+
+1. Navigate to **Administrator Tools** > **Tags**.
+2. Click the **Add Tag from Work Order** button.
+3. A modal will display showing all tags that are used on work orders but don't have
+   system records, along with their usage count.
+4. Click the **Add** button next to the tag you want to promote.
+5. A new modal will open with the tag name pre-filled. Choose colors:
+   - **Background Color**: Choose a background color for the tag
+   - **Text Color**: Choose a text color for optimal readability
+6. Click **Add Tag** to create the system record.
+
+Once added, all existing work orders using that tag will automatically display with
+the new custom colors.
 
 ## Editing Tags
 

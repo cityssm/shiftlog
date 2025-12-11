@@ -354,6 +354,162 @@ declare const exports: {
     }
   }
 
+  function addTagFromWorkOrder(): void {
+    let closeModalFunction: () => void
+
+    function selectOrphanedTag(clickEvent: Event): void {
+      const buttonElement = clickEvent.currentTarget as HTMLButtonElement
+      const tagName = buttonElement.dataset.tagName
+
+      if (tagName === undefined) {
+        return
+      }
+
+      closeModalFunction()
+
+      // Open the add tag modal with the tag name pre-filled
+      cityssm.openHtmlModal('adminTags-add', {
+        onshow(modalElement) {
+          ;(
+            modalElement.querySelector('#addTag--tagName') as HTMLInputElement
+          ).value = tagName
+          ;(
+            modalElement.querySelector('#addTag--tagName') as HTMLInputElement
+          ).readOnly = true
+
+          modalElement.querySelector('form')?.addEventListener('submit', (submitEvent) => {
+            submitEvent.preventDefault()
+
+            const addForm = submitEvent.currentTarget as HTMLFormElement
+
+            cityssm.postJSON(
+              `${shiftLog.urlPrefix}/admin/doAddTag`,
+              addForm,
+              (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON as {
+                  success: boolean
+                  message?: string
+                  tags?: Tag[]
+                }
+
+                if (responseJSON.success) {
+                  ;(modalElement.closest('.modal') as HTMLElement).querySelector('.is-close-modal-button')?.dispatchEvent(new Event('click'))
+                  if (responseJSON.tags !== undefined) {
+                    exports.tags = responseJSON.tags
+                    currentFilteredTags = responseJSON.tags
+                    currentPage = 1
+                    renderTagsWithPagination(responseJSON.tags)
+                  }
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    title: 'Tag Added',
+                    message: 'Tag has been successfully added from work order.'
+                  })
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Error Adding Tag',
+                    message: responseJSON.message ?? 'Please try again.'
+                  })
+                }
+              }
+            )
+          })
+        }
+      })
+    }
+
+    cityssm.openHtmlModal('adminTags-addFromWorkOrder', {
+      onshow(modalElement) {
+        const containerElement = modalElement.querySelector(
+          '#container--orphanedTags'
+        ) as HTMLDivElement
+
+        containerElement.innerHTML = `
+          <div class="message is-info">
+            <p class="message-body">
+              <span class="icon"><i class="fa-solid fa-spinner fa-pulse"></i></span>
+              Loading tags...
+            </p>
+          </div>
+        `
+
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/admin/doGetOrphanedTags`,
+          {},
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as {
+              success: boolean
+              orphanedTags?: Array<{ tagName: string; usageCount: number }>
+            }
+
+            if (responseJSON.success && responseJSON.orphanedTags !== undefined) {
+              if (responseJSON.orphanedTags.length === 0) {
+                containerElement.innerHTML = `
+                  <div class="message is-success">
+                    <p class="message-body">
+                      <span class="icon"><i class="fa-solid fa-check"></i></span>
+                      All work order tags have system records.
+                    </p>
+                  </div>
+                `
+              } else {
+                const tableElement = document.createElement('table')
+                tableElement.className = 'table is-striped is-hoverable is-fullwidth'
+
+                tableElement.innerHTML = `
+                  <thead>
+                    <tr>
+                      <th>Tag Name</th>
+                      <th style="width: 120px;">Usage Count</th>
+                      <th style="width: 100px;"><span class="is-sr-only">Actions</span></th>
+                    </tr>
+                  </thead>
+                `
+
+                const tbody = document.createElement('tbody')
+
+                for (const orphanedTag of responseJSON.orphanedTags) {
+                  const tr = document.createElement('tr')
+
+                  tr.innerHTML = `
+                    <td>${cityssm.escapeHTML(orphanedTag.tagName)}</td>
+                    <td>${orphanedTag.usageCount}</td>
+                    <td class="has-text-right">
+                      <button class="button is-primary is-small" data-tag-name="${cityssm.escapeHTML(orphanedTag.tagName)}" type="button">
+                        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                        <span>Add</span>
+                      </button>
+                    </td>
+                  `
+
+                  tr.querySelector('button')?.addEventListener('click', selectOrphanedTag)
+                  tbody.append(tr)
+                }
+
+                tableElement.append(tbody)
+                containerElement.innerHTML = ''
+                containerElement.append(tableElement)
+              }
+            } else {
+              containerElement.innerHTML = `
+                <div class="message is-danger">
+                  <p class="message-body">
+                    <span class="icon"><i class="fa-solid fa-exclamation-triangle"></i></span>
+                    Failed to load orphaned tags.
+                  </p>
+                </div>
+              `
+            }
+          }
+        )
+      },
+      onshown(_modalElement, closeFunction) {
+        closeModalFunction = closeFunction
+      }
+    })
+  }
+
   // Filter functionality
   const filterInput = document.querySelector(
     '#filter--tags'
@@ -369,6 +525,9 @@ declare const exports: {
 
   // Add tag button
   document.querySelector('#button--addTag')?.addEventListener('click', addTag)
+
+  // Add tag from work order button
+  document.querySelector('#button--addTagFromWorkOrder')?.addEventListener('click', addTagFromWorkOrder)
 
   // Initial render
   renderTagsWithPagination(exports.tags)
