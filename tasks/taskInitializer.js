@@ -44,5 +44,14 @@ export function initializeTasks() {
         stdio: 'inherit'
     });
     childProcesses.push(cleanupTask);
+    /*
+     * Scheduled Reports Task
+     */
+    const scheduledReportsTask = fork('./tasks/scheduledReports/task.js', {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: 'inherit'
+    });
+    childProcesses.push(scheduledReportsTask);
     return childProcesses;
 }

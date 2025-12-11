@@ -19,6 +19,17 @@ export interface Config {
         urlPrefix?: string;
         disableCsrf?: boolean;
     };
+    /** Email Configuration for Scheduled Reports */
+    email?: {
+        host: string;
+        port: number;
+        secure?: boolean;
+        auth?: {
+            user: string;
+            pass: string;
+        };
+        from: string;
+    };
     login?: {
         authentication: {
             config: ActiveDirectoryAuthenticatorConfiguration;

@@ -1,0 +1,129 @@
+<%- await include('_header-print'); -%>
+
+<div id="pageHeader">
+  <h1 class="title is-3">
+    <%= configFunctions.getConfigProperty('workOrders.sectionName') %> Digest
+  </h1>
+  <p class="subtitle is-5">
+    <%= dateTimeFunctions.dateToString(reportDateTime) %>
+    <%= dateTimeFunctions.dateToTimeString(reportDateTime) %>
+  </p>
+</div>
+
+<% if (workOrders.length === 0 && milestones.length === 0) { %>
+<div class="box">
+  <div class="message">
+    <div class="message-body">
+      No open <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> or milestones assigned to this value.
+    </div>
+  </div>
+</div>
+<% } %>
+
+<% if (workOrders.length > 0) { %>
+<div class="box avoid-page-break">
+  <h2 class="title is-4">
+    Open <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
+  </h2>
+  <table class="table is-fullwidth is-striped is-hoverable">
+    <thead>
+      <tr>
+        <th><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Details</th>
+        <th>Due Date</th>
+        <th>Opened</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const workOrder of workOrders) { %>
+      <tr class="<%= workOrder.isOverdue ? 'has-background-danger-light' : '' %> <%= workOrder.isNew ? 'has-background-info-light' : '' %>">
+        <td class="has-text-weight-bold">
+          <%= workOrder.workOrderNumber %>
+          <% if (workOrder.isOverdue) { %>
+          <span class="tag is-danger ml-2">Overdue</span>
+          <% } %>
+          <% if (workOrder.isNew) { %>
+          <span class="tag is-info ml-2">New</span>
+          <% } %>
+        </td>
+        <td><%= workOrder.workOrderType ?? '' %></td>
+        <td><%= workOrder.workOrderStatusDataListItem ?? '' %></td>
+        <td style="white-space: pre-wrap; max-width: 300px;">
+          <%= workOrder.workOrderDetails.length > 100 ? workOrder.workOrderDetails.substring(0, 100) + '...' : workOrder.workOrderDetails %>
+        </td>
+        <td>
+          <% if (workOrder.workOrderDueDateTime) { %>
+          <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>
+          <%= dateTimeFunctions.dateToTimeString(workOrder.workOrderDueDateTime) %>
+          <% } else { %>
+          <span class="has-text-grey-light">(Not set)</span>
+          <% } %>
+        </td>
+        <td>
+          <%= dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) %>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<% if (milestones.length > 0) { %>
+<div class="box avoid-page-break">
+  <h2 class="title is-4">
+    Open Milestones
+  </h2>
+  <table class="table is-fullwidth is-striped is-hoverable">
+    <thead>
+      <tr>
+        <th><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #</th>
+        <th>Milestone</th>
+        <th>Description</th>
+        <th>Due Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const milestone of milestones) { %>
+      <tr class="<%= milestone.isOverdue ? 'has-background-danger-light' : '' %> <%= milestone.isNew ? 'has-background-info-light' : '' %>">
+        <td class="has-text-weight-bold">
+          <%= milestone.workOrderNumber %>
+        </td>
+        <td>
+          <%= milestone.milestoneTitle %>
+          <% if (milestone.isOverdue) { %>
+          <span class="tag is-danger ml-2">Overdue</span>
+          <% } %>
+          <% if (milestone.isNew) { %>
+          <span class="tag is-info ml-2">New</span>
+          <% } %>
+        </td>
+        <td style="white-space: pre-wrap; max-width: 300px;">
+          <%= milestone.milestoneDescription || '' %>
+        </td>
+        <td>
+          <% if (milestone.milestoneDueDateTime) { %>
+          <%= dateTimeFunctions.dateToString(milestone.milestoneDueDateTime) %>
+          <%= dateTimeFunctions.dateToTimeString(milestone.milestoneDueDateTime) %>
+          <% } else { %>
+          <span class="has-text-grey-light">(Not set)</span>
+          <% } %>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<div class="box has-background-light">
+  <p class="is-size-7">
+    <strong>Legend:</strong>
+    <span class="tag is-danger ml-2">Overdue</span> Items past their due date
+    <span class="tag is-info ml-2">New</span> Items created within the last 48 hours
+  </p>
+</div>
+
+<%- await include('_footer-print'); -%>

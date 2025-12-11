@@ -53,6 +53,26 @@ export interface DatabaseUser extends BaseRecord {
   userSettings?: Partial<Record<UserSettingKey, string>>
 }
 
+export interface UserScheduledReport extends BaseRecord {
+  scheduledReportId: number
+  userName: string
+
+  reportType: string
+  reportTitle: string
+
+  reportParameters?: string | null
+  reportParametersJson?: Record<string, unknown>
+
+  scheduleDaysOfWeek: string
+  scheduleTimeOfDay: string | Date
+
+  lastSentDate?: Date | string | null
+  lastSentDateTime?: Date | string | null
+  nextScheduledDateTime?: Date | string | null
+
+  isActive: boolean
+}
+
 export interface UserGroup extends BaseRecord {
   userGroupId: number
   userGroupName: string

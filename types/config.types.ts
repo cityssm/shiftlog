@@ -39,6 +39,18 @@ export interface Config {
     disableCsrf?: boolean
   }
 
+  /** Email Configuration for Scheduled Reports */
+  email?: {
+    host: string
+    port: number
+    secure?: boolean
+    auth?: {
+      user: string
+      pass: string
+    }
+    from: string
+  }
+
   login?: {
     authentication:
       | {
