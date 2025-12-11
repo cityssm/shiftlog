@@ -1,1 +1,1 @@
-export default function updateScheduledReportLastSent(scheduledReportId: number, nextScheduledDateTime?: Date): Promise<boolean>;
+export default function updateScheduledReportLastSent(scheduledReportId: number, nextScheduledDateTime?: Date, userName?: string): Promise<boolean>;

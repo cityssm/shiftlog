@@ -25,9 +25,13 @@ function calculateNextScheduledDateTime(report) {
     const timeStr = typeof report.scheduleTimeOfDay === 'string'
         ? report.scheduleTimeOfDay
         : report.scheduleTimeOfDay.toISOString().slice(11, 19);
-    const [hours, minutes] = timeStr.split(':').map((n) => Number.parseInt(n, 10));
-    // Find the next occurrence
-    for (let daysAhead = 0; daysAhead <= 7; daysAhead++) {
+    const timeParts = timeStr.split(':');
+    if (timeParts.length < 2) {
+        return undefined;
+    }
+    const [hours, minutes] = timeParts.map((n) => Number.parseInt(n, 10));
+    // Find the next occurrence (check up to 7 days ahead)
+    for (let daysAhead = 0; daysAhead < 7; daysAhead++) {
         const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysAhead, hours, minutes, 0, 0);
         if (candidate <= now) {
             continue;
@@ -67,8 +71,11 @@ function shouldSendReport(report) {
     const timeStr = typeof report.scheduleTimeOfDay === 'string'
         ? report.scheduleTimeOfDay
         : report.scheduleTimeOfDay.toISOString().slice(11, 19);
-    const [scheduleHours, scheduleMinutes] = timeStr
-        .split(':')
+    const timeParts = timeStr.split(':');
+    if (timeParts.length < 2) {
+        return false;
+    }
+    const [scheduleHours, scheduleMinutes] = timeParts
         .map((n) => Number.parseInt(n, 10));
     const currentHours = now.getHours();
     const currentMinutes = now.getMinutes();
@@ -193,10 +200,15 @@ async function processScheduledReport(report) {
             }
         }
         // Send email
-        // For now, we'll use the userName as the email address
-        // In a real implementation, you'd look up the user's email from the database
+        // Note: This implementation assumes userName is a valid email address
+        // In production, you should validate the email format or look up the user's email
+        // from a separate email field in the Users table
+        if (!report.userName || !report.userName.includes('@')) {
+            debug(`Invalid email address for user ${report.userName}, skipping report`);
+            return;
+        }
         const emailResult = await sendEmail({
-            to: report.userName, // Assuming userName is an email address
+            to: report.userName,
             subject,
             html
         });
@@ -204,7 +216,7 @@ async function processScheduledReport(report) {
             debug(`Successfully sent report ${report.scheduledReportId} to ${report.userName}`);
             // Update last sent timestamp
             const nextScheduledDateTime = calculateNextScheduledDateTime(report);
-            await updateScheduledReportLastSent(report.scheduledReportId, nextScheduledDateTime);
+            await updateScheduledReportLastSent(report.scheduledReportId, nextScheduledDateTime, report.userName);
         }
         else {
             debug(`Failed to send report ${report.scheduledReportId}: ${emailResult.error}`);
@@ -231,7 +243,7 @@ async function runScheduledReportsTask() {
                 if (!report.nextScheduledDateTime) {
                     const nextScheduledDateTime = calculateNextScheduledDateTime(report);
                     if (nextScheduledDateTime) {
-                        await updateScheduledReportLastSent(report.scheduledReportId, nextScheduledDateTime);
+                        await updateScheduledReportLastSent(report.scheduledReportId, nextScheduledDateTime, report.userName);
                     }
                 }
             }
