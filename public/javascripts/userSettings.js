@@ -1,5 +1,35 @@
 (() => {
     const shiftLog = exports.shiftLog;
+    /*
+     * Employee Contact Information
+     */
+    const employeeContactForm = document.querySelector('#employeeContactForm');
+    if (employeeContactForm !== null) {
+        employeeContactForm.addEventListener('submit', (formEvent) => {
+            formEvent.preventDefault();
+            const formElement = formEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        title: 'Contact Information Updated',
+                        message: 'Your contact information has been updated successfully.'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error',
+                        message: 'There was an error updating your contact information.'
+                    });
+                }
+            });
+        });
+    }
+    /*
+     * User Settings
+     */
     const userSettingForms = document.querySelectorAll('.userSettingForm');
     for (const userSettingForm of userSettingForms) {
         userSettingForm.addEventListener('submit', (formEvent) => {
