@@ -18,6 +18,68 @@
 
 <div class="columns">
   <div class="column">
+    <% if (employee) { %>
+    <div class="panel">
+      <h2 class="panel-heading">Employee Contact Information</h2>
+      <div class="panel-block is-block">
+        <form id="employeeContactForm">
+          <div class="field">
+            <label class="label" for="employeeContactForm--phoneNumber">Phone Number</label>
+            <div class="control">
+              <input
+                class="input"
+                id="employeeContactForm--phoneNumber"
+                name="phoneNumber"
+                type="text"
+                maxlength="20"
+                value="<%= employee.phoneNumber ?? '' %>"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="employeeContactForm--phoneNumberAlternate">Alternate Phone Number</label>
+            <div class="control">
+              <input
+                class="input"
+                id="employeeContactForm--phoneNumberAlternate"
+                name="phoneNumberAlternate"
+                type="text"
+                maxlength="20"
+                value="<%= employee.phoneNumberAlternate ?? '' %>"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="employeeContactForm--emailAddress">Email Address</label>
+            <div class="control">
+              <input
+                class="input"
+                id="employeeContactForm--emailAddress"
+                name="emailAddress"
+                type="email"
+                maxlength="100"
+                value="<%= employee.emailAddress ?? '' %>"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <button class="button is-primary" type="submit">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                </span>
+                <span>Update Contact Information</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <% } %>
+
     <div class="panel">
       <h2 class="panel-heading"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Settings</h2>
       <div class="panel-block is-block">
