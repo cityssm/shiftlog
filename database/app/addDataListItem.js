@@ -1,9 +1,52 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
+import Debug from 'debug';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { DEBUG_NAMESPACE } from '../../debug.config.js';
+const debug = Debug(`${DEBUG_NAMESPACE}:database:addDataListItem`);
 export default async function addDataListItem(form) {
     const pool = await getShiftLogConnectionPool();
+    // Check for existing item
+    const existingDataListItemResult = await pool
+        .request()
+        .input('instance', getConfigProperty('application.instance'))
+        .input('dataListKey', form.dataListKey)
+        .input('dataListItem', form.dataListItem).query(/* sql */ `
+      select dataListItemId, recordDelete_dateTime
+      from ShiftLog.DataListItems
+      where instance = @instance
+        and dataListKey = @dataListKey
+        and dataListItem = @dataListItem
+    `);
+    if (existingDataListItemResult.recordset.length > 0) {
+        // Check if deleted
+        const existingDataListItem = existingDataListItemResult.recordset[0];
+        if (existingDataListItem.recordDelete_dateTime !== null) {
+            // Undelete
+            try {
+                await pool
+                    .request()
+                    .input('dataListItemId', existingDataListItem.dataListItemId)
+                    .input('userName', form.userName).query(/* sql */ `
+            update ShiftLog.DataListItems
+            set
+              recordDelete_userName = null,
+              recordDelete_dateTime = null,
+              recordUpdate_userName = @userName,
+              recordUpdate_dateTime = getdate()
+            where dataListItemId = @dataListItemId
+          `);
+                return true;
+            }
+            catch (error) {
+                debug('Error undeleting data list item:', error);
+                return false;
+            }
+        }
+        // Already exists
+        return false;
+    }
     try {
         await pool
             .request()
@@ -22,11 +65,13 @@ export default async function addDataListItem(form) {
           @userName, @userName
         from ShiftLog.DataListItems
         where dataListKey = @dataListKey
+          and instance = @instance
           and recordDelete_dateTime is null
       `);
         return true;
     }
-    catch {
+    catch (error) {
+        debug('Error adding data list item:', error);
         return false;
     }
 }

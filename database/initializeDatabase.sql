@@ -116,7 +116,7 @@ CREATE TABLE ShiftLog.DataListItems (
   recordDelete_userName varchar(30),
   recordDelete_dateTime datetime,
 
-  unique (dataListKey, dataListItem),
+  unique (instance, dataListKey, dataListItem),
 
   foreign key (instance, dataListKey) references ShiftLog.DataLists(instance, dataListKey),
   foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
