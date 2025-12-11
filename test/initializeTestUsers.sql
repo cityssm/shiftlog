@@ -34,6 +34,20 @@ values (
 )
 GO
 
+insert into ShiftLog.Employees (
+  instance, employeeNumber, firstName, lastName,
+  userName, isSupervisor,
+  phoneNumber, phoneNumberAlternate, emailAddress,
+  recordCreate_userName, recordUpdate_userName
+)
+values (
+  '', '00001', 'Test', 'Inquiry',
+  '~testinquiry', 0,
+  '555-0101', '555-0102', 'test.inquiry@example.com',
+  'initializeTestUsers.sql', 'initializeTestUsers.sql'
+)
+GO
+
 insert into ShiftLog.Users (
   userName, instance, isActive,
   shifts_canView, shifts_canUpdate, shifts_canManage,
