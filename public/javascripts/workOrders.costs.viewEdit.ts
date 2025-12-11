@@ -47,6 +47,7 @@ declare const bulmaJS: BulmaJS
     function renderCosts(costs: WorkOrderCost[]): void {
       // Update costs count
       const costsCountElement = document.querySelector('#costsCount')
+      
       if (costsCountElement !== null) {
         costsCountElement.textContent = costs.length.toString()
       }

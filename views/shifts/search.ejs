@@ -19,18 +19,35 @@
       </ul>
     </nav>
 
-    <h1 class="title is-1">
-      <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Search
-    </h1>
+    <div class="columns is-vcentered">
+      <div class="column">
+        <h1 class="title is-1">
+          <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Search
+        </h1>
+      </div>
+      <div class="column is-narrow">
+        <div class="field has-addons">
+          <div class="control">
+            <label class="button is-small is-static" for="shiftSearch--limit">Limit</label>
+          </div>
+          <div class="control">
+            <div class="select is-small">
+              <select id="shiftSearch--limit" name="limit" form="form--shiftSearch">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50" selected>50</option>
+                <option value="100">100</option>
+                <option value="250">250</option>
+                <option value="500">500</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="box">
       <form id="form--shiftSearch">
-        <input
-          id="searchSearch--limit"
-          name="limit"
-          type="hidden"
-          value="50"
-        />
         <input
           id="searchSearch--offset"
           name="offset"

@@ -192,14 +192,20 @@ declare const exports: {
     event.preventDefault()
   })
 
+  function resetOffsetAndGetResults(): void {
+    offsetInputElement.value = '0'
+    getSearchResults()
+  }
+
   const formElements = filtersFormElement.querySelectorAll('input, select')
 
   for (const formElement of formElements) {
-    formElement.addEventListener('change', () => {
-      offsetInputElement.value = '0'
-      getSearchResults()
-    })
+    formElement.addEventListener('change', resetOffsetAndGetResults)
   }
+
+  document
+    .querySelector('#shiftSearch--limit')
+    ?.addEventListener('change', resetOffsetAndGetResults)
 
   getSearchResults()
 })()

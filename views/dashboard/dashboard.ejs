@@ -327,7 +327,8 @@
             <p>
               Tips and tricks to get the most out of
               <%= configFunctions.getConfigProperty("application.applicationName") %>
-              (ShiftLog).</p>
+              <%= configFunctions.getConfigProperty("application.applicationName") === 'ShiftLog' ? '' : '(ShiftLog)' %>.
+            </p>
           </div>
         </div>
       </a>
