@@ -7,6 +7,7 @@ import handler_doDeleteScheduledReport from '../handlers/dashboard-post/doDelete
 import handler_doGetUserScheduledReports from '../handlers/dashboard-post/doGetUserScheduledReports.js';
 import handler_doResetApiKey from '../handlers/dashboard-post/doResetApiKey.js';
 import handler_doUpdateScheduledReport from '../handlers/dashboard-post/doUpdateScheduledReport.js';
+import handler_doUpdateEmployeeContact from '../handlers/dashboard-post/doUpdateEmployeeContact.js';
 import handler_doUpdateUserSetting from '../handlers/dashboard-post/doUpdateUserSetting.js';
 export const router = Router();
 router.get('/', handler_dashboard);
@@ -21,4 +22,6 @@ router
     .post('/doCreateScheduledReport', handler_doCreateScheduledReport)
     .post('/doUpdateScheduledReport', handler_doUpdateScheduledReport)
     .post('/doDeleteScheduledReport', handler_doDeleteScheduledReport);
+    .post('/doUpdateEmployeeContact', handler_doUpdateEmployeeContact)
+    .post('/doUpdateUserSetting', handler_doUpdateUserSetting);
 export default router;

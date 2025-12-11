@@ -8,6 +8,7 @@ import handler_doDeleteScheduledReport from '../handlers/dashboard-post/doDelete
 import handler_doGetUserScheduledReports from '../handlers/dashboard-post/doGetUserScheduledReports.js'
 import handler_doResetApiKey from '../handlers/dashboard-post/doResetApiKey.js'
 import handler_doUpdateScheduledReport from '../handlers/dashboard-post/doUpdateScheduledReport.js'
+import handler_doUpdateEmployeeContact from '../handlers/dashboard-post/doUpdateEmployeeContact.js'
 import handler_doUpdateUserSetting from '../handlers/dashboard-post/doUpdateUserSetting.js'
 
 export const router = Router()
@@ -23,6 +24,7 @@ router.get('/reports', handler_reports)
 router
   .get('/userSettings', handler_userSettings)
   .post('/doResetApiKey', handler_doResetApiKey)
+  .post('/doUpdateEmployeeContact', handler_doUpdateEmployeeContact)
   .post('/doUpdateUserSetting', handler_doUpdateUserSetting)
   .post('/doGetUserScheduledReports', handler_doGetUserScheduledReports)
   .post('/doCreateScheduledReport', handler_doCreateScheduledReport)
