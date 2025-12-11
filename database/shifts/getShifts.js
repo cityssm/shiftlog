@@ -72,10 +72,10 @@ export default async function getShifts(filters, options, user) {
           s.shiftDescription,
 
           -- Counts
-          (select count(*) from ShiftLog.ShiftWorkOrders wo where wo.shiftId = s.shiftId and wo.recordDelete_dateTime is null) as workOrdersCount,
-          (select count(*) from ShiftLog.ShiftEmployees se where se.shiftId = s.shiftId and se.recordDelete_dateTime is null) as employeesCount,
-          (select count(*) from ShiftLog.ShiftCrews sc where sc.shiftId = s.shiftId and sc.recordDelete_dateTime is null) as crewsCount,
-          (select count(*) from ShiftLog.ShiftEquipment seq where seq.shiftId = s.shiftId and seq.recordDelete_dateTime is null) as equipmentCount,
+          (select count(*) from ShiftLog.ShiftWorkOrders wo where wo.shiftId = s.shiftId) as workOrdersCount,
+          (select count(*) from ShiftLog.ShiftEmployees se where se.shiftId = s.shiftId) as employeesCount,
+          (select count(*) from ShiftLog.ShiftCrews sc where sc.shiftId = s.shiftId) as crewsCount,
+          (select count(*) from ShiftLog.ShiftEquipment seq where seq.shiftId = s.shiftId) as equipmentCount,
           (select count(*) from ShiftLog.Timesheets t where t.shiftId = s.shiftId and t.recordDelete_dateTime is null) as timesheetsCount
 
         from ShiftLog.Shifts s
