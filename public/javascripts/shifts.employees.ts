@@ -66,15 +66,14 @@ declare const exports: {
       '#icon--hasEmployeesEquipment'
     )
     if (hasEmployeesEquipmentIcon !== null) {
-      if (
-        shiftCrews.length > 0 ||
-        shiftEmployees.length > 0 ||
-        shiftEquipment.length > 0
-      ) {
-        hasEmployeesEquipmentIcon.classList.remove('is-hidden')
-      } else {
-        hasEmployeesEquipmentIcon.classList.add('is-hidden')
-      }
+      hasEmployeesEquipmentIcon.classList.toggle(
+        'is-hidden',
+        !(
+          shiftCrews.length > 0 ||
+          shiftEmployees.length > 0 ||
+          shiftEquipment.length > 0
+        )
+      )
     }
   }
 
@@ -467,7 +466,9 @@ declare const exports: {
     )
   }
 
-  function addCrew(): void {
+  function addCrew(clickEvent: Event): void {
+    clickEvent.preventDefault()
+
     let formElement: HTMLFormElement
 
     function doAdd(formEvent: Event): void {
@@ -537,7 +538,9 @@ declare const exports: {
     })
   }
 
-  function addEmployee(): void {
+  function addEmployee(clickEvent: Event): void {
+    clickEvent.preventDefault()
+
     let formElement: HTMLFormElement
     let closeModalFunction: () => void
 
@@ -631,7 +634,9 @@ declare const exports: {
     })
   }
 
-  function addEquipment(): void {
+  function addEquipment(clickEvent: Event): void {
+    clickEvent.preventDefault()
+
     let closeModalFunction: () => void
     let formElement: HTMLFormElement
 
@@ -1249,7 +1254,9 @@ declare const exports: {
     })
   }
 
-  function importFromPreviousShift(): void {
+  function importFromPreviousShift(clickEvent: Event): void {
+    clickEvent.preventDefault()
+
     let formElement: HTMLFormElement
     let closeModalFunction: () => void
 

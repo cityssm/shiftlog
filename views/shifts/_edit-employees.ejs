@@ -5,28 +5,44 @@
   <% if (isEdit) { %>
   <div class="column is-narrow">
     <div class="buttons">
-      <button class="button is-small is-link" id="button--addCrew" type="button">
-        <span class="icon"><i class="fa-solid fa-plus"></i></span>
-        <span>Add Crew</span>
-      </button>
-      <button class="button is-small is-link" id="button--addEmployee" type="button">
-        <span class="icon"><i class="fa-solid fa-plus"></i></span>
-        <span>Add Employee</span>
-      </button>
-      <button class="button is-small is-link" id="button--addEquipment" type="button">
-        <span class="icon"><i class="fa-solid fa-plus"></i></span>
-        <span>Add Equipment</span>
-      </button>
-      <button class="button is-small is-info" id="button--importFromPreviousShift" type="button">
-        <span class="icon"><i class="fa-solid fa-download"></i></span>
-        <span>Import from Previous Shift</span>
-      </button>
+      <div class="dropdown is-right">
+        <div class="dropdown-trigger">
+          <button class="button is-small is-success" aria-haspopup="true" aria-controls="dropdown-menu--addEmployeeEquipment">
+            <span class="icon"><i class="fa-solid fa-plus"></i></span>
+            <span>Add</span>
+            <span class="icon is-small">
+              <i class="fa-solid fa-caret-down" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu--addEmployeeEquipment" role="menu">
+          <div class="dropdown-content">
+            <a class="dropdown-item" id="button--addCrew" href="#">
+              <span class="icon"><i class="fa-solid fa-users-gear"></i></span>
+              <span>Add Crew</span>
+            </a>
+            <a class="dropdown-item" id="button--addEmployee" href="#">
+              <span class="icon"><i class="fa-solid fa-users"></i></span>
+              <span>Add Employee</span>
+            </a>
+            <a class="dropdown-item" id="button--addEquipment" href="#">
+              <span class="icon"><i class="fa-solid fa-truck"></i></span>
+              <span>Add Equipment</span>
+            </a>
+            <hr class="dropdown-divider" />
+            <a class="dropdown-item" id="button--importFromPreviousShift" href="#">
+              <span class="icon"><i class="fa-solid fa-download"></i></span>
+              <span>Import from Previous Shift</span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <% } %>
 </div>
 
-<div class="tabs is-small">
+<div class="tabs is-boxed is-small">
   <ul>
     <li class="is-active">
       <a href="#tab-content--crews">

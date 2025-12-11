@@ -29,14 +29,9 @@
         // Show/hide checkmark icon on main tab
         const hasEmployeesEquipmentIcon = document.querySelector('#icon--hasEmployeesEquipment');
         if (hasEmployeesEquipmentIcon !== null) {
-            if (shiftCrews.length > 0 ||
+            hasEmployeesEquipmentIcon.classList.toggle('is-hidden', !(shiftCrews.length > 0 ||
                 shiftEmployees.length > 0 ||
-                shiftEquipment.length > 0) {
-                hasEmployeesEquipmentIcon.classList.remove('is-hidden');
-            }
-            else {
-                hasEmployeesEquipmentIcon.classList.add('is-hidden');
-            }
+                shiftEquipment.length > 0));
         }
     }
     function renderShiftCrews() {
@@ -322,7 +317,8 @@
             availableEquipment = responseJSON.equipment;
         });
     }
-    function addCrew() {
+    function addCrew(clickEvent) {
+        clickEvent.preventDefault();
         let formElement;
         function doAdd(formEvent) {
             formEvent.preventDefault();
@@ -372,7 +368,8 @@
             }
         });
     }
-    function addEmployee() {
+    function addEmployee(clickEvent) {
+        clickEvent.preventDefault();
         let formElement;
         let closeModalFunction;
         function doAdd(formEvent) {
@@ -436,7 +433,8 @@
             }
         });
     }
-    function addEquipment() {
+    function addEquipment(clickEvent) {
+        clickEvent.preventDefault();
         let closeModalFunction;
         let formElement;
         function doAdd(formEvent) {
@@ -856,7 +854,8 @@
             }
         });
     }
-    function importFromPreviousShift() {
+    function importFromPreviousShift(clickEvent) {
+        clickEvent.preventDefault();
         let formElement;
         let closeModalFunction;
         function doImport(formEvent) {

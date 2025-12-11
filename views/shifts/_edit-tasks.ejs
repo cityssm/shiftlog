@@ -5,7 +5,7 @@
   <% if (isEdit && configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
   <div class="column is-narrow">
     <div class="buttons">
-      <button class="button is-small is-link" id="button--addWorkOrder" type="button">
+      <button class="button is-small is-success" id="button--addWorkOrder" type="button">
         <span class="icon"><i class="fa-solid fa-plus"></i></span>
         <span>Add <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
       </button>
@@ -15,7 +15,7 @@
 </div>
 
 <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
-<div class="tabs is-small">
+<div class="tabs is-boxed is-small">
   <ul>
     <li class="is-active">
       <a href="#tab-content--workOrders">

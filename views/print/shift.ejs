@@ -56,7 +56,12 @@
 </div>
 
 <% if (shiftCrews.length > 0) { %>
-<div class="box avoid-page-break">
+<div class="box avoid-page-break report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Crews section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
   <h2 class="title is-4">Crews</h2>
   <table class="table is-fullwidth is-striped">
     <thead>
@@ -78,7 +83,12 @@
 <% } %>
 
 <% if (shiftEmployees.length > 0) { %>
-<div class="box avoid-page-break">
+<div class="box avoid-page-break report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Employees section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
   <h2 class="title is-4">Employees</h2>
   <table class="table is-fullwidth is-striped">
     <thead>
@@ -110,7 +120,12 @@
 <% } %>
 
 <% if (shiftEquipment.length > 0) { %>
-<div class="box avoid-page-break">
+<div class="box avoid-page-break report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Equipment section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
   <h2 class="title is-4">Equipment</h2>
   <table class="table is-fullwidth is-striped">
     <thead>
@@ -142,7 +157,12 @@
 <% } %>
 
 <% if (shiftWorkOrders.length > 0) { %>
-<div class="box avoid-page-break">
+<div class="box avoid-page-break report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Work Orders section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
   <h2 class="title is-4">Work Orders</h2>
   <table class="table is-fullwidth is-striped">
     <thead>
@@ -170,7 +190,12 @@
 <% } %>
 
 <% if (allMilestones.length > 0) { %>
-<div class="box avoid-page-break">
+<div class="box avoid-page-break report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Work Order Milestones section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
   <h2 class="title is-4">Work Order Milestones</h2>
   <table class="table is-fullwidth is-striped">
     <thead>
@@ -185,7 +210,7 @@
     <tbody>
       <% for (const milestone of allMilestones) { %>
       <%
-        const workOrder = shiftWorkOrders.find(wo => wo.workOrderId === milestone.workOrderId);
+      const workOrder = shiftWorkOrders.find(wo => wo.workOrderId === milestone.workOrderId);
       %>
       <tr>
         <td><%= workOrder ? '#' + workOrder.workOrderNumber : '' %></td>
