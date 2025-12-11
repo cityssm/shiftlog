@@ -368,6 +368,8 @@ declare const exports: {
       closeModalFunction()
 
       // Open the add tag modal with the tag name pre-filled
+      let closeAddModalFunction: () => void
+
       cityssm.openHtmlModal('adminTags-add', {
         onshow(modalElement) {
           ;(
@@ -393,7 +395,7 @@ declare const exports: {
                 }
 
                 if (responseJSON.success) {
-                  ;(modalElement.closest('.modal') as HTMLElement).querySelector('.is-close-modal-button')?.dispatchEvent(new Event('click'))
+                  closeAddModalFunction()
                   if (responseJSON.tags !== undefined) {
                     exports.tags = responseJSON.tags
                     currentFilteredTags = responseJSON.tags
@@ -403,7 +405,7 @@ declare const exports: {
                   bulmaJS.alert({
                     contextualColorName: 'success',
                     title: 'Tag Added',
-                    message: 'Tag has been successfully added from work order.'
+                    message: 'Tag has been successfully added to the system.'
                   })
                 } else {
                   bulmaJS.alert({
@@ -415,6 +417,9 @@ declare const exports: {
               }
             )
           })
+        },
+        onshown(_modalElement, closeFunction) {
+          closeAddModalFunction = closeFunction
         }
       })
     }

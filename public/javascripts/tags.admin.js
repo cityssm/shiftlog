@@ -220,6 +220,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
             }
             closeModalFunction();
             // Open the add tag modal with the tag name pre-filled
+            var closeAddModalFunction;
             cityssm.openHtmlModal('adminTags-add', {
                 onshow: function (modalElement) {
                     var _a;
@@ -230,11 +231,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
                         submitEvent.preventDefault();
                         var addForm = submitEvent.currentTarget;
                         cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doAddTag"), addForm, function (rawResponseJSON) {
-                            var _a, _b;
+                            var _a;
                             var responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
-                                ;
-                                (_a = modalElement.closest('.modal').querySelector('.is-close-modal-button')) === null || _a === void 0 ? void 0 : _a.dispatchEvent(new Event('click'));
+                                closeAddModalFunction();
                                 if (responseJSON.tags !== undefined) {
                                     exports.tags = responseJSON.tags;
                                     currentFilteredTags = responseJSON.tags;
@@ -244,18 +244,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
                                 bulmaJS.alert({
                                     contextualColorName: 'success',
                                     title: 'Tag Added',
-                                    message: 'Tag has been successfully added from work order.'
+                                    message: 'Tag has been successfully added to the system.'
                                 });
                             }
                             else {
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Error Adding Tag',
-                                    message: (_b = responseJSON.message) !== null && _b !== void 0 ? _b : 'Please try again.'
+                                    message: (_a = responseJSON.message) !== null && _a !== void 0 ? _a : 'Please try again.'
                                 });
                             }
                         });
                     });
+                },
+                onshown: function (_modalElement, closeFunction) {
+                    closeAddModalFunction = closeFunction;
                 }
             });
         }

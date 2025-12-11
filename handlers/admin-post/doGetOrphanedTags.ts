@@ -6,10 +6,17 @@ export default async function handler(
   _request: Request,
   response: Response
 ): Promise<void> {
-  const orphanedTags = await getOrphanedTags()
+  try {
+    const orphanedTags = await getOrphanedTags()
 
-  response.json({
-    success: true,
-    orphanedTags
-  })
+    response.json({
+      success: true,
+      orphanedTags
+    })
+  } catch {
+    response.json({
+      success: false,
+      message: 'Error retrieving orphaned tags.'
+    })
+  }
 }
