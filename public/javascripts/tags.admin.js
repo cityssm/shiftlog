@@ -146,7 +146,11 @@
                 modalElement.querySelector('form')?.addEventListener('submit', doAddTag);
             },
             onshown(_modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -204,7 +208,7 @@
         </td>
         <td class="has-text-right">
           <div class="buttons are-small is-right">
-            <button class="button is-warning" data-tag-name="${cityssm.escapeHTML(tag.tagName)}" type="button">
+            <button class="button is-info" data-tag-name="${cityssm.escapeHTML(tag.tagName)}" type="button">
               <span class="icon"><i class="fa-solid fa-pencil"></i></span>
               <span>Edit</span>
             </button>
@@ -251,6 +255,150 @@
             tagsContainerElement.append(paginationElement);
         }
     }
+    function addTagFromWorkOrder() {
+        let closeModalFunction = () => {
+            // Initialized with no-op, will be assigned in onshown
+        };
+        function selectOrphanedTag(clickEvent) {
+            const buttonElement = clickEvent.currentTarget;
+            const tagName = buttonElement.dataset.tagName;
+            if (tagName === undefined) {
+                return;
+            }
+            closeModalFunction();
+            // Open the add tag modal with the tag name pre-filled
+            let closeAddModalFunction;
+            cityssm.openHtmlModal('adminTags-add', {
+                onshow(modalElement) {
+                    ;
+                    modalElement.querySelector('#addTag--tagName').value = tagName;
+                    modalElement.querySelector('#addTag--tagName').readOnly = true;
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', (submitEvent) => {
+                        submitEvent.preventDefault();
+                        const addForm = submitEvent.currentTarget;
+                        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTag`, addForm, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
+                            if (responseJSON.success) {
+                                closeAddModalFunction();
+                                if (responseJSON.tags !== undefined) {
+                                    exports.tags = responseJSON.tags;
+                                    currentFilteredTags = responseJSON.tags;
+                                    currentPage = 1;
+                                    renderTagsWithPagination(responseJSON.tags);
+                                }
+                                bulmaJS.alert({
+                                    contextualColorName: 'success',
+                                    title: 'Tag Added',
+                                    message: 'Tag has been successfully added to the system.'
+                                });
+                            }
+                            else {
+                                bulmaJS.alert({
+                                    contextualColorName: 'danger',
+                                    title: 'Error Adding Tag',
+                                    message: responseJSON.message ?? 'Please try again.'
+                                });
+                            }
+                        });
+                    });
+                },
+                onshown(_modalElement, closeFunction) {
+                    bulmaJS.toggleHtmlClipped();
+                    closeAddModalFunction = closeFunction;
+                },
+                onremoved() {
+                    bulmaJS.toggleHtmlClipped();
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminTags-addFromWorkOrder', {
+            onshow(modalElement) {
+                const containerElement = modalElement.querySelector('#container--orphanedTags');
+                containerElement.innerHTML = `
+          <div class="message is-info">
+            <p class="message-body">
+              <span class="icon"><i class="fa-solid fa-spinner fa-pulse"></i></span>
+              Loading tags...
+            </p>
+          </div>
+        `;
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetOrphanedTags`, {}, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success &&
+                        responseJSON.orphanedTags !== undefined) {
+                        if (responseJSON.orphanedTags.length === 0) {
+                            containerElement.innerHTML = `
+                  <div class="message is-success">
+                    <p class="message-body">
+                      <span class="icon"><i class="fa-solid fa-check"></i></span>
+                      All work order tags have system records.
+                    </p>
+                  </div>
+                `;
+                        }
+                        else {
+                            const tableElement = document.createElement('table');
+                            tableElement.className =
+                                'table is-striped is-hoverable is-fullwidth';
+                            tableElement.innerHTML = /* html */ `
+                  <thead>
+                    <tr>
+                      <th>Tag Name</th>
+                      <th class="has-text-right" style="width: 120px;">Usage Count</th>
+                      <th style="width: 100px;"><span class="is-sr-only">Actions</span></th>
+                    </tr>
+                  </thead>
+                `;
+                            const tbody = document.createElement('tbody');
+                            for (const orphanedTag of responseJSON.orphanedTags) {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = /* html */ `
+                    <td>
+                      <span class="tag is-light">
+                        ${cityssm.escapeHTML(orphanedTag.tagName)}
+                      </span>
+                    </td>
+                    <td class="has-text-right">
+                      ${cityssm.escapeHTML(orphanedTag.usageCount.toString())}
+                    </td>
+                    <td class="has-text-right">
+                      <button class="button is-primary is-small" data-tag-name="${cityssm.escapeHTML(orphanedTag.tagName)}" type="button">
+                        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                        <span>Add</span>
+                      </button>
+                    </td>
+                  `;
+                                tr.querySelector('button')?.addEventListener('click', selectOrphanedTag);
+                                tbody.append(tr);
+                            }
+                            tableElement.append(tbody);
+                            containerElement.innerHTML = '';
+                            containerElement.append(tableElement);
+                        }
+                    }
+                    else {
+                        containerElement.innerHTML = /* html */ `
+                <div class="message is-danger">
+                  <p class="message-body">
+                    <span class="icon"><i class="fa-solid fa-exclamation-triangle"></i></span>
+                    Failed to load orphaned tags.
+                  </p>
+                </div>
+              `;
+                    }
+                });
+            },
+            onshown(_modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
     // Filter functionality
     const filterInput = document.querySelector('#filter--tags');
     filterInput?.addEventListener('keyup', () => {
@@ -261,6 +409,10 @@
     });
     // Add tag button
     document.querySelector('#button--addTag')?.addEventListener('click', addTag);
+    // Add tag from work order button
+    document
+        .querySelector('#button--addTagFromWorkOrder')
+        ?.addEventListener('click', addTagFromWorkOrder);
     // Initial render
     renderTagsWithPagination(exports.tags);
 })();

@@ -13,6 +13,7 @@ import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js';
 import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js';
 import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js';
 import handler_doAddTag from '../handlers/admin-post/doAddTag.js';
+import handler_doGetOrphanedTags from '../handlers/admin-post/doGetOrphanedTags.js';
 import handler_doAddUser from '../handlers/admin-post/doAddUser.js';
 import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js';
 import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupMember.js';
@@ -117,5 +118,6 @@ router
     .get('/tags', handler_tags)
     .post('/doAddTag', handler_doAddTag)
     .post('/doUpdateTag', handler_doUpdateTag)
-    .post('/doDeleteTag', handler_doDeleteTag);
+    .post('/doDeleteTag', handler_doDeleteTag)
+    .post('/doGetOrphanedTags', handler_doGetOrphanedTags);
 export default router;
