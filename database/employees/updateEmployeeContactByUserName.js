@@ -23,9 +23,9 @@ export default async function updateEmployeeContactByUserName(userName, contactF
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .input('phoneNumber', contactFields.phoneNumber ?? undefined)
-        .input('phoneNumberAlternate', contactFields.phoneNumberAlternate ?? undefined)
-        .input('emailAddress', contactFields.emailAddress ?? undefined)
+        .input('phoneNumber', contactFields.phoneNumber)
+        .input('phoneNumberAlternate', contactFields.phoneNumberAlternate)
+        .input('emailAddress', contactFields.emailAddress)
         .input('recordUpdate_userName', user.userName)
         .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
       update ShiftLog.Employees
