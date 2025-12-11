@@ -148,6 +148,13 @@ export interface Shift extends BaseRecord {
   shiftDescription: string
 
   recordLock_dateTime?: Date | null
+
+  // Counts for search results
+  workOrdersCount?: number
+  employeesCount?: number
+  crewsCount?: number
+  equipmentCount?: number
+  timesheetsCount?: number
 }
 
 export interface ShiftCrew {
