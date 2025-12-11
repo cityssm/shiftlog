@@ -36,7 +36,7 @@ declare const exports: {
     }
 
     const tableElement = document.createElement('table')
-    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+    tableElement.className = 'table is-fullwidth is-striped is-hoverable is-narrow'
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
@@ -45,6 +45,12 @@ declare const exports: {
           <th>Date</th>
           <th>Time</th>
           <th>Supervisor</th>
+          <th class="has-width-1">
+            <span class="is-sr-only">Properties</span>
+          </th>
+          <th class="has-width-1 is-hidden-print">
+            <span class="is-sr-only">Actions</span>
+          </th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -57,6 +63,53 @@ declare const exports: {
     for (const shift of data.shifts) {
       const tableRowElement = document.createElement('tr')
 
+      // Build counts icons HTML
+      const workOrdersIconHTML =
+        shift.workOrdersCount && shift.workOrdersCount > 0
+          ? /* html */ `
+            <span class="icon" title="${shift.workOrdersCount} work order(s)">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </span>
+          `
+          : ''
+
+      const employeesIconHTML =
+        shift.employeesCount && shift.employeesCount > 0
+          ? /* html */ `
+            <span class="icon" title="${shift.employeesCount} employee(s)">
+              <i class="fa-solid fa-users"></i>
+            </span>
+          `
+          : ''
+
+      const crewsIconHTML =
+        shift.crewsCount && shift.crewsCount > 0
+          ? /* html */ `
+            <span class="icon" title="${shift.crewsCount} crew(s)">
+              <i class="fa-solid fa-users-gear"></i>
+            </span>
+          `
+          : ''
+
+      const equipmentIconHTML =
+        shift.equipmentCount && shift.equipmentCount > 0
+          ? /* html */ `
+            <span class="icon" title="${shift.equipmentCount} equipment">
+              <i class="fa-solid fa-truck"></i>
+            </span>
+          `
+          : ''
+
+      const timesheetsIconHTML =
+        shift.timesheetsCount && shift.timesheetsCount > 0
+          ? /* html */ `
+            <span class="icon" title="${shift.timesheetsCount} timesheet(s)">
+              <i class="fa-solid fa-clock"></i>
+            </span>
+          `
+          : ''
+
+      // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
         <td>
           <a href="${shiftLog.buildShiftURL(shift.shiftId)}">
@@ -68,6 +121,23 @@ declare const exports: {
         <td>${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '(Unknown Shift Time)')}</td>
         <td>
           ${cityssm.escapeHTML(shift.supervisorLastName ?? '')}, ${cityssm.escapeHTML(shift.supervisorFirstName ?? '')}
+        </td>
+        <td>
+          ${workOrdersIconHTML}
+          ${crewsIconHTML}
+          ${employeesIconHTML}
+          ${equipmentIconHTML}
+          ${timesheetsIconHTML}
+        </td>
+        <td class="is-hidden-print">
+          <a
+            class="button is-small is-info is-light"
+            href="${shiftLog.buildShiftURL(shift.shiftId)}/print"
+            title="Print Shift"
+            target="_blank"
+          >
+            <span class="icon is-small"><i class="fa-solid fa-print"></i></span>
+          </a>
         </td>
       `
 

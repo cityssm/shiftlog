@@ -19,6 +19,16 @@
         if (milestonesCountElement !== null) {
             milestonesCountElement.textContent = allMilestones.length.toString();
         }
+        // Show/hide tasks icon indicator
+        const hasTasksIconElement = document.querySelector('#icon--hasTasks');
+        if (hasTasksIconElement !== null) {
+            if (shiftWorkOrders.length > 0) {
+                hasTasksIconElement.classList.remove('is-hidden');
+            }
+            else {
+                hasTasksIconElement.classList.add('is-hidden');
+            }
+        }
     }
     function renderShiftWorkOrders() {
         const containerElement = document.querySelector('#container--shiftWorkOrders');
