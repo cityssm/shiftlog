@@ -12,6 +12,33 @@
     let availableCrews = [];
     let availableEmployees = [];
     let availableEquipment = [];
+    /**
+     * Switch to a specific tab
+     * @param tabId - The ID of the tab content to show (e.g., 'tab-content--crews')
+     */
+    function switchToTab(tabId) {
+        // Find the tab link for this content
+        const tabLink = document.querySelector(`a[href="#${tabId}"]`);
+        if (tabLink !== null) {
+            // Remove is-active from all tabs
+            const allTabLinks = document.querySelectorAll('#tab--employees .tabs a');
+            for (const link of allTabLinks) {
+                link.parentElement?.classList.remove('is-active');
+            }
+            // Set is-active on the selected tab
+            tabLink.parentElement?.classList.add('is-active');
+            // Hide all tab content
+            const allTabContent = document.querySelectorAll('[id^="tab-content--crews"], [id^="tab-content--employees"], [id^="tab-content--equipment"]');
+            for (const content of allTabContent) {
+                content.classList.add('is-hidden');
+            }
+            // Show the selected tab content
+            const selectedContent = document.querySelector(`#${tabId}`);
+            if (selectedContent !== null) {
+                selectedContent.classList.remove('is-hidden');
+            }
+        }
+    }
     function updateCounts() {
         // Update count badges
         const crewsCountElement = document.querySelector('#crewsCount');
@@ -326,6 +353,7 @@
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
+                    switchToTab('tab-content--crews');
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         message: 'Crew added successfully'
@@ -378,6 +406,7 @@
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
+                    switchToTab('tab-content--employees');
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         message: 'Employee added successfully'
@@ -443,6 +472,7 @@
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
+                    switchToTab('tab-content--equipment');
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         message: 'Equipment added successfully'
