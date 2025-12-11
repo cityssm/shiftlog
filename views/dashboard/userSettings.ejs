@@ -32,7 +32,7 @@
                 name="phoneNumber"
                 type="text"
                 maxlength="20"
-                value="<%- cityssm.escapeHTML(employee.phoneNumber ?? '') %>"
+                value="<%= (employee.phoneNumber ?? '') %>"
               />
             </div>
           </div>
@@ -46,7 +46,7 @@
                 name="phoneNumberAlternate"
                 type="text"
                 maxlength="20"
-                value="<%- cityssm.escapeHTML(employee.phoneNumberAlternate ?? '') %>"
+                value="<%= (employee.phoneNumberAlternate ?? '') %>"
               />
             </div>
           </div>
@@ -60,26 +60,25 @@
                 name="emailAddress"
                 type="email"
                 maxlength="100"
-                value="<%- cityssm.escapeHTML(employee.emailAddress ?? '') %>"
+                value="<%= (employee.emailAddress ?? '') %>"
               />
             </div>
           </div>
 
-          <div class="field">
-            <div class="control">
-              <button class="button is-primary" type="submit">
-                <span class="icon is-small">
-                  <i class="fa-solid fa-floppy-disk"></i>
-                </span>
-                <span>Update Contact Information</span>
-              </button>
-            </div>
+          <div class="has-text-right">
+            <button class="button is-primary" type="submit">
+              <span class="icon is-small">
+                <i class="fa-solid fa-floppy-disk"></i>
+              </span>
+              <span>Update Contact Information</span>
+            </button>
           </div>
         </form>
       </div>
     </div>
     <% } %>
 
+    <% if (configFunctions.getConfigProperty('workOrders.isEnabled')) { %>
     <div class="panel">
       <h2 class="panel-heading"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Settings</h2>
       <div class="panel-block is-block">
@@ -116,6 +115,7 @@
         </form>
       </div>
     </div>
+    <% } %>
   </div>
   <div class="column">
     <div class="panel">
