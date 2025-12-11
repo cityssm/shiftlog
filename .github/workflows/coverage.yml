@@ -49,7 +49,7 @@ jobs:
         run: npm install
 
       - name: Copy Test Config
-        run: cp ./data/testing.config.js ./data/config.js
+        run: cp ./data/githubActions.config.js ./data/config.js
 
       - name: Test Application Startup
         run: npm run test:startup

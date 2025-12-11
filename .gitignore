@@ -21,6 +21,7 @@ node_modules/
 
 data/config.*
 data/*.config.*
+!data/githubActions.config.*
 !data/testing.config.*
 
 public/images-custom/*

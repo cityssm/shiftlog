@@ -3,7 +3,7 @@
 
 import type { Config } from '../types/config.types.js'
 
-import { config as baseConfig } from './partialConfigs/publicWorks.partialConfig.js'
+import { config as baseConfig } from './partialConfigs/all.partialConfig.js'
 
 export const config: Config = { ...baseConfig }
 
