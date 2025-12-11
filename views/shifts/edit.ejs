@@ -256,6 +256,7 @@
   <div class="columns is-vcentered is-fixed-bottom has-background-white has-shadow is-hidden-print">
     <div class="column">
       <% if (!isCreate) { %>
+        <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
       #<%= shift.shiftId %>
       <% } %>
     </div>

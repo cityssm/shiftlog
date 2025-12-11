@@ -3,10 +3,9 @@
 
 import Debug from 'debug'
 
+import { DEBUG_NAMESPACE } from '../../debug.config.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
-
-import { DEBUG_NAMESPACE } from '../../debug.config.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:database:addDataListItem`)
 

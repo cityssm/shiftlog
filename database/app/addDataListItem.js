@@ -1,9 +1,9 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
 import Debug from 'debug';
+import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-import { DEBUG_NAMESPACE } from '../../debug.config.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:database:addDataListItem`);
 export default async function addDataListItem(form) {
     const pool = await getShiftLogConnectionPool();
