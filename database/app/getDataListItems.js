@@ -1,19 +1,19 @@
 import mssqlPool from '@cityssm/mssql-multi-pool';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
-export default async function getDataListItems(dataListKey, user) {
+export default async function getDataListItems(dataListKey, userName) {
     const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
     const dataListItemsResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('dataListKey', dataListKey)
-        .input('userName', user?.userName).query(/* sql */ `
+        .input('userName', userName).query(/* sql */ `
       select
         i.dataListItemId, i.dataListKey, i.dataListItem
       from ShiftLog.DataListItems i
       where i.instance = @instance
         and i.dataListKey = @dataListKey
         and i.recordDelete_dateTime is null
-        ${user === undefined
+        ${userName === undefined
         ? ''
         : `
                 and (i.userGroupId is null or i.userGroupId in (

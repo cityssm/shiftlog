@@ -4,4 +4,4 @@ import type { Request } from 'express';
  * @param request The request object
  * @returns The application URL
  */
-export declare function getApplicationUrl(request: Request): string;
+export declare function getApplicationUrl(request?: Request): string;

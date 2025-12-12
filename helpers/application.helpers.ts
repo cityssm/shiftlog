@@ -9,8 +9,11 @@ let applicationUrl = getConfigProperty('application.applicationUrl')
  * @param request The request object
  * @returns The application URL
  */
-export function getApplicationUrl(request: Request): string {
-  if (applicationUrl === undefined || applicationUrl === '') {
+export function getApplicationUrl(request?: Request): string {
+  if (
+    (applicationUrl === undefined || applicationUrl === '') &&
+    request !== undefined
+  ) {
     applicationUrl = `http://${request.hostname}${
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       getConfigProperty('application.httpPort') === 80
@@ -19,5 +22,8 @@ export function getApplicationUrl(request: Request): string {
     }${getConfigProperty('reverseProxy.urlPrefix')}`
   }
 
-  return applicationUrl
+  return (
+    applicationUrl ??
+    `http://localhost:${getConfigProperty('application.httpPort')}${getConfigProperty('reverseProxy.urlPrefix')}`
+  )
 }

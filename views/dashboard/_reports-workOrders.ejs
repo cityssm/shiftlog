@@ -22,6 +22,52 @@
           </div>
         </div>
       </a>
+      <div class="panel-block">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-3x fa-print"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0">
+              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+              Digest
+            </h2>
+            <p class="mb-4">
+              All outstanding items assigned to a specific group
+              in a printable format for easy distribution.
+            </p>
+            <form
+              action="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/workOrderDigest"
+              method="GET"
+            >
+              <div class="field has-addons">
+                <div class="control">
+                  <label class="button is-static" for="report--workOrderDigest-assignedToDataListItemId">Assigned To</label>
+                </div>
+                <div class="control is-expanded">
+                  <div class="select is-fullwidth">
+                    <select
+                      id="report--workOrderDigest-assignedToDataListItemId"
+                      name="assignedToDataListItemId"
+                      required
+                    >
+                      <option value="" disabled selected>(Select)</option>
+                      <% for (const item of assignedToDataListItems) { %>
+                      <option value="<%= item.dataListItemId %>"><%= item.dataListItem %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+                <div class="control">
+                  <button class="button" type="submit">
+                    Generate
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="column">

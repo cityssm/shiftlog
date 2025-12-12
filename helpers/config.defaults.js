@@ -23,6 +23,7 @@ export const configDefaultValues = {
     'connectors.shiftLog': undefined,
     'connectors.avanti': undefined,
     'connectors.pearl': undefined,
+    'connectors.email': undefined,
     // Shifts
     'shifts.isEnabled': false,
     'shifts.router': 'shifts',
