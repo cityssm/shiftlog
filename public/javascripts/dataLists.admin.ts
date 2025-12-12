@@ -223,16 +223,16 @@ declare const exports: {
     cityssm.openHtmlModal('adminDataLists-addItem', {
       onshow(modalElement) {
         // Set the modal title
-        ;(
-          modalElement.querySelector('#addDataListItem--title') as HTMLElement
-        ).textContent = `Add ${dataList.dataListName} Item`
+        const titleElement = modalElement.querySelector(
+          '#addDataListItem--title'
+        ) as HTMLElement
+        titleElement.textContent = `Add ${dataList.dataListName} Item`
 
         // Set the data list key
-        ;(
-          modalElement.querySelector(
-            '#addDataListItem--dataListKey'
-          ) as HTMLInputElement
-        ).value = dataListKey
+        const dataListKeyInput = modalElement.querySelector(
+          '#addDataListItem--dataListKey'
+        ) as HTMLInputElement
+        dataListKeyInput.value = dataListKey
 
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
@@ -325,28 +325,27 @@ declare const exports: {
     cityssm.openHtmlModal('adminDataLists-editItem', {
       onshow(modalElement) {
         // Set the modal title
-        ;(
-          modalElement.querySelector('#editDataListItem--title') as HTMLElement
-        ).textContent = `Edit ${dataList.dataListName} Item`
+        const titleElement = modalElement.querySelector(
+          '#editDataListItem--title'
+        ) as HTMLElement
+        titleElement.textContent = `Edit ${dataList.dataListName} Item`
 
         // Set the hidden fields
-        ;(
-          modalElement.querySelector(
-            '#editDataListItem--dataListKey'
-          ) as HTMLInputElement
-        ).value = dataListKey
-        ;(
-          modalElement.querySelector(
-            '#editDataListItem--dataListItemId'
-          ) as HTMLInputElement
-        ).value = dataListItemId
+        const dataListKeyInput = modalElement.querySelector(
+          '#editDataListItem--dataListKey'
+        ) as HTMLInputElement
+        dataListKeyInput.value = dataListKey
+
+        const dataListItemIdInput = modalElement.querySelector(
+          '#editDataListItem--dataListItemId'
+        ) as HTMLInputElement
+        dataListItemIdInput.value = dataListItemId
 
         // Set the item name
-        ;(
-          modalElement.querySelector(
-            '#editDataListItem--dataListItem'
-          ) as HTMLInputElement
-        ).value = dataListItem
+        const dataListItemInput = modalElement.querySelector(
+          '#editDataListItem--dataListItem'
+        ) as HTMLInputElement
+        dataListItemInput.value = dataListItem
 
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
