@@ -26,7 +26,9 @@ export default async function createApiAuditLog(form) {
       `);
         return true;
     }
-    catch {
+    catch (error) {
+        // Log error but don't throw to avoid breaking API requests
+        console.error('Failed to create API audit log:', error);
         return false;
     }
 }

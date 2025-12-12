@@ -91,12 +91,12 @@ CREATE TABLE ShiftLog.ApiAuditLog (
   instance varchar(20) not null,
   userName varchar(30),
   apiKey varchar(100),
-  endpoint varchar(500) not null,
+  endpoint varchar(2000) not null,
   requestMethod varchar(10) not null,
   isValidApiKey bit not null,
   requestTime datetime not null default getdate(),
   ipAddress varchar(45),
-  userAgent varchar(500),
+  userAgent varchar(1000),
   responseStatus int,
   errorMessage varchar(1000)
 )
