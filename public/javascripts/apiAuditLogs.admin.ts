@@ -63,7 +63,7 @@ declare const exports: {
 
       let displayEndpoint = log.endpoint
       if (log.endpoint.length > maxEndpointLength) {
-        displayEndpoint = log.endpoint.slice(0, maxEndpointLength) + '...'
+        displayEndpoint = '...' + log.endpoint.slice(-maxEndpointLength)
       }
 
       const escapedContent = {
@@ -145,6 +145,11 @@ declare const exports: {
         loadAuditLogs()
       }
     })
+
+  // Auto-refresh on filter change
+  document
+    .querySelector('#filter--isValidApiKey')
+    ?.addEventListener('change', loadAuditLogs)
 
   // Initial load
   loadAuditLogs()
