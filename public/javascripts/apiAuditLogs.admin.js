@@ -55,7 +55,7 @@
             tableHTML += `<tr>
         <td>${escapedContent.requestTime}</td>
         <td>${escapedContent.userName}</td>
-        <td class="is-size-7" title="${escapedContent.endpoint}">${escapedContent.displayEndpoint}</td>
+        <td class="is-vcentered is-size-7" title="${escapedContent.endpoint}">${escapedContent.displayEndpoint}</td>
         <td><span class="tag">${escapedContent.requestMethod}</span></td>
         <td>${isValidIcon}</td>
         <td>${escapedContent.ipAddress}</td>
