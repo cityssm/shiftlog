@@ -59,39 +59,6 @@ CREATE TABLE ShiftLog.UserSettings (
 )
 GO
 
-CREATE TABLE ShiftLog.UserScheduledReports (
-  scheduledReportId int not null primary key identity(1,1),
-  instance varchar(20) not null,
-  userName varchar(30) not null,
-  
-  reportType varchar(50) not null,
-  reportTitle varchar(100) not null,
-  
-  -- Report parameters stored as JSON
-  reportParameters varchar(max),
-  
-  -- Schedule configuration
-  scheduleDaysOfWeek varchar(20) not null, -- Comma-separated: "1,3,5" for Mon,Wed,Fri
-  scheduleTimeOfDay time not null,
-  
-  -- Email tracking
-  lastSentDate date,
-  lastSentDateTime datetime,
-  nextScheduledDateTime datetime,
-  
-  isActive bit not null default 1,
-  
-  recordCreate_userName varchar(30) not null,
-  recordCreate_dateTime datetime not null default getdate(),
-  recordUpdate_userName varchar(30) not null,
-  recordUpdate_dateTime datetime not null default getdate(),
-  recordDelete_userName varchar(30),
-  recordDelete_dateTime datetime,
-  
-  foreign key (instance, userName) references ShiftLog.Users(instance, userName)
-)
-GO
-
 CREATE TABLE ShiftLog.UserGroups (
   userGroupId int not null primary key identity(1,1),
   instance varchar(20) not null,

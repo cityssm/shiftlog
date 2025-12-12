@@ -37,21 +37,6 @@ export interface DatabaseUser extends BaseRecord {
     isAdmin: boolean;
     userSettings?: Partial<Record<UserSettingKey, string>>;
 }
-export interface UserScheduledReport extends BaseRecord {
-    scheduledReportId: number;
-    userName: string;
-    reportType: string;
-    reportTitle: string;
-    reportParameters?: string | null;
-    reportParametersJson?: Record<string, unknown>;
-    scheduleDaysOfWeek: string;
-    scheduleTimeOfDay: Date | string;
-    lastSentDate?: Date | string | null;
-    lastSentDateTime?: Date | string | null;
-    nextScheduledDateTime?: Date | string | null;
-    isActive: boolean;
-    apiKey?: string | null;
-}
 export interface UserGroup extends BaseRecord {
     userGroupId: number;
     userGroupName: string;

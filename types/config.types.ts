@@ -13,7 +13,6 @@ import type {
   GetEquipmentFilters
 } from '@cityssm/worktech-api'
 import type { config as MSSQLConfig } from 'mssql'
-import type { TransportOptions } from 'nodemailer'
 
 export interface Config {
   application: ConfigApplication
@@ -66,9 +65,6 @@ export interface Config {
 
     avanti?: AvantiApiConfiguration
     pearl?: MSSQLConfig
-
-    /** Email Configuration for Scheduled Reports */
-    email?: TransportOptions & { from?: string }
   }
 
   shifts?: ConfigSection

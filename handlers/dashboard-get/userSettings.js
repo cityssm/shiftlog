@@ -1,10 +1,7 @@
-import getUserScheduledReports from '../../database/users/getUserScheduledReports.js';
 import getEmployee from '../../database/employees/getEmployee.js';
 import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
 export default async function handler(request, response) {
     const assignedToDataListItems = await getAssignedToDataListItems(request.session.user);
-    const scheduledReports = await getUserScheduledReports(request.session.user?.userName ?? '');
-      
     // Get employee information if available and userName matches
     let employee = request.session.user?.employeeNumber
         ? await getEmployee(request.session.user.employeeNumber)
@@ -16,7 +13,6 @@ export default async function handler(request, response) {
     response.render('dashboard/userSettings', {
         headTitle: 'User Settings',
         assignedToDataListItems,
-        employee,
-        scheduledReports
+        employee
     });
 }
