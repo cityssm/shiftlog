@@ -4,8 +4,14 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 function buildWhereClause(filters, user) {
     let whereClause = 'where s.instance = @instance and s.recordDelete_dateTime is null';
-    if (filters.shiftDateString !== undefined) {
+    if (filters.shiftDateString !== undefined && filters.shiftDateString !== '') {
         whereClause += ' and s.shiftDate = @shiftDateString';
+    }
+    if (filters.shiftTypeDataListItemId !== undefined && filters.shiftTypeDataListItemId !== '') {
+        whereClause += ' and s.shiftTypeDataListItemId = @shiftTypeDataListItemId';
+    }
+    if (filters.supervisorEmployeeNumber !== undefined && filters.supervisorEmployeeNumber !== '') {
+        whereClause += ' and s.supervisorEmployeeNumber = @supervisorEmployeeNumber';
     }
     if (user !== undefined) {
         whereClause += `
@@ -43,6 +49,8 @@ export default async function getShifts(filters, options, user) {
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('shiftDateString', filters.shiftDateString ?? null)
+            .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
+            .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
             .input('userName', user?.userName)
             .query(countSql);
         totalCount = countResult.recordset[0]?.totalCount ?? 0;
@@ -54,6 +62,8 @@ export default async function getShifts(filters, options, user) {
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('shiftDateString', filters.shiftDateString ?? null)
+            .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
+            .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
             .input('userName', user?.userName).query(/* sql */ `
         select
           s.shiftId, s.shiftDate,

@@ -36,16 +36,15 @@ declare const exports: {
     }
 
     const tableElement = document.createElement('table')
-    tableElement.className = 'table is-fullwidth is-striped is-hoverable is-narrow'
+    tableElement.className =
+      'table is-fullwidth is-striped is-hoverable is-narrow'
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Type</th>
+          <th>${cityssm.escapeHTML(shiftLog.shiftsSectionNameSingular)}</th>
           <th>Date</th>
-          <th>Time</th>
           <th>Supervisor</th>
-          <th class="has-width-1">
+          <th>
             <span class="is-sr-only">Properties</span>
           </th>
           <th class="has-width-1 is-hidden-print">
@@ -109,20 +108,27 @@ declare const exports: {
           `
           : ''
 
+      const shiftDate = new Date(shift.shiftDate)
+
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
         <td>
           <a class="has-text-weight-semibold" href="${shiftLog.buildShiftURL(shift.shiftId)}">
-            ${cityssm.escapeHTML(shift.shiftId.toString())}
-          </a>
+            ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '(Unknown Shift Type)')}
+            -
+            ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '(Unknown Shift Time)')}
+          </a><br />
+          <span class="is-size-7">#${cityssm.escapeHTML(shift.shiftId.toString())}</span>
         </td>
-        <td>${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '(Unknown Shift Type)')}</td>
-        <td>${cityssm.dateToString(new Date(shift.shiftDate))}</td>
-        <td>${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '(Unknown Shift Time)')}</td>
+        <td>
+          ${cityssm.dateToString(shiftDate)}<br />
+          <span class="is-size-7">${shiftLog.daysOfWeek[shiftDate.getDay()]}</span>
+        </td>
+
         <td>
           ${cityssm.escapeHTML(shift.supervisorLastName ?? '')}, ${cityssm.escapeHTML(shift.supervisorFirstName ?? '')}
         </td>
-        <td>
+        <td class="has-text-right">
           ${workOrdersIconHTML}
           ${crewsIconHTML}
           ${employeesIconHTML}
@@ -186,14 +192,20 @@ declare const exports: {
     event.preventDefault()
   })
 
+  function resetOffsetAndGetResults(): void {
+    offsetInputElement.value = '0'
+    getSearchResults()
+  }
+
   const formElements = filtersFormElement.querySelectorAll('input, select')
 
   for (const formElement of formElements) {
-    formElement.addEventListener('change', () => {
-      offsetInputElement.value = '0'
-      getSearchResults()
-    })
+    formElement.addEventListener('change', resetOffsetAndGetResults)
   }
+
+  document
+    .querySelector('#shiftSearch--limit')
+    ?.addEventListener('change', resetOffsetAndGetResults)
 
   getSearchResults()
 })()

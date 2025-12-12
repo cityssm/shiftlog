@@ -35,22 +35,22 @@
                 }
                 const tagTextElement = document.createElement('span');
                 tagTextElement.textContent = tag.tagName;
-                tagElement.appendChild(tagTextElement);
+                tagElement.append(tagTextElement);
                 // Add delete button if in edit mode
                 if (exports.isEdit) {
                     const deleteButton = document.createElement('button');
                     deleteButton.className = 'delete is-small';
                     deleteButton.type = 'button';
-                    deleteButton.setAttribute('data-tag-name', tag.tagName);
+                    deleteButton.dataset.tagName = tag.tagName;
                     deleteButton.setAttribute('aria-label', `Remove tag ${tag.tagName}`);
                     deleteButton.addEventListener('click', () => {
                         deleteTag(tag.tagName);
                     });
-                    tagElement.appendChild(deleteButton);
+                    tagElement.append(deleteButton);
                 }
-                tagsElement.appendChild(tagElement);
+                tagsElement.append(tagElement);
             }
-            tagsContainerElement.appendChild(tagsElement);
+            tagsContainerElement.append(tagsElement);
         }
         function deleteTag(tagName) {
             bulmaJS.confirm({

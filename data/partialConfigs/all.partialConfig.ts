@@ -6,6 +6,8 @@ export const config: Config = { ...baseConfig }
 
 config.application.instance = 'all'
 
+config.session.doKeepAlive = true
+
 config.shifts = {
   isEnabled: true
 }
