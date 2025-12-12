@@ -1,27 +1,30 @@
 <%- await include('_header-print'); -%>
 
-<div id="pageHeader">
-  <h1 class="title is-3">
-    <%= configFunctions.getConfigProperty('workOrders.sectionName') %> Digest
-  </h1>
-  <p class="subtitle is-5">
-    <%= dateTimeFunctions.dateToString(reportDateTime) %>
-    <%= dateTimeFunctions.dateToTimeString(reportDateTime) %>
-  </p>
+<div class="mb-5" id="pageHeader">
+  <div class="columns">
+    <div class="column">
+      <h1 class="title is-3">
+        <%= configFunctions.getConfigProperty('workOrders.sectionName') %> Digest
+      </h1>
+    </div>
+    <div class="column is-narrow">
+      <p>
+        <strong><%= assignedToDataListItem ? assignedToDataListItem.dataListItem : '' %></strong><br />
+        <%= dateTimeFunctions.dateToString(reportDateTime) %>
+        <%= dateTimeFunctions.dateToTimeString(reportDateTime) %>
+      </p>
+    </div>
+  </div>
 </div>
 
 <% if (workOrders.length === 0 && milestones.length === 0) { %>
-<div class="box">
-  <div class="message">
-    <div class="message-body">
-      No open <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> or milestones assigned to this value.
-    </div>
-  </div>
+<div class="message-body">
+  No open <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> or milestones assigned to this value.
 </div>
 <% } %>
 
 <% if (workOrders.length > 0) { %>
-<div class="box avoid-page-break">
+<div class="avoid-page-break">
   <h2 class="title is-4">
     Open <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
   </h2>
@@ -72,7 +75,7 @@
 <% } %>
 
 <% if (milestones.length > 0) { %>
-<div class="box avoid-page-break">
+<div class="avoid-page-break">
   <h2 class="title is-4">
     Open Milestones
   </h2>
@@ -118,7 +121,7 @@
 </div>
 <% } %>
 
-<div class="box has-background-light">
+<div class="box has-background-light mt-5">
   <p class="is-size-7">
     <strong>Legend:</strong>
     <span class="tag is-danger ml-2">Overdue</span> Items past their due date

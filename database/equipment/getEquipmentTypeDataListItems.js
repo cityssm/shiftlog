@@ -1,4 +1,5 @@
 import getDataListItems from '../app/getDataListItems.js';
 export default async function getEquipmentTypeDataListItems(user) {
-    return await getDataListItems('equipmentTypes', user);
+    const userName = typeof user === 'string' ? user : user?.userName;
+    return await getDataListItems('equipmentTypes', userName);
 }

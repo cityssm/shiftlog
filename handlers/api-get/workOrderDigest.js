@@ -1,4 +1,5 @@
 import { getUserByApiKey } from '../../database/users/getUser.js';
+import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
 import { getWorkOrdersForDigest } from '../../database/workOrders/getWorkOrdersForDigest.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
@@ -15,6 +16,10 @@ export default async function handler(request, response) {
             .json({ error: 'Missing required parameter: assignedToDataListItemId' });
         return;
     }
+    // Get assigned to data list item
+    const assignedToDataListItemId = Number(request.query.assignedToDataListItemId);
+    const assignedToDataListItems = await getAssignedToDataListItems(apiUser.userName);
+    const assignedToDataListItem = assignedToDataListItems.find((item) => item.dataListItemId === assignedToDataListItemId);
     // Get digest data
     const digestData = await getWorkOrdersForDigest(request.query.assignedToDataListItemId);
     // Generate report date/time
@@ -22,9 +27,9 @@ export default async function handler(request, response) {
     // Render the print view
     response.render('print/workOrderDigest', {
         headTitle: `${getConfigProperty('workOrders.sectionName')} Digest`,
-        workOrders: digestData.workOrders,
-        milestones: digestData.milestones,
         reportDateTime,
-        assignedToDataListItemId: request.query.assignedToDataListItemId
+        milestones: digestData.milestones,
+        workOrders: digestData.workOrders,
+        assignedToDataListItem
     });
 }

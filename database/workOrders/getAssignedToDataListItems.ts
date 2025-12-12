@@ -2,7 +2,8 @@ import type { DataListItem } from '../../types/record.types.js'
 import getDataListItems from '../app/getDataListItems.js'
 
 export default async function getAssignedToDataListItems(
-  user?: User
+  user?: string | User
 ): Promise<DataListItem[]> {
-  return await getDataListItems('assignedTo', user)
+  const userName = typeof user === 'string' ? user : user?.userName
+  return await getDataListItems('assignedTo', userName)
 }
