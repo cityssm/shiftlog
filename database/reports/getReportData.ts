@@ -2,16 +2,22 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { DatabaseUser } from '../../types/record.types.js'
 
+import adminReports from './admin.reports.js'
 import type { ReportDefinition, ReportParameters } from './types.js'
 import workOrderReports from './workOrder.reports.js'
 
 const reports: Record<string, ReportDefinition | undefined> = {
-  ...workOrderReports
+  ...workOrderReports,
+  ...adminReports
 }
 
 function userHasReportAccess(reportKey: string, user: DatabaseUser): boolean {
   if (reportKey.startsWith('workOrders-')) {
     return user.workOrders_canView
+  }
+
+  if (reportKey.startsWith('admin-')) {
+    return user.isAdmin
   }
 
   return false

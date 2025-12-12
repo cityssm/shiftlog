@@ -56,6 +56,18 @@
           </a>
         </li>
         <% } %>
+        <% if (user.userProperties.isAdmin) { %>
+        <li>
+          <a href="#tab--admin" title="Administrator">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-cog"></i></span>
+              </div>
+              <div class="column is-hidden-touch">Administrator</div>
+            </div>
+          </a>
+        </li>
+        <% } %>
       </ul>  
     </div>
   </div>
@@ -74,6 +86,11 @@
       <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
       <div class="is-hidden" id="tab--timesheets">
         <%- await include('_reports-timesheets'); -%>
+      </div>
+      <% } %>
+      <% if (user.userProperties.isAdmin) { %>
+      <div class="is-hidden" id="tab--admin">
+        <%- await include('_reports-admin'); -%>
       </div>
       <% } %>
     </div>
