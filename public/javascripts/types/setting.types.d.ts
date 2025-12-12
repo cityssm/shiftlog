@@ -1,4 +1,4 @@
-export type SettingKey = 'application.csrfSecret' | 'cleanup.apiAuditLogRetentionDays' | 'cleanup.daysBeforePermanentDelete' | 'locations.defaultCityProvince' | 'locations.defaultLatitude' | 'locations.defaultLongitude' | 'workOrders.reopenWindowDays';
+export type SettingKey = 'application.csrfSecret' | 'cleanup.daysBeforePermanentDelete' | 'locations.defaultCityProvince' | 'locations.defaultLatitude' | 'locations.defaultLongitude' | 'workOrders.reopenWindowDays';
 export interface SettingProperties {
     settingKey: SettingKey;
     settingName: string;

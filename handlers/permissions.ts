@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 
+import { logApiRequest } from '../helpers/audit.helpers.js'
+import { getUserNameFromApiKey } from '../helpers/cache/apiKeys.cache.js'
 import { getConfigProperty } from '../helpers/config.helpers.js'
 import { apiKeyIsValid, userIsAdmin } from '../helpers/user.helpers.js'
 
@@ -45,7 +47,23 @@ export async function apiGetHandler(
   response: Response,
   next: NextFunction
 ): Promise<void> {
-  if (await apiKeyIsValid(request)) {
+  const isValid = await apiKeyIsValid(request)
+  const apiKey = request.params.apiKey
+  let userName: string | undefined
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (isValid && apiKey !== undefined) {
+    userName = await getUserNameFromApiKey(apiKey)
+  }
+
+  // Log the API request
+  await logApiRequest({
+    isValidApiKey: isValid,
+    request,
+    userName
+  })
+
+  if (isValid) {
     next()
   } else {
     response.redirect(`${urlPrefix}/login`)

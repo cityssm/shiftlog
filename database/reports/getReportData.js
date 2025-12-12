@@ -1,12 +1,17 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import adminReports from './admin.reports.js';
 import workOrderReports from './workOrder.reports.js';
 const reports = {
-    ...workOrderReports
+    ...workOrderReports,
+    ...adminReports
 };
 function userHasReportAccess(reportKey, user) {
     if (reportKey.startsWith('workOrders-')) {
         return user.workOrders_canView;
+    }
+    if (reportKey.startsWith('admin-')) {
+        return user.isAdmin;
     }
     return false;
 }

@@ -1,0 +1,100 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <nav class="breadcrumb">
+          <ul>
+            <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+            <li>
+              <a href="#">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-cog"></i>
+                </span>
+                <span>Administrator Tools</span>
+              </a>
+            </li>
+            <li class="is-active">
+              <a href="#" aria-current="page"> API Audit Logs </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <h1 class="title is-1">API Audit Logs</h1>
+      </div>
+      <div class="column is-narrow">
+        <a
+          class="button is-info"
+          href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/admin-apiAuditLogs"
+          title="Export all audit logs to CSV"
+        >
+          <span class="icon">
+            <i class="fa-solid fa-file-csv"></i>
+          </span>
+          <span>Export to CSV</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="columns">
+        <div class="column">
+          <div class="field">
+            <label class="label" for="filter--userName">User Name</label>
+            <div class="control">
+              <input
+                class="input"
+                id="filter--userName"
+                type="text"
+                placeholder="Filter by user name"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="field">
+            <label class="label" for="filter--isValidApiKey">API Key Status</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="filter--isValidApiKey">
+                  <option value="">All</option>
+                  <option value="true">Valid</option>
+                  <option value="false">Invalid</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="field">
+            <label class="label">&nbsp;</label>
+            <div class="control">
+              <button class="button is-primary" id="button--refresh" type="button">
+                <span class="icon">
+                  <i class="fa-solid fa-rotate"></i>
+                </span>
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="container--auditLogs"></div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/apiAuditLogs.admin.js"></script>
+
+<%- await include('../_footerB'); -%>

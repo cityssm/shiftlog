@@ -19,6 +19,9 @@ requires administrator permissions.
 - [**Application Settings**](./adminSettings.md)<br />
   Configure system-wide options and customize the application.
 
+- [**API Audit Logs**](./adminApiAuditLogs.md)<br />
+  Monitor and track API endpoint access and usage.
+
 ## Lists
 
 - [**Work Order Types**](./adminWorkOrderTypes.md)<br />

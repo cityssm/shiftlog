@@ -1,3 +1,5 @@
+import { logApiRequest } from '../helpers/audit.helpers.js';
+import { getUserNameFromApiKey } from '../helpers/cache/apiKeys.cache.js';
 import { getConfigProperty } from '../helpers/config.helpers.js';
 import { apiKeyIsValid, userIsAdmin } from '../helpers/user.helpers.js';
 const urlPrefix = getConfigProperty('reverseProxy.urlPrefix');
@@ -22,7 +24,20 @@ export function adminPostHandler(request, response, next) {
     response.status(forbiddenStatus).json(forbiddenJSON);
 }
 export async function apiGetHandler(request, response, next) {
-    if (await apiKeyIsValid(request)) {
+    const isValid = await apiKeyIsValid(request);
+    const apiKey = request.params.apiKey;
+    let userName;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (isValid && apiKey !== undefined) {
+        userName = await getUserNameFromApiKey(apiKey);
+    }
+    // Log the API request
+    await logApiRequest({
+        isValidApiKey: isValid,
+        request,
+        userName
+    });
+    if (isValid) {
         next();
     }
     else {
