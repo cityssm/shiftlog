@@ -8,7 +8,10 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Shift } from '../../types/record.types.js'
 
 export interface GetShiftsFilters {
-  shiftDateString?: DateString
+  shiftDateString?: '' | DateString
+
+  shiftTypeDataListItemId?: number | string
+  supervisorEmployeeNumber?: string
 }
 
 export interface GetShiftsOptions {
@@ -20,8 +23,16 @@ function buildWhereClause(filters: GetShiftsFilters, user?: User): string {
   let whereClause =
     'where s.instance = @instance and s.recordDelete_dateTime is null'
 
-  if (filters.shiftDateString !== undefined) {
+  if (filters.shiftDateString !== undefined && filters.shiftDateString !== '') {
     whereClause += ' and s.shiftDate = @shiftDateString'
+  }
+
+  if (filters.shiftTypeDataListItemId !== undefined && filters.shiftTypeDataListItemId !== '') {
+    whereClause += ' and s.shiftTypeDataListItemId = @shiftTypeDataListItemId'
+  }
+
+  if (filters.supervisorEmployeeNumber !== undefined && filters.supervisorEmployeeNumber !== '') {
+    whereClause += ' and s.supervisorEmployeeNumber = @supervisorEmployeeNumber'
   }
 
   if (user !== undefined) {
@@ -78,6 +89,8 @@ export default async function getShifts(
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('shiftDateString', filters.shiftDateString ?? null)
+      .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
+      .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
       .input('userName', user?.userName)
       .query(countSql)
 
@@ -93,6 +106,8 @@ export default async function getShifts(
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('shiftDateString', filters.shiftDateString ?? null)
+      .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
+      .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
       .input('userName', user?.userName).query<Shift>(/* sql */ `
         select
           s.shiftId, s.shiftDate,

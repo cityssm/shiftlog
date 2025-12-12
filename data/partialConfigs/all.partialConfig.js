@@ -1,6 +1,7 @@
 import { config as baseConfig } from './partialConfig.js';
 export const config = { ...baseConfig };
 config.application.instance = 'all';
+config.session.doKeepAlive = true;
 config.shifts = {
     isEnabled: true
 };

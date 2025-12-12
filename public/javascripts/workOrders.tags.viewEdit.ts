@@ -38,6 +38,7 @@ declare const bulmaJS: BulmaJS
     function renderTags(tags: WorkOrderTag[]): void {
       // Update tags count
       const tagsCountElement = document.querySelector('#tagsCount')
+      
       if (tagsCountElement !== null) {
         tagsCountElement.textContent = tags.length.toString()
       }
@@ -69,37 +70,39 @@ declare const bulmaJS: BulmaJS
         const tagTextElement = document.createElement('span')
         tagTextElement.textContent = tag.tagName
 
-        tagElement.appendChild(tagTextElement)
+        tagElement.append(tagTextElement)
 
         // Add delete button if in edit mode
         if (exports.isEdit) {
           const deleteButton = document.createElement('button')
           deleteButton.className = 'delete is-small'
           deleteButton.type = 'button'
-          deleteButton.setAttribute('data-tag-name', tag.tagName)
+          deleteButton.dataset.tagName = tag.tagName
           deleteButton.setAttribute('aria-label', `Remove tag ${tag.tagName}`)
 
           deleteButton.addEventListener('click', () => {
             deleteTag(tag.tagName)
           })
 
-          tagElement.appendChild(deleteButton)
+          tagElement.append(deleteButton)
         }
 
-        tagsElement.appendChild(tagElement)
+        tagsElement.append(tagElement)
       }
 
-      tagsContainerElement.appendChild(tagsElement)
+      tagsContainerElement.append(tagsElement)
     }
 
     function deleteTag(tagName: string): void {
       bulmaJS.confirm({
         contextualColorName: 'warning',
         title: 'Remove Tag',
+
         message: `Are you sure you want to remove the tag "${tagName}" from this work order?`,
         okButton: {
           contextualColorName: 'warning',
           text: 'Remove Tag',
+
           callbackFunction() {
             cityssm.postJSON(
               `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderTag`,
@@ -167,12 +170,14 @@ declare const bulmaJS: BulmaJS
               bulmaJS.alert({
                 contextualColorName: 'success',
                 title: 'Tag Added',
+                
                 message: 'Tag has been successfully added to this work order.'
               })
             } else {
               bulmaJS.alert({
                 contextualColorName: 'danger',
                 title: 'Error Adding Tag',
+
                 message:
                   responseJSON.message ??
                   'An error occurred while adding the tag.'

@@ -24,6 +24,11 @@ declare const exports: {
     '#container--workOrderSearchResults'
   ) as HTMLDivElement
 
+  // Validate hex color format (6 characters, alphanumeric)
+  function isValidHex(color?: string): boolean {
+    return color !== undefined && /^[0-9a-f]{6}$/i.test(color)
+  }
+
   function renderWorkOrdersTable(data: DoSearchWorkOrdersResponse): void {
     if (data.workOrders.length === 0) {
       resultsContainerElement.innerHTML = /* html */ `
@@ -51,7 +56,7 @@ declare const exports: {
           <th>Open Date</th>
           <th>Requestor</th>
           <th>Assigned To</th>
-          <th class="has-width-1">
+          <th>
             <span class="is-sr-only">Properties</span>
           </th>
           <th class="has-width-1 is-hidden-print">
@@ -98,24 +103,24 @@ declare const exports: {
       if (workOrder.tags && workOrder.tags.length > 0) {
         const tagsElements = workOrder.tags
           .map((tag) => {
-            // Validate hex color format (6 characters, alphanumeric)
-            const isValidHex = (color?: string) =>
-              color !== undefined && /^[0-9a-fA-F]{6}$/.test(color)
-
             const backgroundColor = isValidHex(tag.tagBackgroundColor)
               ? `#${tag.tagBackgroundColor}`
               : ''
+
             const textColor = isValidHex(tag.tagTextColor)
               ? `#${tag.tagTextColor}`
               : ''
+
             // Only apply custom styling if both colors are present to ensure consistency
             const style =
               backgroundColor && textColor
                 ? `style="background-color: ${backgroundColor}; color: ${textColor};"`
                 : ''
+
             return `<span class="tag is-small" ${style}>${cityssm.escapeHTML(tag.tagName)}</span>`
           })
           .join(' ')
+
         tagsHTML = `<div class="tags" style="margin-top: 0.25rem;">${tagsElements}</div>`
       }
 
@@ -141,7 +146,9 @@ declare const exports: {
 
       // Build costs icon HTML
       const costsIconHTML =
-        workOrder.costsCount && workOrder.costsCount > 0 && workOrder.costsTotal !== undefined
+        workOrder.costsCount &&
+        workOrder.costsCount > 0 &&
+        workOrder.costsTotal !== undefined
           ? /* html */ `
             <span class="icon" title="Total Cost: $${workOrder.costsTotal.toFixed(2)}">
               <i class="fa-solid fa-dollar-sign"></i>
@@ -192,7 +199,7 @@ declare const exports: {
         <td>
           ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '-' : (workOrder.assignedToDataListItem ?? ''))}
         </td>
-        <td>
+        <td class="has-text-right">
           ${notesIconHTML}
           ${attachmentIconHTML}
           ${costsIconHTML}
