@@ -9,7 +9,7 @@ export default async function updateDataListItem(form) {
             .request()
             .input('dataListItemId', form.dataListItemId)
             .input('dataListItem', form.dataListItem)
-            .input('userGroupId', form.userGroupId ?? null)
+            .input('userGroupId', (form.userGroupId ?? '') === '' ? null : form.userGroupId)
             .input('userName', form.userName).query(/* sql */ `
         update ShiftLog.DataListItems
         set dataListItem = @dataListItem,
