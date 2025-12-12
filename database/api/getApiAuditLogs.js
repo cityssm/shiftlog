@@ -19,13 +19,14 @@ export default async function getApiAuditLogs(filters = {}) {
         whereClause += ' and requestTime <= @endDate';
     }
     const sql = /* sql */ `
-    select top (@limit)
+    select
       auditLogId, userName, apiKey, endpoint, requestMethod, isValidApiKey,
       requestTime, ipAddress, userAgent, responseStatus, errorMessage
     from ShiftLog.ApiAuditLog
     ${whereClause}
     order by requestTime desc
     offset @offset rows
+    fetch next @limit rows only
   `;
     const request = pool
         .request()
