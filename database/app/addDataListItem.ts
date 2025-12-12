@@ -12,7 +12,7 @@ const debug = Debug(`${DEBUG_NAMESPACE}:database:addDataListItem`)
 export interface AddDataListItemForm {
   dataListKey: string
   dataListItem: string
-  userGroupId?: number | null
+  userGroupId?: number | string | null
   userName: string
 }
 
@@ -73,7 +73,10 @@ export default async function addDataListItem(
       .input('instance', getConfigProperty('application.instance'))
       .input('dataListKey', form.dataListKey)
       .input('dataListItem', form.dataListItem)
-      .input('userGroupId', form.userGroupId ?? null)
+      .input(
+        'userGroupId',
+        (form.userGroupId ?? '') === '' ? null : form.userGroupId
+      )
       .input('userName', form.userName).query(/* sql */ `
         insert into ShiftLog.DataListItems (
           instance, dataListKey, dataListItem, userGroupId, orderNumber,
