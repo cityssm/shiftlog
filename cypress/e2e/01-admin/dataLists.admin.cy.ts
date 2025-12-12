@@ -28,10 +28,10 @@ describe('Admin - Data List Management', () => {
     // Fill in the item details
     const testItemName = `Test Item ${Date.now()}`
 
-    cy.get('#input--newItem').type(testItemName)
+    cy.get('#addDataListItem--dataListItem').type(testItemName)
 
     // Submit the form
-    cy.get('.modal button[data-cy="ok"]').click()
+    cy.get('.modal form').submit()
 
     // Wait for AJAX response
     cy.wait(ajaxDelayMillis)
@@ -51,16 +51,16 @@ describe('Admin - Data List Management', () => {
 
     // Update the item
     const updatedText = ` - Updated ${Date.now()}`
-    cy.get('#input--editItem')
+    cy.get('#editDataListItem--dataListItem')
       .invoke('val')
       .then((originalValue) => {
-        cy.get('#input--editItem')
+        cy.get('#editDataListItem--dataListItem')
           .clear()
           .type(originalValue + updatedText)
       })
 
     // Submit the form
-    cy.get('.modal button[data-cy="ok"]').click()
+    cy.get('.modal form').submit()
 
     // Wait for AJAX response
     cy.wait(ajaxDelayMillis)
@@ -75,10 +75,10 @@ describe('Admin - Data List Management', () => {
     // First, add an item to delete
     cy.get('.button--addItem').first().click()
     const testItemName = `Delete Item ${Date.now()}`
-    cy.get('#input--newItem').type(testItemName)
+    cy.get('#addDataListItem--dataListItem').type(testItemName)
 
     // Submit the form
-    cy.get('.modal button[data-cy="ok"]').click()
+    cy.get('.modal form').submit()
     cy.wait(ajaxDelayMillis)
 
     // Dismiss the success modal

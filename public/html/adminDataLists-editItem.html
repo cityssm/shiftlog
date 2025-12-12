@@ -1,0 +1,80 @@
+<div
+  class="modal"
+  id="modal--editDataListItem"
+  role="dialog"
+  aria-label="Edit Data List Item"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title" id="editDataListItem--title">Edit Item</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editDataListItem">
+        <input
+          id="editDataListItem--dataListKey"
+          name="dataListKey"
+          type="hidden"
+        />
+        <input
+          id="editDataListItem--dataListItemId"
+          name="dataListItemId"
+          type="hidden"
+        />
+        <div class="field">
+          <label class="label" for="editDataListItem--dataListItem">
+            Item Name
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="editDataListItem--dataListItem"
+              name="dataListItem"
+              type="text"
+              required
+              autofocus
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="editDataListItem--userGroupId">
+            User Group (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="editDataListItem--userGroupId"
+                name="userGroupId"
+              >
+                <option value="">None (Available to All)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            If specified, only members of this user group will see this item.
+          </p>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--editDataListItem"
+        >
+          <span class="icon"><i class="fa-solid fa-save"></i></span>
+          <span>Update Item</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

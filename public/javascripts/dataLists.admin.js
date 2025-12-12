@@ -98,90 +98,64 @@
         if (dataList === undefined) {
             return;
         }
-        let itemInputElement;
-        let userGroupSelectElement;
-        // Build user group options
-        let userGroupOptions = '<option value="">None (Available to All)</option>';
-        for (const userGroup of exports.userGroups) {
-            userGroupOptions += `<option value="${userGroup.userGroupId}">${cityssm.escapeHTML(userGroup.userGroupName)}</option>`;
-        }
-        bulmaJS.confirm({
-            contextualColorName: 'primary',
-            message: /* html */ `
-        <div class="field">
-          <label class="label">Item Name</label>
-          <div class="control">
-            <input
-              class="input"
-              id="input--newItem"
-              type="text"
-              required
-            />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">User Group (Optional)</label>
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select id="select--userGroup">
-                ${userGroupOptions}
-              </select>
-            </div>
-          </div>
-          <p class="help">If specified, only members of this user group will see this item.</p>
-        </div>
-      `,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Add Item',
-                callbackFunction() {
-                    const dataListItem = itemInputElement.value.trim();
-                    if (dataListItem === '') {
-                        bulmaJS.alert({
-                            contextualColorName: 'warning',
-                            title: 'Item Name Required',
-                            message: 'Please enter an item name.'
-                        });
-                        return;
+        let closeModalFunction;
+        function doAddDataListItem(submitEvent) {
+            submitEvent.preventDefault();
+            const addForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success && responseJSON.items !== undefined) {
+                    closeModalFunction();
+                    // Open the details panel if it's closed
+                    const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
+                    if (detailsElement !== null && !detailsElement.open) {
+                        detailsElement.open = true;
                     }
-                    const userGroupIdValue = userGroupSelectElement.value;
-                    const userGroupId = userGroupIdValue
-                        ? Number.parseInt(userGroupIdValue, 10)
-                        : null;
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, {
-                        dataListKey,
-                        dataListItem,
-                        userGroupId
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success && responseJSON.items !== undefined) {
-                            // Open the details panel if it's closed
-                            const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
-                            if (detailsElement !== null && !detailsElement.open) {
-                                detailsElement.open = true;
-                            }
-                            renderDataListItems(dataListKey, responseJSON.items);
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                title: 'Item Added',
-                                message: 'The item has been successfully added.'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error Adding Item',
-                                message: 'Please try again.'
-                            });
-                        }
+                    renderDataListItems(dataListKey, responseJSON.items);
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        title: 'Item Added',
+                        message: 'The item has been successfully added.'
                     });
                 }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Adding Item',
+                        message: 'Please try again.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminDataLists-addItem', {
+            onshow(modalElement) {
+                // Set the modal title
+                ;
+                modalElement.querySelector('#addDataListItem--title').textContent = `Add ${dataList.dataListName} Item`;
+                modalElement.querySelector('#addDataListItem--dataListKey').value = dataListKey;
+                // Populate user group options
+                const userGroupSelect = modalElement.querySelector('#addDataListItem--userGroupId');
+                userGroupSelect.innerHTML =
+                    '<option value="">None (Available to All)</option>';
+                for (const userGroup of exports.userGroups) {
+                    const option = document.createElement('option');
+                    option.value = userGroup.userGroupId.toString();
+                    option.textContent = userGroup.userGroupName;
+                    userGroupSelect.append(option);
+                }
+                // Attach form submit handler
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doAddDataListItem);
             },
-            title: `Add ${dataList.dataListName} Item`
+            onshown(_modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
         });
-        itemInputElement = document.querySelector('#input--newItem');
-        userGroupSelectElement = document.querySelector('#select--userGroup');
-        itemInputElement.focus();
     }
     function editDataListItem(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
@@ -198,92 +172,69 @@
         if (dataList === undefined) {
             return;
         }
-        let itemInputElement;
-        let userGroupSelectElement;
-        // Build user group options
-        let userGroupOptions = '<option value="">None (Available to All)</option>';
-        for (const userGroup of exports.userGroups) {
-            const selected = userGroupId &&
-                Number.parseInt(userGroupId, 10) === userGroup.userGroupId
-                ? 'selected'
-                : '';
-            userGroupOptions += `<option value="${userGroup.userGroupId}" ${selected}>${cityssm.escapeHTML(userGroup.userGroupName)}</option>`;
-        }
-        bulmaJS.confirm({
-            contextualColorName: 'info',
-            title: `Edit ${dataList.dataListName} Item`,
-            message: /* html */ `
-        <div class="field">
-          <label class="label">Item Name</label>
-          <div class="control">
-            <input
-              class="input"
-              id="input--editItem"
-              type="text"
-              value="${cityssm.escapeHTML(dataListItem)}"
-              required
-            />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">User Group (Optional)</label>
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select id="select--editUserGroup">
-                ${userGroupOptions}
-              </select>
-            </div>
-          </div>
-          <p class="help">If specified, only members of this user group will see this item.</p>
-        </div>
-      `,
-            messageIsHtml: true,
-            okButton: {
-                text: 'Update Item',
-                callbackFunction() {
-                    const newDataListItem = itemInputElement.value.trim();
-                    if (newDataListItem === '') {
-                        bulmaJS.alert({
-                            contextualColorName: 'warning',
-                            title: 'Item Name Required',
-                            message: 'Please enter an item name.'
-                        });
-                        return;
-                    }
-                    const userGroupIdValue = userGroupSelectElement.value;
-                    const newUserGroupId = userGroupIdValue
-                        ? Number.parseInt(userGroupIdValue, 10)
-                        : null;
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, {
-                        dataListKey,
-                        dataListItemId: Number.parseInt(dataListItemId, 10),
-                        dataListItem: newDataListItem,
-                        userGroupId: newUserGroupId
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success && responseJSON.items !== undefined) {
-                            renderDataListItems(dataListKey, responseJSON.items);
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                title: 'Item Updated',
-                                message: 'The item has been successfully updated.'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error Updating Item',
-                                message: 'Please try again.'
-                            });
-                        }
+        let closeModalFunction;
+        function doUpdateDataListItem(submitEvent) {
+            submitEvent.preventDefault();
+            const editForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success && responseJSON.items !== undefined) {
+                    closeModalFunction();
+                    renderDataListItems(dataListKey, responseJSON.items);
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        title: 'Item Updated',
+                        message: 'The item has been successfully updated.'
                     });
                 }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Updating Item',
+                        message: 'Please try again.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminDataLists-editItem', {
+            onshow(modalElement) {
+                // Set the modal title
+                ;
+                modalElement.querySelector('#editDataListItem--title').textContent = `Edit ${dataList.dataListName} Item`;
+                modalElement.querySelector('#editDataListItem--dataListKey').value = dataListKey;
+                modalElement.querySelector('#editDataListItem--dataListItemId').value = dataListItemId;
+                modalElement.querySelector('#editDataListItem--dataListItem').value = dataListItem;
+                // Populate user group options
+                const userGroupSelect = modalElement.querySelector('#editDataListItem--userGroupId');
+                userGroupSelect.innerHTML =
+                    '<option value="">None (Available to All)</option>';
+                for (const userGroup of exports.userGroups) {
+                    const option = document.createElement('option');
+                    option.value = userGroup.userGroupId.toString();
+                    option.textContent = userGroup.userGroupName;
+                    if (userGroupId &&
+                        Number.parseInt(userGroupId, 10) === userGroup.userGroupId) {
+                        option.selected = true;
+                    }
+                    userGroupSelect.append(option);
+                }
+                // Attach form submit handler
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doUpdateDataListItem);
+            },
+            onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+                // Focus and select the input
+                const itemInput = modalElement.querySelector('#editDataListItem--dataListItem');
+                itemInput.focus();
+                itemInput.select();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
-        itemInputElement = document.querySelector('#input--editItem');
-        userGroupSelectElement = document.querySelector('#select--editUserGroup');
-        itemInputElement.focus();
-        itemInputElement.select();
     }
     function deleteDataListItem(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
