@@ -224,9 +224,7 @@ declare const exports: {
       onshow(modalElement) {
         // Set the modal title
         ;(
-          modalElement.querySelector(
-            '#addDataListItem--title'
-          ) as HTMLElement
+          modalElement.querySelector('#addDataListItem--title') as HTMLElement
         ).textContent = `Add ${dataList.dataListName} Item`
 
         // Set the data list key
@@ -328,9 +326,7 @@ declare const exports: {
       onshow(modalElement) {
         // Set the modal title
         ;(
-          modalElement.querySelector(
-            '#editDataListItem--title'
-          ) as HTMLElement
+          modalElement.querySelector('#editDataListItem--title') as HTMLElement
         ).textContent = `Edit ${dataList.dataListName} Item`
 
         // Set the hidden fields
