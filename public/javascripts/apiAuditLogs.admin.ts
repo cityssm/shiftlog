@@ -9,7 +9,6 @@ declare const cityssm: cityssmGlobal
 declare const exports: {
   shiftLog: ShiftLogGlobal
 }
-
 ;(() => {
   const shiftLog = exports.shiftLog
   const containerElement = document.querySelector(
@@ -28,18 +27,20 @@ declare const exports: {
 
   function renderAuditLogs(logs: ApiAuditLog[]): void {
     if (logs.length === 0) {
-      const messageHTML = `<div class="message is-info">
-        <div class="message-body">
-          No audit logs found.
+      containerElement.innerHTML = /* html */ `
+        <div class="message is-info">
+          <div class="message-body">
+            No audit logs found.
+          </div>
         </div>
-      </div>`
-      // Safe to assign since messageHTML is a static string with no user input
-      // eslint-disable-next-line no-unsanitized/property
-      containerElement.innerHTML = messageHTML
+      `
       return
     }
 
-    let tableHTML = `<table class="table is-fullwidth is-striped is-hoverable">
+    const tableElement = document.createElement('table')
+    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+
+    tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
           <th>Request Time</th>
@@ -51,23 +52,26 @@ declare const exports: {
           <th>Status</th>
         </tr>
       </thead>
-      <tbody>`
+      <tbody></tbody>
+    `
 
     for (const log of logs) {
       const requestTime =
         typeof log.requestTime === 'string'
           ? new Date(log.requestTime)
           : log.requestTime
+
       const isValidIcon = log.isValidApiKey
         ? '<span class="icon has-text-success"><i class="fa-solid fa-check"></i></span>'
         : '<span class="icon has-text-danger"><i class="fa-solid fa-times"></i></span>'
 
       const maxEndpointLength = 50
       const minStatusSuccess = 400
-      
+
       let statusBadge = ''
       if (log.responseStatus !== null && log.responseStatus !== undefined) {
-        const statusClass = log.responseStatus < minStatusSuccess ? 'is-success' : 'is-danger'
+        const statusClass =
+          log.responseStatus < minStatusSuccess ? 'is-success' : 'is-danger'
         statusBadge = `<span class="tag ${statusClass}">${log.responseStatus}</span>`
       }
 
@@ -85,21 +89,26 @@ declare const exports: {
         userName: cityssm.escapeHTML(log.userName ?? '-')
       }
 
-      tableHTML += `<tr>
-        <td>${escapedContent.requestTime}</td>
-        <td>${escapedContent.userName}</td>
-        <td class="is-vcentered is-size-7" title="${escapedContent.endpoint}">${escapedContent.displayEndpoint}</td>
-        <td><span class="tag">${escapedContent.requestMethod}</span></td>
-        <td>${isValidIcon}</td>
-        <td>${escapedContent.ipAddress}</td>
-        <td>${statusBadge}</td>
-      </tr>`
+      // eslint-disable-next-line no-unsanitized/method
+      tableElement.querySelector('tbody')?.insertAdjacentHTML(
+        'beforeend',
+        /* html */ `
+          <tr>
+            <td>${escapedContent.requestTime}</td>
+            <td>${escapedContent.userName}</td>
+            <td class="is-vcentered is-size-7" title="${escapedContent.endpoint}">
+              ${escapedContent.displayEndpoint}
+            </td>
+            <td><span class="tag">${escapedContent.requestMethod}</span></td>
+            <td>${isValidIcon}</td>
+            <td>${escapedContent.ipAddress}</td>
+            <td>${statusBadge}</td>
+          </tr>
+        `
+      )
     }
 
-    tableHTML += '</tbody></table>'
-    // Safe to assign since all user content has been escaped with cityssm.escapeHTML
-    // eslint-disable-next-line no-unsanitized/property
-    containerElement.innerHTML = tableHTML
+    containerElement.replaceChildren(tableElement)
   }
 
   function loadAuditLogs(): void {
