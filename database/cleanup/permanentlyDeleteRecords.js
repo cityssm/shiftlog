@@ -23,6 +23,28 @@ export default async function permanentlyDeleteRecords() {
         // Calculate the cutoff date
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - daysBeforeDelete);
+        // Get API audit log retention days setting
+        const apiAuditLogRetentionDaysString = await getCachedSettingValue('cleanup.apiAuditLogRetentionDays');
+        const apiAuditLogRetentionDays = Number.parseInt(apiAuditLogRetentionDaysString || '365', 10) || 365;
+        debug(`API audit log retention period: ${apiAuditLogRetentionDays} days`);
+        // Clean up old API audit logs if retention is enabled (> 0)
+        if (apiAuditLogRetentionDays > 0) {
+            const apiAuditCutoffDate = new Date();
+            apiAuditCutoffDate.setDate(apiAuditCutoffDate.getDate() - apiAuditLogRetentionDays);
+            const apiAuditLogsResult = await pool
+                .request()
+                .input('apiAuditCutoffDate', apiAuditCutoffDate).query(/* sql */ `
+          DELETE FROM ShiftLog.ApiAuditLog
+          WHERE requestTime < @apiAuditCutoffDate
+        `);
+            if (apiAuditLogsResult.rowsAffected[0] > 0) {
+                deletedCount += apiAuditLogsResult.rowsAffected[0];
+                debug(`Permanently deleted ${apiAuditLogsResult.rowsAffected[0]} API audit log records older than ${apiAuditLogRetentionDays} days`);
+            }
+        }
+        else {
+            debug('API audit log cleanup is disabled (retention days set to 0)');
+        }
         // Step 1: Handle WorkOrderAttachments - delete files first, then records
         const attachmentsResult = await pool
             .request()
