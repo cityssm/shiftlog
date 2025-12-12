@@ -1,0 +1,77 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <nav class="breadcrumb">
+          <ul>
+            <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+            <li>
+              <a href="#">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-cog"></i>
+                </span>
+                <span>Administrator Tools</span>
+              </a>
+            </li>
+            <li class="is-active">
+              <a href="#" aria-current="page"> API Audit Logs </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <h1 class="title is-1">API Audit Logs</h1>
+
+    <div class="columns">
+      <div class="column is-4">
+        <div class="field">
+          <label class="label" for="filter--userName">User Name</label>
+          <div class="control">
+            <input class="input" type="text" id="filter--userName" placeholder="Filter by user name" />
+          </div>
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="field">
+          <label class="label" for="filter--isValidApiKey">API Key Status</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="filter--isValidApiKey">
+                <option value="">All</option>
+                <option value="true">Valid</option>
+                <option value="false">Invalid</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="field">
+          <label class="label">&nbsp;</label>
+          <div class="control">
+            <button class="button is-primary" id="button--refresh" type="button">
+              <span class="icon">
+                <i class="fa-solid fa-refresh"></i>
+              </span>
+              <span>Refresh</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="container--auditLogs"></div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/apiAuditLogs.admin.js"></script>
+
+<%- await include('../_footerB'); -%>

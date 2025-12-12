@@ -84,6 +84,33 @@ CREATE TABLE ShiftLog.UserGroupMembers (
 )
 GO
 
+-- API AUDIT LOG
+
+CREATE TABLE ShiftLog.ApiAuditLog (
+  auditLogId bigint not null primary key identity(1,1),
+  instance varchar(20) not null,
+  userName varchar(30),
+  apiKey varchar(100),
+  endpoint varchar(500) not null,
+  requestMethod varchar(10) not null,
+  isValidApiKey bit not null,
+  requestTime datetime not null default getdate(),
+  ipAddress varchar(45),
+  userAgent varchar(500),
+  responseStatus int,
+  errorMessage varchar(1000)
+)
+GO
+
+CREATE INDEX IX_ApiAuditLog_Instance_RequestTime 
+  ON ShiftLog.ApiAuditLog(instance, requestTime DESC)
+GO
+
+CREATE INDEX IX_ApiAuditLog_UserName 
+  ON ShiftLog.ApiAuditLog(userName, requestTime DESC) 
+  WHERE userName IS NOT NULL
+GO
+
 -- DATALISTS
 
 CREATE TABLE ShiftLog.DataLists (

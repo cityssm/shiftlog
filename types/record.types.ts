@@ -53,6 +53,20 @@ export interface DatabaseUser extends BaseRecord {
   userSettings?: Partial<Record<UserSettingKey, string>>
 }
 
+export interface ApiAuditLog {
+  auditLogId: number
+  userName?: string | null
+  apiKey?: string | null
+  endpoint: string
+  requestMethod: string
+  isValidApiKey: boolean
+  requestTime: Date
+  ipAddress?: string | null
+  userAgent?: string | null
+  responseStatus?: number | null
+  errorMessage?: string | null
+}
+
 export interface UserGroup extends BaseRecord {
   userGroupId: number
   userGroupName: string

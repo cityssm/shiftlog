@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import handler_apiAuditLogs from '../handlers/admin-get/apiAuditLogs.js';
 import handler_dataLists from '../handlers/admin-get/dataLists.js';
 import handler_employees from '../handlers/admin-get/employees.js';
 import handler_equipment from '../handlers/admin-get/equipment.js';
@@ -13,6 +14,7 @@ import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js';
 import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js';
 import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js';
 import handler_doAddTag from '../handlers/admin-post/doAddTag.js';
+import handler_doGetApiAuditLogs from '../handlers/admin-post/doGetApiAuditLogs.js';
 import handler_doGetOrphanedTags from '../handlers/admin-post/doGetOrphanedTags.js';
 import handler_doAddUser from '../handlers/admin-post/doAddUser.js';
 import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js';
@@ -120,4 +122,10 @@ router
     .post('/doUpdateTag', handler_doUpdateTag)
     .post('/doDeleteTag', handler_doDeleteTag)
     .post('/doGetOrphanedTags', handler_doGetOrphanedTags);
+/*
+ * API Audit Logs
+ */
+router
+    .get('/apiAuditLogs', handler_apiAuditLogs)
+    .post('/doGetApiAuditLogs', handler_doGetApiAuditLogs);
 export default router;
