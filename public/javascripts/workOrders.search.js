@@ -3,6 +3,10 @@
     const filtersFormElement = document.querySelector('#form--workOrderSearch');
     const offsetInputElement = document.querySelector('#workOrderSearch--offset');
     const resultsContainerElement = document.querySelector('#container--workOrderSearchResults');
+    // Validate hex color format (6 characters, alphanumeric)
+    function isValidHex(color) {
+        return color !== undefined && /^[0-9a-f]{6}$/i.test(color);
+    }
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {
             resultsContainerElement.innerHTML = /* html */ `
@@ -64,8 +68,6 @@
             if (workOrder.tags && workOrder.tags.length > 0) {
                 const tagsElements = workOrder.tags
                     .map((tag) => {
-                    // Validate hex color format (6 characters, alphanumeric)
-                    const isValidHex = (color) => color !== undefined && /^[0-9a-fA-F]{6}$/.test(color);
                     const backgroundColor = isValidHex(tag.tagBackgroundColor)
                         ? `#${tag.tagBackgroundColor}`
                         : '';
@@ -98,7 +100,9 @@
           `
                 : '';
             // Build costs icon HTML
-            const costsIconHTML = workOrder.costsCount && workOrder.costsCount > 0 && workOrder.costsTotal !== undefined
+            const costsIconHTML = workOrder.costsCount &&
+                workOrder.costsCount > 0 &&
+                workOrder.costsTotal !== undefined
                 ? /* html */ `
             <span class="icon" title="Total Cost: $${workOrder.costsTotal.toFixed(2)}">
               <i class="fa-solid fa-dollar-sign"></i>
