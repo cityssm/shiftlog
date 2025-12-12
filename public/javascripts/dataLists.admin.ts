@@ -180,6 +180,17 @@ declare const exports: {
       submitEvent.preventDefault()
 
       const addForm = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(addForm)
+      const dataListItem = (formData.get('dataListItem') as string)?.trim()
+
+      if (dataListItem === '') {
+        bulmaJS.alert({
+          contextualColorName: 'warning',
+          message: 'Please enter an item name.',
+          title: 'Item Name Required'
+        })
+        return
+      }
 
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddDataListItem`,
@@ -293,6 +304,17 @@ declare const exports: {
       submitEvent.preventDefault()
 
       const editForm = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(editForm)
+      const dataListItem = (formData.get('dataListItem') as string)?.trim()
+
+      if (dataListItem === '') {
+        bulmaJS.alert({
+          contextualColorName: 'warning',
+          message: 'Please enter an item name.',
+          title: 'Item Name Required'
+        })
+        return
+      }
 
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateDataListItem`,

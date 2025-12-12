@@ -102,6 +102,16 @@
         function doAddDataListItem(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
+            const formData = new FormData(addForm);
+            const dataListItem = formData.get('dataListItem')?.trim();
+            if (dataListItem === '') {
+                bulmaJS.alert({
+                    contextualColorName: 'warning',
+                    message: 'Please enter an item name.',
+                    title: 'Item Name Required'
+                });
+                return;
+            }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
@@ -178,6 +188,16 @@
         function doUpdateDataListItem(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
+            const formData = new FormData(editForm);
+            const dataListItem = formData.get('dataListItem')?.trim();
+            if (dataListItem === '') {
+                bulmaJS.alert({
+                    contextualColorName: 'warning',
+                    message: 'Please enter an item name.',
+                    title: 'Item Name Required'
+                });
+                return;
+            }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
