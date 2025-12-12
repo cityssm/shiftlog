@@ -51,12 +51,17 @@ export async function apiGetHandler(
   const apiKey = request.params.apiKey
   let userName: string | undefined
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (isValid && apiKey !== undefined) {
     userName = await getUserNameFromApiKey(apiKey)
   }
 
   // Log the API request
-  await logApiRequest(request, isValid, userName)
+  await logApiRequest({
+    isValidApiKey: isValid,
+    request,
+    userName
+  })
 
   if (isValid) {
     next()

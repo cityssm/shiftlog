@@ -18,11 +18,14 @@ declare const exports: {
 
   function renderAuditLogs(logs: ApiAuditLog[]): void {
     if (logs.length === 0) {
-      containerElement.innerHTML = `<div class="message is-info">
+      const messageHTML = `<div class="message is-info">
         <div class="message-body">
           No audit logs found.
         </div>
       </div>`
+      // Safe to assign since messageHTML is a static string with no user input
+      // eslint-disable-next-line no-unsanitized/property
+      containerElement.innerHTML = messageHTML
       return
     }
 
@@ -49,22 +52,43 @@ declare const exports: {
         ? '<span class="icon has-text-success"><i class="fa-solid fa-check"></i></span>'
         : '<span class="icon has-text-danger"><i class="fa-solid fa-times"></i></span>'
 
-      const statusBadge = log.responseStatus
-        ? `<span class="tag ${log.responseStatus < 400 ? 'is-success' : 'is-danger'}">${log.responseStatus}</span>`
-        : ''
+      const maxEndpointLength = 50
+      const minStatusSuccess = 400
+      
+      let statusBadge = ''
+      if (log.responseStatus !== null && log.responseStatus !== undefined) {
+        const statusClass = log.responseStatus < minStatusSuccess ? 'is-success' : 'is-danger'
+        statusBadge = `<span class="tag ${statusClass}">${log.responseStatus}</span>`
+      }
+
+      let displayEndpoint = log.endpoint
+      if (log.endpoint.length > maxEndpointLength) {
+        displayEndpoint = log.endpoint.slice(0, maxEndpointLength) + '...'
+      }
+
+      const escapedContent = {
+        displayEndpoint: cityssm.escapeHTML(displayEndpoint),
+        endpoint: cityssm.escapeHTML(log.endpoint),
+        ipAddress: cityssm.escapeHTML(log.ipAddress ?? '-'),
+        requestMethod: cityssm.escapeHTML(log.requestMethod),
+        requestTime: cityssm.escapeHTML(requestTime.toLocaleString()),
+        userName: cityssm.escapeHTML(log.userName ?? '-')
+      }
 
       tableHTML += `<tr>
-        <td>${cityssm.escapeHTML(requestTime.toLocaleString())}</td>
-        <td>${cityssm.escapeHTML(log.userName ?? '-')}</td>
-        <td class="is-size-7" title="${cityssm.escapeHTML(log.endpoint)}">${cityssm.escapeHTML(log.endpoint.length > 50 ? log.endpoint.substring(0, 50) + '...' : log.endpoint)}</td>
-        <td><span class="tag">${cityssm.escapeHTML(log.requestMethod)}</span></td>
+        <td>${escapedContent.requestTime}</td>
+        <td>${escapedContent.userName}</td>
+        <td class="is-size-7" title="${escapedContent.endpoint}">${escapedContent.displayEndpoint}</td>
+        <td><span class="tag">${escapedContent.requestMethod}</span></td>
         <td>${isValidIcon}</td>
-        <td>${cityssm.escapeHTML(log.ipAddress ?? '-')}</td>
+        <td>${escapedContent.ipAddress}</td>
         <td>${statusBadge}</td>
       </tr>`
     }
 
     tableHTML += '</tbody></table>'
+    // Safe to assign since all user content has been escaped with cityssm.escapeHTML
+    // eslint-disable-next-line no-unsanitized/property
     containerElement.innerHTML = tableHTML
   }
 
@@ -76,12 +100,13 @@ declare const exports: {
       document.querySelector('#filter--isValidApiKey') as HTMLSelectElement
     ).value
 
+    const defaultLimit = 100
     const requestBody: {
-      userName?: string
       isValidApiKey?: boolean
       limit: number
+      userName?: string
     } = {
-      limit: 100
+      limit: defaultLimit
     }
 
     if (userName !== '') {
@@ -97,8 +122,8 @@ declare const exports: {
       requestBody,
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
-          success: boolean
           logs: ApiAuditLog[]
+          success: boolean
         }
 
         if (responseJSON.success) {

@@ -3,12 +3,12 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { ApiAuditLog } from '../../types/record.types.js'
 
 export interface GetApiAuditLogsFilters {
-  userName?: string
-  isValidApiKey?: boolean
-  startDate?: string
   endDate?: string
+  isValidApiKey?: boolean
   limit?: number
   offset?: number
+  startDate?: string
+  userName?: string
 }
 
 export default async function getApiAuditLogs(
@@ -16,7 +16,8 @@ export default async function getApiAuditLogs(
 ): Promise<ApiAuditLog[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const limit = filters.limit ?? 100
+  const defaultLimit = 100
+  const limit = filters.limit ?? defaultLimit
   const offset = filters.offset ?? 0
 
   let whereClause = 'where instance = @instance'

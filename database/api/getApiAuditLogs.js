@@ -2,7 +2,8 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getApiAuditLogs(filters = {}) {
     const pool = await getShiftLogConnectionPool();
-    const limit = filters.limit ?? 100;
+    const defaultLimit = 100;
+    const limit = filters.limit ?? defaultLimit;
     const offset = filters.offset ?? 0;
     let whereClause = 'where instance = @instance';
     if (filters.userName !== undefined) {

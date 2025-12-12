@@ -2,15 +2,15 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface CreateApiAuditLogForm {
-  userName?: string
   apiKey?: string
   endpoint: string
-  requestMethod: string
-  isValidApiKey: boolean
-  ipAddress?: string
-  userAgent?: string
-  responseStatus?: number
   errorMessage?: string
+  ipAddress?: string
+  isValidApiKey: boolean
+  requestMethod: string
+  responseStatus?: number
+  userAgent?: string
+  userName?: string
 }
 
 export default async function createApiAuditLog(
