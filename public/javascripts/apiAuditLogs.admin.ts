@@ -16,6 +16,16 @@ declare const exports: {
     '#container--auditLogs'
   ) as HTMLDivElement
 
+  // Pagination settings
+  const ITEMS_PER_PAGE = 50
+  let currentPage = 1
+  let totalCount = 0
+
+  function pageSelect(pageNumber: number): void {
+    currentPage = pageNumber
+    loadAuditLogs()
+  }
+
   function renderAuditLogs(logs: ApiAuditLog[]): void {
     if (logs.length === 0) {
       const messageHTML = `<div class="message is-info">
@@ -100,13 +110,16 @@ declare const exports: {
       document.querySelector('#filter--isValidApiKey') as HTMLSelectElement
     ).value
 
-    const defaultLimit = 100
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE
+
     const requestBody: {
       isValidApiKey?: boolean
       limit: number
+      offset: number
       userName?: string
     } = {
-      limit: defaultLimit
+      limit: ITEMS_PER_PAGE,
+      offset
     }
 
     if (userName !== '') {
@@ -124,10 +137,24 @@ declare const exports: {
         const responseJSON = rawResponseJSON as {
           logs: ApiAuditLog[]
           success: boolean
+          totalCount: number
         }
 
         if (responseJSON.success) {
+          totalCount = responseJSON.totalCount
           renderAuditLogs(responseJSON.logs)
+
+          // Add pagination controls if needed
+          if (totalCount > ITEMS_PER_PAGE) {
+            const paginationControls = shiftLog.buildPaginationControls({
+              clickHandler: pageSelect,
+              currentPageOrOffset: currentPage,
+              itemsPerPageOrLimit: ITEMS_PER_PAGE,
+              totalCount
+            })
+
+            containerElement.append(paginationControls)
+          }
         }
       }
     )
@@ -142,6 +169,7 @@ declare const exports: {
     .querySelector('#filter--userName')
     ?.addEventListener('keyup', (keyEvent: KeyboardEvent) => {
       if (keyEvent.key === 'Enter') {
+        currentPage = 1
         loadAuditLogs()
       }
     })
@@ -149,7 +177,10 @@ declare const exports: {
   // Auto-refresh on filter change
   document
     .querySelector('#filter--isValidApiKey')
-    ?.addEventListener('change', loadAuditLogs)
+    ?.addEventListener('change', () => {
+      currentPage = 1
+      loadAuditLogs()
+    })
 
   // Initial load
   loadAuditLogs()

@@ -1,8 +1,9 @@
 import getApiAuditLogs from '../../database/api/getApiAuditLogs.js';
 export default async function handler(request, response) {
-    const logs = await getApiAuditLogs(request.body);
+    const result = await getApiAuditLogs(request.body);
     response.json({
-        logs,
-        success: true
+        logs: result.logs,
+        success: true,
+        totalCount: result.totalCount
     });
 }

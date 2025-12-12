@@ -18,6 +18,30 @@ export default async function getApiAuditLogs(filters = {}) {
     if (filters.endDate !== undefined) {
         whereClause += ' and requestTime <= @endDate';
     }
+    // Get total count
+    const countSql = /* sql */ `
+    select count(*) as totalCount
+    from ShiftLog.ApiAuditLog
+    ${whereClause}
+  `;
+    const countRequest = pool
+        .request()
+        .input('instance', getConfigProperty('application.instance'));
+    if (filters.userName !== undefined) {
+        countRequest.input('userName', filters.userName);
+    }
+    if (filters.isValidApiKey !== undefined) {
+        countRequest.input('isValidApiKey', filters.isValidApiKey);
+    }
+    if (filters.startDate !== undefined) {
+        countRequest.input('startDate', filters.startDate);
+    }
+    if (filters.endDate !== undefined) {
+        countRequest.input('endDate', filters.endDate);
+    }
+    const countResult = await countRequest.query(countSql);
+    const totalCount = countResult.recordset[0]?.totalCount ?? 0;
+    // Get paginated data
     const sql = /* sql */ `
     select
       auditLogId, userName, apiKey, endpoint, requestMethod, isValidApiKey,
@@ -46,5 +70,8 @@ export default async function getApiAuditLogs(filters = {}) {
         request.input('endDate', filters.endDate);
     }
     const result = await request.query(sql);
-    return result.recordset;
+    return {
+        logs: result.recordset,
+        totalCount
+    };
 }

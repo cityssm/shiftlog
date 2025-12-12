@@ -7,4 +7,8 @@ export interface GetApiAuditLogsFilters {
     startDate?: string;
     userName?: string;
 }
-export default function getApiAuditLogs(filters?: GetApiAuditLogsFilters): Promise<ApiAuditLog[]>;
+export interface GetApiAuditLogsResult {
+    logs: ApiAuditLog[];
+    totalCount: number;
+}
+export default function getApiAuditLogs(filters?: GetApiAuditLogsFilters): Promise<GetApiAuditLogsResult>;

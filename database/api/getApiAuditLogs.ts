@@ -11,9 +11,14 @@ export interface GetApiAuditLogsFilters {
   userName?: string
 }
 
+export interface GetApiAuditLogsResult {
+  logs: ApiAuditLog[]
+  totalCount: number
+}
+
 export default async function getApiAuditLogs(
   filters: GetApiAuditLogsFilters = {}
-): Promise<ApiAuditLog[]> {
+): Promise<GetApiAuditLogsResult> {
   const pool = await getShiftLogConnectionPool()
 
   const defaultLimit = 100
@@ -38,6 +43,37 @@ export default async function getApiAuditLogs(
     whereClause += ' and requestTime <= @endDate'
   }
 
+  // Get total count
+  const countSql = /* sql */ `
+    select count(*) as totalCount
+    from ShiftLog.ApiAuditLog
+    ${whereClause}
+  `
+
+  const countRequest = pool
+    .request()
+    .input('instance', getConfigProperty('application.instance'))
+
+  if (filters.userName !== undefined) {
+    countRequest.input('userName', filters.userName)
+  }
+
+  if (filters.isValidApiKey !== undefined) {
+    countRequest.input('isValidApiKey', filters.isValidApiKey)
+  }
+
+  if (filters.startDate !== undefined) {
+    countRequest.input('startDate', filters.startDate)
+  }
+
+  if (filters.endDate !== undefined) {
+    countRequest.input('endDate', filters.endDate)
+  }
+
+  const countResult = await countRequest.query<{ totalCount: number }>(countSql)
+  const totalCount = countResult.recordset[0]?.totalCount ?? 0
+
+  // Get paginated data
   const sql = /* sql */ `
     select
       auditLogId, userName, apiKey, endpoint, requestMethod, isValidApiKey,
@@ -73,5 +109,8 @@ export default async function getApiAuditLogs(
 
   const result = await request.query<ApiAuditLog>(sql)
 
-  return result.recordset
+  return {
+    logs: result.recordset,
+    totalCount
+  }
 }
