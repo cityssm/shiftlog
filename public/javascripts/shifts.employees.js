@@ -887,6 +887,7 @@
     function importFromPreviousShift(clickEvent) {
         clickEvent.preventDefault();
         let formElement;
+        let searchFormElement;
         let closeModalFunction;
         function doImport(formEvent) {
             formEvent.preventDefault();
@@ -909,16 +910,131 @@
                 }
             });
         }
+        function doSearch(searchEvent) {
+            searchEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doGetPreviousShifts`, searchFormElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                const resultsContainer = document.querySelector('#container--searchResults');
+                const listContainer = document.querySelector('#list--shifts');
+                if (responseJSON.shifts.length === 0) {
+                    listContainer.innerHTML = /* html */ `
+              <div class="message">
+                <div class="message-body">No matching shifts found.</div>
+              </div>
+            `;
+                }
+                else {
+                    listContainer.innerHTML = '';
+                    for (const shift of responseJSON.shifts) {
+                        const shiftDate = new Date(shift.shiftDate);
+                        const dateString = shiftDate.toLocaleDateString();
+                        const counts = [];
+                        if ((shift.crewsCount ?? 0) > 0) {
+                            counts.push(`${shift.crewsCount} crew${shift.crewsCount === 1 ? '' : 's'}`);
+                        }
+                        if ((shift.employeesCount ?? 0) > 0) {
+                            counts.push(`${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`);
+                        }
+                        if ((shift.equipmentCount ?? 0) > 0) {
+                            counts.push(`${shift.equipmentCount} equipment`);
+                        }
+                        const countsText = counts.length > 0 ? ` (${counts.join(', ')})` : '';
+                        const shiftElement = document.createElement('a');
+                        shiftElement.className = 'panel-block is-block';
+                        shiftElement.dataset.shiftId = shift.shiftId.toString();
+                        shiftElement.href = '#';
+                        shiftElement.innerHTML = /* html */ `
+                <div class="columns is-mobile is-vcentered">
+                  <div class="column">
+                    <strong>Shift #${cityssm.escapeHTML(shift.shiftId.toString())}</strong>
+                    - ${cityssm.escapeHTML(dateString)}
+                    <br />
+                    <small>
+                      ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '')}
+                      ${shift.shiftTimeDataListItem ? ' - ' + cityssm.escapeHTML(shift.shiftTimeDataListItem) : ''}
+                      ${shift.supervisorLastName ? ' - ' + cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? '')) : ''}
+                    </small>
+                    ${countsText ? '<br /><small class="has-text-grey">' + cityssm.escapeHTML(countsText) + '</small>' : ''}
+                  </div>
+                  <div class="column is-narrow">
+                    <span class="icon has-text-info">
+                      <i class="fa-solid fa-chevron-right"></i>
+                    </span>
+                  </div>
+                </div>
+              `;
+                        shiftElement.addEventListener('click', (clickEvent) => {
+                            clickEvent.preventDefault();
+                            const previousShiftIdInput = document.querySelector('#input--previousShiftId');
+                            previousShiftIdInput.value = shift.shiftId.toString();
+                            // Highlight selected shift
+                            const allPanelBlocks = listContainer.querySelectorAll('.panel-block');
+                            for (const block of allPanelBlocks) {
+                                block.classList.remove('is-active');
+                            }
+                            shiftElement.classList.add('is-active');
+                        });
+                        listContainer.append(shiftElement);
+                    }
+                }
+                resultsContainer.classList.remove('is-hidden');
+            });
+        }
         cityssm.openHtmlModal('shifts-importFromPreviousShift', {
             onshow(modalElement) {
+                // Get current shift data from the form
+                const currentShiftTypeId = document.querySelector('#shift--shiftTypeDataListItemId').value;
+                const currentSupervisorNumber = document.querySelector('#shift--supervisorEmployeeNumber').value;
+                const currentShiftTimeId = document.querySelector('#shift--shiftTimeDataListItemId').value;
+                const currentShiftDate = document.querySelector('#shift--shiftDateString').value;
+                // Set hidden fields
+                const searchCurrentShiftIdInputs = modalElement.querySelectorAll('input[name="currentShiftId"]');
+                for (const input of searchCurrentShiftIdInputs) {
+                    input.value = shiftId;
+                }
+                // Set shift date for filtering
                 ;
-                modalElement.querySelector('input[name="currentShiftId"]').value = shiftId;
+                modalElement.querySelector('form#form--searchShifts input[name="shiftDateString"]').value = currentShiftDate;
+                // Populate shift types
+                const shiftTypeSelect = modalElement.querySelector('#search--shiftTypeDataListItemId');
+                const shiftTypeOptions = document.querySelectorAll('#shift--shiftTypeDataListItemId option');
+                for (const option of shiftTypeOptions) {
+                    if (option.value !== '') {
+                        const newOption = option.cloneNode(true);
+                        newOption.selected = option.value === currentShiftTypeId;
+                        shiftTypeSelect.append(newOption);
+                    }
+                }
+                // Populate supervisors
+                const supervisorSelect = modalElement.querySelector('#search--supervisorEmployeeNumber');
+                const supervisorOptions = document.querySelectorAll('#shift--supervisorEmployeeNumber option');
+                for (const option of supervisorOptions) {
+                    if (option.value !== '') {
+                        const newOption = option.cloneNode(true);
+                        newOption.selected = option.value === currentSupervisorNumber;
+                        supervisorSelect.append(newOption);
+                    }
+                }
+                // Populate shift times
+                const shiftTimeSelect = modalElement.querySelector('#search--shiftTimeDataListItemId');
+                const shiftTimeOptions = document.querySelectorAll('#shift--shiftTimeDataListItemId option');
+                for (const option of shiftTimeOptions) {
+                    if (option.value !== '') {
+                        const newOption = option.cloneNode(true);
+                        newOption.selected = option.value === currentShiftTimeId;
+                        shiftTimeSelect.append(newOption);
+                    }
+                }
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = _closeModalFunction;
-                formElement = modalElement.querySelector('form');
+                formElement = modalElement.querySelector('#form--import');
                 formElement.addEventListener('submit', doImport);
+                searchFormElement = modalElement.querySelector('#form--searchShifts');
+                searchFormElement.addEventListener('submit', doSearch);
+                // Auto-trigger search with current shift's values
+                doSearch(new Event('submit'));
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
@@ -947,3 +1063,4 @@
     renderShiftEquipment();
     updateCounts();
 })();
+export {};

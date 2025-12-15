@@ -11,6 +11,7 @@ import handler_doAddShiftEquipment from '../handlers/shifts-post/doAddShiftEquip
 import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkOrder.js';
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js';
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js';
+import handler_doGetPreviousShifts from '../handlers/shifts-post/doGetPreviousShifts.js';
 import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js';
 import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew.js';
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js';
@@ -79,6 +80,7 @@ router.post('/doGetShiftWorkOrders', handler_doGetShiftWorkOrders);
 router.post('/doAddShiftWorkOrder', updateHandler, handler_doAddShiftWorkOrder);
 router.post('/doUpdateShiftWorkOrderNote', updateHandler, handler_doUpdateShiftWorkOrderNote);
 router.post('/doDeleteShiftWorkOrder', updateHandler, handler_doDeleteShiftWorkOrder);
+router.post('/doGetPreviousShifts', handler_doGetPreviousShifts);
 router.post('/doCopyFromPreviousShift', updateHandler, handler_doCopyFromPreviousShift);
 router
     .get('/recovery', manageHandler, handler_recovery)

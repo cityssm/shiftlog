@@ -1303,6 +1303,7 @@ declare const exports: {
     clickEvent.preventDefault()
 
     let formElement: HTMLFormElement
+    let searchFormElement: HTMLFormElement
     let closeModalFunction: () => void
 
     function doImport(formEvent: Event): void {
@@ -1333,20 +1334,212 @@ declare const exports: {
       )
     }
 
+    function doSearch(searchEvent: Event): void {
+      searchEvent.preventDefault()
+
+      cityssm.postJSON(
+        `${urlPrefix}/doGetPreviousShifts`,
+        searchFormElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            shifts: Array<{
+              shiftId: number
+              shiftDate: string
+              shiftTypeDataListItem?: string
+              shiftTimeDataListItem?: string
+              supervisorFirstName?: string
+              supervisorLastName?: string
+              shiftDescription: string
+              crewsCount?: number
+              employeesCount?: number
+              equipmentCount?: number
+            }>
+          }
+
+          const resultsContainer = document.querySelector(
+            '#container--searchResults'
+          ) as HTMLElement
+          const listContainer = document.querySelector(
+            '#list--shifts'
+          ) as HTMLElement
+
+          if (responseJSON.shifts.length === 0) {
+            listContainer.innerHTML = /* html */ `
+              <div class="message">
+                <div class="message-body">No matching shifts found.</div>
+              </div>
+            `
+          } else {
+            listContainer.innerHTML = ''
+            
+            for (const shift of responseJSON.shifts) {
+              const shiftDate = new Date(shift.shiftDate)
+              const dateString = shiftDate.toLocaleDateString()
+              
+              const counts = []
+              if ((shift.crewsCount ?? 0) > 0) {
+                counts.push(`${shift.crewsCount} crew${shift.crewsCount === 1 ? '' : 's'}`)
+              }
+              if ((shift.employeesCount ?? 0) > 0) {
+                counts.push(`${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`)
+              }
+              if ((shift.equipmentCount ?? 0) > 0) {
+                counts.push(`${shift.equipmentCount} equipment`)
+              }
+              
+              const countsText = counts.length > 0 ? ` (${counts.join(', ')})` : ''
+
+              const shiftElement = document.createElement('a')
+              shiftElement.className = 'panel-block is-block'
+              shiftElement.dataset.shiftId = shift.shiftId.toString()
+              shiftElement.href = '#'
+              
+              shiftElement.innerHTML = /* html */ `
+                <div class="columns is-mobile is-vcentered">
+                  <div class="column">
+                    <strong>Shift #${cityssm.escapeHTML(shift.shiftId.toString())}</strong>
+                    - ${cityssm.escapeHTML(dateString)}
+                    <br />
+                    <small>
+                      ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '')}
+                      ${shift.shiftTimeDataListItem ? ' - ' + cityssm.escapeHTML(shift.shiftTimeDataListItem) : ''}
+                      ${shift.supervisorLastName ? ' - ' + cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? '')) : ''}
+                    </small>
+                    ${countsText ? '<br /><small class="has-text-grey">' + cityssm.escapeHTML(countsText) + '</small>' : ''}
+                  </div>
+                  <div class="column is-narrow">
+                    <span class="icon has-text-info">
+                      <i class="fa-solid fa-chevron-right"></i>
+                    </span>
+                  </div>
+                </div>
+              `
+              
+              shiftElement.addEventListener('click', (clickEvent) => {
+                clickEvent.preventDefault()
+                const previousShiftIdInput = document.querySelector(
+                  '#input--previousShiftId'
+                ) as HTMLInputElement
+                previousShiftIdInput.value = shift.shiftId.toString()
+                
+                // Highlight selected shift
+                const allPanelBlocks = listContainer.querySelectorAll('.panel-block')
+                for (const block of allPanelBlocks) {
+                  block.classList.remove('is-active')
+                }
+                shiftElement.classList.add('is-active')
+              })
+              
+              listContainer.append(shiftElement)
+            }
+          }
+
+          resultsContainer.classList.remove('is-hidden')
+        }
+      )
+    }
+
     cityssm.openHtmlModal('shifts-importFromPreviousShift', {
       onshow(modalElement) {
+        // Get current shift data from the form
+        const currentShiftTypeId = (
+          document.querySelector(
+            '#shift--shiftTypeDataListItemId'
+          ) as HTMLSelectElement
+        ).value
+        const currentSupervisorNumber = (
+          document.querySelector(
+            '#shift--supervisorEmployeeNumber'
+          ) as HTMLSelectElement
+        ).value
+        const currentShiftTimeId = (
+          document.querySelector(
+            '#shift--shiftTimeDataListItemId'
+          ) as HTMLSelectElement
+        ).value
+        const currentShiftDate = (
+          document.querySelector(
+            '#shift--shiftDateString'
+          ) as HTMLInputElement
+        ).value
+
+        // Set hidden fields
+        const searchCurrentShiftIdInputs = modalElement.querySelectorAll(
+          'input[name="currentShiftId"]'
+        ) as NodeListOf<HTMLInputElement>
+        for (const input of searchCurrentShiftIdInputs) {
+          input.value = shiftId
+        }
+
+        // Set shift date for filtering
         ;(
           modalElement.querySelector(
-            'input[name="currentShiftId"]'
+            'form#form--searchShifts input[name="shiftDateString"]'
           ) as HTMLInputElement
-        ).value = shiftId
+        ).value = currentShiftDate
+
+        // Populate shift types
+        const shiftTypeSelect = modalElement.querySelector(
+          '#search--shiftTypeDataListItemId'
+        ) as HTMLSelectElement
+        const shiftTypeOptions = document.querySelectorAll(
+          '#shift--shiftTypeDataListItemId option'
+        ) as NodeListOf<HTMLOptionElement>
+        for (const option of shiftTypeOptions) {
+          if (option.value !== '') {
+            const newOption = option.cloneNode(true) as HTMLOptionElement
+            newOption.selected = option.value === currentShiftTypeId
+            shiftTypeSelect.append(newOption)
+          }
+        }
+
+        // Populate supervisors
+        const supervisorSelect = modalElement.querySelector(
+          '#search--supervisorEmployeeNumber'
+        ) as HTMLSelectElement
+        const supervisorOptions = document.querySelectorAll(
+          '#shift--supervisorEmployeeNumber option'
+        ) as NodeListOf<HTMLOptionElement>
+        for (const option of supervisorOptions) {
+          if (option.value !== '') {
+            const newOption = option.cloneNode(true) as HTMLOptionElement
+            newOption.selected = option.value === currentSupervisorNumber
+            supervisorSelect.append(newOption)
+          }
+        }
+
+        // Populate shift times
+        const shiftTimeSelect = modalElement.querySelector(
+          '#search--shiftTimeDataListItemId'
+        ) as HTMLSelectElement
+        const shiftTimeOptions = document.querySelectorAll(
+          '#shift--shiftTimeDataListItemId option'
+        ) as NodeListOf<HTMLOptionElement>
+        for (const option of shiftTimeOptions) {
+          if (option.value !== '') {
+            const newOption = option.cloneNode(true) as HTMLOptionElement
+            newOption.selected = option.value === currentShiftTimeId
+            shiftTimeSelect.append(newOption)
+          }
+        }
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = _closeModalFunction
 
-        formElement = modalElement.querySelector('form') as HTMLFormElement
+        formElement = modalElement.querySelector(
+          '#form--import'
+        ) as HTMLFormElement
         formElement.addEventListener('submit', doImport)
+
+        searchFormElement = modalElement.querySelector(
+          '#form--searchShifts'
+        ) as HTMLFormElement
+        searchFormElement.addEventListener('submit', doSearch)
+
+        // Auto-trigger search with current shift's values
+        doSearch(new Event('submit'))
       },
 
       onremoved() {
