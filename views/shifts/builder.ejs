@@ -1,0 +1,99 @@
+<%- await include('../_header'); -%>
+
+<nav class="breadcrumb">
+  <ul>
+    <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+    <li>
+      <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
+        <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i></span>
+        <span><%= configFunctions.getConfigProperty('shifts.sectionName') %></span>
+      </a>
+    </li>
+    <li class="is-active">
+      <a href="#" aria-current="page">
+        <span><%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Builder</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<h1 class="title is-1">
+  <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Builder
+</h1>
+
+<div class="message is-info">
+  <div class="message-body">
+    Use the <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Builder to quickly organize shifts for a date, 
+    manage staff and equipment assignments, and organize work orders across multiple shifts.
+    <% if (user.userProperties.shifts.canManage) { %>
+    You can drag and drop employees, equipment, crews, and work orders between shifts.
+    <% } else { %>
+    You are viewing in read-only mode.
+    <% } %>
+  </div>
+</div>
+
+<div class="box">
+  <div class="columns">
+    <div class="column is-half">
+      <div class="field">
+        <label class="label" for="builder--shiftDate">Date</label>
+        <div class="control has-icons-left">
+          <input
+            class="input"
+            id="builder--shiftDate"
+            name="shiftDate"
+            type="text"
+            value="<%= new Date().toISOString().split('T')[0] %>"
+            required
+            placeholder="YYYY-MM-DD"
+          />
+          <span class="icon is-small is-left">
+            <i class="fa-solid fa-calendar"></i>
+          </span>
+        </div>
+        <p class="help">Select a date to view and manage shifts</p>
+      </div>
+    </div>
+    <div class="column is-half">
+      <div class="field">
+        <label class="label" for="builder--viewMode">View</label>
+        <div class="control has-icons-left">
+          <div class="select is-fullwidth">
+            <select id="builder--viewMode" name="viewMode">
+              <option value="employees">Employees and Equipment</option>
+              <option value="tasks">Tasks</option>
+            </select>
+          </div>
+          <span class="icon is-small is-left">
+            <i class="fa-solid fa-eye"></i>
+          </span>
+        </div>
+        <p class="help">Choose what to display in each shift card</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="container--shiftBuilderResults">
+  <div class="has-text-centered py-6">
+    <span class="icon is-large has-text-grey-light">
+      <i class="fa-solid fa-3x fa-calendar-days"></i>
+    </span>
+    <p class="has-text-grey">Select a date to view shifts</p>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script>
+  exports.shiftLog = {
+    urlPrefix: '<%= urlPrefix %>',
+    canManage: <%= user.userProperties.shifts.canManage %>,
+    canUpdate: <%= user.userProperties.shifts.canUpdate %>,
+    currentUser: '<%= user.userName %>'
+  };
+</script>
+<script src="<%= urlPrefix %>/javascripts/shifts.builder.js"></script>
+
+<%- await include('../_footerB'); -%>
