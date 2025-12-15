@@ -80,7 +80,8 @@ const minEditableDate = 0;
             for (const crew of shift.crews) {
                 const isDup = isDuplicate(duplicates, 'crew', crew.crewId);
                 const dupClass = isDup ? ' has-background-warning-light' : '';
-                html += `<li class="${dupClass}" data-crew-id="${crew.crewId}" draggable="${isEditable}">`;
+                const dropTargetClass = isEditable ? ' drop-target-crew' : '';
+                html += `<li class="${dupClass}${dropTargetClass}" data-crew-id="${crew.crewId}" draggable="${isEditable}">`;
                 html += cityssm.escapeHTML(crew.crewName);
                 if (crew.shiftCrewNote !== '') {
                     html += ` <span class="has-text-grey-light">- ${cityssm.escapeHTML(crew.shiftCrewNote)}</span>`;
@@ -95,7 +96,8 @@ const minEditableDate = 0;
             for (const employee of shift.employees) {
                 const isDup = isDuplicate(duplicates, 'employee', employee.employeeNumber);
                 const dupClass = isDup ? ' has-background-warning-light' : '';
-                html += `<li class="${dupClass}" data-employee-number="${employee.employeeNumber}" draggable="${isEditable}">`;
+                const dropTargetClass = isEditable ? ' drop-target-employee' : '';
+                html += `<li class="${dupClass}${dropTargetClass}" data-employee-number="${employee.employeeNumber}" data-crew-id="${employee.crewId ?? ''}" draggable="${isEditable}">`;
                 html += `${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}`;
                 if (employee.crewName !== null) {
                     html += ` <span class="tag is-small is-info is-light">${cityssm.escapeHTML(employee.crewName)}</span>`;
@@ -193,7 +195,9 @@ const minEditableDate = 0;
         // Shift details
         cardHTML += '<div class="content is-small">';
         cardHTML += `<p class="mb-2"><strong>Time:</strong> ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}</p>`;
-        cardHTML += `<p class="mb-2"><strong>Supervisor:</strong> ${cityssm.escapeHTML(shift.supervisorLastName ?? '')}, ${cityssm.escapeHTML(shift.supervisorFirstName ?? '')}</p>`;
+        // Make supervisor field a drop target for employees
+        const supervisorDropClass = isEditable ? ' drop-target-supervisor' : '';
+        cardHTML += `<p class="mb-2${supervisorDropClass}" data-shift-id="${shift.shiftId}" data-supervisor-employee-number="${shift.supervisorEmployeeNumber}"><strong>Supervisor:</strong> ${cityssm.escapeHTML(shift.supervisorLastName ?? '')}, ${cityssm.escapeHTML(shift.supervisorFirstName ?? '')}</p>`;
         if (shift.shiftDescription !== '') {
             cardHTML += `<p class="mb-2"><strong>Description:</strong> ${cityssm.escapeHTML(shift.shiftDescription)}</p>`;
         }
@@ -307,10 +311,30 @@ const minEditableDate = 0;
     function handleDragOver(event) {
         event.preventDefault();
         const target = event.target;
-        // Highlight drop zones
-        const shiftBox = target.closest('.box');
-        if (shiftBox !== null) {
-            shiftBox.classList.add('is-drop-target');
+        // Remove existing highlights
+        document.querySelectorAll('.is-drop-target').forEach((element) => {
+            element.classList.remove('is-drop-target');
+        });
+        // Check for specific drop targets first
+        const supervisorTarget = target.closest('.drop-target-supervisor');
+        const crewTarget = target.closest('.drop-target-crew');
+        const employeeTarget = target.closest('.drop-target-employee');
+        // Highlight specific drop targets based on what's being dragged
+        if (draggedData?.type === 'employee' && supervisorTarget !== null) {
+            supervisorTarget.classList.add('is-drop-target');
+        }
+        else if (draggedData?.type === 'employee' && crewTarget !== null) {
+            crewTarget.classList.add('is-drop-target');
+        }
+        else if (draggedData?.type === 'equipment' && employeeTarget !== null) {
+            employeeTarget.classList.add('is-drop-target');
+        }
+        else {
+            // Default: highlight entire shift box
+            const shiftBox = target.closest('.box');
+            if (shiftBox !== null) {
+                shiftBox.classList.add('is-drop-target');
+            }
         }
         if (event.dataTransfer !== null) {
             event.dataTransfer.dropEffect = 'move';
@@ -330,6 +354,39 @@ const minEditableDate = 0;
         if (draggedData === null) {
             return;
         }
+        // Check for specific drop targets first
+        const supervisorTarget = target.closest('.drop-target-supervisor');
+        const crewTarget = target.closest('.drop-target-crew');
+        const employeeTarget = target.closest('.drop-target-employee');
+        // Handle employee dropped on supervisor slot
+        if (supervisorTarget !== null && draggedData.type === 'employee') {
+            const shiftId = Number.parseInt(supervisorTarget.dataset.shiftId ?? '0', 10);
+            if (shiftId > 0) {
+                makeEmployeeSupervisor(draggedData.id, shiftId);
+                return;
+            }
+        }
+        // Handle employee dropped on crew
+        if (crewTarget !== null && draggedData.type === 'employee') {
+            const shiftCard = crewTarget.closest('[data-shift-id]');
+            const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
+            const crewId = Number.parseInt(crewTarget.dataset.crewId ?? '0', 10);
+            if (shiftId > 0 && crewId > 0) {
+                assignEmployeeToCrew(draggedData.id, draggedData.fromShiftId, shiftId, crewId);
+                return;
+            }
+        }
+        // Handle equipment dropped on employee
+        if (employeeTarget !== null && draggedData.type === 'equipment') {
+            const shiftCard = employeeTarget.closest('[data-shift-id]');
+            const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
+            const employeeNumber = employeeTarget.dataset.employeeNumber ?? '';
+            if (shiftId > 0 && employeeNumber !== '') {
+                assignEquipmentToEmployee(draggedData.id, draggedData.fromShiftId, shiftId, employeeNumber);
+                return;
+            }
+        }
+        // Default: move to shift
         const shiftCard = target.closest('[data-shift-id]');
         const toShiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
         if (toShiftId === 0 || toShiftId === draggedData.fromShiftId) {
@@ -456,6 +513,124 @@ const minEditableDate = 0;
                 cityssm.alertModal('Error', 'Failed to remove work order from original shift.', 'danger', 'OK');
             }
         });
+    }
+    function makeEmployeeSupervisor(employeeNumber, shiftId) {
+        // Get the shift details first to get current values
+        const shift = currentShifts.find((s) => s.shiftId === shiftId);
+        if (shift === undefined) {
+            return;
+        }
+        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doUpdateShift`, {
+            shiftId,
+            shiftTypeDataListItemId: shift.shiftTypeDataListItemId,
+            supervisorEmployeeNumber: employeeNumber,
+            shiftDateString: shift.shiftDate,
+            shiftTimeDataListItemId: shift.shiftTimeDataListItemId,
+            shiftDescription: shift.shiftDescription
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success) {
+                cityssm.alertModal('Supervisor Updated', 'Employee has been set as the supervisor for this shift.', 'success', 'OK');
+                loadShifts();
+            }
+            else {
+                cityssm.alertModal('Error', 'Failed to update shift supervisor.', 'danger', 'OK');
+            }
+        });
+    }
+    function assignEmployeeToCrew(employeeNumber, fromShiftId, toShiftId, crewId) {
+        // If employee is on a different shift, move them first
+        if (fromShiftId !== toShiftId) {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`, {
+                shiftId: fromShiftId,
+                employeeNumber
+            }, (deleteResponse) => {
+                if (deleteResponse.success) {
+                    // Add to new shift with crew assignment
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`, {
+                        shiftId: toShiftId,
+                        employeeNumber,
+                        crewId,
+                        shiftEmployeeNote: ''
+                    }, (addResponse) => {
+                        if (addResponse.success) {
+                            cityssm.alertModal('Employee Assigned', 'Employee has been moved and assigned to the crew.', 'success', 'OK');
+                            loadShifts();
+                        }
+                        else {
+                            cityssm.alertModal('Error', 'Failed to add employee to crew.', 'danger', 'OK');
+                        }
+                    });
+                }
+                else {
+                    cityssm.alertModal('Error', 'Failed to remove employee from original shift.', 'danger', 'OK');
+                }
+            });
+        }
+        else {
+            // Same shift, just update the crew assignment
+            cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doUpdateShiftEmployee`, {
+                shiftId: toShiftId,
+                employeeNumber,
+                crewId
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    cityssm.alertModal('Employee Assigned', 'Employee has been assigned to the crew.', 'success', 'OK');
+                    loadShifts();
+                }
+                else {
+                    cityssm.alertModal('Error', 'Failed to assign employee to crew.', 'danger', 'OK');
+                }
+            });
+        }
+    }
+    function assignEquipmentToEmployee(equipmentNumber, fromShiftId, toShiftId, employeeNumber) {
+        // If equipment is on a different shift, move it first
+        if (fromShiftId !== toShiftId) {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`, {
+                shiftId: fromShiftId,
+                equipmentNumber
+            }, (deleteResponse) => {
+                if (deleteResponse.success) {
+                    // Add to new shift with employee assignment
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`, {
+                        shiftId: toShiftId,
+                        equipmentNumber,
+                        employeeNumber,
+                        shiftEquipmentNote: ''
+                    }, (addResponse) => {
+                        if (addResponse.success) {
+                            cityssm.alertModal('Equipment Assigned', 'Equipment has been moved and assigned to the employee.', 'success', 'OK');
+                            loadShifts();
+                        }
+                        else {
+                            cityssm.alertModal('Error', 'Failed to add equipment to shift.', 'danger', 'OK');
+                        }
+                    });
+                }
+                else {
+                    cityssm.alertModal('Error', 'Failed to remove equipment from original shift.', 'danger', 'OK');
+                }
+            });
+        }
+        else {
+            // Same shift, just update the employee assignment
+            cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doUpdateShiftEquipment`, {
+                shiftId: toShiftId,
+                equipmentNumber,
+                employeeNumber
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    cityssm.alertModal('Equipment Assigned', 'Equipment has been assigned to the employee.', 'success', 'OK');
+                    loadShifts();
+                }
+                else {
+                    cityssm.alertModal('Error', 'Failed to assign equipment to employee.', 'danger', 'OK');
+                }
+            });
+        }
     }
     // Event listeners
     shiftDateElement.addEventListener('change', loadShifts);

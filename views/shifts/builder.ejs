@@ -112,6 +112,28 @@
     list-style: none;
     padding-left: 0;
   }
+
+  /* Drop target styles */
+  .drop-target-supervisor,
+  .drop-target-crew,
+  .drop-target-employee {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .drop-target-supervisor:hover,
+  .drop-target-crew:hover,
+  .drop-target-employee:hover {
+    background-color: rgba(50, 115, 220, 0.05);
+  }
+
+  .drop-target-supervisor.is-drop-target,
+  .drop-target-crew.is-drop-target,
+  .drop-target-employee.is-drop-target {
+    border: 2px solid #3273dc;
+    background-color: rgba(50, 115, 220, 0.1);
+  }
 </style>
 
 <script>
