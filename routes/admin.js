@@ -1,156 +1,153 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = void 0;
-var express_1 = require("express");
-var apiAuditLogs_js_1 = require("../handlers/admin-get/apiAuditLogs.js");
-var dataLists_js_1 = require("../handlers/admin-get/dataLists.js");
-var employees_js_1 = require("../handlers/admin-get/employees.js");
-var employeeLists_js_1 = require("../handlers/admin-get/employeeLists.js");
-var equipment_js_1 = require("../handlers/admin-get/equipment.js");
-var locations_js_1 = require("../handlers/admin-get/locations.js");
-var settings_js_1 = require("../handlers/admin-get/settings.js");
-var tags_js_1 = require("../handlers/admin-get/tags.js");
-var userGroups_js_1 = require("../handlers/admin-get/userGroups.js");
-var users_js_1 = require("../handlers/admin-get/users.js");
-var workOrderTypes_js_1 = require("../handlers/admin-get/workOrderTypes.js");
-var doAddDataListItem_js_1 = require("../handlers/admin-post/doAddDataListItem.js");
-var doAddEmployee_js_1 = require("../handlers/admin-post/doAddEmployee.js");
-var doAddEmployeeList_js_1 = require("../handlers/admin-post/doAddEmployeeList.js");
-var doAddEmployeeListMember_js_1 = require("../handlers/admin-post/doAddEmployeeListMember.js");
-var doAddEquipment_js_1 = require("../handlers/admin-post/doAddEquipment.js");
-var doAddLocation_js_1 = require("../handlers/admin-post/doAddLocation.js");
-var doAddTag_js_1 = require("../handlers/admin-post/doAddTag.js");
-var doGetApiAuditLogs_js_1 = require("../handlers/admin-post/doGetApiAuditLogs.js");
-var doGetOrphanedTags_js_1 = require("../handlers/admin-post/doGetOrphanedTags.js");
-var doAddUser_js_1 = require("../handlers/admin-post/doAddUser.js");
-var doAddUserGroup_js_1 = require("../handlers/admin-post/doAddUserGroup.js");
-var doAddUserGroupMember_js_1 = require("../handlers/admin-post/doAddUserGroupMember.js");
-var doAddWorkOrderType_js_1 = require("../handlers/admin-post/doAddWorkOrderType.js");
-var doDeleteDataListItem_js_1 = require("../handlers/admin-post/doDeleteDataListItem.js");
-var doDeleteEmployee_js_1 = require("../handlers/admin-post/doDeleteEmployee.js");
-var doDeleteEmployeeList_js_1 = require("../handlers/admin-post/doDeleteEmployeeList.js");
-var doDeleteEmployeeListMember_js_1 = require("../handlers/admin-post/doDeleteEmployeeListMember.js");
-var doDeleteEquipment_js_1 = require("../handlers/admin-post/doDeleteEquipment.js");
-var doDeleteLocation_js_1 = require("../handlers/admin-post/doDeleteLocation.js");
-var doDeleteTag_js_1 = require("../handlers/admin-post/doDeleteTag.js");
-var doDeleteUser_js_1 = require("../handlers/admin-post/doDeleteUser.js");
-var doDeleteUserGroup_js_1 = require("../handlers/admin-post/doDeleteUserGroup.js");
-var doDeleteUserGroupMember_js_1 = require("../handlers/admin-post/doDeleteUserGroupMember.js");
-var doDeleteWorkOrderType_js_1 = require("../handlers/admin-post/doDeleteWorkOrderType.js");
-var doGetEmployeeList_js_1 = require("../handlers/admin-post/doGetEmployeeList.js");
-var doGetUserGroup_js_1 = require("../handlers/admin-post/doGetUserGroup.js");
-var doReorderDataListItems_js_1 = require("../handlers/admin-post/doReorderDataListItems.js");
-var doReorderEmployeeListMembers_js_1 = require("../handlers/admin-post/doReorderEmployeeListMembers.js");
-var doReorderWorkOrderTypes_js_1 = require("../handlers/admin-post/doReorderWorkOrderTypes.js");
-var doToggleUserPermission_js_1 = require("../handlers/admin-post/doToggleUserPermission.js");
-var doUpdateDataListItem_js_1 = require("../handlers/admin-post/doUpdateDataListItem.js");
-var doUpdateEmployee_js_1 = require("../handlers/admin-post/doUpdateEmployee.js");
-var doUpdateEmployeeList_js_1 = require("../handlers/admin-post/doUpdateEmployeeList.js");
-var doUpdateEmployeeListMember_js_1 = require("../handlers/admin-post/doUpdateEmployeeListMember.js");
-var doUpdateEquipment_js_1 = require("../handlers/admin-post/doUpdateEquipment.js");
-var doUpdateLocation_js_1 = require("../handlers/admin-post/doUpdateLocation.js");
-var doUpdateSetting_js_1 = require("../handlers/admin-post/doUpdateSetting.js");
-var doUpdateTag_js_1 = require("../handlers/admin-post/doUpdateTag.js");
-var doUpdateUser_js_1 = require("../handlers/admin-post/doUpdateUser.js");
-var doUpdateUserGroup_js_1 = require("../handlers/admin-post/doUpdateUserGroup.js");
-var doUpdateUserSettings_js_1 = require("../handlers/admin-post/doUpdateUserSettings.js");
-var doUpdateWorkOrderType_js_1 = require("../handlers/admin-post/doUpdateWorkOrderType.js");
-exports.router = (0, express_1.Router)();
+import { Router } from 'express';
+import handler_apiAuditLogs from '../handlers/admin-get/apiAuditLogs.js';
+import handler_dataLists from '../handlers/admin-get/dataLists.js';
+import handler_employees from '../handlers/admin-get/employees.js';
+import handler_employeeLists from '../handlers/admin-get/employeeLists.js';
+import handler_equipment from '../handlers/admin-get/equipment.js';
+import handler_locations from '../handlers/admin-get/locations.js';
+import handler_settings from '../handlers/admin-get/settings.js';
+import handler_tags from '../handlers/admin-get/tags.js';
+import handler_userGroups from '../handlers/admin-get/userGroups.js';
+import handler_users from '../handlers/admin-get/users.js';
+import handler_workOrderTypes from '../handlers/admin-get/workOrderTypes.js';
+import handler_doAddDataListItem from '../handlers/admin-post/doAddDataListItem.js';
+import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js';
+import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.js';
+import handler_doAddEmployeeListMember from '../handlers/admin-post/doAddEmployeeListMember.js';
+import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js';
+import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js';
+import handler_doAddTag from '../handlers/admin-post/doAddTag.js';
+import handler_doGetApiAuditLogs from '../handlers/admin-post/doGetApiAuditLogs.js';
+import handler_doGetOrphanedTags from '../handlers/admin-post/doGetOrphanedTags.js';
+import handler_doAddUser from '../handlers/admin-post/doAddUser.js';
+import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js';
+import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupMember.js';
+import handler_doAddWorkOrderType from '../handlers/admin-post/doAddWorkOrderType.js';
+import handler_doDeleteDataListItem from '../handlers/admin-post/doDeleteDataListItem.js';
+import handler_doDeleteEmployee from '../handlers/admin-post/doDeleteEmployee.js';
+import handler_doDeleteEmployeeList from '../handlers/admin-post/doDeleteEmployeeList.js';
+import handler_doDeleteEmployeeListMember from '../handlers/admin-post/doDeleteEmployeeListMember.js';
+import handler_doDeleteEquipment from '../handlers/admin-post/doDeleteEquipment.js';
+import handler_doDeleteLocation from '../handlers/admin-post/doDeleteLocation.js';
+import handler_doDeleteTag from '../handlers/admin-post/doDeleteTag.js';
+import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js';
+import handler_doDeleteUserGroup from '../handlers/admin-post/doDeleteUserGroup.js';
+import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUserGroupMember.js';
+import handler_doDeleteWorkOrderType from '../handlers/admin-post/doDeleteWorkOrderType.js';
+import handler_doGetEmployeeList from '../handlers/admin-post/doGetEmployeeList.js';
+import handler_doGetUserGroup from '../handlers/admin-post/doGetUserGroup.js';
+import handler_doReorderDataListItems from '../handlers/admin-post/doReorderDataListItems.js';
+import handler_doReorderEmployeeListMembers from '../handlers/admin-post/doReorderEmployeeListMembers.js';
+import handler_doReorderWorkOrderTypes from '../handlers/admin-post/doReorderWorkOrderTypes.js';
+import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js';
+import handler_doUpdateDataListItem from '../handlers/admin-post/doUpdateDataListItem.js';
+import handler_doUpdateEmployee from '../handlers/admin-post/doUpdateEmployee.js';
+import handler_doUpdateEmployeeList from '../handlers/admin-post/doUpdateEmployeeList.js';
+import handler_doUpdateEmployeeListMember from '../handlers/admin-post/doUpdateEmployeeListMember.js';
+import handler_doUpdateEquipment from '../handlers/admin-post/doUpdateEquipment.js';
+import handler_doUpdateLocation from '../handlers/admin-post/doUpdateLocation.js';
+import handler_doUpdateSetting from '../handlers/admin-post/doUpdateSetting.js';
+import handler_doUpdateTag from '../handlers/admin-post/doUpdateTag.js';
+import handler_doUpdateUser from '../handlers/admin-post/doUpdateUser.js';
+import handler_doUpdateUserGroup from '../handlers/admin-post/doUpdateUserGroup.js';
+import handler_doUpdateUserSettings from '../handlers/admin-post/doUpdateUserSettings.js';
+import handler_doUpdateWorkOrderType from '../handlers/admin-post/doUpdateWorkOrderType.js';
+export const router = Router();
 /*
  * Users
  */
-exports.router
-    .get('/users', users_js_1.default)
-    .post('/doAddUser', doAddUser_js_1.default)
-    .post('/doUpdateUser', doUpdateUser_js_1.default)
-    .post('/doUpdateUserSettings', doUpdateUserSettings_js_1.default)
-    .post('/doToggleUserPermission', doToggleUserPermission_js_1.default)
-    .post('/doDeleteUser', doDeleteUser_js_1.default);
+router
+    .get('/users', handler_users)
+    .post('/doAddUser', handler_doAddUser)
+    .post('/doUpdateUser', handler_doUpdateUser)
+    .post('/doUpdateUserSettings', handler_doUpdateUserSettings)
+    .post('/doToggleUserPermission', handler_doToggleUserPermission)
+    .post('/doDeleteUser', handler_doDeleteUser);
 /*
  * User Groups
  */
-exports.router
-    .get('/userGroups', userGroups_js_1.default)
-    .post('/doGetUserGroup', doGetUserGroup_js_1.default)
-    .post('/doAddUserGroup', doAddUserGroup_js_1.default)
-    .post('/doUpdateUserGroup', doUpdateUserGroup_js_1.default)
-    .post('/doDeleteUserGroup', doDeleteUserGroup_js_1.default)
-    .post('/doAddUserGroupMember', doAddUserGroupMember_js_1.default)
-    .post('/doDeleteUserGroupMember', doDeleteUserGroupMember_js_1.default);
+router
+    .get('/userGroups', handler_userGroups)
+    .post('/doGetUserGroup', handler_doGetUserGroup)
+    .post('/doAddUserGroup', handler_doAddUserGroup)
+    .post('/doUpdateUserGroup', handler_doUpdateUserGroup)
+    .post('/doDeleteUserGroup', handler_doDeleteUserGroup)
+    .post('/doAddUserGroupMember', handler_doAddUserGroupMember)
+    .post('/doDeleteUserGroupMember', handler_doDeleteUserGroupMember);
 /*
  * Employees
  */
-exports.router
-    .get('/employees', employees_js_1.default)
-    .post('/doAddEmployee', doAddEmployee_js_1.default)
-    .post('/doUpdateEmployee', doUpdateEmployee_js_1.default)
-    .post('/doDeleteEmployee', doDeleteEmployee_js_1.default);
+router
+    .get('/employees', handler_employees)
+    .post('/doAddEmployee', handler_doAddEmployee)
+    .post('/doUpdateEmployee', handler_doUpdateEmployee)
+    .post('/doDeleteEmployee', handler_doDeleteEmployee);
 /*
  * Employee Lists
  */
-exports.router
-    .get('/employeeLists', employeeLists_js_1.default)
-    .post('/doGetEmployeeList', doGetEmployeeList_js_1.default)
-    .post('/doAddEmployeeList', doAddEmployeeList_js_1.default)
-    .post('/doUpdateEmployeeList', doUpdateEmployeeList_js_1.default)
-    .post('/doDeleteEmployeeList', doDeleteEmployeeList_js_1.default)
-    .post('/doAddEmployeeListMember', doAddEmployeeListMember_js_1.default)
-    .post('/doUpdateEmployeeListMember', doUpdateEmployeeListMember_js_1.default)
-    .post('/doDeleteEmployeeListMember', doDeleteEmployeeListMember_js_1.default)
-    .post('/doReorderEmployeeListMembers', doReorderEmployeeListMembers_js_1.default);
+router
+    .get('/employeeLists', handler_employeeLists)
+    .post('/doGetEmployeeList', handler_doGetEmployeeList)
+    .post('/doAddEmployeeList', handler_doAddEmployeeList)
+    .post('/doUpdateEmployeeList', handler_doUpdateEmployeeList)
+    .post('/doDeleteEmployeeList', handler_doDeleteEmployeeList)
+    .post('/doAddEmployeeListMember', handler_doAddEmployeeListMember)
+    .post('/doUpdateEmployeeListMember', handler_doUpdateEmployeeListMember)
+    .post('/doDeleteEmployeeListMember', handler_doDeleteEmployeeListMember)
+    .post('/doReorderEmployeeListMembers', handler_doReorderEmployeeListMembers);
 /*
  * Settings Management
  */
-exports.router
-    .get('/settings', settings_js_1.default)
-    .post('/doUpdateSetting', doUpdateSetting_js_1.default);
+router
+    .get('/settings', handler_settings)
+    .post('/doUpdateSetting', handler_doUpdateSetting);
 /*
  * Equipment Management
  */
-exports.router
-    .get('/equipment', equipment_js_1.default)
-    .post('/doAddEquipment', doAddEquipment_js_1.default)
-    .post('/doUpdateEquipment', doUpdateEquipment_js_1.default)
-    .post('/doDeleteEquipment', doDeleteEquipment_js_1.default);
+router
+    .get('/equipment', handler_equipment)
+    .post('/doAddEquipment', handler_doAddEquipment)
+    .post('/doUpdateEquipment', handler_doUpdateEquipment)
+    .post('/doDeleteEquipment', handler_doDeleteEquipment);
 /*
  * Location Maintenance
  */
-exports.router
-    .get('/locations', locations_js_1.default)
-    .post('/doAddLocation', doAddLocation_js_1.default)
-    .post('/doUpdateLocation', doUpdateLocation_js_1.default)
-    .post('/doDeleteLocation', doDeleteLocation_js_1.default);
+router
+    .get('/locations', handler_locations)
+    .post('/doAddLocation', handler_doAddLocation)
+    .post('/doUpdateLocation', handler_doUpdateLocation)
+    .post('/doDeleteLocation', handler_doDeleteLocation);
 /*
  * Work Order Type Management
  */
-exports.router
-    .get('/workOrderTypes', workOrderTypes_js_1.default)
-    .post('/doAddWorkOrderType', doAddWorkOrderType_js_1.default)
-    .post('/doUpdateWorkOrderType', doUpdateWorkOrderType_js_1.default)
-    .post('/doDeleteWorkOrderType', doDeleteWorkOrderType_js_1.default)
-    .post('/doReorderWorkOrderTypes', doReorderWorkOrderTypes_js_1.default);
+router
+    .get('/workOrderTypes', handler_workOrderTypes)
+    .post('/doAddWorkOrderType', handler_doAddWorkOrderType)
+    .post('/doUpdateWorkOrderType', handler_doUpdateWorkOrderType)
+    .post('/doDeleteWorkOrderType', handler_doDeleteWorkOrderType)
+    .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes);
 /*
  * Data List Management
  */
-exports.router
-    .get('/dataLists', dataLists_js_1.default)
-    .post('/doAddDataListItem', doAddDataListItem_js_1.default)
-    .post('/doUpdateDataListItem', doUpdateDataListItem_js_1.default)
-    .post('/doDeleteDataListItem', doDeleteDataListItem_js_1.default)
-    .post('/doReorderDataListItems', doReorderDataListItems_js_1.default);
+router
+    .get('/dataLists', handler_dataLists)
+    .post('/doAddDataListItem', handler_doAddDataListItem)
+    .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
+    .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
+    .post('/doReorderDataListItems', handler_doReorderDataListItems);
 /*
  * Tag Management
  */
-exports.router
-    .get('/tags', tags_js_1.default)
-    .post('/doAddTag', doAddTag_js_1.default)
-    .post('/doUpdateTag', doUpdateTag_js_1.default)
-    .post('/doDeleteTag', doDeleteTag_js_1.default)
-    .post('/doGetOrphanedTags', doGetOrphanedTags_js_1.default);
+router
+    .get('/tags', handler_tags)
+    .post('/doAddTag', handler_doAddTag)
+    .post('/doUpdateTag', handler_doUpdateTag)
+    .post('/doDeleteTag', handler_doDeleteTag)
+    .post('/doGetOrphanedTags', handler_doGetOrphanedTags);
 /*
  * API Audit Logs
  */
-exports.router
-    .get('/apiAuditLogs', apiAuditLogs_js_1.default)
-    .post('/doGetApiAuditLogs', doGetApiAuditLogs_js_1.default);
-exports.default = exports.router;
+router
+    .get('/apiAuditLogs', handler_apiAuditLogs)
+    .post('/doGetApiAuditLogs', handler_doGetApiAuditLogs);
+export default router;

@@ -5,4 +5,3 @@ export default function handler(request: Request<unknown, unknown, {
     seniorityDate: string;
     seniorityOrderNumber: string;
 }>, response: Response): Promise<void>;
-//# sourceMappingURL=doUpdateEmployeeListMember.d.ts.map
