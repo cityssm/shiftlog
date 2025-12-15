@@ -1,0 +1,142 @@
+<div
+  class="modal"
+  id="modal--builderAddResource"
+  role="dialog"
+  aria-label="Add Resources to Shift"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Resources to Shift</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <!-- Shift Details -->
+      <div class="box mb-4" id="builderAddResource--shiftDetails">
+        <div class="is-flex is-justify-content-space-between">
+          <div>
+            <strong id="builderAddResource--shiftType"></strong>
+            <span class="ml-2" id="builderAddResource--shiftNumber"></span>
+          </div>
+          <div>
+            <span id="builderAddResource--shiftTime"></span>
+          </div>
+        </div>
+        <div class="mt-2">
+          <strong>Supervisor:</strong>
+          <span id="builderAddResource--supervisor"></span>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <ul id="builderAddResource--tabs">
+          <!-- Tabs will be dynamically populated -->
+        </ul>
+      </div>
+
+      <!-- Tab Content -->
+      <div id="builderAddResource--tabContent">
+        <!-- Employees Tab -->
+        <div id="builderAddResource--tabContent-employees" class="is-hidden">
+          <div class="field">
+            <div class="control">
+              <input
+                class="input"
+                type="text"
+                id="builderAddResource--employeeFilter"
+                placeholder="Filter employees by name or number..."
+              />
+            </div>
+          </div>
+          <div id="builderAddResource--employeeList" class="box" style="max-height: 300px; overflow-y: auto;">
+            <!-- Employee checkboxes will be populated here -->
+          </div>
+        </div>
+
+        <!-- Equipment Tab -->
+        <div id="builderAddResource--tabContent-equipment" class="is-hidden">
+          <div class="field">
+            <div class="control">
+              <input
+                class="input"
+                type="text"
+                id="builderAddResource--equipmentFilter"
+                placeholder="Filter equipment by name or number..."
+              />
+            </div>
+          </div>
+          <div id="builderAddResource--equipmentList" class="box" style="max-height: 300px; overflow-y: auto;">
+            <!-- Equipment checkboxes will be populated here -->
+          </div>
+        </div>
+
+        <!-- Crews Tab -->
+        <div id="builderAddResource--tabContent-crews" class="is-hidden">
+          <div class="field">
+            <div class="control">
+              <input
+                class="input"
+                type="text"
+                id="builderAddResource--crewFilter"
+                placeholder="Filter crews by name..."
+              />
+            </div>
+          </div>
+          <div id="builderAddResource--crewList" class="box" style="max-height: 300px; overflow-y: auto;">
+            <!-- Crew checkboxes will be populated here -->
+          </div>
+        </div>
+
+        <!-- Work Orders Tab -->
+        <div id="builderAddResource--tabContent-workOrders" class="is-hidden">
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <input
+                class="input"
+                type="text"
+                id="builderAddResource--workOrderFilter"
+                placeholder="Search by work order number, requestor, or details..."
+              />
+            </div>
+            <div class="control">
+              <button class="button is-info" id="builderAddResource--searchWorkOrders" type="button">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-search"></i>
+                </span>
+                <span>Search</span>
+              </button>
+            </div>
+          </div>
+          <div id="builderAddResource--workOrderList" class="box" style="max-height: 300px; overflow-y: auto;">
+            <div class="message is-info">
+              <div class="message-body">
+                Enter search terms above to find open work orders.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notification is-success is-hidden mt-4" id="builderAddResource--successMessage">
+        <button class="delete" type="button"></button>
+        <span id="builderAddResource--successText"></span>
+      </div>
+    </section>
+    <div class="modal-card-foot is-justify-content-space-between">
+      <button class="button is-primary" id="builderAddResource--addButton" type="button">
+        <span class="icon is-small">
+          <i class="fa-solid fa-plus"></i>
+        </span>
+        <span>Add Selected</span>
+      </button>
+      <button class="button is-close-modal-button" type="button">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
