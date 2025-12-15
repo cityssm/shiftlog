@@ -372,14 +372,14 @@ declare const exports: {
           ) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
-            closeModalFunction()
-
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Member Added',
 
               message: 'Employee has been added to the list.'
             })
+
+            closeModalFunction()
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -416,6 +416,17 @@ declare const exports: {
           optionElement.textContent = `${employee.firstName} ${employee.lastName} (${employee.employeeNumber})`
           selectElement.append(optionElement)
         }
+
+        // Initialize flatpickr for seniority date
+        const seniorityDateInput = formElement.querySelector(
+          '#employeeListMember--seniorityDate'
+        ) as HTMLInputElement
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ;(window as any).flatpickr(seniorityDateInput, {
+          dateFormat: 'Y-m-d',
+          allowInput: true
+        })
 
         formElement.addEventListener('submit', doAdd)
       },
@@ -719,8 +730,8 @@ declare const exports: {
           <span class="tag is-rounded ml-2">${employeeList.memberCount ?? 0}</span>
         </span>
       </summary>
-      <div class="panel-block is-justify-content-space-between">
-        <div class="buttons are-small">
+      <div class="panel-block is-justify-content-space-between is-align-items-center">
+        <div class="buttons are-small mb-0">
           <button
             class="button is-primary button--addMember"
             type="button"
@@ -731,7 +742,7 @@ declare const exports: {
             <span>Add Member</span>
           </button>
         </div>
-        <div class="buttons are-small">
+        <div class="buttons are-small mb-0">
           <button
             class="button is-info button--editEmployeeList"
             data-employee-list-id="${employeeList.employeeListId}"
