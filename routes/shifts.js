@@ -11,7 +11,6 @@ import handler_doAddShiftEquipment from '../handlers/shifts-post/doAddShiftEquip
 import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkOrder.js';
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js';
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js';
-import handler_doGetPreviousShifts from '../handlers/shifts-post/doGetPreviousShifts.js';
 import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js';
 import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew.js';
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js';
@@ -19,6 +18,7 @@ import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShif
 import handler_doDeleteShiftWorkOrder from '../handlers/shifts-post/doDeleteShiftWorkOrder.js';
 import handler_doGetAvailableCrewsEmployeesEquipment from '../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js';
 import handler_doGetDeletedShifts from '../handlers/shifts-post/doGetDeletedShifts.js';
+import handler_doGetPreviousShifts from '../handlers/shifts-post/doGetPreviousShifts.js';
 import handler_doGetShiftCrews from '../handlers/shifts-post/doGetShiftCrews.js';
 import handler_doGetShiftEmployees from '../handlers/shifts-post/doGetShiftEmployees.js';
 import handler_doGetShiftEquipment from '../handlers/shifts-post/doGetShiftEquipment.js';

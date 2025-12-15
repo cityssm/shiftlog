@@ -1395,6 +1395,8 @@ declare const exports: {
               shiftElement.dataset.shiftId = shift.shiftId.toString()
               shiftElement.href = '#'
               
+              // All user data is escaped with cityssm.escapeHTML()
+              // eslint-disable-next-line no-unsanitized/property
               shiftElement.innerHTML = /* html */ `
                 <div class="columns is-mobile is-vcentered">
                   <div class="column">
@@ -1403,10 +1405,10 @@ declare const exports: {
                     <br />
                     <small>
                       ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '')}
-                      ${shift.shiftTimeDataListItem ? ' - ' + cityssm.escapeHTML(shift.shiftTimeDataListItem) : ''}
-                      ${shift.supervisorLastName ? ' - ' + cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? '')) : ''}
+                      ${(shift.shiftTimeDataListItem ?? '') === '' ? '' : ' - ' + cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}
+                      ${(shift.supervisorLastName ?? '') === '' ? '' : ' - ' + cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? ''))}
                     </small>
-                    ${countsText ? '<br /><small class="has-text-grey">' + cityssm.escapeHTML(countsText) + '</small>' : ''}
+                    ${countsText === '' ? '' : '<br /><small class="has-text-grey">' + cityssm.escapeHTML(countsText) + '</small>'}
                   </div>
                   <div class="column is-narrow">
                     <span class="icon has-text-info">

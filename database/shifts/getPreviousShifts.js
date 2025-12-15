@@ -39,10 +39,10 @@ export default async function getPreviousShifts(filters, user) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('currentShiftId', filters.currentShiftId)
-        .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
-        .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
-        .input('shiftTimeDataListItemId', filters.shiftTimeDataListItemId ?? null)
-        .input('shiftDateString', filters.shiftDateString ?? null)
+        .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? undefined)
+        .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? undefined)
+        .input('shiftTimeDataListItemId', filters.shiftTimeDataListItemId ?? undefined)
+        .input('shiftDateString', filters.shiftDateString ?? undefined)
         .input('userName', user.userName).query(/* sql */ `
       select top ${maxResults}
         s.shiftId,

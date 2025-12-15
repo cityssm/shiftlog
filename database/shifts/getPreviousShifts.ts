@@ -6,10 +6,10 @@ import type { Shift } from '../../types/record.types.js'
 
 export interface GetPreviousShiftsFilters {
   currentShiftId: number | string
+  shiftDateString?: '' | DateString
+  shiftTimeDataListItemId?: number | string
   shiftTypeDataListItemId?: number | string
   supervisorEmployeeNumber?: string
-  shiftTimeDataListItemId?: number | string
-  shiftDateString?: '' | DateString
 }
 
 const maxResults = 10
@@ -70,10 +70,19 @@ export default async function getPreviousShifts(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('currentShiftId', filters.currentShiftId)
-    .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
-    .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
-    .input('shiftTimeDataListItemId', filters.shiftTimeDataListItemId ?? null)
-    .input('shiftDateString', filters.shiftDateString ?? null)
+    .input(
+      'shiftTypeDataListItemId',
+      filters.shiftTypeDataListItemId ?? undefined
+    )
+    .input(
+      'supervisorEmployeeNumber',
+      filters.supervisorEmployeeNumber ?? undefined
+    )
+    .input(
+      'shiftTimeDataListItemId',
+      filters.shiftTimeDataListItemId ?? undefined
+    )
+    .input('shiftDateString', filters.shiftDateString ?? undefined)
     .input('userName', user.userName).query<Shift>(/* sql */ `
       select top ${maxResults}
         s.shiftId,
