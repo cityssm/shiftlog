@@ -1062,6 +1062,24 @@ declare const exports: {
     }
   }
 
+  // Helper function to get equipment assigned to an employee
+  function getEmployeeEquipment(
+    shiftId: number,
+    employeeNumber: string
+  ): Array<{ equipmentNumber: string; equipmentName: string }> {
+    const shift = currentShifts.find((s) => s.shiftId === shiftId)
+    if (shift === undefined) {
+      return []
+    }
+    
+    return shift.equipment.filter(
+      (eq) => eq.employeeNumber === employeeNumber
+    ).map((eq) => ({
+      equipmentNumber: eq.equipmentNumber,
+      equipmentName: eq.equipmentName
+    }))
+  }
+
   function removeFromShift(draggedData: {
     fromShiftId: number
     id: number | string
@@ -1095,6 +1113,13 @@ declare const exports: {
         break
       }
       case 'employee': {
+        // Get equipment assigned to this employee
+        const assignedEquipment = getEmployeeEquipment(
+          draggedData.fromShiftId,
+          draggedData.id as string
+        )
+        
+        // Delete employee first
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
           {
@@ -1103,11 +1128,39 @@ declare const exports: {
           },
           (response) => {
             if (response.success) {
-              bulmaJS.alert({
-                contextualColorName: 'success',
-                message: 'Employee removed from shift.'
-              })
-              loadShifts()
+              // Also delete assigned equipment
+              let equipmentDeletedCount = 0
+              const totalEquipment = assignedEquipment.length
+              
+              if (totalEquipment === 0) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Employee removed from shift.'
+                })
+                loadShifts()
+              } else {
+                // Delete each piece of equipment
+                for (const equipment of assignedEquipment) {
+                  cityssm.postJSON(
+                    `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+                    {
+                      equipmentNumber: equipment.equipmentNumber,
+                      shiftId: draggedData.fromShiftId
+                    },
+                    (equipResponse) => {
+                      equipmentDeletedCount++
+                      
+                      if (equipmentDeletedCount === totalEquipment) {
+                        bulmaJS.alert({
+                          contextualColorName: 'success',
+                          message: `Employee and ${totalEquipment} assigned equipment removed from shift.`
+                        })
+                        loadShifts()
+                      }
+                    }
+                  )
+                }
+              }
             } else {
               bulmaJS.alert({
                 contextualColorName: 'danger',
@@ -1185,6 +1238,9 @@ declare const exports: {
       return
     }
 
+    // Get equipment assigned to this employee
+    const assignedEquipment = getEmployeeEquipment(fromShiftId, employeeNumber)
+
     // Delete from old shift
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
@@ -1204,12 +1260,55 @@ declare const exports: {
             },
             (addResponse) => {
               if (addResponse.success) {
-                bulmaJS.alert({
-                  contextualColorName: 'success',
-                  message: 'Employee has been moved to the new shift.',
-                  title: 'Employee Moved'
-                })
-                loadShifts()
+                // Move assigned equipment too
+                let equipmentMovedCount = 0
+                const totalEquipment = assignedEquipment.length
+                
+                if (totalEquipment === 0) {
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    message: 'Employee has been moved to the new shift.',
+                    title: 'Employee Moved'
+                  })
+                  loadShifts()
+                } else {
+                  // First delete equipment from old shift
+                  for (const equipment of assignedEquipment) {
+                    cityssm.postJSON(
+                      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+                      {
+                        equipmentNumber: equipment.equipmentNumber,
+                        shiftId: fromShiftId
+                      },
+                      (deleteEquipResponse) => {
+                        if (deleteEquipResponse.success) {
+                          // Add equipment to new shift with operator assignment
+                          cityssm.postJSON(
+                            `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+                            {
+                              equipmentNumber: equipment.equipmentNumber,
+                              employeeNumber,
+                              shiftEquipmentNote: '',
+                              shiftId: toShiftId
+                            },
+                            () => {
+                              equipmentMovedCount++
+                              
+                              if (equipmentMovedCount === totalEquipment) {
+                                bulmaJS.alert({
+                                  contextualColorName: 'success',
+                                  message: `Employee and ${totalEquipment} assigned equipment moved to new shift.`,
+                                  title: 'Employee Moved'
+                                })
+                                loadShifts()
+                              }
+                            }
+                          )
+                        }
+                      }
+                    )
+                  }
+                }
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
