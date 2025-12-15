@@ -1,8 +1,13 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
-import type { DoGetShiftsForBuilderResponse } from '../../handlers/shifts-post/doGetShiftsForBuilder.js'
+
 import type { ShiftForBuilder } from '../../database/shifts/getShiftsForBuilder.js'
+import type { DoGetShiftsForBuilderResponse } from '../../handlers/shifts-post/doGetShiftsForBuilder.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const bulmaJS: BulmaJS
@@ -16,9 +21,6 @@ declare const exports: {
     currentUser: string
   }
 }
-
-const minEditableDate = 0
-
 ;(() => {
   const shiftLog = exports.shiftLog
 
@@ -37,13 +39,11 @@ const minEditableDate = 0
   let currentShifts: ShiftForBuilder[] = []
 
   // Track items appearing on multiple shifts
-  interface DuplicateTracker {
-    [key: string]: number[] // key -> array of shiftIds
-  }
+  type DuplicateTracker = Record<string, number[]>
 
   function getItemKey(
-    type: 'employee' | 'equipment' | 'crew' | 'workOrder',
-    id: string | number
+    type: 'crew' | 'employee' | 'equipment' | 'workOrder',
+    id: number | string
   ): string {
     return `${type}:${id}`
   }
@@ -55,36 +55,28 @@ const minEditableDate = 0
       // Track employees
       for (const employee of shift.employees) {
         const key = getItemKey('employee', employee.employeeNumber)
-        if (tracker[key] === undefined) {
-          tracker[key] = []
-        }
+        tracker[key] ??= []
         tracker[key].push(shift.shiftId)
       }
 
       // Track equipment
       for (const equipment of shift.equipment) {
         const key = getItemKey('equipment', equipment.equipmentNumber)
-        if (tracker[key] === undefined) {
-          tracker[key] = []
-        }
+        tracker[key] ??= []
         tracker[key].push(shift.shiftId)
       }
 
       // Track crews
       for (const crew of shift.crews) {
         const key = getItemKey('crew', crew.crewId)
-        if (tracker[key] === undefined) {
-          tracker[key] = []
-        }
+        tracker[key] ??= []
         tracker[key].push(shift.shiftId)
       }
 
       // Track work orders
       for (const workOrder of shift.workOrders) {
         const key = getItemKey('workOrder', workOrder.workOrderId)
-        if (tracker[key] === undefined) {
-          tracker[key] = []
-        }
+        tracker[key] ??= []
         tracker[key].push(shift.shiftId)
       }
     }
@@ -102,8 +94,8 @@ const minEditableDate = 0
 
   function isDuplicate(
     duplicates: DuplicateTracker,
-    type: 'employee' | 'equipment' | 'crew' | 'workOrder',
-    id: string | number
+    type: 'crew' | 'employee' | 'equipment' | 'workOrder',
+    id: number | string
   ): boolean {
     const key = getItemKey(type, id)
     return duplicates[key] !== undefined
@@ -157,7 +149,11 @@ const minEditableDate = 0
     if (shift.employees.length > 0) {
       html += '<div class="mb-3"><strong>Employees:</strong><ul class="ml-4">'
       for (const employee of shift.employees) {
-        const isDup = isDuplicate(duplicates, 'employee', employee.employeeNumber)
+        const isDup = isDuplicate(
+          duplicates,
+          'employee',
+          employee.employeeNumber
+        )
         const dupClass = isDup ? ' has-background-warning-light' : ''
         const dropTargetClass = isEditable ? ' drop-target-employee' : ''
         html += `<li class="${dupClass}${dropTargetClass}" data-employee-number="${employee.employeeNumber}" data-crew-id="${employee.crewId ?? ''}" draggable="${isEditable}">`
@@ -177,7 +173,11 @@ const minEditableDate = 0
     if (shift.equipment.length > 0) {
       html += '<div class="mb-3"><strong>Equipment:</strong><ul class="ml-4">'
       for (const equipment of shift.equipment) {
-        const isDup = isDuplicate(duplicates, 'equipment', equipment.equipmentNumber)
+        const isDup = isDuplicate(
+          duplicates,
+          'equipment',
+          equipment.equipmentNumber
+        )
         const dupClass = isDup ? ' has-background-warning-light' : ''
         html += `<li class="${dupClass}" data-equipment-number="${equipment.equipmentNumber}" draggable="${isEditable}">`
         html += cityssm.escapeHTML(equipment.equipmentName)
@@ -192,8 +192,13 @@ const minEditableDate = 0
       html += '</ul></div>'
     }
 
-    if (shift.crews.length === 0 && shift.employees.length === 0 && shift.equipment.length === 0) {
-      html += '<p class="has-text-grey-light">No employees or equipment assigned</p>'
+    if (
+      shift.crews.length === 0 &&
+      shift.employees.length === 0 &&
+      shift.equipment.length === 0
+    ) {
+      html +=
+        '<p class="has-text-grey-light">No employees or equipment assigned</p>'
     }
 
     html += '</div>'
@@ -210,7 +215,11 @@ const minEditableDate = 0
     if (shift.workOrders.length > 0) {
       html += '<div class="mb-3"><strong>Work Orders:</strong><ul class="ml-4">'
       for (const workOrder of shift.workOrders) {
-        const isDup = isDuplicate(duplicates, 'workOrder', workOrder.workOrderId)
+        const isDup = isDuplicate(
+          duplicates,
+          'workOrder',
+          workOrder.workOrderId
+        )
         const dupClass = isDup ? ' has-background-warning-light' : ''
         html += `<li class="${dupClass}" data-workorder-id="${workOrder.workOrderId}" draggable="${isEditable}">`
         html += `<a href="${shiftLog.urlPrefix}/workOrders/${workOrder.workOrderId}" target="_blank">`
@@ -260,14 +269,16 @@ const minEditableDate = 0
     cardHTML += '<div class="level-right">'
     if (updatedByOther) {
       cardHTML += '<div class="level-item">'
-      cardHTML += '<span class="icon has-text-warning" title="Modified by another user">'
+      cardHTML +=
+        '<span class="icon has-text-warning" title="Modified by another user">'
       cardHTML += '<i class="fa-solid fa-exclamation-triangle"></i>'
       cardHTML += '</span></div>'
     }
     if (isEditable) {
       cardHTML += '<div class="level-item">'
       cardHTML += `<a href="${shiftLog.urlPrefix}/shifts/${shift.shiftId}/edit" class="button is-small is-light">`
-      cardHTML += '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
+      cardHTML +=
+        '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
       cardHTML += '</a></div>'
     }
     cardHTML += '</div></div>'
@@ -286,15 +297,13 @@ const minEditableDate = 0
     cardHTML += '<hr class="my-3" />'
 
     // View-specific content
-    if (viewMode === 'employees') {
-      cardHTML += renderEmployeesView(shift, duplicates)
-    } else {
-      cardHTML += renderTasksView(shift, duplicates)
-    }
+    cardHTML +=
+      viewMode === 'employees'
+        ? renderEmployeesView(shift, duplicates)
+        : renderTasksView(shift, duplicates)
 
     cardHTML += '</div>'
 
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     cardElement.innerHTML = cardHTML
 
     return cardElement
@@ -342,7 +351,7 @@ const minEditableDate = 0
       },
       (rawResponseJSON) => {
         const responseJSON =
-          rawResponseJSON as DoGetShiftsForBuilderResponse
+          rawResponseJSON as unknown as DoGetShiftsForBuilderResponse
 
         if (responseJSON.success) {
           currentShifts = responseJSON.shifts
@@ -355,7 +364,9 @@ const minEditableDate = 0
 
   function loadAvailableResources(): void {
     // Only load if the available resources sidebar exists (user has canUpdate permission)
-    const availableResourcesContainer = document.querySelector('#container--availableResources')
+    const availableResourcesContainer = document.querySelector(
+      '#container--availableResources'
+    )
     if (availableResourcesContainer === null) {
       return
     }
@@ -373,10 +384,14 @@ const minEditableDate = 0
       },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
-          success: boolean
-          employees: Array<{ employeeNumber: string; firstName: string; lastName: string }>
-          equipment: Array<{ equipmentNumber: string; equipmentName: string }>
           crews: Array<{ crewId: number; crewName: string }>
+          employees: Array<{
+            employeeNumber: string
+            firstName: string
+            lastName: string
+          }>
+          equipment: Array<{ equipmentName: string; equipmentNumber: string }>
+          success: boolean
         }
 
         if (responseJSON.success) {
@@ -387,15 +402,22 @@ const minEditableDate = 0
   }
 
   function renderAvailableResources(resources: {
-    employees: Array<{ employeeNumber: string; firstName: string; lastName: string }>
-    equipment: Array<{ equipmentNumber: string; equipmentName: string }>
     crews: Array<{ crewId: number; crewName: string }>
+    employees: Array<{
+      employeeNumber: string
+      firstName: string
+      lastName: string
+    }>
+    equipment: Array<{ equipmentName: string; equipmentNumber: string }>
   }): void {
     // Render employees
-    const employeesList = document.querySelector('#available--employees .available-resources-list') as HTMLElement
+    const employeesList = document.querySelector(
+      '#available--employees .available-resources-list'
+    ) as HTMLElement
     if (employeesList !== null) {
       if (resources.employees.length === 0) {
-        employeesList.innerHTML = '<p class="has-text-grey-light is-size-7">No available employees</p>'
+        employeesList.innerHTML =
+          '<p class="has-text-grey-light is-size-7">No available employees</p>'
       } else {
         let html = '<div class="available-items">'
         for (const employee of resources.employees) {
@@ -409,10 +431,13 @@ const minEditableDate = 0
     }
 
     // Render equipment
-    const equipmentList = document.querySelector('#available--equipment .available-resources-list') as HTMLElement
+    const equipmentList = document.querySelector(
+      '#available--equipment .available-resources-list'
+    ) as HTMLElement
     if (equipmentList !== null) {
       if (resources.equipment.length === 0) {
-        equipmentList.innerHTML = '<p class="has-text-grey-light is-size-7">No available equipment</p>'
+        equipmentList.innerHTML =
+          '<p class="has-text-grey-light is-size-7">No available equipment</p>'
       } else {
         let html = '<div class="available-items">'
         for (const equipment of resources.equipment) {
@@ -426,10 +451,13 @@ const minEditableDate = 0
     }
 
     // Render crews
-    const crewsList = document.querySelector('#available--crews .available-resources-list') as HTMLElement
+    const crewsList = document.querySelector(
+      '#available--crews .available-resources-list'
+    ) as HTMLElement
     if (crewsList !== null) {
       if (resources.crews.length === 0) {
-        crewsList.innerHTML = '<p class="has-text-grey-light is-size-7">No available crews</p>'
+        crewsList.innerHTML =
+          '<p class="has-text-grey-light is-size-7">No available crews</p>'
       } else {
         let html = '<div class="available-items">'
         for (const crew of resources.crews) {
@@ -446,9 +474,9 @@ const minEditableDate = 0
   // Drag and drop state
   let draggedElement: HTMLElement | null = null
   let draggedData: {
-    type: 'employee' | 'equipment' | 'crew' | 'workOrder'
-    id: string | number
     fromShiftId: number
+    id: number | string
+    type: 'crew' | 'employee' | 'equipment' | 'workOrder'
   } | null = null
 
   // Drag and drop handlers
@@ -464,31 +492,33 @@ const minEditableDate = 0
     const fromAvailable = target.dataset.fromAvailable === 'true'
 
     const shiftCard = target.closest('[data-shift-id]') as HTMLElement
-    const fromShiftId = fromAvailable ? 0 : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
+    const fromShiftId = fromAvailable
+      ? 0
+      : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
 
     if (employeeNumber !== undefined) {
       draggedData = {
-        type: 'employee',
+        fromShiftId,
         id: employeeNumber,
-        fromShiftId
+        type: 'employee'
       }
     } else if (equipmentNumber !== undefined) {
       draggedData = {
-        type: 'equipment',
+        fromShiftId,
         id: equipmentNumber,
-        fromShiftId
+        type: 'equipment'
       }
     } else if (crewId !== undefined) {
       draggedData = {
-        type: 'crew',
+        fromShiftId,
         id: Number.parseInt(crewId, 10),
-        fromShiftId
+        type: 'crew'
       }
     } else if (workorderId !== undefined) {
       draggedData = {
-        type: 'workOrder',
+        fromShiftId,
         id: Number.parseInt(workorderId, 10),
-        fromShiftId
+        type: 'workOrder'
       }
     }
 
@@ -504,9 +534,9 @@ const minEditableDate = 0
     draggedData = null
 
     // Remove all drop zone highlights
-    document.querySelectorAll('.is-drop-target').forEach((element) => {
+    for (const element of document.querySelectorAll('.is-drop-target')) {
       element.classList.remove('is-drop-target')
-    })
+    }
   }
 
   function handleDragOver(event: DragEvent): void {
@@ -514,13 +544,19 @@ const minEditableDate = 0
     const target = event.target as HTMLElement
 
     // Remove existing highlights
-    document.querySelectorAll('.is-drop-target').forEach((element) => {
+    for (const element of document.querySelectorAll('.is-drop-target')) {
       element.classList.remove('is-drop-target')
-    })
+    }
 
     // Check if hovering over available resources sidebar (to remove from shift)
-    const availableResourcesSidebar = target.closest('#container--availableResources')
-    if (availableResourcesSidebar !== null && draggedData !== null && draggedData.fromShiftId > 0) {
+    const availableResourcesSidebar = target.closest(
+      '#container--availableResources'
+    )
+    if (
+      availableResourcesSidebar !== null &&
+      draggedData !== null &&
+      draggedData.fromShiftId > 0
+    ) {
       // Highlight the sidebar box when dragging from a shift to remove
       const sidebarBox = availableResourcesSidebar.querySelector('.box')
       if (sidebarBox !== null) {
@@ -533,9 +569,13 @@ const minEditableDate = 0
     }
 
     // Check for specific drop targets first
-    const supervisorTarget = target.closest('.drop-target-supervisor') as HTMLElement
+    const supervisorTarget = target.closest(
+      '.drop-target-supervisor'
+    ) as HTMLElement
     const crewTarget = target.closest('.drop-target-crew') as HTMLElement
-    const employeeTarget = target.closest('.drop-target-employee') as HTMLElement
+    const employeeTarget = target.closest(
+      '.drop-target-employee'
+    ) as HTMLElement
 
     // Highlight specific drop targets based on what's being dragged
     if (draggedData?.type === 'employee' && supervisorTarget !== null) {
@@ -547,7 +587,10 @@ const minEditableDate = 0
     } else {
       // Default: highlight entire shift box
       const shiftBox = target.closest('.box')
-      if (shiftBox !== null && !shiftBox.closest('#container--availableResources')) {
+      if (
+        shiftBox !== null &&
+        !shiftBox.closest('#container--availableResources')
+      ) {
         shiftBox.classList.add('is-drop-target')
       }
     }
@@ -576,20 +619,29 @@ const minEditableDate = 0
     }
 
     // Check if dropped on available resources sidebar (to remove from shift)
-    const availableResourcesSidebar = target.closest('#container--availableResources')
+    const availableResourcesSidebar = target.closest(
+      '#container--availableResources'
+    )
     if (availableResourcesSidebar !== null && draggedData.fromShiftId > 0) {
       removeFromShift(draggedData)
       return
     }
 
     // Check for specific drop targets first
-    const supervisorTarget = target.closest('.drop-target-supervisor') as HTMLElement
+    const supervisorTarget = target.closest(
+      '.drop-target-supervisor'
+    ) as HTMLElement
     const crewTarget = target.closest('.drop-target-crew') as HTMLElement
-    const employeeTarget = target.closest('.drop-target-employee') as HTMLElement
+    const employeeTarget = target.closest(
+      '.drop-target-employee'
+    ) as HTMLElement
 
     // Handle employee dropped on supervisor slot
     if (supervisorTarget !== null && draggedData.type === 'employee') {
-      const shiftId = Number.parseInt(supervisorTarget.dataset.shiftId ?? '0', 10)
+      const shiftId = Number.parseInt(
+        supervisorTarget.dataset.shiftId ?? '0',
+        10
+      )
       if (shiftId > 0) {
         makeEmployeeSupervisor(draggedData.id as string, shiftId)
         return
@@ -601,7 +653,7 @@ const minEditableDate = 0
       const shiftCard = crewTarget.closest('[data-shift-id]') as HTMLElement
       const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
       const crewId = Number.parseInt(crewTarget.dataset.crewId ?? '0', 10)
-      
+
       if (shiftId > 0 && crewId > 0) {
         assignEmployeeToCrew(
           draggedData.id as string,
@@ -618,7 +670,7 @@ const minEditableDate = 0
       const shiftCard = employeeTarget.closest('[data-shift-id]') as HTMLElement
       const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
       const employeeNumber = employeeTarget.dataset.employeeNumber ?? ''
-      
+
       if (shiftId > 0 && employeeNumber !== '') {
         assignEquipmentToEmployee(
           draggedData.id as string,
@@ -639,82 +691,128 @@ const minEditableDate = 0
     }
 
     // Handle different drop scenarios
-    if (draggedData.type === 'employee') {
-      moveEmployee(
-        draggedData.id as string,
-        draggedData.fromShiftId,
-        toShiftId
-      )
-    } else if (draggedData.type === 'equipment') {
-      moveEquipment(
-        draggedData.id as string,
-        draggedData.fromShiftId,
-        toShiftId
-      )
-    } else if (draggedData.type === 'crew') {
-      moveCrew(draggedData.id as number, draggedData.fromShiftId, toShiftId)
-    } else if (draggedData.type === 'workOrder') {
-      moveWorkOrder(
-        draggedData.id as number,
-        draggedData.fromShiftId,
-        toShiftId
-      )
+    switch (draggedData.type) {
+      case 'crew': {
+        moveCrew(draggedData.id as number, draggedData.fromShiftId, toShiftId)
+
+        break
+      }
+      case 'employee': {
+        moveEmployee(
+          draggedData.id as string,
+          draggedData.fromShiftId,
+          toShiftId
+        )
+
+        break
+      }
+      case 'equipment': {
+        moveEquipment(
+          draggedData.id as string,
+          draggedData.fromShiftId,
+          toShiftId
+        )
+
+        break
+      }
+      case 'workOrder': {
+        moveWorkOrder(
+          draggedData.id as number,
+          draggedData.fromShiftId,
+          toShiftId
+        )
+
+        break
+      }
+      // No default
     }
   }
 
   function removeFromShift(draggedData: {
-    type: 'employee' | 'equipment' | 'crew' | 'workOrder'
-    id: string | number
     fromShiftId: number
+    id: number | string
+    type: 'crew' | 'employee' | 'equipment' | 'workOrder'
   }): void {
-    if (draggedData.type === 'employee') {
-      cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
-        {
-          shiftId: draggedData.fromShiftId,
-          employeeNumber: draggedData.id
-        },
-        (response) => {
-          if (response.success) {
-            bulmaJS.alert({ contextualColorName: 'success', message: 'Employee removed from shift.' })
-            loadShifts()
-          } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove employee from shift.' })
+    switch (draggedData.type) {
+      case 'crew': {
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
+          {
+            crewId: draggedData.id,
+            shiftId: draggedData.fromShiftId
+          },
+          (response) => {
+            if (response.success) {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Crew removed from shift.'
+              })
+              loadShifts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to remove crew from shift.',
+                title: 'Error'
+              })
+            }
           }
-        }
-      )
-    } else if (draggedData.type === 'equipment') {
-      cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
-        {
-          shiftId: draggedData.fromShiftId,
-          equipmentNumber: draggedData.id
-        },
-        (response) => {
-          if (response.success) {
-            bulmaJS.alert({ contextualColorName: 'success', message: 'Equipment removed from shift.' })
-            loadShifts()
-          } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove equipment from shift.' })
+        )
+
+        break
+      }
+      case 'employee': {
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+          {
+            employeeNumber: draggedData.id,
+            shiftId: draggedData.fromShiftId
+          },
+          (response) => {
+            if (response.success) {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Employee removed from shift.'
+              })
+              loadShifts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to remove employee from shift.',
+                title: 'Error'
+              })
+            }
           }
-        }
-      )
-    } else if (draggedData.type === 'crew') {
-      cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
-        {
-          shiftId: draggedData.fromShiftId,
-          crewId: draggedData.id
-        },
-        (response) => {
-          if (response.success) {
-            bulmaJS.alert({ contextualColorName: 'success', message: 'Crew removed from shift.' })
-            loadShifts()
-          } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove crew from shift.' })
+        )
+
+        break
+      }
+      case 'equipment': {
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+          {
+            equipmentNumber: draggedData.id,
+            shiftId: draggedData.fromShiftId
+          },
+          (response) => {
+            if (response.success) {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Equipment removed from shift.'
+              })
+              loadShifts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to remove equipment from shift.',
+                title: 'Error'
+              })
+            }
           }
-        }
-      )
+        )
+
+        break
+      }
+      // No default
     }
   }
 
@@ -729,16 +827,24 @@ const minEditableDate = 0
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
         {
-          shiftId: toShiftId,
           employeeNumber,
-          shiftEmployeeNote: ''
+          shiftEmployeeNote: '',
+          shiftId: toShiftId
         },
         (addResponse) => {
           if (addResponse.success) {
-            bulmaJS.alert({ contextualColorName: 'success', title: 'Employee Added', message: 'Employee has been added to the shift.' })
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Employee has been added to the shift.',
+              title: 'Employee Added'
+            })
             loadShifts()
           } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add employee to shift.' })
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to add employee to shift.',
+              title: 'Error'
+            })
           }
         }
       )
@@ -749,8 +855,8 @@ const minEditableDate = 0
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
       {
-        shiftId: fromShiftId,
-        employeeNumber
+        employeeNumber,
+        shiftId: fromShiftId
       },
       (deleteResponse) => {
         if (deleteResponse.success) {
@@ -758,21 +864,33 @@ const minEditableDate = 0
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
             {
-              shiftId: toShiftId,
               employeeNumber,
-              shiftEmployeeNote: ''
+              shiftEmployeeNote: '',
+              shiftId: toShiftId
             },
             (addResponse) => {
               if (addResponse.success) {
-                bulmaJS.alert({ contextualColorName: 'success', title: 'Employee Moved', message: 'Employee has been moved to the new shift.' })
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Employee has been moved to the new shift.',
+                  title: 'Employee Moved'
+                })
                 loadShifts()
               } else {
-                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add employee to new shift.' })
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to add employee to new shift.',
+                  title: 'Error'
+                })
               }
             }
           )
         } else {
-          bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove employee from original shift.' })
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to remove employee from original shift.',
+            title: 'Error'
+          })
         }
       }
     )
@@ -789,16 +907,24 @@ const minEditableDate = 0
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
         {
-          shiftId: toShiftId,
           equipmentNumber,
-          shiftEquipmentNote: ''
+          shiftEquipmentNote: '',
+          shiftId: toShiftId
         },
         (addResponse) => {
           if (addResponse.success) {
-            bulmaJS.alert({ contextualColorName: 'success', title: 'Equipment Added', message: 'Equipment has been added to the shift.' })
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Equipment has been added to the shift.',
+              title: 'Equipment Added'
+            })
             loadShifts()
           } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add equipment to shift.' })
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to add equipment to shift.',
+              title: 'Error'
+            })
           }
         }
       )
@@ -809,8 +935,8 @@ const minEditableDate = 0
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
       {
-        shiftId: fromShiftId,
-        equipmentNumber
+        equipmentNumber,
+        shiftId: fromShiftId
       },
       (deleteResponse) => {
         if (deleteResponse.success) {
@@ -818,21 +944,33 @@ const minEditableDate = 0
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
             {
-              shiftId: toShiftId,
               equipmentNumber,
-              shiftEquipmentNote: ''
+              shiftEquipmentNote: '',
+              shiftId: toShiftId
             },
             (addResponse) => {
               if (addResponse.success) {
-                bulmaJS.alert({ contextualColorName: 'success', title: 'Equipment Moved', message: 'Equipment has been moved to the new shift.' })
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Equipment has been moved to the new shift.',
+                  title: 'Equipment Moved'
+                })
                 loadShifts()
               } else {
-                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add equipment to new shift.' })
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to add equipment to new shift.',
+                  title: 'Error'
+                })
               }
             }
           )
         } else {
-          bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove equipment from original shift.' })
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to remove equipment from original shift.',
+            title: 'Error'
+          })
         }
       }
     )
@@ -849,16 +987,24 @@ const minEditableDate = 0
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
         {
-          shiftId: toShiftId,
           crewId,
-          shiftCrewNote: ''
+          shiftCrewNote: '',
+          shiftId: toShiftId
         },
         (addResponse) => {
           if (addResponse.success) {
-            bulmaJS.alert({ contextualColorName: 'success', title: 'Crew Added', message: 'Crew has been added to the shift.' })
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Crew has been added to the shift.',
+              title: 'Crew Added'
+            })
             loadShifts()
           } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add crew to shift.' })
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to add crew to shift.',
+              title: 'Error'
+            })
           }
         }
       )
@@ -869,8 +1015,8 @@ const minEditableDate = 0
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
       {
-        shiftId: fromShiftId,
-        crewId
+        crewId,
+        shiftId: fromShiftId
       },
       (deleteResponse) => {
         if (deleteResponse.success) {
@@ -878,21 +1024,33 @@ const minEditableDate = 0
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
             {
-              shiftId: toShiftId,
               crewId,
-              shiftCrewNote: ''
+              shiftCrewNote: '',
+              shiftId: toShiftId
             },
             (addResponse) => {
               if (addResponse.success) {
-                bulmaJS.alert({ contextualColorName: 'success', title: 'Crew Moved', message: 'Crew has been moved to the new shift.' })
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Crew has been moved to the new shift.',
+                  title: 'Crew Moved'
+                })
                 loadShifts()
               } else {
-                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add crew to new shift.' })
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to add crew to new shift.',
+                  title: 'Error'
+                })
               }
             }
           )
         } else {
-          bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove crew from original shift.' })
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to remove crew from original shift.',
+            title: 'Error'
+          })
         }
       }
     )
@@ -917,20 +1075,32 @@ const minEditableDate = 0
             `${shiftLog.urlPrefix}/shifts/doAddShiftWorkOrder`,
             {
               shiftId: toShiftId,
-              workOrderId,
-              shiftWorkOrderNote: ''
+              shiftWorkOrderNote: '',
+              workOrderId
             },
             (addResponse) => {
               if (addResponse.success) {
-                bulmaJS.alert({ contextualColorName: 'success', title: 'Work Order Moved', message: 'Work order has been moved to the new shift.' })
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Work order has been moved to the new shift.',
+                  title: 'Work Order Moved'
+                })
                 loadShifts()
               } else {
-                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add work order to new shift.' })
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to add work order to new shift.',
+                  title: 'Error'
+                })
               }
             }
           )
         } else {
-          bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove work order from original shift.' })
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to remove work order from original shift.',
+            title: 'Error'
+          })
         }
       }
     )
@@ -949,20 +1119,28 @@ const minEditableDate = 0
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doUpdateShift`,
       {
-        shiftId,
-        shiftTypeDataListItemId: shift.shiftTypeDataListItemId,
-        supervisorEmployeeNumber: employeeNumber,
         shiftDateString: shift.shiftDate,
+        shiftDescription: shift.shiftDescription,
+        shiftId,
         shiftTimeDataListItemId: shift.shiftTimeDataListItemId,
-        shiftDescription: shift.shiftDescription
+        shiftTypeDataListItemId: shift.shiftTypeDataListItemId,
+        supervisorEmployeeNumber: employeeNumber
       },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as { success: boolean }
         if (responseJSON.success) {
-          bulmaJS.alert({ contextualColorName: 'success', title: 'Supervisor Updated', message: 'Employee has been set as the supervisor for this shift.' })
+          bulmaJS.alert({
+            contextualColorName: 'success',
+            message: 'Employee has been set as the supervisor for this shift.',
+            title: 'Supervisor Updated'
+          })
           loadShifts()
         } else {
-          bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to update shift supervisor.' })
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to update shift supervisor.',
+            title: 'Error'
+          })
         }
       }
     )
@@ -975,12 +1153,39 @@ const minEditableDate = 0
     crewId: number
   ): void {
     // If employee is on a different shift, move them first
-    if (fromShiftId !== toShiftId) {
+    if (fromShiftId === toShiftId) {
+      // Same shift, just update the crew assignment
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doUpdateShiftEmployee`,
+        {
+          crewId,
+          employeeNumber,
+          shiftId: toShiftId
+        },
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+          if (responseJSON.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Employee has been assigned to the crew.',
+              title: 'Employee Assigned'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to assign employee to crew.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+    } else {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
         {
-          shiftId: fromShiftId,
-          employeeNumber
+          employeeNumber,
+          shiftId: fromShiftId
         },
         (deleteResponse) => {
           if (deleteResponse.success) {
@@ -988,41 +1193,35 @@ const minEditableDate = 0
             cityssm.postJSON(
               `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
               {
-                shiftId: toShiftId,
-                employeeNumber,
                 crewId,
-                shiftEmployeeNote: ''
+                employeeNumber,
+                shiftEmployeeNote: '',
+                shiftId: toShiftId
               },
               (addResponse) => {
                 if (addResponse.success) {
-                  bulmaJS.alert({ contextualColorName: 'success', title: 'Employee Assigned', message: 'Employee has been moved and assigned to the crew.' })
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    message:
+                      'Employee has been moved and assigned to the crew.',
+                    title: 'Employee Assigned'
+                  })
                   loadShifts()
                 } else {
-                  bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add employee to crew.' })
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: 'Failed to add employee to crew.',
+                    title: 'Error'
+                  })
                 }
               }
             )
           } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove employee from original shift.' })
-          }
-        }
-      )
-    } else {
-      // Same shift, just update the crew assignment
-      cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doUpdateShiftEmployee`,
-        {
-          shiftId: toShiftId,
-          employeeNumber,
-          crewId
-        },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-          if (responseJSON.success) {
-            bulmaJS.alert({ contextualColorName: 'success', title: 'Employee Assigned', message: 'Employee has been assigned to the crew.' })
-            loadShifts()
-          } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to assign employee to crew.' })
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to remove employee from original shift.',
+              title: 'Error'
+            })
           }
         }
       )
@@ -1036,12 +1235,39 @@ const minEditableDate = 0
     employeeNumber: string
   ): void {
     // If equipment is on a different shift, move it first
-    if (fromShiftId !== toShiftId) {
+    if (fromShiftId === toShiftId) {
+      // Same shift, just update the employee assignment
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doUpdateShiftEquipment`,
+        {
+          employeeNumber,
+          equipmentNumber,
+          shiftId: toShiftId
+        },
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+          if (responseJSON.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Equipment has been assigned to the employee.',
+              title: 'Equipment Assigned'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to assign equipment to employee.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+    } else {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
         {
-          shiftId: fromShiftId,
-          equipmentNumber
+          equipmentNumber,
+          shiftId: fromShiftId
         },
         (deleteResponse) => {
           if (deleteResponse.success) {
@@ -1049,41 +1275,35 @@ const minEditableDate = 0
             cityssm.postJSON(
               `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
               {
-                shiftId: toShiftId,
-                equipmentNumber,
                 employeeNumber,
-                shiftEquipmentNote: ''
+                equipmentNumber,
+                shiftEquipmentNote: '',
+                shiftId: toShiftId
               },
               (addResponse) => {
                 if (addResponse.success) {
-                  bulmaJS.alert({ contextualColorName: 'success', title: 'Equipment Assigned', message: 'Equipment has been moved and assigned to the employee.' })
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    message:
+                      'Equipment has been moved and assigned to the employee.',
+                    title: 'Equipment Assigned'
+                  })
                   loadShifts()
                 } else {
-                  bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add equipment to shift.' })
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: 'Failed to add equipment to shift.',
+                    title: 'Error'
+                  })
                 }
               }
             )
           } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove equipment from original shift.' })
-          }
-        }
-      )
-    } else {
-      // Same shift, just update the employee assignment
-      cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doUpdateShiftEquipment`,
-        {
-          shiftId: toShiftId,
-          equipmentNumber,
-          employeeNumber
-        },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-          if (responseJSON.success) {
-            bulmaJS.alert({ contextualColorName: 'success', title: 'Equipment Assigned', message: 'Equipment has been assigned to the employee.' })
-            loadShifts()
-          } else {
-            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to assign equipment to employee.' })
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to remove equipment from original shift.',
+              title: 'Error'
+            })
           }
         }
       )
@@ -1102,7 +1322,9 @@ const minEditableDate = 0
   resultsContainerElement.addEventListener('drop', handleDrop)
 
   // Set up drag and drop for available resources sidebar
-  const availableResourcesContainer = document.querySelector('#container--availableResources')
+  const availableResourcesContainer = document.querySelector(
+    '#container--availableResources'
+  )
   if (availableResourcesContainer !== null) {
     availableResourcesContainer.addEventListener('dragstart', handleDragStart)
     availableResourcesContainer.addEventListener('dragend', handleDragEnd)
@@ -1112,7 +1334,7 @@ const minEditableDate = 0
   }
 
   // Initialize flatpickr for date input
-  if (typeof flatpickr !== 'undefined') {
+  if (flatpickr !== undefined) {
     flatpickr(shiftDateElement, {
       allowInput: true,
       dateFormat: 'Y-m-d',
@@ -1136,15 +1358,25 @@ const minEditableDate = 0
 
     cityssm.openHtmlModal('shifts-createShift', {
       onshow(modalElement) {
-        const formElement = modalElement.querySelector('#form--createShift') as HTMLFormElement
-        
+        const formElement = modalElement.querySelector(
+          '#form--createShift'
+        ) as HTMLFormElement
+
         // Set the date
-        const dateInput = formElement.querySelector('[name="shiftDateString"]') as HTMLInputElement
+        const dateInput = formElement.querySelector(
+          '[name="shiftDateString"]'
+        ) as HTMLInputElement
         dateInput.value = selectedDate
 
-        const shiftTypeSelect = modalElement.querySelector('#createShift--shiftTypeDataListItemId') as HTMLSelectElement
-        const shiftTimeSelect = modalElement.querySelector('#createShift--shiftTimeDataListItemId') as HTMLSelectElement
-        const supervisorSelect = modalElement.querySelector('#createShift--supervisorEmployeeNumber') as HTMLSelectElement
+        const shiftTypeSelect = modalElement.querySelector(
+          '#createShift--shiftTypeDataListItemId'
+        ) as HTMLSelectElement
+        const shiftTimeSelect = modalElement.querySelector(
+          '#createShift--shiftTimeDataListItemId'
+        ) as HTMLSelectElement
+        const supervisorSelect = modalElement.querySelector(
+          '#createShift--supervisorEmployeeNumber'
+        ) as HTMLSelectElement
 
         // Load shift types, times, and supervisors
         cityssm.postJSON(
@@ -1152,10 +1384,20 @@ const minEditableDate = 0
           {},
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
+              shiftTimes: Array<{
+                dataListItem: string
+                dataListItemId: number
+              }>
+              shiftTypes: Array<{
+                dataListItem: string
+                dataListItemId: number
+              }>
               success: boolean
-              shiftTypes: Array<{ dataListItemId: number; dataListItem: string }>
-              shiftTimes: Array<{ dataListItemId: number; dataListItem: string }>
-              supervisors: Array<{ employeeNumber: string; firstName: string; lastName: string }>
+              supervisors: Array<{
+                employeeNumber: string
+                firstName: string
+                lastName: string
+              }>
             }
 
             if (responseJSON.success) {
@@ -1195,9 +1437,9 @@ const minEditableDate = 0
             formElement,
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
-                success: boolean
-                shiftId?: number
                 errorMessage?: string
+                shiftId?: number
+                success: boolean
               }
 
               if (responseJSON.success) {
@@ -1210,8 +1452,9 @@ const minEditableDate = 0
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Creation Error',
-                  message: responseJSON.errorMessage ?? 'Failed to create shift.'
+                  message:
+                    responseJSON.errorMessage ?? 'Failed to create shift.',
+                  title: 'Creation Error'
                 })
               }
             }
