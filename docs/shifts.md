@@ -253,7 +253,24 @@ You can quickly populate the shift with resources from a previous shift:
 
 1. Click the **Add** dropdown button
 2. Select **Import from Previous Shift**
-3. The system will load crews, employees, and equipment from the most recent shift
+3. A modal will open showing recent shifts that match your current shift's criteria:
+   - The search is automatically filtered by the current shift's type, supervisor, and time
+   - Results show the 10 most recent matching shifts with their details
+   - Each result displays the shift date, type, time, supervisor, and counts of resources (crews, employees, equipment)
+4. You can refine the search by changing the filters:
+   - **Shift Type**: Filter by a specific shift category or view all types
+   - **Supervisor**: Filter by a specific supervisor or view all supervisors
+   - **Shift Time**: Filter by a specific time period or view all times
+   - Click **Search** to update the results
+5. Select a shift from the results by clicking on it, or manually enter a shift ID
+6. Choose which resources to import:
+   - **Import Crews**: Include all crews from the selected shift
+   - **Import Employees**: Include all employees from the selected shift
+   - **Import Equipment**: Include all equipment from the selected shift
+7. Click **Import** to add the selected resources to your current shift
+
+**Note**: The import will only add resources that don't already exist in your current shift,
+preventing duplicates
 
 ### Tasks (Work Orders)
 
