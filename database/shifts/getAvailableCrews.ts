@@ -29,7 +29,6 @@ export async function getAvailableCrews(
           where s.instance = @instance
             and s.recordDelete_dateTime is null
             and s.shiftDate = @shiftDateString
-            and sc.recordDelete_dateTime is null
         )
       order by c.crewName
     `)

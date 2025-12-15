@@ -18,7 +18,6 @@ export async function getAvailableEquipment(shiftDateString) {
           where s.instance = @instance
             and s.recordDelete_dateTime is null
             and s.shiftDate = @shiftDateString
-            and seq.recordDelete_dateTime is null
         )
       order by eq.equipmentName
     `);

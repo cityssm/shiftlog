@@ -18,7 +18,6 @@ export async function getAvailableEmployees(shiftDateString) {
           where s.instance = @instance
             and s.recordDelete_dateTime is null
             and s.shiftDate = @shiftDateString
-            and se.recordDelete_dateTime is null
         )
       order by e.lastName, e.firstName
     `);
