@@ -6,6 +6,9 @@ export default async function handler(request, response) {
         equipmentName: request.body.equipmentName,
         equipmentDescription: request.body.equipmentDescription,
         equipmentTypeDataListItemId: Number.parseInt(request.body.equipmentTypeDataListItemId, 10),
+        employeeListId: request.body.employeeListId === ''
+            ? undefined
+            : Number.parseInt(request.body.employeeListId, 10),
         recordSync_isSynced: request.body.recordSync_isSynced === '1',
         userGroupId: request.body.userGroupId === ''
             ? undefined

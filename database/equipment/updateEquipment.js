@@ -11,6 +11,7 @@ export default async function updateEquipment(equipmentFields, user) {
             .input('equipmentName', equipmentFields.equipmentName)
             .input('equipmentDescription', equipmentFields.equipmentDescription)
             .input('equipmentTypeDataListItemId', equipmentFields.equipmentTypeDataListItemId)
+            .input('employeeListId', equipmentFields.employeeListId ?? undefined)
             .input('userGroupId', equipmentFields.userGroupId ?? undefined)
             .input('recordSync_isSynced', equipmentFields.recordSync_isSynced ?? false)
             .input('recordUpdate_userName', user.userName)
@@ -19,6 +20,7 @@ export default async function updateEquipment(equipmentFields, user) {
         set equipmentName = @equipmentName,
           equipmentDescription = @equipmentDescription,
           equipmentTypeDataListItemId = @equipmentTypeDataListItemId,
+          employeeListId = @employeeListId,
           userGroupId = @userGroupId,
           recordSync_isSynced = @recordSync_isSynced,
           recordUpdate_userName = @recordUpdate_userName,
