@@ -124,72 +124,143 @@ declare const exports: {
   function renderEmployeesView(
     shift: ShiftForBuilder,
     duplicates: DuplicateTracker
-  ): string {
+  ): HTMLElement {
     const isEditable = isShiftEditable(shift)
-    let html = '<div class="shift-details">'
+    const containerElement = document.createElement('div')
+    containerElement.className = 'shift-details'
 
     // Crews
     if (shift.crews.length > 0) {
-      html += '<div class="mb-3"><strong>Crews:</strong><ul class="ml-4">'
+      const crewsSection = document.createElement('div')
+      crewsSection.className = 'mb-3'
+      
+      const crewsLabel = document.createElement('strong')
+      crewsLabel.textContent = 'Crews:'
+      crewsSection.append(crewsLabel)
+      
+      const crewsList = document.createElement('ul')
+      crewsList.className = 'ml-4'
+      
       for (const crew of shift.crews) {
         const isDup = isDuplicate(duplicates, 'crew', crew.crewId)
-        const dupClass = isDup ? ' has-background-warning-light' : ''
-        const dropTargetClass = isEditable ? ' drop-target-crew' : ''
-        html += `<li class="${dupClass}${dropTargetClass}" data-crew-id="${crew.crewId}" draggable="${isEditable}">`
-        html += cityssm.escapeHTML(crew.crewName)
-        if (crew.shiftCrewNote !== '') {
-          html += ` <span class="has-text-grey-light">- ${cityssm.escapeHTML(crew.shiftCrewNote)}</span>`
+        const crewItem = document.createElement('li')
+        
+        if (isDup) {
+          crewItem.classList.add('has-background-warning-light')
         }
-        html += '</li>'
+        if (isEditable) {
+          crewItem.classList.add('drop-target-crew')
+          crewItem.draggable = true
+        }
+        crewItem.dataset.crewId = crew.crewId.toString()
+        crewItem.textContent = crew.crewName
+        
+        if (crew.shiftCrewNote !== '') {
+          const noteSpan = document.createElement('span')
+          noteSpan.className = 'has-text-grey-light'
+          noteSpan.textContent = ` - ${crew.shiftCrewNote}`
+          crewItem.append(noteSpan)
+        }
+        
+        crewsList.append(crewItem)
       }
-      html += '</ul></div>'
+      
+      crewsSection.append(crewsList)
+      containerElement.append(crewsSection)
     }
 
     // Employees
     if (shift.employees.length > 0) {
-      html += '<div class="mb-3"><strong>Employees:</strong><ul class="ml-4">'
+      const employeesSection = document.createElement('div')
+      employeesSection.className = 'mb-3'
+      
+      const employeesLabel = document.createElement('strong')
+      employeesLabel.textContent = 'Employees:'
+      employeesSection.append(employeesLabel)
+      
+      const employeesList = document.createElement('ul')
+      employeesList.className = 'ml-4'
+      
       for (const employee of shift.employees) {
-        const isDup = isDuplicate(
-          duplicates,
-          'employee',
-          employee.employeeNumber
-        )
-        const dupClass = isDup ? ' has-background-warning-light' : ''
-        const dropTargetClass = isEditable ? ' drop-target-employee' : ''
-        html += `<li class="${dupClass}${dropTargetClass}" data-employee-number="${employee.employeeNumber}" data-crew-id="${employee.crewId ?? ''}" draggable="${isEditable}">`
-        html += `${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}`
+        const isDup = isDuplicate(duplicates, 'employee', employee.employeeNumber)
+        const employeeItem = document.createElement('li')
+        
+        if (isDup) {
+          employeeItem.classList.add('has-background-warning-light')
+        }
+        if (isEditable) {
+          employeeItem.classList.add('drop-target-employee')
+          employeeItem.draggable = true
+        }
+        employeeItem.dataset.employeeNumber = employee.employeeNumber
+        employeeItem.dataset.crewId = employee.crewId?.toString() ?? ''
+        employeeItem.textContent = `${employee.lastName}, ${employee.firstName}`
+        
         if (employee.crewName !== null) {
-          html += ` <span class="tag is-small is-info is-light">${cityssm.escapeHTML(employee.crewName)}</span>`
+          const crewTag = document.createElement('span')
+          crewTag.className = 'tag is-small is-info is-light'
+          crewTag.textContent = employee.crewName
+          employeeItem.append(' ', crewTag)
         }
+        
         if (employee.shiftEmployeeNote !== '') {
-          html += ` <span class="has-text-grey-light">- ${cityssm.escapeHTML(employee.shiftEmployeeNote)}</span>`
+          const noteSpan = document.createElement('span')
+          noteSpan.className = 'has-text-grey-light'
+          noteSpan.textContent = ` - ${employee.shiftEmployeeNote}`
+          employeeItem.append(noteSpan)
         }
-        html += '</li>'
+        
+        employeesList.append(employeeItem)
       }
-      html += '</ul></div>'
+      
+      employeesSection.append(employeesList)
+      containerElement.append(employeesSection)
     }
 
     // Equipment
     if (shift.equipment.length > 0) {
-      html += '<div class="mb-3"><strong>Equipment:</strong><ul class="ml-4">'
+      const equipmentSection = document.createElement('div')
+      equipmentSection.className = 'mb-3'
+      
+      const equipmentLabel = document.createElement('strong')
+      equipmentLabel.textContent = 'Equipment:'
+      equipmentSection.append(equipmentLabel)
+      
+      const equipmentList = document.createElement('ul')
+      equipmentList.className = 'ml-4'
+      
       for (const equipment of shift.equipment) {
-        const isDup = isDuplicate(
-          duplicates,
-          'equipment',
-          equipment.equipmentNumber
-        )
-        const dupClass = isDup ? ' has-background-warning-light' : ''
-        html += `<li class="${dupClass}" data-equipment-number="${equipment.equipmentNumber}" draggable="${isEditable}">`
-        html += cityssm.escapeHTML(equipment.equipmentName)
+        const isDup = isDuplicate(duplicates, 'equipment', equipment.equipmentNumber)
+        const equipmentItem = document.createElement('li')
+        
+        if (isDup) {
+          equipmentItem.classList.add('has-background-warning-light')
+        }
+        if (isEditable) {
+          equipmentItem.draggable = true
+        }
+        equipmentItem.dataset.equipmentNumber = equipment.equipmentNumber
+        equipmentItem.textContent = equipment.equipmentName
+        
         if (equipment.employeeFirstName !== null) {
-          html += ` <span class="has-text-grey-light">(${cityssm.escapeHTML(equipment.employeeLastName ?? '')}, ${cityssm.escapeHTML(equipment.employeeFirstName)})</span>`
+          const operatorSpan = document.createElement('span')
+          operatorSpan.className = 'has-text-grey-light'
+          operatorSpan.textContent = ` (${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName})`
+          equipmentItem.append(operatorSpan)
         }
+        
         if (equipment.shiftEquipmentNote !== '') {
-          html += ` <span class="has-text-grey-light">- ${cityssm.escapeHTML(equipment.shiftEquipmentNote)}</span>`
+          const noteSpan = document.createElement('span')
+          noteSpan.className = 'has-text-grey-light'
+          noteSpan.textContent = ` - ${equipment.shiftEquipmentNote}`
+          equipmentItem.append(noteSpan)
         }
-        html += '</li>'
+        
+        equipmentList.append(equipmentItem)
       }
-      html += '</ul></div>'
+      
+      equipmentSection.append(equipmentList)
+      containerElement.append(equipmentSection)
     }
 
     if (
@@ -197,49 +268,76 @@ declare const exports: {
       shift.employees.length === 0 &&
       shift.equipment.length === 0
     ) {
-      html +=
-        '<p class="has-text-grey-light">No employees or equipment assigned</p>'
+      const emptyMessage = document.createElement('p')
+      emptyMessage.className = 'has-text-grey-light'
+      emptyMessage.textContent = 'No employees or equipment assigned'
+      containerElement.append(emptyMessage)
     }
 
-    html += '</div>'
-    return html
+    return containerElement
   }
 
   function renderTasksView(
     shift: ShiftForBuilder,
     duplicates: DuplicateTracker
-  ): string {
+  ): HTMLElement {
     const isEditable = isShiftEditable(shift)
-    let html = '<div class="shift-details">'
+    const containerElement = document.createElement('div')
+    containerElement.className = 'shift-details'
 
     if (shift.workOrders.length > 0) {
-      html += '<div class="mb-3"><strong>Work Orders:</strong><ul class="ml-4">'
+      const workOrdersSection = document.createElement('div')
+      workOrdersSection.className = 'mb-3'
+      
+      const workOrdersLabel = document.createElement('strong')
+      workOrdersLabel.textContent = 'Work Orders:'
+      workOrdersSection.append(workOrdersLabel)
+      
+      const workOrdersList = document.createElement('ul')
+      workOrdersList.className = 'ml-4'
+      
       for (const workOrder of shift.workOrders) {
-        const isDup = isDuplicate(
-          duplicates,
-          'workOrder',
-          workOrder.workOrderId
-        )
-        const dupClass = isDup ? ' has-background-warning-light' : ''
-        html += `<li class="${dupClass}" data-workorder-id="${workOrder.workOrderId}" draggable="${isEditable}">`
-        html += `<a href="${shiftLog.urlPrefix}/workOrders/${workOrder.workOrderId}" target="_blank">`
-        html += cityssm.escapeHTML(workOrder.workOrderNumber)
-        html += '</a>'
+        const isDup = isDuplicate(duplicates, 'workOrder', workOrder.workOrderId)
+        const workOrderItem = document.createElement('li')
+        
+        if (isDup) {
+          workOrderItem.classList.add('has-background-warning-light')
+        }
+        if (isEditable) {
+          workOrderItem.draggable = true
+        }
+        workOrderItem.dataset.workorderId = workOrder.workOrderId.toString()
+        
+        const workOrderLink = document.createElement('a')
+        workOrderLink.href = `${shiftLog.urlPrefix}/workOrders/${workOrder.workOrderId}`
+        workOrderLink.target = '_blank'
+        workOrderLink.textContent = workOrder.workOrderNumber
+        workOrderItem.append(workOrderLink)
+        
         if (workOrder.workOrderDetails !== '') {
-          html += ` - ${cityssm.escapeHTML(workOrder.workOrderDetails)}`
+          workOrderItem.append(` - ${workOrder.workOrderDetails}`)
         }
+        
         if (workOrder.shiftWorkOrderNote !== '') {
-          html += ` <span class="has-text-grey-light">- ${cityssm.escapeHTML(workOrder.shiftWorkOrderNote)}</span>`
+          const noteSpan = document.createElement('span')
+          noteSpan.className = 'has-text-grey-light'
+          noteSpan.textContent = ` - ${workOrder.shiftWorkOrderNote}`
+          workOrderItem.append(noteSpan)
         }
-        html += '</li>'
+        
+        workOrdersList.append(workOrderItem)
       }
-      html += '</ul></div>'
+      
+      workOrdersSection.append(workOrdersList)
+      containerElement.append(workOrdersSection)
     } else {
-      html += '<p class="has-text-grey-light">No work orders assigned</p>'
+      const emptyMessage = document.createElement('p')
+      emptyMessage.className = 'has-text-grey-light'
+      emptyMessage.textContent = 'No work orders assigned'
+      containerElement.append(emptyMessage)
     }
 
-    html += '</div>'
-    return html
+    return containerElement
   }
 
   function renderShiftCard(
@@ -252,59 +350,107 @@ declare const exports: {
     cardElement.dataset.shiftId = shift.shiftId.toString()
 
     const updatedByOther = wasUpdatedByOther(shift)
-    const warningClass = updatedByOther ? ' has-background-warning-light' : ''
     const isEditable = isShiftEditable(shift)
 
-    let cardHTML = `<div class="box${warningClass}">`
+    const boxElement = document.createElement('div')
+    boxElement.className = 'box'
+    if (updatedByOther) {
+      boxElement.classList.add('has-background-warning-light')
+    }
 
     // Header
-    cardHTML += '<div class="level is-mobile mb-3">'
-    cardHTML += '<div class="level-left">'
-    cardHTML += '<div class="level-item">'
-    cardHTML += `<h3 class="title is-5 mb-0">`
-    cardHTML += `<a href="${shiftLog.urlPrefix}/shifts/${shift.shiftId}">`
-    cardHTML += `#${shift.shiftId} - ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? 'Shift')}`
-    cardHTML += `</a></h3>`
-    cardHTML += '</div></div>'
-    cardHTML += '<div class="level-right">'
+    const headerLevel = document.createElement('div')
+    headerLevel.className = 'level is-mobile mb-3'
+    
+    const levelLeft = document.createElement('div')
+    levelLeft.className = 'level-left'
+    const levelLeftItem = document.createElement('div')
+    levelLeftItem.className = 'level-item'
+    const titleElement = document.createElement('h3')
+    titleElement.className = 'title is-5 mb-0'
+    const titleLink = document.createElement('a')
+    titleLink.href = `${shiftLog.urlPrefix}/shifts/${shift.shiftId}`
+    titleLink.textContent = `#${shift.shiftId} - ${shift.shiftTypeDataListItem ?? 'Shift'}`
+    titleElement.append(titleLink)
+    levelLeftItem.append(titleElement)
+    levelLeft.append(levelLeftItem)
+    headerLevel.append(levelLeft)
+    
+    const levelRight = document.createElement('div')
+    levelRight.className = 'level-right'
+    
     if (updatedByOther) {
-      cardHTML += '<div class="level-item">'
-      cardHTML +=
-        '<span class="icon has-text-warning" title="Modified by another user">'
-      cardHTML += '<i class="fa-solid fa-exclamation-triangle"></i>'
-      cardHTML += '</span></div>'
+      const warningItem = document.createElement('div')
+      warningItem.className = 'level-item'
+      const warningIcon = document.createElement('span')
+      warningIcon.className = 'icon has-text-warning'
+      warningIcon.title = 'Modified by another user'
+      warningIcon.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i>'
+      warningItem.append(warningIcon)
+      levelRight.append(warningItem)
     }
+    
     if (isEditable) {
-      cardHTML += '<div class="level-item">'
-      cardHTML += `<a href="${shiftLog.urlPrefix}/shifts/${shift.shiftId}/edit" class="button is-small is-light">`
-      cardHTML +=
-        '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
-      cardHTML += '</a></div>'
+      const editItem = document.createElement('div')
+      editItem.className = 'level-item'
+      const editLink = document.createElement('a')
+      editLink.href = `${shiftLog.urlPrefix}/shifts/${shift.shiftId}/edit`
+      editLink.className = 'button is-small is-light'
+      editLink.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
+      editItem.append(editLink)
+      levelRight.append(editItem)
     }
-    cardHTML += '</div></div>'
+    
+    headerLevel.append(levelRight)
+    boxElement.append(headerLevel)
 
     // Shift details
-    cardHTML += '<div class="content is-small">'
-    cardHTML += `<p class="mb-2"><strong>Time:</strong> ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}</p>`
+    const contentElement = document.createElement('div')
+    contentElement.className = 'content is-small'
+    
+    const timeParagraph = document.createElement('p')
+    timeParagraph.className = 'mb-2'
+    const timeLabel = document.createElement('strong')
+    timeLabel.textContent = 'Time:'
+    timeParagraph.append(timeLabel, ` ${shift.shiftTimeDataListItem ?? ''}`)
+    contentElement.append(timeParagraph)
+    
     // Make supervisor field a drop target for employees
-    const supervisorDropClass = isEditable ? ' drop-target-supervisor' : ''
-    cardHTML += `<p class="mb-2${supervisorDropClass}" data-shift-id="${shift.shiftId}" data-supervisor-employee-number="${shift.supervisorEmployeeNumber}"><strong>Supervisor:</strong> ${cityssm.escapeHTML(shift.supervisorLastName ?? '')}, ${cityssm.escapeHTML(shift.supervisorFirstName ?? '')}</p>`
-    if (shift.shiftDescription !== '') {
-      cardHTML += `<p class="mb-2"><strong>Description:</strong> ${cityssm.escapeHTML(shift.shiftDescription)}</p>`
+    const supervisorParagraph = document.createElement('p')
+    supervisorParagraph.className = 'mb-2'
+    if (isEditable) {
+      supervisorParagraph.classList.add('drop-target-supervisor')
     }
-    cardHTML += '</div>'
+    supervisorParagraph.dataset.shiftId = shift.shiftId.toString()
+    supervisorParagraph.dataset.supervisorEmployeeNumber = shift.supervisorEmployeeNumber
+    const supervisorLabel = document.createElement('strong')
+    supervisorLabel.textContent = 'Supervisor:'
+    supervisorParagraph.append(supervisorLabel, ` ${shift.supervisorLastName ?? ''}, ${shift.supervisorFirstName ?? ''}`)
+    contentElement.append(supervisorParagraph)
+    
+    if (shift.shiftDescription !== '') {
+      const descParagraph = document.createElement('p')
+      descParagraph.className = 'mb-2'
+      const descLabel = document.createElement('strong')
+      descLabel.textContent = 'Description:'
+      descParagraph.append(descLabel, ` ${shift.shiftDescription}`)
+      contentElement.append(descParagraph)
+    }
+    
+    boxElement.append(contentElement)
 
-    cardHTML += '<hr class="my-3" />'
+    const hrElement = document.createElement('hr')
+    hrElement.className = 'my-3'
+    boxElement.append(hrElement)
 
     // View-specific content
-    cardHTML +=
+    const viewContent =
       viewMode === 'employees'
         ? renderEmployeesView(shift, duplicates)
         : renderTasksView(shift, duplicates)
+    boxElement.append(viewContent)
 
-    cardHTML += '</div>'
-
-    cardElement.innerHTML = cardHTML
+    cardElement.append(boxElement)
 
     return cardElement
   }
@@ -415,18 +561,33 @@ declare const exports: {
       '#available--employees .available-resources-list'
     ) as HTMLElement
     if (employeesList !== null) {
+      employeesList.textContent = ''
+      
       if (resources.employees.length === 0) {
-        employeesList.innerHTML =
-          '<p class="has-text-grey-light is-size-7">No available employees</p>'
+        const emptyMessage = document.createElement('p')
+        emptyMessage.className = 'has-text-grey-light is-size-7'
+        emptyMessage.textContent = 'No available employees'
+        employeesList.append(emptyMessage)
       } else {
-        let html = '<div class="available-items">'
+        const itemsContainer = document.createElement('div')
+        itemsContainer.className = 'available-items'
+        
         for (const employee of resources.employees) {
-          html += `<div class="box is-paddingless p-2 mb-2 is-clickable" draggable="true" data-employee-number="${employee.employeeNumber}" data-from-available="true">`
-          html += `<span class="is-size-7">${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}</span>`
-          html += '</div>'
+          const itemBox = document.createElement('div')
+          itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable'
+          itemBox.draggable = true
+          itemBox.dataset.employeeNumber = employee.employeeNumber
+          itemBox.dataset.fromAvailable = 'true'
+          
+          const itemText = document.createElement('span')
+          itemText.className = 'is-size-7'
+          itemText.textContent = `${employee.lastName}, ${employee.firstName}`
+          itemBox.append(itemText)
+          
+          itemsContainer.append(itemBox)
         }
-        html += '</div>'
-        employeesList.innerHTML = html
+        
+        employeesList.append(itemsContainer)
       }
     }
 
@@ -435,18 +596,33 @@ declare const exports: {
       '#available--equipment .available-resources-list'
     ) as HTMLElement
     if (equipmentList !== null) {
+      equipmentList.textContent = ''
+      
       if (resources.equipment.length === 0) {
-        equipmentList.innerHTML =
-          '<p class="has-text-grey-light is-size-7">No available equipment</p>'
+        const emptyMessage = document.createElement('p')
+        emptyMessage.className = 'has-text-grey-light is-size-7'
+        emptyMessage.textContent = 'No available equipment'
+        equipmentList.append(emptyMessage)
       } else {
-        let html = '<div class="available-items">'
+        const itemsContainer = document.createElement('div')
+        itemsContainer.className = 'available-items'
+        
         for (const equipment of resources.equipment) {
-          html += `<div class="box is-paddingless p-2 mb-2 is-clickable" draggable="true" data-equipment-number="${equipment.equipmentNumber}" data-from-available="true">`
-          html += `<span class="is-size-7">${cityssm.escapeHTML(equipment.equipmentName)}</span>`
-          html += '</div>'
+          const itemBox = document.createElement('div')
+          itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable'
+          itemBox.draggable = true
+          itemBox.dataset.equipmentNumber = equipment.equipmentNumber
+          itemBox.dataset.fromAvailable = 'true'
+          
+          const itemText = document.createElement('span')
+          itemText.className = 'is-size-7'
+          itemText.textContent = equipment.equipmentName
+          itemBox.append(itemText)
+          
+          itemsContainer.append(itemBox)
         }
-        html += '</div>'
-        equipmentList.innerHTML = html
+        
+        equipmentList.append(itemsContainer)
       }
     }
 
@@ -455,18 +631,33 @@ declare const exports: {
       '#available--crews .available-resources-list'
     ) as HTMLElement
     if (crewsList !== null) {
+      crewsList.textContent = ''
+      
       if (resources.crews.length === 0) {
-        crewsList.innerHTML =
-          '<p class="has-text-grey-light is-size-7">No available crews</p>'
+        const emptyMessage = document.createElement('p')
+        emptyMessage.className = 'has-text-grey-light is-size-7'
+        emptyMessage.textContent = 'No available crews'
+        crewsList.append(emptyMessage)
       } else {
-        let html = '<div class="available-items">'
+        const itemsContainer = document.createElement('div')
+        itemsContainer.className = 'available-items'
+        
         for (const crew of resources.crews) {
-          html += `<div class="box is-paddingless p-2 mb-2 is-clickable" draggable="true" data-crew-id="${crew.crewId}" data-from-available="true">`
-          html += `<span class="is-size-7">${cityssm.escapeHTML(crew.crewName)}</span>`
-          html += '</div>'
+          const itemBox = document.createElement('div')
+          itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable'
+          itemBox.draggable = true
+          itemBox.dataset.crewId = crew.crewId.toString()
+          itemBox.dataset.fromAvailable = 'true'
+          
+          const itemText = document.createElement('span')
+          itemText.className = 'is-size-7'
+          itemText.textContent = crew.crewName
+          itemBox.append(itemText)
+          
+          itemsContainer.append(itemBox)
         }
-        html += '</div>'
-        crewsList.innerHTML = html
+        
+        crewsList.append(itemsContainer)
       }
     }
   }
