@@ -1,1 +1,1 @@
-export default function addEquipment(equipmentNumber: string, equipmentName: string, equipmentDescription: string, equipmentTypeDataListItemId: number, userGroupId: number | undefined, user: User): Promise<boolean>;
+export default function addEquipment(equipmentNumber: string, equipmentName: string, equipmentDescription: string, equipmentTypeDataListItemId: number, employeeListId: number | undefined, userGroupId: number | undefined, user: User): Promise<boolean>;

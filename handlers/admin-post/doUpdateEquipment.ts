@@ -12,6 +12,7 @@ export default async function handler(
       equipmentName: string
       equipmentNumber: string
       equipmentTypeDataListItemId: string
+      employeeListId: string
       userGroupId: string
       recordSync_isSynced?: string
     }
@@ -27,6 +28,10 @@ export default async function handler(
         request.body.equipmentTypeDataListItemId,
         10
       ),
+      employeeListId:
+        request.body.employeeListId === ''
+          ? undefined
+          : Number.parseInt(request.body.employeeListId, 10),
       recordSync_isSynced: request.body.recordSync_isSynced === '1',
       userGroupId:
         request.body.userGroupId === ''
