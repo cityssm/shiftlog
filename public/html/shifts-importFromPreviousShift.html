@@ -15,37 +15,107 @@
       ></button>
     </div>
     <section class="modal-card-body">
+      <!-- Search filters -->
+      <div class="box" id="box--searchFilters">
+        <h3 class="title is-5">Search Past Shifts</h3>
+        <form id="form--searchShifts">
+          <input name="currentShiftId" type="hidden" />
+          <input name="shiftDateString" type="hidden" />
+          
+          <div class="field">
+            <label class="label">Shift Type</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="search--shiftTypeDataListItemId" name="shiftTypeDataListItemId">
+                  <option value="">(All Types)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field">
+            <label class="label">Supervisor</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="search--supervisorEmployeeNumber" name="supervisorEmployeeNumber">
+                  <option value="">(All Supervisors)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field">
+            <label class="label">Shift Time</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="search--shiftTimeDataListItemId" name="shiftTimeDataListItemId">
+                  <option value="">(All Times)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field">
+            <div class="control">
+              <button class="button is-info is-fullwidth" type="submit">
+                <span class="icon"><i class="fa-solid fa-search"></i></span>
+                <span>Search</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <hr />
+        
+        <!-- Search results -->
+        <div class="is-hidden mt-4" id="container--searchResults">
+          <h4 class="title is-6">Recent Shifts</h4>
+          <div id="list--shifts"></div>
+        </div>
+      </div>
+      
+      <!-- Import form -->
       <form id="form--import">
         <input name="currentShiftId" type="hidden" />
-        <div class="field">
-          <label class="label">Previous Shift ID</label>
-          <div class="control">
-            <input
-              class="input"
-              name="previousShiftId"
-              type="number"
-              required
-            />
+
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label">Selected Shift ID</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="input--previousShiftId"
+                  name="previousShiftId"
+                  type="number"
+                  placeholder="Enter shift ID or select from search results above"
+                  required
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <div class="control">
-            <label class="checkbox">
-              <input name="copyCrews" type="checkbox" checked />
-              Import Crews
-            </label>
-          </div>
-          <div class="control">
-            <label class="checkbox">
-              <input name="copyEmployees" type="checkbox" checked />
-              Import Employees
-            </label>
-          </div>
-          <div class="control">
-            <label class="checkbox">
-              <input name="copyEquipment" type="checkbox" checked />
-              Import Equipment
-            </label>
+          <div class="column">
+            <div class="field">
+              <label class="label">Import Options</label>
+              <div class="control">
+                <label class="checkbox">
+                  <input name="copyCrews" type="checkbox" checked />
+                  Import Crews
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input name="copyEmployees" type="checkbox" checked />
+                  Import Employees
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input name="copyEquipment" type="checkbox" checked />
+                  Import Equipment
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </form>

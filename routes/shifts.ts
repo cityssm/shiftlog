@@ -19,6 +19,7 @@ import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShif
 import handler_doDeleteShiftWorkOrder from '../handlers/shifts-post/doDeleteShiftWorkOrder.js'
 import handler_doGetAvailableCrewsEmployeesEquipment from '../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js'
 import handler_doGetDeletedShifts from '../handlers/shifts-post/doGetDeletedShifts.js'
+import handler_doGetPreviousShifts from '../handlers/shifts-post/doGetPreviousShifts.js'
 import handler_doGetShiftCrews from '../handlers/shifts-post/doGetShiftCrews.js'
 import handler_doGetShiftEmployees from '../handlers/shifts-post/doGetShiftEmployees.js'
 import handler_doGetShiftEquipment from '../handlers/shifts-post/doGetShiftEquipment.js'
@@ -136,6 +137,11 @@ router.post(
   '/doDeleteShiftWorkOrder',
   updateHandler,
   handler_doDeleteShiftWorkOrder
+)
+
+router.post(
+  '/doGetPreviousShifts',
+  handler_doGetPreviousShifts
 )
 
 router.post(
