@@ -420,16 +420,16 @@ const minEditableDate = 0;
                     shiftEmployeeNote: ''
                 }, (addResponse) => {
                     if (addResponse.success) {
-                        cityssm.alertModal('Employee Moved', 'Employee has been moved to the new shift.', 'success', 'OK');
+                        bulmaJS.alert({ contextualColorName: 'success', title: 'Employee Moved', message: 'Employee has been moved to the new shift.' });
                         loadShifts();
                     }
                     else {
-                        cityssm.alertModal('Error', 'Failed to add employee to new shift.', 'danger', 'OK');
+                        bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add employee to new shift.' });
                     }
                 });
             }
             else {
-                cityssm.alertModal('Error', 'Failed to remove employee from original shift.', 'danger', 'OK');
+                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove employee from original shift.' });
             }
         });
     }
@@ -447,16 +447,16 @@ const minEditableDate = 0;
                     shiftEquipmentNote: ''
                 }, (addResponse) => {
                     if (addResponse.success) {
-                        cityssm.alertModal('Equipment Moved', 'Equipment has been moved to the new shift.', 'success', 'OK');
+                        bulmaJS.alert({ contextualColorName: 'success', title: 'Equipment Moved', message: 'Equipment has been moved to the new shift.' });
                         loadShifts();
                     }
                     else {
-                        cityssm.alertModal('Error', 'Failed to add equipment to new shift.', 'danger', 'OK');
+                        bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add equipment to new shift.' });
                     }
                 });
             }
             else {
-                cityssm.alertModal('Error', 'Failed to remove equipment from original shift.', 'danger', 'OK');
+                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove equipment from original shift.' });
             }
         });
     }
@@ -474,16 +474,16 @@ const minEditableDate = 0;
                     shiftCrewNote: ''
                 }, (addResponse) => {
                     if (addResponse.success) {
-                        cityssm.alertModal('Crew Moved', 'Crew has been moved to the new shift.', 'success', 'OK');
+                        bulmaJS.alert({ contextualColorName: 'success', title: 'Crew Moved', message: 'Crew has been moved to the new shift.' });
                         loadShifts();
                     }
                     else {
-                        cityssm.alertModal('Error', 'Failed to add crew to new shift.', 'danger', 'OK');
+                        bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add crew to new shift.' });
                     }
                 });
             }
             else {
-                cityssm.alertModal('Error', 'Failed to remove crew from original shift.', 'danger', 'OK');
+                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove crew from original shift.' });
             }
         });
     }
@@ -501,16 +501,16 @@ const minEditableDate = 0;
                     shiftWorkOrderNote: ''
                 }, (addResponse) => {
                     if (addResponse.success) {
-                        cityssm.alertModal('Work Order Moved', 'Work order has been moved to the new shift.', 'success', 'OK');
+                        bulmaJS.alert({ contextualColorName: 'success', title: 'Work Order Moved', message: 'Work order has been moved to the new shift.' });
                         loadShifts();
                     }
                     else {
-                        cityssm.alertModal('Error', 'Failed to add work order to new shift.', 'danger', 'OK');
+                        bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add work order to new shift.' });
                     }
                 });
             }
             else {
-                cityssm.alertModal('Error', 'Failed to remove work order from original shift.', 'danger', 'OK');
+                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove work order from original shift.' });
             }
         });
     }
@@ -530,11 +530,11 @@ const minEditableDate = 0;
         }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
-                cityssm.alertModal('Supervisor Updated', 'Employee has been set as the supervisor for this shift.', 'success', 'OK');
+                bulmaJS.alert({ contextualColorName: 'success', title: 'Supervisor Updated', message: 'Employee has been set as the supervisor for this shift.' });
                 loadShifts();
             }
             else {
-                cityssm.alertModal('Error', 'Failed to update shift supervisor.', 'danger', 'OK');
+                bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to update shift supervisor.' });
             }
         });
     }
@@ -554,16 +554,16 @@ const minEditableDate = 0;
                         shiftEmployeeNote: ''
                     }, (addResponse) => {
                         if (addResponse.success) {
-                            cityssm.alertModal('Employee Assigned', 'Employee has been moved and assigned to the crew.', 'success', 'OK');
+                            bulmaJS.alert({ contextualColorName: 'success', title: 'Employee Assigned', message: 'Employee has been moved and assigned to the crew.' });
                             loadShifts();
                         }
                         else {
-                            cityssm.alertModal('Error', 'Failed to add employee to crew.', 'danger', 'OK');
+                            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add employee to crew.' });
                         }
                     });
                 }
                 else {
-                    cityssm.alertModal('Error', 'Failed to remove employee from original shift.', 'danger', 'OK');
+                    bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove employee from original shift.' });
                 }
             });
         }
@@ -576,11 +576,11 @@ const minEditableDate = 0;
             }, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
-                    cityssm.alertModal('Employee Assigned', 'Employee has been assigned to the crew.', 'success', 'OK');
+                    bulmaJS.alert({ contextualColorName: 'success', title: 'Employee Assigned', message: 'Employee has been assigned to the crew.' });
                     loadShifts();
                 }
                 else {
-                    cityssm.alertModal('Error', 'Failed to assign employee to crew.', 'danger', 'OK');
+                    bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to assign employee to crew.' });
                 }
             });
         }
@@ -601,16 +601,16 @@ const minEditableDate = 0;
                         shiftEquipmentNote: ''
                     }, (addResponse) => {
                         if (addResponse.success) {
-                            cityssm.alertModal('Equipment Assigned', 'Equipment has been moved and assigned to the employee.', 'success', 'OK');
+                            bulmaJS.alert({ contextualColorName: 'success', title: 'Equipment Assigned', message: 'Equipment has been moved and assigned to the employee.' });
                             loadShifts();
                         }
                         else {
-                            cityssm.alertModal('Error', 'Failed to add equipment to shift.', 'danger', 'OK');
+                            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add equipment to shift.' });
                         }
                     });
                 }
                 else {
-                    cityssm.alertModal('Error', 'Failed to remove equipment from original shift.', 'danger', 'OK');
+                    bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove equipment from original shift.' });
                 }
             });
         }
@@ -623,11 +623,11 @@ const minEditableDate = 0;
             }, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
-                    cityssm.alertModal('Equipment Assigned', 'Equipment has been assigned to the employee.', 'success', 'OK');
+                    bulmaJS.alert({ contextualColorName: 'success', title: 'Equipment Assigned', message: 'Equipment has been assigned to the employee.' });
                     loadShifts();
                 }
                 else {
-                    cityssm.alertModal('Error', 'Failed to assign equipment to employee.', 'danger', 'OK');
+                    bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to assign equipment to employee.' });
                 }
             });
         }
@@ -650,18 +650,85 @@ const minEditableDate = 0;
             prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
         });
     }
+    // Create shift modal
+    function openCreateShiftModal() {
+        const selectedDate = shiftDateElement.value;
+        if (selectedDate === '') {
+            bulmaJS.alert({
+                contextualColorName: 'warning',
+                message: 'Please select a date first.'
+            });
+            return;
+        }
+        let closeModalFunction;
+        cityssm.openHtmlModal('shifts-createShift', {
+            onshow(modalElement) {
+                const formElement = modalElement.querySelector('#form--createShift');
+                // Set the date
+                const dateInput = formElement.querySelector('[name="shiftDateString"]');
+                dateInput.value = selectedDate;
+                const shiftTypeSelect = modalElement.querySelector('#createShift--shiftTypeDataListItemId');
+                const shiftTimeSelect = modalElement.querySelector('#createShift--shiftTimeDataListItemId');
+                const supervisorSelect = modalElement.querySelector('#createShift--supervisorEmployeeNumber');
+                // Load shift types, times, and supervisors
+                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doGetShiftCreationData`, {}, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success) {
+                        // Populate shift types
+                        for (const shiftType of responseJSON.shiftTypes) {
+                            const optionElement = document.createElement('option');
+                            optionElement.value = shiftType.dataListItemId.toString();
+                            optionElement.textContent = shiftType.dataListItem;
+                            shiftTypeSelect.append(optionElement);
+                        }
+                        // Populate shift times
+                        for (const shiftTime of responseJSON.shiftTimes) {
+                            const optionElement = document.createElement('option');
+                            optionElement.value = shiftTime.dataListItemId.toString();
+                            optionElement.textContent = shiftTime.dataListItem;
+                            shiftTimeSelect.append(optionElement);
+                        }
+                        // Populate supervisors
+                        for (const supervisor of responseJSON.supervisors) {
+                            const optionElement = document.createElement('option');
+                            optionElement.value = supervisor.employeeNumber;
+                            optionElement.textContent = `${supervisor.lastName}, ${supervisor.firstName}`;
+                            supervisorSelect.append(optionElement);
+                        }
+                    }
+                });
+                // Handle form submission
+                formElement.addEventListener('submit', (submitEvent) => {
+                    submitEvent.preventDefault();
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doCreateShift`, formElement, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success) {
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Shift created successfully!'
+                            });
+                            closeModalFunction();
+                            loadShifts();
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                title: 'Creation Error',
+                                message: responseJSON.errorMessage ?? 'Failed to create shift.'
+                            });
+                        }
+                    });
+                });
+            },
+            onshown(modalElement, closeFunction) {
+                closeModalFunction = closeFunction;
+            }
+        });
+    }
     // Create shift button handler
     const createShiftButton = document.querySelector('#button--createShift');
     if (createShiftButton !== null) {
-        createShiftButton.addEventListener('click', () => {
-            const selectedDate = shiftDateElement.value;
-            if (selectedDate !== '') {
-                // Redirect to the new shift page with the date pre-filled
-                const url = new URL(`${shiftLog.urlPrefix}/shifts/new`, window.location.origin);
-                url.searchParams.set('date', selectedDate);
-                window.location.href = url.toString();
-            }
-        });
+        createShiftButton.addEventListener('click', openCreateShiftModal);
     }
     // Load shifts for today on page load
     loadShifts();

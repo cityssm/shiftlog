@@ -14,6 +14,7 @@ import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkO
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js'
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js'
 import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js'
+import handler_doGetShiftCreationData from '../handlers/shifts-post/doGetShiftCreationData.js'
 import handler_doGetShiftsForBuilder from '../handlers/shifts-post/doGetShiftsForBuilder.js'
 import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew.js'
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js'
@@ -79,6 +80,7 @@ router.get('/', handler_search).post('/doSearchShifts', handler_doSearchShifts)
 router
   .get('/builder', viewHandler, handler_builder)
   .post('/doGetShiftsForBuilder', handler_doGetShiftsForBuilder)
+  .post('/doGetShiftCreationData', handler_doGetShiftCreationData)
 
 router
   .get('/new', updateHandler, handler_new)
