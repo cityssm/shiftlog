@@ -8,6 +8,7 @@ export default async function updateEquipment(
     equipmentName: string
     equipmentDescription: string
     equipmentTypeDataListItemId: number
+    employeeListId: number | undefined
     recordSync_isSynced?: boolean
     userGroupId: number | undefined
   },
@@ -30,6 +31,7 @@ export default async function updateEquipment(
         'equipmentTypeDataListItemId',
         equipmentFields.equipmentTypeDataListItemId
       )
+      .input('employeeListId', equipmentFields.employeeListId ?? undefined)
       .input('userGroupId', equipmentFields.userGroupId ?? undefined)
       .input(
         'recordSync_isSynced',
@@ -41,6 +43,7 @@ export default async function updateEquipment(
         set equipmentName = @equipmentName,
           equipmentDescription = @equipmentDescription,
           equipmentTypeDataListItemId = @equipmentTypeDataListItemId,
+          employeeListId = @employeeListId,
           userGroupId = @userGroupId,
           recordSync_isSynced = @recordSync_isSynced,
           recordUpdate_userName = @recordUpdate_userName,

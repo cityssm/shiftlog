@@ -3,6 +3,7 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type {
   DataListItem,
+  EmployeeList,
   Equipment,
   UserGroup
 } from '../../types/record.types.js'
@@ -14,6 +15,7 @@ declare const bulmaJS: BulmaJS
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+  employeeLists: EmployeeList[]
   equipment: Equipment[]
   userGroups: UserGroup[]
   equipmentTypes: DataListItem[]
@@ -191,6 +193,20 @@ declare const exports: {
 
         equipmentTypeSelect.value =
           equipment.equipmentTypeDataListItemId.toString()
+
+        // Populate employee lists dropdown
+        const employeeListSelect = modalElement.querySelector(
+          '[name="employeeListId"]'
+        ) as HTMLSelectElement
+
+        for (const employeeList of exports.employeeLists) {
+          const option = document.createElement('option')
+          option.value = employeeList.employeeListId.toString()
+          option.textContent = employeeList.employeeListName
+          employeeListSelect.append(option)
+        }
+
+        employeeListSelect.value = equipment.employeeListId?.toString() ?? ''
 
         // Populate user groups dropdown
         const userGroupSelect = modalElement.querySelector(
@@ -423,6 +439,18 @@ declare const exports: {
           option.value = equipmentType.dataListItemId.toString()
           option.textContent = equipmentType.dataListItem
           equipmentTypeSelect.append(option)
+        }
+
+        // Populate employee lists dropdown
+        const employeeListSelect = modalElement.querySelector(
+          '[name="employeeListId"]'
+        ) as HTMLSelectElement
+
+        for (const employeeList of exports.employeeLists) {
+          const option = document.createElement('option')
+          option.value = employeeList.employeeListId.toString()
+          option.textContent = employeeList.employeeListName
+          employeeListSelect.append(option)
         }
 
         // Populate user groups dropdown

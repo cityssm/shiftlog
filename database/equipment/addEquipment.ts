@@ -7,6 +7,7 @@ export default async function addEquipment(
   equipmentName: string,
   equipmentDescription: string,
   equipmentTypeDataListItemId: number,
+  employeeListId: number | undefined,
   userGroupId: number | undefined,
   user: User
 ): Promise<boolean> {
@@ -22,6 +23,7 @@ export default async function addEquipment(
       .input('equipmentName', equipmentName)
       .input('equipmentDescription', equipmentDescription)
       .input('equipmentTypeDataListItemId', equipmentTypeDataListItemId)
+      .input('employeeListId', employeeListId ?? undefined)
       .input('userGroupId', userGroupId ?? undefined)
       .input('recordCreate_userName', user.userName)
       .input('recordCreate_dateTime', currentDate)
@@ -29,13 +31,13 @@ export default async function addEquipment(
       .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
         insert into ShiftLog.Equipment (
           instance, equipmentNumber, equipmentName, equipmentDescription,
-          equipmentTypeDataListItemId, userGroupId,
+          equipmentTypeDataListItemId, employeeListId, userGroupId,
           recordCreate_userName, recordCreate_dateTime,
           recordUpdate_userName, recordUpdate_dateTime
         )
         values (
           @instance, @equipmentNumber, @equipmentName, @equipmentDescription,
-          @equipmentTypeDataListItemId, @userGroupId,
+          @equipmentTypeDataListItemId, @employeeListId, @userGroupId,
           @recordCreate_userName, @recordCreate_dateTime,
           @recordUpdate_userName, @recordUpdate_dateTime
         )

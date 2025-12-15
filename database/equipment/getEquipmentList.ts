@@ -19,6 +19,7 @@ export default async function getEquipmentList(
     .query<Equipment>(/* sql */ `
       select e.equipmentNumber, e.equipmentName, e.equipmentDescription,
         e.equipmentTypeDataListItemId, dli.dataListItem as equipmentTypeDataListItem,
+        e.employeeListId, el.employeeListName,
         e.userGroupId,
         ug.userGroupName,
         recordSync_isSynced, recordSync_source, recordSync_dateTime,
@@ -27,6 +28,7 @@ export default async function getEquipmentList(
       from ShiftLog.Equipment e
       left join ShiftLog.DataListItems dli on
         e.equipmentTypeDataListItemId = dli.dataListItemId
+      left join ShiftLog.EmployeeLists el on e.employeeListId = el.employeeListId and el.recordDelete_dateTime is null
       left join ShiftLog.UserGroups ug on e.userGroupId = ug.userGroupId
       where
         e.instance = @instance

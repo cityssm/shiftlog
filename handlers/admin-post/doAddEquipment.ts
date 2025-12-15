@@ -12,6 +12,7 @@ export default async function handler(
       equipmentName: string
       equipmentNumber: string
       equipmentTypeDataListItemId: string
+      employeeListId: string
       userGroupId: string
     }
   >,
@@ -22,6 +23,9 @@ export default async function handler(
     request.body.equipmentName,
     request.body.equipmentDescription,
     Number.parseInt(request.body.equipmentTypeDataListItemId, 10),
+    request.body.employeeListId === ''
+      ? undefined
+      : Number.parseInt(request.body.employeeListId, 10),
     request.body.userGroupId === ''
       ? undefined
       : Number.parseInt(request.body.userGroupId, 10),
