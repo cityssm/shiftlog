@@ -9,7 +9,7 @@ import type { Shift } from '../../types/record.types.js'
 import type { ShiftEditResponse } from './types.js'
 
 export default async function handler(
-  request: Request<unknown, unknown, unknown, { error?: string }>,
+  request: Request<unknown, unknown, unknown, { error?: string; date?: string }>,
   response: Response
 ): Promise<void> {
   let supervisors = await getEmployees({ isSupervisor: true })
@@ -24,8 +24,21 @@ export default async function handler(
 
   const shiftTimes = await getShiftTimeDataListItems(request.session.user)
 
+  // Use date from query parameter if provided, otherwise use today
+  let shiftDate = new Date()
+  if (request.query.date !== undefined && request.query.date !== '') {
+    try {
+      const parsedDate = new Date(request.query.date)
+      if (!isNaN(parsedDate.getTime())) {
+        shiftDate = parsedDate
+      }
+    } catch {
+      // Use default date if parsing fails
+    }
+  }
+
   const shift = {
-    shiftDate: new Date(),
+    shiftDate,
     shiftTimeDataListItemId: shiftTimes.length === 1 ? shiftTimes[0].dataListItemId : -1,
     shiftTypeDataListItemId: shiftTypes.length === 1 ? shiftTypes[0].dataListItemId : -1,
     supervisorEmployeeNumber: '',

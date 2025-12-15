@@ -35,7 +35,7 @@
 
 <div class="box">
   <div class="columns">
-    <div class="column is-half">
+    <div class="column is-one-third">
       <div class="field">
         <label class="label" for="builder--shiftDate">Date</label>
         <div class="control has-icons-left">
@@ -55,7 +55,7 @@
         <p class="help">Select a date to view and manage shifts</p>
       </div>
     </div>
-    <div class="column is-half">
+    <div class="column is-one-third">
       <div class="field">
         <label class="label" for="builder--viewMode">View</label>
         <div class="control has-icons-left">
@@ -72,6 +72,22 @@
         <p class="help">Choose what to display in each shift card</p>
       </div>
     </div>
+    <% if (user.userProperties.shifts.canUpdate) { %>
+    <div class="column is-one-third">
+      <div class="field">
+        <label class="label">&nbsp;</label>
+        <div class="control">
+          <button class="button is-success is-fullwidth" id="button--createShift" type="button">
+            <span class="icon is-small">
+              <i class="fa-solid fa-plus"></i>
+            </span>
+            <span>Create <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
+          </button>
+        </div>
+        <p class="help">Create a new shift for the selected date</p>
+      </div>
+    </div>
+    <% } %>
   </div>
 </div>
 
@@ -137,12 +153,18 @@
 </style>
 
 <script>
-  exports.shiftLog = {
+  // Override sessionKeepAliveMillis to prevent excessive keepAlive requests
+  if (exports.shiftLog) {
+    exports.shiftLog.sessionKeepAliveMillis = 0;
+  }
+  
+  exports.shiftLog = Object.assign(exports.shiftLog || {}, {
     urlPrefix: '<%= urlPrefix %>',
     canManage: <%= user.userProperties.shifts.canManage %>,
     canUpdate: <%= user.userProperties.shifts.canUpdate %>,
-    currentUser: '<%= user.userName %>'
-  };
+    currentUser: '<%= user.userName %>',
+    sessionKeepAliveMillis: 0
+  });
 </script>
 <script src="<%= urlPrefix %>/javascripts/shifts.builder.js"></script>
 

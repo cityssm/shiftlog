@@ -1,9 +1,11 @@
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type FlatPickr from 'flatpickr'
 import type { DoGetShiftsForBuilderResponse } from '../../handlers/shifts-post/doGetShiftsForBuilder.js'
 import type { ShiftForBuilder } from '../../database/shifts/getShiftsForBuilder.js'
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
+declare const flatpickr: typeof FlatPickr
 
 declare const exports: {
   shiftLog: ShiftLogGlobal & {
@@ -983,8 +985,28 @@ const minEditableDate = 0
   resultsContainerElement.addEventListener('drop', handleDrop)
 
   // Initialize flatpickr for date input
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  ;(cityssm as any).initializeDatePickers(shiftDateElement)
+  if (typeof flatpickr !== 'undefined') {
+    flatpickr(shiftDateElement, {
+      allowInput: true,
+      dateFormat: 'Y-m-d',
+      nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+      prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+    })
+  }
+
+  // Create shift button handler
+  const createShiftButton = document.querySelector('#button--createShift')
+  if (createShiftButton !== null) {
+    createShiftButton.addEventListener('click', () => {
+      const selectedDate = shiftDateElement.value
+      if (selectedDate !== '') {
+        // Redirect to the new shift page with the date pre-filled
+        const url = new URL(`${shiftLog.urlPrefix}/shifts/new`, window.location.origin)
+        url.searchParams.set('date', selectedDate)
+        window.location.href = url.toString()
+      }
+    })
+  }
 
   // Load shifts for today on page load
   loadShifts()
