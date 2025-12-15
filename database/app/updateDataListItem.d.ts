@@ -5,4 +5,3 @@ export interface UpdateDataListItemForm {
     userName: string;
 }
 export default function updateDataListItem(form: UpdateDataListItemForm): Promise<boolean>;
-//# sourceMappingURL=updateDataListItem.d.ts.map

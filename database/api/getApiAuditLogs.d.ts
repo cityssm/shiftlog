@@ -12,4 +12,3 @@ export interface GetApiAuditLogsResult {
     totalCount: number;
 }
 export default function getApiAuditLogs(filters?: GetApiAuditLogsFilters): Promise<GetApiAuditLogsResult>;
-//# sourceMappingURL=getApiAuditLogs.d.ts.map

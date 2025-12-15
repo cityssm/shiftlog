@@ -5,4 +5,3 @@ export interface AddDataListItemForm {
     userName: string;
 }
 export default function addDataListItem(form: AddDataListItemForm): Promise<boolean>;
-//# sourceMappingURL=addDataListItem.d.ts.map

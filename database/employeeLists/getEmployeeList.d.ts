@@ -4,4 +4,3 @@ interface EmployeeListWithMembers extends EmployeeList {
 }
 export default function getEmployeeList(employeeListId: number): Promise<EmployeeListWithMembers | undefined>;
 export {};
-//# sourceMappingURL=getEmployeeList.d.ts.map

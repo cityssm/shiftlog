@@ -3,4 +3,3 @@ export default function updateEmployeeList(employeeListFields: {
     employeeListName: string;
     userGroupId: number | undefined;
 }, user: User): Promise<boolean>;
-//# sourceMappingURL=updateEmployeeList.d.ts.map

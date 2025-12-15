@@ -6,4 +6,3 @@ export interface DataListItemWithDetails {
     userGroupId: number | null;
 }
 export default function getDataListItemsAdmin(dataListKey: string): Promise<DataListItemWithDetails[]>;
-//# sourceMappingURL=getDataListItemsAdmin.d.ts.map
