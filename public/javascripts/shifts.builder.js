@@ -248,9 +248,224 @@ const minEditableDate = 0;
             }
         });
     }
+    // Drag and drop state
+    let draggedElement = null;
+    let draggedData = null;
+    // Drag and drop handlers
+    function handleDragStart(event) {
+        const target = event.target;
+        draggedElement = target;
+        target.classList.add('is-dragging');
+        const employeeNumber = target.dataset.employeeNumber;
+        const equipmentNumber = target.dataset.equipmentNumber;
+        const crewId = target.dataset.crewId;
+        const workorderId = target.dataset.workorderId;
+        const shiftCard = target.closest('[data-shift-id]');
+        const fromShiftId = Number.parseInt(shiftCard.dataset.shiftId ?? '0', 10);
+        if (employeeNumber !== undefined) {
+            draggedData = {
+                type: 'employee',
+                id: employeeNumber,
+                fromShiftId
+            };
+        }
+        else if (equipmentNumber !== undefined) {
+            draggedData = {
+                type: 'equipment',
+                id: equipmentNumber,
+                fromShiftId
+            };
+        }
+        else if (crewId !== undefined) {
+            draggedData = {
+                type: 'crew',
+                id: Number.parseInt(crewId, 10),
+                fromShiftId
+            };
+        }
+        else if (workorderId !== undefined) {
+            draggedData = {
+                type: 'workOrder',
+                id: Number.parseInt(workorderId, 10),
+                fromShiftId
+            };
+        }
+        if (event.dataTransfer !== null) {
+            event.dataTransfer.effectAllowed = 'move';
+        }
+    }
+    function handleDragEnd(event) {
+        const target = event.target;
+        target.classList.remove('is-dragging');
+        draggedElement = null;
+        draggedData = null;
+        // Remove all drop zone highlights
+        document.querySelectorAll('.is-drop-target').forEach((element) => {
+            element.classList.remove('is-drop-target');
+        });
+    }
+    function handleDragOver(event) {
+        event.preventDefault();
+        const target = event.target;
+        // Highlight drop zones
+        const shiftBox = target.closest('.box');
+        if (shiftBox !== null) {
+            shiftBox.classList.add('is-drop-target');
+        }
+        if (event.dataTransfer !== null) {
+            event.dataTransfer.dropEffect = 'move';
+        }
+    }
+    function handleDragLeave(event) {
+        const target = event.target;
+        const shiftBox = target.closest('.box');
+        if (shiftBox !== null) {
+            shiftBox.classList.remove('is-drop-target');
+        }
+    }
+    function handleDrop(event) {
+        event.preventDefault();
+        const target = event.target;
+        target.classList.remove('is-drop-target');
+        if (draggedData === null) {
+            return;
+        }
+        const shiftCard = target.closest('[data-shift-id]');
+        const toShiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
+        if (toShiftId === 0 || toShiftId === draggedData.fromShiftId) {
+            return;
+        }
+        // Handle different drop scenarios
+        if (draggedData.type === 'employee') {
+            moveEmployee(draggedData.id, draggedData.fromShiftId, toShiftId);
+        }
+        else if (draggedData.type === 'equipment') {
+            moveEquipment(draggedData.id, draggedData.fromShiftId, toShiftId);
+        }
+        else if (draggedData.type === 'crew') {
+            moveCrew(draggedData.id, draggedData.fromShiftId, toShiftId);
+        }
+        else if (draggedData.type === 'workOrder') {
+            moveWorkOrder(draggedData.id, draggedData.fromShiftId, toShiftId);
+        }
+    }
+    function moveEmployee(employeeNumber, fromShiftId, toShiftId) {
+        // Delete from old shift
+        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`, {
+            shiftId: fromShiftId,
+            employeeNumber
+        }, (deleteResponse) => {
+            if (deleteResponse.success) {
+                // Add to new shift
+                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`, {
+                    shiftId: toShiftId,
+                    employeeNumber,
+                    shiftEmployeeNote: ''
+                }, (addResponse) => {
+                    if (addResponse.success) {
+                        cityssm.alertModal('Employee Moved', 'Employee has been moved to the new shift.', 'success', 'OK');
+                        loadShifts();
+                    }
+                    else {
+                        cityssm.alertModal('Error', 'Failed to add employee to new shift.', 'danger', 'OK');
+                    }
+                });
+            }
+            else {
+                cityssm.alertModal('Error', 'Failed to remove employee from original shift.', 'danger', 'OK');
+            }
+        });
+    }
+    function moveEquipment(equipmentNumber, fromShiftId, toShiftId) {
+        // Delete from old shift
+        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`, {
+            shiftId: fromShiftId,
+            equipmentNumber
+        }, (deleteResponse) => {
+            if (deleteResponse.success) {
+                // Add to new shift
+                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`, {
+                    shiftId: toShiftId,
+                    equipmentNumber,
+                    shiftEquipmentNote: ''
+                }, (addResponse) => {
+                    if (addResponse.success) {
+                        cityssm.alertModal('Equipment Moved', 'Equipment has been moved to the new shift.', 'success', 'OK');
+                        loadShifts();
+                    }
+                    else {
+                        cityssm.alertModal('Error', 'Failed to add equipment to new shift.', 'danger', 'OK');
+                    }
+                });
+            }
+            else {
+                cityssm.alertModal('Error', 'Failed to remove equipment from original shift.', 'danger', 'OK');
+            }
+        });
+    }
+    function moveCrew(crewId, fromShiftId, toShiftId) {
+        // Delete from old shift
+        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`, {
+            shiftId: fromShiftId,
+            crewId
+        }, (deleteResponse) => {
+            if (deleteResponse.success) {
+                // Add to new shift
+                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftCrew`, {
+                    shiftId: toShiftId,
+                    crewId,
+                    shiftCrewNote: ''
+                }, (addResponse) => {
+                    if (addResponse.success) {
+                        cityssm.alertModal('Crew Moved', 'Crew has been moved to the new shift.', 'success', 'OK');
+                        loadShifts();
+                    }
+                    else {
+                        cityssm.alertModal('Error', 'Failed to add crew to new shift.', 'danger', 'OK');
+                    }
+                });
+            }
+            else {
+                cityssm.alertModal('Error', 'Failed to remove crew from original shift.', 'danger', 'OK');
+            }
+        });
+    }
+    function moveWorkOrder(workOrderId, fromShiftId, toShiftId) {
+        // Delete from old shift
+        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftWorkOrder`, {
+            shiftId: fromShiftId,
+            workOrderId
+        }, (deleteResponse) => {
+            if (deleteResponse.success) {
+                // Add to new shift
+                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftWorkOrder`, {
+                    shiftId: toShiftId,
+                    workOrderId,
+                    shiftWorkOrderNote: ''
+                }, (addResponse) => {
+                    if (addResponse.success) {
+                        cityssm.alertModal('Work Order Moved', 'Work order has been moved to the new shift.', 'success', 'OK');
+                        loadShifts();
+                    }
+                    else {
+                        cityssm.alertModal('Error', 'Failed to add work order to new shift.', 'danger', 'OK');
+                    }
+                });
+            }
+            else {
+                cityssm.alertModal('Error', 'Failed to remove work order from original shift.', 'danger', 'OK');
+            }
+        });
+    }
     // Event listeners
     shiftDateElement.addEventListener('change', loadShifts);
     viewModeElement.addEventListener('change', renderShifts);
+    // Set up drag and drop event delegation on the results container
+    resultsContainerElement.addEventListener('dragstart', handleDragStart);
+    resultsContainerElement.addEventListener('dragend', handleDragEnd);
+    resultsContainerElement.addEventListener('dragover', handleDragOver);
+    resultsContainerElement.addEventListener('dragleave', handleDragLeave);
+    resultsContainerElement.addEventListener('drop', handleDrop);
     // Initialize flatpickr for date input
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     cityssm.initializeDatePickers(shiftDateElement);
