@@ -44,6 +44,7 @@ import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserP
 import handler_doUpdateDataListItem from '../handlers/admin-post/doUpdateDataListItem.js'
 import handler_doUpdateEmployee from '../handlers/admin-post/doUpdateEmployee.js'
 import handler_doUpdateEmployeeList from '../handlers/admin-post/doUpdateEmployeeList.js'
+import handler_doUpdateEmployeeListMember from '../handlers/admin-post/doUpdateEmployeeListMember.js'
 import handler_doUpdateEquipment from '../handlers/admin-post/doUpdateEquipment.js'
 import handler_doUpdateLocation from '../handlers/admin-post/doUpdateLocation.js'
 import handler_doUpdateSetting from '../handlers/admin-post/doUpdateSetting.js'
@@ -101,6 +102,7 @@ router
   .post('/doUpdateEmployeeList', handler_doUpdateEmployeeList)
   .post('/doDeleteEmployeeList', handler_doDeleteEmployeeList)
   .post('/doAddEmployeeListMember', handler_doAddEmployeeListMember)
+  .post('/doUpdateEmployeeListMember', handler_doUpdateEmployeeListMember)
   .post('/doDeleteEmployeeListMember', handler_doDeleteEmployeeListMember)
   .post('/doReorderEmployeeListMembers', handler_doReorderEmployeeListMembers)
 

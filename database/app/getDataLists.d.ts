@@ -4,3 +4,4 @@ export interface DataList {
     isSystemList: boolean;
 }
 export default function getDataLists(): Promise<DataList[]>;
+//# sourceMappingURL=getDataLists.d.ts.map

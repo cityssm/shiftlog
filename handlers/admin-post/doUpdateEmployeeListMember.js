@@ -36,45 +36,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = updateSetting;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var cache_helpers_js_1 = require("../../helpers/cache.helpers.js");
-var config_helpers_js_1 = require("../../helpers/config.helpers.js");
-function updateSetting(updateForm) {
+exports.default = handler;
+var getEmployeeList_js_1 = require("../../database/employeeLists/getEmployeeList.js");
+var updateEmployeeListMember_js_1 = require("../../database/employeeLists/updateEmployeeListMember.js");
+function handler(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool, currentDate, updateResult, insertResult;
+        var employeeListId, success, employeeList;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+                case 0:
+                    employeeListId = Number.parseInt(request.body.employeeListId, 10);
+                    return [4 /*yield*/, (0, updateEmployeeListMember_js_1.default)(employeeListId, request.body.employeeNumber, request.body.seniorityDate === '' ? undefined : request.body.seniorityDate, Number.parseInt(request.body.seniorityOrderNumber, 10))];
                 case 1:
-                    pool = _a.sent();
-                    currentDate = new Date();
-                    return [4 /*yield*/, pool
-                            .request()
-                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
-                            .input('settingKey', updateForm.settingKey)
-                            .input('settingValue', updateForm.settingValue)
-                            .input('recordUpdate_dateTime', currentDate).query(/* sql */ "\n      update ShiftLog.ApplicationSettings\n      set settingValue = @settingValue,\n        previousSettingValue = settingValue,\n        recordUpdate_dateTime = @recordUpdate_dateTime\n      where instance = @instance\n        and settingKey = @settingKey\n    ")];
+                    success = _a.sent();
+                    return [4 /*yield*/, (0, getEmployeeList_js_1.default)(employeeListId)];
                 case 2:
-                    updateResult = _a.sent();
-                    if (updateResult.rowsAffected[0] > 0) {
-                        (0, cache_helpers_js_1.clearCacheByTableName)('ApplicationSettings');
-                        return [2 /*return*/, true];
-                    }
-                    return [4 /*yield*/, pool
-                            .request()
-                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
-                            .input('settingKey', updateForm.settingKey)
-                            .input('settingValue', updateForm.settingValue)
-                            .input('previousSettingValue', '')
-                            .input('recordUpdate_dateTime', currentDate).query(/* sql */ "\n      insert into ShiftLog.ApplicationSettings (\n        instance, settingKey, settingValue, previousSettingValue,\n        recordUpdate_dateTime\n      )\n      values (\n        @instance, @settingKey, @settingValue, @previousSettingValue,\n        @recordUpdate_dateTime\n      )\n      ")];
-                case 3:
-                    insertResult = _a.sent();
-                    if (insertResult.rowsAffected[0] > 0) {
-                        (0, cache_helpers_js_1.clearCacheByTableName)('ApplicationSettings');
-                        return [2 /*return*/, true];
-                    }
-                    return [2 /*return*/, false];
+                    employeeList = _a.sent();
+                    response.json({
+                        employeeList: employeeList,
+                        success: success
+                    });
+                    return [2 /*return*/];
             }
         });
     });

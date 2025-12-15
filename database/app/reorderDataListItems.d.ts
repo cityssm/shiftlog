@@ -4,3 +4,4 @@ export interface ReorderDataListItemsForm {
     userName: string;
 }
 export default function reorderDataListItems(form: ReorderDataListItemsForm): Promise<boolean>;
+//# sourceMappingURL=reorderDataListItems.d.ts.map

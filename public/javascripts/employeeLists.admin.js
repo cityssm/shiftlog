@@ -1,29 +1,32 @@
+"use strict";
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable max-lines */
-(() => {
-    const shiftLog = exports.shiftLog;
-    const employeeListsContainerElement = document.querySelector('#container--employeeLists');
+Object.defineProperty(exports, "__esModule", { value: true });
+(function () {
+    var shiftLog = exports.shiftLog;
+    var employeeListsContainerElement = document.querySelector('#container--employeeLists');
     // Track Sortable instances to prevent duplicates
-    const sortableInstances = new Map();
+    var sortableInstances = new Map();
     function deleteEmployeeList(clickEvent) {
-        const buttonElement = clickEvent.currentTarget;
-        const employeeListId = Number.parseInt(buttonElement.dataset.employeeListId ?? '', 10);
-        const employeeList = exports.employeeLists.find((list) => list.employeeListId === employeeListId);
+        var _a;
+        var buttonElement = clickEvent.currentTarget;
+        var employeeListId = Number.parseInt((_a = buttonElement.dataset.employeeListId) !== null && _a !== void 0 ? _a : '', 10);
+        var employeeList = exports.employeeLists.find(function (list) { return list.employeeListId === employeeListId; });
         if (employeeList === undefined) {
             return;
         }
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Employee List',
-            message: `Are you sure you want to delete the employee list "${cityssm.escapeHTML(employeeList.employeeListName)}"? This action cannot be undone.`,
+            message: "Are you sure you want to delete the employee list \"".concat(cityssm.escapeHTML(employeeList.employeeListName), "\"? This action cannot be undone."),
             okButton: {
                 contextualColorName: 'warning',
                 text: 'Delete Employee List',
-                callbackFunction() {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEmployeeList`, {
-                        employeeListId
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                callbackFunction: function () {
+                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doDeleteEmployeeList"), {
+                        employeeListId: employeeListId
+                    }, function (rawResponseJSON) {
+                        var responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             if (responseJSON.employeeLists !== undefined) {
                                 exports.employeeLists = responseJSON.employeeLists;
@@ -48,18 +51,19 @@
         });
     }
     function editEmployeeList(clickEvent) {
-        const buttonElement = clickEvent.currentTarget;
-        const employeeListId = Number.parseInt(buttonElement.dataset.employeeListId ?? '', 10);
-        const employeeList = exports.employeeLists.find((list) => list.employeeListId === employeeListId);
+        var _a;
+        var buttonElement = clickEvent.currentTarget;
+        var employeeListId = Number.parseInt((_a = buttonElement.dataset.employeeListId) !== null && _a !== void 0 ? _a : '', 10);
+        var employeeList = exports.employeeLists.find(function (list) { return list.employeeListId === employeeListId; });
         if (employeeList === undefined) {
             return;
         }
-        let formElement;
-        let closeModalFunction;
+        var formElement;
+        var closeModalFunction;
         function doEdit(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeList`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doUpdateEmployeeList"), formElement, function (rawResponseJSON) {
+                var responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     if (responseJSON.employeeLists !== undefined) {
                         exports.employeeLists = responseJSON.employeeLists;
@@ -82,31 +86,32 @@
             });
         }
         cityssm.openHtmlModal('adminEmployeeLists-edit', {
-            onshow(modalElement) {
+            onshow: function (modalElement) {
+                var _a;
                 modalElement.querySelector('.modal-card-title').textContent =
                     'Edit Employee List';
                 formElement = modalElement.querySelector('form');
                 formElement.querySelector('#employeeListEdit--employeeListId').value = employeeListId.toString();
                 formElement.querySelector('#employeeListEdit--employeeListName').value = employeeList.employeeListName;
-                formElement.querySelector('#employeeListEdit--userGroupId').value = (employeeList.userGroupId ?? '').toString();
+                formElement.querySelector('#employeeListEdit--userGroupId').value = ((_a = employeeList.userGroupId) !== null && _a !== void 0 ? _a : '').toString();
                 formElement.addEventListener('submit', doEdit);
             },
-            onshown(_modalElement, closeFunction) {
+            onshown: function (_modalElement, closeFunction) {
                 closeModalFunction = closeFunction;
                 bulmaJS.toggleHtmlClipped();
             },
-            onhidden() {
+            onhidden: function () {
                 bulmaJS.toggleHtmlClipped();
             }
         });
     }
     function addEmployeeList() {
-        let formElement;
-        let closeModalFunction;
+        var formElement;
+        var closeModalFunction;
         function doAdd(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeList`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doAddEmployeeList"), formElement, function (rawResponseJSON) {
+                var responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     if (responseJSON.employeeLists !== undefined) {
                         exports.employeeLists = responseJSON.employeeLists;
@@ -129,35 +134,35 @@
             });
         }
         cityssm.openHtmlModal('adminEmployeeLists-add', {
-            onshow(modalElement) {
+            onshow: function (modalElement) {
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doAdd);
             },
-            onshown(_modalElement, closeFunction) {
+            onshown: function (_modalElement, closeFunction) {
                 closeModalFunction = closeFunction;
                 bulmaJS.toggleHtmlClipped();
             },
-            onhidden() {
+            onhidden: function () {
                 bulmaJS.toggleHtmlClipped();
             }
         });
     }
     function loadEmployeeListDetails(employeeListId, panelElement) {
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetEmployeeList`, {
-            employeeListId
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doGetEmployeeList"), {
+            employeeListId: employeeListId
+        }, function (rawResponseJSON) {
+            var responseJSON = rawResponseJSON;
             if (responseJSON.employeeList !== undefined) {
                 renderEmployeeListMembers(responseJSON.employeeList, panelElement);
             }
         });
     }
     function deleteEmployeeListMember(employeeListId, employeeNumber, panelElement) {
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEmployeeListMember`, {
-            employeeListId,
-            employeeNumber
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doDeleteEmployeeListMember"), {
+            employeeListId: employeeListId,
+            employeeNumber: employeeNumber
+        }, function (rawResponseJSON) {
+            var responseJSON = rawResponseJSON;
             if (responseJSON.success && responseJSON.employeeList !== undefined) {
                 renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                 bulmaJS.alert({
@@ -176,12 +181,12 @@
         });
     }
     function addEmployeeListMember(employeeListId, panelElement) {
-        let formElement;
-        let closeModalFunction;
+        var formElement;
+        var closeModalFunction;
         function doAdd(submitEvent) {
             submitEvent.preventDefault();
-            const formData = new FormData(formElement);
-            const employeeNumber = formData.get('employeeNumber').trim();
+            var formData = new FormData(formElement);
+            var employeeNumber = formData.get('employeeNumber').trim();
             if (employeeNumber === '') {
                 bulmaJS.alert({
                     contextualColorName: 'danger',
@@ -190,8 +195,8 @@
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doAddEmployeeListMember"), formElement, function (rawResponseJSON) {
+                var responseJSON = rawResponseJSON;
                 if (responseJSON.success &&
                     responseJSON.employeeList !== undefined) {
                     renderEmployeeListMembers(responseJSON.employeeList, panelElement);
@@ -212,81 +217,144 @@
             });
         }
         cityssm.openHtmlModal('adminEmployeeLists-addMember', {
-            onshow(modalElement) {
+            onshow: function (modalElement) {
                 formElement = modalElement.querySelector('form');
                 formElement.querySelector('#employeeListMember--employeeListId').value = employeeListId.toString();
                 // Populate employee select
-                const selectElement = formElement.querySelector('#employeeListMember--employeeNumber');
-                for (const employee of exports.employees) {
-                    const optionElement = document.createElement('option');
+                var selectElement = formElement.querySelector('#employeeListMember--employeeNumber');
+                for (var _i = 0, _a = exports.employees; _i < _a.length; _i++) {
+                    var employee = _a[_i];
+                    var optionElement = document.createElement('option');
                     optionElement.value = employee.employeeNumber;
-                    optionElement.textContent = `${employee.firstName} ${employee.lastName} (${employee.employeeNumber})`;
+                    optionElement.textContent = "".concat(employee.firstName, " ").concat(employee.lastName, " (").concat(employee.employeeNumber, ")");
                     selectElement.append(optionElement);
                 }
                 // Initialize flatpickr for seniority date
-                const seniorityDateInput = formElement.querySelector('#employeeListMember--seniorityDate');
+                var seniorityDateInput = formElement.querySelector('#employeeListMember--seniorityDate');
                 window.flatpickr(seniorityDateInput, {
                     dateFormat: 'Y-m-d',
                     allowInput: true
                 });
                 formElement.addEventListener('submit', doAdd);
             },
-            onshown(_modalElement, closeFunction) {
+            onshown: function (_modalElement, closeFunction) {
                 closeModalFunction = closeFunction;
                 bulmaJS.toggleHtmlClipped();
             },
-            onhidden() {
+            onhidden: function () {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function editEmployeeListMember(employeeListId, employeeNumber, employeeList, panelElement) {
+        var member = employeeList.members.find(function (m) { return m.employeeNumber === employeeNumber; });
+        if (member === undefined) {
+            return;
+        }
+        var formElement;
+        var closeModalFunction;
+        function doUpdate(submitEvent) {
+            submitEvent.preventDefault();
+            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doUpdateEmployeeListMember"), formElement, function (rawResponseJSON) {
+                var responseJSON = rawResponseJSON;
+                if (responseJSON.success &&
+                    responseJSON.employeeList !== undefined) {
+                    renderEmployeeListMembers(responseJSON.employeeList, panelElement);
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        title: 'Member Updated',
+                        message: 'Employee list member has been updated.'
+                    });
+                    closeModalFunction();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Updating Member',
+                        message: 'Please try again.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminEmployeeLists-editMember', {
+            onshow: function (modalElement) {
+                var _a, _b;
+                formElement = modalElement.querySelector('form');
+                formElement.querySelector('#employeeListMemberEdit--employeeListId').value = employeeListId.toString();
+                formElement.querySelector('#employeeListMemberEdit--employeeNumber').value = employeeNumber;
+                formElement.querySelector('#employeeListMemberEdit--employeeName').value = "".concat((_a = member.firstName) !== null && _a !== void 0 ? _a : '', " ").concat((_b = member.lastName) !== null && _b !== void 0 ? _b : '', " (").concat(employeeNumber, ")");
+                // Initialize flatpickr for seniority date
+                var seniorityDateInput = formElement.querySelector('#employeeListMemberEdit--seniorityDate');
+                // Set initial value
+                if (member.seniorityDate) {
+                    seniorityDateInput.value = cityssm.dateToString(new Date(member.seniorityDate));
+                }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ;
+                window.flatpickr(seniorityDateInput, {
+                    dateFormat: 'Y-m-d',
+                    allowInput: true
+                });
+                formElement.querySelector('#employeeListMemberEdit--seniorityOrderNumber').value = member.seniorityOrderNumber.toString();
+                formElement.addEventListener('submit', doUpdate);
+            },
+            onshown: function (_modalElement, closeFunction) {
+                closeModalFunction = closeFunction;
+                bulmaJS.toggleHtmlClipped();
+            },
+            onhidden: function () {
                 bulmaJS.toggleHtmlClipped();
             }
         });
     }
     function initializeSortable(employeeListId, seniorityDate, panelElement) {
         // Sanitize dateKey for use in CSS selector (remove special characters)
-        const sanitizedDateKey = seniorityDate
+        var sanitizedDateKey = seniorityDate
             ? seniorityDate.replace(/[^a-zA-Z0-9-]/g, '-')
             : 'nodate';
-        const containerId = `members--${employeeListId}--${sanitizedDateKey}`;
-        const tbodyElement = document.querySelector(`#${containerId}`);
+        var containerId = "members--".concat(employeeListId, "--").concat(sanitizedDateKey);
+        var tbodyElement = document.querySelector("#".concat(containerId));
         if (tbodyElement === null) {
             return;
         }
         // Check if the tbody has any sortable items
-        const hasItems = tbodyElement.querySelectorAll('tr[data-employee-number]').length > 0;
+        var hasItems = tbodyElement.querySelectorAll('tr[data-employee-number]').length > 0;
         if (!hasItems) {
             // Destroy existing instance if no items
-            const existingInstance = sortableInstances.get(containerId);
-            if (existingInstance !== undefined) {
-                existingInstance.destroy();
+            var existingInstance_1 = sortableInstances.get(containerId);
+            if (existingInstance_1 !== undefined) {
+                existingInstance_1.destroy();
                 sortableInstances.delete(containerId);
             }
             return;
         }
         // Destroy existing Sortable instance before creating a new one
-        const existingInstance = sortableInstances.get(containerId);
+        var existingInstance = sortableInstances.get(containerId);
         if (existingInstance !== undefined) {
             existingInstance.destroy();
         }
         // Create new Sortable instance
-        const sortableInstance = Sortable.create(tbodyElement, {
+        var sortableInstance = Sortable.create(tbodyElement, {
             handle: '.handle',
             animation: 150,
-            onEnd() {
+            onEnd: function () {
                 // Get the new order
-                const rows = tbodyElement.querySelectorAll('tr[data-employee-number]');
-                const employeeNumbers = [];
-                for (const row of rows) {
-                    const employeeNumber = row.dataset.employeeNumber;
+                var rows = tbodyElement.querySelectorAll('tr[data-employee-number]');
+                var employeeNumbers = [];
+                for (var _i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
+                    var row = rows_1[_i];
+                    var employeeNumber = row.dataset.employeeNumber;
                     if (employeeNumber !== undefined) {
                         employeeNumbers.push(employeeNumber);
                     }
                 }
                 // Send to server
-                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderEmployeeListMembers`, {
-                    employeeListId,
-                    employeeNumbers,
-                    seniorityDate: seniorityDate ?? undefined
-                }, (rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
+                cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doReorderEmployeeListMembers"), {
+                    employeeListId: employeeListId,
+                    employeeNumbers: employeeNumbers,
+                    seniorityDate: seniorityDate !== null && seniorityDate !== void 0 ? seniorityDate : undefined
+                }, function (rawResponseJSON) {
+                    var responseJSON = rawResponseJSON;
                     if (responseJSON.success &&
                         responseJSON.employeeList !== undefined) {
                         renderEmployeeListMembers(responseJSON.employeeList, panelElement);
@@ -305,103 +373,73 @@
         sortableInstances.set(containerId, sortableInstance);
     }
     function renderEmployeeListMembers(employeeList, panelElement) {
-        const membersContainerElement = panelElement.querySelector('.panel-block-members');
+        var _a, _b, _c, _d;
+        var membersContainerElement = panelElement.querySelector('.panel-block-members');
         if (employeeList.members.length === 0) {
-            membersContainerElement.innerHTML = `<div class="panel-block">
-        <p class="has-text-grey">
-          No employees in this list. Click "Add Member" to add an employee.
-        </p>
-      </div>`;
+            membersContainerElement.innerHTML = "<div class=\"panel-block\">\n        <p class=\"has-text-grey\">\n          No employees in this list. Click \"Add Member\" to add an employee.\n        </p>\n      </div>";
             return;
         }
         // Group members by seniority date
-        const membersByDate = new Map();
-        for (const member of employeeList.members) {
-            const dateKey = member.seniorityDate?.toString() ?? 'no-date';
+        var membersByDate = new Map();
+        for (var _i = 0, _e = employeeList.members; _i < _e.length; _i++) {
+            var member = _e[_i];
+            var dateKey = (_b = (_a = member.seniorityDate) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : 'no-date';
             if (!membersByDate.has(dateKey)) {
                 membersByDate.set(dateKey, []);
             }
             membersByDate.get(dateKey).push(member);
         }
-        let membersHtml = '';
-        for (const [dateKey, members] of membersByDate) {
+        var membersHtml = '';
+        for (var _f = 0, membersByDate_1 = membersByDate; _f < membersByDate_1.length; _f++) {
+            var _g = membersByDate_1[_f], dateKey = _g[0], members = _g[1];
             // Sanitize dateKey for use in CSS selector (remove special characters)
-            const sanitizedDateKey = dateKey === 'no-date'
+            var sanitizedDateKey = dateKey === 'no-date'
                 ? 'nodate'
                 : dateKey.replace(/[^a-zA-Z0-9-]/g, '-');
-            const containerId = `members--${employeeList.employeeListId}--${sanitizedDateKey}`;
-            const dateDisplay = dateKey === 'no-date'
+            var containerId = "members--".concat(employeeList.employeeListId, "--").concat(sanitizedDateKey);
+            var dateDisplay = dateKey === 'no-date'
                 ? 'No Seniority Date'
                 : cityssm.dateToString(new Date(dateKey));
-            membersHtml += `<div class="panel-block is-block p-0">
-        <div class="px-4 py-2 has-background-light">
-          <strong>${dateDisplay}</strong>
-        </div>
-        <div class="table-container" style="width: 100%;">
-          <table class="table is-striped is-hoverable is-fullwidth mb-0">
-            <thead>
-              <tr>
-                <th style="width: 60px;">Order</th>
-                <th>Employee Name</th>
-                <th>Employee Number</th>
-                <th>
-                  <span class="is-sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="is-sortable" id="${containerId}">`;
-            for (const member of members) {
+            membersHtml += "<div class=\"panel-block is-block p-0\">\n        <div class=\"px-4 py-2 has-background-light\">\n          <strong>".concat(dateDisplay, "</strong>\n        </div>\n        <div class=\"table-container\" style=\"width: 100%;\">\n          <table class=\"table is-striped is-hoverable is-fullwidth mb-0\">\n            <thead>\n              <tr>\n                <th style=\"width: 60px;\">Order</th>\n                <th>Employee Name</th>\n                <th>Employee Number</th>\n                <th>\n                  <span class=\"is-sr-only\">Actions</span>\n                </th>\n              </tr>\n            </thead>\n            <tbody class=\"is-sortable\" id=\"").concat(containerId, "\">");
+            for (var _h = 0, members_1 = members; _h < members_1.length; _h++) {
+                var member = members_1[_h];
                 // eslint-disable-next-line no-unsanitized/method
-                membersHtml += `<tr data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}">
-          <td class="has-text-centered">
-            <span class="icon is-small has-text-grey handle" style="cursor: move;">
-              <i class="fa-solid fa-grip-vertical"></i>
-            </span>
-          </td>
-          <td>
-            ${cityssm.escapeHTML(member.firstName ?? '')} ${cityssm.escapeHTML(member.lastName ?? '')}
-          </td>
-          <td>
-            ${cityssm.escapeHTML(member.employeeNumber)}
-          </td>
-          <td class="has-text-right">
-            <button
-              class="button is-danger is-small button--deleteMember"
-              data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
-              type="button"
-              aria-label="Delete"
-            >
-              <span class="icon">
-                <i class="fa-solid fa-trash"></i>
-              </span>
-            </button>
-          </td>
-        </tr>`;
+                membersHtml += "<tr data-employee-number=\"".concat(cityssm.escapeHTML(member.employeeNumber), "\">\n          <td class=\"has-text-centered\">\n            <span class=\"icon is-small has-text-grey handle\" style=\"cursor: move;\">\n              <i class=\"fa-solid fa-grip-vertical\"></i>\n            </span>\n          </td>\n          <td>\n            ").concat(cityssm.escapeHTML((_c = member.firstName) !== null && _c !== void 0 ? _c : ''), " ").concat(cityssm.escapeHTML((_d = member.lastName) !== null && _d !== void 0 ? _d : ''), "\n          </td>\n          <td>\n            ").concat(cityssm.escapeHTML(member.employeeNumber), "\n          </td>\n          <td class=\"has-text-right\">\n            <div class=\"buttons are-small is-justify-content-end mb-0\">\n              <button\n                class=\"button is-info button--editMember\"\n                data-employee-number=\"").concat(cityssm.escapeHTML(member.employeeNumber), "\"\n                type=\"button\"\n                aria-label=\"Edit\"\n              >\n                <span class=\"icon\">\n                  <i class=\"fa-solid fa-pencil\"></i>\n                </span>\n              </button>\n              <button\n                class=\"button is-danger button--deleteMember\"\n                data-employee-number=\"").concat(cityssm.escapeHTML(member.employeeNumber), "\"\n                type=\"button\"\n                aria-label=\"Delete\"\n              >\n                <span class=\"icon\">\n                  <i class=\"fa-solid fa-trash\"></i>\n                </span>\n              </button>\n            </div>\n          </td>\n        </tr>");
             }
-            membersHtml += `</tbody>
-          </table>
-        </div>
-      </div>`;
+            membersHtml += "</tbody>\n          </table>\n        </div>\n      </div>";
         }
         membersContainerElement.innerHTML = membersHtml;
+        // Add event listeners for edit buttons
+        var editButtons = membersContainerElement.querySelectorAll('.button--editMember');
+        for (var _j = 0, editButtons_1 = editButtons; _j < editButtons_1.length; _j++) {
+            var button = editButtons_1[_j];
+            button.addEventListener('click', function (clickEvent) {
+                var _a;
+                var buttonElement = clickEvent.currentTarget;
+                var employeeNumber = (_a = buttonElement.dataset.employeeNumber) !== null && _a !== void 0 ? _a : '';
+                editEmployeeListMember(employeeList.employeeListId, employeeNumber, employeeList, panelElement);
+            });
+        }
         // Add event listeners for delete buttons
-        const deleteButtons = membersContainerElement.querySelectorAll('.button--deleteMember');
-        for (const button of deleteButtons) {
-            button.addEventListener('click', (clickEvent) => {
-                const buttonElement = clickEvent.currentTarget;
-                const employeeNumber = buttonElement.dataset.employeeNumber ?? '';
-                const member = employeeList.members.find((m) => m.employeeNumber === employeeNumber);
+        var deleteButtons = membersContainerElement.querySelectorAll('.button--deleteMember');
+        for (var _k = 0, deleteButtons_1 = deleteButtons; _k < deleteButtons_1.length; _k++) {
+            var button = deleteButtons_1[_k];
+            button.addEventListener('click', function (clickEvent) {
+                var _a, _b, _c;
+                var buttonElement = clickEvent.currentTarget;
+                var employeeNumber = (_a = buttonElement.dataset.employeeNumber) !== null && _a !== void 0 ? _a : '';
+                var member = employeeList.members.find(function (m) { return m.employeeNumber === employeeNumber; });
                 if (member === undefined) {
                     return;
                 }
                 bulmaJS.confirm({
                     contextualColorName: 'warning',
                     title: 'Remove Employee',
-                    message: `Are you sure you want to remove ${cityssm.escapeHTML(member.firstName ?? '')} ${cityssm.escapeHTML(member.lastName ?? '')} from this list?`,
+                    message: "Are you sure you want to remove ".concat(cityssm.escapeHTML((_b = member.firstName) !== null && _b !== void 0 ? _b : ''), " ").concat(cityssm.escapeHTML((_c = member.lastName) !== null && _c !== void 0 ? _c : ''), " from this list?"),
                     okButton: {
                         contextualColorName: 'warning',
                         text: 'Remove Employee',
-                        callbackFunction() {
+                        callbackFunction: function () {
                             deleteEmployeeListMember(employeeList.employeeListId, employeeNumber, panelElement);
                         }
                     }
@@ -409,84 +447,30 @@
             });
         }
         // Initialize sortable for each date group
-        for (const [dateKey, _members] of membersByDate) {
+        for (var _l = 0, membersByDate_2 = membersByDate; _l < membersByDate_2.length; _l++) {
+            var _m = membersByDate_2[_l], dateKey = _m[0], _members = _m[1];
             initializeSortable(employeeList.employeeListId, dateKey === 'no-date' ? null : dateKey, panelElement);
         }
     }
     function renderEmployeeLists() {
+        var _a;
         if (exports.employeeLists.length === 0) {
-            employeeListsContainerElement.innerHTML = `<div class="message is-info">
-        <div class="message-body">
-          <p class="has-text-centered">
-            No employee lists have been created yet.
-          </p>
-          <p class="has-text-centered mt-3">
-            Click "Add Employee List" to create one.
-          </p>
-        </div>
-      </div>`;
+            employeeListsContainerElement.innerHTML = "<div class=\"message is-info\">\n        <div class=\"message-body\">\n          <p class=\"has-text-centered\">\n            No employee lists have been created yet.\n          </p>\n          <p class=\"has-text-centered mt-3\">\n            Click \"Add Employee List\" to create one.\n          </p>\n        </div>\n      </div>";
             return;
         }
         employeeListsContainerElement.innerHTML = '';
-        for (const employeeList of exports.employeeLists) {
-            const userGroup = employeeList.userGroupId
-                ? exports.userGroups.find((ug) => ug.userGroupId === employeeList.userGroupId)
+        var _loop_1 = function (employeeList) {
+            var userGroup = employeeList.userGroupId
+                ? exports.userGroups.find(function (ug) { return ug.userGroupId === employeeList.userGroupId; })
                 : undefined;
-            const panelElement = document.createElement('details');
+            var panelElement = document.createElement('details');
             panelElement.className = 'panel mb-5 collapsable-panel';
             panelElement.dataset.employeeListId =
                 employeeList.employeeListId.toString();
             // eslint-disable-next-line no-unsanitized/property
-            panelElement.innerHTML = `<summary class="panel-heading is-clickable">
-        <span class="icon-text">
-          <span class="icon">
-            <i class="fa-solid fa-chevron-right details-chevron"></i>
-          </span>
-          <span class="has-text-weight-semibold mr-2">
-            ${cityssm.escapeHTML(employeeList.employeeListName)}
-          </span>
-          ${userGroup !== undefined
-                ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
-                : ''}
-          <span class="tag is-rounded ml-2">${employeeList.memberCount ?? 0}</span>
-        </span>
-      </summary>
-      <div class="panel-block is-justify-content-space-between is-align-items-center">
-        <div class="buttons are-small mb-0">
-          <button
-            class="button is-primary button--addMember"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-plus"></i>
-            </span>
-            <span>Add Member</span>
-          </button>
-        </div>
-        <div class="buttons are-small mb-0">
-          <button
-            class="button is-info button--editEmployeeList"
-            data-employee-list-id="${employeeList.employeeListId}"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-pencil"></i>
-            </span>
-            <span>Edit List</span>
-          </button>
-          <button
-            class="button is-danger button--deleteEmployeeList"
-            data-employee-list-id="${employeeList.employeeListId}"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-trash"></i>
-            </span>
-            <span>Delete List</span>
-          </button>
-        </div>
-      </div>
-      <div class="panel-block-members"></div>`;
+            panelElement.innerHTML = "<summary class=\"panel-heading is-clickable\">\n        <span class=\"icon-text\">\n          <span class=\"icon\">\n            <i class=\"fa-solid fa-chevron-right details-chevron\"></i>\n          </span>\n          <span class=\"has-text-weight-semibold mr-2\">\n            ".concat(cityssm.escapeHTML(employeeList.employeeListName), "\n          </span>\n          ").concat(userGroup !== undefined
+                ? "<span class=\"tag is-info\">".concat(cityssm.escapeHTML(userGroup.userGroupName), "</span>")
+                : '', "\n          <span class=\"tag is-rounded ml-2\">").concat((_a = employeeList.memberCount) !== null && _a !== void 0 ? _a : 0, "</span>\n        </span>\n      </summary>\n      <div class=\"panel-block is-justify-content-space-between is-align-items-center\">\n        <div class=\"buttons are-small mb-0\">\n          <button\n            class=\"button is-primary button--addMember\"\n            type=\"button\"\n          >\n            <span class=\"icon\">\n              <i class=\"fa-solid fa-plus\"></i>\n            </span>\n            <span>Add Member</span>\n          </button>\n        </div>\n        <div class=\"buttons are-small mb-0\">\n          <button\n            class=\"button is-info button--editEmployeeList\"\n            data-employee-list-id=\"").concat(employeeList.employeeListId, "\"\n            type=\"button\"\n          >\n            <span class=\"icon\">\n              <i class=\"fa-solid fa-pencil\"></i>\n            </span>\n            <span>Edit List</span>\n          </button>\n          <button\n            class=\"button is-danger button--deleteEmployeeList\"\n            data-employee-list-id=\"").concat(employeeList.employeeListId, "\"\n            type=\"button\"\n          >\n            <span class=\"icon\">\n              <i class=\"fa-solid fa-trash\"></i>\n            </span>\n            <span>Delete List</span>\n          </button>\n        </div>\n      </div>\n      <div class=\"panel-block-members\"></div>");
             employeeListsContainerElement.append(panelElement);
             // Add event listeners
             panelElement
@@ -497,15 +481,19 @@
                 .addEventListener('click', deleteEmployeeList);
             panelElement
                 .querySelector('.button--addMember')
-                .addEventListener('click', () => {
+                .addEventListener('click', function () {
                 addEmployeeListMember(employeeList.employeeListId, panelElement);
             });
             // Load details when panel is opened
-            panelElement.addEventListener('toggle', () => {
+            panelElement.addEventListener('toggle', function () {
                 if (panelElement.open) {
                     loadEmployeeListDetails(employeeList.employeeListId, panelElement);
                 }
             });
+        };
+        for (var _i = 0, _b = exports.employeeLists; _i < _b.length; _i++) {
+            var employeeList = _b[_i];
+            _loop_1(employeeList);
         }
     }
     // Initialize

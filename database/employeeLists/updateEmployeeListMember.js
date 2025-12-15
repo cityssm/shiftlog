@@ -36,45 +36,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = updateSetting;
+exports.default = updateEmployeeListMember;
 var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var cache_helpers_js_1 = require("../../helpers/cache.helpers.js");
 var config_helpers_js_1 = require("../../helpers/config.helpers.js");
-function updateSetting(updateForm) {
+function updateEmployeeListMember(employeeListId, employeeNumber, seniorityDate, seniorityOrderNumber) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool, currentDate, updateResult, insertResult;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+        var pool, result, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 3, , 4]);
+                    return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
                 case 1:
-                    pool = _a.sent();
-                    currentDate = new Date();
+                    pool = _b.sent();
                     return [4 /*yield*/, pool
                             .request()
                             .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
-                            .input('settingKey', updateForm.settingKey)
-                            .input('settingValue', updateForm.settingValue)
-                            .input('recordUpdate_dateTime', currentDate).query(/* sql */ "\n      update ShiftLog.ApplicationSettings\n      set settingValue = @settingValue,\n        previousSettingValue = settingValue,\n        recordUpdate_dateTime = @recordUpdate_dateTime\n      where instance = @instance\n        and settingKey = @settingKey\n    ")];
+                            .input('employeeListId', employeeListId)
+                            .input('employeeNumber', employeeNumber)
+                            .input('seniorityDate', seniorityDate !== null && seniorityDate !== void 0 ? seniorityDate : null)
+                            .input('seniorityOrderNumber', seniorityOrderNumber).query(/* sql */ "\n        update ShiftLog.EmployeeListMembers\n        set seniorityDate = @seniorityDate,\n          seniorityOrderNumber = @seniorityOrderNumber\n        where employeeListId = @employeeListId\n          and employeeNumber = @employeeNumber\n      ")];
                 case 2:
-                    updateResult = _a.sent();
-                    if (updateResult.rowsAffected[0] > 0) {
-                        (0, cache_helpers_js_1.clearCacheByTableName)('ApplicationSettings');
-                        return [2 /*return*/, true];
-                    }
-                    return [4 /*yield*/, pool
-                            .request()
-                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
-                            .input('settingKey', updateForm.settingKey)
-                            .input('settingValue', updateForm.settingValue)
-                            .input('previousSettingValue', '')
-                            .input('recordUpdate_dateTime', currentDate).query(/* sql */ "\n      insert into ShiftLog.ApplicationSettings (\n        instance, settingKey, settingValue, previousSettingValue,\n        recordUpdate_dateTime\n      )\n      values (\n        @instance, @settingKey, @settingValue, @previousSettingValue,\n        @recordUpdate_dateTime\n      )\n      ")];
+                    result = _b.sent();
+                    return [2 /*return*/, result.rowsAffected[0] > 0];
                 case 3:
-                    insertResult = _a.sent();
-                    if (insertResult.rowsAffected[0] > 0) {
-                        (0, cache_helpers_js_1.clearCacheByTableName)('ApplicationSettings');
-                        return [2 /*return*/, true];
-                    }
+                    _a = _b.sent();
                     return [2 /*return*/, false];
+                case 4: return [2 /*return*/];
             }
         });
     });

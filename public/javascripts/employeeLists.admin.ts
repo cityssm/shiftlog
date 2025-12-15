@@ -441,6 +441,120 @@ declare const exports: {
     })
   }
 
+  function editEmployeeListMember(
+    employeeListId: number,
+    employeeNumber: string,
+    employeeList: EmployeeListWithMembers,
+    panelElement: HTMLElement
+  ): void {
+    const member = employeeList.members.find(
+      (m) => m.employeeNumber === employeeNumber
+    )
+
+    if (member === undefined) {
+      return
+    }
+
+    let formElement: HTMLFormElement
+    let closeModalFunction: () => void
+
+    function doUpdate(submitEvent: Event): void {
+      submitEvent.preventDefault()
+
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`,
+        formElement,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            employeeList?: EmployeeListWithMembers
+          }
+
+          if (
+            responseJSON.success &&
+            responseJSON.employeeList !== undefined
+          ) {
+            renderEmployeeListMembers(responseJSON.employeeList, panelElement)
+
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'Member Updated',
+
+              message: 'Employee list member has been updated.'
+            })
+
+            closeModalFunction()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error Updating Member',
+
+              message: 'Please try again.'
+            })
+          }
+        }
+      )
+    }
+
+    cityssm.openHtmlModal('adminEmployeeLists-editMember', {
+      onshow(modalElement) {
+        formElement = modalElement.querySelector(
+          'form'
+        ) as HTMLFormElement
+
+        ;(
+          formElement.querySelector(
+            '#employeeListMemberEdit--employeeListId'
+          ) as HTMLInputElement
+        ).value = employeeListId.toString()
+        ;(
+          formElement.querySelector(
+            '#employeeListMemberEdit--employeeNumber'
+          ) as HTMLInputElement
+        ).value = employeeNumber
+        ;(
+          formElement.querySelector(
+            '#employeeListMemberEdit--employeeName'
+          ) as HTMLInputElement
+        ).value = `${member.firstName ?? ''} ${member.lastName ?? ''} (${employeeNumber})`
+
+        // Initialize flatpickr for seniority date
+        const seniorityDateInput = formElement.querySelector(
+          '#employeeListMemberEdit--seniorityDate'
+        ) as HTMLInputElement
+
+        // Set initial value
+        if (member.seniorityDate) {
+          seniorityDateInput.value = cityssm.dateToString(
+            new Date(member.seniorityDate)
+          )
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ;(window as any).flatpickr(seniorityDateInput, {
+          dateFormat: 'Y-m-d',
+          allowInput: true
+        })
+
+        ;(
+          formElement.querySelector(
+            '#employeeListMemberEdit--seniorityOrderNumber'
+          ) as HTMLInputElement
+        ).value = member.seniorityOrderNumber.toString()
+
+        formElement.addEventListener('submit', doUpdate)
+      },
+      onshown(_modalElement, closeFunction) {
+        closeModalFunction = closeFunction
+
+        bulmaJS.toggleHtmlClipped()
+      },
+      onhidden() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
   function initializeSortable(
     employeeListId: number,
     seniorityDate: string | null | undefined,
@@ -617,16 +731,28 @@ declare const exports: {
             ${cityssm.escapeHTML(member.employeeNumber)}
           </td>
           <td class="has-text-right">
-            <button
-              class="button is-danger is-small button--deleteMember"
-              data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
-              type="button"
-              aria-label="Delete"
-            >
-              <span class="icon">
-                <i class="fa-solid fa-trash"></i>
-              </span>
-            </button>
+            <div class="buttons are-small is-justify-content-end mb-0">
+              <button
+                class="button is-info button--editMember"
+                data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
+                type="button"
+                aria-label="Edit"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+              </button>
+              <button
+                class="button is-danger button--deleteMember"
+                data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
+                type="button"
+                aria-label="Delete"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-trash"></i>
+                </span>
+              </button>
+            </div>
           </td>
         </tr>`
       }
@@ -638,6 +764,25 @@ declare const exports: {
     }
 
     membersContainerElement.innerHTML = membersHtml
+
+    // Add event listeners for edit buttons
+    const editButtons = membersContainerElement.querySelectorAll(
+      '.button--editMember'
+    )
+
+    for (const button of editButtons) {
+      button.addEventListener('click', (clickEvent) => {
+        const buttonElement = clickEvent.currentTarget as HTMLButtonElement
+        const employeeNumber = buttonElement.dataset.employeeNumber ?? ''
+
+        editEmployeeListMember(
+          employeeList.employeeListId,
+          employeeNumber,
+          employeeList,
+          panelElement
+        )
+      })
+    }
 
     // Add event listeners for delete buttons
     const deleteButtons = membersContainerElement.querySelectorAll(

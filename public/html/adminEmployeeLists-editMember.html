@@ -1,0 +1,78 @@
+<div
+  class="modal"
+  id="modal--editEmployeeListMember"
+  role="dialog"
+  aria-label="Edit Employee List Member"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit List Member</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editEmployeeListMember">
+        <input id="employeeListMemberEdit--employeeListId" name="employeeListId" type="hidden" />
+        <input id="employeeListMemberEdit--employeeNumber" name="employeeNumber" type="hidden" />
+        <div class="field">
+          <label class="label">Employee</label>
+          <div class="control">
+            <input
+              class="input"
+              id="employeeListMemberEdit--employeeName"
+              type="text"
+              readonly
+              disabled
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="employeeListMemberEdit--seniorityDate">Seniority Date</label>
+          <div class="control">
+            <input
+              class="input"
+              id="employeeListMemberEdit--seniorityDate"
+              name="seniorityDate"
+              type="text"
+              placeholder="YYYY-MM-DD"
+              autocomplete="off"
+            />
+          </div>
+          <p class="help">Optional. Employees are sorted first by seniority date, then by order number within the same date.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="employeeListMemberEdit--seniorityOrderNumber">Order Number</label>
+          <div class="control">
+            <input
+              class="input"
+              id="employeeListMemberEdit--seniorityOrderNumber"
+              name="seniorityOrderNumber"
+              type="number"
+              min="0"
+              value="0"
+            />
+          </div>
+          <p class="help">Used to order employees within the same seniority date. Can be changed via drag-and-drop.</p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--editEmployeeListMember"
+        >
+          Update Member
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
