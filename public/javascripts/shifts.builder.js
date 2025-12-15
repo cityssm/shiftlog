@@ -6,6 +6,8 @@
     const viewModeElement = document.querySelector('#builder--viewMode');
     const resultsContainerElement = document.querySelector('#container--shiftBuilderResults');
     let currentShifts = [];
+    // Track locked shifts
+    const lockedShifts = new Set();
     function getItemKey(type, id) {
         return `${type}:${id}`;
     }
@@ -66,6 +68,8 @@
     }
     function renderEmployeesView(shift, duplicates) {
         const isEditable = isShiftEditable(shift);
+        const isLocked = lockedShifts.has(shift.shiftId);
+        const isDraggable = isEditable && !isLocked;
         const containerElement = document.createElement('div');
         containerElement.className = 'shift-details';
         // Crews
@@ -85,6 +89,8 @@
                 }
                 if (isEditable) {
                     crewItem.classList.add('drop-target-crew');
+                }
+                if (isDraggable) {
                     crewItem.draggable = true;
                 }
                 crewItem.dataset.crewId = crew.crewId.toString();
@@ -125,6 +131,8 @@
                 }
                 if (isEditable) {
                     employeeItem.classList.add('drop-target-employee');
+                }
+                if (isDraggable) {
                     employeeItem.draggable = true;
                 }
                 employeeItem.dataset.employeeNumber = employee.employeeNumber;
@@ -174,7 +182,7 @@
                 if (isDup) {
                     equipmentItem.classList.add('has-background-warning-light');
                 }
-                if (isEditable) {
+                if (isDraggable) {
                     equipmentItem.draggable = true;
                 }
                 equipmentItem.dataset.equipmentNumber = equipment.equipmentNumber;
@@ -220,6 +228,8 @@
     }
     function renderTasksView(shift, duplicates) {
         const isEditable = isShiftEditable(shift);
+        const isLocked = lockedShifts.has(shift.shiftId);
+        const isDraggable = isEditable && !isLocked;
         const containerElement = document.createElement('div');
         containerElement.className = 'shift-details';
         if (shift.workOrders.length > 0) {
@@ -236,7 +246,7 @@
                 if (isDup) {
                     workOrderItem.classList.add('has-background-warning-light');
                 }
-                if (isEditable) {
+                if (isDraggable) {
                     workOrderItem.draggable = true;
                 }
                 workOrderItem.dataset.workorderId = workOrder.workOrderId.toString();
@@ -289,6 +299,28 @@
         headerLevel.className = 'level is-mobile mb-3';
         const levelLeft = document.createElement('div');
         levelLeft.className = 'level-left';
+        // Lock button (if editable)
+        if (isEditable) {
+            const lockItem = document.createElement('div');
+            lockItem.className = 'level-item';
+            const lockButton = document.createElement('button');
+            lockButton.className = 'button is-small is-ghost';
+            lockButton.type = 'button';
+            lockButton.title = 'Lock/Unlock shift';
+            lockButton.dataset.shiftId = shift.shiftId.toString();
+            const isLocked = lockedShifts.has(shift.shiftId);
+            const lockIcon = document.createElement('span');
+            lockIcon.className = 'icon is-small';
+            lockIcon.innerHTML = isLocked
+                ? '<i class="fa-solid fa-lock has-text-danger"></i>'
+                : '<i class="fa-solid fa-lock-open has-text-success"></i>';
+            lockButton.append(lockIcon);
+            lockButton.addEventListener('click', () => {
+                toggleShiftLock(shift.shiftId);
+            });
+            lockItem.append(lockButton);
+            levelLeft.append(lockItem);
+        }
         const levelLeftItem = document.createElement('div');
         levelLeftItem.className = 'level-item';
         const titleElement = document.createElement('h3');
@@ -534,14 +566,23 @@
             }
         }
     }
+    // Lock/unlock functionality
+    function toggleShiftLock(shiftId) {
+        if (lockedShifts.has(shiftId)) {
+            lockedShifts.delete(shiftId);
+        }
+        else {
+            lockedShifts.add(shiftId);
+        }
+        // Re-render shifts to update lock button and draggable states
+        renderShifts();
+    }
     // Drag and drop state
     let draggedElement = null;
     let draggedData = null;
     // Drag and drop handlers
     function handleDragStart(event) {
         const target = event.target;
-        draggedElement = target;
-        target.classList.add('is-dragging');
         const employeeNumber = target.dataset.employeeNumber;
         const equipmentNumber = target.dataset.equipmentNumber;
         const crewId = target.dataset.crewId;
@@ -551,6 +592,13 @@
         const fromShiftId = fromAvailable
             ? 0
             : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
+        // Prevent dragging from locked shifts
+        if (fromShiftId !== 0 && lockedShifts.has(fromShiftId)) {
+            event.preventDefault();
+            return;
+        }
+        draggedElement = target;
+        target.classList.add('is-dragging');
         if (employeeNumber !== undefined) {
             draggedData = {
                 fromShiftId,
@@ -668,7 +716,8 @@
         // Handle employee dropped on supervisor slot
         if (supervisorTarget !== null && draggedData.type === 'employee') {
             const shiftId = Number.parseInt(supervisorTarget.dataset.shiftId ?? '0', 10);
-            if (shiftId > 0) {
+            // Prevent dropping on locked shifts
+            if (shiftId > 0 && !lockedShifts.has(shiftId)) {
                 makeEmployeeSupervisor(draggedData.id, shiftId);
                 return;
             }
@@ -678,7 +727,8 @@
             const shiftCard = crewTarget.closest('[data-shift-id]');
             const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
             const crewId = Number.parseInt(crewTarget.dataset.crewId ?? '0', 10);
-            if (shiftId > 0 && crewId > 0) {
+            // Prevent dropping on locked shifts
+            if (shiftId > 0 && crewId > 0 && !lockedShifts.has(shiftId)) {
                 assignEmployeeToCrew(draggedData.id, draggedData.fromShiftId, shiftId, crewId);
                 return;
             }
@@ -688,7 +738,8 @@
             const shiftCard = employeeTarget.closest('[data-shift-id]');
             const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
             const employeeNumber = employeeTarget.dataset.employeeNumber ?? '';
-            if (shiftId > 0 && employeeNumber !== '') {
+            // Prevent dropping on locked shifts
+            if (shiftId > 0 && employeeNumber !== '' && !lockedShifts.has(shiftId)) {
                 assignEquipmentToEmployee(draggedData.id, draggedData.fromShiftId, shiftId, employeeNumber);
                 return;
             }
@@ -697,6 +748,10 @@
         const shiftCard = target.closest('[data-shift-id]');
         const toShiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
         if (toShiftId === 0 || toShiftId === draggedData.fromShiftId) {
+            return;
+        }
+        // Prevent dropping on locked shifts
+        if (lockedShifts.has(toShiftId)) {
             return;
         }
         // Handle different drop scenarios
