@@ -394,6 +394,17 @@
             ? renderEmployeesView(shift, duplicates)
             : renderTasksView(shift, duplicates);
         boxElement.append(viewContent);
+        // Add Resource button (only for editable shifts)
+        if (isEditable) {
+            const addResourceButton = document.createElement('button');
+            addResourceButton.className = 'button is-small is-success is-fullwidth mt-3';
+            addResourceButton.type = 'button';
+            addResourceButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add Resource</span>';
+            addResourceButton.addEventListener('click', () => {
+                openAddResourceModal(shift, viewMode);
+            });
+            boxElement.append(addResourceButton);
+        }
         cardElement.append(boxElement);
         return cardElement;
     }
@@ -1425,6 +1436,359 @@
     const createShiftButton = document.querySelector('#button--createShift');
     if (createShiftButton !== null) {
         createShiftButton.addEventListener('click', openCreateShiftModal);
+    }
+    // Add Resource Modal
+    function openAddResourceModal(shift, viewMode) {
+        let closeModalFunction;
+        cityssm.openHtmlModal('shifts-builder-addResource', {
+            onshow(modalElement) {
+                // Populate shift details
+                const shiftTypeElement = modalElement.querySelector('#builderAddResource--shiftType');
+                const shiftNumberElement = modalElement.querySelector('#builderAddResource--shiftNumber');
+                const shiftTimeElement = modalElement.querySelector('#builderAddResource--shiftTime');
+                const supervisorElement = modalElement.querySelector('#builderAddResource--supervisor');
+                shiftTypeElement.textContent = shift.shiftTypeDataListItem ?? 'Shift';
+                shiftNumberElement.textContent = `#${shift.shiftId}`;
+                shiftTimeElement.textContent = shift.shiftTimeDataListItem ?? '';
+                supervisorElement.textContent = shift.supervisorLastName !== null
+                    ? `${shift.supervisorLastName}, ${shift.supervisorFirstName}`
+                    : 'None';
+                // Setup tabs based on view mode
+                const tabsElement = modalElement.querySelector('#builderAddResource--tabs');
+                tabsElement.innerHTML = '';
+                if (viewMode === 'employees') {
+                    // Create tabs for Employees, Equipment, and Crews
+                    const employeesTab = document.createElement('li');
+                    employeesTab.className = 'is-active';
+                    const employeesLink = document.createElement('a');
+                    employeesLink.href = '#';
+                    employeesLink.textContent = 'Employees';
+                    employeesLink.dataset.tab = 'employees';
+                    employeesTab.append(employeesLink);
+                    const equipmentTab = document.createElement('li');
+                    const equipmentLink = document.createElement('a');
+                    equipmentLink.href = '#';
+                    equipmentLink.textContent = 'Equipment';
+                    equipmentLink.dataset.tab = 'equipment';
+                    equipmentTab.append(equipmentLink);
+                    const crewsTab = document.createElement('li');
+                    const crewsLink = document.createElement('a');
+                    crewsLink.href = '#';
+                    crewsLink.textContent = 'Crews';
+                    crewsLink.dataset.tab = 'crews';
+                    crewsTab.append(crewsLink);
+                    tabsElement.append(employeesTab, equipmentTab, crewsTab);
+                    // Show employees tab by default
+                    const employeesContent = modalElement.querySelector('#builderAddResource--tabContent-employees');
+                    employeesContent.classList.remove('is-hidden');
+                    // Load available employees
+                    loadAvailableEmployeesForModal(modalElement);
+                }
+                else {
+                    // Create tab for Work Orders
+                    const workOrdersTab = document.createElement('li');
+                    workOrdersTab.className = 'is-active';
+                    const workOrdersLink = document.createElement('a');
+                    workOrdersLink.href = '#';
+                    workOrdersLink.textContent = 'Work Orders';
+                    workOrdersLink.dataset.tab = 'workOrders';
+                    workOrdersTab.append(workOrdersLink);
+                    tabsElement.append(workOrdersTab);
+                    // Show work orders tab
+                    const workOrdersContent = modalElement.querySelector('#builderAddResource--tabContent-workOrders');
+                    workOrdersContent.classList.remove('is-hidden');
+                }
+                // Tab switching
+                tabsElement.addEventListener('click', (event) => {
+                    const target = event.target;
+                    if (target.tagName === 'A' && target.dataset.tab !== undefined) {
+                        event.preventDefault();
+                        // Update active tab
+                        const allTabs = tabsElement.querySelectorAll('li');
+                        for (const tab of allTabs) {
+                            tab.classList.remove('is-active');
+                        }
+                        target.parentElement?.classList.add('is-active');
+                        // Hide all tab content
+                        const allContent = modalElement.querySelectorAll('[id^="builderAddResource--tabContent-"]');
+                        for (const content of allContent) {
+                            content.classList.add('is-hidden');
+                        }
+                        // Show selected tab content
+                        const selectedContent = modalElement.querySelector(`#builderAddResource--tabContent-${target.dataset.tab}`);
+                        selectedContent.classList.remove('is-hidden');
+                        // Load data for the selected tab
+                        switch (target.dataset.tab) {
+                            case 'employees':
+                                loadAvailableEmployeesForModal(modalElement);
+                                break;
+                            case 'equipment':
+                                loadAvailableEquipmentForModal(modalElement);
+                                break;
+                            case 'crews':
+                                loadAvailableCrewsForModal(modalElement);
+                                break;
+                            case 'workOrders':
+                                // Work orders are search-based, don't auto-load
+                                break;
+                        }
+                    }
+                });
+                // Filter functionality
+                setupFilterListeners(modalElement);
+                // Work order search
+                const searchButton = modalElement.querySelector('#builderAddResource--searchWorkOrders');
+                const workOrderFilter = modalElement.querySelector('#builderAddResource--workOrderFilter');
+                searchButton.addEventListener('click', () => {
+                    searchWorkOrders(modalElement, workOrderFilter.value);
+                });
+                // Allow Enter key to trigger search
+                workOrderFilter.addEventListener('keypress', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        searchWorkOrders(modalElement, workOrderFilter.value);
+                    }
+                });
+                // Add button handler
+                const addButton = modalElement.querySelector('#builderAddResource--addButton');
+                addButton.addEventListener('click', () => {
+                    addSelectedResources(modalElement, shift.shiftId);
+                });
+                // Success message close button
+                const successMessage = modalElement.querySelector('#builderAddResource--successMessage');
+                const deleteButton = successMessage.querySelector('.delete');
+                deleteButton?.addEventListener('click', () => {
+                    successMessage.classList.add('is-hidden');
+                });
+            },
+            onshown(modalElement, closeFunction) {
+                closeModalFunction = closeFunction;
+            }
+        });
+    }
+    function loadAvailableEmployeesForModal(modalElement) {
+        const shiftDateString = shiftDateElement.value;
+        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doGetAvailableResources`, { shiftDateString }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success) {
+                const employeeList = modalElement.querySelector('#builderAddResource--employeeList');
+                employeeList.innerHTML = '';
+                if (responseJSON.employees.length === 0) {
+                    employeeList.innerHTML = '<p class="has-text-grey-light">No available employees</p>';
+                }
+                else {
+                    for (const employee of responseJSON.employees) {
+                        const label = document.createElement('label');
+                        label.className = 'checkbox is-block mb-2';
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = employee.employeeNumber;
+                        checkbox.dataset.resourceType = 'employee';
+                        label.append(checkbox, ` ${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`);
+                        employeeList.append(label);
+                    }
+                }
+            }
+        });
+    }
+    function loadAvailableEquipmentForModal(modalElement) {
+        const shiftDateString = shiftDateElement.value;
+        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doGetAvailableResources`, { shiftDateString }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success) {
+                const equipmentList = modalElement.querySelector('#builderAddResource--equipmentList');
+                equipmentList.innerHTML = '';
+                if (responseJSON.equipment.length === 0) {
+                    equipmentList.innerHTML = '<p class="has-text-grey-light">No available equipment</p>';
+                }
+                else {
+                    for (const equipment of responseJSON.equipment) {
+                        const label = document.createElement('label');
+                        label.className = 'checkbox is-block mb-2';
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = equipment.equipmentNumber;
+                        checkbox.dataset.resourceType = 'equipment';
+                        label.append(checkbox, ` ${equipment.equipmentName} (#${equipment.equipmentNumber})`);
+                        equipmentList.append(label);
+                    }
+                }
+            }
+        });
+    }
+    function loadAvailableCrewsForModal(modalElement) {
+        const shiftDateString = shiftDateElement.value;
+        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doGetAvailableResources`, { shiftDateString }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success) {
+                const crewList = modalElement.querySelector('#builderAddResource--crewList');
+                crewList.innerHTML = '';
+                if (responseJSON.crews.length === 0) {
+                    crewList.innerHTML = '<p class="has-text-grey-light">No available crews</p>';
+                }
+                else {
+                    for (const crew of responseJSON.crews) {
+                        const label = document.createElement('label');
+                        label.className = 'checkbox is-block mb-2';
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = crew.crewId.toString();
+                        checkbox.dataset.resourceType = 'crew';
+                        label.append(checkbox, ` ${crew.crewName}`);
+                        crewList.append(label);
+                    }
+                }
+            }
+        });
+    }
+    function searchWorkOrders(modalElement, searchString) {
+        if (searchString.trim() === '') {
+            bulmaJS.alert({
+                contextualColorName: 'warning',
+                message: 'Please enter search terms.'
+            });
+            return;
+        }
+        cityssm.postJSON(`${shiftLog.urlPrefix}/workOrders/doSearchWorkOrders`, { searchString, orderBy: 'workOrderNumber desc' }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success) {
+                const workOrderList = modalElement.querySelector('#builderAddResource--workOrderList');
+                workOrderList.innerHTML = '';
+                if (responseJSON.count === 0) {
+                    workOrderList.innerHTML = '<p class="has-text-grey-light">No work orders found</p>';
+                }
+                else {
+                    for (const workOrder of responseJSON.workOrders) {
+                        const label = document.createElement('label');
+                        label.className = 'checkbox is-block mb-2';
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = workOrder.workOrderId.toString();
+                        checkbox.dataset.resourceType = 'workOrder';
+                        const details = workOrder.workOrderDetails !== '' ? ` - ${workOrder.workOrderDetails}` : '';
+                        label.append(checkbox, ` ${workOrder.workOrderNumber}${details}`);
+                        workOrderList.append(label);
+                    }
+                }
+            }
+        });
+    }
+    function setupFilterListeners(modalElement) {
+        // Employee filter
+        const employeeFilter = modalElement.querySelector('#builderAddResource--employeeFilter');
+        employeeFilter?.addEventListener('input', () => {
+            filterCheckboxes('#builderAddResource--employeeList', employeeFilter.value);
+        });
+        // Equipment filter
+        const equipmentFilter = modalElement.querySelector('#builderAddResource--equipmentFilter');
+        equipmentFilter?.addEventListener('input', () => {
+            filterCheckboxes('#builderAddResource--equipmentList', equipmentFilter.value);
+        });
+        // Crew filter
+        const crewFilter = modalElement.querySelector('#builderAddResource--crewFilter');
+        crewFilter?.addEventListener('input', () => {
+            filterCheckboxes('#builderAddResource--crewList', crewFilter.value);
+        });
+    }
+    function filterCheckboxes(containerSelector, filterText) {
+        const container = document.querySelector(containerSelector);
+        if (container === null)
+            return;
+        const labels = container.querySelectorAll('label.checkbox');
+        const lowerFilter = filterText.toLowerCase();
+        for (const label of labels) {
+            const text = label.textContent?.toLowerCase() ?? '';
+            if (text.includes(lowerFilter)) {
+                label.style.display = 'block';
+            }
+            else {
+                label.style.display = 'none';
+            }
+        }
+    }
+    function addSelectedResources(modalElement, shiftId) {
+        const checkedBoxes = modalElement.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkedBoxes.length === 0) {
+            bulmaJS.alert({
+                contextualColorName: 'warning',
+                message: 'Please select at least one resource to add.'
+            });
+            return;
+        }
+        const successText = modalElement.querySelector('#builderAddResource--successText');
+        const successMessage = modalElement.querySelector('#builderAddResource--successMessage');
+        let addedCount = 0;
+        const totalToAdd = checkedBoxes.length;
+        for (const checkbox of checkedBoxes) {
+            const resourceType = checkbox.dataset.resourceType;
+            const resourceId = checkbox.value;
+            switch (resourceType) {
+                case 'employee': {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`, {
+                        employeeNumber: resourceId,
+                        shiftEmployeeNote: '',
+                        shiftId
+                    }, (response) => {
+                        addedCount++;
+                        checkbox.checked = false;
+                        if (addedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                            successMessage.classList.remove('is-hidden');
+                            loadShifts();
+                        }
+                    });
+                    break;
+                }
+                case 'equipment': {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`, {
+                        equipmentNumber: resourceId,
+                        shiftEquipmentNote: '',
+                        shiftId
+                    }, (response) => {
+                        addedCount++;
+                        checkbox.checked = false;
+                        if (addedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                            successMessage.classList.remove('is-hidden');
+                            loadShifts();
+                        }
+                    });
+                    break;
+                }
+                case 'crew': {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftCrew`, {
+                        crewId: resourceId,
+                        shiftCrewNote: '',
+                        shiftId
+                    }, (response) => {
+                        addedCount++;
+                        checkbox.checked = false;
+                        if (addedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                            successMessage.classList.remove('is-hidden');
+                            loadShifts();
+                        }
+                    });
+                    break;
+                }
+                case 'workOrder': {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftWorkOrder`, {
+                        shiftId,
+                        shiftWorkOrderNote: '',
+                        workOrderId: resourceId
+                    }, (response) => {
+                        addedCount++;
+                        checkbox.checked = false;
+                        if (addedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                            successMessage.classList.remove('is-hidden');
+                            loadShifts();
+                        }
+                    });
+                    break;
+                }
+            }
+        }
     }
     // Load shifts for today on page load
     loadShifts();
