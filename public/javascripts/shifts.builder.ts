@@ -153,7 +153,17 @@ declare const exports: {
           crewItem.draggable = true
         }
         crewItem.dataset.crewId = crew.crewId.toString()
-        crewItem.textContent = crew.crewName
+        
+        // Add icon
+        const icon = document.createElement('span')
+        icon.className = 'icon is-small'
+        icon.innerHTML = '<i class="fa-solid fa-users"></i>'
+        crewItem.append(icon, ' ')
+        
+        // Add crew name
+        const nameSpan = document.createElement('span')
+        nameSpan.textContent = crew.crewName
+        crewItem.append(nameSpan)
         
         if (crew.shiftCrewNote !== '') {
           const noteSpan = document.createElement('span')
@@ -194,11 +204,26 @@ declare const exports: {
         }
         employeeItem.dataset.employeeNumber = employee.employeeNumber
         employeeItem.dataset.crewId = employee.crewId?.toString() ?? ''
-        employeeItem.textContent = `${employee.lastName}, ${employee.firstName}`
+        
+        // Add icon
+        const icon = document.createElement('span')
+        icon.className = 'icon is-small'
+        icon.innerHTML = '<i class="fa-solid fa-user"></i>'
+        employeeItem.append(icon, ' ')
+        
+        // Add employee name with number in smaller text
+        const nameSpan = document.createElement('span')
+        nameSpan.textContent = `${employee.lastName}, ${employee.firstName} `
+        employeeItem.append(nameSpan)
+        
+        const numberSpan = document.createElement('span')
+        numberSpan.className = 'is-size-7 has-text-grey'
+        numberSpan.textContent = `(#${employee.employeeNumber})`
+        employeeItem.append(numberSpan)
         
         if (employee.crewName !== null) {
           const crewTag = document.createElement('span')
-          crewTag.className = 'tag is-small is-info is-light'
+          crewTag.className = 'tag is-small is-info is-light ml-1'
           crewTag.textContent = employee.crewName
           employeeItem.append(' ', crewTag)
         }
@@ -240,7 +265,22 @@ declare const exports: {
           equipmentItem.draggable = true
         }
         equipmentItem.dataset.equipmentNumber = equipment.equipmentNumber
-        equipmentItem.textContent = equipment.equipmentName
+        
+        // Add icon
+        const icon = document.createElement('span')
+        icon.className = 'icon is-small'
+        icon.innerHTML = '<i class="fa-solid fa-truck"></i>'
+        equipmentItem.append(icon, ' ')
+        
+        // Add equipment name with number in smaller text
+        const nameSpan = document.createElement('span')
+        nameSpan.textContent = `${equipment.equipmentName} `
+        equipmentItem.append(nameSpan)
+        
+        const numberSpan = document.createElement('span')
+        numberSpan.className = 'is-size-7 has-text-grey'
+        numberSpan.textContent = `(#${equipment.equipmentNumber})`
+        equipmentItem.append(numberSpan)
         
         if (equipment.employeeFirstName !== null) {
           const operatorSpan = document.createElement('span')
@@ -308,6 +348,13 @@ declare const exports: {
         }
         workOrderItem.dataset.workorderId = workOrder.workOrderId.toString()
         
+        // Add icon
+        const icon = document.createElement('span')
+        icon.className = 'icon is-small'
+        icon.innerHTML = '<i class="fa-solid fa-clipboard-list"></i>'
+        workOrderItem.append(icon, ' ')
+        
+        // Add work order link
         const workOrderLink = document.createElement('a')
         workOrderLink.href = `${shiftLog.urlPrefix}/workOrders/${workOrder.workOrderId}`
         workOrderLink.target = '_blank'
@@ -579,10 +626,22 @@ declare const exports: {
           itemBox.dataset.employeeNumber = employee.employeeNumber
           itemBox.dataset.fromAvailable = 'true'
           
+          // Add icon
+          const icon = document.createElement('span')
+          icon.className = 'icon is-small'
+          icon.innerHTML = '<i class="fa-solid fa-user"></i>'
+          itemBox.append(icon, ' ')
+          
+          // Add employee name with number
           const itemText = document.createElement('span')
           itemText.className = 'is-size-7'
-          itemText.textContent = `${employee.lastName}, ${employee.firstName}`
+          itemText.textContent = `${employee.lastName}, ${employee.firstName} `
           itemBox.append(itemText)
+          
+          const numberSpan = document.createElement('span')
+          numberSpan.className = 'is-size-7 has-text-grey'
+          numberSpan.textContent = `(#${employee.employeeNumber})`
+          itemBox.append(numberSpan)
           
           itemsContainer.append(itemBox)
         }
@@ -614,10 +673,22 @@ declare const exports: {
           itemBox.dataset.equipmentNumber = equipment.equipmentNumber
           itemBox.dataset.fromAvailable = 'true'
           
+          // Add icon
+          const icon = document.createElement('span')
+          icon.className = 'icon is-small'
+          icon.innerHTML = '<i class="fa-solid fa-truck"></i>'
+          itemBox.append(icon, ' ')
+          
+          // Add equipment name with number
           const itemText = document.createElement('span')
           itemText.className = 'is-size-7'
-          itemText.textContent = equipment.equipmentName
+          itemText.textContent = `${equipment.equipmentName} `
           itemBox.append(itemText)
+          
+          const numberSpan = document.createElement('span')
+          numberSpan.className = 'is-size-7 has-text-grey'
+          numberSpan.textContent = `(#${equipment.equipmentNumber})`
+          itemBox.append(numberSpan)
           
           itemsContainer.append(itemBox)
         }
@@ -649,6 +720,13 @@ declare const exports: {
           itemBox.dataset.crewId = crew.crewId.toString()
           itemBox.dataset.fromAvailable = 'true'
           
+          // Add icon
+          const icon = document.createElement('span')
+          icon.className = 'icon is-small'
+          icon.innerHTML = '<i class="fa-solid fa-users"></i>'
+          itemBox.append(icon, ' ')
+          
+          // Add crew name
           const itemText = document.createElement('span')
           itemText.className = 'is-size-7'
           itemText.textContent = crew.crewName
