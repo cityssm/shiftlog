@@ -354,6 +354,12 @@ const minEditableDate = 0
   }
 
   function loadAvailableResources(): void {
+    // Only load if the available resources sidebar exists (user has canUpdate permission)
+    const availableResourcesContainer = document.querySelector('#container--availableResources')
+    if (availableResourcesContainer === null) {
+      return
+    }
+
     const shiftDateString = shiftDateElement.value
 
     if (shiftDateString === '') {

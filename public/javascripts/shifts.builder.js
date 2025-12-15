@@ -211,7 +211,7 @@ const minEditableDate = 0;
             cardHTML += renderTasksView(shift, duplicates);
         }
         cardHTML += '</div>';
-        // eslint-disable-next-line no-unsanitized/property
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         cardElement.innerHTML = cardHTML;
         return cardElement;
     }
@@ -253,8 +253,12 @@ const minEditableDate = 0;
             }
         });
     }
-    
     function loadAvailableResources() {
+        // Only load if the available resources sidebar exists (user has canUpdate permission)
+        const availableResourcesContainer = document.querySelector('#container--availableResources');
+        if (availableResourcesContainer === null) {
+            return;
+        }
         const shiftDateString = shiftDateElement.value;
         if (shiftDateString === '') {
             return;
@@ -269,6 +273,7 @@ const minEditableDate = 0;
         });
     }
     function renderAvailableResources(resources) {
+        // Render employees
         const employeesList = document.querySelector('#available--employees .available-resources-list');
         if (employeesList !== null) {
             if (resources.employees.length === 0) {
@@ -285,6 +290,7 @@ const minEditableDate = 0;
                 employeesList.innerHTML = html;
             }
         }
+        // Render equipment
         const equipmentList = document.querySelector('#available--equipment .available-resources-list');
         if (equipmentList !== null) {
             if (resources.equipment.length === 0) {
@@ -301,6 +307,7 @@ const minEditableDate = 0;
                 equipmentList.innerHTML = html;
             }
         }
+        // Render crews
         const crewsList = document.querySelector('#available--crews .available-resources-list');
         if (crewsList !== null) {
             if (resources.crews.length === 0) {
@@ -318,7 +325,6 @@ const minEditableDate = 0;
             }
         }
     }
-    
     // Drag and drop state
     let draggedElement = null;
     let draggedData = null;
@@ -331,8 +337,8 @@ const minEditableDate = 0;
         const equipmentNumber = target.dataset.equipmentNumber;
         const crewId = target.dataset.crewId;
         const workorderId = target.dataset.workorderId;
-        const shiftCard = target.closest('[data-shift-id]');
         const fromAvailable = target.dataset.fromAvailable === 'true';
+        const shiftCard = target.closest('[data-shift-id]');
         const fromShiftId = fromAvailable ? 0 : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
         if (employeeNumber !== undefined) {
             draggedData = {
@@ -380,9 +386,13 @@ const minEditableDate = 0;
         event.preventDefault();
         const target = event.target;
         // Remove existing highlights
-        // Check if hovering over available resources sidebar
+        document.querySelectorAll('.is-drop-target').forEach((element) => {
+            element.classList.remove('is-drop-target');
+        });
+        // Check if hovering over available resources sidebar (to remove from shift)
         const availableResourcesSidebar = target.closest('#container--availableResources');
         if (availableResourcesSidebar !== null && draggedData !== null && draggedData.fromShiftId > 0) {
+            // Highlight the sidebar box when dragging from a shift to remove
             const sidebarBox = availableResourcesSidebar.querySelector('.box');
             if (sidebarBox !== null) {
                 sidebarBox.classList.add('is-drop-target');
@@ -392,9 +402,6 @@ const minEditableDate = 0;
             }
             return;
         }
-        document.querySelectorAll('.is-drop-target').forEach((element) => {
-            element.classList.remove('is-drop-target');
-        });
         // Check for specific drop targets first
         const supervisorTarget = target.closest('.drop-target-supervisor');
         const crewTarget = target.closest('.drop-target-crew');
@@ -423,7 +430,7 @@ const minEditableDate = 0;
     function handleDragLeave(event) {
         const target = event.target;
         const shiftBox = target.closest('.box');
-            if (shiftBox !== null && !shiftBox.closest('#container--availableResources')) {
+        if (shiftBox !== null) {
             shiftBox.classList.remove('is-drop-target');
         }
     }
@@ -492,7 +499,6 @@ const minEditableDate = 0;
             moveWorkOrder(draggedData.id, draggedData.fromShiftId, toShiftId);
         }
     }
-    
     function removeFromShift(draggedData) {
         if (draggedData.type === 'employee') {
             cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`, {
@@ -540,6 +546,7 @@ const minEditableDate = 0;
     function moveEmployee(employeeNumber, fromShiftId, toShiftId) {
         // If fromShiftId is 0, employee is from available resources
         if (fromShiftId === 0) {
+            // Just add to new shift
             cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`, {
                 shiftId: toShiftId,
                 employeeNumber,
@@ -584,6 +591,7 @@ const minEditableDate = 0;
     function moveEquipment(equipmentNumber, fromShiftId, toShiftId) {
         // If fromShiftId is 0, equipment is from available resources
         if (fromShiftId === 0) {
+            // Just add to new shift
             cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`, {
                 shiftId: toShiftId,
                 equipmentNumber,
@@ -628,6 +636,7 @@ const minEditableDate = 0;
     function moveCrew(crewId, fromShiftId, toShiftId) {
         // If fromShiftId is 0, crew is from available resources
         if (fromShiftId === 0) {
+            // Just add to new shift
             cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftCrew`, {
                 shiftId: toShiftId,
                 crewId,
@@ -924,3 +933,4 @@ const minEditableDate = 0;
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};

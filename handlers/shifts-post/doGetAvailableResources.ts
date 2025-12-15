@@ -41,7 +41,6 @@ export default async function handler(
       from ShiftLog.Employees e
       where e.instance = @instance
         and e.recordDelete_dateTime is null
-        and e.isActive = 1
         and e.employeeNumber not in (
           select se.employeeNumber
           from ShiftLog.ShiftEmployees se
@@ -62,7 +61,6 @@ export default async function handler(
       from ShiftLog.Equipment eq
       where eq.instance = @instance
         and eq.recordDelete_dateTime is null
-        and eq.isActive = 1
         and eq.equipmentNumber not in (
           select seq.equipmentNumber
           from ShiftLog.ShiftEquipment seq
@@ -83,7 +81,6 @@ export default async function handler(
       from ShiftLog.Crews c
       where c.instance = @instance
         and c.recordDelete_dateTime is null
-        and c.isActive = 1
         and c.crewId not in (
           select sc.crewId
           from ShiftLog.ShiftCrews sc
