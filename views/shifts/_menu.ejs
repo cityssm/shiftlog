@@ -30,6 +30,22 @@
       </ul>
       <% } %>
     </li>
+    <% if (user.userProperties.shifts.canView) { %>
+    <li>
+      <a
+        href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/builder"
+        title="<%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Builder">
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small"><i class="fa-solid fa-calendar-days"></i></span>
+          </div>
+          <div class="column is-hidden-touch">
+            <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Builder
+          </div>
+        </div>
+      </a>
+    </li>
+    <% } %>
     <% if (user.userProperties.shifts.canManage) { %>
     <li>
       <a

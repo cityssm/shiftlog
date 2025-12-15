@@ -41,7 +41,7 @@ const minEditableDate = 0;
                 if (tracker[key] === undefined) {
                     tracker[key] = [];
                 }
-                tracker[key].push(shift.workOrderId);
+                tracker[key].push(shift.shiftId);
             }
         }
         // Remove items that only appear once
