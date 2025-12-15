@@ -1,27 +1,24 @@
-import type { Request, Response } from 'express'
 import type { DateString } from '@cityssm/utils-datetime'
+import type { Request, Response } from 'express'
 
-import getEmployees from '../../database/employees/getEmployees.js'
-import getEquipment from '../../database/equipment/getEquipment.js'
-import getCrews from '../../database/crews/getCrews.js'
-import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface DoGetAvailableResourcesResponse {
-  success: boolean
+  crews: Array<{
+    crewId: number
+    crewName: string
+  }>
   employees: Array<{
     employeeNumber: string
     firstName: string
     lastName: string
   }>
   equipment: Array<{
-    equipmentNumber: string
     equipmentName: string
+    equipmentNumber: string
   }>
-  crews: Array<{
-    crewId: number
-    crewName: string
-  }>
+  success: boolean
 }
 
 export default async function handler(
@@ -34,7 +31,8 @@ export default async function handler(
   const instance = getConfigProperty('application.instance')
 
   // Get all employees not on any shift for this date
-  const employeesResult = await pool.request()
+  const employeesResult = await pool
+    .request()
     .input('instance', instance)
     .input('shiftDateString', shiftDateString).query(`
       select e.employeeNumber, e.firstName, e.lastName
@@ -54,7 +52,8 @@ export default async function handler(
     `)
 
   // Get all equipment not on any shift for this date
-  const equipmentResult = await pool.request()
+  const equipmentResult = await pool
+    .request()
     .input('instance', instance)
     .input('shiftDateString', shiftDateString).query(`
       select eq.equipmentNumber, eq.equipmentName
@@ -74,7 +73,8 @@ export default async function handler(
     `)
 
   // Get all crews not on any shift for this date
-  const crewsResult = await pool.request()
+  const crewsResult = await pool
+    .request()
     .input('instance', instance)
     .input('shiftDateString', shiftDateString).query(`
       select c.crewId, c.crewName
@@ -94,9 +94,9 @@ export default async function handler(
     `)
 
   response.json({
-    success: true,
+    crews: crewsResult.recordset,
     employees: employeesResult.recordset,
     equipment: equipmentResult.recordset,
-    crews: crewsResult.recordset
+    success: true
   })
 }

@@ -1,11 +1,12 @@
-import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function handler(request, response) {
     const { shiftDateString } = request.body;
     const pool = await getShiftLogConnectionPool();
     const instance = getConfigProperty('application.instance');
     // Get all employees not on any shift for this date
-    const employeesResult = await pool.request()
+    const employeesResult = await pool
+        .request()
         .input('instance', instance)
         .input('shiftDateString', shiftDateString).query(`
       select e.employeeNumber, e.firstName, e.lastName
@@ -24,7 +25,8 @@ export default async function handler(request, response) {
       order by e.lastName, e.firstName
     `);
     // Get all equipment not on any shift for this date
-    const equipmentResult = await pool.request()
+    const equipmentResult = await pool
+        .request()
         .input('instance', instance)
         .input('shiftDateString', shiftDateString).query(`
       select eq.equipmentNumber, eq.equipmentName
@@ -43,7 +45,8 @@ export default async function handler(request, response) {
       order by eq.equipmentName
     `);
     // Get all crews not on any shift for this date
-    const crewsResult = await pool.request()
+    const crewsResult = await pool
+        .request()
         .input('instance', instance)
         .input('shiftDateString', shiftDateString).query(`
       select c.crewId, c.crewName
@@ -62,9 +65,9 @@ export default async function handler(request, response) {
       order by c.crewName
     `);
     response.json({
-        success: true,
+        crews: crewsResult.recordset,
         employees: employeesResult.recordset,
         equipment: equipmentResult.recordset,
-        crews: crewsResult.recordset
+        success: true
     });
 }
