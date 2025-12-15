@@ -1,0 +1,60 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <nav class="breadcrumb">
+          <ul>
+            <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+            <li>
+              <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
+                <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i></span>
+                <span><%= configFunctions.getConfigProperty('shifts.sectionName') %></span>
+              </a>
+            </li>
+            <li class="is-active">
+              <a href="#" aria-current="page">
+                Crew Maintenance
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="columns is-vcentered">
+      <div class="column">
+        <h1 class="title is-1">
+          Crew Maintenance
+        </h1>
+      </div>
+      <div class="column is-narrow">
+        <button class="button is-primary" id="button--addCrew" type="button">
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Add Crew</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="container--crews"></div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script>
+  exports.crews = <%- JSON.stringify(crews) %>;
+  exports.employees = <%- JSON.stringify(employees) %>;
+  exports.equipment = <%- JSON.stringify(equipment) %>;
+  exports.userGroups = <%- JSON.stringify(userGroups) %>;
+  exports.canManage = <%= user.userProperties.shifts.canManage ? 'true' : 'false' %>;
+</script>
+<script src="<%= urlPrefix %>/javascripts/crews.shifts.js"></script>
+
+<%- await include('../_footerB'); -%>

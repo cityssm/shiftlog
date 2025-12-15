@@ -107,6 +107,20 @@ export interface Crew extends BaseRecord {
     userGroupName?: string;
     memberCount?: number;
 }
+export interface CrewMember {
+    crewId: number;
+    employeeNumber: string;
+    firstName?: string;
+    lastName?: string;
+}
+export interface CrewEquipment {
+    crewId: number;
+    equipmentNumber: string;
+    equipmentName?: string;
+    employeeNumber?: string | null;
+    employeeFirstName?: string;
+    employeeLastName?: string;
+}
 export interface EmployeeList extends BaseRecord {
     employeeListId: number;
     employeeListName: string;
