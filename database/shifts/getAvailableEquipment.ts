@@ -8,7 +8,7 @@ export interface AvailableEquipment {
   equipmentName: string
 }
 
-export async function getAvailableEquipment(
+export default async function getAvailableEquipment(
   shiftDateString: DateString
 ): Promise<AvailableEquipment[]> {
   const pool = await getShiftLogConnectionPool()
@@ -35,5 +35,3 @@ export async function getAvailableEquipment(
 
   return result.recordset
 }
-
-export default getAvailableEquipment

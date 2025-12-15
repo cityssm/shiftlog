@@ -3,5 +3,4 @@ export interface AvailableCrew {
     crewId: number;
     crewName: string;
 }
-export declare function getAvailableCrews(shiftDateString: DateString): Promise<AvailableCrew[]>;
-export default getAvailableCrews;
+export default function getAvailableCrews(shiftDateString: DateString): Promise<AvailableCrew[]>;

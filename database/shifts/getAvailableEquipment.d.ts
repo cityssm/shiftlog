@@ -3,5 +3,4 @@ export interface AvailableEquipment {
     equipmentNumber: string;
     equipmentName: string;
 }
-export declare function getAvailableEquipment(shiftDateString: DateString): Promise<AvailableEquipment[]>;
-export default getAvailableEquipment;
+export default function getAvailableEquipment(shiftDateString: DateString): Promise<AvailableEquipment[]>;

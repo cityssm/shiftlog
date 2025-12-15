@@ -4,5 +4,4 @@ export interface AvailableEmployee {
     firstName: string;
     lastName: string;
 }
-export declare function getAvailableEmployees(shiftDateString: DateString): Promise<AvailableEmployee[]>;
-export default getAvailableEmployees;
+export default function getAvailableEmployees(shiftDateString: DateString): Promise<AvailableEmployee[]>;

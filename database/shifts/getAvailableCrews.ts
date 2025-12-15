@@ -8,7 +8,7 @@ export interface AvailableCrew {
   crewName: string
 }
 
-export async function getAvailableCrews(
+export default async function getAvailableCrews(
   shiftDateString: DateString
 ): Promise<AvailableCrew[]> {
   const pool = await getShiftLogConnectionPool()
@@ -35,5 +35,3 @@ export async function getAvailableCrews(
 
   return result.recordset
 }
-
-export default getAvailableCrews

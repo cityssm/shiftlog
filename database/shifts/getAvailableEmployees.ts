@@ -9,7 +9,7 @@ export interface AvailableEmployee {
   lastName: string
 }
 
-export async function getAvailableEmployees(
+export default async function getAvailableEmployees(
   shiftDateString: DateString
 ): Promise<AvailableEmployee[]> {
   const pool = await getShiftLogConnectionPool()
@@ -36,5 +36,3 @@ export async function getAvailableEmployees(
 
   return result.recordset
 }
-
-export default getAvailableEmployees

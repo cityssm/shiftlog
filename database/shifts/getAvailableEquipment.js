@@ -1,6 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-export async function getAvailableEquipment(shiftDateString) {
+export default async function getAvailableEquipment(shiftDateString) {
     const pool = await getShiftLogConnectionPool();
     const instance = getConfigProperty('application.instance');
     const result = await pool
@@ -23,4 +23,3 @@ export async function getAvailableEquipment(shiftDateString) {
     `);
     return result.recordset;
 }
-export default getAvailableEquipment;
