@@ -446,9 +446,12 @@ declare const exports: {
     seniorityDate: string | null | undefined,
     panelElement: HTMLElement
   ): void {
-    const containerId = seniorityDate
-      ? `members--${employeeListId}--${seniorityDate}`
-      : `members--${employeeListId}--nodate`
+    // Sanitize dateKey for use in CSS selector (remove special characters)
+    const sanitizedDateKey = seniorityDate
+      ? seniorityDate.replace(/[^a-zA-Z0-9-]/g, '-')
+      : 'nodate'
+    
+    const containerId = `members--${employeeListId}--${sanitizedDateKey}`
 
     const tbodyElement = document.querySelector(
       `#${containerId}`
@@ -569,10 +572,12 @@ declare const exports: {
     let membersHtml = ''
 
     for (const [dateKey, members] of membersByDate) {
-      const containerId =
-        dateKey === 'no-date'
-          ? `members--${employeeList.employeeListId}--nodate`
-          : `members--${employeeList.employeeListId}--${dateKey}`
+      // Sanitize dateKey for use in CSS selector (remove special characters)
+      const sanitizedDateKey = dateKey === 'no-date' 
+        ? 'nodate'
+        : dateKey.replace(/[^a-zA-Z0-9-]/g, '-')
+      
+      const containerId = `members--${employeeList.employeeListId}--${sanitizedDateKey}`
 
       const dateDisplay =
         dateKey === 'no-date'

@@ -247,9 +247,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
         });
     }
     function initializeSortable(employeeListId, seniorityDate, panelElement) {
-        var containerId = seniorityDate
-            ? "members--".concat(employeeListId, "--").concat(seniorityDate)
-            : "members--".concat(employeeListId, "--nodate");
+        // Sanitize dateKey for use in CSS selector (remove special characters)
+        var sanitizedDateKey = seniorityDate
+            ? seniorityDate.replace(/[^a-zA-Z0-9-]/g, '-')
+            : 'nodate';
+        var containerId = "members--".concat(employeeListId, "--").concat(sanitizedDateKey);
         var tbodyElement = document.querySelector("#".concat(containerId));
         if (tbodyElement === null) {
             return;
@@ -329,9 +331,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
         var membersHtml = '';
         for (var _f = 0, membersByDate_1 = membersByDate; _f < membersByDate_1.length; _f++) {
             var _g = membersByDate_1[_f], dateKey = _g[0], members = _g[1];
-            var containerId = dateKey === 'no-date'
-                ? "members--".concat(employeeList.employeeListId, "--nodate")
-                : "members--".concat(employeeList.employeeListId, "--").concat(dateKey);
+            // Sanitize dateKey for use in CSS selector (remove special characters)
+            var sanitizedDateKey = dateKey === 'no-date'
+                ? 'nodate'
+                : dateKey.replace(/[^a-zA-Z0-9-]/g, '-');
+            var containerId = "members--".concat(employeeList.employeeListId, "--").concat(sanitizedDateKey);
             var dateDisplay = dateKey === 'no-date'
                 ? 'No Seniority Date'
                 : cityssm.dateToString(new Date(dateKey));
