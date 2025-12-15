@@ -25,7 +25,7 @@ export interface ShiftForBuilder extends Shift {
     workOrders: Array<{
         workOrderId: number;
         workOrderNumber: string;
-        workOrderDescription: string;
+        workOrderDetails: string;
         shiftWorkOrderNote: string;
     }>;
 }

@@ -125,7 +125,7 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
       sw.shiftId,
       sw.workOrderId,
       wo.workOrderNumber,
-      wo.workOrderDescription,
+      wo.workOrderDetails,
       sw.shiftWorkOrderNote
     from ShiftLog.ShiftWorkOrders sw
     inner join ShiftLog.WorkOrders wo

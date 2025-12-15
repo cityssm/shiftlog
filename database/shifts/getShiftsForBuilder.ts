@@ -32,7 +32,7 @@ export interface ShiftForBuilder extends Shift {
   workOrders: Array<{
     workOrderId: number
     workOrderNumber: string
-    workOrderDescription: string
+    workOrderDetails: string
     shiftWorkOrderNote: string
   }>
 }
@@ -177,7 +177,7 @@ export default async function getShiftsForBuilder(
       sw.shiftId,
       sw.workOrderId,
       wo.workOrderNumber,
-      wo.workOrderDescription,
+      wo.workOrderDetails,
       sw.shiftWorkOrderNote
     from ShiftLog.ShiftWorkOrders sw
     inner join ShiftLog.WorkOrders wo

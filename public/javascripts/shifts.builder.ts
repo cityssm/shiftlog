@@ -214,8 +214,8 @@ const minEditableDate = 0
         html += `<a href="${shiftLog.urlPrefix}/workOrders/${workOrder.workOrderId}" target="_blank">`
         html += cityssm.escapeHTML(workOrder.workOrderNumber)
         html += '</a>'
-        if (workOrder.workOrderDescription !== '') {
-          html += ` - ${cityssm.escapeHTML(workOrder.workOrderDescription)}`
+        if (workOrder.workOrderDetails !== '') {
+          html += ` - ${cityssm.escapeHTML(workOrder.workOrderDetails)}`
         }
         if (workOrder.shiftWorkOrderNote !== '') {
           html += ` <span class="has-text-grey-light">- ${cityssm.escapeHTML(workOrder.shiftWorkOrderNote)}</span>`
