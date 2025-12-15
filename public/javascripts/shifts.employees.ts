@@ -77,9 +77,7 @@ declare const exports: {
       }
 
       // Show the selected tab content
-      const selectedContent = document.querySelector(
-        `#${tabId}`
-      ) as HTMLElement
+      const selectedContent = document.querySelector(`#${tabId}`) as HTMLElement
       if (selectedContent !== null) {
         selectedContent.classList.remove('is-hidden')
       }
@@ -1360,6 +1358,7 @@ declare const exports: {
           const resultsContainer = document.querySelector(
             '#container--searchResults'
           ) as HTMLElement
+
           const listContainer = document.querySelector(
             '#list--shifts'
           ) as HTMLElement
@@ -1372,29 +1371,38 @@ declare const exports: {
             `
           } else {
             listContainer.innerHTML = ''
-            
+
             for (const shift of responseJSON.shifts) {
               const shiftDate = new Date(shift.shiftDate)
               const dateString = shiftDate.toLocaleDateString()
-              
-              const counts = []
+
+              const counts: string[] = []
+
               if ((shift.crewsCount ?? 0) > 0) {
-                counts.push(`${shift.crewsCount} crew${shift.crewsCount === 1 ? '' : 's'}`)
+                counts.push(
+                  `${shift.crewsCount} crew${shift.crewsCount === 1 ? '' : 's'}`
+                )
               }
+
               if ((shift.employeesCount ?? 0) > 0) {
-                counts.push(`${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`)
+                counts.push(
+                  `${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`
+                )
               }
+
               if ((shift.equipmentCount ?? 0) > 0) {
                 counts.push(`${shift.equipmentCount} equipment`)
               }
-              
-              const countsText = counts.length > 0 ? ` (${counts.join(', ')})` : ''
+
+              const countsText =
+                counts.length > 0 ? ` (${counts.join(', ')})` : ''
 
               const shiftElement = document.createElement('a')
+
               shiftElement.className = 'panel-block is-block'
               shiftElement.dataset.shiftId = shift.shiftId.toString()
               shiftElement.href = '#'
-              
+
               // All user data is escaped with cityssm.escapeHTML()
               // eslint-disable-next-line no-unsanitized/property
               shiftElement.innerHTML = /* html */ `
@@ -1417,22 +1425,23 @@ declare const exports: {
                   </div>
                 </div>
               `
-              
+
               shiftElement.addEventListener('click', (clickEvent) => {
                 clickEvent.preventDefault()
                 const previousShiftIdInput = document.querySelector(
                   '#input--previousShiftId'
                 ) as HTMLInputElement
                 previousShiftIdInput.value = shift.shiftId.toString()
-                
+
                 // Highlight selected shift
-                const allPanelBlocks = listContainer.querySelectorAll('.panel-block')
+                const allPanelBlocks =
+                  listContainer.querySelectorAll('.panel-block')
                 for (const block of allPanelBlocks) {
                   block.classList.remove('is-active')
                 }
                 shiftElement.classList.add('is-active')
               })
-              
+
               listContainer.append(shiftElement)
             }
           }
@@ -1461,9 +1470,7 @@ declare const exports: {
           ) as HTMLSelectElement
         ).value
         const currentShiftDate = (
-          document.querySelector(
-            '#shift--shiftDateString'
-          ) as HTMLInputElement
+          document.querySelector('#shift--shiftDateString') as HTMLInputElement
         ).value
 
         // Set hidden fields
