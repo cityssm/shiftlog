@@ -1482,12 +1482,15 @@ declare const exports: {
         ).value = currentShiftDate
 
         // Populate shift types
+
         const shiftTypeSelect = modalElement.querySelector(
           '#search--shiftTypeDataListItemId'
         ) as HTMLSelectElement
+
         const shiftTypeOptions = document.querySelectorAll(
           '#shift--shiftTypeDataListItemId option'
         ) as NodeListOf<HTMLOptionElement>
+
         for (const option of shiftTypeOptions) {
           if (option.value !== '') {
             const newOption = option.cloneNode(true) as HTMLOptionElement
@@ -1496,13 +1499,18 @@ declare const exports: {
           }
         }
 
+        shiftTypeSelect.addEventListener('change', doSearch)
+
         // Populate supervisors
+
         const supervisorSelect = modalElement.querySelector(
           '#search--supervisorEmployeeNumber'
         ) as HTMLSelectElement
+
         const supervisorOptions = document.querySelectorAll(
           '#shift--supervisorEmployeeNumber option'
         ) as NodeListOf<HTMLOptionElement>
+
         for (const option of supervisorOptions) {
           if (option.value !== '') {
             const newOption = option.cloneNode(true) as HTMLOptionElement
@@ -1511,13 +1519,18 @@ declare const exports: {
           }
         }
 
+        supervisorSelect.addEventListener('change', doSearch)
+
         // Populate shift times
+
         const shiftTimeSelect = modalElement.querySelector(
           '#search--shiftTimeDataListItemId'
         ) as HTMLSelectElement
+
         const shiftTimeOptions = document.querySelectorAll(
           '#shift--shiftTimeDataListItemId option'
         ) as NodeListOf<HTMLOptionElement>
+
         for (const option of shiftTimeOptions) {
           if (option.value !== '') {
             const newOption = option.cloneNode(true) as HTMLOptionElement
@@ -1525,6 +1538,8 @@ declare const exports: {
             shiftTimeSelect.append(newOption)
           }
         }
+
+        shiftTimeSelect.addEventListener('change', doSearch)
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()

@@ -1007,6 +1007,7 @@
                         shiftTypeSelect.append(newOption);
                     }
                 }
+                shiftTypeSelect.addEventListener('change', doSearch);
                 // Populate supervisors
                 const supervisorSelect = modalElement.querySelector('#search--supervisorEmployeeNumber');
                 const supervisorOptions = document.querySelectorAll('#shift--supervisorEmployeeNumber option');
@@ -1017,6 +1018,7 @@
                         supervisorSelect.append(newOption);
                     }
                 }
+                supervisorSelect.addEventListener('change', doSearch);
                 // Populate shift times
                 const shiftTimeSelect = modalElement.querySelector('#search--shiftTimeDataListItemId');
                 const shiftTimeOptions = document.querySelectorAll('#shift--shiftTimeDataListItemId option');
@@ -1027,6 +1029,7 @@
                         shiftTimeSelect.append(newOption);
                     }
                 }
+                shiftTimeSelect.addEventListener('change', doSearch);
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
