@@ -152,6 +152,24 @@
     </li>
     <li>
       <a
+        class="<%= headTitle === 'Employee List Management' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/employeeLists"
+        title="Employee List Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-list-ol"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Employee Lists
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
         class="<%= headTitle === 'Equipment Maintenance' ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/admin/equipment"
         title="Equipment Maintenance"

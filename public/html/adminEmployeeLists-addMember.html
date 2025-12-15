@@ -1,0 +1,78 @@
+<div
+  class="modal"
+  id="modal--addEmployeeListMember"
+  role="dialog"
+  aria-label="Add Employee to List"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Employee to List</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addEmployeeListMember">
+        <input id="employeeListMember--employeeListId" name="employeeListId" type="hidden" />
+        <div class="field">
+          <label class="label" for="employeeListMember--employeeNumber">Employee</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="employeeListMember--employeeNumber"
+                name="employeeNumber"
+                autofocus
+                required
+              >
+                <option value="">Select an Employee</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="employeeListMember--seniorityDate">Seniority Date</label>
+          <div class="control">
+            <input
+              class="input"
+              id="employeeListMember--seniorityDate"
+              name="seniorityDate"
+              type="date"
+            />
+          </div>
+          <p class="help">Optional. Employees are sorted first by seniority date, then by order number within the same date.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="employeeListMember--seniorityOrderNumber">Order Number</label>
+          <div class="control">
+            <input
+              class="input"
+              id="employeeListMember--seniorityOrderNumber"
+              name="seniorityOrderNumber"
+              type="number"
+              min="0"
+              value="0"
+            />
+          </div>
+          <p class="help">Used to order employees within the same seniority date. Can be changed via drag-and-drop.</p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--addEmployeeListMember"
+        >
+          Add Employee
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

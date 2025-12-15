@@ -1,0 +1,74 @@
+<div
+  class="modal"
+  id="modal--addEmployeeList"
+  role="dialog"
+  aria-label="Add Employee List"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Employee List</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addEmployeeList">
+        <div class="field">
+          <label class="label" for="employeeListAdd--employeeListName">List Name</label>
+          <div class="control">
+            <input
+              class="input"
+              id="employeeListAdd--employeeListName"
+              name="employeeListName"
+              type="text"
+              maxlength="50"
+              autofocus
+              required
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="employeeListAdd--userGroupId">User Group</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="employeeListAdd--userGroupId" name="userGroupId">
+                <option value="">(All Users)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">Optional. Restricts access to this list.</p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--addEmployeeList"
+        >
+          Add Employee List
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    const selectElement = document.querySelector('#employeeListAdd--userGroupId');
+    if (selectElement && window.exports && window.exports.userGroups) {
+      for (const userGroup of window.exports.userGroups) {
+        const optionElement = document.createElement('option');
+        optionElement.value = userGroup.userGroupId;
+        optionElement.textContent = userGroup.userGroupName;
+        selectElement.appendChild(optionElement);
+      }
+    }
+  })();
+</script>
