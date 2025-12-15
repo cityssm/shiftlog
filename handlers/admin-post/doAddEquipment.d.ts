@@ -4,5 +4,6 @@ export default function handler(request: Request<unknown, unknown, {
     equipmentName: string;
     equipmentNumber: string;
     equipmentTypeDataListItemId: string;
+    employeeListId: string;
     userGroupId: string;
 }>, response: Response): Promise<void>;

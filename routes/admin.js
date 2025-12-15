@@ -2,6 +2,7 @@ import { Router } from 'express';
 import handler_apiAuditLogs from '../handlers/admin-get/apiAuditLogs.js';
 import handler_dataLists from '../handlers/admin-get/dataLists.js';
 import handler_employees from '../handlers/admin-get/employees.js';
+import handler_employeeLists from '../handlers/admin-get/employeeLists.js';
 import handler_equipment from '../handlers/admin-get/equipment.js';
 import handler_locations from '../handlers/admin-get/locations.js';
 import handler_settings from '../handlers/admin-get/settings.js';
@@ -11,6 +12,8 @@ import handler_users from '../handlers/admin-get/users.js';
 import handler_workOrderTypes from '../handlers/admin-get/workOrderTypes.js';
 import handler_doAddDataListItem from '../handlers/admin-post/doAddDataListItem.js';
 import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js';
+import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.js';
+import handler_doAddEmployeeListMember from '../handlers/admin-post/doAddEmployeeListMember.js';
 import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js';
 import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js';
 import handler_doAddTag from '../handlers/admin-post/doAddTag.js';
@@ -22,6 +25,8 @@ import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupM
 import handler_doAddWorkOrderType from '../handlers/admin-post/doAddWorkOrderType.js';
 import handler_doDeleteDataListItem from '../handlers/admin-post/doDeleteDataListItem.js';
 import handler_doDeleteEmployee from '../handlers/admin-post/doDeleteEmployee.js';
+import handler_doDeleteEmployeeList from '../handlers/admin-post/doDeleteEmployeeList.js';
+import handler_doDeleteEmployeeListMember from '../handlers/admin-post/doDeleteEmployeeListMember.js';
 import handler_doDeleteEquipment from '../handlers/admin-post/doDeleteEquipment.js';
 import handler_doDeleteLocation from '../handlers/admin-post/doDeleteLocation.js';
 import handler_doDeleteTag from '../handlers/admin-post/doDeleteTag.js';
@@ -29,12 +34,16 @@ import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js';
 import handler_doDeleteUserGroup from '../handlers/admin-post/doDeleteUserGroup.js';
 import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUserGroupMember.js';
 import handler_doDeleteWorkOrderType from '../handlers/admin-post/doDeleteWorkOrderType.js';
+import handler_doGetEmployeeList from '../handlers/admin-post/doGetEmployeeList.js';
 import handler_doGetUserGroup from '../handlers/admin-post/doGetUserGroup.js';
 import handler_doReorderDataListItems from '../handlers/admin-post/doReorderDataListItems.js';
+import handler_doReorderEmployeeListMembers from '../handlers/admin-post/doReorderEmployeeListMembers.js';
 import handler_doReorderWorkOrderTypes from '../handlers/admin-post/doReorderWorkOrderTypes.js';
 import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js';
 import handler_doUpdateDataListItem from '../handlers/admin-post/doUpdateDataListItem.js';
 import handler_doUpdateEmployee from '../handlers/admin-post/doUpdateEmployee.js';
+import handler_doUpdateEmployeeList from '../handlers/admin-post/doUpdateEmployeeList.js';
+import handler_doUpdateEmployeeListMember from '../handlers/admin-post/doUpdateEmployeeListMember.js';
 import handler_doUpdateEquipment from '../handlers/admin-post/doUpdateEquipment.js';
 import handler_doUpdateLocation from '../handlers/admin-post/doUpdateLocation.js';
 import handler_doUpdateSetting from '../handlers/admin-post/doUpdateSetting.js';
@@ -73,6 +82,19 @@ router
     .post('/doAddEmployee', handler_doAddEmployee)
     .post('/doUpdateEmployee', handler_doUpdateEmployee)
     .post('/doDeleteEmployee', handler_doDeleteEmployee);
+/*
+ * Employee Lists
+ */
+router
+    .get('/employeeLists', handler_employeeLists)
+    .post('/doGetEmployeeList', handler_doGetEmployeeList)
+    .post('/doAddEmployeeList', handler_doAddEmployeeList)
+    .post('/doUpdateEmployeeList', handler_doUpdateEmployeeList)
+    .post('/doDeleteEmployeeList', handler_doDeleteEmployeeList)
+    .post('/doAddEmployeeListMember', handler_doAddEmployeeListMember)
+    .post('/doUpdateEmployeeListMember', handler_doUpdateEmployeeListMember)
+    .post('/doDeleteEmployeeListMember', handler_doDeleteEmployeeListMember)
+    .post('/doReorderEmployeeListMembers', handler_doReorderEmployeeListMembers);
 /*
  * Settings Management
  */
