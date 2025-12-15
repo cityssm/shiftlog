@@ -254,7 +254,7 @@ const minEditableDate = 0
     cardHTML += '<div class="level-item">'
     cardHTML += `<h3 class="title is-5 mb-0">`
     cardHTML += `<a href="${shiftLog.urlPrefix}/shifts/${shift.shiftId}">`
-    cardHTML += cityssm.escapeHTML(shift.shiftTypeDataListItem ?? 'Shift')
+    cardHTML += `#${shift.shiftId} - ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? 'Shift')}`
     cardHTML += `</a></h3>`
     cardHTML += '</div></div>'
     cardHTML += '<div class="level-right">'
@@ -347,9 +347,94 @@ const minEditableDate = 0
         if (responseJSON.success) {
           currentShifts = responseJSON.shifts
           renderShifts()
+          loadAvailableResources()
         }
       }
     )
+  }
+
+  function loadAvailableResources(): void {
+    const shiftDateString = shiftDateElement.value
+
+    if (shiftDateString === '') {
+      return
+    }
+
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      {
+        shiftDateString
+      },
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as {
+          success: boolean
+          employees: Array<{ employeeNumber: string; firstName: string; lastName: string }>
+          equipment: Array<{ equipmentNumber: string; equipmentName: string }>
+          crews: Array<{ crewId: number; crewName: string }>
+        }
+
+        if (responseJSON.success) {
+          renderAvailableResources(responseJSON)
+        }
+      }
+    )
+  }
+
+  function renderAvailableResources(resources: {
+    employees: Array<{ employeeNumber: string; firstName: string; lastName: string }>
+    equipment: Array<{ equipmentNumber: string; equipmentName: string }>
+    crews: Array<{ crewId: number; crewName: string }>
+  }): void {
+    // Render employees
+    const employeesList = document.querySelector('#available--employees .available-resources-list') as HTMLElement
+    if (employeesList !== null) {
+      if (resources.employees.length === 0) {
+        employeesList.innerHTML = '<p class="has-text-grey-light is-size-7">No available employees</p>'
+      } else {
+        let html = '<div class="available-items">'
+        for (const employee of resources.employees) {
+          html += `<div class="box is-paddingless p-2 mb-2 is-clickable" draggable="true" data-employee-number="${employee.employeeNumber}" data-from-available="true">`
+          html += `<span class="is-size-7">${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)}</span>`
+          html += '</div>'
+        }
+        html += '</div>'
+        employeesList.innerHTML = html
+      }
+    }
+
+    // Render equipment
+    const equipmentList = document.querySelector('#available--equipment .available-resources-list') as HTMLElement
+    if (equipmentList !== null) {
+      if (resources.equipment.length === 0) {
+        equipmentList.innerHTML = '<p class="has-text-grey-light is-size-7">No available equipment</p>'
+      } else {
+        let html = '<div class="available-items">'
+        for (const equipment of resources.equipment) {
+          html += `<div class="box is-paddingless p-2 mb-2 is-clickable" draggable="true" data-equipment-number="${equipment.equipmentNumber}" data-from-available="true">`
+          html += `<span class="is-size-7">${cityssm.escapeHTML(equipment.equipmentName)}</span>`
+          html += '</div>'
+        }
+        html += '</div>'
+        equipmentList.innerHTML = html
+      }
+    }
+
+    // Render crews
+    const crewsList = document.querySelector('#available--crews .available-resources-list') as HTMLElement
+    if (crewsList !== null) {
+      if (resources.crews.length === 0) {
+        crewsList.innerHTML = '<p class="has-text-grey-light is-size-7">No available crews</p>'
+      } else {
+        let html = '<div class="available-items">'
+        for (const crew of resources.crews) {
+          html += `<div class="box is-paddingless p-2 mb-2 is-clickable" draggable="true" data-crew-id="${crew.crewId}" data-from-available="true">`
+          html += `<span class="is-size-7">${cityssm.escapeHTML(crew.crewName)}</span>`
+          html += '</div>'
+        }
+        html += '</div>'
+        crewsList.innerHTML = html
+      }
+    }
   }
 
   // Drag and drop state
@@ -370,9 +455,10 @@ const minEditableDate = 0
     const equipmentNumber = target.dataset.equipmentNumber
     const crewId = target.dataset.crewId
     const workorderId = target.dataset.workorderId
+    const fromAvailable = target.dataset.fromAvailable === 'true'
 
     const shiftCard = target.closest('[data-shift-id]') as HTMLElement
-    const fromShiftId = Number.parseInt(shiftCard.dataset.shiftId ?? '0', 10)
+    const fromShiftId = fromAvailable ? 0 : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
 
     if (employeeNumber !== undefined) {
       draggedData = {
@@ -426,6 +512,20 @@ const minEditableDate = 0
       element.classList.remove('is-drop-target')
     })
 
+    // Check if hovering over available resources sidebar (to remove from shift)
+    const availableResourcesSidebar = target.closest('#container--availableResources')
+    if (availableResourcesSidebar !== null && draggedData !== null && draggedData.fromShiftId > 0) {
+      // Highlight the sidebar box when dragging from a shift to remove
+      const sidebarBox = availableResourcesSidebar.querySelector('.box')
+      if (sidebarBox !== null) {
+        sidebarBox.classList.add('is-drop-target')
+      }
+      if (event.dataTransfer !== null) {
+        event.dataTransfer.dropEffect = 'move'
+      }
+      return
+    }
+
     // Check for specific drop targets first
     const supervisorTarget = target.closest('.drop-target-supervisor') as HTMLElement
     const crewTarget = target.closest('.drop-target-crew') as HTMLElement
@@ -441,7 +541,7 @@ const minEditableDate = 0
     } else {
       // Default: highlight entire shift box
       const shiftBox = target.closest('.box')
-      if (shiftBox !== null) {
+      if (shiftBox !== null && !shiftBox.closest('#container--availableResources')) {
         shiftBox.classList.add('is-drop-target')
       }
     }
@@ -466,6 +566,13 @@ const minEditableDate = 0
     target.classList.remove('is-drop-target')
 
     if (draggedData === null) {
+      return
+    }
+
+    // Check if dropped on available resources sidebar (to remove from shift)
+    const availableResourcesSidebar = target.closest('#container--availableResources')
+    if (availableResourcesSidebar !== null && draggedData.fromShiftId > 0) {
+      removeFromShift(draggedData)
       return
     }
 
@@ -549,11 +656,89 @@ const minEditableDate = 0
     }
   }
 
+  function removeFromShift(draggedData: {
+    type: 'employee' | 'equipment' | 'crew' | 'workOrder'
+    id: string | number
+    fromShiftId: number
+  }): void {
+    if (draggedData.type === 'employee') {
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+        {
+          shiftId: draggedData.fromShiftId,
+          employeeNumber: draggedData.id
+        },
+        (response) => {
+          if (response.success) {
+            bulmaJS.alert({ contextualColorName: 'success', message: 'Employee removed from shift.' })
+            loadShifts()
+          } else {
+            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove employee from shift.' })
+          }
+        }
+      )
+    } else if (draggedData.type === 'equipment') {
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+        {
+          shiftId: draggedData.fromShiftId,
+          equipmentNumber: draggedData.id
+        },
+        (response) => {
+          if (response.success) {
+            bulmaJS.alert({ contextualColorName: 'success', message: 'Equipment removed from shift.' })
+            loadShifts()
+          } else {
+            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove equipment from shift.' })
+          }
+        }
+      )
+    } else if (draggedData.type === 'crew') {
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
+        {
+          shiftId: draggedData.fromShiftId,
+          crewId: draggedData.id
+        },
+        (response) => {
+          if (response.success) {
+            bulmaJS.alert({ contextualColorName: 'success', message: 'Crew removed from shift.' })
+            loadShifts()
+          } else {
+            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to remove crew from shift.' })
+          }
+        }
+      )
+    }
+  }
+
   function moveEmployee(
     employeeNumber: string,
     fromShiftId: number,
     toShiftId: number
   ): void {
+    // If fromShiftId is 0, employee is from available resources
+    if (fromShiftId === 0) {
+      // Just add to new shift
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+        {
+          shiftId: toShiftId,
+          employeeNumber,
+          shiftEmployeeNote: ''
+        },
+        (addResponse) => {
+          if (addResponse.success) {
+            bulmaJS.alert({ contextualColorName: 'success', title: 'Employee Added', message: 'Employee has been added to the shift.' })
+            loadShifts()
+          } else {
+            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add employee to shift.' })
+          }
+        }
+      )
+      return
+    }
+
     // Delete from old shift
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
@@ -592,6 +777,28 @@ const minEditableDate = 0
     fromShiftId: number,
     toShiftId: number
   ): void {
+    // If fromShiftId is 0, equipment is from available resources
+    if (fromShiftId === 0) {
+      // Just add to new shift
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+        {
+          shiftId: toShiftId,
+          equipmentNumber,
+          shiftEquipmentNote: ''
+        },
+        (addResponse) => {
+          if (addResponse.success) {
+            bulmaJS.alert({ contextualColorName: 'success', title: 'Equipment Added', message: 'Equipment has been added to the shift.' })
+            loadShifts()
+          } else {
+            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add equipment to shift.' })
+          }
+        }
+      )
+      return
+    }
+
     // Delete from old shift
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
@@ -630,6 +837,28 @@ const minEditableDate = 0
     fromShiftId: number,
     toShiftId: number
   ): void {
+    // If fromShiftId is 0, crew is from available resources
+    if (fromShiftId === 0) {
+      // Just add to new shift
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
+        {
+          shiftId: toShiftId,
+          crewId,
+          shiftCrewNote: ''
+        },
+        (addResponse) => {
+          if (addResponse.success) {
+            bulmaJS.alert({ contextualColorName: 'success', title: 'Crew Added', message: 'Crew has been added to the shift.' })
+            loadShifts()
+          } else {
+            bulmaJS.alert({ contextualColorName: 'danger', title: 'Error', message: 'Failed to add crew to shift.' })
+          }
+        }
+      )
+      return
+    }
+
     // Delete from old shift
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
@@ -865,6 +1094,16 @@ const minEditableDate = 0
   resultsContainerElement.addEventListener('dragover', handleDragOver)
   resultsContainerElement.addEventListener('dragleave', handleDragLeave)
   resultsContainerElement.addEventListener('drop', handleDrop)
+
+  // Set up drag and drop for available resources sidebar
+  const availableResourcesContainer = document.querySelector('#container--availableResources')
+  if (availableResourcesContainer !== null) {
+    availableResourcesContainer.addEventListener('dragstart', handleDragStart)
+    availableResourcesContainer.addEventListener('dragend', handleDragEnd)
+    availableResourcesContainer.addEventListener('dragover', handleDragOver)
+    availableResourcesContainer.addEventListener('dragleave', handleDragLeave)
+    availableResourcesContainer.addEventListener('drop', handleDrop)
+  }
 
   // Initialize flatpickr for date input
   if (typeof flatpickr !== 'undefined') {

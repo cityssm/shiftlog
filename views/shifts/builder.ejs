@@ -91,13 +91,44 @@
   </div>
 </div>
 
-<div id="container--shiftBuilderResults">
-  <div class="has-text-centered py-6">
-    <span class="icon is-large has-text-grey-light">
-      <i class="fa-solid fa-3x fa-calendar-days"></i>
-    </span>
-    <p class="has-text-grey">Select a date to view shifts</p>
+<div class="columns">
+  <div class="column" id="container--shiftBuilderResults">
+    <div class="has-text-centered py-6">
+      <span class="icon is-large has-text-grey-light">
+        <i class="fa-solid fa-3x fa-calendar-days"></i>
+      </span>
+      <p class="has-text-grey">Select a date to view shifts</p>
+    </div>
   </div>
+  <% if (user.userProperties.shifts.canUpdate) { %>
+  <div class="column is-one-quarter" id="container--availableResources">
+    <div class="box">
+      <h3 class="title is-5">Available Resources</h3>
+      <p class="help mb-3">Drag resources to shifts or drag from shifts here to remove</p>
+      
+      <div id="available--employees" class="mb-4">
+        <h4 class="subtitle is-6">Employees</h4>
+        <div class="available-resources-list" data-resource-type="employee">
+          <p class="has-text-grey-light is-size-7">No available employees</p>
+        </div>
+      </div>
+      
+      <div id="available--equipment" class="mb-4">
+        <h4 class="subtitle is-6">Equipment</h4>
+        <div class="available-resources-list" data-resource-type="equipment">
+          <p class="has-text-grey-light is-size-7">No available equipment</p>
+        </div>
+      </div>
+      
+      <div id="available--crews">
+        <h4 class="subtitle is-6">Crews</h4>
+        <div class="available-resources-list" data-resource-type="crew">
+          <p class="has-text-grey-light is-size-7">No available crews</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
 </div>
 
 <%- await include('../_footerA'); -%>
@@ -149,6 +180,25 @@
   .drop-target-employee.is-drop-target {
     border: 2px solid #3273dc;
     background-color: rgba(50, 115, 220, 0.1);
+  }
+
+  #container--availableResources .available-items > div {
+    cursor: move;
+    transition: all 0.2s;
+  }
+
+  #container--availableResources .available-items > div:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateX(2px);
+  }
+
+  #container--availableResources .available-items > div.is-dragging {
+    opacity: 0.5;
+  }
+
+  #container--availableResources .box.is-drop-target {
+    border: 2px solid #48c774;
+    background-color: rgba(72, 199, 116, 0.05);
   }
 </style>
 
