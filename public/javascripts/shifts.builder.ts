@@ -38,6 +38,9 @@ declare const exports: {
 
   let currentShifts: ShiftForBuilder[] = []
 
+  // Track locked shifts
+  const lockedShifts = new Set<number>()
+
   // Track items appearing on multiple shifts
   type DuplicateTracker = Record<string, number[]>
 
@@ -126,6 +129,8 @@ declare const exports: {
     duplicates: DuplicateTracker
   ): HTMLElement {
     const isEditable = isShiftEditable(shift)
+    const isLocked = lockedShifts.has(shift.shiftId)
+    const isDraggable = isEditable && !isLocked
     const containerElement = document.createElement('div')
     containerElement.className = 'shift-details'
 
@@ -150,6 +155,8 @@ declare const exports: {
         }
         if (isEditable) {
           crewItem.classList.add('drop-target-crew')
+        }
+        if (isDraggable) {
           crewItem.draggable = true
         }
         crewItem.dataset.crewId = crew.crewId.toString()
@@ -200,6 +207,8 @@ declare const exports: {
         }
         if (isEditable) {
           employeeItem.classList.add('drop-target-employee')
+        }
+        if (isDraggable) {
           employeeItem.draggable = true
         }
         employeeItem.dataset.employeeNumber = employee.employeeNumber
@@ -261,7 +270,7 @@ declare const exports: {
         if (isDup) {
           equipmentItem.classList.add('has-background-warning-light')
         }
-        if (isEditable) {
+        if (isDraggable) {
           equipmentItem.draggable = true
         }
         equipmentItem.dataset.equipmentNumber = equipment.equipmentNumber
@@ -322,6 +331,8 @@ declare const exports: {
     duplicates: DuplicateTracker
   ): HTMLElement {
     const isEditable = isShiftEditable(shift)
+    const isLocked = lockedShifts.has(shift.shiftId)
+    const isDraggable = isEditable && !isLocked
     const containerElement = document.createElement('div')
     containerElement.className = 'shift-details'
 
@@ -343,7 +354,7 @@ declare const exports: {
         if (isDup) {
           workOrderItem.classList.add('has-background-warning-light')
         }
-        if (isEditable) {
+        if (isDraggable) {
           workOrderItem.draggable = true
         }
         workOrderItem.dataset.workorderId = workOrder.workOrderId.toString()
@@ -411,6 +422,33 @@ declare const exports: {
     
     const levelLeft = document.createElement('div')
     levelLeft.className = 'level-left'
+    
+    // Lock button (if editable)
+    if (isEditable) {
+      const lockItem = document.createElement('div')
+      lockItem.className = 'level-item'
+      const lockButton = document.createElement('button')
+      lockButton.className = 'button is-small is-ghost'
+      lockButton.type = 'button'
+      lockButton.title = 'Lock/Unlock shift'
+      lockButton.dataset.shiftId = shift.shiftId.toString()
+      
+      const isLocked = lockedShifts.has(shift.shiftId)
+      const lockIcon = document.createElement('span')
+      lockIcon.className = 'icon is-small'
+      lockIcon.innerHTML = isLocked 
+        ? '<i class="fa-solid fa-lock has-text-danger"></i>'
+        : '<i class="fa-solid fa-lock-open has-text-success"></i>'
+      lockButton.append(lockIcon)
+      
+      lockButton.addEventListener('click', () => {
+        toggleShiftLock(shift.shiftId)
+      })
+      
+      lockItem.append(lockButton)
+      levelLeft.append(lockItem)
+    }
+    
     const levelLeftItem = document.createElement('div')
     levelLeftItem.className = 'level-item'
     const titleElement = document.createElement('h3')
@@ -740,6 +778,18 @@ declare const exports: {
     }
   }
 
+  // Lock/unlock functionality
+  function toggleShiftLock(shiftId: number): void {
+    if (lockedShifts.has(shiftId)) {
+      lockedShifts.delete(shiftId)
+    } else {
+      lockedShifts.add(shiftId)
+    }
+    
+    // Re-render shifts to update lock button and draggable states
+    renderShifts()
+  }
+
   // Drag and drop state
   let draggedElement: HTMLElement | null = null
   let draggedData: {
@@ -751,9 +801,7 @@ declare const exports: {
   // Drag and drop handlers
   function handleDragStart(event: DragEvent): void {
     const target = event.target as HTMLElement
-    draggedElement = target
-    target.classList.add('is-dragging')
-
+    
     const employeeNumber = target.dataset.employeeNumber
     const equipmentNumber = target.dataset.equipmentNumber
     const crewId = target.dataset.crewId
@@ -764,6 +812,15 @@ declare const exports: {
     const fromShiftId = fromAvailable
       ? 0
       : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
+    
+    // Prevent dragging from locked shifts
+    if (fromShiftId !== 0 && lockedShifts.has(fromShiftId)) {
+      event.preventDefault()
+      return
+    }
+    
+    draggedElement = target
+    target.classList.add('is-dragging')
 
     if (employeeNumber !== undefined) {
       draggedData = {
@@ -911,7 +968,8 @@ declare const exports: {
         supervisorTarget.dataset.shiftId ?? '0',
         10
       )
-      if (shiftId > 0) {
+      // Prevent dropping on locked shifts
+      if (shiftId > 0 && !lockedShifts.has(shiftId)) {
         makeEmployeeSupervisor(draggedData.id as string, shiftId)
         return
       }
@@ -923,7 +981,8 @@ declare const exports: {
       const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
       const crewId = Number.parseInt(crewTarget.dataset.crewId ?? '0', 10)
 
-      if (shiftId > 0 && crewId > 0) {
+      // Prevent dropping on locked shifts
+      if (shiftId > 0 && crewId > 0 && !lockedShifts.has(shiftId)) {
         assignEmployeeToCrew(
           draggedData.id as string,
           draggedData.fromShiftId,
@@ -940,7 +999,8 @@ declare const exports: {
       const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
       const employeeNumber = employeeTarget.dataset.employeeNumber ?? ''
 
-      if (shiftId > 0 && employeeNumber !== '') {
+      // Prevent dropping on locked shifts
+      if (shiftId > 0 && employeeNumber !== '' && !lockedShifts.has(shiftId)) {
         assignEquipmentToEmployee(
           draggedData.id as string,
           draggedData.fromShiftId,
@@ -956,6 +1016,11 @@ declare const exports: {
     const toShiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
 
     if (toShiftId === 0 || toShiftId === draggedData.fromShiftId) {
+      return
+    }
+    
+    // Prevent dropping on locked shifts
+    if (lockedShifts.has(toShiftId)) {
       return
     }
 
