@@ -232,6 +232,16 @@ CREATE TABLE ShiftLog.CrewMembers (
 )
 GO
 
+CREATE TABLE ShiftLog.CrewEquipment (
+  crewId int not null,
+  instance varchar(20) not null,
+  equipmentNumber varchar(20) not null,
+  employeeNumber varchar(10),
+  primary key (crewId, equipmentNumber),
+  foreign key (crewId) references ShiftLog.Crews(crewId),
+  foreign key (instance, equipmentNumber) references ShiftLog.Equipment(instance, equipmentNumber)
+)
+
 CREATE TABLE ShiftLog.EmployeeLists (
   employeeListId int not null primary key identity(1,1),
   instance varchar(20) not null,
