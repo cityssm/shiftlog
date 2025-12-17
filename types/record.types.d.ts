@@ -264,6 +264,8 @@ export interface WorkOrder extends BaseRecord {
     workOrderType?: string;
     workOrderStatusDataListItemId?: number | null;
     workOrderStatusDataListItem?: string;
+    workOrderPriorityDataListItemId?: number | null;
+    workOrderPriorityDataListItem?: string;
     workOrderDetails: string;
     workOrderOpenDateTime: Date | string;
     workOrderDueDateTime?: Date | string | null;
@@ -320,5 +322,6 @@ export interface WorkOrderAttachment extends BaseRecord {
     attachmentFileType: string;
     attachmentFileSizeInBytes: number;
     attachmentDescription: string;
+    isWorkOrderThumbnail: boolean;
     fileSystemPath: string;
 }

@@ -1,16 +1,19 @@
 import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
+import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
     const assignedToItems = await getAssignedToDataListItems(request.session.user);
     const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user);
+    const workOrderPriorities = await getWorkOrderPriorityDataListItems(request.session.user);
     const workOrderTypes = await getWorkOrderTypes(request.session.user);
     response.render('workOrders/planner', {
         headTitle: `${getConfigProperty('workOrders.sectionName')} - Work Planner`,
         error: request.query.error ?? '',
         assignedToItems,
         workOrderStatuses,
+        workOrderPriorities,
         workOrderTypes
     });
 }

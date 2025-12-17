@@ -11,5 +11,6 @@ export interface WorkOrderEditResponse {
 
   workOrderTypes: WorkOrderType[]
   workOrderStatuses: DataListItem[]
+  workOrderPriorities: DataListItem[]
   assignedToOptions: DataListItem[]
 }

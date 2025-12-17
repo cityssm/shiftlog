@@ -137,6 +137,36 @@
                   </div>
                 </div>
               </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrder--workOrderPriorityDataListItemId">Priority</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="workOrder--workOrderPriorityDataListItemId" name="workOrderPriorityDataListItemId" <% if (!isEdit) { %>disabled<% } %>>
+                    <option value="">(No Priority)</option>
+                    <% let workOrderPriorityFound = false %>
+                    <% for (const workOrderPriority of workOrderPriorities) { %>
+                      <option
+                      value="<%= workOrderPriority.dataListItemId %>"
+                      <% if (workOrder.workOrderPriorityDataListItemId === workOrderPriority.dataListItemId) { %>
+                        <% workOrderPriorityFound = true; %>
+                        selected
+                        <% } %>
+                        >
+                        <%= workOrderPriority.dataListItem %>
+                      </option>
+                      <% } %>
+                      <% if (!workOrderPriorityFound && workOrder.workOrderPriorityDataListItemId) { %>
+                        <option value="<%= workOrder.workOrderPriorityDataListItemId %>" selected>
+                          <%= workOrder.workOrderPriorityDataListItem %>
+                          <%= isEdit ? "(Inactive)" : "" %>
+                        </option>
+                        <% } %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </div>
         <div class="field">
           <label class="label" for="workOrder--workOrderDetails">Details</label>

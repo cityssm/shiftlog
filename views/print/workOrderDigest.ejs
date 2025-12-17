@@ -34,6 +34,7 @@
         <th><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #</th>
         <th>Type</th>
         <th>Status</th>
+        <th>Priority</th>
         <th>Details</th>
         <th>Due Date</th>
         <th>Opened</th>
@@ -53,6 +54,7 @@
         </td>
         <td><%= workOrder.workOrderType ?? '' %></td>
         <td><%= workOrder.workOrderStatusDataListItem ?? '' %></td>
+        <td><%= workOrder.workOrderPriorityDataListItem ?? '' %></td>
         <td style="white-space: pre-wrap; max-width: 300px;">
           <%= (workOrder.workOrderDetails && workOrder.workOrderDetails.length > 100) ? workOrder.workOrderDetails.substring(0, 100) + '...' : (workOrder.workOrderDetails || '') %>
         </td>

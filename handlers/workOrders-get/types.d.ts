@@ -7,5 +7,6 @@ export interface WorkOrderEditResponse {
     canReopen?: boolean;
     workOrderTypes: WorkOrderType[];
     workOrderStatuses: DataListItem[];
+    workOrderPriorities: DataListItem[];
     assignedToOptions: DataListItem[];
 }

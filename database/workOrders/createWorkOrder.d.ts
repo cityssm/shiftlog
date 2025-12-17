@@ -2,6 +2,7 @@ import type { DateString, TimeString } from '@cityssm/utils-datetime';
 export interface CreateWorkOrderForm {
     workOrderDetails: string;
     workOrderStatusDataListItemId?: number | string;
+    workOrderPriorityDataListItemId?: number | string;
     workOrderTypeId: number | string;
     workOrderOpenDateTimeString: `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderDueDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;

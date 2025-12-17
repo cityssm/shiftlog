@@ -12,6 +12,7 @@ export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
 
   workOrderDetails: string
   workOrderStatusDataListItemId?: number | string
+  workOrderPriorityDataListItemId?: number | string
   workOrderTypeId: number | string
 
   workOrderOpenDateTimeString:
@@ -78,6 +79,12 @@ export default async function updateWorkOrder(
         ? null
         : updateWorkOrderForm.workOrderStatusDataListItemId
     )
+    .input(
+      'workOrderPriorityDataListItemId',
+      updateWorkOrderForm.workOrderPriorityDataListItemId === ''
+        ? null
+        : updateWorkOrderForm.workOrderPriorityDataListItemId
+    )
     .input('workOrderDetails', updateWorkOrderForm.workOrderDetails)
     .input(
       'workOrderOpenDateTime',
@@ -130,6 +137,7 @@ export default async function updateWorkOrder(
       set
         workOrderTypeId = @workOrderTypeId,
         workOrderStatusDataListItemId = @workOrderStatusDataListItemId,
+        workOrderPriorityDataListItemId = @workOrderPriorityDataListItemId,
         workOrderDetails = @workOrderDetails,
         workOrderOpenDateTime = @workOrderOpenDateTime,
         workOrderDueDateTime = @workOrderDueDateTime,
