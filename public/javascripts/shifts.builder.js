@@ -481,7 +481,7 @@
                 itemsContainer.className = 'available-items';
                 for (const employee of resources.employees) {
                     const itemBox = document.createElement('div');
-                    itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable';
+                    itemBox.className = 'box is-paddingless p-2 mb-2';
                     itemBox.draggable = true;
                     itemBox.dataset.employeeNumber = employee.employeeNumber;
                     itemBox.dataset.fromAvailable = 'true';
@@ -519,7 +519,7 @@
                 itemsContainer.className = 'available-items';
                 for (const equipment of resources.equipment) {
                     const itemBox = document.createElement('div');
-                    itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable';
+                    itemBox.className = 'box is-paddingless p-2 mb-2';
                     itemBox.draggable = true;
                     itemBox.dataset.equipmentNumber = equipment.equipmentNumber;
                     itemBox.dataset.fromAvailable = 'true';
@@ -557,7 +557,7 @@
                 itemsContainer.className = 'available-items';
                 for (const crew of resources.crews) {
                     const itemBox = document.createElement('div');
-                    itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable';
+                    itemBox.className = 'box is-paddingless p-2 mb-2';
                     itemBox.draggable = true;
                     itemBox.dataset.crewId = crew.crewId.toString();
                     itemBox.dataset.fromAvailable = 'true';
