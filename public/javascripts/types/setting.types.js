@@ -1,6 +1,17 @@
+"use strict";
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable perfectionist/sort-objects */
-export const settingProperties = [
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.settingProperties = void 0;
+exports.settingProperties = [
+    {
+        settingKey: 'cleanup.apiAuditLogRetentionDays',
+        settingName: 'Cleanup - API Audit Log Retention (Days)',
+        description: 'The number of days to retain API audit log records before they are permanently deleted. Set to 0 to disable automatic cleanup.',
+        type: 'number',
+        defaultValue: '365',
+        isUserConfigurable: true
+    },
     {
         settingKey: 'cleanup.daysBeforePermanentDelete',
         settingName: 'Cleanup - Days Before Permanent Delete',
