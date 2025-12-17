@@ -87,13 +87,13 @@
                       ${cityssm.escapeHTML(attachment.attachmentFileName)}
                     </a>
                     ${attachment.isWorkOrderThumbnail
-                        ? /* html */ `
+                    ? /* html */ `
                           <span class="tag is-info is-light ml-1" title="Thumbnail">
                             <span class="icon is-small"><i class="fa-solid fa-image"></i></span>
                             <span>Thumbnail</span>
                           </span>
                         `
-                        : ''}
+                    : ''}
                   </strong>
                   <br />
                   <small class="has-text-grey">
@@ -116,12 +116,12 @@
                           <span class="icon is-small"><i class="fa-solid fa-download"></i></span>
                         </a>
                         ${isImage && !attachment.isWorkOrderThumbnail
-                            ? /* html */ `
+                        ? /* html */ `
                               <a class="level-item set-thumbnail" data-attachment-id="${attachment.workOrderAttachmentId}" title="Set as Thumbnail">
                                 <span class="icon is-small has-text-info"><i class="fa-solid fa-image"></i></span>
                               </a>
                             `
-                            : ''}
+                        : ''}
                         <a class="level-item delete-attachment" data-attachment-id="${attachment.workOrderAttachmentId}">
                           <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
                         </a>
