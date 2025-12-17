@@ -535,8 +535,8 @@ declare const exports: {
         : renderTasksView(shift, duplicates)
     boxElement.append(viewContent)
 
-    // Add Resource button (only for editable shifts)
-    if (isEditable) {
+    // Add Resource button (only for editable shifts that are not locked)
+    if (isEditable && !lockedShifts.has(shift.shiftId)) {
       const addResourceButton = document.createElement('button')
       addResourceButton.className = 'button is-small is-success is-fullwidth mt-3'
       addResourceButton.type = 'button'
@@ -2314,6 +2314,7 @@ declare const exports: {
                 successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
                 loadShifts()
+                loadAvailableResources()
               }
             }
           )
@@ -2335,6 +2336,7 @@ declare const exports: {
                 successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
                 loadShifts()
+                loadAvailableResources()
               }
             }
           )
@@ -2356,6 +2358,7 @@ declare const exports: {
                 successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
                 loadShifts()
+                loadAvailableResources()
               }
             }
           )
@@ -2377,6 +2380,7 @@ declare const exports: {
                 successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
                 loadShifts()
+                loadAvailableResources()
               }
             }
           )

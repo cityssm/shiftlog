@@ -394,8 +394,8 @@
             ? renderEmployeesView(shift, duplicates)
             : renderTasksView(shift, duplicates);
         boxElement.append(viewContent);
-        // Add Resource button (only for editable shifts)
-        if (isEditable) {
+        // Add Resource button (only for editable shifts that are not locked)
+        if (isEditable && !lockedShifts.has(shift.shiftId)) {
             const addResourceButton = document.createElement('button');
             addResourceButton.className = 'button is-small is-success is-fullwidth mt-3';
             addResourceButton.type = 'button';
@@ -1735,6 +1735,7 @@
                             successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
+                            loadAvailableResources();
                         }
                     });
                     break;
@@ -1751,6 +1752,7 @@
                             successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
+                            loadAvailableResources();
                         }
                     });
                     break;
@@ -1767,6 +1769,7 @@
                             successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
+                            loadAvailableResources();
                         }
                     });
                     break;
@@ -1783,6 +1786,7 @@
                             successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
+                            loadAvailableResources();
                         }
                     });
                     break;
@@ -1793,3 +1797,4 @@
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};
