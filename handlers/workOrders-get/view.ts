@@ -73,6 +73,7 @@ export default async function handler(
 
     assignedToOptions: [],
     workOrderStatuses: [],
+    workOrderPriorities: [],
     workOrderTypes: [workOrderType]
   } satisfies WorkOrderEditResponse)
 }

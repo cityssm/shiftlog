@@ -33,6 +33,7 @@ export default async function handler(request, response) {
         workOrder,
         assignedToOptions: [],
         workOrderStatuses: [],
+        workOrderPriorities: [],
         workOrderTypes: [workOrderType]
     });
 }

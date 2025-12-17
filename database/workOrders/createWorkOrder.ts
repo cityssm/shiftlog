@@ -13,6 +13,7 @@ import getWorkOrderTypeDefaultMilestones from '../workOrderTypes/getWorkOrderTyp
 export interface CreateWorkOrderForm {
   workOrderDetails: string
   workOrderStatusDataListItemId?: number | string
+  workOrderPriorityDataListItemId?: number | string
   workOrderTypeId: number | string
 
   workOrderOpenDateTimeString:
@@ -106,6 +107,12 @@ export default async function createWorkOrder(
         ? null
         : createWorkOrderForm.workOrderStatusDataListItemId
     )
+    .input(
+      'workOrderPriorityDataListItemId',
+      createWorkOrderForm.workOrderPriorityDataListItemId === ''
+        ? null
+        : createWorkOrderForm.workOrderPriorityDataListItemId
+    )
     .input('workOrderDetails', createWorkOrderForm.workOrderDetails)
     .input(
       'workOrderOpenDateTime',
@@ -160,6 +167,7 @@ export default async function createWorkOrder(
         workOrderNumberSequence,
         workOrderTypeId,
         workOrderStatusDataListItemId,
+        workOrderPriorityDataListItemId,
         workOrderDetails,
         workOrderOpenDateTime,
         workOrderDueDateTime,
@@ -183,6 +191,7 @@ export default async function createWorkOrder(
         @workOrderNumberSequence,
         @workOrderTypeId,
         @workOrderStatusDataListItemId,
+        @workOrderPriorityDataListItemId,
         @workOrderDetails,
         @workOrderOpenDateTime,
         @workOrderDueDateTime,
