@@ -700,7 +700,7 @@ declare const exports: {
 
           // Add icon
           const icon = document.createElement('span')
-          icon.className = 'icon is-small'
+          icon.className = 'icon'
           icon.innerHTML = '<i class="fa-solid fa-user"></i>'
           itemBox.append(icon, ' ')
 
@@ -747,7 +747,7 @@ declare const exports: {
 
           // Add icon
           const icon = document.createElement('span')
-          icon.className = 'icon is-small'
+          icon.className = 'icon'
           icon.innerHTML = '<i class="fa-solid fa-truck"></i>'
           itemBox.append(icon, ' ')
 
@@ -794,7 +794,7 @@ declare const exports: {
 
           // Add icon
           const icon = document.createElement('span')
-          icon.className = 'icon is-small'
+          icon.className = 'icon'
           icon.innerHTML = '<i class="fa-solid fa-users"></i>'
           itemBox.append(icon, ' ')
 
