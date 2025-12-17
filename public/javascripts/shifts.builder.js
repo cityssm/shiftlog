@@ -200,10 +200,10 @@
                 numberSpan.textContent = `(#${equipment.equipmentNumber})`;
                 equipmentItem.append(numberSpan);
                 if (equipment.employeeFirstName !== null) {
-                    const operatorSpan = document.createElement('span');
-                    operatorSpan.className = 'has-text-grey-light';
-                    operatorSpan.textContent = ` (${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName})`;
-                    equipmentItem.append(operatorSpan);
+                    const operatorTag = document.createElement('span');
+                    operatorTag.className = 'tag is-small is-info is-light ml-1';
+                    operatorTag.textContent = `${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName}`;
+                    equipmentItem.append(' ', operatorTag);
                 }
                 if (equipment.shiftEquipmentNote !== '') {
                     const noteSpan = document.createElement('span');
@@ -350,7 +350,8 @@
             const editLink = document.createElement('a');
             editLink.href = `${shiftLog.urlPrefix}/shifts/${shift.shiftId}/edit`;
             editLink.className = 'button is-small is-light';
-            editLink.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
+            editLink.innerHTML =
+                '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
             editItem.append(editLink);
             levelRight.append(editItem);
         }
@@ -372,7 +373,8 @@
             supervisorParagraph.classList.add('drop-target-supervisor');
         }
         supervisorParagraph.dataset.shiftId = shift.shiftId.toString();
-        supervisorParagraph.dataset.supervisorEmployeeNumber = shift.supervisorEmployeeNumber;
+        supervisorParagraph.dataset.supervisorEmployeeNumber =
+            shift.supervisorEmployeeNumber;
         const supervisorLabel = document.createElement('strong');
         supervisorLabel.textContent = 'Supervisor:';
         supervisorParagraph.append(supervisorLabel, ` ${shift.supervisorLastName ?? ''}, ${shift.supervisorFirstName ?? ''}`);
@@ -397,9 +399,11 @@
         // Add Resource button (only for editable shifts that are not locked)
         if (isEditable && !lockedShifts.has(shift.shiftId)) {
             const addResourceButton = document.createElement('button');
-            addResourceButton.className = 'button is-small is-success is-fullwidth mt-3';
+            addResourceButton.className =
+                'button is-small is-success is-fullwidth mt-3';
             addResourceButton.type = 'button';
-            addResourceButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add Resource</span>';
+            addResourceButton.innerHTML =
+                '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add Resource</span>';
             addResourceButton.addEventListener('click', () => {
                 openAddResourceModal(shift, viewMode);
             });
@@ -481,10 +485,11 @@
                 itemsContainer.className = 'available-items';
                 for (const employee of resources.employees) {
                     const itemBox = document.createElement('div');
-                    itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable';
+                    itemBox.className = 'box is-paddingless p-2 mb-2';
                     itemBox.draggable = true;
                     itemBox.dataset.employeeNumber = employee.employeeNumber;
                     itemBox.dataset.fromAvailable = 'true';
+                    itemBox.dataset.isSupervisor = employee.isSupervisor.toString();
                     // Add icon
                     const icon = document.createElement('span');
                     icon.className = 'icon is-small';
@@ -519,7 +524,7 @@
                 itemsContainer.className = 'available-items';
                 for (const equipment of resources.equipment) {
                     const itemBox = document.createElement('div');
-                    itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable';
+                    itemBox.className = 'box is-paddingless p-2 mb-2';
                     itemBox.draggable = true;
                     itemBox.dataset.equipmentNumber = equipment.equipmentNumber;
                     itemBox.dataset.fromAvailable = 'true';
@@ -557,7 +562,7 @@
                 itemsContainer.className = 'available-items';
                 for (const crew of resources.crews) {
                     const itemBox = document.createElement('div');
-                    itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable';
+                    itemBox.className = 'box is-paddingless p-2 mb-2';
                     itemBox.draggable = true;
                     itemBox.dataset.crewId = crew.crewId.toString();
                     itemBox.dataset.fromAvailable = 'true';
@@ -611,10 +616,27 @@
         draggedElement = target;
         target.classList.add('is-dragging');
         if (employeeNumber !== undefined) {
+            // Get isSupervisor status
+            let isSupervisor = false;
+            // Check if it's from available resources
+            if (fromAvailable && target.dataset.isSupervisor !== undefined) {
+                isSupervisor = target.dataset.isSupervisor === 'true';
+            }
+            else if (!fromAvailable) {
+                // Check in current shifts
+                for (const shift of currentShifts) {
+                    const employee = shift.employees.find((e) => e.employeeNumber === employeeNumber);
+                    if (employee !== undefined) {
+                        isSupervisor = employee.isSupervisor;
+                        break;
+                    }
+                }
+            }
             draggedData = {
                 fromShiftId,
                 id: employeeNumber,
-                type: 'employee'
+                type: 'employee',
+                isSupervisor
             };
         }
         else if (equipmentNumber !== undefined) {
@@ -727,9 +749,23 @@
         // Handle employee dropped on supervisor slot
         if (supervisorTarget !== null && draggedData.type === 'employee') {
             const shiftId = Number.parseInt(supervisorTarget.dataset.shiftId ?? '0', 10);
-            // Prevent dropping on locked shifts
-            if (shiftId > 0 && !lockedShifts.has(shiftId)) {
-                makeEmployeeSupervisor(draggedData.id, shiftId);
+            const targetShift = currentShifts.find((s) => s.shiftId === shiftId);
+            const employeeNumber = draggedData.id;
+            const isSupervisor = draggedData.isSupervisor ?? false;
+            // Prevent dropping on locked shifts, past date shifts, or non-supervisors
+            if (shiftId > 0 &&
+                !lockedShifts.has(shiftId) &&
+                targetShift !== undefined &&
+                isShiftEditable(targetShift)) {
+                if (!isSupervisor) {
+                    bulmaJS.alert({
+                        contextualColorName: 'warning',
+                        message: 'Only employees marked as supervisors can be assigned to the supervisor position.',
+                        title: 'Invalid Assignment'
+                    });
+                    return;
+                }
+                makeEmployeeSupervisor(employeeNumber, shiftId);
                 return;
             }
         }
@@ -738,8 +774,13 @@
             const shiftCard = crewTarget.closest('[data-shift-id]');
             const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
             const crewId = Number.parseInt(crewTarget.dataset.crewId ?? '0', 10);
-            // Prevent dropping on locked shifts
-            if (shiftId > 0 && crewId > 0 && !lockedShifts.has(shiftId)) {
+            const targetShift = currentShifts.find((s) => s.shiftId === shiftId);
+            // Prevent dropping on locked shifts or past date shifts
+            if (shiftId > 0 &&
+                crewId > 0 &&
+                !lockedShifts.has(shiftId) &&
+                targetShift !== undefined &&
+                isShiftEditable(targetShift)) {
                 assignEmployeeToCrew(draggedData.id, draggedData.fromShiftId, shiftId, crewId);
                 return;
             }
@@ -749,8 +790,13 @@
             const shiftCard = employeeTarget.closest('[data-shift-id]');
             const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
             const employeeNumber = employeeTarget.dataset.employeeNumber ?? '';
-            // Prevent dropping on locked shifts
-            if (shiftId > 0 && employeeNumber !== '' && !lockedShifts.has(shiftId)) {
+            const targetShift = currentShifts.find((s) => s.shiftId === shiftId);
+            // Prevent dropping on locked shifts or past date shifts
+            if (shiftId > 0 &&
+                employeeNumber !== '' &&
+                !lockedShifts.has(shiftId) &&
+                targetShift !== undefined &&
+                isShiftEditable(targetShift)) {
                 assignEquipmentToEmployee(draggedData.id, draggedData.fromShiftId, shiftId, employeeNumber);
                 return;
             }
@@ -763,6 +809,11 @@
         }
         // Prevent dropping on locked shifts
         if (lockedShifts.has(toShiftId)) {
+            return;
+        }
+        // Prevent dropping on past date shifts
+        const targetShift = currentShifts.find((s) => s.shiftId === toShiftId);
+        if (targetShift !== undefined && !isShiftEditable(targetShift)) {
             return;
         }
         // Handle different drop scenarios
@@ -792,24 +843,139 @@
         if (shift === undefined) {
             return [];
         }
-        return shift.equipment.filter((eq) => eq.employeeNumber === employeeNumber).map((eq) => ({
+        return shift.equipment
+            .filter((eq) => eq.employeeNumber === employeeNumber)
+            .map((eq) => ({
             equipmentNumber: eq.equipmentNumber,
             equipmentName: eq.equipmentName
+        }));
+    }
+    // Helper function to get employees assigned to a crew
+    function getCrewEmployees(shiftId, crewId) {
+        const shift = currentShifts.find((s) => s.shiftId === shiftId);
+        if (shift === undefined) {
+            return [];
+        }
+        return shift.employees
+            .filter((emp) => emp.crewId === crewId)
+            .map((emp) => ({
+            employeeNumber: emp.employeeNumber,
+            firstName: emp.firstName,
+            lastName: emp.lastName
         }));
     }
     function removeFromShift(draggedData) {
         switch (draggedData.type) {
             case 'crew': {
+                // Get employees assigned to this crew
+                const crewEmployees = getCrewEmployees(draggedData.fromShiftId, draggedData.id);
+                // Get equipment for each employee in the crew
+                const crewEquipment = [];
+                for (const employee of crewEmployees) {
+                    const employeeEquipment = getEmployeeEquipment(draggedData.fromShiftId, employee.employeeNumber);
+                    for (const equipment of employeeEquipment) {
+                        crewEquipment.push({
+                            employeeNumber: employee.employeeNumber,
+                            equipmentNumber: equipment.equipmentNumber,
+                            equipmentName: equipment.equipmentName
+                        });
+                    }
+                }
+                // Delete crew first
                 cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`, {
                     crewId: draggedData.id,
                     shiftId: draggedData.fromShiftId
                 }, (response) => {
                     if (response.success) {
-                        bulmaJS.alert({
-                            contextualColorName: 'success',
-                            message: 'Crew removed from shift.'
-                        });
-                        loadShifts();
+                        // Also delete crew employees and their equipment
+                        let employeesDeletedCount = 0;
+                        let employeesFailedCount = 0;
+                        let equipmentDeletedCount = 0;
+                        let equipmentFailedCount = 0;
+                        const totalEmployees = crewEmployees.length;
+                        const totalEquipment = crewEquipment.length;
+                        if (totalEmployees === 0) {
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Crew removed from shift.'
+                            });
+                            loadShifts();
+                        }
+                        else {
+                            // Delete each crew employee
+                            for (const employee of crewEmployees) {
+                                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`, {
+                                    employeeNumber: employee.employeeNumber,
+                                    shiftId: draggedData.fromShiftId
+                                }, (empResponse) => {
+                                    if (empResponse.success) {
+                                        employeesDeletedCount++;
+                                    }
+                                    else {
+                                        employeesFailedCount++;
+                                    }
+                                    // Check if all employees processed
+                                    if (employeesDeletedCount + employeesFailedCount ===
+                                        totalEmployees) {
+                                        // Now delete equipment
+                                        if (totalEquipment === 0) {
+                                            // No equipment to delete, show final message
+                                            if (employeesFailedCount === 0) {
+                                                bulmaJS.alert({
+                                                    contextualColorName: 'success',
+                                                    message: `Crew and ${totalEmployees} associated employee(s) removed from shift.`
+                                                });
+                                            }
+                                            else {
+                                                bulmaJS.alert({
+                                                    contextualColorName: 'warning',
+                                                    message: `Crew removed. ${employeesDeletedCount} employee(s) removed, but ${employeesFailedCount} employee(s) failed to remove.`,
+                                                    title: 'Partial Success'
+                                                });
+                                            }
+                                            loadShifts();
+                                        }
+                                        else {
+                                            // Delete equipment
+                                            for (const equipment of crewEquipment) {
+                                                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`, {
+                                                    equipmentNumber: equipment.equipmentNumber,
+                                                    shiftId: draggedData.fromShiftId
+                                                }, (eqResponse) => {
+                                                    if (eqResponse.success) {
+                                                        equipmentDeletedCount++;
+                                                    }
+                                                    else {
+                                                        equipmentFailedCount++;
+                                                    }
+                                                    // Check if all equipment processed
+                                                    if (equipmentDeletedCount +
+                                                        equipmentFailedCount ===
+                                                        totalEquipment) {
+                                                        // Show final message
+                                                        if (employeesFailedCount === 0 &&
+                                                            equipmentFailedCount === 0) {
+                                                            bulmaJS.alert({
+                                                                contextualColorName: 'success',
+                                                                message: `Crew, ${totalEmployees} employee(s), and ${totalEquipment} equipment removed from shift.`
+                                                            });
+                                                        }
+                                                        else {
+                                                            bulmaJS.alert({
+                                                                contextualColorName: 'warning',
+                                                                message: `Crew removed. ${employeesDeletedCount} of ${totalEmployees} employee(s) and ${equipmentDeletedCount} of ${totalEquipment} equipment removed successfully.`,
+                                                                title: 'Partial Success'
+                                                            });
+                                                        }
+                                                        loadShifts();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
                     }
                     else {
                         bulmaJS.alert({
@@ -1087,25 +1253,132 @@
             });
             return;
         }
-        // Delete from old shift
+        // Get employees assigned to this crew
+        const crewEmployees = getCrewEmployees(fromShiftId, crewId);
+        // Get equipment for each employee in the crew
+        const crewEquipment = [];
+        for (const employee of crewEmployees) {
+            const employeeEquipment = getEmployeeEquipment(fromShiftId, employee.employeeNumber);
+            for (const equipment of employeeEquipment) {
+                crewEquipment.push({
+                    employeeNumber: employee.employeeNumber,
+                    equipmentNumber: equipment.equipmentNumber,
+                    equipmentName: equipment.equipmentName
+                });
+            }
+        }
+        // Delete crew from old shift
         cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`, {
             crewId,
             shiftId: fromShiftId
         }, (deleteResponse) => {
             if (deleteResponse.success) {
-                // Add to new shift
+                // Add crew to new shift
                 cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftCrew`, {
                     crewId,
                     shiftCrewNote: '',
                     shiftId: toShiftId
                 }, (addResponse) => {
                     if (addResponse.success) {
-                        bulmaJS.alert({
-                            contextualColorName: 'success',
-                            message: 'Crew has been moved to the new shift.',
-                            title: 'Crew Moved'
-                        });
-                        loadShifts();
+                        // Now move employees
+                        let employeesProcessed = 0;
+                        const totalEmployees = crewEmployees.length;
+                        if (totalEmployees === 0) {
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Crew has been moved to the new shift.',
+                                title: 'Crew Moved'
+                            });
+                            loadShifts();
+                        }
+                        else {
+                            // Delete and add each employee
+                            for (const employee of crewEmployees) {
+                                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`, {
+                                    employeeNumber: employee.employeeNumber,
+                                    shiftId: fromShiftId
+                                }, (deleteEmpResponse) => {
+                                    if (deleteEmpResponse.success) {
+                                        // Add employee to new shift with crew assignment
+                                        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`, {
+                                            crewId,
+                                            employeeNumber: employee.employeeNumber,
+                                            shiftEmployeeNote: '',
+                                            shiftId: toShiftId
+                                        }, () => {
+                                            employeesProcessed++;
+                                            // Check if all employees are processed
+                                            if (employeesProcessed === totalEmployees) {
+                                                // Now move equipment
+                                                let equipmentProcessed = 0;
+                                                const totalEquipment = crewEquipment.length;
+                                                if (totalEquipment === 0) {
+                                                    bulmaJS.alert({
+                                                        contextualColorName: 'success',
+                                                        message: `Crew and ${totalEmployees} employee(s) moved to new shift.`,
+                                                        title: 'Crew Moved'
+                                                    });
+                                                    loadShifts();
+                                                }
+                                                else {
+                                                    // Delete and add each equipment
+                                                    for (const equipment of crewEquipment) {
+                                                        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`, {
+                                                            equipmentNumber: equipment.equipmentNumber,
+                                                            shiftId: fromShiftId
+                                                        }, (deleteEqResponse) => {
+                                                            if (deleteEqResponse.success) {
+                                                                // Add equipment to new shift with operator assignment
+                                                                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`, {
+                                                                    employeeNumber: equipment.employeeNumber,
+                                                                    equipmentNumber: equipment.equipmentNumber,
+                                                                    shiftEquipmentNote: '',
+                                                                    shiftId: toShiftId
+                                                                }, () => {
+                                                                    equipmentProcessed++;
+                                                                    if (equipmentProcessed ===
+                                                                        totalEquipment) {
+                                                                        bulmaJS.alert({
+                                                                            contextualColorName: 'success',
+                                                                            message: `Crew, ${totalEmployees} employee(s), and ${totalEquipment} equipment moved to new shift.`,
+                                                                            title: 'Crew Moved'
+                                                                        });
+                                                                        loadShifts();
+                                                                    }
+                                                                });
+                                                            }
+                                                            else {
+                                                                equipmentProcessed++;
+                                                                if (equipmentProcessed ===
+                                                                    totalEquipment) {
+                                                                    bulmaJS.alert({
+                                                                        contextualColorName: 'success',
+                                                                        message: `Crew and ${totalEmployees} employee(s) moved to new shift. Some equipment may not have been moved.`,
+                                                                        title: 'Crew Moved'
+                                                                    });
+                                                                    loadShifts();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        employeesProcessed++;
+                                        if (employeesProcessed === totalEmployees) {
+                                            bulmaJS.alert({
+                                                contextualColorName: 'warning',
+                                                message: 'Crew moved but some employees may not have been moved.',
+                                                title: 'Crew Moved'
+                                            });
+                                            loadShifts();
+                                        }
+                                    }
+                                });
+                            }
+                        }
                     }
                     else {
                         bulmaJS.alert({
@@ -1439,7 +1712,6 @@
     }
     // Add Resource Modal
     function openAddResourceModal(shift, viewMode) {
-        let closeModalFunction;
         cityssm.openHtmlModal('shifts-builder-addResource', {
             onshow(modalElement) {
                 // Populate shift details
@@ -1450,9 +1722,10 @@
                 shiftTypeElement.textContent = shift.shiftTypeDataListItem ?? 'Shift';
                 shiftNumberElement.textContent = `#${shift.shiftId}`;
                 shiftTimeElement.textContent = shift.shiftTimeDataListItem ?? '';
-                supervisorElement.textContent = shift.supervisorLastName !== null
-                    ? `${shift.supervisorLastName}, ${shift.supervisorFirstName}`
-                    : 'None';
+                supervisorElement.textContent =
+                    shift.supervisorLastName !== null
+                        ? `${shift.supervisorLastName}, ${shift.supervisorFirstName}`
+                        : 'None';
                 // Setup tabs based on view mode
                 const tabsElement = modalElement.querySelector('#builderAddResource--tabs');
                 tabsElement.innerHTML = '';
@@ -1482,7 +1755,7 @@
                     const employeesContent = modalElement.querySelector('#builderAddResource--tabContent-employees');
                     employeesContent.classList.remove('is-hidden');
                     // Load available employees
-                    loadAvailableEmployeesForModal(modalElement);
+                    loadAvailableEmployeesForModal(modalElement, shift);
                 }
                 else {
                     // Create tab for Work Orders
@@ -1519,18 +1792,22 @@
                         selectedContent.classList.remove('is-hidden');
                         // Load data for the selected tab
                         switch (target.dataset.tab) {
-                            case 'employees':
-                                loadAvailableEmployeesForModal(modalElement);
+                            case 'crews': {
+                                loadAvailableCrewsForModal(modalElement, shift);
                                 break;
-                            case 'equipment':
-                                loadAvailableEquipmentForModal(modalElement);
+                            }
+                            case 'employees': {
+                                loadAvailableEmployeesForModal(modalElement, shift);
                                 break;
-                            case 'crews':
-                                loadAvailableCrewsForModal(modalElement);
+                            }
+                            case 'equipment': {
+                                loadAvailableEquipmentForModal(modalElement, shift);
                                 break;
-                            case 'workOrders':
+                            }
+                            case 'workOrders': {
                                 // Work orders are search-based, don't auto-load
                                 break;
+                            }
                         }
                     }
                 });
@@ -1562,22 +1839,29 @@
                 });
             },
             onshown(modalElement, closeFunction) {
-                closeModalFunction = closeFunction;
+                bulmaJS.toggleHtmlClipped();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
-    function loadAvailableEmployeesForModal(modalElement) {
+    function loadAvailableEmployeesForModal(modalElement, shift) {
         const shiftDateString = shiftDateElement.value;
         cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doGetAvailableResources`, { shiftDateString }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
+                // Filter out employees already on the shift
+                const shiftEmployeeNumbers = new Set(shift.employees.map((e) => e.employeeNumber));
+                const availableEmployees = responseJSON.employees.filter((e) => !shiftEmployeeNumbers.has(e.employeeNumber));
                 const employeeList = modalElement.querySelector('#builderAddResource--employeeList');
                 employeeList.innerHTML = '';
-                if (responseJSON.employees.length === 0) {
-                    employeeList.innerHTML = '<p class="has-text-grey-light">No available employees</p>';
+                if (availableEmployees.length === 0) {
+                    employeeList.innerHTML =
+                        '<p class="has-text-grey-light">No available employees</p>';
                 }
                 else {
-                    for (const employee of responseJSON.employees) {
+                    for (const employee of availableEmployees) {
                         const label = document.createElement('label');
                         label.className = 'checkbox is-block mb-2';
                         const checkbox = document.createElement('input');
@@ -1591,18 +1875,22 @@
             }
         });
     }
-    function loadAvailableEquipmentForModal(modalElement) {
+    function loadAvailableEquipmentForModal(modalElement, shift) {
         const shiftDateString = shiftDateElement.value;
         cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doGetAvailableResources`, { shiftDateString }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
+                // Filter out equipment already on the shift
+                const shiftEquipmentNumbers = new Set(shift.equipment.map((e) => e.equipmentNumber));
+                const availableEquipment = responseJSON.equipment.filter((e) => !shiftEquipmentNumbers.has(e.equipmentNumber));
                 const equipmentList = modalElement.querySelector('#builderAddResource--equipmentList');
                 equipmentList.innerHTML = '';
-                if (responseJSON.equipment.length === 0) {
-                    equipmentList.innerHTML = '<p class="has-text-grey-light">No available equipment</p>';
+                if (availableEquipment.length === 0) {
+                    equipmentList.innerHTML =
+                        '<p class="has-text-grey-light">No available equipment</p>';
                 }
                 else {
-                    for (const equipment of responseJSON.equipment) {
+                    for (const equipment of availableEquipment) {
                         const label = document.createElement('label');
                         label.className = 'checkbox is-block mb-2';
                         const checkbox = document.createElement('input');
@@ -1616,18 +1904,22 @@
             }
         });
     }
-    function loadAvailableCrewsForModal(modalElement) {
+    function loadAvailableCrewsForModal(modalElement, shift) {
         const shiftDateString = shiftDateElement.value;
         cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doGetAvailableResources`, { shiftDateString }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
+                // Filter out crews already on the shift
+                const shiftCrewIds = new Set(shift.crews.map((c) => c.crewId));
+                const availableCrews = responseJSON.crews.filter((c) => !shiftCrewIds.has(c.crewId));
                 const crewList = modalElement.querySelector('#builderAddResource--crewList');
                 crewList.innerHTML = '';
-                if (responseJSON.crews.length === 0) {
-                    crewList.innerHTML = '<p class="has-text-grey-light">No available crews</p>';
+                if (availableCrews.length === 0) {
+                    crewList.innerHTML =
+                        '<p class="has-text-grey-light">No available crews</p>';
                 }
                 else {
-                    for (const crew of responseJSON.crews) {
+                    for (const crew of availableCrews) {
                         const label = document.createElement('label');
                         label.className = 'checkbox is-block mb-2';
                         const checkbox = document.createElement('input');
@@ -1655,7 +1947,8 @@
                 const workOrderList = modalElement.querySelector('#builderAddResource--workOrderList');
                 workOrderList.innerHTML = '';
                 if (responseJSON.count === 0) {
-                    workOrderList.innerHTML = '<p class="has-text-grey-light">No work orders found</p>';
+                    workOrderList.innerHTML =
+                        '<p class="has-text-grey-light">No work orders found</p>';
                 }
                 else {
                     for (const workOrder of responseJSON.workOrders) {
@@ -1665,7 +1958,9 @@
                         checkbox.type = 'checkbox';
                         checkbox.value = workOrder.workOrderId.toString();
                         checkbox.dataset.resourceType = 'workOrder';
-                        const details = workOrder.workOrderDetails !== '' ? ` - ${workOrder.workOrderDetails}` : '';
+                        const details = workOrder.workOrderDetails !== ''
+                            ? ` - ${workOrder.workOrderDetails}`
+                            : '';
                         label.append(checkbox, ` ${workOrder.workOrderNumber}${details}`);
                         workOrderList.append(label);
                     }
@@ -1699,9 +1994,11 @@
         for (const label of labels) {
             const text = label.textContent?.toLowerCase() ?? '';
             if (text.includes(lowerFilter)) {
+                ;
                 label.style.display = 'block';
             }
             else {
+                ;
                 label.style.display = 'none';
             }
         }
@@ -1723,6 +2020,23 @@
             const resourceType = checkbox.dataset.resourceType;
             const resourceId = checkbox.value;
             switch (resourceType) {
+                case 'crew': {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftCrew`, {
+                        crewId: resourceId,
+                        shiftCrewNote: '',
+                        shiftId
+                    }, (response) => {
+                        addedCount++;
+                        checkbox.checked = false;
+                        if (addedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                            successMessage.classList.remove('is-hidden');
+                            loadShifts();
+                            loadAvailableResources();
+                        }
+                    });
+                    break;
+                }
                 case 'employee': {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`, {
                         employeeNumber: resourceId,
@@ -1744,23 +2058,6 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`, {
                         equipmentNumber: resourceId,
                         shiftEquipmentNote: '',
-                        shiftId
-                    }, (response) => {
-                        addedCount++;
-                        checkbox.checked = false;
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
-                            successMessage.classList.remove('is-hidden');
-                            loadShifts();
-                            loadAvailableResources();
-                        }
-                    });
-                    break;
-                }
-                case 'crew': {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftCrew`, {
-                        crewId: resourceId,
-                        shiftCrewNote: '',
                         shiftId
                     }, (response) => {
                         addedCount++;
