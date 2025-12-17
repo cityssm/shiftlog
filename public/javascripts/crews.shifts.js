@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const crewsContainerElement = document.querySelector('#container--crews');
@@ -85,10 +87,14 @@
                 });
             },
             onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
                 modalElement
                     .querySelector('#crewEdit--crewName')
                     ?.focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -136,7 +142,7 @@
                                 const optionElement = document.createElement('option');
                                 optionElement.value = employee.employeeNumber;
                                 optionElement.textContent = `${employee.lastName}, ${employee.firstName} (${employee.employeeNumber})`;
-                                selectElement.appendChild(optionElement);
+                                selectElement.append(optionElement);
                             }
                         }
                     }
@@ -162,7 +168,11 @@
                 });
             },
             onshown(_modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
@@ -475,7 +485,7 @@
             panelElement.className = 'panel mb-4';
             // Panel heading
             const headingLink = document.createElement('a');
-            headingLink.className = 'panel-heading';
+            headingLink.className = 'panel-heading is-block';
             headingLink.href = '#';
             headingLink.dataset.crewId = crew.crewId.toString();
             headingLink.dataset.expandCrew = '';
@@ -493,6 +503,7 @@
             panelElement.append(headingLink);
             // Details container
             const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'panel-block is-block';
             detailsDiv.id = `crew-${crew.crewId}--details`;
             panelElement.append(detailsDiv);
             // Edit/Delete buttons

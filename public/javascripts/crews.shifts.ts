@@ -1,4 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
@@ -149,6 +151,7 @@ declare const exports: {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Updating Crew',
+
                     message: 'An error occurred while updating the crew.'
                   })
                 }
@@ -157,10 +160,15 @@ declare const exports: {
           })
       },
       onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
         modalElement
           .querySelector<HTMLInputElement>('#crewEdit--crewName')
           ?.focus()
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -241,7 +249,7 @@ declare const exports: {
                   const optionElement = document.createElement('option')
                   optionElement.value = employee.employeeNumber
                   optionElement.textContent = `${employee.lastName}, ${employee.firstName} (${employee.employeeNumber})`
-                  selectElement.appendChild(optionElement)
+                  selectElement.append(optionElement)
                 }
               }
             }
@@ -277,7 +285,12 @@ declare const exports: {
           })
       },
       onshown(_modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -711,7 +724,7 @@ declare const exports: {
 
       // Panel heading
       const headingLink = document.createElement('a')
-      headingLink.className = 'panel-heading'
+      headingLink.className = 'panel-heading is-block'
       headingLink.href = '#'
       headingLink.dataset.crewId = crew.crewId.toString()
       headingLink.dataset.expandCrew = ''
@@ -733,6 +746,7 @@ declare const exports: {
 
       // Details container
       const detailsDiv = document.createElement('div')
+      detailsDiv.className = 'panel-block is-block'
       detailsDiv.id = `crew-${crew.crewId}--details`
       panelElement.append(detailsDiv)
 
