@@ -1144,6 +1144,7 @@ declare const exports: {
             if (response.success) {
               // Also delete crew employees
               let employeesDeletedCount = 0
+              let employeesFailedCount = 0
               const totalEmployees = crewEmployees.length
               
               if (totalEmployees === 0) {
@@ -1162,13 +1163,25 @@ declare const exports: {
                       shiftId: draggedData.fromShiftId
                     },
                     (empResponse) => {
-                      employeesDeletedCount++
+                      if (empResponse.success) {
+                        employeesDeletedCount++
+                      } else {
+                        employeesFailedCount++
+                      }
                       
-                      if (employeesDeletedCount === totalEmployees) {
-                        bulmaJS.alert({
-                          contextualColorName: 'success',
-                          message: `Crew and ${totalEmployees} associated employee(s) removed from shift.`
-                        })
+                      if (employeesDeletedCount + employeesFailedCount === totalEmployees) {
+                        if (employeesFailedCount === 0) {
+                          bulmaJS.alert({
+                            contextualColorName: 'success',
+                            message: `Crew and ${totalEmployees} associated employee(s) removed from shift.`
+                          })
+                        } else {
+                          bulmaJS.alert({
+                            contextualColorName: 'warning',
+                            message: `Crew removed. ${employeesDeletedCount} employee(s) removed, but ${employeesFailedCount} employee(s) failed to remove.`,
+                            title: 'Partial Success'
+                          })
+                        }
                         loadShifts()
                       }
                     }
