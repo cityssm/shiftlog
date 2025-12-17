@@ -405,6 +405,8 @@ create table ShiftLog.WorkOrders (
     end PERSISTED,
 
   workOrderStatusDataListItemId int,
+  workOrderPriorityDataListItemId int,
+
   workOrderDetails varchar(max) not null default '',
 
   workOrderOpenDateTime datetime not null,
@@ -435,6 +437,7 @@ create table ShiftLog.WorkOrders (
   unique (instance, workOrderNumberPrefix, workOrderNumberYear, workOrderNumberSequence, workOrderNumberOverride),
   foreign key (workOrderTypeId) references ShiftLog.WorkOrderTypes(workOrderTypeId),
   foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
+  foreign key (workOrderPriorityDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
 )
 GO
