@@ -2026,4 +2026,3 @@
     // Load shifts for today on page load
     loadShifts();
 })();
-export {};
