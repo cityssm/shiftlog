@@ -1,10 +1,11 @@
+/* eslint-disable max-lines */
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type {
   Crew,
-  CrewMember,
   CrewEquipment,
+  CrewMember,
   Employee,
   Equipment,
   UserGroup
@@ -38,10 +39,7 @@ declare const exports: {
   function deleteCrew(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
 
-    const crewId = Number.parseInt(
-      buttonElement.dataset.crewId ?? '',
-      10
-    )
+    const crewId = Number.parseInt(buttonElement.dataset.crewId ?? '', 10)
 
     const crew = exports.crews.find((c) => c.crewId === crewId)
 
@@ -52,13 +50,15 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete Crew',
+
       message: `Are you sure you want to delete the crew "${cityssm.escapeHTML(crew.crewName)}"? This action cannot be undone.`,
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete Crew',
+
         callbackFunction() {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doDeleteCrew`,
+            `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrew`,
             {
               crewId
             },
@@ -125,7 +125,7 @@ declare const exports: {
             formEvent.preventDefault()
 
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doUpdateCrew`,
+              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doUpdateCrew`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
@@ -158,7 +158,9 @@ declare const exports: {
       },
       onshown(modalElement, closeFunction) {
         closeModalFunction = closeFunction
-        modalElement.querySelector<HTMLInputElement>('#crewEdit--crewName')?.focus()
+        modalElement
+          .querySelector<HTMLInputElement>('#crewEdit--crewName')
+          ?.focus()
       }
     })
   }
@@ -172,12 +174,14 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Remove Crew Member',
+
       message: 'Are you sure you want to remove this employee from the crew?',
       okButton: {
         text: 'Remove Member',
+
         callbackFunction() {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doDeleteCrewMember`,
+            `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrewMember`,
             {
               crewId,
               employeeNumber
@@ -219,7 +223,7 @@ declare const exports: {
 
         // Get existing members to exclude them
         cityssm.postJSON(
-          `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doGetCrew`,
+          `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`,
           { crewId },
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
@@ -250,7 +254,7 @@ declare const exports: {
             formEvent.preventDefault()
 
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doAddCrewMember`,
+              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrewMember`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
@@ -287,12 +291,14 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Remove Equipment',
+
       message: 'Are you sure you want to remove this equipment from the crew?',
       okButton: {
         text: 'Remove Equipment',
+
         callbackFunction() {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doDeleteCrewEquipment`,
+            `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrewEquipment`,
             {
               crewId,
               equipmentNumber
@@ -321,7 +327,7 @@ declare const exports: {
     const employeeNumber = selectElement.value
 
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doUpdateCrewEquipment`,
+      `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doUpdateCrewEquipment`,
       {
         crewId,
         equipmentNumber,
@@ -366,7 +372,7 @@ declare const exports: {
 
         // Get existing equipment to exclude them
         cityssm.postJSON(
-          `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doGetCrew`,
+          `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`,
           { crewId },
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
@@ -389,7 +395,7 @@ declare const exports: {
                   const optionElement = document.createElement('option')
                   optionElement.value = equipmentItem.equipmentNumber
                   optionElement.textContent = `${equipmentItem.equipmentName} (${equipmentItem.equipmentNumber})`
-                  equipmentSelectElement.appendChild(optionElement)
+                  equipmentSelectElement.append(optionElement)
                 }
               }
 
@@ -398,7 +404,7 @@ declare const exports: {
                 const optionElement = document.createElement('option')
                 optionElement.value = member.employeeNumber
                 optionElement.textContent = `${member.lastName}, ${member.firstName}`
-                employeeSelectElement.appendChild(optionElement)
+                employeeSelectElement.append(optionElement)
               }
             }
           }
@@ -410,7 +416,7 @@ declare const exports: {
             formEvent.preventDefault()
 
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doAddCrewEquipment`,
+              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrewEquipment`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
@@ -433,7 +439,12 @@ declare const exports: {
           })
       },
       onshown(_modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -449,8 +460,7 @@ declare const exports: {
 
     // Check permissions
     const canEdit =
-      exports.canManage ||
-      crew.recordCreate_userName === shiftLog.userName
+      exports.canManage || crew.recordCreate_userName === shiftLog.userName
 
     // Render members
     let membersHTML = '<div class="panel-block"><strong>Members</strong></div>'
@@ -461,12 +471,14 @@ declare const exports: {
     } else {
       for (const member of crew.members) {
         membersHTML += '<div class="panel-block">'
-        membersHTML += '<span class="panel-icon"><i class="fa-solid fa-user"></i></span>'
+        membersHTML +=
+          '<span class="panel-icon"><i class="fa-solid fa-user"></i></span>'
         membersHTML += `${cityssm.escapeHTML(member.lastName ?? '')}, ${cityssm.escapeHTML(member.firstName ?? '')}`
 
         if (canEdit) {
           membersHTML += `<button class="button is-small is-danger ml-auto" data-crew-id="${crewId}" data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}" data-delete-member type="button">`
-          membersHTML += '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
+          membersHTML +=
+            '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
           membersHTML += '</button>'
         }
 
@@ -477,7 +489,8 @@ declare const exports: {
     if (canEdit) {
       membersHTML += '<div class="panel-block">'
       membersHTML += `<button class="button is-small is-primary" data-crew-id="${crewId}" data-add-member type="button">`
-      membersHTML += '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span>'
+      membersHTML +=
+        '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span>'
       membersHTML += '<span>Add Member</span>'
       membersHTML += '</button>'
       membersHTML += '</div>'
@@ -495,13 +508,15 @@ declare const exports: {
         equipmentHTML += '<div class="panel-block is-block">'
         equipmentHTML += '<div class="columns is-mobile is-vcentered">'
         equipmentHTML += '<div class="column">'
-        equipmentHTML += '<span class="panel-icon"><i class="fa-solid fa-truck"></i></span>'
+        equipmentHTML +=
+          '<span class="panel-icon"><i class="fa-solid fa-truck"></i></span>'
         equipmentHTML += cityssm.escapeHTML(equipmentItem.equipmentName ?? '')
 
         if (canEdit) {
           equipmentHTML += '<div class="field has-addons mt-2">'
           equipmentHTML += '<div class="control">'
-          equipmentHTML += '<span class="button is-small is-static">Assigned To</span>'
+          equipmentHTML +=
+            '<span class="button is-small is-static">Assigned To</span>'
           equipmentHTML += '</div>'
           equipmentHTML += '<div class="control is-expanded">'
           equipmentHTML += `<div class="select is-small is-fullwidth"><select data-crew-id="${crewId}" data-equipment-number="${cityssm.escapeHTML(equipmentItem.equipmentNumber)}" data-update-assignment>`
@@ -529,7 +544,8 @@ declare const exports: {
         if (canEdit) {
           equipmentHTML += '<div class="column is-narrow">'
           equipmentHTML += `<button class="button is-small is-danger" data-crew-id="${crewId}" data-equipment-number="${cityssm.escapeHTML(equipmentItem.equipmentNumber)}" data-delete-equipment type="button">`
-          equipmentHTML += '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
+          equipmentHTML +=
+            '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
           equipmentHTML += '</button>'
           equipmentHTML += '</div>'
         }
@@ -542,7 +558,8 @@ declare const exports: {
     if (canEdit) {
       equipmentHTML += '<div class="panel-block">'
       equipmentHTML += `<button class="button is-small is-primary" data-crew-id="${crewId}" data-add-equipment type="button">`
-      equipmentHTML += '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span>'
+      equipmentHTML +=
+        '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span>'
       equipmentHTML += '<span>Add Equipment</span>'
       equipmentHTML += '</button>'
       equipmentHTML += '</div>'
@@ -552,35 +569,35 @@ declare const exports: {
 
     // Add event listeners
     if (canEdit) {
-      detailsElement
-        .querySelectorAll('[data-delete-member]')
-        .forEach((buttonElement) => {
-          buttonElement.addEventListener('click', deleteCrewMember)
-        })
+      for (const buttonElement of detailsElement.querySelectorAll(
+        '[data-delete-member]'
+      )) {
+        buttonElement.addEventListener('click', deleteCrewMember)
+      }
 
-      detailsElement
-        .querySelectorAll('[data-add-member]')
-        .forEach((buttonElement) => {
-          buttonElement.addEventListener('click', openAddCrewMemberModal)
-        })
+      for (const buttonElement of detailsElement.querySelectorAll(
+        '[data-add-member]'
+      )) {
+        buttonElement.addEventListener('click', openAddCrewMemberModal)
+      }
 
-      detailsElement
-        .querySelectorAll('[data-delete-equipment]')
-        .forEach((buttonElement) => {
-          buttonElement.addEventListener('click', deleteCrewEquipment)
-        })
+      for (const buttonElement of detailsElement.querySelectorAll(
+        '[data-delete-equipment]'
+      )) {
+        buttonElement.addEventListener('click', deleteCrewEquipment)
+      }
 
-      detailsElement
-        .querySelectorAll('[data-add-equipment]')
-        .forEach((buttonElement) => {
-          buttonElement.addEventListener('click', openAddCrewEquipmentModal)
-        })
+      for (const buttonElement of detailsElement.querySelectorAll(
+        '[data-add-equipment]'
+      )) {
+        buttonElement.addEventListener('click', openAddCrewEquipmentModal)
+      }
 
-      detailsElement
-        .querySelectorAll('[data-update-assignment]')
-        .forEach((selectElement) => {
-          selectElement.addEventListener('change', updateEquipmentAssignment)
-        })
+      for (const selectElement of detailsElement.querySelectorAll(
+        '[data-update-assignment]'
+      )) {
+        selectElement.addEventListener('change', updateEquipmentAssignment)
+      }
     }
   }
 
@@ -604,7 +621,7 @@ declare const exports: {
 
     // Load crew details
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doGetCrew`,
+      `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`,
       { crewId },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
@@ -630,8 +647,7 @@ declare const exports: {
 
     for (const crew of exports.crews) {
       const canEdit =
-        exports.canManage ||
-        crew.recordCreate_userName === shiftLog.userName
+        exports.canManage || crew.recordCreate_userName === shiftLog.userName
 
       crewsHTML += '<nav class="panel mb-4">'
       crewsHTML += `<a class="panel-heading" href="#" data-crew-id="${crew.crewId}" data-expand-crew>`
@@ -667,26 +683,26 @@ declare const exports: {
     crewsContainerElement.innerHTML = crewsHTML
 
     // Add event listeners
-    crewsContainerElement
-      .querySelectorAll('[data-expand-crew]')
-      .forEach((linkElement) => {
-        linkElement.addEventListener('click', (clickEvent) => {
-          clickEvent.preventDefault()
-          expandCrewPanel(clickEvent)
-        })
+    for (const linkElement of crewsContainerElement.querySelectorAll(
+      '[data-expand-crew]'
+    )) {
+      linkElement.addEventListener('click', (clickEvent) => {
+        clickEvent.preventDefault()
+        expandCrewPanel(clickEvent)
       })
+    }
 
-    crewsContainerElement
-      .querySelectorAll('[data-edit-crew]')
-      .forEach((buttonElement) => {
-        buttonElement.addEventListener('click', openEditCrewModal)
-      })
+    for (const buttonElement of crewsContainerElement.querySelectorAll(
+      '[data-edit-crew]'
+    )) {
+      buttonElement.addEventListener('click', openEditCrewModal)
+    }
 
-    crewsContainerElement
-      .querySelectorAll('[data-delete-crew]')
-      .forEach((buttonElement) => {
-        buttonElement.addEventListener('click', deleteCrew)
-      })
+    for (const buttonElement of crewsContainerElement.querySelectorAll(
+      '[data-delete-crew]'
+    )) {
+      buttonElement.addEventListener('click', deleteCrew)
+    }
   }
 
   function openAddCrewModal(): void {
@@ -700,7 +716,7 @@ declare const exports: {
             formEvent.preventDefault()
 
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shifts.router}/doAddCrew`,
+              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrew`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
@@ -733,7 +749,9 @@ declare const exports: {
       },
       onshown(modalElement, closeFunction) {
         closeModalFunction = closeFunction
-        modalElement.querySelector<HTMLInputElement>('#crewAdd--crewName')?.focus()
+        modalElement
+          .querySelector<HTMLInputElement>('#crewAdd--crewName')
+          ?.focus()
       }
     })
   }

@@ -1,88 +1,31 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+import getShift from '../../database/shifts/getShift.js';
+import getShiftCrews from '../../database/shifts/getShiftCrews.js';
+import getShiftEmployees from '../../database/shifts/getShiftEmployees.js';
+import getShiftEquipment from '../../database/shifts/getShiftEquipment.js';
+import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
+const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('shifts.router')}`;
+export default async function handler(request, response) {
+    const shift = await getShift(request.params.shiftId, request.session.user);
+    if (shift === undefined) {
+        response.redirect(`${redirectRoot}/?error=notFound`);
+        return;
     }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = handler;
-var getShift_js_1 = require("../../database/shifts/getShift.js");
-var getShiftCrews_js_1 = require("../../database/shifts/getShiftCrews.js");
-var getShiftEmployees_js_1 = require("../../database/shifts/getShiftEmployees.js");
-var getShiftEquipment_js_1 = require("../../database/shifts/getShiftEquipment.js");
-var getShiftWorkOrders_js_1 = require("../../database/shifts/getShiftWorkOrders.js");
-var config_helpers_js_1 = require("../../helpers/config.helpers.js");
-var redirectRoot = "".concat((0, config_helpers_js_1.getConfigProperty)('reverseProxy.urlPrefix'), "/").concat((0, config_helpers_js_1.getConfigProperty)('shifts.router'));
-function handler(request, response) {
-    return __awaiter(this, void 0, void 0, function () {
-        var shift, shiftCrews, shiftEmployees, shiftEquipment, shiftWorkOrders;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, getShift_js_1.default)(request.params.shiftId, request.session.user)];
-                case 1:
-                    shift = _a.sent();
-                    if (shift === undefined) {
-                        response.redirect("".concat(redirectRoot, "/?error=notFound"));
-                        return [2 /*return*/];
-                    }
-                    return [4 /*yield*/, (0, getShiftCrews_js_1.default)(request.params.shiftId)];
-                case 2:
-                    shiftCrews = _a.sent();
-                    return [4 /*yield*/, (0, getShiftEmployees_js_1.default)(request.params.shiftId)];
-                case 3:
-                    shiftEmployees = _a.sent();
-                    return [4 /*yield*/, (0, getShiftEquipment_js_1.default)(request.params.shiftId)];
-                case 4:
-                    shiftEquipment = _a.sent();
-                    return [4 /*yield*/, (0, getShiftWorkOrders_js_1.default)(request.params.shiftId)];
-                case 5:
-                    shiftWorkOrders = _a.sent();
-                    response.render('shifts/edit', {
-                        headTitle: "".concat((0, config_helpers_js_1.getConfigProperty)('shifts.sectionNameSingular'), " #").concat(request.params.shiftId),
-                        isCreate: false,
-                        isEdit: false,
-                        shift: shift,
-                        shiftCrews: shiftCrews,
-                        shiftEmployees: shiftEmployees,
-                        shiftEquipment: shiftEquipment,
-                        shiftWorkOrders: shiftWorkOrders,
-                        shiftTimes: [],
-                        shiftTypes: [],
-                        supervisors: []
-                    });
-                    return [2 /*return*/];
-            }
-        });
+    const shiftCrews = await getShiftCrews(request.params.shiftId);
+    const shiftEmployees = await getShiftEmployees(request.params.shiftId);
+    const shiftEquipment = await getShiftEquipment(request.params.shiftId);
+    const shiftWorkOrders = await getShiftWorkOrders(request.params.shiftId);
+    response.render('shifts/edit', {
+        headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${request.params.shiftId}`,
+        isCreate: false,
+        isEdit: false,
+        shift,
+        shiftCrews,
+        shiftEmployees,
+        shiftEquipment,
+        shiftWorkOrders,
+        shiftTimes: [],
+        shiftTypes: [],
+        supervisors: []
     });
 }
