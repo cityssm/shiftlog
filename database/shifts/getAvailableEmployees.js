@@ -7,7 +7,7 @@ export default async function getAvailableEmployees(shiftDateString) {
         .request()
         .input('instance', instance)
         .input('shiftDateString', shiftDateString).query(`
-      select e.employeeNumber, e.firstName, e.lastName
+      select e.employeeNumber, e.firstName, e.lastName, e.isSupervisor
       from ShiftLog.Employees e
       where e.instance = @instance
         and e.recordDelete_dateTime is null

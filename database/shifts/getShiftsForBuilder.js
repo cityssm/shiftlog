@@ -85,7 +85,8 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
       e.lastName,
       se.crewId,
       c.crewName,
-      se.shiftEmployeeNote
+      se.shiftEmployeeNote,
+      e.isSupervisor
     from ShiftLog.ShiftEmployees se
     inner join ShiftLog.Employees e
       on se.employeeNumber = e.employeeNumber

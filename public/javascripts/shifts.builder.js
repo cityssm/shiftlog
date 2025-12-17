@@ -485,6 +485,7 @@
                     itemBox.draggable = true;
                     itemBox.dataset.employeeNumber = employee.employeeNumber;
                     itemBox.dataset.fromAvailable = 'true';
+                    itemBox.dataset.isSupervisor = employee.isSupervisor.toString();
                     // Add icon
                     const icon = document.createElement('span');
                     icon.className = 'icon is-small';
@@ -611,10 +612,27 @@
         draggedElement = target;
         target.classList.add('is-dragging');
         if (employeeNumber !== undefined) {
+            // Get isSupervisor status
+            let isSupervisor = false;
+            // Check if it's from available resources
+            if (fromAvailable && target.dataset.isSupervisor !== undefined) {
+                isSupervisor = target.dataset.isSupervisor === 'true';
+            }
+            else if (!fromAvailable) {
+                // Check in current shifts
+                for (const shift of currentShifts) {
+                    const employee = shift.employees.find((e) => e.employeeNumber === employeeNumber);
+                    if (employee !== undefined) {
+                        isSupervisor = employee.isSupervisor;
+                        break;
+                    }
+                }
+            }
             draggedData = {
                 fromShiftId,
                 id: employeeNumber,
-                type: 'employee'
+                type: 'employee',
+                isSupervisor
             };
         }
         else if (equipmentNumber !== undefined) {
@@ -728,9 +746,19 @@
         if (supervisorTarget !== null && draggedData.type === 'employee') {
             const shiftId = Number.parseInt(supervisorTarget.dataset.shiftId ?? '0', 10);
             const targetShift = currentShifts.find((s) => s.shiftId === shiftId);
-            // Prevent dropping on locked shifts or past date shifts
+            const employeeNumber = draggedData.id;
+            const isSupervisor = draggedData.isSupervisor ?? false;
+            // Prevent dropping on locked shifts, past date shifts, or non-supervisors
             if (shiftId > 0 && !lockedShifts.has(shiftId) && targetShift !== undefined && isShiftEditable(targetShift)) {
-                makeEmployeeSupervisor(draggedData.id, shiftId);
+                if (!isSupervisor) {
+                    bulmaJS.alert({
+                        contextualColorName: 'warning',
+                        message: 'Only employees marked as supervisors can be assigned to the supervisor position.',
+                        title: 'Invalid Assignment'
+                    });
+                    return;
+                }
+                makeEmployeeSupervisor(employeeNumber, shiftId);
                 return;
             }
         }
@@ -2026,3 +2054,4 @@
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};

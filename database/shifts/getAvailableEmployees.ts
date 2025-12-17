@@ -7,6 +7,7 @@ export interface AvailableEmployee {
   employeeNumber: string
   firstName: string
   lastName: string
+  isSupervisor: boolean
 }
 
 export default async function getAvailableEmployees(
@@ -19,7 +20,7 @@ export default async function getAvailableEmployees(
     .request()
     .input('instance', instance)
     .input('shiftDateString', shiftDateString).query(`
-      select e.employeeNumber, e.firstName, e.lastName
+      select e.employeeNumber, e.firstName, e.lastName, e.isSupervisor
       from ShiftLog.Employees e
       where e.instance = @instance
         and e.recordDelete_dateTime is null
