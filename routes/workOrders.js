@@ -20,6 +20,7 @@ import handler_doCreateWorkOrderNote from '../handlers/workOrders-post/doCreateW
 import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkOrder.js';
 import handler_doDeleteWorkOrderCost from '../handlers/workOrders-post/doDeleteWorkOrderCost.js';
 import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js';
+import handler_doSetWorkOrderAttachmentThumbnail from '../handlers/workOrders-post/doSetWorkOrderAttachmentThumbnail.js';
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js';
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js';
 import handler_doDeleteWorkOrderTag from '../handlers/workOrders-post/doDeleteWorkOrderTag.js';
@@ -104,7 +105,8 @@ router
 router
     .post('/:workOrderId/doGetWorkOrderAttachments', handler_doGetWorkOrderAttachments)
     .post('/doUploadWorkOrderAttachment', updateHandler, upload.single('attachmentFile'), handler_doUploadWorkOrderAttachment)
-    .post('/doDeleteWorkOrderAttachment', updateHandler, handler_doDeleteWorkOrderAttachment);
+    .post('/doDeleteWorkOrderAttachment', updateHandler, handler_doDeleteWorkOrderAttachment)
+    .post('/doSetWorkOrderAttachmentThumbnail', updateHandler, handler_doSetWorkOrderAttachmentThumbnail);
 router
     .post('/:workOrderId/doGetWorkOrderTags', handler_doGetWorkOrderTags)
     .post('/doAddWorkOrderTag', updateHandler, handler_doAddWorkOrderTag)

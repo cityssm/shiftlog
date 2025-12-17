@@ -43,6 +43,8 @@ declare const bulmaJS: BulmaJS
       attachmentFileSizeInBytes: number
       attachmentFileType: string
 
+      isWorkOrderThumbnail: boolean
+
       recordCreate_dateTime: string
       recordCreate_userName: string
     }
@@ -133,6 +135,16 @@ declare const bulmaJS: BulmaJS
                     <a href="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/download" target="_blank">
                       ${cityssm.escapeHTML(attachment.attachmentFileName)}
                     </a>
+                    ${
+                      attachment.isWorkOrderThumbnail
+                        ? /* html */ `
+                          <span class="tag is-info is-light ml-1" title="Thumbnail">
+                            <span class="icon is-small"><i class="fa-solid fa-image"></i></span>
+                            <span>Thumbnail</span>
+                          </span>
+                        `
+                        : ''
+                    }
                   </strong>
                   <br />
                   <small class="has-text-grey">
@@ -157,6 +169,15 @@ declare const bulmaJS: BulmaJS
                         <a class="level-item download-attachment" href="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/download" target="_blank">
                           <span class="icon is-small"><i class="fa-solid fa-download"></i></span>
                         </a>
+                        ${
+                          isImage && !attachment.isWorkOrderThumbnail
+                            ? /* html */ `
+                              <a class="level-item set-thumbnail" data-attachment-id="${attachment.workOrderAttachmentId}" title="Set as Thumbnail">
+                                <span class="icon is-small has-text-info"><i class="fa-solid fa-image"></i></span>
+                              </a>
+                            `
+                            : ''
+                        }
                         <a class="level-item delete-attachment" data-attachment-id="${attachment.workOrderAttachmentId}">
                           <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
                         </a>
@@ -186,6 +207,16 @@ declare const bulmaJS: BulmaJS
             event.preventDefault()
             deleteAttachment(attachment.workOrderAttachmentId)
           })
+
+          const setThumbnailLink = attachmentElement.querySelector(
+            '.set-thumbnail'
+          ) as HTMLAnchorElement | null
+          if (setThumbnailLink !== null) {
+            setThumbnailLink.addEventListener('click', (event) => {
+              event.preventDefault()
+              setThumbnail(attachment.workOrderAttachmentId)
+            })
+          }
         }
 
         attachmentsContainerElement.append(attachmentElement)
@@ -332,6 +363,29 @@ declare const bulmaJS: BulmaJS
           }
         }
       })
+    }
+
+    function setThumbnail(workOrderAttachmentId: number): void {
+      cityssm.postJSON(
+        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doSetWorkOrderAttachmentThumbnail`,
+        {
+          workOrderAttachmentId
+        },
+        (responseJSON: { success: boolean }) => {
+          if (responseJSON.success) {
+            loadAttachments()
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Thumbnail set successfully.'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to set thumbnail.'
+            })
+          }
+        }
+      )
     }
 
     function loadAttachments(): void {

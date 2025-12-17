@@ -21,6 +21,7 @@ export default async function getWorkOrderAttachments(
         attachmentFileType,
         attachmentFileSizeInBytes,
         attachmentDescription,
+        isWorkOrderThumbnail,
         fileSystemPath,
         recordCreate_userName,
         recordCreate_dateTime,

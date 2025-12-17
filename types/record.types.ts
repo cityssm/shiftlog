@@ -420,5 +420,7 @@ export interface WorkOrderAttachment extends BaseRecord {
 
   attachmentDescription: string
 
+  isWorkOrderThumbnail: boolean
+
   fileSystemPath: string
 }

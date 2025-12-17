@@ -502,6 +502,8 @@ create table ShiftLog.WorkOrderAttachments (
 
   attachmentDescription varchar(200) not null default '',
 
+  isWorkOrderThumbnail bit not null default 0,
+
   fileSystemPath varchar(500) not null,
 
   recordCreate_userName varchar(30) not null,

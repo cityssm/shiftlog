@@ -306,5 +306,6 @@ export interface WorkOrderAttachment extends BaseRecord {
     attachmentFileType: string;
     attachmentFileSizeInBytes: number;
     attachmentDescription: string;
+    isWorkOrderThumbnail: boolean;
     fileSystemPath: string;
 }
