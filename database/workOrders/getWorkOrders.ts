@@ -241,6 +241,9 @@ export default async function getWorkOrders(
           w.workOrderStatusDataListItemId,
           wStatus.dataListItem as workOrderStatusDataListItem,
 
+          w.workOrderPriorityDataListItemId,
+          wPriority.dataListItem as workOrderPriorityDataListItem,
+
           w.workOrderDetails,
 
           w.workOrderOpenDateTime,
@@ -280,6 +283,9 @@ export default async function getWorkOrders(
 
         left join ShiftLog.DataListItems wStatus
           on w.workOrderStatusDataListItemId = wStatus.dataListItemId
+
+        left join ShiftLog.DataListItems wPriority
+          on w.workOrderPriorityDataListItemId = wPriority.dataListItemId
 
         left join ShiftLog.DataListItems assignedTo
           on w.assignedToDataListItemId = assignedTo.dataListItemId

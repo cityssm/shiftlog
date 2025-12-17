@@ -129,6 +129,7 @@
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -
             ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}
+            ${workOrder.workOrderPriorityDataListItem ? ` - ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem)}` : ''}
           </span>
           ${tagsHTML}
         </td>

@@ -3,6 +3,7 @@ export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
     workOrderId: number | string;
     workOrderDetails: string;
     workOrderStatusDataListItemId?: number | string;
+    workOrderPriorityDataListItemId?: number | string;
     workOrderTypeId: number | string;
     workOrderOpenDateTimeString: `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderDueDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;

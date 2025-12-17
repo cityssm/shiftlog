@@ -147,6 +147,28 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderPlanner--workOrderPriorityDataListItemId">Priority</label>
+              <div class="control has-icons-left">
+                <div class="select is-fullwidth">
+                  <select id="workOrderPlanner--workOrderPriorityDataListItemId" name="workOrderPriorityDataListItemId">
+                    <option value="">(All Priorities)</option>
+                    <% workOrderPriorities.forEach(function(workOrderPriority) { %>
+                    <option value="<%= workOrderPriority.dataListItemId %>">
+                      <%= workOrderPriority.dataListItem %>
+                    </option>
+                    <% }); %>
+                  </select>
+                </div>
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-filter"></i>
+                </span>
+              </div>
+            </div>
+          </div>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrderPlanner--assignedToDataListItemId">Assigned To</label>
