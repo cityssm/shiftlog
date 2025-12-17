@@ -1,0 +1,105 @@
+<div
+  class="modal"
+  id="modal--createShift"
+  role="dialog"
+  aria-label="Create Shift"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Create Shift</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--createShift">
+        <input name="shiftDateString" type="hidden" />
+        
+        <div class="field">
+          <label class="label" for="createShift--shiftTypeDataListItemId">
+            Shift Type
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="createShift--shiftTypeDataListItemId"
+                name="shiftTypeDataListItemId"
+                required
+              >
+                <option value="">(Select Type)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="createShift--shiftTimeDataListItemId">
+            Shift Time
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="createShift--shiftTimeDataListItemId"
+                name="shiftTimeDataListItemId"
+                required
+              >
+                <option value="">(Select Time)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="createShift--supervisorEmployeeNumber">
+            Supervisor
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="createShift--supervisorEmployeeNumber"
+                name="supervisorEmployeeNumber"
+                required
+              >
+                <option value="">(Select Supervisor)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="createShift--shiftDescription">
+            Description (Optional)
+          </label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="createShift--shiftDescription"
+              name="shiftDescription"
+              maxlength="1000"
+            ></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-success"
+          type="submit"
+          form="form--createShift"
+        >
+          <span class="icon is-small">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Create Shift</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

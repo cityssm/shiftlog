@@ -1,0 +1,2395 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
+import type { BulmaJS } from '@cityssm/bulma-js/types.js'
+import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type FlatPickr from 'flatpickr'
+
+import type { ShiftForBuilder } from '../../database/shifts/getShiftsForBuilder.js'
+import type { DoGetShiftsForBuilderResponse } from '../../handlers/shifts-post/doGetShiftsForBuilder.js'
+
+import type { ShiftLogGlobal } from './types.js'
+
+declare const bulmaJS: BulmaJS
+declare const cityssm: cityssmGlobal
+declare const flatpickr: typeof FlatPickr
+
+declare const exports: {
+  shiftLog: ShiftLogGlobal & {
+    canManage: boolean
+    canUpdate: boolean
+    currentUser: string
+  }
+}
+;(() => {
+  const shiftLog = exports.shiftLog
+
+  const shiftDateElement = document.querySelector(
+    '#builder--shiftDate'
+  ) as HTMLInputElement
+
+  const viewModeElement = document.querySelector(
+    '#builder--viewMode'
+  ) as HTMLSelectElement
+
+  const resultsContainerElement = document.querySelector(
+    '#container--shiftBuilderResults'
+  ) as HTMLDivElement
+
+  let currentShifts: ShiftForBuilder[] = []
+
+  // Track locked shifts
+  const lockedShifts = new Set<number>()
+
+  // Track items appearing on multiple shifts
+  type DuplicateTracker = Record<string, number[]>
+
+  function getItemKey(
+    type: 'crew' | 'employee' | 'equipment' | 'workOrder',
+    id: number | string
+  ): string {
+    return `${type}:${id}`
+  }
+
+  function findDuplicates(shifts: ShiftForBuilder[]): DuplicateTracker {
+    const tracker: DuplicateTracker = {}
+
+    for (const shift of shifts) {
+      // Track employees
+      for (const employee of shift.employees) {
+        const key = getItemKey('employee', employee.employeeNumber)
+        tracker[key] ??= []
+        tracker[key].push(shift.shiftId)
+      }
+
+      // Track equipment
+      for (const equipment of shift.equipment) {
+        const key = getItemKey('equipment', equipment.equipmentNumber)
+        tracker[key] ??= []
+        tracker[key].push(shift.shiftId)
+      }
+
+      // Track crews
+      for (const crew of shift.crews) {
+        const key = getItemKey('crew', crew.crewId)
+        tracker[key] ??= []
+        tracker[key].push(shift.shiftId)
+      }
+
+      // Track work orders
+      for (const workOrder of shift.workOrders) {
+        const key = getItemKey('workOrder', workOrder.workOrderId)
+        tracker[key] ??= []
+        tracker[key].push(shift.shiftId)
+      }
+    }
+
+    // Remove items that only appear once
+    for (const key in tracker) {
+      if (tracker[key].length <= 1) {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete tracker[key]
+      }
+    }
+
+    return tracker
+  }
+
+  function isDuplicate(
+    duplicates: DuplicateTracker,
+    type: 'crew' | 'employee' | 'equipment' | 'workOrder',
+    id: number | string
+  ): boolean {
+    const key = getItemKey(type, id)
+    return duplicates[key] !== undefined
+  }
+
+  function isShiftEditable(shift: ShiftForBuilder): boolean {
+    if (!shiftLog.canUpdate) {
+      return false
+    }
+
+    const shiftDate = new Date(shift.shiftDate as string)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    return shiftDate >= today
+  }
+
+  function wasUpdatedByOther(shift: ShiftForBuilder): boolean {
+    return (
+      shift.recordUpdate_userName !== undefined &&
+      shift.recordUpdate_userName !== shiftLog.currentUser &&
+      shift.recordUpdate_userName !== shift.recordCreate_userName
+    )
+  }
+
+  function renderEmployeesView(
+    shift: ShiftForBuilder,
+    duplicates: DuplicateTracker
+  ): HTMLElement {
+    const isEditable = isShiftEditable(shift)
+    const isLocked = lockedShifts.has(shift.shiftId)
+    const isDraggable = isEditable && !isLocked
+    const containerElement = document.createElement('div')
+    containerElement.className = 'shift-details'
+
+    // Crews
+    if (shift.crews.length > 0) {
+      const crewsSection = document.createElement('div')
+      crewsSection.className = 'mb-3'
+      
+      const crewsLabel = document.createElement('strong')
+      crewsLabel.textContent = 'Crews:'
+      crewsSection.append(crewsLabel)
+      
+      const crewsList = document.createElement('ul')
+      crewsList.className = 'ml-4'
+      
+      for (const crew of shift.crews) {
+        const isDup = isDuplicate(duplicates, 'crew', crew.crewId)
+        const crewItem = document.createElement('li')
+        
+        if (isDup) {
+          crewItem.classList.add('has-background-warning-light')
+        }
+        if (isEditable) {
+          crewItem.classList.add('drop-target-crew')
+        }
+        if (isDraggable) {
+          crewItem.draggable = true
+        }
+        crewItem.dataset.crewId = crew.crewId.toString()
+        
+        // Add icon
+        const icon = document.createElement('span')
+        icon.className = 'icon is-small'
+        icon.innerHTML = '<i class="fa-solid fa-users"></i>'
+        crewItem.append(icon, ' ')
+        
+        // Add crew name
+        const nameSpan = document.createElement('span')
+        nameSpan.textContent = crew.crewName
+        crewItem.append(nameSpan)
+        
+        if (crew.shiftCrewNote !== '') {
+          const noteSpan = document.createElement('span')
+          noteSpan.className = 'has-text-grey-light'
+          noteSpan.textContent = ` - ${crew.shiftCrewNote}`
+          crewItem.append(noteSpan)
+        }
+        
+        crewsList.append(crewItem)
+      }
+      
+      crewsSection.append(crewsList)
+      containerElement.append(crewsSection)
+    }
+
+    // Employees
+    if (shift.employees.length > 0) {
+      const employeesSection = document.createElement('div')
+      employeesSection.className = 'mb-3'
+      
+      const employeesLabel = document.createElement('strong')
+      employeesLabel.textContent = 'Employees:'
+      employeesSection.append(employeesLabel)
+      
+      const employeesList = document.createElement('ul')
+      employeesList.className = 'ml-4'
+      
+      for (const employee of shift.employees) {
+        const isDup = isDuplicate(duplicates, 'employee', employee.employeeNumber)
+        const employeeItem = document.createElement('li')
+        
+        if (isDup) {
+          employeeItem.classList.add('has-background-warning-light')
+        }
+        if (isEditable) {
+          employeeItem.classList.add('drop-target-employee')
+        }
+        if (isDraggable) {
+          employeeItem.draggable = true
+        }
+        employeeItem.dataset.employeeNumber = employee.employeeNumber
+        employeeItem.dataset.crewId = employee.crewId?.toString() ?? ''
+        
+        // Add icon
+        const icon = document.createElement('span')
+        icon.className = 'icon is-small'
+        icon.innerHTML = '<i class="fa-solid fa-user"></i>'
+        employeeItem.append(icon, ' ')
+        
+        // Add employee name with number in smaller text
+        const nameSpan = document.createElement('span')
+        nameSpan.textContent = `${employee.lastName}, ${employee.firstName} `
+        employeeItem.append(nameSpan)
+        
+        const numberSpan = document.createElement('span')
+        numberSpan.className = 'is-size-7 has-text-grey'
+        numberSpan.textContent = `(#${employee.employeeNumber})`
+        employeeItem.append(numberSpan)
+        
+        if (employee.crewName !== null) {
+          const crewTag = document.createElement('span')
+          crewTag.className = 'tag is-small is-info is-light ml-1'
+          crewTag.textContent = employee.crewName
+          employeeItem.append(' ', crewTag)
+        }
+        
+        if (employee.shiftEmployeeNote !== '') {
+          const noteSpan = document.createElement('span')
+          noteSpan.className = 'has-text-grey-light'
+          noteSpan.textContent = ` - ${employee.shiftEmployeeNote}`
+          employeeItem.append(noteSpan)
+        }
+        
+        employeesList.append(employeeItem)
+      }
+      
+      employeesSection.append(employeesList)
+      containerElement.append(employeesSection)
+    }
+
+    // Equipment
+    if (shift.equipment.length > 0) {
+      const equipmentSection = document.createElement('div')
+      equipmentSection.className = 'mb-3'
+      
+      const equipmentLabel = document.createElement('strong')
+      equipmentLabel.textContent = 'Equipment:'
+      equipmentSection.append(equipmentLabel)
+      
+      const equipmentList = document.createElement('ul')
+      equipmentList.className = 'ml-4'
+      
+      for (const equipment of shift.equipment) {
+        const isDup = isDuplicate(duplicates, 'equipment', equipment.equipmentNumber)
+        const equipmentItem = document.createElement('li')
+        
+        if (isDup) {
+          equipmentItem.classList.add('has-background-warning-light')
+        }
+        if (isDraggable) {
+          equipmentItem.draggable = true
+        }
+        equipmentItem.dataset.equipmentNumber = equipment.equipmentNumber
+        
+        // Add icon
+        const icon = document.createElement('span')
+        icon.className = 'icon is-small'
+        icon.innerHTML = '<i class="fa-solid fa-truck"></i>'
+        equipmentItem.append(icon, ' ')
+        
+        // Add equipment name with number in smaller text
+        const nameSpan = document.createElement('span')
+        nameSpan.textContent = `${equipment.equipmentName} `
+        equipmentItem.append(nameSpan)
+        
+        const numberSpan = document.createElement('span')
+        numberSpan.className = 'is-size-7 has-text-grey'
+        numberSpan.textContent = `(#${equipment.equipmentNumber})`
+        equipmentItem.append(numberSpan)
+        
+        if (equipment.employeeFirstName !== null) {
+          const operatorSpan = document.createElement('span')
+          operatorSpan.className = 'has-text-grey-light'
+          operatorSpan.textContent = ` (${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName})`
+          equipmentItem.append(operatorSpan)
+        }
+        
+        if (equipment.shiftEquipmentNote !== '') {
+          const noteSpan = document.createElement('span')
+          noteSpan.className = 'has-text-grey-light'
+          noteSpan.textContent = ` - ${equipment.shiftEquipmentNote}`
+          equipmentItem.append(noteSpan)
+        }
+        
+        equipmentList.append(equipmentItem)
+      }
+      
+      equipmentSection.append(equipmentList)
+      containerElement.append(equipmentSection)
+    }
+
+    if (
+      shift.crews.length === 0 &&
+      shift.employees.length === 0 &&
+      shift.equipment.length === 0
+    ) {
+      const emptyMessage = document.createElement('p')
+      emptyMessage.className = 'has-text-grey-light'
+      emptyMessage.textContent = 'No employees or equipment assigned'
+      containerElement.append(emptyMessage)
+    }
+
+    return containerElement
+  }
+
+  function renderTasksView(
+    shift: ShiftForBuilder,
+    duplicates: DuplicateTracker
+  ): HTMLElement {
+    const isEditable = isShiftEditable(shift)
+    const isLocked = lockedShifts.has(shift.shiftId)
+    const isDraggable = isEditable && !isLocked
+    const containerElement = document.createElement('div')
+    containerElement.className = 'shift-details'
+
+    if (shift.workOrders.length > 0) {
+      const workOrdersSection = document.createElement('div')
+      workOrdersSection.className = 'mb-3'
+      
+      const workOrdersLabel = document.createElement('strong')
+      workOrdersLabel.textContent = 'Work Orders:'
+      workOrdersSection.append(workOrdersLabel)
+      
+      const workOrdersList = document.createElement('ul')
+      workOrdersList.className = 'ml-4'
+      
+      for (const workOrder of shift.workOrders) {
+        const isDup = isDuplicate(duplicates, 'workOrder', workOrder.workOrderId)
+        const workOrderItem = document.createElement('li')
+        
+        if (isDup) {
+          workOrderItem.classList.add('has-background-warning-light')
+        }
+        if (isDraggable) {
+          workOrderItem.draggable = true
+        }
+        workOrderItem.dataset.workorderId = workOrder.workOrderId.toString()
+        
+        // Add icon
+        const icon = document.createElement('span')
+        icon.className = 'icon is-small'
+        icon.innerHTML = '<i class="fa-solid fa-clipboard-list"></i>'
+        workOrderItem.append(icon, ' ')
+        
+        // Add work order link
+        const workOrderLink = document.createElement('a')
+        workOrderLink.href = `${shiftLog.urlPrefix}/workOrders/${workOrder.workOrderId}`
+        workOrderLink.target = '_blank'
+        workOrderLink.textContent = workOrder.workOrderNumber
+        workOrderItem.append(workOrderLink)
+        
+        if (workOrder.workOrderDetails !== '') {
+          workOrderItem.append(` - ${workOrder.workOrderDetails}`)
+        }
+        
+        if (workOrder.shiftWorkOrderNote !== '') {
+          const noteSpan = document.createElement('span')
+          noteSpan.className = 'has-text-grey-light'
+          noteSpan.textContent = ` - ${workOrder.shiftWorkOrderNote}`
+          workOrderItem.append(noteSpan)
+        }
+        
+        workOrdersList.append(workOrderItem)
+      }
+      
+      workOrdersSection.append(workOrdersList)
+      containerElement.append(workOrdersSection)
+    } else {
+      const emptyMessage = document.createElement('p')
+      emptyMessage.className = 'has-text-grey-light'
+      emptyMessage.textContent = 'No work orders assigned'
+      containerElement.append(emptyMessage)
+    }
+
+    return containerElement
+  }
+
+  function renderShiftCard(
+    shift: ShiftForBuilder,
+    duplicates: DuplicateTracker,
+    viewMode: string
+  ): HTMLElement {
+    const cardElement = document.createElement('div')
+    cardElement.className = 'column is-half-tablet is-one-third-desktop'
+    cardElement.dataset.shiftId = shift.shiftId.toString()
+
+    const updatedByOther = wasUpdatedByOther(shift)
+    const isEditable = isShiftEditable(shift)
+
+    const boxElement = document.createElement('div')
+    boxElement.className = 'box'
+    if (updatedByOther) {
+      boxElement.classList.add('has-background-warning-light')
+    }
+
+    // Header
+    const headerLevel = document.createElement('div')
+    headerLevel.className = 'level is-mobile mb-3'
+    
+    const levelLeft = document.createElement('div')
+    levelLeft.className = 'level-left'
+    
+    // Lock button (if editable)
+    if (isEditable) {
+      const lockItem = document.createElement('div')
+      lockItem.className = 'level-item'
+      const lockButton = document.createElement('button')
+      lockButton.className = 'button is-small is-ghost'
+      lockButton.type = 'button'
+      lockButton.title = 'Lock/Unlock shift'
+      lockButton.dataset.shiftId = shift.shiftId.toString()
+      
+      const isLocked = lockedShifts.has(shift.shiftId)
+      const lockIcon = document.createElement('span')
+      lockIcon.className = 'icon is-small'
+      lockIcon.innerHTML = isLocked 
+        ? '<i class="fa-solid fa-lock has-text-danger"></i>'
+        : '<i class="fa-solid fa-lock-open has-text-success"></i>'
+      lockButton.append(lockIcon)
+      
+      lockButton.addEventListener('click', () => {
+        toggleShiftLock(shift.shiftId)
+      })
+      
+      lockItem.append(lockButton)
+      levelLeft.append(lockItem)
+    }
+    
+    const levelLeftItem = document.createElement('div')
+    levelLeftItem.className = 'level-item'
+    const titleElement = document.createElement('h3')
+    titleElement.className = 'title is-5 mb-0'
+    const titleLink = document.createElement('a')
+    titleLink.href = `${shiftLog.urlPrefix}/shifts/${shift.shiftId}`
+    titleLink.textContent = `#${shift.shiftId} - ${shift.shiftTypeDataListItem ?? 'Shift'}`
+    titleElement.append(titleLink)
+    levelLeftItem.append(titleElement)
+    levelLeft.append(levelLeftItem)
+    headerLevel.append(levelLeft)
+    
+    const levelRight = document.createElement('div')
+    levelRight.className = 'level-right'
+    
+    if (updatedByOther) {
+      const warningItem = document.createElement('div')
+      warningItem.className = 'level-item'
+      const warningIcon = document.createElement('span')
+      warningIcon.className = 'icon has-text-warning'
+      warningIcon.title = 'Modified by another user'
+      warningIcon.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i>'
+      warningItem.append(warningIcon)
+      levelRight.append(warningItem)
+    }
+    
+    if (isEditable) {
+      const editItem = document.createElement('div')
+      editItem.className = 'level-item'
+      const editLink = document.createElement('a')
+      editLink.href = `${shiftLog.urlPrefix}/shifts/${shift.shiftId}/edit`
+      editLink.className = 'button is-small is-light'
+      editLink.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
+      editItem.append(editLink)
+      levelRight.append(editItem)
+    }
+    
+    headerLevel.append(levelRight)
+    boxElement.append(headerLevel)
+
+    // Shift details
+    const contentElement = document.createElement('div')
+    contentElement.className = 'content is-small'
+    
+    const timeParagraph = document.createElement('p')
+    timeParagraph.className = 'mb-2'
+    const timeLabel = document.createElement('strong')
+    timeLabel.textContent = 'Time:'
+    timeParagraph.append(timeLabel, ` ${shift.shiftTimeDataListItem ?? ''}`)
+    contentElement.append(timeParagraph)
+    
+    // Make supervisor field a drop target for employees
+    const supervisorParagraph = document.createElement('p')
+    supervisorParagraph.className = 'mb-2'
+    if (isEditable) {
+      supervisorParagraph.classList.add('drop-target-supervisor')
+    }
+    supervisorParagraph.dataset.shiftId = shift.shiftId.toString()
+    supervisorParagraph.dataset.supervisorEmployeeNumber = shift.supervisorEmployeeNumber
+    const supervisorLabel = document.createElement('strong')
+    supervisorLabel.textContent = 'Supervisor:'
+    supervisorParagraph.append(supervisorLabel, ` ${shift.supervisorLastName ?? ''}, ${shift.supervisorFirstName ?? ''}`)
+    contentElement.append(supervisorParagraph)
+    
+    if (shift.shiftDescription !== '') {
+      const descParagraph = document.createElement('p')
+      descParagraph.className = 'mb-2'
+      const descLabel = document.createElement('strong')
+      descLabel.textContent = 'Description:'
+      descParagraph.append(descLabel, ` ${shift.shiftDescription}`)
+      contentElement.append(descParagraph)
+    }
+    
+    boxElement.append(contentElement)
+
+    const hrElement = document.createElement('hr')
+    hrElement.className = 'my-3'
+    boxElement.append(hrElement)
+
+    // View-specific content
+    const viewContent =
+      viewMode === 'employees'
+        ? renderEmployeesView(shift, duplicates)
+        : renderTasksView(shift, duplicates)
+    boxElement.append(viewContent)
+
+    // Add Resource button (only for editable shifts that are not locked)
+    if (isEditable && !lockedShifts.has(shift.shiftId)) {
+      const addResourceButton = document.createElement('button')
+      addResourceButton.className = 'button is-small is-success is-fullwidth mt-3'
+      addResourceButton.type = 'button'
+      addResourceButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add Resource</span>'
+      addResourceButton.addEventListener('click', () => {
+        openAddResourceModal(shift, viewMode)
+      })
+      boxElement.append(addResourceButton)
+    }
+
+    cardElement.append(boxElement)
+
+    return cardElement
+  }
+
+  function renderShifts(): void {
+    resultsContainerElement.innerHTML = ''
+
+    if (currentShifts.length === 0) {
+      resultsContainerElement.innerHTML = /* html */ `
+        <div class="message is-info">
+          <div class="message-body">
+            No shifts found for the selected date.
+          </div>
+        </div>
+      `
+      return
+    }
+
+    const duplicates = findDuplicates(currentShifts)
+    const viewMode = viewModeElement.value
+
+    const columnsElement = document.createElement('div')
+    columnsElement.className = 'columns is-multiline'
+
+    for (const shift of currentShifts) {
+      const shiftCard = renderShiftCard(shift, duplicates, viewMode)
+      columnsElement.append(shiftCard)
+    }
+
+    resultsContainerElement.append(columnsElement)
+  }
+
+  function loadShifts(): void {
+    const shiftDateString = shiftDateElement.value
+
+    if (shiftDateString === '') {
+      return
+    }
+
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doGetShiftsForBuilder`,
+      {
+        shiftDateString
+      },
+      (rawResponseJSON) => {
+        const responseJSON =
+          rawResponseJSON as unknown as DoGetShiftsForBuilderResponse
+
+        if (responseJSON.success) {
+          currentShifts = responseJSON.shifts
+          renderShifts()
+          loadAvailableResources()
+        }
+      }
+    )
+  }
+
+  function loadAvailableResources(): void {
+    // Only load if the available resources sidebar exists (user has canUpdate permission)
+    const availableResourcesContainer = document.querySelector(
+      '#container--availableResources'
+    )
+    if (availableResourcesContainer === null) {
+      return
+    }
+
+    const shiftDateString = shiftDateElement.value
+
+    if (shiftDateString === '') {
+      return
+    }
+
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      {
+        shiftDateString
+      },
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as {
+          crews: Array<{ crewId: number; crewName: string }>
+          employees: Array<{
+            employeeNumber: string
+            firstName: string
+            lastName: string
+          }>
+          equipment: Array<{ equipmentName: string; equipmentNumber: string }>
+          success: boolean
+        }
+
+        if (responseJSON.success) {
+          renderAvailableResources(responseJSON)
+        }
+      }
+    )
+  }
+
+  function renderAvailableResources(resources: {
+    crews: Array<{ crewId: number; crewName: string }>
+    employees: Array<{
+      employeeNumber: string
+      firstName: string
+      lastName: string
+    }>
+    equipment: Array<{ equipmentName: string; equipmentNumber: string }>
+  }): void {
+    // Render employees
+    const employeesList = document.querySelector(
+      '#available--employees .available-resources-list'
+    ) as HTMLElement
+    if (employeesList !== null) {
+      employeesList.textContent = ''
+      
+      if (resources.employees.length === 0) {
+        const emptyMessage = document.createElement('p')
+        emptyMessage.className = 'has-text-grey-light is-size-7'
+        emptyMessage.textContent = 'No available employees'
+        employeesList.append(emptyMessage)
+      } else {
+        const itemsContainer = document.createElement('div')
+        itemsContainer.className = 'available-items'
+        
+        for (const employee of resources.employees) {
+          const itemBox = document.createElement('div')
+          itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable'
+          itemBox.draggable = true
+          itemBox.dataset.employeeNumber = employee.employeeNumber
+          itemBox.dataset.fromAvailable = 'true'
+          
+          // Add icon
+          const icon = document.createElement('span')
+          icon.className = 'icon is-small'
+          icon.innerHTML = '<i class="fa-solid fa-user"></i>'
+          itemBox.append(icon, ' ')
+          
+          // Add employee name with number
+          const itemText = document.createElement('span')
+          itemText.className = 'is-size-7'
+          itemText.textContent = `${employee.lastName}, ${employee.firstName} `
+          itemBox.append(itemText)
+          
+          const numberSpan = document.createElement('span')
+          numberSpan.className = 'is-size-7 has-text-grey'
+          numberSpan.textContent = `(#${employee.employeeNumber})`
+          itemBox.append(numberSpan)
+          
+          itemsContainer.append(itemBox)
+        }
+        
+        employeesList.append(itemsContainer)
+      }
+    }
+
+    // Render equipment
+    const equipmentList = document.querySelector(
+      '#available--equipment .available-resources-list'
+    ) as HTMLElement
+    if (equipmentList !== null) {
+      equipmentList.textContent = ''
+      
+      if (resources.equipment.length === 0) {
+        const emptyMessage = document.createElement('p')
+        emptyMessage.className = 'has-text-grey-light is-size-7'
+        emptyMessage.textContent = 'No available equipment'
+        equipmentList.append(emptyMessage)
+      } else {
+        const itemsContainer = document.createElement('div')
+        itemsContainer.className = 'available-items'
+        
+        for (const equipment of resources.equipment) {
+          const itemBox = document.createElement('div')
+          itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable'
+          itemBox.draggable = true
+          itemBox.dataset.equipmentNumber = equipment.equipmentNumber
+          itemBox.dataset.fromAvailable = 'true'
+          
+          // Add icon
+          const icon = document.createElement('span')
+          icon.className = 'icon is-small'
+          icon.innerHTML = '<i class="fa-solid fa-truck"></i>'
+          itemBox.append(icon, ' ')
+          
+          // Add equipment name with number
+          const itemText = document.createElement('span')
+          itemText.className = 'is-size-7'
+          itemText.textContent = `${equipment.equipmentName} `
+          itemBox.append(itemText)
+          
+          const numberSpan = document.createElement('span')
+          numberSpan.className = 'is-size-7 has-text-grey'
+          numberSpan.textContent = `(#${equipment.equipmentNumber})`
+          itemBox.append(numberSpan)
+          
+          itemsContainer.append(itemBox)
+        }
+        
+        equipmentList.append(itemsContainer)
+      }
+    }
+
+    // Render crews
+    const crewsList = document.querySelector(
+      '#available--crews .available-resources-list'
+    ) as HTMLElement
+    if (crewsList !== null) {
+      crewsList.textContent = ''
+      
+      if (resources.crews.length === 0) {
+        const emptyMessage = document.createElement('p')
+        emptyMessage.className = 'has-text-grey-light is-size-7'
+        emptyMessage.textContent = 'No available crews'
+        crewsList.append(emptyMessage)
+      } else {
+        const itemsContainer = document.createElement('div')
+        itemsContainer.className = 'available-items'
+        
+        for (const crew of resources.crews) {
+          const itemBox = document.createElement('div')
+          itemBox.className = 'box is-paddingless p-2 mb-2 is-clickable'
+          itemBox.draggable = true
+          itemBox.dataset.crewId = crew.crewId.toString()
+          itemBox.dataset.fromAvailable = 'true'
+          
+          // Add icon
+          const icon = document.createElement('span')
+          icon.className = 'icon is-small'
+          icon.innerHTML = '<i class="fa-solid fa-users"></i>'
+          itemBox.append(icon, ' ')
+          
+          // Add crew name
+          const itemText = document.createElement('span')
+          itemText.className = 'is-size-7'
+          itemText.textContent = crew.crewName
+          itemBox.append(itemText)
+          
+          itemsContainer.append(itemBox)
+        }
+        
+        crewsList.append(itemsContainer)
+      }
+    }
+  }
+
+  // Lock/unlock functionality
+  function toggleShiftLock(shiftId: number): void {
+    if (lockedShifts.has(shiftId)) {
+      lockedShifts.delete(shiftId)
+    } else {
+      lockedShifts.add(shiftId)
+    }
+    
+    // Re-render shifts to update lock button and draggable states
+    renderShifts()
+  }
+
+  // Drag and drop state
+  let draggedElement: HTMLElement | null = null
+  let draggedData: {
+    fromShiftId: number
+    id: number | string
+    type: 'crew' | 'employee' | 'equipment' | 'workOrder'
+  } | null = null
+
+  // Drag and drop handlers
+  function handleDragStart(event: DragEvent): void {
+    const target = event.target as HTMLElement
+    
+    const employeeNumber = target.dataset.employeeNumber
+    const equipmentNumber = target.dataset.equipmentNumber
+    const crewId = target.dataset.crewId
+    const workorderId = target.dataset.workorderId
+    const fromAvailable = target.dataset.fromAvailable === 'true'
+
+    const shiftCard = target.closest('[data-shift-id]') as HTMLElement
+    const fromShiftId = fromAvailable
+      ? 0
+      : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
+    
+    // Prevent dragging from locked shifts
+    if (fromShiftId !== 0 && lockedShifts.has(fromShiftId)) {
+      event.preventDefault()
+      return
+    }
+    
+    draggedElement = target
+    target.classList.add('is-dragging')
+
+    if (employeeNumber !== undefined) {
+      draggedData = {
+        fromShiftId,
+        id: employeeNumber,
+        type: 'employee'
+      }
+    } else if (equipmentNumber !== undefined) {
+      draggedData = {
+        fromShiftId,
+        id: equipmentNumber,
+        type: 'equipment'
+      }
+    } else if (crewId !== undefined) {
+      draggedData = {
+        fromShiftId,
+        id: Number.parseInt(crewId, 10),
+        type: 'crew'
+      }
+    } else if (workorderId !== undefined) {
+      draggedData = {
+        fromShiftId,
+        id: Number.parseInt(workorderId, 10),
+        type: 'workOrder'
+      }
+    }
+
+    if (event.dataTransfer !== null) {
+      event.dataTransfer.effectAllowed = 'move'
+    }
+  }
+
+  function handleDragEnd(event: DragEvent): void {
+    const target = event.target as HTMLElement
+    target.classList.remove('is-dragging')
+    draggedElement = null
+    draggedData = null
+
+    // Remove all drop zone highlights
+    for (const element of document.querySelectorAll('.is-drop-target')) {
+      element.classList.remove('is-drop-target')
+    }
+  }
+
+  function handleDragOver(event: DragEvent): void {
+    event.preventDefault()
+    const target = event.target as HTMLElement
+
+    // Remove existing highlights
+    for (const element of document.querySelectorAll('.is-drop-target')) {
+      element.classList.remove('is-drop-target')
+    }
+
+    // Check if hovering over available resources sidebar (to remove from shift)
+    const availableResourcesSidebar = target.closest(
+      '#container--availableResources'
+    )
+    if (
+      availableResourcesSidebar !== null &&
+      draggedData !== null &&
+      draggedData.fromShiftId > 0
+    ) {
+      // Highlight the sidebar box when dragging from a shift to remove
+      const sidebarBox = availableResourcesSidebar.querySelector('.box')
+      if (sidebarBox !== null) {
+        sidebarBox.classList.add('is-drop-target')
+      }
+      if (event.dataTransfer !== null) {
+        event.dataTransfer.dropEffect = 'move'
+      }
+      return
+    }
+
+    // Check for specific drop targets first
+    const supervisorTarget = target.closest(
+      '.drop-target-supervisor'
+    ) as HTMLElement
+    const crewTarget = target.closest('.drop-target-crew') as HTMLElement
+    const employeeTarget = target.closest(
+      '.drop-target-employee'
+    ) as HTMLElement
+
+    // Highlight specific drop targets based on what's being dragged
+    if (draggedData?.type === 'employee' && supervisorTarget !== null) {
+      supervisorTarget.classList.add('is-drop-target')
+    } else if (draggedData?.type === 'employee' && crewTarget !== null) {
+      crewTarget.classList.add('is-drop-target')
+    } else if (draggedData?.type === 'equipment' && employeeTarget !== null) {
+      employeeTarget.classList.add('is-drop-target')
+    } else {
+      // Default: highlight entire shift box
+      const shiftBox = target.closest('.box')
+      if (
+        shiftBox !== null &&
+        !shiftBox.closest('#container--availableResources')
+      ) {
+        shiftBox.classList.add('is-drop-target')
+      }
+    }
+
+    if (event.dataTransfer !== null) {
+      event.dataTransfer.dropEffect = 'move'
+    }
+  }
+
+  function handleDragLeave(event: DragEvent): void {
+    const target = event.target as HTMLElement
+    const shiftBox = target.closest('.box')
+    if (shiftBox !== null) {
+      shiftBox.classList.remove('is-drop-target')
+    }
+  }
+
+  function handleDrop(event: DragEvent): void {
+    event.preventDefault()
+
+    const target = event.target as HTMLElement
+    target.classList.remove('is-drop-target')
+
+    if (draggedData === null) {
+      return
+    }
+
+    // Check if dropped on available resources sidebar (to remove from shift)
+    const availableResourcesSidebar = target.closest(
+      '#container--availableResources'
+    )
+    if (availableResourcesSidebar !== null && draggedData.fromShiftId > 0) {
+      removeFromShift(draggedData)
+      return
+    }
+
+    // Check for specific drop targets first
+    const supervisorTarget = target.closest(
+      '.drop-target-supervisor'
+    ) as HTMLElement
+    const crewTarget = target.closest('.drop-target-crew') as HTMLElement
+    const employeeTarget = target.closest(
+      '.drop-target-employee'
+    ) as HTMLElement
+
+    // Handle employee dropped on supervisor slot
+    if (supervisorTarget !== null && draggedData.type === 'employee') {
+      const shiftId = Number.parseInt(
+        supervisorTarget.dataset.shiftId ?? '0',
+        10
+      )
+      // Prevent dropping on locked shifts
+      if (shiftId > 0 && !lockedShifts.has(shiftId)) {
+        makeEmployeeSupervisor(draggedData.id as string, shiftId)
+        return
+      }
+    }
+
+    // Handle employee dropped on crew
+    if (crewTarget !== null && draggedData.type === 'employee') {
+      const shiftCard = crewTarget.closest('[data-shift-id]') as HTMLElement
+      const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
+      const crewId = Number.parseInt(crewTarget.dataset.crewId ?? '0', 10)
+
+      // Prevent dropping on locked shifts
+      if (shiftId > 0 && crewId > 0 && !lockedShifts.has(shiftId)) {
+        assignEmployeeToCrew(
+          draggedData.id as string,
+          draggedData.fromShiftId,
+          shiftId,
+          crewId
+        )
+        return
+      }
+    }
+
+    // Handle equipment dropped on employee
+    if (employeeTarget !== null && draggedData.type === 'equipment') {
+      const shiftCard = employeeTarget.closest('[data-shift-id]') as HTMLElement
+      const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
+      const employeeNumber = employeeTarget.dataset.employeeNumber ?? ''
+
+      // Prevent dropping on locked shifts
+      if (shiftId > 0 && employeeNumber !== '' && !lockedShifts.has(shiftId)) {
+        assignEquipmentToEmployee(
+          draggedData.id as string,
+          draggedData.fromShiftId,
+          shiftId,
+          employeeNumber
+        )
+        return
+      }
+    }
+
+    // Default: move to shift
+    const shiftCard = target.closest('[data-shift-id]') as HTMLElement
+    const toShiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
+
+    if (toShiftId === 0 || toShiftId === draggedData.fromShiftId) {
+      return
+    }
+    
+    // Prevent dropping on locked shifts
+    if (lockedShifts.has(toShiftId)) {
+      return
+    }
+
+    // Handle different drop scenarios
+    switch (draggedData.type) {
+      case 'crew': {
+        moveCrew(draggedData.id as number, draggedData.fromShiftId, toShiftId)
+
+        break
+      }
+      case 'employee': {
+        moveEmployee(
+          draggedData.id as string,
+          draggedData.fromShiftId,
+          toShiftId
+        )
+
+        break
+      }
+      case 'equipment': {
+        moveEquipment(
+          draggedData.id as string,
+          draggedData.fromShiftId,
+          toShiftId
+        )
+
+        break
+      }
+      case 'workOrder': {
+        moveWorkOrder(
+          draggedData.id as number,
+          draggedData.fromShiftId,
+          toShiftId
+        )
+
+        break
+      }
+      // No default
+    }
+  }
+
+  // Helper function to get equipment assigned to an employee
+  function getEmployeeEquipment(
+    shiftId: number,
+    employeeNumber: string
+  ): Array<{ equipmentNumber: string; equipmentName: string }> {
+    const shift = currentShifts.find((s) => s.shiftId === shiftId)
+    if (shift === undefined) {
+      return []
+    }
+    
+    return shift.equipment.filter(
+      (eq) => eq.employeeNumber === employeeNumber
+    ).map((eq) => ({
+      equipmentNumber: eq.equipmentNumber,
+      equipmentName: eq.equipmentName
+    }))
+  }
+
+  function removeFromShift(draggedData: {
+    fromShiftId: number
+    id: number | string
+    type: 'crew' | 'employee' | 'equipment' | 'workOrder'
+  }): void {
+    switch (draggedData.type) {
+      case 'crew': {
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
+          {
+            crewId: draggedData.id,
+            shiftId: draggedData.fromShiftId
+          },
+          (response) => {
+            if (response.success) {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Crew removed from shift.'
+              })
+              loadShifts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to remove crew from shift.',
+                title: 'Error'
+              })
+            }
+          }
+        )
+
+        break
+      }
+      case 'employee': {
+        // Get equipment assigned to this employee
+        const assignedEquipment = getEmployeeEquipment(
+          draggedData.fromShiftId,
+          draggedData.id as string
+        )
+        
+        // Delete employee first
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+          {
+            employeeNumber: draggedData.id,
+            shiftId: draggedData.fromShiftId
+          },
+          (response) => {
+            if (response.success) {
+              // Also delete assigned equipment
+              let equipmentDeletedCount = 0
+              const totalEquipment = assignedEquipment.length
+              
+              if (totalEquipment === 0) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Employee removed from shift.'
+                })
+                loadShifts()
+              } else {
+                // Delete each piece of equipment
+                for (const equipment of assignedEquipment) {
+                  cityssm.postJSON(
+                    `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+                    {
+                      equipmentNumber: equipment.equipmentNumber,
+                      shiftId: draggedData.fromShiftId
+                    },
+                    (equipResponse) => {
+                      equipmentDeletedCount++
+                      
+                      if (equipmentDeletedCount === totalEquipment) {
+                        bulmaJS.alert({
+                          contextualColorName: 'success',
+                          message: `Employee and ${totalEquipment} assigned equipment removed from shift.`
+                        })
+                        loadShifts()
+                      }
+                    }
+                  )
+                }
+              }
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to remove employee from shift.',
+                title: 'Error'
+              })
+            }
+          }
+        )
+
+        break
+      }
+      case 'equipment': {
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+          {
+            equipmentNumber: draggedData.id,
+            shiftId: draggedData.fromShiftId
+          },
+          (response) => {
+            if (response.success) {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Equipment removed from shift.'
+              })
+              loadShifts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to remove equipment from shift.',
+                title: 'Error'
+              })
+            }
+          }
+        )
+
+        break
+      }
+      // No default
+    }
+  }
+
+  function moveEmployee(
+    employeeNumber: string,
+    fromShiftId: number,
+    toShiftId: number
+  ): void {
+    // If fromShiftId is 0, employee is from available resources
+    if (fromShiftId === 0) {
+      // Just add to new shift
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+        {
+          employeeNumber,
+          shiftEmployeeNote: '',
+          shiftId: toShiftId
+        },
+        (addResponse) => {
+          if (addResponse.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Employee has been added to the shift.',
+              title: 'Employee Added'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to add employee to shift.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+      return
+    }
+
+    // Get equipment assigned to this employee
+    const assignedEquipment = getEmployeeEquipment(fromShiftId, employeeNumber)
+
+    // Delete from old shift
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+      {
+        employeeNumber,
+        shiftId: fromShiftId
+      },
+      (deleteResponse) => {
+        if (deleteResponse.success) {
+          // Add to new shift
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+            {
+              employeeNumber,
+              shiftEmployeeNote: '',
+              shiftId: toShiftId
+            },
+            (addResponse) => {
+              if (addResponse.success) {
+                // Move assigned equipment too
+                let equipmentMovedCount = 0
+                const totalEquipment = assignedEquipment.length
+                
+                if (totalEquipment === 0) {
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    message: 'Employee has been moved to the new shift.',
+                    title: 'Employee Moved'
+                  })
+                  loadShifts()
+                } else {
+                  // First delete equipment from old shift
+                  for (const equipment of assignedEquipment) {
+                    cityssm.postJSON(
+                      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+                      {
+                        equipmentNumber: equipment.equipmentNumber,
+                        shiftId: fromShiftId
+                      },
+                      (deleteEquipResponse) => {
+                        if (deleteEquipResponse.success) {
+                          // Add equipment to new shift with operator assignment
+                          cityssm.postJSON(
+                            `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+                            {
+                              equipmentNumber: equipment.equipmentNumber,
+                              employeeNumber,
+                              shiftEquipmentNote: '',
+                              shiftId: toShiftId
+                            },
+                            () => {
+                              equipmentMovedCount++
+                              
+                              if (equipmentMovedCount === totalEquipment) {
+                                bulmaJS.alert({
+                                  contextualColorName: 'success',
+                                  message: `Employee and ${totalEquipment} assigned equipment moved to new shift.`,
+                                  title: 'Employee Moved'
+                                })
+                                loadShifts()
+                              }
+                            }
+                          )
+                        }
+                      }
+                    )
+                  }
+                }
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to add employee to new shift.',
+                  title: 'Error'
+                })
+              }
+            }
+          )
+        } else {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to remove employee from original shift.',
+            title: 'Error'
+          })
+        }
+      }
+    )
+  }
+
+  function moveEquipment(
+    equipmentNumber: string,
+    fromShiftId: number,
+    toShiftId: number
+  ): void {
+    // If fromShiftId is 0, equipment is from available resources
+    if (fromShiftId === 0) {
+      // Just add to new shift
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+        {
+          equipmentNumber,
+          shiftEquipmentNote: '',
+          shiftId: toShiftId
+        },
+        (addResponse) => {
+          if (addResponse.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Equipment has been added to the shift.',
+              title: 'Equipment Added'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to add equipment to shift.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+      return
+    }
+
+    // Delete from old shift
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+      {
+        equipmentNumber,
+        shiftId: fromShiftId
+      },
+      (deleteResponse) => {
+        if (deleteResponse.success) {
+          // Add to new shift
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+            {
+              equipmentNumber,
+              shiftEquipmentNote: '',
+              shiftId: toShiftId
+            },
+            (addResponse) => {
+              if (addResponse.success) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Equipment has been moved to the new shift.',
+                  title: 'Equipment Moved'
+                })
+                loadShifts()
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to add equipment to new shift.',
+                  title: 'Error'
+                })
+              }
+            }
+          )
+        } else {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to remove equipment from original shift.',
+            title: 'Error'
+          })
+        }
+      }
+    )
+  }
+
+  function moveCrew(
+    crewId: number,
+    fromShiftId: number,
+    toShiftId: number
+  ): void {
+    // If fromShiftId is 0, crew is from available resources
+    if (fromShiftId === 0) {
+      // Just add to new shift
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
+        {
+          crewId,
+          shiftCrewNote: '',
+          shiftId: toShiftId
+        },
+        (addResponse) => {
+          if (addResponse.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Crew has been added to the shift.',
+              title: 'Crew Added'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to add crew to shift.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+      return
+    }
+
+    // Delete from old shift
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
+      {
+        crewId,
+        shiftId: fromShiftId
+      },
+      (deleteResponse) => {
+        if (deleteResponse.success) {
+          // Add to new shift
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
+            {
+              crewId,
+              shiftCrewNote: '',
+              shiftId: toShiftId
+            },
+            (addResponse) => {
+              if (addResponse.success) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Crew has been moved to the new shift.',
+                  title: 'Crew Moved'
+                })
+                loadShifts()
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to add crew to new shift.',
+                  title: 'Error'
+                })
+              }
+            }
+          )
+        } else {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to remove crew from original shift.',
+            title: 'Error'
+          })
+        }
+      }
+    )
+  }
+
+  function moveWorkOrder(
+    workOrderId: number,
+    fromShiftId: number,
+    toShiftId: number
+  ): void {
+    // Delete from old shift
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doDeleteShiftWorkOrder`,
+      {
+        shiftId: fromShiftId,
+        workOrderId
+      },
+      (deleteResponse) => {
+        if (deleteResponse.success) {
+          // Add to new shift
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doAddShiftWorkOrder`,
+            {
+              shiftId: toShiftId,
+              shiftWorkOrderNote: '',
+              workOrderId
+            },
+            (addResponse) => {
+              if (addResponse.success) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Work order has been moved to the new shift.',
+                  title: 'Work Order Moved'
+                })
+                loadShifts()
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to add work order to new shift.',
+                  title: 'Error'
+                })
+              }
+            }
+          )
+        } else {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to remove work order from original shift.',
+            title: 'Error'
+          })
+        }
+      }
+    )
+  }
+
+  function makeEmployeeSupervisor(
+    employeeNumber: string,
+    shiftId: number
+  ): void {
+    // Get the shift details first to get current values
+    const shift = currentShifts.find((s) => s.shiftId === shiftId)
+    if (shift === undefined) {
+      return
+    }
+
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doUpdateShift`,
+      {
+        shiftDateString: shift.shiftDate,
+        shiftDescription: shift.shiftDescription,
+        shiftId,
+        shiftTimeDataListItemId: shift.shiftTimeDataListItemId,
+        shiftTypeDataListItemId: shift.shiftTypeDataListItemId,
+        supervisorEmployeeNumber: employeeNumber
+      },
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as { success: boolean }
+        if (responseJSON.success) {
+          bulmaJS.alert({
+            contextualColorName: 'success',
+            message: 'Employee has been set as the supervisor for this shift.',
+            title: 'Supervisor Updated'
+          })
+          loadShifts()
+        } else {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to update shift supervisor.',
+            title: 'Error'
+          })
+        }
+      }
+    )
+  }
+
+  function assignEmployeeToCrew(
+    employeeNumber: string,
+    fromShiftId: number,
+    toShiftId: number,
+    crewId: number
+  ): void {
+    // If employee is on a different shift, move them first
+    if (fromShiftId === toShiftId) {
+      // Same shift, just update the crew assignment
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doUpdateShiftEmployee`,
+        {
+          crewId,
+          employeeNumber,
+          shiftId: toShiftId
+        },
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+          if (responseJSON.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Employee has been assigned to the crew.',
+              title: 'Employee Assigned'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to assign employee to crew.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+    } else {
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+        {
+          employeeNumber,
+          shiftId: fromShiftId
+        },
+        (deleteResponse) => {
+          if (deleteResponse.success) {
+            // Add to new shift with crew assignment
+            cityssm.postJSON(
+              `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+              {
+                crewId,
+                employeeNumber,
+                shiftEmployeeNote: '',
+                shiftId: toShiftId
+              },
+              (addResponse) => {
+                if (addResponse.success) {
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    message:
+                      'Employee has been moved and assigned to the crew.',
+                    title: 'Employee Assigned'
+                  })
+                  loadShifts()
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: 'Failed to add employee to crew.',
+                    title: 'Error'
+                  })
+                }
+              }
+            )
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to remove employee from original shift.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+    }
+  }
+
+  function assignEquipmentToEmployee(
+    equipmentNumber: string,
+    fromShiftId: number,
+    toShiftId: number,
+    employeeNumber: string
+  ): void {
+    // If equipment is on a different shift, move it first
+    if (fromShiftId === toShiftId) {
+      // Same shift, just update the employee assignment
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doUpdateShiftEquipment`,
+        {
+          employeeNumber,
+          equipmentNumber,
+          shiftId: toShiftId
+        },
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as { success: boolean }
+          if (responseJSON.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Equipment has been assigned to the employee.',
+              title: 'Equipment Assigned'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to assign equipment to employee.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+    } else {
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+        {
+          equipmentNumber,
+          shiftId: fromShiftId
+        },
+        (deleteResponse) => {
+          if (deleteResponse.success) {
+            // Add to new shift with employee assignment
+            cityssm.postJSON(
+              `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+              {
+                employeeNumber,
+                equipmentNumber,
+                shiftEquipmentNote: '',
+                shiftId: toShiftId
+              },
+              (addResponse) => {
+                if (addResponse.success) {
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    message:
+                      'Equipment has been moved and assigned to the employee.',
+                    title: 'Equipment Assigned'
+                  })
+                  loadShifts()
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: 'Failed to add equipment to shift.',
+                    title: 'Error'
+                  })
+                }
+              }
+            )
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to remove equipment from original shift.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+    }
+  }
+
+  // Event listeners
+  shiftDateElement.addEventListener('change', loadShifts)
+  viewModeElement.addEventListener('change', renderShifts)
+
+  // Set up drag and drop event delegation on the results container
+  resultsContainerElement.addEventListener('dragstart', handleDragStart)
+  resultsContainerElement.addEventListener('dragend', handleDragEnd)
+  resultsContainerElement.addEventListener('dragover', handleDragOver)
+  resultsContainerElement.addEventListener('dragleave', handleDragLeave)
+  resultsContainerElement.addEventListener('drop', handleDrop)
+
+  // Set up drag and drop for available resources sidebar
+  const availableResourcesContainer = document.querySelector(
+    '#container--availableResources'
+  )
+  if (availableResourcesContainer !== null) {
+    availableResourcesContainer.addEventListener('dragstart', handleDragStart)
+    availableResourcesContainer.addEventListener('dragend', handleDragEnd)
+    availableResourcesContainer.addEventListener('dragover', handleDragOver)
+    availableResourcesContainer.addEventListener('dragleave', handleDragLeave)
+    availableResourcesContainer.addEventListener('drop', handleDrop)
+  }
+
+  // Initialize flatpickr for date input
+  if (flatpickr !== undefined) {
+    flatpickr(shiftDateElement, {
+      allowInput: true,
+      dateFormat: 'Y-m-d',
+      nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+      prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+    })
+  }
+
+  // Create shift modal
+  function openCreateShiftModal(): void {
+    const selectedDate = shiftDateElement.value
+    if (selectedDate === '') {
+      bulmaJS.alert({
+        contextualColorName: 'warning',
+        message: 'Please select a date first.'
+      })
+      return
+    }
+
+    let closeModalFunction: () => void
+
+    cityssm.openHtmlModal('shifts-createShift', {
+      onshow(modalElement) {
+        const formElement = modalElement.querySelector(
+          '#form--createShift'
+        ) as HTMLFormElement
+
+        // Set the date
+        const dateInput = formElement.querySelector(
+          '[name="shiftDateString"]'
+        ) as HTMLInputElement
+        dateInput.value = selectedDate
+
+        const shiftTypeSelect = modalElement.querySelector(
+          '#createShift--shiftTypeDataListItemId'
+        ) as HTMLSelectElement
+        const shiftTimeSelect = modalElement.querySelector(
+          '#createShift--shiftTimeDataListItemId'
+        ) as HTMLSelectElement
+        const supervisorSelect = modalElement.querySelector(
+          '#createShift--supervisorEmployeeNumber'
+        ) as HTMLSelectElement
+
+        // Load shift types, times, and supervisors
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/shifts/doGetShiftCreationData`,
+          {},
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as {
+              shiftTimes: Array<{
+                dataListItem: string
+                dataListItemId: number
+              }>
+              shiftTypes: Array<{
+                dataListItem: string
+                dataListItemId: number
+              }>
+              success: boolean
+              supervisors: Array<{
+                employeeNumber: string
+                firstName: string
+                lastName: string
+              }>
+            }
+
+            if (responseJSON.success) {
+              // Populate shift types
+              for (const shiftType of responseJSON.shiftTypes) {
+                const optionElement = document.createElement('option')
+                optionElement.value = shiftType.dataListItemId.toString()
+                optionElement.textContent = shiftType.dataListItem
+                shiftTypeSelect.append(optionElement)
+              }
+
+              // Populate shift times
+              for (const shiftTime of responseJSON.shiftTimes) {
+                const optionElement = document.createElement('option')
+                optionElement.value = shiftTime.dataListItemId.toString()
+                optionElement.textContent = shiftTime.dataListItem
+                shiftTimeSelect.append(optionElement)
+              }
+
+              // Populate supervisors
+              for (const supervisor of responseJSON.supervisors) {
+                const optionElement = document.createElement('option')
+                optionElement.value = supervisor.employeeNumber
+                optionElement.textContent = `${supervisor.lastName}, ${supervisor.firstName}`
+                supervisorSelect.append(optionElement)
+              }
+            }
+          }
+        )
+
+        // Handle form submission
+        formElement.addEventListener('submit', (submitEvent) => {
+          submitEvent.preventDefault()
+
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doCreateShift`,
+            formElement,
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as {
+                errorMessage?: string
+                shiftId?: number
+                success: boolean
+              }
+
+              if (responseJSON.success) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Shift created successfully!'
+                })
+                closeModalFunction()
+                loadShifts()
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message:
+                    responseJSON.errorMessage ?? 'Failed to create shift.',
+                  title: 'Creation Error'
+                })
+              }
+            }
+          )
+        })
+      },
+      onshown(modalElement, closeFunction) {
+        closeModalFunction = closeFunction
+      }
+    })
+  }
+
+  // Create shift button handler
+  const createShiftButton = document.querySelector('#button--createShift')
+  if (createShiftButton !== null) {
+    createShiftButton.addEventListener('click', openCreateShiftModal)
+  }
+
+  // Add Resource Modal
+  function openAddResourceModal(shift: ShiftForBuilder, viewMode: string): void {
+    let closeModalFunction: () => void
+    
+    cityssm.openHtmlModal('shifts-builder-addResource', {
+      onshow(modalElement) {
+        // Populate shift details
+        const shiftTypeElement = modalElement.querySelector('#builderAddResource--shiftType') as HTMLElement
+        const shiftNumberElement = modalElement.querySelector('#builderAddResource--shiftNumber') as HTMLElement
+        const shiftTimeElement = modalElement.querySelector('#builderAddResource--shiftTime') as HTMLElement
+        const supervisorElement = modalElement.querySelector('#builderAddResource--supervisor') as HTMLElement
+        
+        shiftTypeElement.textContent = shift.shiftTypeDataListItem ?? 'Shift'
+        shiftNumberElement.textContent = `#${shift.shiftId}`
+        shiftTimeElement.textContent = shift.shiftTimeDataListItem ?? ''
+        supervisorElement.textContent = shift.supervisorLastName !== null 
+          ? `${shift.supervisorLastName}, ${shift.supervisorFirstName}` 
+          : 'None'
+        
+        // Setup tabs based on view mode
+        const tabsElement = modalElement.querySelector('#builderAddResource--tabs') as HTMLUListElement
+        tabsElement.innerHTML = ''
+        
+        if (viewMode === 'employees') {
+          // Create tabs for Employees, Equipment, and Crews
+          const employeesTab = document.createElement('li')
+          employeesTab.className = 'is-active'
+          const employeesLink = document.createElement('a')
+          employeesLink.href = '#'
+          employeesLink.textContent = 'Employees'
+          employeesLink.dataset.tab = 'employees'
+          employeesTab.append(employeesLink)
+          
+          const equipmentTab = document.createElement('li')
+          const equipmentLink = document.createElement('a')
+          equipmentLink.href = '#'
+          equipmentLink.textContent = 'Equipment'
+          equipmentLink.dataset.tab = 'equipment'
+          equipmentTab.append(equipmentLink)
+          
+          const crewsTab = document.createElement('li')
+          const crewsLink = document.createElement('a')
+          crewsLink.href = '#'
+          crewsLink.textContent = 'Crews'
+          crewsLink.dataset.tab = 'crews'
+          crewsTab.append(crewsLink)
+          
+          tabsElement.append(employeesTab, equipmentTab, crewsTab)
+          
+          // Show employees tab by default
+          const employeesContent = modalElement.querySelector('#builderAddResource--tabContent-employees') as HTMLElement
+          employeesContent.classList.remove('is-hidden')
+          
+          // Load available employees
+          loadAvailableEmployeesForModal(modalElement)
+          
+        } else {
+          // Create tab for Work Orders
+          const workOrdersTab = document.createElement('li')
+          workOrdersTab.className = 'is-active'
+          const workOrdersLink = document.createElement('a')
+          workOrdersLink.href = '#'
+          workOrdersLink.textContent = 'Work Orders'
+          workOrdersLink.dataset.tab = 'workOrders'
+          workOrdersTab.append(workOrdersLink)
+          
+          tabsElement.append(workOrdersTab)
+          
+          // Show work orders tab
+          const workOrdersContent = modalElement.querySelector('#builderAddResource--tabContent-workOrders') as HTMLElement
+          workOrdersContent.classList.remove('is-hidden')
+        }
+        
+        // Tab switching
+        tabsElement.addEventListener('click', (event) => {
+          const target = event.target as HTMLElement
+          if (target.tagName === 'A' && target.dataset.tab !== undefined) {
+            event.preventDefault()
+            
+            // Update active tab
+            const allTabs = tabsElement.querySelectorAll('li')
+            for (const tab of allTabs) {
+              tab.classList.remove('is-active')
+            }
+            target.parentElement?.classList.add('is-active')
+            
+            // Hide all tab content
+            const allContent = modalElement.querySelectorAll('[id^="builderAddResource--tabContent-"]')
+            for (const content of allContent) {
+              content.classList.add('is-hidden')
+            }
+            
+            // Show selected tab content
+            const selectedContent = modalElement.querySelector(`#builderAddResource--tabContent-${target.dataset.tab}`) as HTMLElement
+            selectedContent.classList.remove('is-hidden')
+            
+            // Load data for the selected tab
+            switch (target.dataset.tab) {
+              case 'employees':
+                loadAvailableEmployeesForModal(modalElement)
+                break
+              case 'equipment':
+                loadAvailableEquipmentForModal(modalElement)
+                break
+              case 'crews':
+                loadAvailableCrewsForModal(modalElement)
+                break
+              case 'workOrders':
+                // Work orders are search-based, don't auto-load
+                break
+            }
+          }
+        })
+        
+        // Filter functionality
+        setupFilterListeners(modalElement)
+        
+        // Work order search
+        const searchButton = modalElement.querySelector('#builderAddResource--searchWorkOrders') as HTMLButtonElement
+        const workOrderFilter = modalElement.querySelector('#builderAddResource--workOrderFilter') as HTMLInputElement
+        searchButton.addEventListener('click', () => {
+          searchWorkOrders(modalElement, workOrderFilter.value)
+        })
+        
+        // Allow Enter key to trigger search
+        workOrderFilter.addEventListener('keypress', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault()
+            searchWorkOrders(modalElement, workOrderFilter.value)
+          }
+        })
+        
+        // Add button handler
+        const addButton = modalElement.querySelector('#builderAddResource--addButton') as HTMLButtonElement
+        addButton.addEventListener('click', () => {
+          addSelectedResources(modalElement, shift.shiftId)
+        })
+        
+        // Success message close button
+        const successMessage = modalElement.querySelector('#builderAddResource--successMessage') as HTMLElement
+        const deleteButton = successMessage.querySelector('.delete')
+        deleteButton?.addEventListener('click', () => {
+          successMessage.classList.add('is-hidden')
+        })
+      },
+      onshown(modalElement, closeFunction) {
+        closeModalFunction = closeFunction
+      }
+    })
+  }
+  
+  function loadAvailableEmployeesForModal(modalElement: HTMLElement): void {
+    const shiftDateString = shiftDateElement.value
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      { shiftDateString },
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as {
+          employees: Array<{
+            employeeNumber: string
+            firstName: string
+            lastName: string
+          }>
+          success: boolean
+        }
+        
+        if (responseJSON.success) {
+          const employeeList = modalElement.querySelector('#builderAddResource--employeeList') as HTMLElement
+          employeeList.innerHTML = ''
+          
+          if (responseJSON.employees.length === 0) {
+            employeeList.innerHTML = '<p class="has-text-grey-light">No available employees</p>'
+          } else {
+            for (const employee of responseJSON.employees) {
+              const label = document.createElement('label')
+              label.className = 'checkbox is-block mb-2'
+              
+              const checkbox = document.createElement('input')
+              checkbox.type = 'checkbox'
+              checkbox.value = employee.employeeNumber
+              checkbox.dataset.resourceType = 'employee'
+              
+              label.append(checkbox, ` ${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`)
+              employeeList.append(label)
+            }
+          }
+        }
+      }
+    )
+  }
+  
+  function loadAvailableEquipmentForModal(modalElement: HTMLElement): void {
+    const shiftDateString = shiftDateElement.value
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      { shiftDateString },
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as {
+          equipment: Array<{
+            equipmentName: string
+            equipmentNumber: string
+          }>
+          success: boolean
+        }
+        
+        if (responseJSON.success) {
+          const equipmentList = modalElement.querySelector('#builderAddResource--equipmentList') as HTMLElement
+          equipmentList.innerHTML = ''
+          
+          if (responseJSON.equipment.length === 0) {
+            equipmentList.innerHTML = '<p class="has-text-grey-light">No available equipment</p>'
+          } else {
+            for (const equipment of responseJSON.equipment) {
+              const label = document.createElement('label')
+              label.className = 'checkbox is-block mb-2'
+              
+              const checkbox = document.createElement('input')
+              checkbox.type = 'checkbox'
+              checkbox.value = equipment.equipmentNumber
+              checkbox.dataset.resourceType = 'equipment'
+              
+              label.append(checkbox, ` ${equipment.equipmentName} (#${equipment.equipmentNumber})`)
+              equipmentList.append(label)
+            }
+          }
+        }
+      }
+    )
+  }
+  
+  function loadAvailableCrewsForModal(modalElement: HTMLElement): void {
+    const shiftDateString = shiftDateElement.value
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      { shiftDateString },
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as {
+          crews: Array<{
+            crewId: number
+            crewName: string
+          }>
+          success: boolean
+        }
+        
+        if (responseJSON.success) {
+          const crewList = modalElement.querySelector('#builderAddResource--crewList') as HTMLElement
+          crewList.innerHTML = ''
+          
+          if (responseJSON.crews.length === 0) {
+            crewList.innerHTML = '<p class="has-text-grey-light">No available crews</p>'
+          } else {
+            for (const crew of responseJSON.crews) {
+              const label = document.createElement('label')
+              label.className = 'checkbox is-block mb-2'
+              
+              const checkbox = document.createElement('input')
+              checkbox.type = 'checkbox'
+              checkbox.value = crew.crewId.toString()
+              checkbox.dataset.resourceType = 'crew'
+              
+              label.append(checkbox, ` ${crew.crewName}`)
+              crewList.append(label)
+            }
+          }
+        }
+      }
+    )
+  }
+  
+  function searchWorkOrders(modalElement: HTMLElement, searchString: string): void {
+    if (searchString.trim() === '') {
+      bulmaJS.alert({
+        contextualColorName: 'warning',
+        message: 'Please enter search terms.'
+      })
+      return
+    }
+    
+    cityssm.postJSON(
+      `${shiftLog.urlPrefix}/workOrders/doSearchWorkOrders`,
+      { searchString, orderBy: 'workOrderNumber desc' },
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as {
+          count: number
+          success: boolean
+          workOrders: Array<{
+            requestorEmployeeNumber: string | null
+            requestorFirstName: string | null
+            requestorLastName: string | null
+            workOrderDetails: string
+            workOrderId: number
+            workOrderNumber: string
+          }>
+        }
+        
+        if (responseJSON.success) {
+          const workOrderList = modalElement.querySelector('#builderAddResource--workOrderList') as HTMLElement
+          workOrderList.innerHTML = ''
+          
+          if (responseJSON.count === 0) {
+            workOrderList.innerHTML = '<p class="has-text-grey-light">No work orders found</p>'
+          } else {
+            for (const workOrder of responseJSON.workOrders) {
+              const label = document.createElement('label')
+              label.className = 'checkbox is-block mb-2'
+              
+              const checkbox = document.createElement('input')
+              checkbox.type = 'checkbox'
+              checkbox.value = workOrder.workOrderId.toString()
+              checkbox.dataset.resourceType = 'workOrder'
+              
+              const details = workOrder.workOrderDetails !== '' ? ` - ${workOrder.workOrderDetails}` : ''
+              label.append(checkbox, ` ${workOrder.workOrderNumber}${details}`)
+              workOrderList.append(label)
+            }
+          }
+        }
+      }
+    )
+  }
+  
+  function setupFilterListeners(modalElement: HTMLElement): void {
+    // Employee filter
+    const employeeFilter = modalElement.querySelector('#builderAddResource--employeeFilter') as HTMLInputElement
+    employeeFilter?.addEventListener('input', () => {
+      filterCheckboxes('#builderAddResource--employeeList', employeeFilter.value)
+    })
+    
+    // Equipment filter
+    const equipmentFilter = modalElement.querySelector('#builderAddResource--equipmentFilter') as HTMLInputElement
+    equipmentFilter?.addEventListener('input', () => {
+      filterCheckboxes('#builderAddResource--equipmentList', equipmentFilter.value)
+    })
+    
+    // Crew filter
+    const crewFilter = modalElement.querySelector('#builderAddResource--crewFilter') as HTMLInputElement
+    crewFilter?.addEventListener('input', () => {
+      filterCheckboxes('#builderAddResource--crewList', crewFilter.value)
+    })
+  }
+  
+  function filterCheckboxes(containerSelector: string, filterText: string): void {
+    const container = document.querySelector(containerSelector) as HTMLElement
+    if (container === null) return
+    
+    const labels = container.querySelectorAll('label.checkbox')
+    const lowerFilter = filterText.toLowerCase()
+    
+    for (const label of labels) {
+      const text = label.textContent?.toLowerCase() ?? ''
+      if (text.includes(lowerFilter)) {
+        (label as HTMLElement).style.display = 'block'
+      } else {
+        (label as HTMLElement).style.display = 'none'
+      }
+    }
+  }
+  
+  function addSelectedResources(modalElement: HTMLElement, shiftId: number): void {
+    const checkedBoxes = modalElement.querySelectorAll('input[type="checkbox"]:checked') as NodeListOf<HTMLInputElement>
+    
+    if (checkedBoxes.length === 0) {
+      bulmaJS.alert({
+        contextualColorName: 'warning',
+        message: 'Please select at least one resource to add.'
+      })
+      return
+    }
+    
+    const successText = modalElement.querySelector('#builderAddResource--successText') as HTMLElement
+    const successMessage = modalElement.querySelector('#builderAddResource--successMessage') as HTMLElement
+    
+    let addedCount = 0
+    const totalToAdd = checkedBoxes.length
+    
+    for (const checkbox of checkedBoxes) {
+      const resourceType = checkbox.dataset.resourceType
+      const resourceId = checkbox.value
+      
+      switch (resourceType) {
+        case 'employee': {
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+            {
+              employeeNumber: resourceId,
+              shiftEmployeeNote: '',
+              shiftId
+            },
+            (response) => {
+              addedCount++
+              checkbox.checked = false
+              
+              if (addedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+                successMessage.classList.remove('is-hidden')
+                loadShifts()
+                loadAvailableResources()
+              }
+            }
+          )
+          break
+        }
+        case 'equipment': {
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+            {
+              equipmentNumber: resourceId,
+              shiftEquipmentNote: '',
+              shiftId
+            },
+            (response) => {
+              addedCount++
+              checkbox.checked = false
+              
+              if (addedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+                successMessage.classList.remove('is-hidden')
+                loadShifts()
+                loadAvailableResources()
+              }
+            }
+          )
+          break
+        }
+        case 'crew': {
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
+            {
+              crewId: resourceId,
+              shiftCrewNote: '',
+              shiftId
+            },
+            (response) => {
+              addedCount++
+              checkbox.checked = false
+              
+              if (addedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+                successMessage.classList.remove('is-hidden')
+                loadShifts()
+                loadAvailableResources()
+              }
+            }
+          )
+          break
+        }
+        case 'workOrder': {
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/shifts/doAddShiftWorkOrder`,
+            {
+              shiftId,
+              shiftWorkOrderNote: '',
+              workOrderId: resourceId
+            },
+            (response) => {
+              addedCount++
+              checkbox.checked = false
+              
+              if (addedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+                successMessage.classList.remove('is-hidden')
+                loadShifts()
+                loadAvailableResources()
+              }
+            }
+          )
+          break
+        }
+      }
+    }
+  }
+
+  // Load shifts for today on page load
+  loadShifts()
+})()

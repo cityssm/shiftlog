@@ -1,0 +1,39 @@
+import type { Request, Response } from 'express'
+
+import getEmployees from '../../database/employees/getEmployees.js'
+import getShiftTimeDataListItems from '../../database/shifts/getShiftTimeDataListItems.js'
+import getShiftTypeDataListItems from '../../database/shifts/getShiftTypeDataListItems.js'
+
+export interface DoGetShiftCreationDataResponse {
+  success: boolean
+  shiftTypes: Array<{ dataListItemId: number; dataListItem: string }>
+  shiftTimes: Array<{ dataListItemId: number; dataListItem: string }>
+  supervisors: Array<{
+    employeeNumber: string
+    firstName: string
+    lastName: string
+  }>
+}
+
+export default async function handler(
+  request: Request,
+  response: Response<DoGetShiftCreationDataResponse>
+): Promise<void> {
+  let supervisors = await getEmployees({ isSupervisor: true })
+
+  if (!(request.session.user?.userProperties.shifts.canManage ?? false)) {
+    supervisors = supervisors.filter(
+      (supervisor) => supervisor.userName === request.session.user?.userName
+    )
+  }
+
+  const shiftTypes = await getShiftTypeDataListItems(request.session.user)
+  const shiftTimes = await getShiftTimeDataListItems(request.session.user)
+
+  response.json({
+    success: true,
+    shiftTypes,
+    shiftTimes,
+    supervisors
+  })
+}

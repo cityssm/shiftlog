@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import handler_builder from '../handlers/shifts-get/builder.js';
 import handler_edit from '../handlers/shifts-get/edit.js';
 import handler_new from '../handlers/shifts-get/new.js';
 import handler_print from '../handlers/shifts-get/print.js';
@@ -12,6 +13,9 @@ import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkO
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js';
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js';
 import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js';
+import handler_doGetAvailableResources from '../handlers/shifts-post/doGetAvailableResources.js';
+import handler_doGetShiftCreationData from '../handlers/shifts-post/doGetShiftCreationData.js';
+import handler_doGetShiftsForBuilder from '../handlers/shifts-post/doGetShiftsForBuilder.js';
 import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew.js';
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js';
 import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShiftEquipment.js';
@@ -48,8 +52,21 @@ function manageHandler(request, response, next) {
         response.status(403).send('Forbidden');
     }
 }
+function viewHandler(request, response, next) {
+    if (request.session.user?.userProperties.shifts.canView ?? false) {
+        next();
+    }
+    else {
+        response.status(403).send('Forbidden');
+    }
+}
 export const router = Router();
 router.get('/', handler_search).post('/doSearchShifts', handler_doSearchShifts);
+router
+    .get('/builder', viewHandler, handler_builder)
+    .post('/doGetShiftsForBuilder', handler_doGetShiftsForBuilder)
+    .post('/doGetAvailableResources', handler_doGetAvailableResources)
+    .post('/doGetShiftCreationData', handler_doGetShiftCreationData);
 router
     .get('/new', updateHandler, handler_new)
     .post('/doCreateShift', updateHandler, handler_doCreateShift);
