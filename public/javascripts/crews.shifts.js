@@ -115,7 +115,10 @@
                     }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
-                            renderCrewDetails(crewId, responseJSON.crew);
+                            const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
+                            if (panelElement !== null) {
+                                renderCrewDetails(crewId, responseJSON.crew, panelElement);
+                            }
                         }
                     });
                 }
@@ -154,7 +157,10 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrewMember`, formEvent.currentTarget, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
-                            renderCrewDetails(crewId, responseJSON.crew);
+                            const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
+                            if (panelElement !== null) {
+                                renderCrewDetails(crewId, responseJSON.crew, panelElement);
+                            }
                             closeModalFunction();
                         }
                         else {
@@ -193,7 +199,10 @@
                     }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
-                            renderCrewDetails(crewId, responseJSON.crew);
+                            const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
+                            if (panelElement !== null) {
+                                renderCrewDetails(crewId, responseJSON.crew, panelElement);
+                            }
                         }
                     });
                 }
@@ -212,7 +221,10 @@
         }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success && responseJSON.crew !== undefined) {
-                renderCrewDetails(crewId, responseJSON.crew);
+                const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
+                if (panelElement !== null) {
+                    renderCrewDetails(crewId, responseJSON.crew, panelElement);
+                }
             }
         });
     }
@@ -258,7 +270,10 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrewEquipment`, formEvent.currentTarget, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
-                            renderCrewDetails(crewId, responseJSON.crew);
+                            const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
+                            if (panelElement !== null) {
+                                renderCrewDetails(crewId, responseJSON.crew, panelElement);
+                            }
                             closeModalFunction();
                         }
                         else {
@@ -280,8 +295,8 @@
             }
         });
     }
-    function renderCrewDetails(crewId, crew) {
-        const detailsElement = document.querySelector(`#crew-${crewId}--details`);
+    function renderCrewDetails(crewId, crew, panelElement) {
+        const detailsElement = panelElement.querySelector('.panel-block-details');
         if (detailsElement === null) {
             return;
         }
@@ -289,12 +304,26 @@
         detailsElement.innerHTML = '';
         // Check permissions
         const canEdit = exports.canManage || crew.recordCreate_userName === shiftLog.userName;
-        // Render members section
+        // Render members section header with Add button
         const membersHeaderBlock = document.createElement('div');
-        membersHeaderBlock.className = 'panel-block';
+        membersHeaderBlock.className = 'panel-block is-justify-content-space-between is-align-items-center';
         const membersHeaderStrong = document.createElement('strong');
         membersHeaderStrong.textContent = 'Members';
         membersHeaderBlock.append(membersHeaderStrong);
+        if (canEdit) {
+            const addMemberButtonsDiv = document.createElement('div');
+            addMemberButtonsDiv.className = 'buttons are-small mb-0';
+            const addButton = document.createElement('button');
+            addButton.className = 'button is-primary';
+            addButton.type = 'button';
+            addButton.dataset.crewId = crewId.toString();
+            addButton.dataset.addMember = '';
+            addButton.innerHTML =
+                '<span class="icon"><i class="fa-solid fa-plus"></i></span><span>Add Member</span>';
+            addButton.addEventListener('click', openAddCrewMemberModal);
+            addMemberButtonsDiv.append(addButton);
+            membersHeaderBlock.append(addMemberButtonsDiv);
+        }
         detailsElement.append(membersHeaderBlock);
         if (crew.members.length === 0) {
             const emptyBlock = document.createElement('div');
@@ -327,26 +356,26 @@
                 detailsElement.append(memberBlock);
             }
         }
-        if (canEdit) {
-            const addMemberBlock = document.createElement('div');
-            addMemberBlock.className = 'panel-block';
-            const addButton = document.createElement('button');
-            addButton.className = 'button is-small is-primary';
-            addButton.type = 'button';
-            addButton.dataset.crewId = crewId.toString();
-            addButton.dataset.addMember = '';
-            addButton.innerHTML =
-                '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add Member</span>';
-            addButton.addEventListener('click', openAddCrewMemberModal);
-            addMemberBlock.append(addButton);
-            detailsElement.append(addMemberBlock);
-        }
-        // Render equipment section
+        // Render equipment section header with Add button
         const equipmentHeaderBlock = document.createElement('div');
-        equipmentHeaderBlock.className = 'panel-block';
+        equipmentHeaderBlock.className = 'panel-block is-justify-content-space-between is-align-items-center';
         const equipmentHeaderStrong = document.createElement('strong');
         equipmentHeaderStrong.textContent = 'Equipment';
         equipmentHeaderBlock.append(equipmentHeaderStrong);
+        if (canEdit) {
+            const addEquipmentButtonsDiv = document.createElement('div');
+            addEquipmentButtonsDiv.className = 'buttons are-small mb-0';
+            const addButton = document.createElement('button');
+            addButton.className = 'button is-primary';
+            addButton.type = 'button';
+            addButton.dataset.crewId = crewId.toString();
+            addButton.dataset.addEquipment = '';
+            addButton.innerHTML =
+                '<span class="icon"><i class="fa-solid fa-plus"></i></span><span>Add Equipment</span>';
+            addButton.addEventListener('click', openAddCrewEquipmentModal);
+            addEquipmentButtonsDiv.append(addButton);
+            equipmentHeaderBlock.append(addEquipmentButtonsDiv);
+        }
         detailsElement.append(equipmentHeaderBlock);
         if (crew.equipment.length === 0) {
             const emptyBlock = document.createElement('div');
@@ -431,40 +460,6 @@
                 detailsElement.append(equipmentBlock);
             }
         }
-        if (canEdit) {
-            const addEquipmentBlock = document.createElement('div');
-            addEquipmentBlock.className = 'panel-block';
-            const addButton = document.createElement('button');
-            addButton.className = 'button is-small is-primary';
-            addButton.type = 'button';
-            addButton.dataset.crewId = crewId.toString();
-            addButton.dataset.addEquipment = '';
-            addButton.innerHTML =
-                '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add Equipment</span>';
-            addButton.addEventListener('click', openAddCrewEquipmentModal);
-            addEquipmentBlock.append(addButton);
-            detailsElement.append(addEquipmentBlock);
-        }
-    }
-    function expandCrewPanel(clickEvent) {
-        const linkElement = clickEvent.currentTarget;
-        const crewId = Number.parseInt(linkElement.dataset.crewId ?? '', 10);
-        const detailsElement = document.querySelector(`#crew-${crewId}--details`);
-        if (detailsElement === null) {
-            return;
-        }
-        // Toggle visibility
-        if (detailsElement.innerHTML.trim() !== '') {
-            detailsElement.innerHTML = '';
-            return;
-        }
-        // Load crew details
-        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`, { crewId }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (responseJSON.success && responseJSON.crew !== undefined) {
-                renderCrewDetails(crewId, responseJSON.crew);
-            }
-        });
     }
     function renderCrews() {
         if (exports.crews.length === 0) {
@@ -481,58 +476,73 @@
         crewsContainerElement.innerHTML = '';
         for (const crew of exports.crews) {
             const canEdit = exports.canManage || crew.recordCreate_userName === shiftLog.userName;
-            const panelElement = document.createElement('nav');
-            panelElement.className = 'panel mb-4';
-            // Panel heading
-            const headingLink = document.createElement('a');
-            headingLink.className = 'panel-heading is-block';
-            headingLink.href = '#';
-            headingLink.dataset.crewId = crew.crewId.toString();
-            headingLink.dataset.expandCrew = '';
-            headingLink.textContent = crew.crewName;
+            const panelElement = document.createElement('details');
+            panelElement.className = 'panel mb-5 collapsable-panel';
+            panelElement.dataset.crewId = crew.crewId.toString();
+            // Panel heading with summary
+            const summaryElement = document.createElement('summary');
+            summaryElement.className = 'panel-heading is-clickable';
+            const iconText = document.createElement('span');
+            iconText.className = 'icon-text';
+            const chevronIcon = document.createElement('span');
+            chevronIcon.className = 'icon';
+            chevronIcon.innerHTML = '<i class="fa-solid fa-chevron-right details-chevron"></i>';
+            iconText.append(chevronIcon);
+            const crewNameSpan = document.createElement('span');
+            crewNameSpan.className = 'has-text-weight-semibold mr-2';
+            crewNameSpan.textContent = crew.crewName;
+            iconText.append(crewNameSpan);
             if (crew.userGroupName !== undefined) {
                 const userGroupTag = document.createElement('span');
-                userGroupTag.className = 'tag is-info ml-2';
+                userGroupTag.className = 'tag is-info';
                 userGroupTag.textContent = crew.userGroupName;
-                headingLink.append(userGroupTag);
+                iconText.append(userGroupTag);
             }
-            headingLink.addEventListener('click', (clickEvent) => {
-                clickEvent.preventDefault();
-                expandCrewPanel(clickEvent);
-            });
-            panelElement.append(headingLink);
-            // Details container
-            const detailsDiv = document.createElement('div');
-            detailsDiv.className = 'panel-block is-block';
-            detailsDiv.id = `crew-${crew.crewId}--details`;
-            panelElement.append(detailsDiv);
-            // Edit/Delete buttons
+            summaryElement.append(iconText);
+            panelElement.append(summaryElement);
+            // Edit/Delete buttons block (shown right below heading)
             if (canEdit) {
                 const buttonBlock = document.createElement('div');
-                buttonBlock.className = 'panel-block';
+                buttonBlock.className = 'panel-block is-justify-content-end';
                 const buttonsDiv = document.createElement('div');
-                buttonsDiv.className = 'buttons';
+                buttonsDiv.className = 'buttons are-small mb-0';
                 const editButton = document.createElement('button');
-                editButton.className = 'button is-small';
+                editButton.className = 'button is-info';
                 editButton.type = 'button';
                 editButton.dataset.crewId = crew.crewId.toString();
                 editButton.dataset.editCrew = '';
                 editButton.innerHTML =
-                    '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span><span>Edit Crew</span>';
+                    '<span class="icon"><i class="fa-solid fa-pencil"></i></span><span>Edit Crew</span>';
                 editButton.addEventListener('click', openEditCrewModal);
                 const deleteButton = document.createElement('button');
-                deleteButton.className = 'button is-small is-danger';
+                deleteButton.className = 'button is-danger';
                 deleteButton.type = 'button';
                 deleteButton.dataset.crewId = crew.crewId.toString();
                 deleteButton.dataset.deleteCrew = '';
                 deleteButton.innerHTML =
-                    '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span><span>Delete Crew</span>';
+                    '<span class="icon"><i class="fa-solid fa-trash"></i></span><span>Delete Crew</span>';
                 deleteButton.addEventListener('click', deleteCrew);
                 buttonsDiv.append(editButton, deleteButton);
                 buttonBlock.append(buttonsDiv);
                 panelElement.append(buttonBlock);
             }
+            // Details container
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'panel-block-details';
+            panelElement.append(detailsDiv);
             crewsContainerElement.append(panelElement);
+            // Load details when panel is opened
+            panelElement.addEventListener('toggle', () => {
+                if (panelElement.open) {
+                    const crewId = Number.parseInt(panelElement.dataset.crewId ?? '', 10);
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`, { crewId }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success && responseJSON.crew !== undefined) {
+                            renderCrewDetails(crewId, responseJSON.crew, panelElement);
+                        }
+                    });
+                }
+            });
         }
     }
     function openAddCrewModal() {
