@@ -822,16 +822,31 @@
             case 'crew': {
                 // Get employees assigned to this crew
                 const crewEmployees = getCrewEmployees(draggedData.fromShiftId, draggedData.id);
+                // Get equipment for each employee in the crew
+                const crewEquipment = [];
+                for (const employee of crewEmployees) {
+                    const employeeEquipment = getEmployeeEquipment(draggedData.fromShiftId, employee.employeeNumber);
+                    for (const equipment of employeeEquipment) {
+                        crewEquipment.push({
+                            employeeNumber: employee.employeeNumber,
+                            equipmentNumber: equipment.equipmentNumber,
+                            equipmentName: equipment.equipmentName
+                        });
+                    }
+                }
                 // Delete crew first
                 cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`, {
                     crewId: draggedData.id,
                     shiftId: draggedData.fromShiftId
                 }, (response) => {
                     if (response.success) {
-                        // Also delete crew employees
+                        // Also delete crew employees and their equipment
                         let employeesDeletedCount = 0;
                         let employeesFailedCount = 0;
+                        let equipmentDeletedCount = 0;
+                        let equipmentFailedCount = 0;
                         const totalEmployees = crewEmployees.length;
+                        const totalEquipment = crewEquipment.length;
                         if (totalEmployees === 0) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -852,21 +867,60 @@
                                     else {
                                         employeesFailedCount++;
                                     }
+                                    // Check if all employees processed
                                     if (employeesDeletedCount + employeesFailedCount === totalEmployees) {
-                                        if (employeesFailedCount === 0) {
-                                            bulmaJS.alert({
-                                                contextualColorName: 'success',
-                                                message: `Crew and ${totalEmployees} associated employee(s) removed from shift.`
-                                            });
+                                        // Now delete equipment
+                                        if (totalEquipment === 0) {
+                                            // No equipment to delete, show final message
+                                            if (employeesFailedCount === 0) {
+                                                bulmaJS.alert({
+                                                    contextualColorName: 'success',
+                                                    message: `Crew and ${totalEmployees} associated employee(s) removed from shift.`
+                                                });
+                                            }
+                                            else {
+                                                bulmaJS.alert({
+                                                    contextualColorName: 'warning',
+                                                    message: `Crew removed. ${employeesDeletedCount} employee(s) removed, but ${employeesFailedCount} employee(s) failed to remove.`,
+                                                    title: 'Partial Success'
+                                                });
+                                            }
+                                            loadShifts();
                                         }
                                         else {
-                                            bulmaJS.alert({
-                                                contextualColorName: 'warning',
-                                                message: `Crew removed. ${employeesDeletedCount} employee(s) removed, but ${employeesFailedCount} employee(s) failed to remove.`,
-                                                title: 'Partial Success'
-                                            });
+                                            // Delete equipment
+                                            for (const equipment of crewEquipment) {
+                                                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`, {
+                                                    equipmentNumber: equipment.equipmentNumber,
+                                                    shiftId: draggedData.fromShiftId
+                                                }, (eqResponse) => {
+                                                    if (eqResponse.success) {
+                                                        equipmentDeletedCount++;
+                                                    }
+                                                    else {
+                                                        equipmentFailedCount++;
+                                                    }
+                                                    // Check if all equipment processed
+                                                    if (equipmentDeletedCount + equipmentFailedCount === totalEquipment) {
+                                                        // Show final message
+                                                        if (employeesFailedCount === 0 && equipmentFailedCount === 0) {
+                                                            bulmaJS.alert({
+                                                                contextualColorName: 'success',
+                                                                message: `Crew, ${totalEmployees} employee(s), and ${totalEquipment} equipment removed from shift.`
+                                                            });
+                                                        }
+                                                        else {
+                                                            bulmaJS.alert({
+                                                                contextualColorName: 'warning',
+                                                                message: `Crew removed. ${employeesDeletedCount} of ${totalEmployees} employee(s) and ${equipmentDeletedCount} of ${totalEquipment} equipment removed successfully.`,
+                                                                title: 'Partial Success'
+                                                            });
+                                                        }
+                                                        loadShifts();
+                                                    }
+                                                });
+                                            }
                                         }
-                                        loadShifts();
                                     }
                                 });
                             }
@@ -1148,25 +1202,130 @@
             });
             return;
         }
-        // Delete from old shift
+        // Get employees assigned to this crew
+        const crewEmployees = getCrewEmployees(fromShiftId, crewId);
+        // Get equipment for each employee in the crew
+        const crewEquipment = [];
+        for (const employee of crewEmployees) {
+            const employeeEquipment = getEmployeeEquipment(fromShiftId, employee.employeeNumber);
+            for (const equipment of employeeEquipment) {
+                crewEquipment.push({
+                    employeeNumber: employee.employeeNumber,
+                    equipmentNumber: equipment.equipmentNumber,
+                    equipmentName: equipment.equipmentName
+                });
+            }
+        }
+        // Delete crew from old shift
         cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`, {
             crewId,
             shiftId: fromShiftId
         }, (deleteResponse) => {
             if (deleteResponse.success) {
-                // Add to new shift
+                // Add crew to new shift
                 cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftCrew`, {
                     crewId,
                     shiftCrewNote: '',
                     shiftId: toShiftId
                 }, (addResponse) => {
                     if (addResponse.success) {
-                        bulmaJS.alert({
-                            contextualColorName: 'success',
-                            message: 'Crew has been moved to the new shift.',
-                            title: 'Crew Moved'
-                        });
-                        loadShifts();
+                        // Now move employees
+                        let employeesProcessed = 0;
+                        const totalEmployees = crewEmployees.length;
+                        if (totalEmployees === 0) {
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Crew has been moved to the new shift.',
+                                title: 'Crew Moved'
+                            });
+                            loadShifts();
+                        }
+                        else {
+                            // Delete and add each employee
+                            for (const employee of crewEmployees) {
+                                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`, {
+                                    employeeNumber: employee.employeeNumber,
+                                    shiftId: fromShiftId
+                                }, (deleteEmpResponse) => {
+                                    if (deleteEmpResponse.success) {
+                                        // Add employee to new shift with crew assignment
+                                        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`, {
+                                            crewId,
+                                            employeeNumber: employee.employeeNumber,
+                                            shiftEmployeeNote: '',
+                                            shiftId: toShiftId
+                                        }, () => {
+                                            employeesProcessed++;
+                                            // Check if all employees are processed
+                                            if (employeesProcessed === totalEmployees) {
+                                                // Now move equipment
+                                                let equipmentProcessed = 0;
+                                                const totalEquipment = crewEquipment.length;
+                                                if (totalEquipment === 0) {
+                                                    bulmaJS.alert({
+                                                        contextualColorName: 'success',
+                                                        message: `Crew and ${totalEmployees} employee(s) moved to new shift.`,
+                                                        title: 'Crew Moved'
+                                                    });
+                                                    loadShifts();
+                                                }
+                                                else {
+                                                    // Delete and add each equipment
+                                                    for (const equipment of crewEquipment) {
+                                                        cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`, {
+                                                            equipmentNumber: equipment.equipmentNumber,
+                                                            shiftId: fromShiftId
+                                                        }, (deleteEqResponse) => {
+                                                            if (deleteEqResponse.success) {
+                                                                // Add equipment to new shift with operator assignment
+                                                                cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`, {
+                                                                    employeeNumber: equipment.employeeNumber,
+                                                                    equipmentNumber: equipment.equipmentNumber,
+                                                                    shiftEquipmentNote: '',
+                                                                    shiftId: toShiftId
+                                                                }, () => {
+                                                                    equipmentProcessed++;
+                                                                    if (equipmentProcessed === totalEquipment) {
+                                                                        bulmaJS.alert({
+                                                                            contextualColorName: 'success',
+                                                                            message: `Crew, ${totalEmployees} employee(s), and ${totalEquipment} equipment moved to new shift.`,
+                                                                            title: 'Crew Moved'
+                                                                        });
+                                                                        loadShifts();
+                                                                    }
+                                                                });
+                                                            }
+                                                            else {
+                                                                equipmentProcessed++;
+                                                                if (equipmentProcessed === totalEquipment) {
+                                                                    bulmaJS.alert({
+                                                                        contextualColorName: 'success',
+                                                                        message: `Crew and ${totalEmployees} employee(s) moved to new shift. Some equipment may not have been moved.`,
+                                                                        title: 'Crew Moved'
+                                                                    });
+                                                                    loadShifts();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        employeesProcessed++;
+                                        if (employeesProcessed === totalEmployees) {
+                                            bulmaJS.alert({
+                                                contextualColorName: 'warning',
+                                                message: 'Crew moved but some employees may not have been moved.',
+                                                title: 'Crew Moved'
+                                            });
+                                            loadShifts();
+                                        }
+                                    }
+                                });
+                            }
+                        }
                     }
                     else {
                         bulmaJS.alert({
