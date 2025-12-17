@@ -458,146 +458,197 @@ declare const exports: {
       return
     }
 
+    // Clear previous content
+    detailsElement.innerHTML = ''
+
     // Check permissions
     const canEdit =
       exports.canManage || crew.recordCreate_userName === shiftLog.userName
 
-    // Render members
-    let membersHTML = '<div class="panel-block"><strong>Members</strong></div>'
+    // Render members section
+    const membersHeaderBlock = document.createElement('div')
+    membersHeaderBlock.className = 'panel-block'
+    const membersHeaderStrong = document.createElement('strong')
+    membersHeaderStrong.textContent = 'Members'
+    membersHeaderBlock.append(membersHeaderStrong)
+    detailsElement.append(membersHeaderBlock)
 
     if (crew.members.length === 0) {
-      membersHTML +=
-        '<div class="panel-block has-text-grey">No members added yet.</div>'
+      const emptyBlock = document.createElement('div')
+      emptyBlock.className = 'panel-block has-text-grey'
+      emptyBlock.textContent = 'No members added yet.'
+      detailsElement.append(emptyBlock)
     } else {
       for (const member of crew.members) {
-        membersHTML += '<div class="panel-block">'
-        membersHTML +=
-          '<span class="panel-icon"><i class="fa-solid fa-user"></i></span>'
-        membersHTML += `${cityssm.escapeHTML(member.lastName ?? '')}, ${cityssm.escapeHTML(member.firstName ?? '')}`
+        const memberBlock = document.createElement('div')
+        memberBlock.className = 'panel-block'
+
+        const icon = document.createElement('span')
+        icon.className = 'panel-icon'
+        icon.innerHTML = '<i class="fa-solid fa-user"></i>'
+        memberBlock.append(icon)
+
+        const nameText = document.createTextNode(
+          `${member.lastName ?? ''}, ${member.firstName ?? ''}`
+        )
+        memberBlock.append(nameText)
 
         if (canEdit) {
-          membersHTML += `<button class="button is-small is-danger ml-auto" data-crew-id="${crewId}" data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}" data-delete-member type="button">`
-          membersHTML +=
+          const deleteButton = document.createElement('button')
+          deleteButton.className = 'button is-small is-danger ml-auto'
+          deleteButton.type = 'button'
+          deleteButton.dataset.crewId = crewId.toString()
+          deleteButton.dataset.employeeNumber = member.employeeNumber
+          deleteButton.dataset.deleteMember = ''
+          deleteButton.innerHTML =
             '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
-          membersHTML += '</button>'
+          deleteButton.addEventListener('click', deleteCrewMember)
+          memberBlock.append(deleteButton)
         }
 
-        membersHTML += '</div>'
+        detailsElement.append(memberBlock)
       }
     }
 
     if (canEdit) {
-      membersHTML += '<div class="panel-block">'
-      membersHTML += `<button class="button is-small is-primary" data-crew-id="${crewId}" data-add-member type="button">`
-      membersHTML +=
-        '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span>'
-      membersHTML += '<span>Add Member</span>'
-      membersHTML += '</button>'
-      membersHTML += '</div>'
+      const addMemberBlock = document.createElement('div')
+      addMemberBlock.className = 'panel-block'
+
+      const addButton = document.createElement('button')
+      addButton.className = 'button is-small is-primary'
+      addButton.type = 'button'
+      addButton.dataset.crewId = crewId.toString()
+      addButton.dataset.addMember = ''
+      addButton.innerHTML =
+        '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add Member</span>'
+      addButton.addEventListener('click', openAddCrewMemberModal)
+
+      addMemberBlock.append(addButton)
+      detailsElement.append(addMemberBlock)
     }
 
-    // Render equipment
-    let equipmentHTML =
-      '<div class="panel-block"><strong>Equipment</strong></div>'
+    // Render equipment section
+    const equipmentHeaderBlock = document.createElement('div')
+    equipmentHeaderBlock.className = 'panel-block'
+    const equipmentHeaderStrong = document.createElement('strong')
+    equipmentHeaderStrong.textContent = 'Equipment'
+    equipmentHeaderBlock.append(equipmentHeaderStrong)
+    detailsElement.append(equipmentHeaderBlock)
 
     if (crew.equipment.length === 0) {
-      equipmentHTML +=
-        '<div class="panel-block has-text-grey">No equipment added yet.</div>'
+      const emptyBlock = document.createElement('div')
+      emptyBlock.className = 'panel-block has-text-grey'
+      emptyBlock.textContent = 'No equipment added yet.'
+      detailsElement.append(emptyBlock)
     } else {
       for (const equipmentItem of crew.equipment) {
-        equipmentHTML += '<div class="panel-block is-block">'
-        equipmentHTML += '<div class="columns is-mobile is-vcentered">'
-        equipmentHTML += '<div class="column">'
-        equipmentHTML +=
-          '<span class="panel-icon"><i class="fa-solid fa-truck"></i></span>'
-        equipmentHTML += cityssm.escapeHTML(equipmentItem.equipmentName ?? '')
+        const equipmentBlock = document.createElement('div')
+        equipmentBlock.className = 'panel-block is-block'
+
+        const columns = document.createElement('div')
+        columns.className = 'columns is-mobile is-vcentered'
+
+        const leftColumn = document.createElement('div')
+        leftColumn.className = 'column'
+
+        const icon = document.createElement('span')
+        icon.className = 'panel-icon'
+        icon.innerHTML = '<i class="fa-solid fa-truck"></i>'
+        leftColumn.append(icon)
+
+        const equipmentNameText = document.createTextNode(
+          equipmentItem.equipmentName ?? ''
+        )
+        leftColumn.append(equipmentNameText)
 
         if (canEdit) {
-          equipmentHTML += '<div class="field has-addons mt-2">'
-          equipmentHTML += '<div class="control">'
-          equipmentHTML +=
-            '<span class="button is-small is-static">Assigned To</span>'
-          equipmentHTML += '</div>'
-          equipmentHTML += '<div class="control is-expanded">'
-          equipmentHTML += `<div class="select is-small is-fullwidth"><select data-crew-id="${crewId}" data-equipment-number="${cityssm.escapeHTML(equipmentItem.equipmentNumber)}" data-update-assignment>`
-          equipmentHTML += '<option value="">(Unassigned)</option>'
+          const fieldDiv = document.createElement('div')
+          fieldDiv.className = 'field has-addons mt-2'
+
+          const controlStatic = document.createElement('div')
+          controlStatic.className = 'control'
+          const staticButton = document.createElement('span')
+          staticButton.className = 'button is-small is-static'
+          staticButton.textContent = 'Assigned To'
+          controlStatic.append(staticButton)
+          fieldDiv.append(controlStatic)
+
+          const controlSelect = document.createElement('div')
+          controlSelect.className = 'control is-expanded'
+          const selectWrapper = document.createElement('div')
+          selectWrapper.className = 'select is-small is-fullwidth'
+          const select = document.createElement('select')
+          select.dataset.crewId = crewId.toString()
+          select.dataset.equipmentNumber = equipmentItem.equipmentNumber
+          select.dataset.updateAssignment = ''
+
+          const unassignedOption = document.createElement('option')
+          unassignedOption.value = ''
+          unassignedOption.textContent = '(Unassigned)'
+          select.append(unassignedOption)
 
           for (const member of crew.members) {
-            equipmentHTML += `<option value="${cityssm.escapeHTML(member.employeeNumber)}"${
-              equipmentItem.employeeNumber === member.employeeNumber
-                ? ' selected'
-                : ''
-            }>${cityssm.escapeHTML(member.lastName ?? '')}, ${cityssm.escapeHTML(member.firstName ?? '')}</option>`
+            const option = document.createElement('option')
+            option.value = member.employeeNumber
+            option.textContent = `${member.lastName ?? ''}, ${member.firstName ?? ''}`
+            if (equipmentItem.employeeNumber === member.employeeNumber) {
+              option.selected = true
+            }
+            select.append(option)
           }
 
-          equipmentHTML += '</select></div>'
-          equipmentHTML += '</div>'
-          equipmentHTML += '</div>'
+          select.addEventListener('change', updateEquipmentAssignment)
+          selectWrapper.append(select)
+          controlSelect.append(selectWrapper)
+          fieldDiv.append(controlSelect)
+          leftColumn.append(fieldDiv)
         } else if (equipmentItem.employeeNumber !== null) {
-          equipmentHTML += '<div class="is-size-7 has-text-grey mt-1">'
-          equipmentHTML += `Assigned to: ${cityssm.escapeHTML(equipmentItem.employeeLastName ?? '')}, ${cityssm.escapeHTML(equipmentItem.employeeFirstName ?? '')}`
-          equipmentHTML += '</div>'
+          const assignedDiv = document.createElement('div')
+          assignedDiv.className = 'is-size-7 has-text-grey mt-1'
+          assignedDiv.textContent = `Assigned to: ${equipmentItem.employeeLastName ?? ''}, ${equipmentItem.employeeFirstName ?? ''}`
+          leftColumn.append(assignedDiv)
         }
 
-        equipmentHTML += '</div>'
+        columns.append(leftColumn)
 
         if (canEdit) {
-          equipmentHTML += '<div class="column is-narrow">'
-          equipmentHTML += `<button class="button is-small is-danger" data-crew-id="${crewId}" data-equipment-number="${cityssm.escapeHTML(equipmentItem.equipmentNumber)}" data-delete-equipment type="button">`
-          equipmentHTML +=
+          const rightColumn = document.createElement('div')
+          rightColumn.className = 'column is-narrow'
+
+          const deleteButton = document.createElement('button')
+          deleteButton.className = 'button is-small is-danger'
+          deleteButton.type = 'button'
+          deleteButton.dataset.crewId = crewId.toString()
+          deleteButton.dataset.equipmentNumber = equipmentItem.equipmentNumber
+          deleteButton.dataset.deleteEquipment = ''
+          deleteButton.innerHTML =
             '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
-          equipmentHTML += '</button>'
-          equipmentHTML += '</div>'
+          deleteButton.addEventListener('click', deleteCrewEquipment)
+
+          rightColumn.append(deleteButton)
+          columns.append(rightColumn)
         }
 
-        equipmentHTML += '</div>'
-        equipmentHTML += '</div>'
+        equipmentBlock.append(columns)
+        detailsElement.append(equipmentBlock)
       }
     }
 
     if (canEdit) {
-      equipmentHTML += '<div class="panel-block">'
-      equipmentHTML += `<button class="button is-small is-primary" data-crew-id="${crewId}" data-add-equipment type="button">`
-      equipmentHTML +=
-        '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span>'
-      equipmentHTML += '<span>Add Equipment</span>'
-      equipmentHTML += '</button>'
-      equipmentHTML += '</div>'
-    }
+      const addEquipmentBlock = document.createElement('div')
+      addEquipmentBlock.className = 'panel-block'
 
-    detailsElement.innerHTML = membersHTML + equipmentHTML
+      const addButton = document.createElement('button')
+      addButton.className = 'button is-small is-primary'
+      addButton.type = 'button'
+      addButton.dataset.crewId = crewId.toString()
+      addButton.dataset.addEquipment = ''
+      addButton.innerHTML =
+        '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add Equipment</span>'
+      addButton.addEventListener('click', openAddCrewEquipmentModal)
 
-    // Add event listeners
-    if (canEdit) {
-      for (const buttonElement of detailsElement.querySelectorAll(
-        '[data-delete-member]'
-      )) {
-        buttonElement.addEventListener('click', deleteCrewMember)
-      }
-
-      for (const buttonElement of detailsElement.querySelectorAll(
-        '[data-add-member]'
-      )) {
-        buttonElement.addEventListener('click', openAddCrewMemberModal)
-      }
-
-      for (const buttonElement of detailsElement.querySelectorAll(
-        '[data-delete-equipment]'
-      )) {
-        buttonElement.addEventListener('click', deleteCrewEquipment)
-      }
-
-      for (const buttonElement of detailsElement.querySelectorAll(
-        '[data-add-equipment]'
-      )) {
-        buttonElement.addEventListener('click', openAddCrewEquipmentModal)
-      }
-
-      for (const selectElement of detailsElement.querySelectorAll(
-        '[data-update-assignment]'
-      )) {
-        selectElement.addEventListener('change', updateEquipmentAssignment)
-      }
+      addEquipmentBlock.append(addButton)
+      detailsElement.append(addEquipmentBlock)
     }
   }
 
@@ -638,70 +689,85 @@ declare const exports: {
 
   function renderCrews(): void {
     if (exports.crews.length === 0) {
-      crewsContainerElement.innerHTML =
-        '<div class="message is-info"><div class="message-body">No crews have been added yet.</div></div>'
+      const messageDiv = document.createElement('div')
+      messageDiv.className = 'message is-info'
+      const messageBody = document.createElement('div')
+      messageBody.className = 'message-body'
+      messageBody.textContent = 'No crews have been added yet.'
+      messageDiv.append(messageBody)
+      crewsContainerElement.innerHTML = ''
+      crewsContainerElement.append(messageDiv)
       return
     }
 
-    let crewsHTML = ''
+    crewsContainerElement.innerHTML = ''
 
     for (const crew of exports.crews) {
       const canEdit =
         exports.canManage || crew.recordCreate_userName === shiftLog.userName
 
-      crewsHTML += '<nav class="panel mb-4">'
-      crewsHTML += `<a class="panel-heading" href="#" data-crew-id="${crew.crewId}" data-expand-crew>`
-      crewsHTML += cityssm.escapeHTML(crew.crewName)
+      const panelElement = document.createElement('nav')
+      panelElement.className = 'panel mb-4'
+
+      // Panel heading
+      const headingLink = document.createElement('a')
+      headingLink.className = 'panel-heading'
+      headingLink.href = '#'
+      headingLink.dataset.crewId = crew.crewId.toString()
+      headingLink.dataset.expandCrew = ''
+      headingLink.textContent = crew.crewName
 
       if (crew.userGroupName !== undefined) {
-        crewsHTML += ` <span class="tag is-info ml-2">${cityssm.escapeHTML(crew.userGroupName)}</span>`
+        const userGroupTag = document.createElement('span')
+        userGroupTag.className = 'tag is-info ml-2'
+        userGroupTag.textContent = crew.userGroupName
+        headingLink.append(userGroupTag)
       }
 
-      crewsHTML += '</a>'
-      crewsHTML += `<div id="crew-${crew.crewId}--details"></div>`
-
-      if (canEdit) {
-        crewsHTML += '<div class="panel-block">'
-        crewsHTML += '<div class="buttons">'
-        crewsHTML += `<button class="button is-small" data-crew-id="${crew.crewId}" data-edit-crew type="button">`
-        crewsHTML +=
-          '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
-        crewsHTML += '<span>Edit Crew</span>'
-        crewsHTML += '</button>'
-        crewsHTML += `<button class="button is-small is-danger" data-crew-id="${crew.crewId}" data-delete-crew type="button">`
-        crewsHTML +=
-          '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
-        crewsHTML += '<span>Delete Crew</span>'
-        crewsHTML += '</button>'
-        crewsHTML += '</div>'
-        crewsHTML += '</div>'
-      }
-
-      crewsHTML += '</nav>'
-    }
-
-    crewsContainerElement.innerHTML = crewsHTML
-
-    // Add event listeners
-    for (const linkElement of crewsContainerElement.querySelectorAll(
-      '[data-expand-crew]'
-    )) {
-      linkElement.addEventListener('click', (clickEvent) => {
+      headingLink.addEventListener('click', (clickEvent) => {
         clickEvent.preventDefault()
         expandCrewPanel(clickEvent)
       })
-    }
 
-    for (const buttonElement of crewsContainerElement.querySelectorAll(
-      '[data-edit-crew]'
-    )) {
-      buttonElement.addEventListener('click', openEditCrewModal)
-    }
+      panelElement.append(headingLink)
 
-    for (const buttonElement of crewsContainerElement.querySelectorAll(
-      '[data-delete-crew]'
-    )) {
-      buttonElement.addEventListener('click', deleteCrew)
+      // Details container
+      const detailsDiv = document.createElement('div')
+      detailsDiv.id = `crew-${crew.crewId}--details`
+      panelElement.append(detailsDiv)
+
+      // Edit/Delete buttons
+      if (canEdit) {
+        const buttonBlock = document.createElement('div')
+        buttonBlock.className = 'panel-block'
+
+        const buttonsDiv = document.createElement('div')
+        buttonsDiv.className = 'buttons'
+
+        const editButton = document.createElement('button')
+        editButton.className = 'button is-small'
+        editButton.type = 'button'
+        editButton.dataset.crewId = crew.crewId.toString()
+        editButton.dataset.editCrew = ''
+        editButton.innerHTML =
+          '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span><span>Edit Crew</span>'
+        editButton.addEventListener('click', openEditCrewModal)
+
+        const deleteButton = document.createElement('button')
+        deleteButton.className = 'button is-small is-danger'
+        deleteButton.type = 'button'
+        deleteButton.dataset.crewId = crew.crewId.toString()
+        deleteButton.dataset.deleteCrew = ''
+        deleteButton.innerHTML =
+          '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span><span>Delete Crew</span>'
+        deleteButton.addEventListener('click', deleteCrew)
+
+        buttonsDiv.append(editButton, deleteButton)
+        buttonBlock.append(buttonsDiv)
+        panelElement.append(buttonBlock)
+      }
+
+      crewsContainerElement.append(panelElement)
     }
   }
 
