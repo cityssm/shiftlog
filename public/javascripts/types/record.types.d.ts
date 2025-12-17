@@ -69,6 +69,8 @@ export interface Equipment extends SyncRecord {
     equipmentDescription: string;
     equipmentTypeDataListItem?: string;
     equipmentTypeDataListItemId: number;
+    employeeListId?: number | null;
+    employeeListName?: string;
     userGroupId?: number;
     userGroupName?: string;
 }
@@ -104,6 +106,21 @@ export interface Crew extends BaseRecord {
     userGroupId?: number | null;
     userGroupName?: string;
     memberCount?: number;
+}
+export interface EmployeeList extends BaseRecord {
+    employeeListId: number;
+    employeeListName: string;
+    userGroupId?: number | null;
+    userGroupName?: string;
+    memberCount?: number;
+}
+export interface EmployeeListMember {
+    employeeListId: number;
+    employeeNumber: string;
+    firstName?: string;
+    lastName?: string;
+    seniorityDate?: Date | string | null;
+    seniorityOrderNumber: number;
 }
 export interface Shift extends BaseRecord {
     shiftId: number;
@@ -289,5 +306,6 @@ export interface WorkOrderAttachment extends BaseRecord {
     attachmentFileType: string;
     attachmentFileSizeInBytes: number;
     attachmentDescription: string;
+    isWorkOrderThumbnail: boolean;
     fileSystemPath: string;
 }

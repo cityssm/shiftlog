@@ -200,6 +200,15 @@
     border: 2px solid #48c774;
     background-color: rgba(72, 199, 116, 0.05);
   }
+
+  /* Make available resources sticky */
+  #container--availableResources {
+    position: sticky;
+    top: 1rem;
+    align-self: flex-start;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
 </style>
 
 <script>

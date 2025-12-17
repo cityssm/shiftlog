@@ -292,10 +292,10 @@ declare const exports: {
         equipmentItem.append(numberSpan)
         
         if (equipment.employeeFirstName !== null) {
-          const operatorSpan = document.createElement('span')
-          operatorSpan.className = 'has-text-grey-light'
-          operatorSpan.textContent = ` (${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName})`
-          equipmentItem.append(operatorSpan)
+          const operatorTag = document.createElement('span')
+          operatorTag.className = 'tag is-small is-info is-light ml-1'
+          operatorTag.textContent = `${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName}`
+          equipmentItem.append(' ', operatorTag)
         }
         
         if (equipment.shiftEquipmentNote !== '') {
@@ -980,8 +980,9 @@ declare const exports: {
         supervisorTarget.dataset.shiftId ?? '0',
         10
       )
-      // Prevent dropping on locked shifts
-      if (shiftId > 0 && !lockedShifts.has(shiftId)) {
+      const targetShift = currentShifts.find((s) => s.shiftId === shiftId)
+      // Prevent dropping on locked shifts or past date shifts
+      if (shiftId > 0 && !lockedShifts.has(shiftId) && targetShift !== undefined && isShiftEditable(targetShift)) {
         makeEmployeeSupervisor(draggedData.id as string, shiftId)
         return
       }
@@ -992,9 +993,10 @@ declare const exports: {
       const shiftCard = crewTarget.closest('[data-shift-id]') as HTMLElement
       const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
       const crewId = Number.parseInt(crewTarget.dataset.crewId ?? '0', 10)
+      const targetShift = currentShifts.find((s) => s.shiftId === shiftId)
 
-      // Prevent dropping on locked shifts
-      if (shiftId > 0 && crewId > 0 && !lockedShifts.has(shiftId)) {
+      // Prevent dropping on locked shifts or past date shifts
+      if (shiftId > 0 && crewId > 0 && !lockedShifts.has(shiftId) && targetShift !== undefined && isShiftEditable(targetShift)) {
         assignEmployeeToCrew(
           draggedData.id as string,
           draggedData.fromShiftId,
@@ -1010,9 +1012,10 @@ declare const exports: {
       const shiftCard = employeeTarget.closest('[data-shift-id]') as HTMLElement
       const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
       const employeeNumber = employeeTarget.dataset.employeeNumber ?? ''
+      const targetShift = currentShifts.find((s) => s.shiftId === shiftId)
 
-      // Prevent dropping on locked shifts
-      if (shiftId > 0 && employeeNumber !== '' && !lockedShifts.has(shiftId)) {
+      // Prevent dropping on locked shifts or past date shifts
+      if (shiftId > 0 && employeeNumber !== '' && !lockedShifts.has(shiftId) && targetShift !== undefined && isShiftEditable(targetShift)) {
         assignEquipmentToEmployee(
           draggedData.id as string,
           draggedData.fromShiftId,
@@ -1033,6 +1036,12 @@ declare const exports: {
     
     // Prevent dropping on locked shifts
     if (lockedShifts.has(toShiftId)) {
+      return
+    }
+    
+    // Prevent dropping on past date shifts
+    const targetShift = currentShifts.find((s) => s.shiftId === toShiftId)
+    if (targetShift !== undefined && !isShiftEditable(targetShift)) {
       return
     }
 
@@ -1092,6 +1101,25 @@ declare const exports: {
     }))
   }
 
+  // Helper function to get employees assigned to a crew
+  function getCrewEmployees(
+    shiftId: number,
+    crewId: number
+  ): Array<{ employeeNumber: string; firstName: string; lastName: string }> {
+    const shift = currentShifts.find((s) => s.shiftId === shiftId)
+    if (shift === undefined) {
+      return []
+    }
+    
+    return shift.employees.filter(
+      (emp) => emp.crewId === crewId
+    ).map((emp) => ({
+      employeeNumber: emp.employeeNumber,
+      firstName: emp.firstName,
+      lastName: emp.lastName
+    }))
+  }
+
   function removeFromShift(draggedData: {
     fromShiftId: number
     id: number | string
@@ -1099,6 +1127,13 @@ declare const exports: {
   }): void {
     switch (draggedData.type) {
       case 'crew': {
+        // Get employees assigned to this crew
+        const crewEmployees = getCrewEmployees(
+          draggedData.fromShiftId,
+          draggedData.id as number
+        )
+        
+        // Delete crew first
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
           {
@@ -1107,11 +1142,39 @@ declare const exports: {
           },
           (response) => {
             if (response.success) {
-              bulmaJS.alert({
-                contextualColorName: 'success',
-                message: 'Crew removed from shift.'
-              })
-              loadShifts()
+              // Also delete crew employees
+              let employeesDeletedCount = 0
+              const totalEmployees = crewEmployees.length
+              
+              if (totalEmployees === 0) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Crew removed from shift.'
+                })
+                loadShifts()
+              } else {
+                // Delete each crew employee
+                for (const employee of crewEmployees) {
+                  cityssm.postJSON(
+                    `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+                    {
+                      employeeNumber: employee.employeeNumber,
+                      shiftId: draggedData.fromShiftId
+                    },
+                    (empResponse) => {
+                      employeesDeletedCount++
+                      
+                      if (employeesDeletedCount === totalEmployees) {
+                        bulmaJS.alert({
+                          contextualColorName: 'success',
+                          message: `Crew and ${totalEmployees} associated employee(s) removed from shift.`
+                        })
+                        loadShifts()
+                      }
+                    }
+                  )
+                }
+              }
             } else {
               bulmaJS.alert({
                 contextualColorName: 'danger',
@@ -1972,7 +2035,7 @@ declare const exports: {
           employeesContent.classList.remove('is-hidden')
           
           // Load available employees
-          loadAvailableEmployeesForModal(modalElement)
+          loadAvailableEmployeesForModal(modalElement, shift)
           
         } else {
           // Create tab for Work Orders
@@ -2017,13 +2080,13 @@ declare const exports: {
             // Load data for the selected tab
             switch (target.dataset.tab) {
               case 'employees':
-                loadAvailableEmployeesForModal(modalElement)
+                loadAvailableEmployeesForModal(modalElement, shift)
                 break
               case 'equipment':
-                loadAvailableEquipmentForModal(modalElement)
+                loadAvailableEquipmentForModal(modalElement, shift)
                 break
               case 'crews':
-                loadAvailableCrewsForModal(modalElement)
+                loadAvailableCrewsForModal(modalElement, shift)
                 break
               case 'workOrders':
                 // Work orders are search-based, don't auto-load
@@ -2069,7 +2132,7 @@ declare const exports: {
     })
   }
   
-  function loadAvailableEmployeesForModal(modalElement: HTMLElement): void {
+  function loadAvailableEmployeesForModal(modalElement: HTMLElement, shift: ShiftForBuilder): void {
     const shiftDateString = shiftDateElement.value
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
@@ -2085,13 +2148,19 @@ declare const exports: {
         }
         
         if (responseJSON.success) {
+          // Filter out employees already on the shift
+          const shiftEmployeeNumbers = new Set(shift.employees.map(e => e.employeeNumber))
+          const availableEmployees = responseJSON.employees.filter(
+            e => !shiftEmployeeNumbers.has(e.employeeNumber)
+          )
+          
           const employeeList = modalElement.querySelector('#builderAddResource--employeeList') as HTMLElement
           employeeList.innerHTML = ''
           
-          if (responseJSON.employees.length === 0) {
+          if (availableEmployees.length === 0) {
             employeeList.innerHTML = '<p class="has-text-grey-light">No available employees</p>'
           } else {
-            for (const employee of responseJSON.employees) {
+            for (const employee of availableEmployees) {
               const label = document.createElement('label')
               label.className = 'checkbox is-block mb-2'
               
@@ -2109,7 +2178,7 @@ declare const exports: {
     )
   }
   
-  function loadAvailableEquipmentForModal(modalElement: HTMLElement): void {
+  function loadAvailableEquipmentForModal(modalElement: HTMLElement, shift: ShiftForBuilder): void {
     const shiftDateString = shiftDateElement.value
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
@@ -2124,13 +2193,19 @@ declare const exports: {
         }
         
         if (responseJSON.success) {
+          // Filter out equipment already on the shift
+          const shiftEquipmentNumbers = new Set(shift.equipment.map(e => e.equipmentNumber))
+          const availableEquipment = responseJSON.equipment.filter(
+            e => !shiftEquipmentNumbers.has(e.equipmentNumber)
+          )
+          
           const equipmentList = modalElement.querySelector('#builderAddResource--equipmentList') as HTMLElement
           equipmentList.innerHTML = ''
           
-          if (responseJSON.equipment.length === 0) {
+          if (availableEquipment.length === 0) {
             equipmentList.innerHTML = '<p class="has-text-grey-light">No available equipment</p>'
           } else {
-            for (const equipment of responseJSON.equipment) {
+            for (const equipment of availableEquipment) {
               const label = document.createElement('label')
               label.className = 'checkbox is-block mb-2'
               
@@ -2148,7 +2223,7 @@ declare const exports: {
     )
   }
   
-  function loadAvailableCrewsForModal(modalElement: HTMLElement): void {
+  function loadAvailableCrewsForModal(modalElement: HTMLElement, shift: ShiftForBuilder): void {
     const shiftDateString = shiftDateElement.value
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
@@ -2163,13 +2238,19 @@ declare const exports: {
         }
         
         if (responseJSON.success) {
+          // Filter out crews already on the shift
+          const shiftCrewIds = new Set(shift.crews.map(c => c.crewId))
+          const availableCrews = responseJSON.crews.filter(
+            c => !shiftCrewIds.has(c.crewId)
+          )
+          
           const crewList = modalElement.querySelector('#builderAddResource--crewList') as HTMLElement
           crewList.innerHTML = ''
           
-          if (responseJSON.crews.length === 0) {
+          if (availableCrews.length === 0) {
             crewList.innerHTML = '<p class="has-text-grey-light">No available crews</p>'
           } else {
-            for (const crew of responseJSON.crews) {
+            for (const crew of availableCrews) {
               const label = document.createElement('label')
               label.className = 'checkbox is-block mb-2'
               
