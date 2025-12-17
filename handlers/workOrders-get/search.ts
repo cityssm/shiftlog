@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 
 import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js'
+import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js'
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js'
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js'
 import getTags from '../../database/tags/getTags.js'
@@ -16,6 +17,10 @@ export default async function handler(
     request.session.user
   )
 
+  const workOrderPriorities = await getWorkOrderPriorityDataListItems(
+    request.session.user
+  )
+
   const workOrderTypes = await getWorkOrderTypes(request.session.user)
 
   const tags = await getTags()
@@ -27,6 +32,7 @@ export default async function handler(
 
     assignedToItems,
     workOrderStatuses,
+    workOrderPriorities,
     workOrderTypes,
     tags
   })

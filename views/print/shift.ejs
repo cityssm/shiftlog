@@ -150,6 +150,7 @@
         <th>Work Order #</th>
         <th>Type</th>
         <th>Status</th>
+        <th>Priority</th>
         <th>Details</th>
         <th>Note</th>
       </tr>
@@ -160,6 +161,7 @@
         <td>#<%= workOrder.workOrderNumber %></td>
         <td><%= workOrder.workOrderType ?? '' %></td>
         <td><%= workOrder.workOrderStatusDataListItem ?? '' %></td>
+        <td><%= workOrder.workOrderPriorityDataListItem ?? '' %></td>
         <td><%= workOrder.workOrderDetails.substring(0, 100) %><%= workOrder.workOrderDetails.length > 100 ? '...' : '' %></td>
         <td><%= workOrder.shiftWorkOrderNote %></td>
       </tr>
