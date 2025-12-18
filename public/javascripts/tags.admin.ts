@@ -1,4 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
@@ -169,10 +171,13 @@ declare const exports: {
           ?.addEventListener('submit', doUpdateTag)
       },
       onshown(_modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
       },
 
       onremoved() {
+        bulmaJS.toggleHtmlClipped()
+
         document
           .querySelector('#button--addTag')
           ?.removeEventListener('click', editTag)
@@ -311,7 +316,8 @@ declare const exports: {
         </td>
       `
 
-      tr.querySelector('.button.is-warning')?.addEventListener('click', editTag)
+      tr.querySelector('.button.is-info')?.addEventListener('click', editTag)
+
       tr.querySelector('.button.is-danger')?.addEventListener(
         'click',
         deleteTag
@@ -333,11 +339,12 @@ declare const exports: {
       let paginationHTML = '<ul class="pagination-list">'
 
       for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
-        paginationHTML += `
+        paginationHTML += /* html */ `
           <li>
             <a class="pagination-link ${pageNumber === currentPage ? 'is-current' : ''}" 
-               aria-label="Page ${pageNumber}" 
-               data-page="${pageNumber}">
+              data-page="${pageNumber}" 
+              aria-label="Page ${pageNumber}"
+            >
               ${pageNumber}
             </a>
           </li>
@@ -446,7 +453,7 @@ declare const exports: {
           '#container--orphanedTags'
         ) as HTMLDivElement
 
-        containerElement.innerHTML = `
+        containerElement.innerHTML = /* html */ `
           <div class="message is-info">
             <p class="message-body">
               <span class="icon"><i class="fa-solid fa-spinner fa-pulse"></i></span>
@@ -469,7 +476,7 @@ declare const exports: {
               responseJSON.orphanedTags !== undefined
             ) {
               if (responseJSON.orphanedTags.length === 0) {
-                containerElement.innerHTML = `
+                containerElement.innerHTML = /* html */ `
                   <div class="message is-success">
                     <p class="message-body">
                       <span class="icon"><i class="fa-solid fa-check"></i></span>
@@ -553,11 +560,13 @@ declare const exports: {
   const filterInput = document.querySelector(
     '#filter--tags'
   ) as HTMLInputElement
-  filterInput?.addEventListener('keyup', () => {
+
+  filterInput.addEventListener('keyup', () => {
     const filterValue = filterInput.value.toLowerCase()
     currentFilteredTags = exports.tags.filter((tag) =>
       tag.tagName.toLowerCase().includes(filterValue)
     )
+
     currentPage = 1
     renderTagsWithPagination(currentFilteredTags)
   })

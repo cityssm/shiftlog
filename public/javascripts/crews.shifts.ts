@@ -79,7 +79,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Crew Deleted',
-                  
+
                   message: 'The crew has been deleted successfully.'
                 })
               } else {
@@ -291,6 +291,7 @@ declare const exports: {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Adding Member',
+
                     message: 'An error occurred while adding the crew member.'
                   })
                 }

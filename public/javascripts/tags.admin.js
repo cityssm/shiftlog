@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const tagsContainerElement = document.querySelector('#container--tags');
@@ -102,9 +104,11 @@
                     ?.addEventListener('submit', doUpdateTag);
             },
             onshown(_modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
             },
             onremoved() {
+                bulmaJS.toggleHtmlClipped();
                 document
                     .querySelector('#button--addTag')
                     ?.removeEventListener('click', editTag);
@@ -219,7 +223,7 @@
           </div>
         </td>
       `;
-            tr.querySelector('.button.is-warning')?.addEventListener('click', editTag);
+            tr.querySelector('.button.is-info')?.addEventListener('click', editTag);
             tr.querySelector('.button.is-danger')?.addEventListener('click', deleteTag);
             tbody.append(tr);
         }
@@ -233,11 +237,12 @@
             paginationElement.setAttribute('aria-label', 'pagination');
             let paginationHTML = '<ul class="pagination-list">';
             for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
-                paginationHTML += `
+                paginationHTML += /* html */ `
           <li>
             <a class="pagination-link ${pageNumber === currentPage ? 'is-current' : ''}" 
-               aria-label="Page ${pageNumber}" 
-               data-page="${pageNumber}">
+              data-page="${pageNumber}" 
+              aria-label="Page ${pageNumber}"
+            >
               ${pageNumber}
             </a>
           </li>
@@ -316,7 +321,7 @@
         cityssm.openHtmlModal('adminTags-addFromWorkOrder', {
             onshow(modalElement) {
                 const containerElement = modalElement.querySelector('#container--orphanedTags');
-                containerElement.innerHTML = `
+                containerElement.innerHTML = /* html */ `
           <div class="message is-info">
             <p class="message-body">
               <span class="icon"><i class="fa-solid fa-spinner fa-pulse"></i></span>
@@ -329,7 +334,7 @@
                     if (responseJSON.success &&
                         responseJSON.orphanedTags !== undefined) {
                         if (responseJSON.orphanedTags.length === 0) {
-                            containerElement.innerHTML = `
+                            containerElement.innerHTML = /* html */ `
                   <div class="message is-success">
                     <p class="message-body">
                       <span class="icon"><i class="fa-solid fa-check"></i></span>
@@ -401,7 +406,7 @@
     }
     // Filter functionality
     const filterInput = document.querySelector('#filter--tags');
-    filterInput?.addEventListener('keyup', () => {
+    filterInput.addEventListener('keyup', () => {
         const filterValue = filterInput.value.toLowerCase();
         currentFilteredTags = exports.tags.filter((tag) => tag.tagName.toLowerCase().includes(filterValue));
         currentPage = 1;

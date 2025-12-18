@@ -24,6 +24,8 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
+  const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`
+
   const shiftDateElement = document.querySelector(
     '#builder--shiftDate'
   ) as HTMLInputElement
@@ -446,6 +448,7 @@ declare const exports: {
       lockButton.dataset.shiftId = shift.shiftId.toString()
 
       const isLocked = lockedShifts.has(shift.shiftId)
+
       const lockIcon = document.createElement('span')
       lockIcon.className = 'icon is-small'
       lockIcon.innerHTML = isLocked
@@ -463,11 +466,14 @@ declare const exports: {
 
     const levelLeftItem = document.createElement('div')
     levelLeftItem.className = 'level-item'
+
     const titleElement = document.createElement('h3')
     titleElement.className = 'title is-5 mb-0'
+
     const titleLink = document.createElement('a')
-    titleLink.href = `${shiftLog.urlPrefix}/shifts/${shift.shiftId}`
+    titleLink.href = shiftLog.buildShiftURL(shift.shiftId)
     titleLink.textContent = `#${shift.shiftId} - ${shift.shiftTypeDataListItem ?? 'Shift'}`
+
     titleElement.append(titleLink)
     levelLeftItem.append(titleElement)
     levelLeft.append(levelLeftItem)
@@ -490,8 +496,9 @@ declare const exports: {
     if (isEditable) {
       const editItem = document.createElement('div')
       editItem.className = 'level-item'
+
       const editLink = document.createElement('a')
-      editLink.href = `${shiftLog.urlPrefix}/shifts/${shift.shiftId}/edit`
+      editLink.href = shiftLog.buildShiftURL(shift.shiftId, true)
       editLink.className = 'button is-small is-light'
       editLink.innerHTML =
         '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
@@ -607,7 +614,7 @@ declare const exports: {
     }
 
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doGetShiftsForBuilder`,
+      `${shiftUrlPrefix}/doGetShiftsForBuilder`,
       {
         shiftDateString
       },
@@ -640,7 +647,7 @@ declare const exports: {
     }
 
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      `${shiftUrlPrefix}/doGetAvailableResources`,
       {
         shiftDateString
       },
@@ -1245,7 +1252,7 @@ declare const exports: {
 
         // Delete crew first
         cityssm.postJSON(
-          `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
+          `${shiftUrlPrefix}/doDeleteShiftCrew`,
           {
             crewId: draggedData.id,
             shiftId: draggedData.fromShiftId
@@ -1257,6 +1264,7 @@ declare const exports: {
               let employeesFailedCount = 0
               let equipmentDeletedCount = 0
               let equipmentFailedCount = 0
+
               const totalEmployees = crewEmployees.length
               const totalEquipment = crewEquipment.length
 
@@ -1270,7 +1278,7 @@ declare const exports: {
                 // Delete each crew employee
                 for (const employee of crewEmployees) {
                   cityssm.postJSON(
-                    `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+                    `${shiftUrlPrefix}/doDeleteShiftEmployee`,
                     {
                       employeeNumber: employee.employeeNumber,
                       shiftId: draggedData.fromShiftId
@@ -1307,7 +1315,7 @@ declare const exports: {
                           // Delete equipment
                           for (const equipment of crewEquipment) {
                             cityssm.postJSON(
-                              `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+                              `${shiftUrlPrefix}/doDeleteShiftEquipment`,
                               {
                                 equipmentNumber: equipment.equipmentNumber,
                                 shiftId: draggedData.fromShiftId
@@ -1373,7 +1381,7 @@ declare const exports: {
 
         // Delete employee first
         cityssm.postJSON(
-          `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+          `${shiftUrlPrefix}/doDeleteShiftEmployee`,
           {
             employeeNumber: draggedData.id,
             shiftId: draggedData.fromShiftId
@@ -1394,7 +1402,7 @@ declare const exports: {
                 // Delete each piece of equipment
                 for (const equipment of assignedEquipment) {
                   cityssm.postJSON(
-                    `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+                    `${shiftUrlPrefix}/doDeleteShiftEquipment`,
                     {
                       equipmentNumber: equipment.equipmentNumber,
                       shiftId: draggedData.fromShiftId
@@ -1407,6 +1415,7 @@ declare const exports: {
                           contextualColorName: 'success',
                           message: `Employee and ${totalEquipment} assigned equipment removed from shift.`
                         })
+
                         loadShifts()
                       }
                     }
@@ -1427,7 +1436,7 @@ declare const exports: {
       }
       case 'equipment': {
         cityssm.postJSON(
-          `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+          `${shiftUrlPrefix}/doDeleteShiftEquipment`,
           {
             equipmentNumber: draggedData.id,
             shiftId: draggedData.fromShiftId
@@ -1442,8 +1451,9 @@ declare const exports: {
             } else {
               bulmaJS.alert({
                 contextualColorName: 'danger',
-                message: 'Failed to remove equipment from shift.',
-                title: 'Error'
+                title: 'Error',
+
+                message: 'Failed to remove equipment from shift.'
               })
             }
           }
@@ -1464,7 +1474,7 @@ declare const exports: {
     if (fromShiftId === 0) {
       // Just add to new shift
       cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+        `${shiftUrlPrefix}/doAddShiftEmployee`,
         {
           employeeNumber,
           shiftEmployeeNote: '',
@@ -1495,7 +1505,7 @@ declare const exports: {
 
     // Delete from old shift
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+      `${shiftUrlPrefix}/doDeleteShiftEmployee`,
       {
         employeeNumber,
         shiftId: fromShiftId
@@ -1504,7 +1514,7 @@ declare const exports: {
         if (deleteResponse.success) {
           // Add to new shift
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+            `${shiftUrlPrefix}/doAddShiftEmployee`,
             {
               employeeNumber,
               shiftEmployeeNote: '',
@@ -1527,7 +1537,7 @@ declare const exports: {
                   // First delete equipment from old shift
                   for (const equipment of assignedEquipment) {
                     cityssm.postJSON(
-                      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+                      `${shiftUrlPrefix}/doDeleteShiftEquipment`,
                       {
                         equipmentNumber: equipment.equipmentNumber,
                         shiftId: fromShiftId
@@ -1536,7 +1546,7 @@ declare const exports: {
                         if (deleteEquipResponse.success) {
                           // Add equipment to new shift with operator assignment
                           cityssm.postJSON(
-                            `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+                            `${shiftUrlPrefix}/doAddShiftEquipment`,
                             {
                               equipmentNumber: equipment.equipmentNumber,
                               employeeNumber,
@@ -1544,14 +1554,16 @@ declare const exports: {
                               shiftId: toShiftId
                             },
                             () => {
-                              equipmentMovedCount++
+                              equipmentMovedCount += 1
 
                               if (equipmentMovedCount === totalEquipment) {
                                 bulmaJS.alert({
                                   contextualColorName: 'success',
-                                  message: `Employee and ${totalEquipment} assigned equipment moved to new shift.`,
-                                  title: 'Employee Moved'
+                                  title: 'Employee Moved',
+
+                                  message: `Employee and ${totalEquipment} assigned equipment moved to new shift.`
                                 })
+
                                 loadShifts()
                               }
                             }
@@ -1590,7 +1602,7 @@ declare const exports: {
     if (fromShiftId === 0) {
       // Just add to new shift
       cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+        `${shiftUrlPrefix}/doAddShiftEquipment`,
         {
           equipmentNumber,
           shiftEquipmentNote: '',
@@ -1600,8 +1612,8 @@ declare const exports: {
           if (addResponse.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
-              message: 'Equipment has been added to the shift.',
-              title: 'Equipment Added'
+              title: 'Equipment Added',
+              message: 'Equipment has been added to the shift.'
             })
             loadShifts()
           } else {
@@ -1618,7 +1630,7 @@ declare const exports: {
 
     // Delete from old shift
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+      `${shiftUrlPrefix}/doDeleteShiftEquipment`,
       {
         equipmentNumber,
         shiftId: fromShiftId
@@ -1627,7 +1639,7 @@ declare const exports: {
         if (deleteResponse.success) {
           // Add to new shift
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+            `${shiftUrlPrefix}/doAddShiftEquipment`,
             {
               equipmentNumber,
               shiftEquipmentNote: '',
@@ -1637,8 +1649,9 @@ declare const exports: {
               if (addResponse.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
-                  message: 'Equipment has been moved to the new shift.',
-                  title: 'Equipment Moved'
+                  title: 'Equipment Moved',
+
+                  message: 'Equipment has been moved to the new shift.'
                 })
                 loadShifts()
               } else {
@@ -1653,8 +1666,9 @@ declare const exports: {
         } else {
           bulmaJS.alert({
             contextualColorName: 'danger',
-            message: 'Failed to remove equipment from original shift.',
-            title: 'Error'
+            title: 'Error',
+
+            message: 'Failed to remove equipment from original shift.'
           })
         }
       }
@@ -1670,7 +1684,7 @@ declare const exports: {
     if (fromShiftId === 0) {
       // Just add to new shift
       cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
+        `${shiftUrlPrefix}/doAddShiftCrew`,
         {
           crewId,
           shiftCrewNote: '',
@@ -1721,7 +1735,7 @@ declare const exports: {
 
     // Delete crew from old shift
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doDeleteShiftCrew`,
+      `${shiftUrlPrefix}/doDeleteShiftCrew`,
       {
         crewId,
         shiftId: fromShiftId
@@ -1730,7 +1744,7 @@ declare const exports: {
         if (deleteResponse.success) {
           // Add crew to new shift
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
+            `${shiftUrlPrefix}/doAddShiftCrew`,
             {
               crewId,
               shiftCrewNote: '',
@@ -1753,7 +1767,7 @@ declare const exports: {
                   // Delete and add each employee
                   for (const employee of crewEmployees) {
                     cityssm.postJSON(
-                      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+                      `${shiftUrlPrefix}/doDeleteShiftEmployee`,
                       {
                         employeeNumber: employee.employeeNumber,
                         shiftId: fromShiftId
@@ -1762,7 +1776,7 @@ declare const exports: {
                         if (deleteEmpResponse.success) {
                           // Add employee to new shift with crew assignment
                           cityssm.postJSON(
-                            `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+                            `${shiftUrlPrefix}/doAddShiftEmployee`,
                             {
                               crewId,
                               employeeNumber: employee.employeeNumber,
@@ -1789,7 +1803,7 @@ declare const exports: {
                                   // Delete and add each equipment
                                   for (const equipment of crewEquipment) {
                                     cityssm.postJSON(
-                                      `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+                                      `${shiftUrlPrefix}/doDeleteShiftEquipment`,
                                       {
                                         equipmentNumber:
                                           equipment.equipmentNumber,
@@ -1799,7 +1813,7 @@ declare const exports: {
                                         if (deleteEqResponse.success) {
                                           // Add equipment to new shift with operator assignment
                                           cityssm.postJSON(
-                                            `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+                                            `${shiftUrlPrefix}/doAddShiftEquipment`,
                                             {
                                               employeeNumber:
                                                 equipment.employeeNumber,
@@ -1809,7 +1823,7 @@ declare const exports: {
                                               shiftId: toShiftId
                                             },
                                             () => {
-                                              equipmentProcessed++
+                                              equipmentProcessed += 1
 
                                               if (
                                                 equipmentProcessed ===
@@ -1826,7 +1840,7 @@ declare const exports: {
                                             }
                                           )
                                         } else {
-                                          equipmentProcessed++
+                                          equipmentProcessed += 1
 
                                           if (
                                             equipmentProcessed ===
@@ -1837,6 +1851,7 @@ declare const exports: {
                                               message: `Crew and ${totalEmployees} employee(s) moved to new shift. Some equipment may not have been moved.`,
                                               title: 'Crew Moved'
                                             })
+
                                             loadShifts()
                                           }
                                         }
@@ -1848,7 +1863,7 @@ declare const exports: {
                             }
                           )
                         } else {
-                          employeesProcessed++
+                          employeesProcessed += 1
 
                           if (employeesProcessed === totalEmployees) {
                             bulmaJS.alert({
@@ -1857,6 +1872,7 @@ declare const exports: {
                                 'Crew moved but some employees may not have been moved.',
                               title: 'Crew Moved'
                             })
+
                             loadShifts()
                           }
                         }
@@ -1891,7 +1907,7 @@ declare const exports: {
   ): void {
     // Delete from old shift
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doDeleteShiftWorkOrder`,
+      `${shiftUrlPrefix}/doDeleteShiftWorkOrder`,
       {
         shiftId: fromShiftId,
         workOrderId
@@ -1900,7 +1916,7 @@ declare const exports: {
         if (deleteResponse.success) {
           // Add to new shift
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doAddShiftWorkOrder`,
+            `${shiftUrlPrefix}/doAddShiftWorkOrder`,
             {
               shiftId: toShiftId,
               shiftWorkOrderNote: '',
@@ -1945,7 +1961,7 @@ declare const exports: {
     }
 
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doUpdateShift`,
+      `${shiftUrlPrefix}/doUpdateShift`,
       {
         shiftDateString: shift.shiftDate,
         shiftDescription: shift.shiftDescription,
@@ -1984,7 +2000,7 @@ declare const exports: {
     if (fromShiftId === toShiftId) {
       // Same shift, just update the crew assignment
       cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doUpdateShiftEmployee`,
+        `${shiftUrlPrefix}/doUpdateShiftEmployee`,
         {
           crewId,
           employeeNumber,
@@ -2010,7 +2026,7 @@ declare const exports: {
       )
     } else {
       cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doDeleteShiftEmployee`,
+        `${shiftUrlPrefix}/doDeleteShiftEmployee`,
         {
           employeeNumber,
           shiftId: fromShiftId
@@ -2019,7 +2035,7 @@ declare const exports: {
           if (deleteResponse.success) {
             // Add to new shift with crew assignment
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+              `${shiftUrlPrefix}/doAddShiftEmployee`,
               {
                 crewId,
                 employeeNumber,
@@ -2066,7 +2082,7 @@ declare const exports: {
     if (fromShiftId === toShiftId) {
       // Same shift, just update the employee assignment
       cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doUpdateShiftEquipment`,
+        `${shiftUrlPrefix}/doUpdateShiftEquipment`,
         {
           employeeNumber,
           equipmentNumber,
@@ -2092,7 +2108,7 @@ declare const exports: {
       )
     } else {
       cityssm.postJSON(
-        `${shiftLog.urlPrefix}/shifts/doDeleteShiftEquipment`,
+        `${shiftUrlPrefix}/doDeleteShiftEquipment`,
         {
           equipmentNumber,
           shiftId: fromShiftId
@@ -2101,7 +2117,7 @@ declare const exports: {
           if (deleteResponse.success) {
             // Add to new shift with employee assignment
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+              `${shiftUrlPrefix}/doAddShiftEquipment`,
               {
                 employeeNumber,
                 equipmentNumber,
@@ -2208,7 +2224,7 @@ declare const exports: {
 
         // Load shift types, times, and supervisors
         cityssm.postJSON(
-          `${shiftLog.urlPrefix}/shifts/doGetShiftCreationData`,
+          `${shiftUrlPrefix}/doGetShiftCreationData`,
           {},
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
@@ -2261,7 +2277,7 @@ declare const exports: {
           submitEvent.preventDefault()
 
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doCreateShift`,
+            `${shiftUrlPrefix}/doCreateShift`,
             formElement,
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
@@ -2290,7 +2306,12 @@ declare const exports: {
         })
       },
       onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -2494,7 +2515,7 @@ declare const exports: {
   ): void {
     const shiftDateString = shiftDateElement.value
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
@@ -2509,10 +2530,10 @@ declare const exports: {
         if (responseJSON.success) {
           // Filter out employees already on the shift
           const shiftEmployeeNumbers = new Set(
-            shift.employees.map((e) => e.employeeNumber)
+            shift.employees.map((employee) => employee.employeeNumber)
           )
           const availableEmployees = responseJSON.employees.filter(
-            (e) => !shiftEmployeeNumbers.has(e.employeeNumber)
+            (employee) => !shiftEmployeeNumbers.has(employee.employeeNumber)
           )
 
           const employeeList = modalElement.querySelector(
@@ -2551,7 +2572,7 @@ declare const exports: {
   ): void {
     const shiftDateString = shiftDateElement.value
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
@@ -2593,6 +2614,7 @@ declare const exports: {
                 checkbox,
                 ` ${equipment.equipmentName} (#${equipment.equipmentNumber})`
               )
+
               equipmentList.append(label)
             }
           }
@@ -2607,7 +2629,7 @@ declare const exports: {
   ): void {
     const shiftDateString = shiftDateElement.value
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/shifts/doGetAvailableResources`,
+      `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
@@ -2665,7 +2687,7 @@ declare const exports: {
     }
 
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/workOrders/doSearchWorkOrders`,
+      `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`,
       { searchString, orderBy: 'workOrderNumber desc' },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
@@ -2701,9 +2723,10 @@ declare const exports: {
               checkbox.dataset.resourceType = 'workOrder'
 
               const details =
-                workOrder.workOrderDetails !== ''
-                  ? ` - ${workOrder.workOrderDetails}`
-                  : ''
+                workOrder.workOrderDetails === ''
+                  ? ''
+                  : ` - ${workOrder.workOrderDetails}`
+
               label.append(checkbox, ` ${workOrder.workOrderNumber}${details}`)
               workOrderList.append(label)
             }
@@ -2717,7 +2740,8 @@ declare const exports: {
     // Employee filter
     const employeeFilter = modalElement.querySelector(
       '#builderAddResource--employeeFilter'
-    ) as HTMLInputElement
+    ) as HTMLInputElement | null
+
     employeeFilter?.addEventListener('input', () => {
       filterCheckboxes(
         '#builderAddResource--employeeList',
@@ -2728,7 +2752,8 @@ declare const exports: {
     // Equipment filter
     const equipmentFilter = modalElement.querySelector(
       '#builderAddResource--equipmentFilter'
-    ) as HTMLInputElement
+    ) as HTMLInputElement | null
+
     equipmentFilter?.addEventListener('input', () => {
       filterCheckboxes(
         '#builderAddResource--equipmentList',
@@ -2739,7 +2764,8 @@ declare const exports: {
     // Crew filter
     const crewFilter = modalElement.querySelector(
       '#builderAddResource--crewFilter'
-    ) as HTMLInputElement
+    ) as HTMLInputElement | null
+
     crewFilter?.addEventListener('input', () => {
       filterCheckboxes('#builderAddResource--crewList', crewFilter.value)
     })
@@ -2749,14 +2775,18 @@ declare const exports: {
     containerSelector: string,
     filterText: string
   ): void {
-    const container = document.querySelector(containerSelector) as HTMLElement
+    const container = document.querySelector(
+      containerSelector
+    ) as HTMLElement | null
+
     if (container === null) return
 
     const labels = container.querySelectorAll('label.checkbox')
     const lowerFilter = filterText.toLowerCase()
 
     for (const label of labels) {
-      const text = label.textContent?.toLowerCase() ?? ''
+      const text = label.textContent.toLowerCase()
+
       if (text.includes(lowerFilter)) {
         ;(label as HTMLElement).style.display = 'block'
       } else {
@@ -2798,19 +2828,20 @@ declare const exports: {
       switch (resourceType) {
         case 'crew': {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doAddShiftCrew`,
+            `${shiftUrlPrefix}/doAddShiftCrew`,
             {
               crewId: resourceId,
               shiftCrewNote: '',
               shiftId
             },
             (response) => {
-              addedCount++
+              addedCount += 1
               checkbox.checked = false
 
               if (addedCount === totalToAdd) {
                 successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
+
                 loadShifts()
                 loadAvailableResources()
               }
@@ -2820,19 +2851,20 @@ declare const exports: {
         }
         case 'employee': {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doAddShiftEmployee`,
+            `${shiftUrlPrefix}/doAddShiftEmployee`,
             {
               employeeNumber: resourceId,
               shiftEmployeeNote: '',
               shiftId
             },
             (response) => {
-              addedCount++
+              addedCount += 1
               checkbox.checked = false
 
               if (addedCount === totalToAdd) {
                 successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
+
                 loadShifts()
                 loadAvailableResources()
               }
@@ -2842,19 +2874,20 @@ declare const exports: {
         }
         case 'equipment': {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doAddShiftEquipment`,
+            `${shiftUrlPrefix}/doAddShiftEquipment`,
             {
               equipmentNumber: resourceId,
               shiftEquipmentNote: '',
               shiftId
             },
             (response) => {
-              addedCount++
+              addedCount += 1
               checkbox.checked = false
 
               if (addedCount === totalToAdd) {
                 successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
+
                 loadShifts()
                 loadAvailableResources()
               }
@@ -2864,7 +2897,7 @@ declare const exports: {
         }
         case 'workOrder': {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/shifts/doAddShiftWorkOrder`,
+            `${shiftUrlPrefix}/doAddShiftWorkOrder`,
             {
               shiftId,
               shiftWorkOrderNote: '',
@@ -2918,9 +2951,11 @@ declare const exports: {
       employees: document.querySelectorAll(
         '#available--employees .available-items > div[data-employee-number]'
       ).length,
+
       equipment: document.querySelectorAll(
         '#available--equipment .available-items > div[data-equipment-number]'
       ).length,
+
       crews: document.querySelectorAll(
         '#available--crews .available-items > div[data-crew-id]'
       ).length
@@ -2955,11 +2990,11 @@ declare const exports: {
           item.style.display = ''
           // Count visible items by type
           if (item.dataset.employeeNumber !== undefined) {
-            employeesVisible++
+            employeesVisible += 1
           } else if (item.dataset.equipmentNumber !== undefined) {
-            equipmentVisible++
+            equipmentVisible += 1
           } else if (item.dataset.crewId !== undefined) {
-            crewsVisible++
+            crewsVisible += 1
           }
         } else {
           item.style.display = 'none'
@@ -2972,27 +3007,31 @@ declare const exports: {
       const crewsCountTag = document.querySelector('#crews-count')
       const totals = getResourceCounts()
 
-      if (filterText !== '') {
-        // Show filtered counts
-        if (employeesCountTag !== null) {
-          employeesCountTag.textContent = `${employeesVisible}/${totals.employees}`
-        }
-        if (equipmentCountTag !== null) {
-          equipmentCountTag.textContent = `${equipmentVisible}/${totals.equipment}`
-        }
-        if (crewsCountTag !== null) {
-          crewsCountTag.textContent = `${crewsVisible}/${totals.crews}`
-        }
-      } else {
+      if (filterText === '') {
         // Reset to show total counts
         if (employeesCountTag !== null) {
           employeesCountTag.textContent = totals.employees.toString()
         }
+
         if (equipmentCountTag !== null) {
           equipmentCountTag.textContent = totals.equipment.toString()
         }
+
         if (crewsCountTag !== null) {
           crewsCountTag.textContent = totals.crews.toString()
+        }
+      } else {
+        // Show filtered counts
+        if (employeesCountTag !== null) {
+          employeesCountTag.textContent = `${employeesVisible}/${totals.employees}`
+        }
+
+        if (equipmentCountTag !== null) {
+          equipmentCountTag.textContent = `${equipmentVisible}/${totals.equipment}`
+        }
+
+        if (crewsCountTag !== null) {
+          crewsCountTag.textContent = `${crewsVisible}/${totals.crews}`
         }
       }
     })
