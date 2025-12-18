@@ -388,7 +388,7 @@
                 icon.className = 'panel-icon';
                 icon.innerHTML = '<i class="fa-solid fa-user"></i>';
                 memberBlock.append(icon);
-                const nameText = document.createTextNode(`${member.lastName ?? ''}, ${member.firstName ?? ''}`);
+                const nameText = document.createTextNode(`${member.lastName ?? ''}, ${member.firstName ?? ''} (${member.employeeNumber})`);
                 memberBlock.append(nameText);
                 if (canEdit) {
                     const deleteButton = document.createElement('button');
@@ -445,7 +445,7 @@
                 icon.className = 'panel-icon';
                 icon.innerHTML = '<i class="fa-solid fa-truck"></i>';
                 leftColumn.append(icon);
-                const equipmentNameText = document.createTextNode(equipmentItem.equipmentName ?? '');
+                const equipmentNameText = document.createTextNode(`${equipmentItem.equipmentName ?? ''} (${equipmentItem.equipmentNumber})`);
                 leftColumn.append(equipmentNameText);
                 if (canEdit) {
                     const fieldDiv = document.createElement('div');

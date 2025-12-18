@@ -625,7 +625,7 @@ declare const exports: {
         memberBlock.append(icon)
 
         const nameText = document.createTextNode(
-          `${member.lastName ?? ''}, ${member.firstName ?? ''}`
+          `${member.lastName ?? ''}, ${member.firstName ?? ''} (${member.employeeNumber})`
         )
         memberBlock.append(nameText)
 
@@ -696,7 +696,7 @@ declare const exports: {
         leftColumn.append(icon)
 
         const equipmentNameText = document.createTextNode(
-          equipmentItem.equipmentName ?? ''
+          `${equipmentItem.equipmentName ?? ''} (${equipmentItem.equipmentNumber})`
         )
         leftColumn.append(equipmentNameText)
 
