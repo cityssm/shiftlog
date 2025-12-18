@@ -3,6 +3,7 @@
     const employeesContainerElement = document.querySelector('#container--employees');
     // Pagination settings
     const ITEMS_PER_PAGE = 10;
+    const FILTER_DEBOUNCE_MS = 300;
     let currentPage = 1;
     let currentFilteredEmployees = exports.employees;
     function pageSelect(pageNumber) {
@@ -32,9 +33,7 @@
                             // Update the employees list with the new data from the server
                             if (responseJSON.employees !== undefined) {
                                 exports.employees = responseJSON.employees;
-                                currentFilteredEmployees = responseJSON.employees;
-                                currentPage = 1;
-                                renderEmployeesWithPagination(responseJSON.employees);
+                                applyCurrentFilter();
                             }
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -76,9 +75,7 @@
                     // Update the employees list with the new data from the server
                     if (responseJSON.employees !== undefined) {
                         exports.employees = responseJSON.employees;
-                        currentFilteredEmployees = responseJSON.employees;
-                        currentPage = 1;
-                        renderEmployeesWithPagination(responseJSON.employees);
+                        applyCurrentFilter();
                     }
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -237,6 +234,7 @@
     }
     /**
      * Render employees with pagination
+     * @param employees - List of employees to render
      */
     function renderEmployeesWithPagination(employees) {
         // Calculate pagination
@@ -271,9 +269,7 @@
                     // Update the employees list with the new data from the server
                     if (responseJSON.employees !== undefined) {
                         exports.employees = responseJSON.employees;
-                        currentFilteredEmployees = responseJSON.employees;
-                        currentPage = 1;
-                        renderEmployeesWithPagination(responseJSON.employees);
+                        applyCurrentFilter();
                     }
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -310,30 +306,34 @@
      */
     const filterInput = document.querySelector('#filter--employees');
     let filterTimeout;
+    /**
+     * Apply the current filter to the employees list
+     */
+    function applyCurrentFilter() {
+        let filteredEmployees = exports.employees;
+        if (filterInput !== null) {
+            const filterText = filterInput.value.toLowerCase();
+            if (filterText !== '') {
+                filteredEmployees = exports.employees.filter((possibleEmployee) => {
+                    const searchText = `${possibleEmployee.employeeNumber} ${possibleEmployee.firstName} ${possibleEmployee.lastName} ${possibleEmployee.userName ?? ''} ${possibleEmployee.phoneNumber ?? ''} ${possibleEmployee.emailAddress ?? ''}`.toLowerCase();
+                    return searchText.includes(filterText);
+                });
+            }
+        }
+        currentFilteredEmployees = filteredEmployees;
+        currentPage = 1;
+        renderEmployeesWithPagination(filteredEmployees);
+    }
     if (filterInput !== null) {
         filterInput.addEventListener('input', () => {
             // Clear existing timeout
             if (filterTimeout !== undefined) {
                 clearTimeout(filterTimeout);
             }
-            // Set new timeout (debounce for 300ms)
+            // Set new timeout (debounce)
             filterTimeout = setTimeout(() => {
-                const filterText = filterInput.value.toLowerCase();
-                if (filterText === '') {
-                    currentFilteredEmployees = exports.employees;
-                    currentPage = 1;
-                    renderEmployeesWithPagination(exports.employees);
-                }
-                else {
-                    const filteredEmployees = exports.employees.filter((possibleEmployee) => {
-                        const searchText = `${possibleEmployee.employeeNumber} ${possibleEmployee.firstName} ${possibleEmployee.lastName} ${possibleEmployee.userName ?? ''} ${possibleEmployee.phoneNumber ?? ''} ${possibleEmployee.emailAddress ?? ''}`.toLowerCase();
-                        return searchText.includes(filterText);
-                    });
-                    currentFilteredEmployees = filteredEmployees;
-                    currentPage = 1;
-                    renderEmployeesWithPagination(filteredEmployees);
-                }
-            }, 300);
+                applyCurrentFilter();
+            }, FILTER_DEBOUNCE_MS);
         });
     }
 })();
