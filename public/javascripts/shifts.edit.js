@@ -1,6 +1,6 @@
 (() => {
     const shiftLog = exports.shiftLog;
-    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
+    const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
     const shiftFormElement = document.querySelector('#form--shift');
     const shiftId = shiftFormElement.querySelector('#shift--shiftId').value;
     const isCreate = shiftId === '';
@@ -18,11 +18,11 @@
     }
     function updateShift(formEvent) {
         formEvent.preventDefault();
-        cityssm.postJSON(`${urlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`, shiftFormElement, (rawResponseJSON) => {
+        cityssm.postJSON(`${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`, shiftFormElement, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 if (isCreate && responseJSON.shiftId !== undefined) {
-                    globalThis.location.href = exports.shiftLog.buildShiftURL(responseJSON.shiftId, true);
+                    globalThis.location.href = shiftLog.buildShiftURL(responseJSON.shiftId, true);
                 }
                 else {
                     bulmaJS.alert({
@@ -55,7 +55,7 @@
                 okButton: {
                     text: 'Delete Shift',
                     callbackFunction: () => {
-                        cityssm.postJSON(`${urlPrefix}/doDeleteShift`, {
+                        cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShift`, {
                             shiftId
                         }, (rawResponseJSON) => {
                             const responseJSON = rawResponseJSON;

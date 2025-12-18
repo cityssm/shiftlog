@@ -77,7 +77,9 @@ declare const exports: {
       }
 
       // Show the selected tab content
-      const selectedContent = document.querySelector(`#${tabId}`) as HTMLElement | null
+      const selectedContent = document.querySelector(
+        `#${tabId}`
+      ) as HTMLElement | null
       if (selectedContent !== null) {
         selectedContent.classList.remove('is-hidden')
       }
@@ -197,6 +199,7 @@ declare const exports: {
       const editNoteButtons = containerElement.querySelectorAll(
         '.button--editCrewNote'
       )
+
       for (const button of editNoteButtons) {
         button.addEventListener('click', editCrewNote)
       }
@@ -204,6 +207,7 @@ declare const exports: {
       const deleteButtons = containerElement.querySelectorAll(
         '.button--deleteCrew'
       )
+
       for (const button of deleteButtons) {
         button.addEventListener('click', deleteShiftCrew)
       }
@@ -689,7 +693,10 @@ declare const exports: {
         `${urlPrefix}/doAddShiftEquipment`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean; message?: string }
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            message?: string
+          }
 
           if (responseJSON.success) {
             refreshData()
@@ -1018,7 +1025,10 @@ declare const exports: {
         `${urlPrefix}/doUpdateShiftEquipment`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean; message?: string }
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            message?: string
+          }
 
           if (responseJSON.success) {
             refreshData()
@@ -1341,14 +1351,19 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+
             shifts: Array<{
               shiftId: number
+
               shiftDate: string
-              shiftTypeDataListItem?: string
+              shiftDescription: string
+
               shiftTimeDataListItem?: string
+              shiftTypeDataListItem?: string
+
               supervisorFirstName?: string
               supervisorLastName?: string
-              shiftDescription: string
+
               crewsCount?: number
               employeesCount?: number
               equipmentCount?: number
@@ -1413,8 +1428,8 @@ declare const exports: {
                     <br />
                     <small>
                       ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '')}
-                      ${(shift.shiftTimeDataListItem ?? '') === '' ? '' : ' - ' + cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}
-                      ${(shift.supervisorLastName ?? '') === '' ? '' : ' - ' + cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? ''))}
+                      ${(shift.shiftTimeDataListItem ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}`}
+                      ${(shift.supervisorLastName ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? ''))}`}
                     </small>
                     ${countsText === '' ? '' : '<br /><small class="has-text-grey">' + cityssm.escapeHTML(countsText) + '</small>'}
                   </div>

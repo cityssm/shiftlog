@@ -953,8 +953,8 @@
                     <br />
                     <small>
                       ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '')}
-                      ${(shift.shiftTimeDataListItem ?? '') === '' ? '' : ' - ' + cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}
-                      ${(shift.supervisorLastName ?? '') === '' ? '' : ' - ' + cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? ''))}
+                      ${(shift.shiftTimeDataListItem ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}`}
+                      ${(shift.supervisorLastName ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? ''))}`}
                     </small>
                     ${countsText === '' ? '' : '<br /><small class="has-text-grey">' + cityssm.escapeHTML(countsText) + '</small>'}
                   </div>

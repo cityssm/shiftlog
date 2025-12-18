@@ -123,8 +123,10 @@
                     const isApiKey = settingKey === 'apiKey';
                     const settingValue = settings[settingKey] ?? '';
                     // eslint-disable-next-line no-unsanitized/property
-                    fieldElement.innerHTML = /*html*/ `
-            <label class="label" for="${cityssm.escapeHTML(settingKey)}">${cityssm.escapeHTML(settingKey)}</label>
+                    fieldElement.innerHTML = /* html */ `
+            <label class="label" for="${cityssm.escapeHTML(settingKey)}">
+              ${cityssm.escapeHTML(settingKey)}
+            </label>
             <div class="control">
               <input
                 class="input"
@@ -157,7 +159,7 @@
         const rowElement = document.createElement('tr');
         rowElement.dataset.userName = user.userName;
         // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML = /*html*/ `
+        rowElement.innerHTML = /* html */ `
       <th>${cityssm.escapeHTML(user.userName)}</th>
       <td class="has-text-centered has-border-left">
         <button
@@ -173,7 +175,7 @@
         if (shiftLog.shiftsAreEnabled) {
             // eslint-disable-next-line no-unsanitized/method
             rowElement.insertAdjacentHTML('beforeend', 
-            /*html*/ `
+            /* html */ `
           <td class="has-text-centered has-border-left">
             <button
               class="button is-small permission-toggle ${user.shifts_canView ? activePermissionClass : inactivePermissionClass}"
@@ -209,7 +211,7 @@
         if (shiftLog.workOrdersAreEnabled) {
             // eslint-disable-next-line no-unsanitized/method
             rowElement.insertAdjacentHTML('beforeend', 
-            /*html*/ `
+            /* html */ `
           <td class="has-text-centered has-border-left">
             <button
               class="button is-small permission-toggle ${user.workOrders_canView ? activePermissionClass : inactivePermissionClass}"
@@ -245,7 +247,7 @@
         if (shiftLog.timesheetsAreEnabled) {
             // eslint-disable-next-line no-unsanitized/method
             rowElement.insertAdjacentHTML('beforeend', 
-            /*html*/ `
+            /* html */ `
           <td class="has-text-centered has-border-left">
             <button
               class="button is-small permission-toggle ${user.timesheets_canView ? activePermissionClass : inactivePermissionClass}"
@@ -321,6 +323,11 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+        const sectionColumnHeaderHTML = /* html */ `
+      <th class="has-text-centered has-border-left">View</th>
+      <th class="has-text-centered">Update</th>
+      <th class="has-text-centered">Manage</th>
+    `;
         // eslint-disable-next-line no-unsanitized/property
         tableElement.innerHTML = /*html*/ `
       <thead>
@@ -342,9 +349,9 @@
           </th>
         </tr>
         <tr>
-          ${shiftLog.shiftsAreEnabled ? '<th class="has-text-centered has-border-left">View</th><th class="has-text-centered">Update</th><th class="has-text-centered">Manage</th>' : ''}
-          ${shiftLog.workOrdersAreEnabled ? '<th class="has-text-centered has-border-left">View</th><th class="has-text-centered">Update</th><th class="has-text-centered">Manage</th>' : ''}
-          ${shiftLog.timesheetsAreEnabled ? '<th class="has-text-centered has-border-left">View</th><th class="has-text-centered">Update</th><th class="has-text-centered">Manage</th>' : ''}
+          ${shiftLog.shiftsAreEnabled ? sectionColumnHeaderHTML : ''}
+          ${shiftLog.workOrdersAreEnabled ? sectionColumnHeaderHTML : ''}
+          ${shiftLog.timesheetsAreEnabled ? sectionColumnHeaderHTML : ''}
         </tr>
       </thead>
       <tbody></tbody>

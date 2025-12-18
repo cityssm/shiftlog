@@ -21,7 +21,7 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
-  const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`
+  const workOrderUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`
 
   const workOrderFormElement = document.querySelector(
     '#form--workOrder'
@@ -43,7 +43,7 @@ declare const exports: {
   // Track original work order type for change detection
   const workOrderTypeSelect = workOrderFormElement.querySelector(
     '#workOrder--workOrderTypeId'
-  ) as HTMLSelectElement
+  ) as HTMLSelectElement | null
 
   let originalWorkOrderTypeId = ''
   let workOrderTypeChanged = false
@@ -57,18 +57,22 @@ declare const exports: {
 
       if (workOrderTypeChanged && newTypeId !== '') {
         bulmaJS.confirm({
+          contextualColorName: 'warning',
           title: 'Work Order Type Changed',
+
           message:
             'Changing the work order type may affect the permissions and additional information associated with this work order. Are you sure you want to continue?',
-          contextualColorName: 'warning',
           okButton: {
             text: 'Continue',
+
             callbackFunction() {
               // User confirmed the change, keep the new value
             }
           },
+
           cancelButton: {
             text: 'Revert',
+
             callbackFunction() {
               // Revert to original value
               workOrderTypeSelect.value = originalWorkOrderTypeId
@@ -84,7 +88,7 @@ declare const exports: {
     formEvent.preventDefault()
 
     cityssm.postJSON(
-      `${urlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`,
+      `${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`,
       workOrderFormElement,
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
@@ -162,7 +166,7 @@ declare const exports: {
 
         // Load requestor suggestions
         cityssm.postJSON(
-          `${urlPrefix}/doGetRequestorSuggestions`,
+          `${workOrderUrlPrefix}/doGetRequestorSuggestions`,
           {
             searchString: requestorSearchString
           },
@@ -303,7 +307,7 @@ declare const exports: {
       callback?: (locations: Location[]) => void
     ): void {
       cityssm.postJSON(
-        `${urlPrefix}/doGetLocationSuggestions`,
+        `${workOrderUrlPrefix}/doGetLocationSuggestions`,
         { searchString },
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
@@ -656,7 +660,7 @@ declare const exports: {
 
           callbackFunction: () => {
             cityssm.postJSON(
-              `${urlPrefix}/doDeleteWorkOrder`,
+              `${workOrderUrlPrefix}/doDeleteWorkOrder`,
               {
                 workOrderId
               },

@@ -14,7 +14,7 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
-  const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`
+  const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`
 
   const shiftFormElement = document.querySelector(
     '#form--shift'
@@ -32,7 +32,7 @@ declare const exports: {
 
   const shiftDateStringElement = shiftFormElement.querySelector(
     '#shift--shiftDateString'
-  ) as HTMLInputElement
+  ) as HTMLInputElement | null
 
   if (shiftDateStringElement !== null) {
     flatpickr(shiftDateStringElement, {
@@ -48,7 +48,7 @@ declare const exports: {
     formEvent.preventDefault()
 
     cityssm.postJSON(
-      `${urlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`,
+      `${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`,
       shiftFormElement,
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
@@ -59,7 +59,7 @@ declare const exports: {
 
         if (responseJSON.success) {
           if (isCreate && responseJSON.shiftId !== undefined) {
-            globalThis.location.href = exports.shiftLog.buildShiftURL(responseJSON.shiftId, true)
+            globalThis.location.href = shiftLog.buildShiftURL(responseJSON.shiftId, true)
           } else {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -102,7 +102,7 @@ declare const exports: {
 
           callbackFunction: () => {
             cityssm.postJSON(
-              `${urlPrefix}/doDeleteShift`,
+              `${shiftUrlPrefix}/doDeleteShift`,
               {
                 shiftId
               },

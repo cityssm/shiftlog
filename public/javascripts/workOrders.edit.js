@@ -2,7 +2,7 @@
 /* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
-    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`;
+    const workOrderUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`;
     const workOrderFormElement = document.querySelector('#form--workOrder');
     const workOrderId = workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     const workOrderCloseDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderCloseDateTimeString');
@@ -18,9 +18,9 @@
             workOrderTypeChanged = newTypeId !== originalWorkOrderTypeId;
             if (workOrderTypeChanged && newTypeId !== '') {
                 bulmaJS.confirm({
+                    contextualColorName: 'warning',
                     title: 'Work Order Type Changed',
                     message: 'Changing the work order type may affect the permissions and additional information associated with this work order. Are you sure you want to continue?',
-                    contextualColorName: 'warning',
                     okButton: {
                         text: 'Continue',
                         callbackFunction() {
@@ -41,7 +41,7 @@
     }
     function updateWorkOrder(formEvent) {
         formEvent.preventDefault();
-        cityssm.postJSON(`${urlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (rawResponseJSON) => {
+        cityssm.postJSON(`${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 if (isCreate && responseJSON.workOrderId !== undefined) {
@@ -88,7 +88,7 @@
                 newSearchString !== requestorSearchString) {
                 requestorSearchString = newSearchString;
                 // Load requestor suggestions
-                cityssm.postJSON(`${urlPrefix}/doGetRequestorSuggestions`, {
+                cityssm.postJSON(`${workOrderUrlPrefix}/doGetRequestorSuggestions`, {
                     searchString: requestorSearchString
                 }, (rawResponseJSON) => {
                     const responseJSON = rawResponseJSON;
@@ -177,7 +177,7 @@
          * Fetch location suggestions from the server
          */
         function fetchLocationSuggestions(searchString, callback) {
-            cityssm.postJSON(`${urlPrefix}/doGetLocationSuggestions`, { searchString }, (rawResponseJSON) => {
+            cityssm.postJSON(`${workOrderUrlPrefix}/doGetLocationSuggestions`, { searchString }, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.locations) {
                     locationsData = responseJSON.locations;
@@ -411,7 +411,7 @@
                 okButton: {
                     text: 'Delete Work Order',
                     callbackFunction: () => {
-                        cityssm.postJSON(`${urlPrefix}/doDeleteWorkOrder`, {
+                        cityssm.postJSON(`${workOrderUrlPrefix}/doDeleteWorkOrder`, {
                             workOrderId
                         }, (rawResponseJSON) => {
                             const responseJSON = rawResponseJSON;
