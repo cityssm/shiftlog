@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 
 import addCrewEquipment from '../../database/crews/addCrewEquipment.js'
 import getCrew from '../../database/crews/getCrew.js'
+import { validateEmployeeForEquipment } from '../../helpers/equipment.helpers.js'
 
 export default async function handler(
   request: Request<
@@ -41,6 +42,20 @@ export default async function handler(
 
   const employeeNumber =
     request.body.employeeNumber === '' ? undefined : request.body.employeeNumber
+
+  // Validate employee is allowed for this equipment
+  const validation = await validateEmployeeForEquipment(
+    request.body.equipmentNumber,
+    employeeNumber
+  )
+
+  if (!validation.success) {
+    response.status(400).json({
+      success: false,
+      message: validation.errorMessage
+    })
+    return
+  }
 
   const success = await addCrewEquipment(
     crewId,

@@ -483,7 +483,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error',
-                        message: 'Failed to add equipment'
+                        message: responseJSON.message ?? 'Failed to add equipment'
                     });
                 }
             });
@@ -696,7 +696,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error',
-                        message: 'Failed to update assignment'
+                        message: responseJSON.message ?? 'Failed to update assignment'
                     });
                 }
             });

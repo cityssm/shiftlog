@@ -214,6 +214,7 @@
         const crewId = Number.parseInt(selectElement.dataset.crewId ?? '', 10);
         const equipmentNumber = selectElement.dataset.equipmentNumber ?? '';
         const employeeNumber = selectElement.value;
+        const previousValue = selectElement.dataset.previousValue ?? '';
         cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doUpdateCrewEquipment`, {
             crewId,
             equipmentNumber,
@@ -225,6 +226,15 @@
                 if (panelElement !== null) {
                     renderCrewDetails(crewId, responseJSON.crew, panelElement);
                 }
+            }
+            else {
+                // Revert to previous value
+                selectElement.value = previousValue;
+                bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Error Updating Equipment',
+                    message: responseJSON.message ?? 'An error occurred while updating the equipment assignment.'
+                });
             }
         });
     }
@@ -254,13 +264,49 @@
                                 equipmentSelectElement.append(optionElement);
                             }
                         }
+                        // Helper function to populate employee dropdown
+                        const populateEmployeeOptions = (members, eligibleEmployeeNumbers) => {
+                            employeeSelectElement.innerHTML = '<option value="">(Unassigned)</option>';
+                            for (const member of members) {
+                                if (eligibleEmployeeNumbers === undefined || eligibleEmployeeNumbers.has(member.employeeNumber)) {
+                                    const optionElement = document.createElement('option');
+                                    optionElement.value = member.employeeNumber;
+                                    optionElement.textContent = `${member.lastName}, ${member.firstName}`;
+                                    employeeSelectElement.append(optionElement);
+                                }
+                            }
+                        };
                         // Populate crew members for assignment
-                        for (const member of responseJSON.crew.members) {
-                            const optionElement = document.createElement('option');
-                            optionElement.value = member.employeeNumber;
-                            optionElement.textContent = `${member.lastName}, ${member.firstName}`;
-                            employeeSelectElement.append(optionElement);
-                        }
+                        populateEmployeeOptions(responseJSON.crew.members);
+                        // Add event listener to filter employees when equipment is selected
+                        equipmentSelectElement.addEventListener('change', () => {
+                            const selectedEquipment = equipmentSelectElement.value;
+                            if (selectedEquipment === '') {
+                                // Reset to all crew members
+                                populateEmployeeOptions(responseJSON.crew.members);
+                            }
+                            else {
+                                // Get eligible employees for the selected equipment
+                                cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
+                                    const eligibleResponse = eligibleResponseJSON;
+                                    if (eligibleResponse.success && eligibleResponse.employees !== undefined) {
+                                        const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map(emp => emp.employeeNumber));
+                                        populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers);
+                                    }
+                                    else {
+                                        // On error, show all crew members
+                                        populateEmployeeOptions(responseJSON.crew.members);
+                                        if (eligibleResponse.message) {
+                                            bulmaJS.alert({
+                                                contextualColorName: 'warning',
+                                                title: 'Unable to Filter Employees',
+                                                message: eligibleResponse.message
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
                 modalElement
@@ -280,7 +326,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Adding Equipment',
-                                message: 'An error occurred while adding the equipment.'
+                                message: responseJSON.message ?? 'An error occurred while adding the equipment.'
                             });
                         }
                     });
@@ -417,11 +463,16 @@
                     select.dataset.crewId = crewId.toString();
                     select.dataset.equipmentNumber = equipmentItem.equipmentNumber;
                     select.dataset.updateAssignment = '';
+                    select.dataset.previousValue = equipmentItem.employeeNumber ?? '';
                     const unassignedOption = document.createElement('option');
                     unassignedOption.value = '';
                     unassignedOption.textContent = '(Unassigned)';
                     select.append(unassignedOption);
+                    // Filter members based on equipment's employee list
                     for (const member of crew.members) {
+                        // If equipment has an employee list, only show members who would be eligible
+                        // We need to check if this member is eligible by calling the API or filtering locally
+                        // For now, we'll use the same approach as the add modal - fetch eligible employees
                         const option = document.createElement('option');
                         option.value = member.employeeNumber;
                         option.textContent = `${member.lastName ?? ''}, ${member.firstName ?? ''}`;
@@ -429,6 +480,24 @@
                             option.selected = true;
                         }
                         select.append(option);
+                    }
+                    // If equipment has an employee list, filter the options on load
+                    if (equipmentItem.employeeListId !== null && equipmentItem.employeeListId !== undefined) {
+                        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: equipmentItem.equipmentNumber }, (eligibleResponseJSON) => {
+                            const eligibleResponse = eligibleResponseJSON;
+                            if (eligibleResponse.success && eligibleResponse.employees !== undefined) {
+                                const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map(emp => emp.employeeNumber));
+                                // Remove options that are not eligible (except the currently selected one)
+                                const options = Array.from(select.options);
+                                for (const option of options) {
+                                    if (option.value !== '' &&
+                                        option.value !== equipmentItem.employeeNumber &&
+                                        !eligibleEmployeeNumbers.has(option.value)) {
+                                        select.removeChild(option);
+                                    }
+                                }
+                            }
+                        });
                     }
                     select.addEventListener('change', updateEquipmentAssignment);
                     selectWrapper.append(select);

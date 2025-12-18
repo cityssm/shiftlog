@@ -1197,7 +1197,7 @@
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        message: 'Failed to add equipment to shift.',
+                        message: addResponse.message ?? 'Failed to add equipment to shift.',
                         title: 'Error'
                     });
                 }
@@ -1227,7 +1227,7 @@
                     else {
                         bulmaJS.alert({
                             contextualColorName: 'danger',
-                            message: 'Failed to add equipment to new shift.',
+                            message: addResponse.message ?? 'Failed to add equipment to new shift.',
                             title: 'Error'
                         });
                     }
@@ -1573,7 +1573,7 @@
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        message: 'Failed to assign equipment to employee.',
+                        message: responseJSON.message ?? 'Failed to assign equipment to employee.',
                         title: 'Error'
                     });
                 }
@@ -1603,7 +1603,7 @@
                         else {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
-                                message: 'Failed to add equipment to shift.',
+                                message: addResponse.message ?? 'Failed to add equipment to shift.',
                                 title: 'Error'
                             });
                         }
