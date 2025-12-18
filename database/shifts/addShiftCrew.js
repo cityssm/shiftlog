@@ -51,7 +51,8 @@ export default async function addShiftCrew(form, user) {
                 .input('shiftId', form.shiftId)
                 .input('instance', getConfigProperty('application.instance'))
                 .input('equipmentNumber', equipment.equipmentNumber)
-                .input('employeeNumber', equipment.employeeNumber ?? null).query(/* sql */ `
+                .input('employeeNumber', equipment.employeeNumber ?? null)
+                .query(/* sql */ `
           if not exists (
             select 1 from ShiftLog.ShiftEquipment
             where shiftId = @shiftId and equipmentNumber = @equipmentNumber
