@@ -446,13 +446,24 @@ declare const exports: {
                 }
               }
 
-              // Populate crew members for assignment
-              for (const member of responseJSON.crew.members) {
-                const optionElement = document.createElement('option')
-                optionElement.value = member.employeeNumber
-                optionElement.textContent = `${member.lastName}, ${member.firstName}`
-                employeeSelectElement.append(optionElement)
+              // Helper function to populate employee dropdown
+              const populateEmployeeOptions = (
+                members: Array<{ employeeNumber: string; firstName: string; lastName: string }>,
+                eligibleEmployeeNumbers?: Set<string>
+              ): void => {
+                employeeSelectElement.innerHTML = '<option value="">(Unassigned)</option>'
+                for (const member of members) {
+                  if (eligibleEmployeeNumbers === undefined || eligibleEmployeeNumbers.has(member.employeeNumber)) {
+                    const optionElement = document.createElement('option')
+                    optionElement.value = member.employeeNumber
+                    optionElement.textContent = `${member.lastName}, ${member.firstName}`
+                    employeeSelectElement.append(optionElement)
+                  }
+                }
               }
+
+              // Populate crew members for assignment
+              populateEmployeeOptions(responseJSON.crew.members)
 
               // Add event listener to filter employees when equipment is selected
               equipmentSelectElement.addEventListener('change', () => {
@@ -460,13 +471,7 @@ declare const exports: {
                 
                 if (selectedEquipment === '') {
                   // Reset to all crew members
-                  employeeSelectElement.innerHTML = '<option value="">(Unassigned)</option>'
-                  for (const member of responseJSON.crew.members) {
-                    const optionElement = document.createElement('option')
-                    optionElement.value = member.employeeNumber
-                    optionElement.textContent = `${member.lastName}, ${member.firstName}`
-                    employeeSelectElement.append(optionElement)
-                  }
+                  populateEmployeeOptions(responseJSON.crew.members)
                 } else {
                   // Get eligible employees for the selected equipment
                   cityssm.postJSON(
@@ -475,6 +480,7 @@ declare const exports: {
                     (eligibleResponseJSON) => {
                       const eligibleResponse = eligibleResponseJSON as {
                         success: boolean
+                        message?: string
                         employees?: Array<{ employeeNumber: string; firstName: string; lastName: string }>
                       }
 
@@ -482,16 +488,16 @@ declare const exports: {
                         const eligibleEmployeeNumbers = new Set(
                           eligibleResponse.employees.map(emp => emp.employeeNumber)
                         )
-
-                        // Filter crew members to only eligible employees
-                        employeeSelectElement.innerHTML = '<option value="">(Unassigned)</option>'
-                        for (const member of responseJSON.crew.members) {
-                          if (eligibleEmployeeNumbers.has(member.employeeNumber)) {
-                            const optionElement = document.createElement('option')
-                            optionElement.value = member.employeeNumber
-                            optionElement.textContent = `${member.lastName}, ${member.firstName}`
-                            employeeSelectElement.append(optionElement)
-                          }
+                        populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers)
+                      } else {
+                        // On error, show all crew members
+                        populateEmployeeOptions(responseJSON.crew.members)
+                        if (eligibleResponse.message) {
+                          bulmaJS.alert({
+                            contextualColorName: 'warning',
+                            title: 'Unable to Filter Employees',
+                            message: eligibleResponse.message
+                          })
                         }
                       }
                     }
