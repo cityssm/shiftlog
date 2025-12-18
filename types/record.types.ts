@@ -139,9 +139,25 @@ export interface Crew extends BaseRecord {
   crewId: number
   crewName: string
   userGroupId?: number | null
-  userGroupName?: string
+  userGroupName?: string | null
 
   memberCount?: number
+}
+
+export interface CrewMember {
+  crewId: number
+  employeeNumber: string
+  firstName?: string
+  lastName?: string
+}
+
+export interface CrewEquipment {
+  crewId: number
+  equipmentNumber: string
+  equipmentName?: string
+  employeeNumber?: string | null
+  employeeFirstName?: string
+  employeeLastName?: string
 }
 
 export interface EmployeeList extends BaseRecord {

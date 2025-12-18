@@ -1,0 +1,57 @@
+<div
+  class="modal"
+  id="modal--addCrewEquipment"
+  role="dialog"
+  aria-label="Add Crew Equipment"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Crew Equipment</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addCrewEquipment">
+        <input type="hidden" id="crewEquipmentAdd--crewId" name="crewId" />
+        <div class="field">
+          <label class="label" for="crewEquipmentAdd--equipmentNumber">Equipment</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="crewEquipmentAdd--equipmentNumber" name="equipmentNumber" required>
+                <option value="">(Select Equipment)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="crewEquipmentAdd--employeeNumber">Assigned To (Optional)</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="crewEquipmentAdd--employeeNumber" name="employeeNumber">
+                <option value="">(Unassigned)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--addCrewEquipment"
+        >
+          Add Equipment
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -30,6 +30,23 @@
       </ul>
       <% } %>
     </li>
+    <% if (user.userProperties.shifts.canUpdate) { %>
+    <li>
+      <a
+        class="<%= headTitle === 'Crew Maintenance' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/crews"
+        title="Crew Maintenance">
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small"><i class="fa-solid fa-users"></i></span>
+          </div>
+          <div class="column is-hidden-touch">
+            Crew Maintenance
+          </div>
+        </div>
+      </a>
+    </li>
+    <% } %>
     <% if (user.userProperties.shifts.canView) { %>
     <li>
       <a

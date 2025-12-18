@@ -1,5 +1,6 @@
 import { type NextFunction, type Request, type Response, Router } from 'express'
 
+import handler_crews from '../handlers/shifts-get/crews.js'
 import handler_builder from '../handlers/shifts-get/builder.js'
 import handler_edit from '../handlers/shifts-get/edit.js'
 import handler_new from '../handlers/shifts-get/new.js'
@@ -7,12 +8,18 @@ import handler_print from '../handlers/shifts-get/print.js'
 import handler_recovery from '../handlers/shifts-get/recovery.js'
 import handler_search from '../handlers/shifts-get/search.js'
 import handler_view from '../handlers/shifts-get/view.js'
+import handler_doAddCrew from '../handlers/shifts-post/doAddCrew.js'
+import handler_doAddCrewEquipment from '../handlers/shifts-post/doAddCrewEquipment.js'
+import handler_doAddCrewMember from '../handlers/shifts-post/doAddCrewMember.js'
 import handler_doAddShiftCrew from '../handlers/shifts-post/doAddShiftCrew.js'
 import handler_doAddShiftEmployee from '../handlers/shifts-post/doAddShiftEmployee.js'
 import handler_doAddShiftEquipment from '../handlers/shifts-post/doAddShiftEquipment.js'
 import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkOrder.js'
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js'
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js'
+import handler_doDeleteCrew from '../handlers/shifts-post/doDeleteCrew.js'
+import handler_doDeleteCrewEquipment from '../handlers/shifts-post/doDeleteCrewEquipment.js'
+import handler_doDeleteCrewMember from '../handlers/shifts-post/doDeleteCrewMember.js'
 import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js'
 import handler_doGetAvailableResources from '../handlers/shifts-post/doGetAvailableResources.js'
 import handler_doGetShiftCreationData from '../handlers/shifts-post/doGetShiftCreationData.js'
@@ -22,6 +29,7 @@ import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShift
 import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShiftEquipment.js'
 import handler_doDeleteShiftWorkOrder from '../handlers/shifts-post/doDeleteShiftWorkOrder.js'
 import handler_doGetAvailableCrewsEmployeesEquipment from '../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js'
+import handler_doGetCrew from '../handlers/shifts-post/doGetCrew.js'
 import handler_doGetDeletedShifts from '../handlers/shifts-post/doGetDeletedShifts.js'
 import handler_doGetPreviousShifts from '../handlers/shifts-post/doGetPreviousShifts.js'
 import handler_doGetShiftCrews from '../handlers/shifts-post/doGetShiftCrews.js'
@@ -30,6 +38,8 @@ import handler_doGetShiftEquipment from '../handlers/shifts-post/doGetShiftEquip
 import handler_doGetShiftWorkOrders from '../handlers/shifts-post/doGetShiftWorkOrders.js'
 import handler_doRecoverShift from '../handlers/shifts-post/doRecoverShift.js'
 import handler_doSearchShifts from '../handlers/shifts-post/doSearchShifts.js'
+import handler_doUpdateCrew from '../handlers/shifts-post/doUpdateCrew.js'
+import handler_doUpdateCrewEquipment from '../handlers/shifts-post/doUpdateCrewEquipment.js'
 import handler_doUpdateShift from '../handlers/shifts-post/doUpdateShift.js'
 import handler_doUpdateShiftCrewNote from '../handlers/shifts-post/doUpdateShiftCrewNote.js'
 import handler_doUpdateShiftEmployee from '../handlers/shifts-post/doUpdateShiftEmployee.js'
@@ -171,6 +181,18 @@ router.post(
   updateHandler,
   handler_doCopyFromPreviousShift
 )
+
+// Crew maintenance endpoints
+router.get('/crews', updateHandler, handler_crews)
+router.post('/doGetCrew', updateHandler, handler_doGetCrew)
+router.post('/doAddCrew', updateHandler, handler_doAddCrew)
+router.post('/doUpdateCrew', updateHandler, handler_doUpdateCrew)
+router.post('/doDeleteCrew', updateHandler, handler_doDeleteCrew)
+router.post('/doAddCrewMember', updateHandler, handler_doAddCrewMember)
+router.post('/doDeleteCrewMember', updateHandler, handler_doDeleteCrewMember)
+router.post('/doAddCrewEquipment', updateHandler, handler_doAddCrewEquipment)
+router.post('/doUpdateCrewEquipment', updateHandler, handler_doUpdateCrewEquipment)
+router.post('/doDeleteCrewEquipment', updateHandler, handler_doDeleteCrewEquipment)
 
 router
   .get('/recovery', manageHandler, handler_recovery)

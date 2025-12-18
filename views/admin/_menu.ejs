@@ -131,7 +131,28 @@
           </div>
         </div>
       </a>
+    </li> 
+    <li>
+      <a
+        class="<%= headTitle === 'Location Maintenance' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/locations"
+        title="Location Maintenance"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-map-marker-alt"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Locations
+          </div>
+        </div>
+      </a>
     </li>
+  </ul>
+  <p class="menu-label is-hidden-touch">Resources</p>
+  <ul class="menu-list">
     <li>
       <a
         class="<%= headTitle === 'Employee Management' ? 'is-active' : '' %>"
@@ -182,24 +203,6 @@
           </div>
           <div class="column is-hidden-touch">
             Equipment
-          </div>
-        </div>
-      </a>
-    </li>
-    <li>
-      <a
-        class="<%= headTitle === 'Location Maintenance' ? 'is-active' : '' %>"
-        href="<%= urlPrefix %>/admin/locations"
-        title="Location Maintenance"
-      >
-        <div class="columns is-mobile is-1">
-          <div class="column is-narrow">
-            <span class="icon is-small">
-              <i class="fa-solid fa-map-marker-alt"></i>
-            </span>
-          </div>
-          <div class="column is-hidden-touch">
-            Locations
           </div>
         </div>
       </a>
