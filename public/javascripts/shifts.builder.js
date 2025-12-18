@@ -12,31 +12,30 @@
         return `${type}:${id}`;
     }
     function findDuplicates(shifts) {
-        var _a, _b, _c, _d;
         const tracker = {};
         for (const shift of shifts) {
             // Track employees
             for (const employee of shift.employees) {
                 const key = getItemKey('employee', employee.employeeNumber);
-                (_a = tracker[key]) !== null && _a !== void 0 ? _a : (tracker[key] = []);
+                tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
             // Track equipment
             for (const equipment of shift.equipment) {
                 const key = getItemKey('equipment', equipment.equipmentNumber);
-                (_b = tracker[key]) !== null && _b !== void 0 ? _b : (tracker[key] = []);
+                tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
             // Track crews
             for (const crew of shift.crews) {
                 const key = getItemKey('crew', crew.crewId);
-                (_c = tracker[key]) !== null && _c !== void 0 ? _c : (tracker[key] = []);
+                tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
             // Track work orders
             for (const workOrder of shift.workOrders) {
                 const key = getItemKey('workOrder', workOrder.workOrderId);
-                (_d = tracker[key]) !== null && _d !== void 0 ? _d : (tracker[key] = []);
+                tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
         }
@@ -68,7 +67,6 @@
             shift.recordUpdate_userName !== shift.recordCreate_userName);
     }
     function renderEmployeesView(shift, duplicates) {
-        var _a, _b, _c;
         const isEditable = isShiftEditable(shift);
         const isLocked = lockedShifts.has(shift.shiftId);
         const isDraggable = isEditable && !isLocked;
@@ -138,7 +136,7 @@
                     employeeItem.draggable = true;
                 }
                 employeeItem.dataset.employeeNumber = employee.employeeNumber;
-                employeeItem.dataset.crewId = (_b = (_a = employee.crewId) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : '';
+                employeeItem.dataset.crewId = employee.crewId?.toString() ?? '';
                 // Add icon
                 const icon = document.createElement('span');
                 icon.className = 'icon is-small';
@@ -204,7 +202,7 @@
                 if (equipment.employeeFirstName !== null) {
                     const operatorTag = document.createElement('span');
                     operatorTag.className = 'tag is-small is-info is-light ml-1';
-                    operatorTag.textContent = `${(_c = equipment.employeeLastName) !== null && _c !== void 0 ? _c : ''}, ${equipment.employeeFirstName}`;
+                    operatorTag.textContent = `${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName}`;
                     equipmentItem.append(' ', operatorTag);
                 }
                 if (equipment.shiftEquipmentNote !== '') {
@@ -286,7 +284,6 @@
         return containerElement;
     }
     function renderShiftCard(shift, duplicates, viewMode) {
-        var _a, _b, _c, _d;
         const cardElement = document.createElement('div');
         cardElement.className = 'column is-half-tablet is-one-third-desktop';
         cardElement.dataset.shiftId = shift.shiftId.toString();
@@ -330,7 +327,7 @@
         titleElement.className = 'title is-5 mb-0';
         const titleLink = document.createElement('a');
         titleLink.href = `${shiftLog.urlPrefix}/shifts/${shift.shiftId}`;
-        titleLink.textContent = `#${shift.shiftId} - ${(_a = shift.shiftTypeDataListItem) !== null && _a !== void 0 ? _a : 'Shift'}`;
+        titleLink.textContent = `#${shift.shiftId} - ${shift.shiftTypeDataListItem ?? 'Shift'}`;
         titleElement.append(titleLink);
         levelLeftItem.append(titleElement);
         levelLeft.append(levelLeftItem);
@@ -367,7 +364,7 @@
         timeParagraph.className = 'mb-2';
         const timeLabel = document.createElement('strong');
         timeLabel.textContent = 'Time:';
-        timeParagraph.append(timeLabel, ` ${(_b = shift.shiftTimeDataListItem) !== null && _b !== void 0 ? _b : ''}`);
+        timeParagraph.append(timeLabel, ` ${shift.shiftTimeDataListItem ?? ''}`);
         contentElement.append(timeParagraph);
         // Make supervisor field a drop target for employees
         const supervisorParagraph = document.createElement('p');
@@ -380,7 +377,7 @@
             shift.supervisorEmployeeNumber;
         const supervisorLabel = document.createElement('strong');
         supervisorLabel.textContent = 'Supervisor:';
-        supervisorParagraph.append(supervisorLabel, ` ${(_c = shift.supervisorLastName) !== null && _c !== void 0 ? _c : ''}, ${(_d = shift.supervisorFirstName) !== null && _d !== void 0 ? _d : ''}`);
+        supervisorParagraph.append(supervisorLabel, ` ${shift.supervisorLastName ?? ''}, ${shift.supervisorFirstName ?? ''}`);
         contentElement.append(supervisorParagraph);
         if (shift.shiftDescription !== '') {
             const descParagraph = document.createElement('p');
@@ -616,7 +613,6 @@
     let draggedData = null;
     // Drag and drop handlers
     function handleDragStart(event) {
-        var _a;
         const target = event.target;
         const employeeNumber = target.dataset.employeeNumber;
         const equipmentNumber = target.dataset.equipmentNumber;
@@ -626,7 +622,7 @@
         const shiftCard = target.closest('[data-shift-id]');
         const fromShiftId = fromAvailable
             ? 0
-            : Number.parseInt((_a = shiftCard === null || shiftCard === void 0 ? void 0 : shiftCard.dataset.shiftId) !== null && _a !== void 0 ? _a : '0', 10);
+            : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
         // Prevent dragging from locked shifts
         if (fromShiftId !== 0 && lockedShifts.has(fromShiftId)) {
             event.preventDefault();
@@ -720,13 +716,13 @@
         const crewTarget = target.closest('.drop-target-crew');
         const employeeTarget = target.closest('.drop-target-employee');
         // Highlight specific drop targets based on what's being dragged
-        if ((draggedData === null || draggedData === void 0 ? void 0 : draggedData.type) === 'employee' && supervisorTarget !== null) {
+        if (draggedData?.type === 'employee' && supervisorTarget !== null) {
             supervisorTarget.classList.add('is-drop-target');
         }
-        else if ((draggedData === null || draggedData === void 0 ? void 0 : draggedData.type) === 'employee' && crewTarget !== null) {
+        else if (draggedData?.type === 'employee' && crewTarget !== null) {
             crewTarget.classList.add('is-drop-target');
         }
-        else if ((draggedData === null || draggedData === void 0 ? void 0 : draggedData.type) === 'equipment' && employeeTarget !== null) {
+        else if (draggedData?.type === 'equipment' && employeeTarget !== null) {
             employeeTarget.classList.add('is-drop-target');
         }
         else {
@@ -749,7 +745,6 @@
         }
     }
     function handleDrop(event) {
-        var _a, _b, _c, _d, _e, _f, _g;
         event.preventDefault();
         const target = event.target;
         target.classList.remove('is-drop-target');
@@ -768,10 +763,10 @@
         const employeeTarget = target.closest('.drop-target-employee');
         // Handle employee dropped on supervisor slot
         if (supervisorTarget !== null && draggedData.type === 'employee') {
-            const shiftId = Number.parseInt((_a = supervisorTarget.dataset.shiftId) !== null && _a !== void 0 ? _a : '0', 10);
+            const shiftId = Number.parseInt(supervisorTarget.dataset.shiftId ?? '0', 10);
             const targetShift = currentShifts.find((s) => s.shiftId === shiftId);
             const employeeNumber = draggedData.id;
-            const isSupervisor = (_b = draggedData.isSupervisor) !== null && _b !== void 0 ? _b : false;
+            const isSupervisor = draggedData.isSupervisor ?? false;
             // Prevent dropping on locked shifts, past date shifts, or non-supervisors
             if (shiftId > 0 &&
                 !lockedShifts.has(shiftId) &&
@@ -792,8 +787,8 @@
         // Handle employee dropped on crew
         if (crewTarget !== null && draggedData.type === 'employee') {
             const shiftCard = crewTarget.closest('[data-shift-id]');
-            const shiftId = Number.parseInt((_c = shiftCard === null || shiftCard === void 0 ? void 0 : shiftCard.dataset.shiftId) !== null && _c !== void 0 ? _c : '0', 10);
-            const crewId = Number.parseInt((_d = crewTarget.dataset.crewId) !== null && _d !== void 0 ? _d : '0', 10);
+            const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
+            const crewId = Number.parseInt(crewTarget.dataset.crewId ?? '0', 10);
             const targetShift = currentShifts.find((s) => s.shiftId === shiftId);
             // Prevent dropping on locked shifts or past date shifts
             if (shiftId > 0 &&
@@ -808,8 +803,8 @@
         // Handle equipment dropped on employee
         if (employeeTarget !== null && draggedData.type === 'equipment') {
             const shiftCard = employeeTarget.closest('[data-shift-id]');
-            const shiftId = Number.parseInt((_e = shiftCard === null || shiftCard === void 0 ? void 0 : shiftCard.dataset.shiftId) !== null && _e !== void 0 ? _e : '0', 10);
-            const employeeNumber = (_f = employeeTarget.dataset.employeeNumber) !== null && _f !== void 0 ? _f : '';
+            const shiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
+            const employeeNumber = employeeTarget.dataset.employeeNumber ?? '';
             const targetShift = currentShifts.find((s) => s.shiftId === shiftId);
             // Prevent dropping on locked shifts or past date shifts
             if (shiftId > 0 &&
@@ -823,7 +818,7 @@
         }
         // Default: move to shift
         const shiftCard = target.closest('[data-shift-id]');
-        const toShiftId = Number.parseInt((_g = shiftCard === null || shiftCard === void 0 ? void 0 : shiftCard.dataset.shiftId) !== null && _g !== void 0 ? _g : '0', 10);
+        const toShiftId = Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10);
         if (toShiftId === 0 || toShiftId === draggedData.fromShiftId) {
             return;
         }
@@ -1701,7 +1696,6 @@
                 formElement.addEventListener('submit', (submitEvent) => {
                     submitEvent.preventDefault();
                     cityssm.postJSON(`${shiftLog.urlPrefix}/shifts/doCreateShift`, formElement, (rawResponseJSON) => {
-                        var _a;
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             bulmaJS.alert({
@@ -1714,7 +1708,7 @@
                         else {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
-                                message: (_a = responseJSON.errorMessage) !== null && _a !== void 0 ? _a : 'Failed to create shift.',
+                                message: responseJSON.errorMessage ?? 'Failed to create shift.',
                                 title: 'Creation Error'
                             });
                         }
@@ -1735,15 +1729,14 @@
     function openAddResourceModal(shift, viewMode) {
         cityssm.openHtmlModal('shifts-builder-addResource', {
             onshow(modalElement) {
-                var _a, _b;
                 // Populate shift details
                 const shiftTypeElement = modalElement.querySelector('#builderAddResource--shiftType');
                 const shiftNumberElement = modalElement.querySelector('#builderAddResource--shiftNumber');
                 const shiftTimeElement = modalElement.querySelector('#builderAddResource--shiftTime');
                 const supervisorElement = modalElement.querySelector('#builderAddResource--supervisor');
-                shiftTypeElement.textContent = (_a = shift.shiftTypeDataListItem) !== null && _a !== void 0 ? _a : 'Shift';
+                shiftTypeElement.textContent = shift.shiftTypeDataListItem ?? 'Shift';
                 shiftNumberElement.textContent = `#${shift.shiftId}`;
-                shiftTimeElement.textContent = (_b = shift.shiftTimeDataListItem) !== null && _b !== void 0 ? _b : '';
+                shiftTimeElement.textContent = shift.shiftTimeDataListItem ?? '';
                 supervisorElement.textContent =
                     shift.supervisorLastName !== null
                         ? `${shift.supervisorLastName}, ${shift.supervisorFirstName}`
@@ -1795,7 +1788,6 @@
                 }
                 // Tab switching
                 tabsElement.addEventListener('click', (event) => {
-                    var _a;
                     const target = event.target;
                     if (target.tagName === 'A' && target.dataset.tab !== undefined) {
                         event.preventDefault();
@@ -1804,7 +1796,7 @@
                         for (const tab of allTabs) {
                             tab.classList.remove('is-active');
                         }
-                        (_a = target.parentElement) === null || _a === void 0 ? void 0 : _a.classList.add('is-active');
+                        target.parentElement?.classList.add('is-active');
                         // Hide all tab content
                         const allContent = modalElement.querySelectorAll('[id^="builderAddResource--tabContent-"]');
                         for (const content of allContent) {
@@ -1857,7 +1849,7 @@
                 // Success message close button
                 const successMessage = modalElement.querySelector('#builderAddResource--successMessage');
                 const deleteButton = successMessage.querySelector('.delete');
-                deleteButton === null || deleteButton === void 0 ? void 0 : deleteButton.addEventListener('click', () => {
+                deleteButton?.addEventListener('click', () => {
                     successMessage.classList.add('is-hidden');
                 });
             },
@@ -1994,29 +1986,28 @@
     function setupFilterListeners(modalElement) {
         // Employee filter
         const employeeFilter = modalElement.querySelector('#builderAddResource--employeeFilter');
-        employeeFilter === null || employeeFilter === void 0 ? void 0 : employeeFilter.addEventListener('input', () => {
+        employeeFilter?.addEventListener('input', () => {
             filterCheckboxes('#builderAddResource--employeeList', employeeFilter.value);
         });
         // Equipment filter
         const equipmentFilter = modalElement.querySelector('#builderAddResource--equipmentFilter');
-        equipmentFilter === null || equipmentFilter === void 0 ? void 0 : equipmentFilter.addEventListener('input', () => {
+        equipmentFilter?.addEventListener('input', () => {
             filterCheckboxes('#builderAddResource--equipmentList', equipmentFilter.value);
         });
         // Crew filter
         const crewFilter = modalElement.querySelector('#builderAddResource--crewFilter');
-        crewFilter === null || crewFilter === void 0 ? void 0 : crewFilter.addEventListener('input', () => {
+        crewFilter?.addEventListener('input', () => {
             filterCheckboxes('#builderAddResource--crewList', crewFilter.value);
         });
     }
     function filterCheckboxes(containerSelector, filterText) {
-        var _a, _b;
         const container = document.querySelector(containerSelector);
         if (container === null)
             return;
         const labels = container.querySelectorAll('label.checkbox');
         const lowerFilter = filterText.toLowerCase();
         for (const label of labels) {
-            const text = (_b = (_a = label.textContent) === null || _a === void 0 ? void 0 : _a.toLowerCase()) !== null && _b !== void 0 ? _b : '';
+            const text = label.textContent?.toLowerCase() ?? '';
             if (text.includes(lowerFilter)) {
                 ;
                 label.style.display = 'block';
@@ -2145,7 +2136,6 @@
         if (filterInput === null)
             return;
         filterInput.addEventListener('input', () => {
-            var _a, _b;
             const filterText = filterInput.value.toLowerCase();
             // Filter all resource items
             const allResourceItems = document.querySelectorAll('#container--availableResources .available-items > div');
@@ -2153,7 +2143,7 @@
             let equipmentVisible = 0;
             let crewsVisible = 0;
             for (const item of allResourceItems) {
-                const text = (_b = (_a = item.textContent) === null || _a === void 0 ? void 0 : _a.toLowerCase()) !== null && _b !== void 0 ? _b : '';
+                const text = item.textContent?.toLowerCase() ?? '';
                 const isVisible = text.includes(filterText);
                 if (isVisible) {
                     item.style.display = '';
@@ -2209,4 +2199,3 @@
     // Load shifts for today on page load
     loadShifts();
 })();
-export {};
