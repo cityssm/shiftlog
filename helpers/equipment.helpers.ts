@@ -1,5 +1,6 @@
 import getEquipment from '../database/equipment/getEquipment.js'
 import getEmployeeList from '../database/employeeLists/getEmployeeList.js'
+import type { Employee } from '../types/record.types.js'
 
 /**
  * Validates if an employee is allowed to be assigned to a piece of equipment.
@@ -57,4 +58,46 @@ export async function validateEmployeeForEquipment(
   }
 
   return { success: true }
+}
+
+/**
+ * Gets the list of employees eligible to be assigned to a piece of equipment.
+ * If the equipment has an employee list, returns only those employees.
+ * If the equipment has no employee list, returns all provided employees.
+ *
+ * @param equipmentNumber - The equipment number to check
+ * @param allEmployees - The complete list of employees to filter
+ * @returns Array of eligible employees
+ */
+export async function getEligibleEmployeesForEquipment(
+  equipmentNumber: string,
+  allEmployees: Employee[]
+): Promise<Employee[]> {
+  // Get the equipment details
+  const equipment = await getEquipment(equipmentNumber, false)
+
+  if (equipment === undefined) {
+    return []
+  }
+
+  // If equipment has no employee list restriction, return all employees
+  if (equipment.employeeListId === null || equipment.employeeListId === undefined) {
+    return allEmployees
+  }
+
+  // Equipment has an employee list - get the list
+  const employeeList = await getEmployeeList(equipment.employeeListId)
+
+  if (employeeList === undefined) {
+    return []
+  }
+
+  // Filter employees to only those on the list
+  const eligibleEmployeeNumbers = new Set(
+    employeeList.members.map((member) => member.employeeNumber)
+  )
+
+  return allEmployees.filter((employee) =>
+    eligibleEmployeeNumbers.has(employee.employeeNumber)
+  )
 }

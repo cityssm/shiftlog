@@ -1619,7 +1619,7 @@ declare const exports: {
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              message: 'Failed to add equipment to shift.',
+              message: addResponse.message ?? 'Failed to add equipment to shift.',
               title: 'Error'
             })
           }
@@ -1657,7 +1657,7 @@ declare const exports: {
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  message: 'Failed to add equipment to new shift.',
+                  message: addResponse.message ?? 'Failed to add equipment to new shift.',
                   title: 'Error'
                 })
               }
@@ -2089,7 +2089,7 @@ declare const exports: {
           shiftId: toShiftId
         },
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
+          const responseJSON = rawResponseJSON as { success: boolean; message?: string }
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2100,7 +2100,7 @@ declare const exports: {
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              message: 'Failed to assign equipment to employee.',
+              message: responseJSON.message ?? 'Failed to assign equipment to employee.',
               title: 'Error'
             })
           }
@@ -2136,7 +2136,7 @@ declare const exports: {
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
-                    message: 'Failed to add equipment to shift.',
+                    message: addResponse.message ?? 'Failed to add equipment to shift.',
                     title: 'Error'
                   })
                 }

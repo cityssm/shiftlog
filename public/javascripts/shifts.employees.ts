@@ -689,7 +689,7 @@ declare const exports: {
         `${urlPrefix}/doAddShiftEquipment`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
+          const responseJSON = rawResponseJSON as { success: boolean; message?: string }
 
           if (responseJSON.success) {
             refreshData()
@@ -704,7 +704,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error',
 
-              message: 'Failed to add equipment'
+              message: responseJSON.message ?? 'Failed to add equipment'
             })
           }
         }
@@ -1018,7 +1018,7 @@ declare const exports: {
         `${urlPrefix}/doUpdateShiftEquipment`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
+          const responseJSON = rawResponseJSON as { success: boolean; message?: string }
 
           if (responseJSON.success) {
             refreshData()
@@ -1028,7 +1028,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error',
 
-              message: 'Failed to update assignment'
+              message: responseJSON.message ?? 'Failed to update assignment'
             })
           }
         }
