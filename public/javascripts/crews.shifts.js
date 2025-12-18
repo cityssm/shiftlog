@@ -226,6 +226,13 @@
                     renderCrewDetails(crewId, responseJSON.crew, panelElement);
                 }
             }
+            else {
+                bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Error Updating Equipment',
+                    message: responseJSON.message ?? 'An error occurred while updating the equipment assignment.'
+                });
+            }
         });
     }
     function openAddCrewEquipmentModal(clickEvent) {
@@ -261,6 +268,39 @@
                             optionElement.textContent = `${member.lastName}, ${member.firstName}`;
                             employeeSelectElement.append(optionElement);
                         }
+                        // Add event listener to filter employees when equipment is selected
+                        equipmentSelectElement.addEventListener('change', () => {
+                            const selectedEquipment = equipmentSelectElement.value;
+                            if (selectedEquipment === '') {
+                                // Reset to all crew members
+                                employeeSelectElement.innerHTML = '<option value="">(Unassigned)</option>';
+                                for (const member of responseJSON.crew.members) {
+                                    const optionElement = document.createElement('option');
+                                    optionElement.value = member.employeeNumber;
+                                    optionElement.textContent = `${member.lastName}, ${member.firstName}`;
+                                    employeeSelectElement.append(optionElement);
+                                }
+                            }
+                            else {
+                                // Get eligible employees for the selected equipment
+                                cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
+                                    const eligibleResponse = eligibleResponseJSON;
+                                    if (eligibleResponse.success && eligibleResponse.employees !== undefined) {
+                                        const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map(emp => emp.employeeNumber));
+                                        // Filter crew members to only eligible employees
+                                        employeeSelectElement.innerHTML = '<option value="">(Unassigned)</option>';
+                                        for (const member of responseJSON.crew.members) {
+                                            if (eligibleEmployeeNumbers.has(member.employeeNumber)) {
+                                                const optionElement = document.createElement('option');
+                                                optionElement.value = member.employeeNumber;
+                                                optionElement.textContent = `${member.lastName}, ${member.firstName}`;
+                                                employeeSelectElement.append(optionElement);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
                 modalElement
@@ -280,7 +320,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Adding Equipment',
-                                message: 'An error occurred while adding the equipment.'
+                                message: responseJSON.message ?? 'An error occurred while adding the equipment.'
                             });
                         }
                     });
