@@ -4,8 +4,7 @@ export default async function deleteCrewEquipment(crewId, equipmentNumber) {
     const result = await pool
         .request()
         .input('crewId', crewId)
-        .input('equipmentNumber', equipmentNumber)
-        .query(/* sql */ `
+        .input('equipmentNumber', equipmentNumber).query(/* sql */ `
       delete from ShiftLog.CrewEquipment
       where crewId = @crewId
         and equipmentNumber = @equipmentNumber

@@ -1,4 +1,3 @@
-import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function updateCrewEquipment(
@@ -12,8 +11,7 @@ export default async function updateCrewEquipment(
     .request()
     .input('crewId', crewId)
     .input('equipmentNumber', equipmentNumber)
-    .input('employeeNumber', employeeNumber ?? null)
-    .query(/* sql */ `
+    .input('employeeNumber', employeeNumber ?? undefined).query(/* sql */ `
       update ShiftLog.CrewEquipment
       set employeeNumber = @employeeNumber
       where crewId = @crewId

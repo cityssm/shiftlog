@@ -1,4 +1,3 @@
-import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function deleteCrewEquipment(
@@ -10,8 +9,7 @@ export default async function deleteCrewEquipment(
   const result = await pool
     .request()
     .input('crewId', crewId)
-    .input('equipmentNumber', equipmentNumber)
-    .query(/* sql */ `
+    .input('equipmentNumber', equipmentNumber).query(/* sql */ `
       delete from ShiftLog.CrewEquipment
       where crewId = @crewId
         and equipmentNumber = @equipmentNumber

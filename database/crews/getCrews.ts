@@ -1,10 +1,9 @@
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Crew } from '../../types/record.types.js'
 
 export default async function getCrews(user?: User): Promise<Crew[]> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   const sql = /* sql */ `
     select c.crewId, c.crewName, c.userGroupId,
@@ -32,11 +31,11 @@ export default async function getCrews(user?: User): Promise<Crew[]> {
     order by c.crewName
   `
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('userName', user?.userName)
-    .query(sql)) as mssql.IResult<Crew>
+    .query<Crew>(sql)
 
   return result.recordset
 }

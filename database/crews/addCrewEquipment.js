@@ -7,7 +7,7 @@ export default async function addCrewEquipment(crewId, equipmentNumber, employee
         .input('instance', getConfigProperty('application.instance'))
         .input('crewId', crewId)
         .input('equipmentNumber', equipmentNumber)
-        .input('employeeNumber', employeeNumber ?? null)
+        .input('employeeNumber', employeeNumber ?? undefined)
         .query(/* sql */ `
       insert into ShiftLog.CrewEquipment (
         crewId, instance, equipmentNumber, employeeNumber

@@ -6,8 +6,7 @@ export default async function getCrew(crewId) {
     const crewResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('crewId', crewId)
-        .query(/* sql */ `
+        .input('crewId', crewId).query(/* sql */ `
       select c.crewId, c.crewName,
         c.userGroupId,
         ug.userGroupName,
@@ -28,8 +27,7 @@ export default async function getCrew(crewId) {
     const membersResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('crewId', crewId)
-        .query(/* sql */ `
+        .input('crewId', crewId).query(/* sql */ `
       select cm.crewId, cm.employeeNumber,
         e.firstName, e.lastName
       from ShiftLog.CrewMembers cm
@@ -46,8 +44,7 @@ export default async function getCrew(crewId) {
     const equipmentResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('crewId', crewId)
-        .query(/* sql */ `
+        .input('crewId', crewId).query(/* sql */ `
       select ce.crewId, ce.equipmentNumber, ce.employeeNumber,
         eq.equipmentName,
         e.firstName as employeeFirstName, e.lastName as employeeLastName

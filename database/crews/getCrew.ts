@@ -2,8 +2,8 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type {
   Crew,
-  CrewMember,
-  CrewEquipment
+  CrewEquipment,
+  CrewMember
 } from '../../types/record.types.js'
 
 interface CrewWithDetails extends Crew {
@@ -20,8 +20,7 @@ export default async function getCrew(
   const crewResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('crewId', crewId)
-    .query<Crew>(/* sql */ `
+    .input('crewId', crewId).query<Crew>(/* sql */ `
       select c.crewId, c.crewName,
         c.userGroupId,
         ug.userGroupName,
@@ -45,8 +44,7 @@ export default async function getCrew(
   const membersResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('crewId', crewId)
-    .query<CrewMember>(/* sql */ `
+    .input('crewId', crewId).query<CrewMember>(/* sql */ `
       select cm.crewId, cm.employeeNumber,
         e.firstName, e.lastName
       from ShiftLog.CrewMembers cm
@@ -64,8 +62,7 @@ export default async function getCrew(
   const equipmentResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('crewId', crewId)
-    .query<CrewEquipment>(/* sql */ `
+    .input('crewId', crewId).query<CrewEquipment>(/* sql */ `
       select ce.crewId, ce.equipmentNumber, ce.employeeNumber,
         eq.equipmentName,
         e.firstName as employeeFirstName, e.lastName as employeeLastName

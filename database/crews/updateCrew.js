@@ -7,9 +7,8 @@ export default async function updateCrew(crewForm, user) {
         .input('instance', getConfigProperty('application.instance'))
         .input('crewId', crewForm.crewId)
         .input('crewName', crewForm.crewName)
-        .input('userGroupId', crewForm.userGroupId ?? null)
-        .input('recordUpdate_userName', user.userName)
-        .query(/* sql */ `
+        .input('userGroupId', crewForm.userGroupId ?? undefined)
+        .input('recordUpdate_userName', user.userName).query(/* sql */ `
       update ShiftLog.Crews
       set crewName = @crewName,
           userGroupId = @userGroupId,

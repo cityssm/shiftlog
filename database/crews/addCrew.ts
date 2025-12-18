@@ -16,10 +16,9 @@ export default async function addCrew(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('crewName', crewForm.crewName)
-    .input('userGroupId', crewForm.userGroupId ?? null)
+    .input('userGroupId', crewForm.userGroupId ?? undefined)
     .input('recordCreate_userName', user.userName)
-    .input('recordUpdate_userName', user.userName)
-    .query(/* sql */ `
+    .input('recordUpdate_userName', user.userName).query(/* sql */ `
       insert into ShiftLog.Crews (
         instance, crewName, userGroupId,
         recordCreate_userName, recordUpdate_userName

@@ -11,8 +11,7 @@ export default async function deleteCrew(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('crewId', crewId)
-    .input('recordDelete_userName', user.userName)
-    .query(/* sql */ `
+    .input('recordDelete_userName', user.userName).query(/* sql */ `
       update ShiftLog.Crews
       set recordDelete_userName = @recordDelete_userName,
           recordDelete_dateTime = getdate()

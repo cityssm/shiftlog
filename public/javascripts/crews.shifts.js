@@ -139,9 +139,9 @@
                 cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`, { crewId }, (rawResponseJSON) => {
                     const responseJSON = rawResponseJSON;
                     if (responseJSON.success && responseJSON.crew !== undefined) {
-                        const existingMemberNumbers = responseJSON.crew.members.map((m) => m.employeeNumber);
+                        const existingMemberNumbers = new Set(responseJSON.crew.members.map((member) => member.employeeNumber));
                         for (const employee of exports.employees) {
-                            if (!existingMemberNumbers.includes(employee.employeeNumber)) {
+                            if (!existingMemberNumbers.has(employee.employeeNumber)) {
                                 const optionElement = document.createElement('option');
                                 optionElement.value = employee.employeeNumber;
                                 optionElement.textContent = `${employee.lastName}, ${employee.firstName} (${employee.employeeNumber})`;
@@ -244,10 +244,10 @@
                 cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`, { crewId }, (rawResponseJSON) => {
                     const responseJSON = rawResponseJSON;
                     if (responseJSON.success && responseJSON.crew !== undefined) {
-                        const existingEquipmentNumbers = responseJSON.crew.equipment.map((e) => e.equipmentNumber);
+                        const existingEquipmentNumbers = new Set(responseJSON.crew.equipment.map((equipment) => equipment.equipmentNumber));
                         // Populate equipment
                         for (const equipmentItem of exports.equipment) {
-                            if (!existingEquipmentNumbers.includes(equipmentItem.equipmentNumber)) {
+                            if (!existingEquipmentNumbers.has(equipmentItem.equipmentNumber)) {
                                 const optionElement = document.createElement('option');
                                 optionElement.value = equipmentItem.equipmentNumber;
                                 optionElement.textContent = `${equipmentItem.equipmentName} (${equipmentItem.equipmentNumber})`;
@@ -306,7 +306,8 @@
         const canEdit = exports.canManage || crew.recordCreate_userName === shiftLog.userName;
         // Render members section header with Add button
         const membersHeaderBlock = document.createElement('div');
-        membersHeaderBlock.className = 'panel-block is-justify-content-space-between is-align-items-center';
+        membersHeaderBlock.className =
+            'panel-block is-justify-content-space-between is-align-items-center';
         const membersHeaderStrong = document.createElement('strong');
         membersHeaderStrong.textContent = 'Members';
         membersHeaderBlock.append(membersHeaderStrong);
@@ -358,7 +359,8 @@
         }
         // Render equipment section header with Add button
         const equipmentHeaderBlock = document.createElement('div');
-        equipmentHeaderBlock.className = 'panel-block is-justify-content-space-between is-align-items-center';
+        equipmentHeaderBlock.className =
+            'panel-block is-justify-content-space-between is-align-items-center';
         const equipmentHeaderStrong = document.createElement('strong');
         equipmentHeaderStrong.textContent = 'Equipment';
         equipmentHeaderBlock.append(equipmentHeaderStrong);
@@ -486,7 +488,8 @@
             iconText.className = 'icon-text';
             const chevronIcon = document.createElement('span');
             chevronIcon.className = 'icon';
-            chevronIcon.innerHTML = '<i class="fa-solid fa-chevron-right details-chevron"></i>';
+            chevronIcon.innerHTML =
+                '<i class="fa-solid fa-chevron-right details-chevron"></i>';
             iconText.append(chevronIcon);
             const crewNameSpan = document.createElement('span');
             crewNameSpan.className = 'has-text-weight-semibold mr-2';
