@@ -65,12 +65,17 @@ export default async function getCrew(
     .input('crewId', crewId).query<CrewEquipment>(/* sql */ `
       select ce.crewId, ce.equipmentNumber, ce.employeeNumber,
         eq.equipmentName,
+        eq.employeeListId,
+        el.employeeListName,
         e.firstName as employeeFirstName, e.lastName as employeeLastName
       from ShiftLog.CrewEquipment ce
       left join ShiftLog.Equipment eq on
         ce.instance = eq.instance and
         ce.equipmentNumber = eq.equipmentNumber and
         eq.recordDelete_dateTime is null
+      left join ShiftLog.EmployeeLists el on
+        eq.employeeListId = el.employeeListId and
+        el.recordDelete_dateTime is null
       left join ShiftLog.Employees e on
         ce.instance = e.instance and
         ce.employeeNumber = e.employeeNumber and

@@ -120,6 +120,8 @@ export interface CrewEquipment {
     employeeNumber?: string | null;
     employeeFirstName?: string;
     employeeLastName?: string;
+    employeeListId?: number | null;
+    employeeListName?: string;
 }
 export interface EmployeeList extends BaseRecord {
     employeeListId: number;

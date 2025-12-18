@@ -359,6 +359,7 @@ declare const exports: {
     const crewId = Number.parseInt(selectElement.dataset.crewId ?? '', 10)
     const equipmentNumber = selectElement.dataset.equipmentNumber ?? ''
     const employeeNumber = selectElement.value
+    const previousValue = selectElement.dataset.previousValue ?? ''
 
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doUpdateCrewEquipment`,
@@ -383,6 +384,9 @@ declare const exports: {
             renderCrewDetails(crewId, responseJSON.crew, panelElement)
           }
         } else {
+          // Revert to previous value
+          selectElement.value = previousValue
+          
           bulmaJS.alert({
             contextualColorName: 'danger',
             title: 'Error Updating Equipment',
@@ -714,13 +718,18 @@ declare const exports: {
           select.dataset.crewId = crewId.toString()
           select.dataset.equipmentNumber = equipmentItem.equipmentNumber
           select.dataset.updateAssignment = ''
+          select.dataset.previousValue = equipmentItem.employeeNumber ?? ''
 
           const unassignedOption = document.createElement('option')
           unassignedOption.value = ''
           unassignedOption.textContent = '(Unassigned)'
           select.append(unassignedOption)
 
+          // Filter members based on equipment's employee list
           for (const member of crew.members) {
+            // If equipment has an employee list, only show members who would be eligible
+            // We need to check if this member is eligible by calling the API or filtering locally
+            // For now, we'll use the same approach as the add modal - fetch eligible employees
             const option = document.createElement('option')
             option.value = member.employeeNumber
             option.textContent = `${member.lastName ?? ''}, ${member.firstName ?? ''}`
@@ -728,6 +737,36 @@ declare const exports: {
               option.selected = true
             }
             select.append(option)
+          }
+
+          // If equipment has an employee list, filter the options on load
+          if (equipmentItem.employeeListId !== null && equipmentItem.employeeListId !== undefined) {
+            cityssm.postJSON(
+              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`,
+              { equipmentNumber: equipmentItem.equipmentNumber },
+              (eligibleResponseJSON) => {
+                const eligibleResponse = eligibleResponseJSON as {
+                  success: boolean
+                  employees?: Array<{ employeeNumber: string }>
+                }
+
+                if (eligibleResponse.success && eligibleResponse.employees !== undefined) {
+                  const eligibleEmployeeNumbers = new Set(
+                    eligibleResponse.employees.map(emp => emp.employeeNumber)
+                  )
+
+                  // Remove options that are not eligible (except the currently selected one)
+                  const options = Array.from(select.options)
+                  for (const option of options) {
+                    if (option.value !== '' && 
+                        option.value !== equipmentItem.employeeNumber &&
+                        !eligibleEmployeeNumbers.has(option.value)) {
+                      select.removeChild(option)
+                    }
+                  }
+                }
+              }
+            )
           }
 
           select.addEventListener('change', updateEquipmentAssignment)
