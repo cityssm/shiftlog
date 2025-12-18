@@ -106,23 +106,56 @@
       <h3 class="title is-5">Available Resources</h3>
       <p class="help mb-3">Drag resources to shifts or drag from shifts here to remove</p>
       
+      <!-- Search Filter -->
+      <div class="field mb-4">
+        <div class="control has-icons-left">
+          <input
+            class="input is-small"
+            id="availableResources--filter"
+            type="text"
+            placeholder="Search resources..."
+          />
+          <span class="icon is-small is-left">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </span>
+        </div>
+      </div>
+      
       <div id="available--employees" class="mb-4">
-        <h4 class="subtitle is-6">Employees</h4>
-        <div class="available-resources-list" data-resource-type="employee">
+        <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="employees">
+          <span class="icon is-small">
+            <i class="fa-solid fa-chevron-down"></i>
+          </span>
+          <span>Employees</span>
+          <span class="tag is-info is-light ml-2" id="employees-count">0</span>
+        </h4>
+        <div class="available-resources-list resource-section-content" data-resource-type="employee">
           <p class="has-text-grey-light is-size-7">No available employees</p>
         </div>
       </div>
       
       <div id="available--equipment" class="mb-4">
-        <h4 class="subtitle is-6">Equipment</h4>
-        <div class="available-resources-list" data-resource-type="equipment">
+        <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="equipment">
+          <span class="icon is-small">
+            <i class="fa-solid fa-chevron-down"></i>
+          </span>
+          <span>Equipment</span>
+          <span class="tag is-info is-light ml-2" id="equipment-count">0</span>
+        </h4>
+        <div class="available-resources-list resource-section-content" data-resource-type="equipment">
           <p class="has-text-grey-light is-size-7">No available equipment</p>
         </div>
       </div>
       
       <div id="available--crews">
-        <h4 class="subtitle is-6">Crews</h4>
-        <div class="available-resources-list" data-resource-type="crew">
+        <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="crews">
+          <span class="icon is-small">
+            <i class="fa-solid fa-chevron-down"></i>
+          </span>
+          <span>Crews</span>
+          <span class="tag is-info is-light ml-2" id="crews-count">0</span>
+        </h4>
+        <div class="available-resources-list resource-section-content" data-resource-type="crew">
           <p class="has-text-grey-light is-size-7">No available crews</p>
         </div>
       </div>
@@ -208,6 +241,37 @@
     align-self: flex-start;
     max-height: calc(100vh - 5rem);
     overflow-y: auto;
+  }
+
+  /* Collapsible resource sections */
+  .resource-section-header {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+  }
+
+  .resource-section-header:hover {
+    color: #3273dc;
+  }
+
+  .resource-section-header .icon {
+    transition: transform 0.2s;
+  }
+
+  .resource-section-header.is-collapsed .icon {
+    transform: rotate(-90deg);
+  }
+
+  .resource-section-content {
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    overflow: hidden;
+    max-height: 1000px;
+    opacity: 1;
+  }
+
+  .resource-section-content.is-hidden {
+    max-height: 0;
+    opacity: 0;
   }
 </style>
 
