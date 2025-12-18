@@ -1,5 +1,5 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, unicorn/no-null */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
@@ -371,7 +371,7 @@ declare const exports: {
         if (isDraggable) {
           workOrderItem.draggable = true
         }
-        workOrderItem.dataset.workorderId = workOrder.workOrderId.toString()
+        workOrderItem.dataset.workOrderId = workOrder.workOrderId.toString()
 
         // Add icon
         const icon = document.createElement('span')
@@ -381,7 +381,7 @@ declare const exports: {
 
         // Add work order link
         const workOrderLink = document.createElement('a')
-        workOrderLink.href = `${shiftLog.urlPrefix}/workOrders/${workOrder.workOrderId}`
+        workOrderLink.href = shiftLog.buildWorkOrderURL(workOrder.workOrderId)
         workOrderLink.target = '_blank'
         workOrderLink.textContent = workOrder.workOrderNumber
         workOrderItem.append(workOrderLink)
@@ -699,7 +699,7 @@ declare const exports: {
 
         for (const employee of resources.employees) {
           const itemBox = document.createElement('div')
-          itemBox.className = 'box is-paddingless p-2 mb-2'
+          itemBox.className = 'box p-2 mb-2'
           itemBox.draggable = true
           itemBox.dataset.employeeNumber = employee.employeeNumber
           itemBox.dataset.fromAvailable = 'true'
@@ -753,7 +753,7 @@ declare const exports: {
 
         for (const equipment of resources.equipment) {
           const itemBox = document.createElement('div')
-          itemBox.className = 'box is-paddingless p-2 mb-2'
+          itemBox.className = 'box p-2 mb-2'
           itemBox.draggable = true
           itemBox.dataset.equipmentNumber = equipment.equipmentNumber
           itemBox.dataset.fromAvailable = 'true'
@@ -791,7 +791,8 @@ declare const exports: {
     // Render crews
     const crewsList = document.querySelector(
       '#available--crews .available-resources-list'
-    ) as HTMLElement
+    ) as HTMLElement | null
+
     if (crewsList !== null) {
       crewsList.textContent = ''
 
@@ -806,7 +807,7 @@ declare const exports: {
 
         for (const crew of resources.crews) {
           const itemBox = document.createElement('div')
-          itemBox.className = 'box is-paddingless p-2 mb-2'
+          itemBox.className = 'box p-2 mb-2'
           itemBox.draggable = true
           itemBox.dataset.crewId = crew.crewId.toString()
           itemBox.dataset.fromAvailable = 'true'
@@ -851,6 +852,7 @@ declare const exports: {
 
   // Drag and drop state
   let draggedElement: HTMLElement | null = null
+
   let draggedData: {
     fromShiftId: number
     id: number | string
@@ -865,7 +867,7 @@ declare const exports: {
     const employeeNumber = target.dataset.employeeNumber
     const equipmentNumber = target.dataset.equipmentNumber
     const crewId = target.dataset.crewId
-    const workorderId = target.dataset.workorderId
+    const workOrderId = target.dataset.workOrderId
     const fromAvailable = target.dataset.fromAvailable === 'true'
 
     const shiftCard = target.closest('[data-shift-id]') as HTMLElement
@@ -920,10 +922,10 @@ declare const exports: {
         id: Number.parseInt(crewId, 10),
         type: 'crew'
       }
-    } else if (workorderId !== undefined) {
+    } else if (workOrderId !== undefined) {
       draggedData = {
         fromShiftId,
-        id: Number.parseInt(workorderId, 10),
+        id: Number.parseInt(workOrderId, 10),
         type: 'workOrder'
       }
     }
@@ -978,7 +980,9 @@ declare const exports: {
     const supervisorTarget = target.closest(
       '.drop-target-supervisor'
     ) as HTMLElement
+
     const crewTarget = target.closest('.drop-target-crew') as HTMLElement
+
     const employeeTarget = target.closest(
       '.drop-target-employee'
     ) as HTMLElement
@@ -1036,11 +1040,13 @@ declare const exports: {
     // Check for specific drop targets first
     const supervisorTarget = target.closest(
       '.drop-target-supervisor'
-    ) as HTMLElement
-    const crewTarget = target.closest('.drop-target-crew') as HTMLElement
+    ) as HTMLElement | null
+
+    const crewTarget = target.closest('.drop-target-crew') as HTMLElement | null
+
     const employeeTarget = target.closest(
       '.drop-target-employee'
-    ) as HTMLElement
+    ) as HTMLElement | null
 
     // Handle employee dropped on supervisor slot
     if (supervisorTarget !== null && draggedData.type === 'employee') {
@@ -1176,7 +1182,6 @@ declare const exports: {
 
         break
       }
-      // No default
     }
   }
 
@@ -1285,9 +1290,9 @@ declare const exports: {
                     },
                     (empResponse) => {
                       if (empResponse.success) {
-                        employeesDeletedCount++
+                        employeesDeletedCount += 1
                       } else {
-                        employeesFailedCount++
+                        employeesFailedCount += 1
                       }
 
                       // Check if all employees processed
@@ -1322,9 +1327,9 @@ declare const exports: {
                               },
                               (eqResponse) => {
                                 if (eqResponse.success) {
-                                  equipmentDeletedCount++
+                                  equipmentDeletedCount += 1
                                 } else {
-                                  equipmentFailedCount++
+                                  equipmentFailedCount += 1
                                 }
 
                                 // Check if all equipment processed
@@ -1408,7 +1413,7 @@ declare const exports: {
                       shiftId: draggedData.fromShiftId
                     },
                     (equipResponse) => {
-                      equipmentDeletedCount++
+                      equipmentDeletedCount += 1
 
                       if (equipmentDeletedCount === totalEquipment) {
                         bulmaJS.alert({
@@ -1619,7 +1624,8 @@ declare const exports: {
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              message: addResponse.message ?? 'Failed to add equipment to shift.',
+              message:
+                addResponse.message ?? 'Failed to add equipment to shift.',
               title: 'Error'
             })
           }
@@ -1657,7 +1663,9 @@ declare const exports: {
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  message: addResponse.message ?? 'Failed to add equipment to new shift.',
+                  message:
+                    addResponse.message ??
+                    'Failed to add equipment to new shift.',
                   title: 'Error'
                 })
               }
@@ -1784,7 +1792,7 @@ declare const exports: {
                               shiftId: toShiftId
                             },
                             () => {
-                              employeesProcessed++
+                              employeesProcessed += 1
 
                               // Check if all employees are processed
                               if (employeesProcessed === totalEmployees) {
@@ -2089,7 +2097,10 @@ declare const exports: {
           shiftId: toShiftId
         },
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean; message?: string }
+          const responseJSON = rawResponseJSON as {
+            success: boolean
+            message?: string
+          }
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2100,7 +2111,9 @@ declare const exports: {
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              message: responseJSON.message ?? 'Failed to assign equipment to employee.',
+              message:
+                responseJSON.message ??
+                'Failed to assign equipment to employee.',
               title: 'Error'
             })
           }
@@ -2136,7 +2149,9 @@ declare const exports: {
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
-                    message: addResponse.message ?? 'Failed to add equipment to shift.',
+                    message:
+                      addResponse.message ??
+                      'Failed to add equipment to shift.',
                     title: 'Error'
                   })
                 }

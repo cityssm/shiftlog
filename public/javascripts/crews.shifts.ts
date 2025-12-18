@@ -34,6 +34,8 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
+  const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`
+
   const crewsContainerElement = document.querySelector(
     '#container--crews'
   ) as HTMLElement
@@ -60,7 +62,7 @@ declare const exports: {
 
         callbackFunction() {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrew`,
+            `${shiftUrlPrefix}/doDeleteCrew`,
             {
               crewId
             },
@@ -129,7 +131,7 @@ declare const exports: {
             formEvent.preventDefault()
 
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doUpdateCrew`,
+              `${shiftUrlPrefix}/doUpdateCrew`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
@@ -191,7 +193,7 @@ declare const exports: {
 
         callbackFunction() {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrewMember`,
+            `${shiftUrlPrefix}/doDeleteCrewMember`,
             {
               crewId,
               employeeNumber
@@ -239,7 +241,7 @@ declare const exports: {
 
         // Get existing members to exclude them
         cityssm.postJSON(
-          `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`,
+          `${shiftUrlPrefix}/doGetCrew`,
           { crewId },
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
@@ -270,7 +272,7 @@ declare const exports: {
             formEvent.preventDefault()
 
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrewMember`,
+              `${shiftUrlPrefix}/doAddCrewMember`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
@@ -326,7 +328,7 @@ declare const exports: {
 
         callbackFunction() {
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrewEquipment`,
+            `${shiftUrlPrefix}/doDeleteCrewEquipment`,
             {
               crewId,
               equipmentNumber
@@ -362,7 +364,7 @@ declare const exports: {
     const previousValue = selectElement.dataset.previousValue ?? ''
 
     cityssm.postJSON(
-      `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doUpdateCrewEquipment`,
+      `${shiftUrlPrefix}/doUpdateCrewEquipment`,
       {
         crewId,
         equipmentNumber,
@@ -388,11 +390,13 @@ declare const exports: {
           selectElement.value = previousValue
           // Update the stored previous value to match the reverted state
           selectElement.dataset.previousValue = previousValue
-          
+
           bulmaJS.alert({
             contextualColorName: 'danger',
             title: 'Error Updating Equipment',
-            message: responseJSON.message ?? 'An error occurred while updating the equipment assignment.'
+            message:
+              responseJSON.message ??
+              'An error occurred while updating the equipment assignment.'
           })
         }
       }
@@ -425,7 +429,7 @@ declare const exports: {
 
         // Get existing equipment to exclude them
         cityssm.postJSON(
-          `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`,
+          `${shiftUrlPrefix}/doGetCrew`,
           { crewId },
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
@@ -454,12 +458,20 @@ declare const exports: {
 
               // Helper function to populate employee dropdown
               const populateEmployeeOptions = (
-                members: Array<{ employeeNumber: string; firstName: string; lastName: string }>,
+                members: Array<{
+                  employeeNumber: string
+                  firstName?: string
+                  lastName?: string
+                }>,
                 eligibleEmployeeNumbers?: Set<string>
               ): void => {
-                employeeSelectElement.innerHTML = '<option value="">(Unassigned)</option>'
+                employeeSelectElement.innerHTML =
+                  '<option value="">(Unassigned)</option>'
                 for (const member of members) {
-                  if (eligibleEmployeeNumbers === undefined || eligibleEmployeeNumbers.has(member.employeeNumber)) {
+                  if (
+                    eligibleEmployeeNumbers === undefined ||
+                    eligibleEmployeeNumbers.has(member.employeeNumber)
+                  ) {
                     const optionElement = document.createElement('option')
                     optionElement.value = member.employeeNumber
                     optionElement.textContent = `${member.lastName}, ${member.firstName}`
@@ -474,30 +486,46 @@ declare const exports: {
               // Add event listener to filter employees when equipment is selected
               equipmentSelectElement.addEventListener('change', () => {
                 const selectedEquipment = equipmentSelectElement.value
-                
+
                 if (selectedEquipment === '') {
                   // Reset to all crew members
-                  populateEmployeeOptions(responseJSON.crew.members)
+                  populateEmployeeOptions(responseJSON.crew?.members ?? [])
                 } else {
                   // Get eligible employees for the selected equipment
                   cityssm.postJSON(
-                    `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`,
+                    `${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`,
                     { equipmentNumber: selectedEquipment },
                     (eligibleResponseJSON) => {
                       const eligibleResponse = eligibleResponseJSON as {
                         success: boolean
                         message?: string
-                        employees?: Array<{ employeeNumber: string; firstName: string; lastName: string }>
+
+                        employees?: Array<{
+                          employeeNumber: string
+                          firstName: string
+                          lastName: string
+                        }>
                       }
 
-                      if (eligibleResponse.success && eligibleResponse.employees !== undefined) {
+                      if (
+                        eligibleResponse.success &&
+                        eligibleResponse.employees !== undefined
+                      ) {
                         const eligibleEmployeeNumbers = new Set(
-                          eligibleResponse.employees.map(emp => emp.employeeNumber)
+                          eligibleResponse.employees.map(
+                            (emp) => emp.employeeNumber
+                          )
                         )
-                        populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers)
+                        populateEmployeeOptions(
+                          responseJSON.crew?.members ?? [],
+                          eligibleEmployeeNumbers
+                        )
                       } else {
                         // On error, show all crew members
-                        populateEmployeeOptions(responseJSON.crew.members)
+                        populateEmployeeOptions(
+                          responseJSON.crew?.members ?? []
+                        )
+
                         if (eligibleResponse.message) {
                           bulmaJS.alert({
                             contextualColorName: 'warning',
@@ -520,7 +548,7 @@ declare const exports: {
             formEvent.preventDefault()
 
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrewEquipment`,
+              `${shiftUrlPrefix}/doAddCrewEquipment`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
@@ -543,7 +571,10 @@ declare const exports: {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Adding Equipment',
-                    message: responseJSON.message ?? 'An error occurred while adding the equipment.'
+
+                    message:
+                      responseJSON.message ??
+                      'An error occurred while adding the equipment.'
                   })
                 }
               }
@@ -723,9 +754,11 @@ declare const exports: {
           select.dataset.previousValue = equipmentItem.employeeNumber ?? ''
 
           // Helper function to populate the dropdown
-          const populateDropdown = (eligibleEmployeeNumbers?: Set<string>): void => {
+          const populateDropdown = (
+            eligibleEmployeeNumbers?: Set<string>
+          ): void => {
             select.innerHTML = ''
-            
+
             const unassignedOption = document.createElement('option')
             unassignedOption.value = ''
             unassignedOption.textContent = '(Unassigned)'
@@ -733,9 +766,11 @@ declare const exports: {
 
             for (const member of crew.members) {
               // Only add if no restriction or employee is eligible
-              if (eligibleEmployeeNumbers === undefined || 
-                  eligibleEmployeeNumbers.has(member.employeeNumber) ||
-                  member.employeeNumber === equipmentItem.employeeNumber) {
+              if (
+                eligibleEmployeeNumbers === undefined ||
+                eligibleEmployeeNumbers.has(member.employeeNumber) ||
+                member.employeeNumber === equipmentItem.employeeNumber
+              ) {
                 const option = document.createElement('option')
                 option.value = member.employeeNumber
                 option.textContent = `${member.lastName ?? ''}, ${member.firstName ?? ''}`
@@ -748,17 +783,20 @@ declare const exports: {
           }
 
           // If equipment has an employee list, filter the options before showing
-          if (equipmentItem.employeeListId !== null && equipmentItem.employeeListId !== undefined) {
+          if (
+            equipmentItem.employeeListId !== null &&
+            equipmentItem.employeeListId !== undefined
+          ) {
             // Disable while loading
             select.disabled = true
-            
+
             // Show loading state
             const loadingOption = document.createElement('option')
             loadingOption.textContent = 'Loading...'
             select.append(loadingOption)
-            
+
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`,
+              `${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`,
               { equipmentNumber: equipmentItem.equipmentNumber },
               (eligibleResponseJSON) => {
                 const eligibleResponse = eligibleResponseJSON as {
@@ -766,16 +804,19 @@ declare const exports: {
                   employees?: Array<{ employeeNumber: string }>
                 }
 
-                if (eligibleResponse.success && eligibleResponse.employees !== undefined) {
+                if (
+                  eligibleResponse.success &&
+                  eligibleResponse.employees !== undefined
+                ) {
                   const eligibleEmployeeNumbers = new Set(
-                    eligibleResponse.employees.map(emp => emp.employeeNumber)
+                    eligibleResponse.employees.map((emp) => emp.employeeNumber)
                   )
                   populateDropdown(eligibleEmployeeNumbers)
                 } else {
                   // On error, show all members
                   populateDropdown()
                 }
-                
+
                 select.disabled = false
               }
             )
@@ -826,12 +867,15 @@ declare const exports: {
     if (exports.crews.length === 0) {
       const messageDiv = document.createElement('div')
       messageDiv.className = 'message is-info'
+
       const messageBody = document.createElement('div')
       messageBody.className = 'message-body'
       messageBody.textContent = 'No crews have been added yet.'
       messageDiv.append(messageBody)
+
       crewsContainerElement.innerHTML = ''
       crewsContainerElement.append(messageDiv)
+
       return
     }
 
@@ -916,7 +960,7 @@ declare const exports: {
         if (panelElement.open) {
           const crewId = Number.parseInt(panelElement.dataset.crewId ?? '', 10)
           cityssm.postJSON(
-            `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`,
+            `${shiftUrlPrefix}/doGetCrew`,
             { crewId },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
@@ -945,7 +989,7 @@ declare const exports: {
             formEvent.preventDefault()
 
             cityssm.postJSON(
-              `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrew`,
+              `${shiftUrlPrefix}/doAddCrew`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
@@ -977,10 +1021,15 @@ declare const exports: {
           })
       },
       onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
         modalElement
           .querySelector<HTMLInputElement>('#crewAdd--crewName')
           ?.focus()
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
       }
     })
   }

@@ -52,7 +52,7 @@ declare const exports: {
     // Find the tab link for this content
     const tabLink = document.querySelector(
       `a[href="#${tabId}"]`
-    ) as HTMLAnchorElement
+    ) as HTMLAnchorElement | null
 
     if (tabLink !== null) {
       // Remove is-active from all tabs
@@ -77,7 +77,7 @@ declare const exports: {
       }
 
       // Show the selected tab content
-      const selectedContent = document.querySelector(`#${tabId}`) as HTMLElement
+      const selectedContent = document.querySelector(`#${tabId}`) as HTMLElement | null
       if (selectedContent !== null) {
         selectedContent.classList.remove('is-hidden')
       }

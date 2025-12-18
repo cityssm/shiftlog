@@ -2,6 +2,7 @@
 /* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
+    const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
     const crewsContainerElement = document.querySelector('#container--crews');
     function deleteCrew(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
@@ -18,7 +19,7 @@
                 contextualColorName: 'warning',
                 text: 'Delete Crew',
                 callbackFunction() {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrew`, {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doDeleteCrew`, {
                         crewId
                     }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
@@ -63,7 +64,7 @@
                     .querySelector('#form--editCrew')
                     ?.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doUpdateCrew`, formEvent.currentTarget, (rawResponseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doUpdateCrew`, formEvent.currentTarget, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             if (responseJSON.crews !== undefined) {
@@ -109,7 +110,7 @@
             okButton: {
                 text: 'Remove Member',
                 callbackFunction() {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrewMember`, {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doDeleteCrewMember`, {
                         crewId,
                         employeeNumber
                     }, (rawResponseJSON) => {
@@ -136,7 +137,7 @@
                 // Populate employee dropdown
                 const selectElement = modalElement.querySelector('#crewMemberAdd--employeeNumber');
                 // Get existing members to exclude them
-                cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`, { crewId }, (rawResponseJSON) => {
+                cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (rawResponseJSON) => {
                     const responseJSON = rawResponseJSON;
                     if (responseJSON.success && responseJSON.crew !== undefined) {
                         const existingMemberNumbers = new Set(responseJSON.crew.members.map((member) => member.employeeNumber));
@@ -154,7 +155,7 @@
                     .querySelector('#form--addCrewMember')
                     ?.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrewMember`, formEvent.currentTarget, (rawResponseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrewMember`, formEvent.currentTarget, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
                             const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
@@ -193,7 +194,7 @@
             okButton: {
                 text: 'Remove Equipment',
                 callbackFunction() {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doDeleteCrewEquipment`, {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doDeleteCrewEquipment`, {
                         crewId,
                         equipmentNumber
                     }, (rawResponseJSON) => {
@@ -215,7 +216,7 @@
         const equipmentNumber = selectElement.dataset.equipmentNumber ?? '';
         const employeeNumber = selectElement.value;
         const previousValue = selectElement.dataset.previousValue ?? '';
-        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doUpdateCrewEquipment`, {
+        cityssm.postJSON(`${shiftUrlPrefix}/doUpdateCrewEquipment`, {
             crewId,
             equipmentNumber,
             employeeNumber
@@ -235,7 +236,8 @@
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Updating Equipment',
-                    message: responseJSON.message ?? 'An error occurred while updating the equipment assignment.'
+                    message: responseJSON.message ??
+                        'An error occurred while updating the equipment assignment.'
                 });
             }
         });
@@ -253,7 +255,7 @@
                 // Populate employee dropdown
                 const employeeSelectElement = modalElement.querySelector('#crewEquipmentAdd--employeeNumber');
                 // Get existing equipment to exclude them
-                cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`, { crewId }, (rawResponseJSON) => {
+                cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (rawResponseJSON) => {
                     const responseJSON = rawResponseJSON;
                     if (responseJSON.success && responseJSON.crew !== undefined) {
                         const existingEquipmentNumbers = new Set(responseJSON.crew.equipment.map((equipment) => equipment.equipmentNumber));
@@ -268,9 +270,11 @@
                         }
                         // Helper function to populate employee dropdown
                         const populateEmployeeOptions = (members, eligibleEmployeeNumbers) => {
-                            employeeSelectElement.innerHTML = '<option value="">(Unassigned)</option>';
+                            employeeSelectElement.innerHTML =
+                                '<option value="">(Unassigned)</option>';
                             for (const member of members) {
-                                if (eligibleEmployeeNumbers === undefined || eligibleEmployeeNumbers.has(member.employeeNumber)) {
+                                if (eligibleEmployeeNumbers === undefined ||
+                                    eligibleEmployeeNumbers.has(member.employeeNumber)) {
                                     const optionElement = document.createElement('option');
                                     optionElement.value = member.employeeNumber;
                                     optionElement.textContent = `${member.lastName}, ${member.firstName}`;
@@ -285,19 +289,20 @@
                             const selectedEquipment = equipmentSelectElement.value;
                             if (selectedEquipment === '') {
                                 // Reset to all crew members
-                                populateEmployeeOptions(responseJSON.crew.members);
+                                populateEmployeeOptions(responseJSON.crew?.members ?? []);
                             }
                             else {
                                 // Get eligible employees for the selected equipment
-                                cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
+                                cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
                                     const eligibleResponse = eligibleResponseJSON;
-                                    if (eligibleResponse.success && eligibleResponse.employees !== undefined) {
-                                        const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map(emp => emp.employeeNumber));
-                                        populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers);
+                                    if (eligibleResponse.success &&
+                                        eligibleResponse.employees !== undefined) {
+                                        const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map((emp) => emp.employeeNumber));
+                                        populateEmployeeOptions(responseJSON.crew?.members ?? [], eligibleEmployeeNumbers);
                                     }
                                     else {
                                         // On error, show all crew members
-                                        populateEmployeeOptions(responseJSON.crew.members);
+                                        populateEmployeeOptions(responseJSON.crew?.members ?? []);
                                         if (eligibleResponse.message) {
                                             bulmaJS.alert({
                                                 contextualColorName: 'warning',
@@ -315,7 +320,7 @@
                     .querySelector('#form--addCrewEquipment')
                     ?.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrewEquipment`, formEvent.currentTarget, (rawResponseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrewEquipment`, formEvent.currentTarget, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
                             const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
@@ -328,7 +333,8 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Adding Equipment',
-                                message: responseJSON.message ?? 'An error occurred while adding the equipment.'
+                                message: responseJSON.message ??
+                                    'An error occurred while adding the equipment.'
                             });
                         }
                     });
@@ -489,17 +495,19 @@
                         }
                     };
                     // If equipment has an employee list, filter the options before showing
-                    if (equipmentItem.employeeListId !== null && equipmentItem.employeeListId !== undefined) {
+                    if (equipmentItem.employeeListId !== null &&
+                        equipmentItem.employeeListId !== undefined) {
                         // Disable while loading
                         select.disabled = true;
                         // Show loading state
                         const loadingOption = document.createElement('option');
                         loadingOption.textContent = 'Loading...';
                         select.append(loadingOption);
-                        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: equipmentItem.equipmentNumber }, (eligibleResponseJSON) => {
+                        cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: equipmentItem.equipmentNumber }, (eligibleResponseJSON) => {
                             const eligibleResponse = eligibleResponseJSON;
-                            if (eligibleResponse.success && eligibleResponse.employees !== undefined) {
-                                const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map(emp => emp.employeeNumber));
+                            if (eligibleResponse.success &&
+                                eligibleResponse.employees !== undefined) {
+                                const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map((emp) => emp.employeeNumber));
                                 populateDropdown(eligibleEmployeeNumbers);
                             }
                             else {
@@ -621,7 +629,7 @@
             panelElement.addEventListener('toggle', () => {
                 if (panelElement.open) {
                     const crewId = Number.parseInt(panelElement.dataset.crewId ?? '', 10);
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetCrew`, { crewId }, (rawResponseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
                             renderCrewDetails(crewId, responseJSON.crew, panelElement);
@@ -639,7 +647,7 @@
                     .querySelector('#form--addCrew')
                     ?.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doAddCrew`, formEvent.currentTarget, (rawResponseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrew`, formEvent.currentTarget, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             if (responseJSON.crews !== undefined) {
@@ -663,10 +671,14 @@
                 });
             },
             onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
                 modalElement
                     .querySelector('#crewAdd--crewName')
                     ?.focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
     }
