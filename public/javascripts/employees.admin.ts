@@ -472,32 +472,23 @@ declare const exports: {
    * Apply the current filter to the employees list
    */
   function applyCurrentFilter(): void {
-    if (filterInput === null) {
-      currentFilteredEmployees = exports.employees
-      currentPage = 1
-      renderEmployeesWithPagination(exports.employees)
-      return
-    }
+    let filteredEmployees = exports.employees
 
-    const filterText = filterInput.value.toLowerCase()
+    if (filterInput !== null) {
+      const filterText = filterInput.value.toLowerCase()
 
-    if (filterText === '') {
-      currentFilteredEmployees = exports.employees
-      currentPage = 1
-      renderEmployeesWithPagination(exports.employees)
-    } else {
-      const filteredEmployees = exports.employees.filter(
-        (possibleEmployee) => {
+      if (filterText !== '') {
+        filteredEmployees = exports.employees.filter((possibleEmployee) => {
           const searchText =
             `${possibleEmployee.employeeNumber} ${possibleEmployee.firstName} ${possibleEmployee.lastName} ${possibleEmployee.userName ?? ''} ${possibleEmployee.phoneNumber ?? ''} ${possibleEmployee.emailAddress ?? ''}`.toLowerCase()
           return searchText.includes(filterText)
-        }
-      )
-
-      currentFilteredEmployees = filteredEmployees
-      currentPage = 1
-      renderEmployeesWithPagination(filteredEmployees)
+        })
+      }
     }
+
+    currentFilteredEmployees = filteredEmployees
+    currentPage = 1
+    renderEmployeesWithPagination(filteredEmployees)
   }
 
   if (filterInput !== null) {
