@@ -509,6 +509,11 @@
                 employeesList.append(itemsContainer);
             }
         }
+        // Update employees count
+        const employeesCountTag = document.querySelector('#employees-count');
+        if (employeesCountTag !== null) {
+            employeesCountTag.textContent = resources.employees.length.toString();
+        }
         // Render equipment
         const equipmentList = document.querySelector('#available--equipment .available-resources-list');
         if (equipmentList !== null) {
@@ -547,6 +552,11 @@
                 equipmentList.append(itemsContainer);
             }
         }
+        // Update equipment count
+        const equipmentCountTag = document.querySelector('#equipment-count');
+        if (equipmentCountTag !== null) {
+            equipmentCountTag.textContent = resources.equipment.length.toString();
+        }
         // Render crews
         const crewsList = document.querySelector('#available--crews .available-resources-list');
         if (crewsList !== null) {
@@ -580,6 +590,11 @@
                 }
                 crewsList.append(itemsContainer);
             }
+        }
+        // Update crews count
+        const crewsCountTag = document.querySelector('#crews-count');
+        if (crewsCountTag !== null) {
+            crewsCountTag.textContent = resources.crews.length.toString();
         }
     }
     // Lock/unlock functionality
@@ -2091,6 +2106,96 @@
             }
         }
     }
+    // Setup collapsible resource sections
+    function setupResourceCollapsibles() {
+        const headers = document.querySelectorAll('.resource-section-header');
+        for (const header of headers) {
+            header.addEventListener('click', () => {
+                const section = header.dataset.section;
+                if (section === undefined)
+                    return;
+                const content = document.querySelector(`#available--${section} .resource-section-content`);
+                if (content !== null) {
+                    header.classList.toggle('is-collapsed');
+                    content.classList.toggle('is-hidden');
+                }
+            });
+        }
+    }
+    // Helper function to get resource counts
+    function getResourceCounts() {
+        return {
+            employees: document.querySelectorAll('#available--employees .available-items > div[data-employee-number]').length,
+            equipment: document.querySelectorAll('#available--equipment .available-items > div[data-equipment-number]').length,
+            crews: document.querySelectorAll('#available--crews .available-items > div[data-crew-id]').length
+        };
+    }
+    // Setup search filter for available resources
+    function setupResourceFilter() {
+        const filterInput = document.querySelector('#availableResources--filter');
+        if (filterInput === null)
+            return;
+        filterInput.addEventListener('input', () => {
+            const filterText = filterInput.value.toLowerCase();
+            // Filter all resource items
+            const allResourceItems = document.querySelectorAll('#container--availableResources .available-items > div');
+            let employeesVisible = 0;
+            let equipmentVisible = 0;
+            let crewsVisible = 0;
+            for (const item of allResourceItems) {
+                const text = item.textContent?.toLowerCase() ?? '';
+                const isVisible = text.includes(filterText);
+                if (isVisible) {
+                    item.style.display = '';
+                    // Count visible items by type
+                    if (item.dataset.employeeNumber !== undefined) {
+                        employeesVisible++;
+                    }
+                    else if (item.dataset.equipmentNumber !== undefined) {
+                        equipmentVisible++;
+                    }
+                    else if (item.dataset.crewId !== undefined) {
+                        crewsVisible++;
+                    }
+                }
+                else {
+                    item.style.display = 'none';
+                }
+            }
+            // Update count tags
+            const employeesCountTag = document.querySelector('#employees-count');
+            const equipmentCountTag = document.querySelector('#equipment-count');
+            const crewsCountTag = document.querySelector('#crews-count');
+            const totals = getResourceCounts();
+            if (filterText !== '') {
+                // Show filtered counts
+                if (employeesCountTag !== null) {
+                    employeesCountTag.textContent = `${employeesVisible}/${totals.employees}`;
+                }
+                if (equipmentCountTag !== null) {
+                    equipmentCountTag.textContent = `${equipmentVisible}/${totals.equipment}`;
+                }
+                if (crewsCountTag !== null) {
+                    crewsCountTag.textContent = `${crewsVisible}/${totals.crews}`;
+                }
+            }
+            else {
+                // Reset to show total counts
+                if (employeesCountTag !== null) {
+                    employeesCountTag.textContent = totals.employees.toString();
+                }
+                if (equipmentCountTag !== null) {
+                    equipmentCountTag.textContent = totals.equipment.toString();
+                }
+                if (crewsCountTag !== null) {
+                    crewsCountTag.textContent = totals.crews.toString();
+                }
+            }
+        });
+    }
+    // Initialize resource section features
+    setupResourceCollapsibles();
+    setupResourceFilter();
     // Load shifts for today on page load
     loadShifts();
 })();
