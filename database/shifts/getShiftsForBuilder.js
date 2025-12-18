@@ -1,27 +1,16 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-export default function getShiftsForBuilder(shiftDateString, user) {
-    return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b, _c, _d;
-        const pool = yield getShiftLogConnectionPool();
-        let whereClause = `
+export default async function getShiftsForBuilder(shiftDateString, user) {
+    const pool = await getShiftLogConnectionPool();
+    let whereClause = `
     where s.instance = @instance
     and s.recordDelete_dateTime is null
     and s.shiftDate = @shiftDateString
   `;
-        if (user !== undefined) {
-            whereClause += `
+    if (user !== undefined) {
+        whereClause += `
       and (
         sType.userGroupId is null or sType.userGroupId in (
           select userGroupId
@@ -30,8 +19,8 @@ export default function getShiftsForBuilder(shiftDateString, user) {
         )
       )
     `;
-        }
-        const sql = /* sql */ `
+    }
+    const sql = /* sql */ `
     select
       s.shiftId,
       s.shiftDate,
@@ -60,20 +49,20 @@ export default function getShiftsForBuilder(shiftDateString, user) {
     ${whereClause}
     order by s.shiftTimeDataListItemId, s.shiftTypeDataListItemId
   `;
-        const shiftsResult = yield pool
-            .request()
-            .input('instance', getConfigProperty('application.instance'))
-            .input('shiftDateString', shiftDateString)
-            .input('userName', user === null || user === void 0 ? void 0 : user.userName)
-            .query(sql);
-        const shifts = shiftsResult.recordset;
-        // Get crews, employees, equipment, and work orders for all shifts
-        const shiftIds = shifts.map((shift) => shift.shiftId);
-        if (shiftIds.length === 0) {
-            return [];
-        }
-        // Get crews
-        const crewsSql = /* sql */ `
+    const shiftsResult = await pool
+        .request()
+        .input('instance', getConfigProperty('application.instance'))
+        .input('shiftDateString', shiftDateString)
+        .input('userName', user?.userName)
+        .query(sql);
+    const shifts = shiftsResult.recordset;
+    // Get crews, employees, equipment, and work orders for all shifts
+    const shiftIds = shifts.map((shift) => shift.shiftId);
+    if (shiftIds.length === 0) {
+        return [];
+    }
+    // Get crews
+    const crewsSql = /* sql */ `
     select
       sc.shiftId,
       sc.crewId,
@@ -86,9 +75,9 @@ export default function getShiftsForBuilder(shiftDateString, user) {
     and c.recordDelete_dateTime is null
     order by c.crewName
   `;
-        const crewsResult = yield pool.request().query(crewsSql);
-        // Get employees
-        const employeesSql = /* sql */ `
+    const crewsResult = await pool.request().query(crewsSql);
+    // Get employees
+    const employeesSql = /* sql */ `
     select
       se.shiftId,
       se.employeeNumber,
@@ -108,9 +97,9 @@ export default function getShiftsForBuilder(shiftDateString, user) {
     and e.recordDelete_dateTime is null
     order by e.lastName, e.firstName
   `;
-        const employeesResult = yield pool.request().query(employeesSql);
-        // Get equipment
-        const equipmentSql = /* sql */ `
+    const employeesResult = await pool.request().query(employeesSql);
+    // Get equipment
+    const equipmentSql = /* sql */ `
     select
       seq.shiftId,
       seq.equipmentNumber,
@@ -130,9 +119,9 @@ export default function getShiftsForBuilder(shiftDateString, user) {
     and eq.recordDelete_dateTime is null
     order by eq.equipmentName
   `;
-        const equipmentResult = yield pool.request().query(equipmentSql);
-        // Get work orders
-        const workOrdersSql = /* sql */ `
+    const equipmentResult = await pool.request().query(equipmentSql);
+    // Get work orders
+    const workOrdersSql = /* sql */ `
     select
       sw.shiftId,
       sw.workOrderId,
@@ -146,18 +135,19 @@ export default function getShiftsForBuilder(shiftDateString, user) {
     and wo.recordDelete_dateTime is null
     order by wo.workOrderNumber
   `;
-        const workOrdersResult = yield pool.request().query(workOrdersSql);
-        // Combine data
-        for (const shift of shifts) {
-            shift.crews =
-                (_a = crewsResult.recordset.filter((c) => c.shiftId === shift.shiftId)) !== null && _a !== void 0 ? _a : [];
-            shift.employees =
-                (_b = employeesResult.recordset.filter((e) => e.shiftId === shift.shiftId)) !== null && _b !== void 0 ? _b : [];
-            shift.equipment =
-                (_c = equipmentResult.recordset.filter((eq) => eq.shiftId === shift.shiftId)) !== null && _c !== void 0 ? _c : [];
-            shift.workOrders =
-                (_d = workOrdersResult.recordset.filter((w) => w.shiftId === shift.shiftId)) !== null && _d !== void 0 ? _d : [];
-        }
-        return shifts;
-    });
+    const workOrdersResult = await pool.request().query(workOrdersSql);
+    // Combine data
+    for (const shift of shifts) {
+        shift.crews =
+            crewsResult.recordset.filter((c) => c.shiftId === shift.shiftId) ?? [];
+        shift.employees =
+            employeesResult.recordset.filter((e) => e.shiftId === shift.shiftId) ?? [];
+        shift.equipment =
+            equipmentResult.recordset.filter((eq) => eq.shiftId === shift.shiftId) ??
+                [];
+        shift.workOrders =
+            workOrdersResult.recordset.filter((w) => w.shiftId === shift.shiftId) ??
+                [];
+    }
+    return shifts;
 }

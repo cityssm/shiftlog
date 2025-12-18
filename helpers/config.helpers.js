@@ -1,4 +1,3 @@
-var _a;
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { Configurator } from '@cityssm/configurator';
@@ -22,7 +21,8 @@ if (configArgumentIndex !== -1 &&
 }
 // Load config from the path specified in CONFIG_FILE environment variable
 // or default to data/config.js (resolved relative to this file)
-const configPath = (_a = process.env.CONFIG_FILE) !== null && _a !== void 0 ? _a : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../data/config.js');
+const configPath = process.env.CONFIG_FILE ??
+    path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../data/config.js');
 debug(`Loading configuration from: ${configPath}`);
 // Convert absolute path to file URL for dynamic import (required for Windows compatibility)
 const configUrl = pathToFileURL(configPath).href;
