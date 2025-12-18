@@ -29,6 +29,7 @@ import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShift
 import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShiftEquipment.js'
 import handler_doDeleteShiftWorkOrder from '../handlers/shifts-post/doDeleteShiftWorkOrder.js'
 import handler_doGetAvailableCrewsEmployeesEquipment from '../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js'
+import handler_doGetEligibleEmployeesForEquipment from '../handlers/shifts-post/doGetEligibleEmployeesForEquipment.js'
 import handler_doGetCrew from '../handlers/shifts-post/doGetCrew.js'
 import handler_doGetDeletedShifts from '../handlers/shifts-post/doGetDeletedShifts.js'
 import handler_doGetPreviousShifts from '../handlers/shifts-post/doGetPreviousShifts.js'
@@ -112,6 +113,11 @@ router.post(
   // eslint-disable-next-line no-secrets/no-secrets
   '/doGetAvailableCrewsEmployeesEquipment',
   handler_doGetAvailableCrewsEmployeesEquipment
+)
+
+router.post(
+  '/doGetEligibleEmployeesForEquipment',
+  handler_doGetEligibleEmployeesForEquipment
 )
 
 router.post('/doAddShiftCrew', updateHandler, handler_doAddShiftCrew)

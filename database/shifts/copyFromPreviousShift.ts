@@ -95,6 +95,16 @@ export default async function copyFromPreviousShift(
               select 1 from ShiftLog.ShiftEquipment se2
               where se2.shiftId = @currentShiftId and se2.equipmentNumber = se.equipmentNumber
             )
+            and (
+              -- Validate employee is allowed for equipment with employee list
+              se.employeeNumber is null
+              or eq.employeeListId is null
+              or exists (
+                select 1 from ShiftLog.EmployeeListMembers elm
+                where elm.employeeListId = eq.employeeListId
+                  and elm.employeeNumber = se.employeeNumber
+              )
+            )
         `)
     }
 
