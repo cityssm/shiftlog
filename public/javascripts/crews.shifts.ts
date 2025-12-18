@@ -386,6 +386,8 @@ declare const exports: {
         } else {
           // Revert to previous value
           selectElement.value = previousValue
+          // Update the stored previous value to match the reverted state
+          selectElement.dataset.previousValue = previousValue
           
           bulmaJS.alert({
             contextualColorName: 'danger',
@@ -720,27 +722,41 @@ declare const exports: {
           select.dataset.updateAssignment = ''
           select.dataset.previousValue = equipmentItem.employeeNumber ?? ''
 
-          const unassignedOption = document.createElement('option')
-          unassignedOption.value = ''
-          unassignedOption.textContent = '(Unassigned)'
-          select.append(unassignedOption)
+          // Helper function to populate the dropdown
+          const populateDropdown = (eligibleEmployeeNumbers?: Set<string>): void => {
+            select.innerHTML = ''
+            
+            const unassignedOption = document.createElement('option')
+            unassignedOption.value = ''
+            unassignedOption.textContent = '(Unassigned)'
+            select.append(unassignedOption)
 
-          // Filter members based on equipment's employee list
-          for (const member of crew.members) {
-            // If equipment has an employee list, only show members who would be eligible
-            // We need to check if this member is eligible by calling the API or filtering locally
-            // For now, we'll use the same approach as the add modal - fetch eligible employees
-            const option = document.createElement('option')
-            option.value = member.employeeNumber
-            option.textContent = `${member.lastName ?? ''}, ${member.firstName ?? ''}`
-            if (equipmentItem.employeeNumber === member.employeeNumber) {
-              option.selected = true
+            for (const member of crew.members) {
+              // Only add if no restriction or employee is eligible
+              if (eligibleEmployeeNumbers === undefined || 
+                  eligibleEmployeeNumbers.has(member.employeeNumber) ||
+                  member.employeeNumber === equipmentItem.employeeNumber) {
+                const option = document.createElement('option')
+                option.value = member.employeeNumber
+                option.textContent = `${member.lastName ?? ''}, ${member.firstName ?? ''}`
+                if (equipmentItem.employeeNumber === member.employeeNumber) {
+                  option.selected = true
+                }
+                select.append(option)
+              }
             }
-            select.append(option)
           }
 
-          // If equipment has an employee list, filter the options on load
+          // If equipment has an employee list, filter the options before showing
           if (equipmentItem.employeeListId !== null && equipmentItem.employeeListId !== undefined) {
+            // Disable while loading
+            select.disabled = true
+            
+            // Show loading state
+            const loadingOption = document.createElement('option')
+            loadingOption.textContent = 'Loading...'
+            select.append(loadingOption)
+            
             cityssm.postJSON(
               `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doGetEligibleEmployeesForEquipment`,
               { equipmentNumber: equipmentItem.equipmentNumber },
@@ -754,19 +770,18 @@ declare const exports: {
                   const eligibleEmployeeNumbers = new Set(
                     eligibleResponse.employees.map(emp => emp.employeeNumber)
                   )
-
-                  // Remove options that are not eligible (except the currently selected one)
-                  const options = Array.from(select.options)
-                  for (const option of options) {
-                    if (option.value !== '' && 
-                        option.value !== equipmentItem.employeeNumber &&
-                        !eligibleEmployeeNumbers.has(option.value)) {
-                      select.removeChild(option)
-                    }
-                  }
+                  populateDropdown(eligibleEmployeeNumbers)
+                } else {
+                  // On error, show all members
+                  populateDropdown()
                 }
+                
+                select.disabled = false
               }
             )
+          } else {
+            // No employee list restriction, show all members
+            populateDropdown()
           }
 
           select.addEventListener('change', updateEquipmentAssignment)
