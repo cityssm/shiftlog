@@ -2899,13 +2899,31 @@ declare const exports: {
         const content = document.querySelector(
           `#available--${section} .resource-section-content`
         ) as HTMLElement
-        const icon = header.querySelector('.icon i') as HTMLElement
 
         if (content !== null) {
           header.classList.toggle('is-collapsed')
           content.classList.toggle('is-hidden')
         }
       })
+    }
+  }
+
+  // Helper function to get resource counts
+  function getResourceCounts(): {
+    employees: number
+    equipment: number
+    crews: number
+  } {
+    return {
+      employees: document.querySelectorAll(
+        '#available--employees .available-items > div[data-employee-number]'
+      ).length,
+      equipment: document.querySelectorAll(
+        '#available--equipment .available-items > div[data-equipment-number]'
+      ).length,
+      crews: document.querySelectorAll(
+        '#available--crews .available-items > div[data-crew-id]'
+      ).length
     }
   }
 
@@ -2948,52 +2966,33 @@ declare const exports: {
         }
       }
 
-      // Update count tags to show filtered counts
+      // Update count tags
       const employeesCountTag = document.querySelector('#employees-count')
       const equipmentCountTag = document.querySelector('#equipment-count')
       const crewsCountTag = document.querySelector('#crews-count')
+      const totals = getResourceCounts()
 
       if (filterText !== '') {
         // Show filtered counts
-        const totalEmployees = document.querySelectorAll(
-          '#available--employees .available-items > div[data-employee-number]'
-        ).length
-        const totalEquipment = document.querySelectorAll(
-          '#available--equipment .available-items > div[data-equipment-number]'
-        ).length
-        const totalCrews = document.querySelectorAll(
-          '#available--crews .available-items > div[data-crew-id]'
-        ).length
-
         if (employeesCountTag !== null) {
-          employeesCountTag.textContent = `${employeesVisible}/${totalEmployees}`
+          employeesCountTag.textContent = `${employeesVisible}/${totals.employees}`
         }
         if (equipmentCountTag !== null) {
-          equipmentCountTag.textContent = `${equipmentVisible}/${totalEquipment}`
+          equipmentCountTag.textContent = `${equipmentVisible}/${totals.equipment}`
         }
         if (crewsCountTag !== null) {
-          crewsCountTag.textContent = `${crewsVisible}/${totalCrews}`
+          crewsCountTag.textContent = `${crewsVisible}/${totals.crews}`
         }
       } else {
         // Reset to show total counts
-        const totalEmployees = document.querySelectorAll(
-          '#available--employees .available-items > div[data-employee-number]'
-        ).length
-        const totalEquipment = document.querySelectorAll(
-          '#available--equipment .available-items > div[data-equipment-number]'
-        ).length
-        const totalCrews = document.querySelectorAll(
-          '#available--crews .available-items > div[data-crew-id]'
-        ).length
-
         if (employeesCountTag !== null) {
-          employeesCountTag.textContent = totalEmployees.toString()
+          employeesCountTag.textContent = totals.employees.toString()
         }
         if (equipmentCountTag !== null) {
-          equipmentCountTag.textContent = totalEquipment.toString()
+          equipmentCountTag.textContent = totals.equipment.toString()
         }
         if (crewsCountTag !== null) {
-          crewsCountTag.textContent = totalCrews.toString()
+          crewsCountTag.textContent = totals.crews.toString()
         }
       }
     })
