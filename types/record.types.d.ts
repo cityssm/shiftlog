@@ -104,7 +104,7 @@ export interface Crew extends BaseRecord {
     crewId: number;
     crewName: string;
     userGroupId?: number | null;
-    userGroupName?: string;
+    userGroupName?: string | null;
     memberCount?: number;
 }
 export interface CrewMember {

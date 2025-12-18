@@ -492,7 +492,7 @@
             crewNameSpan.className = 'has-text-weight-semibold mr-2';
             crewNameSpan.textContent = crew.crewName;
             iconText.append(crewNameSpan);
-            if (crew.userGroupName !== undefined) {
+            if (crew.userGroupName !== undefined && crew.userGroupName !== null) {
                 const userGroupTag = document.createElement('span');
                 userGroupTag.className = 'tag is-info';
                 userGroupTag.textContent = crew.userGroupName;
