@@ -52,6 +52,33 @@ export default async function addShiftCrew(
         `)
     }
 
+    // Get crew equipment
+    const crewEquipmentResult = await pool.request().input('crewId', form.crewId)
+      .query(/* sql */ `
+        select equipmentNumber, employeeNumber
+        from ShiftLog.CrewEquipment
+        where crewId = @crewId
+      `)
+
+    // Add crew equipment to shift equipment (if not already there)
+    for (const equipment of crewEquipmentResult.recordset) {
+      await pool
+        .request()
+        .input('shiftId', form.shiftId)
+        .input('instance', getConfigProperty('application.instance'))
+        .input('equipmentNumber', equipment.equipmentNumber)
+        .input('employeeNumber', equipment.employeeNumber ?? null).query(/* sql */ `
+          if not exists (
+            select 1 from ShiftLog.ShiftEquipment
+            where shiftId = @shiftId and equipmentNumber = @equipmentNumber
+          )
+          begin
+            insert into ShiftLog.ShiftEquipment (shiftId, instance, equipmentNumber, employeeNumber, shiftEquipmentNote)
+            values (@shiftId, @instance, @equipmentNumber, @employeeNumber, '')
+          end
+        `)
+    }
+
     return true
   } catch {
     return false
