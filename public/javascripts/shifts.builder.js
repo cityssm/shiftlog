@@ -1072,6 +1072,28 @@
                 });
                 break;
             }
+            case 'workOrder': {
+                cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
+                    shiftId: draggedData.fromShiftId,
+                    workOrderId: draggedData.id
+                }, (response) => {
+                    if (response.success) {
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            message: 'Work order removed from shift.'
+                        });
+                        loadShifts();
+                    }
+                    else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            message: 'Failed to remove work order from shift.',
+                            title: 'Error'
+                        });
+                    }
+                });
+                break;
+            }
             // No default
         }
     }
@@ -1415,6 +1437,32 @@
         });
     }
     function moveWorkOrder(workOrderId, fromShiftId, toShiftId) {
+        // If fromShiftId is 0, work order is being added (not moved)
+        if (fromShiftId === 0) {
+            // Just add to new shift
+            cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftWorkOrder`, {
+                shiftId: toShiftId,
+                shiftWorkOrderNote: '',
+                workOrderId
+            }, (addResponse) => {
+                if (addResponse.success) {
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Work order has been added to the shift.',
+                        title: 'Work Order Added'
+                    });
+                    loadShifts();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        message: 'Failed to add work order to shift.',
+                        title: 'Error'
+                    });
+                }
+            });
+            return;
+        }
         // Delete from old shift
         cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
             shiftId: fromShiftId,
@@ -2206,3 +2254,4 @@
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};

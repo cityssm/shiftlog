@@ -1467,6 +1467,32 @@ declare const exports: {
 
         break
       }
+      case 'workOrder': {
+        cityssm.postJSON(
+          `${shiftUrlPrefix}/doDeleteShiftWorkOrder`,
+          {
+            shiftId: draggedData.fromShiftId,
+            workOrderId: draggedData.id
+          },
+          (response: { success: boolean }) => {
+            if (response.success) {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Work order removed from shift.'
+              })
+              loadShifts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to remove work order from shift.',
+                title: 'Error'
+              })
+            }
+          }
+        )
+
+        break
+      }
       // No default
     }
   }
@@ -1915,6 +1941,36 @@ declare const exports: {
     fromShiftId: number,
     toShiftId: number
   ): void {
+    // If fromShiftId is 0, work order is being added (not moved)
+    if (fromShiftId === 0) {
+      // Just add to new shift
+      cityssm.postJSON(
+        `${shiftUrlPrefix}/doAddShiftWorkOrder`,
+        {
+          shiftId: toShiftId,
+          shiftWorkOrderNote: '',
+          workOrderId
+        },
+        (addResponse: { success: boolean }) => {
+          if (addResponse.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Work order has been added to the shift.',
+              title: 'Work Order Added'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to add work order to shift.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+      return
+    }
+
     // Delete from old shift
     cityssm.postJSON(
       `${shiftUrlPrefix}/doDeleteShiftWorkOrder`,
