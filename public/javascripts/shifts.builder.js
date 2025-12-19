@@ -2075,12 +2075,10 @@
     function filterCheckboxes(modalElement, containerSelector, filterText) {
         const container = modalElement.querySelector(containerSelector);
         if (container === null) {
-            console.warn(`Container not found: ${containerSelector}`);
             return;
         }
         const labels = container.querySelectorAll('label.checkbox');
         if (labels.length === 0) {
-            console.warn(`No checkboxes found in container: ${containerSelector}`);
             return;
         }
         const lowerFilter = filterText.toLowerCase();

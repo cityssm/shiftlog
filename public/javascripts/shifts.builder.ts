@@ -2888,14 +2888,12 @@ declare const exports: {
     ) as HTMLElement | null
 
     if (container === null) {
-      console.warn(`Container not found: ${containerSelector}`)
       return
     }
 
     const labels = container.querySelectorAll('label.checkbox')
 
     if (labels.length === 0) {
-      console.warn(`No checkboxes found in container: ${containerSelector}`)
       return
     }
 
