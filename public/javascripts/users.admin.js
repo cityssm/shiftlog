@@ -127,18 +127,53 @@
             <label class="label" for="${cityssm.escapeHTML(settingKey)}">
               ${cityssm.escapeHTML(settingKey)}
             </label>
-            <div class="control">
-              <input
-                class="input"
-                id="${cityssm.escapeHTML(settingKey)}"
-                name="${cityssm.escapeHTML(settingKey)}"
-                type="text"
-                value="${cityssm.escapeHTML(settingValue)}"
-                ${isApiKey ? 'readonly' : ''}
-              />
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input
+                  class="input"
+                  id="${cityssm.escapeHTML(settingKey)}"
+                  name="${cityssm.escapeHTML(settingKey)}"
+                  type="text"
+                  value="${cityssm.escapeHTML(settingValue)}"
+                  ${isApiKey ? 'readonly' : ''}
+                />
+              </div>
+              ${isApiKey
+                        ? `<div class="control">
+                      <button
+                        class="button is-warning"
+                        id="button--resetApiKey"
+                        type="button"
+                        title="Reset API Key"
+                      >
+                        <span class="icon">
+                          <i class="fa-solid fa-rotate"></i>
+                        </span>
+                        <span>Reset</span>
+                      </button>
+                    </div>`
+                        : ''}
             </div>
           `;
                     containerElement.append(fieldElement);
+                }
+                // Add event listener for reset API key button
+                const resetApiKeyButton = modalElement.querySelector('#button--resetApiKey');
+                if (resetApiKeyButton !== null) {
+                    resetApiKeyButton.addEventListener('click', () => {
+                        bulmaJS.confirm({
+                            contextualColorName: 'warning',
+                            title: 'Reset API Key',
+                            message: `Are you sure you want to reset the API key for user "${userName}"? The old key will no longer work.`,
+                            okButton: {
+                                contextualColorName: 'warning',
+                                text: 'Reset API Key',
+                                callbackFunction() {
+                                    resetUserApiKey(userName);
+                                }
+                            }
+                        });
+                    });
                 }
             },
             onshown(modalElement, _closeModalFunction) {
@@ -150,6 +185,32 @@
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function resetUserApiKey(userName) {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doResetUserApiKey`, {
+            userName
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success) {
+                // Update the users list with the new data from the server
+                if (responseJSON.users !== undefined) {
+                    exports.users = responseJSON.users;
+                    renderUsers(responseJSON.users);
+                }
+                bulmaJS.alert({
+                    contextualColorName: 'success',
+                    title: 'API Key Reset',
+                    message: `API key has been successfully reset.${responseJSON.apiKey !== undefined ? `<br><strong>New API Key:</strong> ${cityssm.escapeHTML(responseJSON.apiKey)}` : ''}`
+                });
+            }
+            else {
+                bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Error Resetting API Key',
+                    message: responseJSON.message ?? 'Please try again.'
+                });
             }
         });
     }
