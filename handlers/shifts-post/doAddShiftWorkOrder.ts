@@ -15,6 +15,22 @@ export default async function handler(
   >,
   response: Response
 ): Promise<void> {
+  // Check if work order is already on this shift
+  const existingWorkOrders = await getShiftWorkOrders(request.body.shiftId)
+  const workOrderId = Number(request.body.workOrderId)
+  
+  const alreadyExists = existingWorkOrders.some(
+    (wo) => wo.workOrderId === workOrderId
+  )
+
+  if (alreadyExists) {
+    response.json({
+      success: false,
+      errorMessage: 'This work order is already assigned to the shift.'
+    })
+    return
+  }
+
   const success = await addShiftWorkOrder(
     request.body.shiftId,
     request.body.workOrderId,

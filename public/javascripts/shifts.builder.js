@@ -1460,7 +1460,7 @@
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        message: 'Failed to add work order to shift.',
+                        message: addResponse.errorMessage ?? 'Failed to add work order to shift.',
                         title: 'Error'
                     });
                 }
@@ -1490,7 +1490,8 @@
                     else {
                         bulmaJS.alert({
                             contextualColorName: 'danger',
-                            message: 'Failed to add work order to new shift.',
+                            message: addResponse.errorMessage ??
+                                'Failed to add work order to new shift.',
                             title: 'Error'
                         });
                     }
@@ -2152,7 +2153,17 @@
                         workOrderId: resourceId
                     }, (response) => {
                         addedCount++;
-                        checkbox.checked = false;
+                        if (!response.success) {
+                            // Show error for this specific work order
+                            bulmaJS.alert({
+                                contextualColorName: 'warning',
+                                message: response.errorMessage ?? 'Failed to add work order.',
+                                title: 'Could Not Add Resource'
+                            });
+                        }
+                        else {
+                            checkbox.checked = false;
+                        }
                         if (addedCount === totalToAdd) {
                             successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
