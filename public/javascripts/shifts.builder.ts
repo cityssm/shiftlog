@@ -2878,18 +2878,28 @@ declare const exports: {
       containerSelector
     ) as HTMLElement | null
 
-    if (container === null) return
+    if (container === null) {
+      console.warn(`Container not found: ${containerSelector}`)
+      return
+    }
 
     const labels = container.querySelectorAll('label.checkbox')
+    
+    if (labels.length === 0) {
+      console.warn(`No checkboxes found in container: ${containerSelector}`)
+      return
+    }
+    
     const lowerFilter = filterText.toLowerCase()
 
     for (const label of labels) {
+      const labelElement = label as HTMLElement
       const text = (label.textContent ?? '').toLowerCase()
 
       if (text.includes(lowerFilter)) {
-        ;(label as HTMLElement).style.display = 'block'
+        labelElement.style.display = ''
       } else {
-        ;(label as HTMLElement).style.display = 'none'
+        labelElement.style.display = 'none'
       }
     }
   }

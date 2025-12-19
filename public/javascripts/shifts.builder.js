@@ -2073,19 +2073,24 @@
     }
     function filterCheckboxes(modalElement, containerSelector, filterText) {
         const container = modalElement.querySelector(containerSelector);
-        if (container === null)
+        if (container === null) {
+            console.warn(`Container not found: ${containerSelector}`);
             return;
+        }
         const labels = container.querySelectorAll('label.checkbox');
+        if (labels.length === 0) {
+            console.warn(`No checkboxes found in container: ${containerSelector}`);
+            return;
+        }
         const lowerFilter = filterText.toLowerCase();
         for (const label of labels) {
+            const labelElement = label;
             const text = (label.textContent ?? '').toLowerCase();
             if (text.includes(lowerFilter)) {
-                ;
-                label.style.display = 'block';
+                labelElement.style.display = '';
             }
             else {
-                ;
-                label.style.display = 'none';
+                labelElement.style.display = 'none';
             }
         }
     }
@@ -2285,3 +2290,4 @@
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};
