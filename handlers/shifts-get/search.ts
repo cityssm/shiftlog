@@ -11,15 +11,15 @@ export default async function handler(
 ): Promise<void> {
   const supervisors = await getEmployees({ isSupervisor: true })
 
-   const shiftTypes = await getShiftTypeDataListItems(request.session.user)
-  
-    const shiftTimes = await getShiftTimeDataListItems(request.session.user)
+  const shiftTypes = await getShiftTypeDataListItems(request.session.user)
+
+  const shiftTimes = await getShiftTimeDataListItems(request.session.user)
 
   response.render('shifts/search', {
-    headTitle: `${getConfigProperty('shifts.sectionNameSingular')} Search`,
+    headTitle: `${getConfigProperty('shifts.sectionNameSingular')} - Search`,
 
-    supervisors,
+    shiftTimes,
     shiftTypes,
-    shiftTimes
+    supervisors
   })
 }

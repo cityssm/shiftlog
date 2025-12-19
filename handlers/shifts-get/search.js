@@ -7,9 +7,9 @@ export default async function handler(request, response) {
     const shiftTypes = await getShiftTypeDataListItems(request.session.user);
     const shiftTimes = await getShiftTimeDataListItems(request.session.user);
     response.render('shifts/search', {
-        headTitle: `${getConfigProperty('shifts.sectionNameSingular')} Search`,
-        supervisors,
+        headTitle: `${getConfigProperty('shifts.sectionNameSingular')} - Search`,
+        shiftTimes,
         shiftTypes,
-        shiftTimes
+        supervisors
     });
 }

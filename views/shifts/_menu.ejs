@@ -1,10 +1,32 @@
 <aside class="menu" aria-label="<%= configFunctions.getConfigProperty('shifts.sectionName') %> Menu">
+  <% if (user.userProperties.shifts.canUpdate) { %>
+  <ul class="menu-list">
+    <li>
+      <a
+        href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/new"
+        title="Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-plus"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
+          </div>
+        </div>
+      </a>
+    </li>
+  </ul>
+  <% } %>
   <h2 class="menu-label is-hidden-touch">
     <%= configFunctions.getConfigProperty('shifts.sectionName') %>
   </h2>
   <ul class="menu-list">
     <li>
       <a
+        class="<%= headTitle.endsWith(' - Search') ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>"
         title="<%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Search">
         <div class="columns is-mobile is-1">
@@ -16,19 +38,6 @@
           </div>
         </div>
       </a>
-      <% if (user.userProperties.shifts.canUpdate) { %>
-      <ul>
-        <li>
-          <a
-            href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/new"
-            title="Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>"
-          >
-            <span class="is-hidden-touch">Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
-            <span class="icon is-hidden-desktop"><i class="fa-solid fa-plus"></i></span>
-          </a>
-        </li>
-      </ul>
-      <% } %>
     </li>
     <% if (user.userProperties.shifts.canUpdate) { %>
     <li>
@@ -61,6 +70,11 @@
         </div>
       </a>
     </li>
+  </ul>
+  <p class="menu-label is-hidden-touch">
+    Tools
+  </p>
+  <ul class="menu-list">
     <% if (user.userProperties.shifts.canManage) { %>
     <li>
       <a
@@ -78,11 +92,6 @@
       </a>
     </li>
     <% } %>
-  </ul>
-  <p class="menu-label is-hidden-touch">
-    Links
-  </p>
-  <ul class="menu-list">
     <li>
       <a
         href="<%= urlPrefix %>/dashboard/reports/?tab=shifts"

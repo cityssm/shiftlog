@@ -1,8 +1,8 @@
+import getTags from '../../database/tags/getTags.js';
 import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
 import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
-import getTags from '../../database/tags/getTags.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
     const assignedToItems = await getAssignedToDataListItems(request.session.user);

@@ -1,43 +1,82 @@
 <div class="menu">
+  <% if (user.userProperties.timesheets.canUpdate) { %>
+  <ul class="menu-list">
+    <li>
+      <a
+        href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new"
+        title="Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-plus"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>
+          </div>
+        </div>
+      </a>
+    </li>
+  </ul>
+  <% } %>
   <p class="menu-label">
     <%= configFunctions.getConfigProperty('timesheets.sectionName') %>
   </p>
   <ul class="menu-list">
     <li>
       <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
-        <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-        <span><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Search</span>
-      </a>
-      <% if (user.userProperties.timesheets.canUpdate) { %>
-      <ul>
-        <li>
-          <a
-            href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new"
-            title="Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>">
-            <span class="is-hidden-touch">Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
-            <span class="icon is-hidden-desktop"><i class="fa-solid fa-plus"></i></span>
-          </a>
-        </li>
-      </ul>
-      <% } %>
-    </li>
-    <li>
-      <a href="<%= urlPrefix %>/dashboard/reports/?tab=timesheets">
-        <span class="icon"><i class="fa-solid fa-file-lines"></i></span>
-        <span><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Reports</span>
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-search"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Search
+          </div>
+        </div>
       </a>
     </li>
+  </ul>
+  <p class="menu-label is-hidden-touch">Tools</p>
+  <ul class="menu-list">
     <% if (user.userProperties.timesheets.canManage) { %>
     <li>
       <a
         class="<%= headTitle.endsWith(' - Record Recovery') ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/recovery"
-        title="Record Recovery">
-        <span class="icon"><i class="fa-solid fa-trash-arrow-up"></i></span>
-        <span>Record Recovery</span>
+        title="Record Recovery"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-trash-can-arrow-up"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Record Recovery
+          </div>
+        </div>
       </a>
     </li>
     <% } %>
+    <li>
+      <a href="<%= urlPrefix %>/dashboard/reports/?tab=timesheets">
+        
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-file-lines"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Reports
+          </div>
+        </div>
+      </a>
+    </li>
+    
     <li>
       <a
         href="https://cityssm.github.io/shiftlog/docs/timesheets.html"
@@ -52,7 +91,7 @@
             </span>
           </div>
           <div class="column is-hidden-touch">
-            <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Help
+            Help
           </div>
         </div>
       </a>
