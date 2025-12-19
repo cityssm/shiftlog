@@ -1977,25 +1977,26 @@ declare const exports: {
       return
     }
 
-    // Delete from old shift
+    // Moving between shifts - check if work order is already on target shift first
+    // This prevents data loss if the add fails due to duplicate
     cityssm.postJSON(
-      `${shiftUrlPrefix}/doDeleteShiftWorkOrder`,
+      `${shiftUrlPrefix}/doAddShiftWorkOrder`,
       {
-        shiftId: fromShiftId,
+        shiftId: toShiftId,
+        shiftWorkOrderNote: '',
         workOrderId
       },
-      (deleteResponse) => {
-        if (deleteResponse.success) {
-          // Add to new shift
+      (addResponse: { success: boolean; errorMessage?: string }) => {
+        if (addResponse.success) {
+          // Successfully added to new shift, now remove from old shift
           cityssm.postJSON(
-            `${shiftUrlPrefix}/doAddShiftWorkOrder`,
+            `${shiftUrlPrefix}/doDeleteShiftWorkOrder`,
             {
-              shiftId: toShiftId,
-              shiftWorkOrderNote: '',
+              shiftId: fromShiftId,
               workOrderId
             },
-            (addResponse: { success: boolean; errorMessage?: string }) => {
-              if (addResponse.success) {
+            (deleteResponse) => {
+              if (deleteResponse.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   message: 'Work order has been moved to the new shift.',
@@ -2004,19 +2005,22 @@ declare const exports: {
                 loadShifts()
               } else {
                 bulmaJS.alert({
-                  contextualColorName: 'danger',
+                  contextualColorName: 'warning',
                   message:
-                    addResponse.errorMessage ??
-                    'Failed to add work order to new shift.',
-                  title: 'Error'
+                    'Work order was added to the new shift but could not be removed from the original shift.',
+                  title: 'Partial Success'
                 })
+                loadShifts()
               }
             }
           )
         } else {
+          // Add failed (likely already on target shift), don't delete from source
           bulmaJS.alert({
             contextualColorName: 'danger',
-            message: 'Failed to remove work order from original shift.',
+            message:
+              addResponse.errorMessage ??
+              'Failed to add work order to new shift.',
             title: 'Error'
           })
         }

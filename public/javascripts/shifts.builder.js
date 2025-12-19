@@ -1467,19 +1467,20 @@
             });
             return;
         }
-        // Delete from old shift
-        cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
-            shiftId: fromShiftId,
+        // Moving between shifts - check if work order is already on target shift first
+        // This prevents data loss if the add fails due to duplicate
+        cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftWorkOrder`, {
+            shiftId: toShiftId,
+            shiftWorkOrderNote: '',
             workOrderId
-        }, (deleteResponse) => {
-            if (deleteResponse.success) {
-                // Add to new shift
-                cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftWorkOrder`, {
-                    shiftId: toShiftId,
-                    shiftWorkOrderNote: '',
+        }, (addResponse) => {
+            if (addResponse.success) {
+                // Successfully added to new shift, now remove from old shift
+                cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
+                    shiftId: fromShiftId,
                     workOrderId
-                }, (addResponse) => {
-                    if (addResponse.success) {
+                }, (deleteResponse) => {
+                    if (deleteResponse.success) {
                         bulmaJS.alert({
                             contextualColorName: 'success',
                             message: 'Work order has been moved to the new shift.',
@@ -1489,18 +1490,20 @@
                     }
                     else {
                         bulmaJS.alert({
-                            contextualColorName: 'danger',
-                            message: addResponse.errorMessage ??
-                                'Failed to add work order to new shift.',
-                            title: 'Error'
+                            contextualColorName: 'warning',
+                            message: 'Work order was added to the new shift but could not be removed from the original shift.',
+                            title: 'Partial Success'
                         });
+                        loadShifts();
                     }
                 });
             }
             else {
+                // Add failed (likely already on target shift), don't delete from source
                 bulmaJS.alert({
                     contextualColorName: 'danger',
-                    message: 'Failed to remove work order from original shift.',
+                    message: addResponse.errorMessage ??
+                        'Failed to add work order to new shift.',
                     title: 'Error'
                 });
             }
