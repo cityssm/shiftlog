@@ -2078,7 +2078,7 @@
         const labels = container.querySelectorAll('label.checkbox');
         const lowerFilter = filterText.toLowerCase();
         for (const label of labels) {
-            const text = label.textContent.toLowerCase();
+            const text = (label.textContent ?? '').toLowerCase();
             if (text.includes(lowerFilter)) {
                 ;
                 label.style.display = 'block';
@@ -2285,3 +2285,4 @@
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};

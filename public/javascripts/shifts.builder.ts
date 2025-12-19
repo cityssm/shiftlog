@@ -2881,7 +2881,7 @@ declare const exports: {
     const lowerFilter = filterText.toLowerCase()
 
     for (const label of labels) {
-      const text = label.textContent.toLowerCase()
+      const text = (label.textContent ?? '').toLowerCase()
 
       if (text.includes(lowerFilter)) {
         ;(label as HTMLElement).style.display = 'block'
