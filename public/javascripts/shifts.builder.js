@@ -614,7 +614,11 @@
     let draggedData = null;
     // Drag and drop handlers
     function handleDragStart(event) {
-        const target = event.target;
+        // Find the actual draggable element (might be parent of event.target)
+        const target = event.target.closest('[draggable="true"]');
+        if (target === null) {
+            return;
+        }
         const employeeNumber = target.dataset.employeeNumber;
         const equipmentNumber = target.dataset.equipmentNumber;
         const crewId = target.dataset.crewId;
@@ -2254,3 +2258,4 @@
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};

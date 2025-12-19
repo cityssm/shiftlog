@@ -862,7 +862,12 @@ declare const exports: {
 
   // Drag and drop handlers
   function handleDragStart(event: DragEvent): void {
-    const target = event.target as HTMLElement
+    // Find the actual draggable element (might be parent of event.target)
+    const target = (event.target as HTMLElement).closest('[draggable="true"]') as HTMLElement
+    
+    if (target === null) {
+      return
+    }
 
     const employeeNumber = target.dataset.employeeNumber
     const equipmentNumber = target.dataset.equipmentNumber
