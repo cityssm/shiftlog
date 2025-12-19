@@ -5,6 +5,45 @@
     const ITEMS_PER_PAGE = 50;
     let currentPage = 1;
     let totalCount = 0;
+    function resetApiKeyFromButton(clickEvent) {
+        const buttonElement = clickEvent.currentTarget;
+        const userName = buttonElement.dataset.userName;
+        if (userName === undefined) {
+            return;
+        }
+        bulmaJS.confirm({
+            contextualColorName: 'warning',
+            title: 'Reset API Key',
+            message: `Are you sure you want to reset the API key for user "${userName}"? The old key will no longer work.`,
+            okButton: {
+                contextualColorName: 'warning',
+                text: 'Reset API Key',
+                callbackFunction() {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doResetUserApiKey`, {
+                        userName
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success) {
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                title: 'API Key Reset',
+                                message: 'API key has been successfully reset for user "${userName}".'
+                            });
+                            // Reload the audit logs to reflect any changes
+                            loadAuditLogs();
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                title: 'Error Resetting API Key',
+                                message: responseJSON.message ?? 'Please try again.'
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    }
     function pageSelect(pageNumber) {
         currentPage = pageNumber;
         loadAuditLogs();
@@ -32,6 +71,7 @@
           <th>Valid Key</th>
           <th>IP Address</th>
           <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -60,7 +100,8 @@
                 ipAddress: cityssm.escapeHTML(log.ipAddress ?? '-'),
                 requestMethod: cityssm.escapeHTML(log.requestMethod),
                 requestTime: cityssm.escapeHTML(requestTime.toLocaleString()),
-                userName: cityssm.escapeHTML(log.userName ?? '-')
+                userName: cityssm.escapeHTML(log.userName ?? '-'),
+                rawUserName: log.userName ?? ''
             };
             // eslint-disable-next-line no-unsanitized/method
             tableElement.querySelector('tbody')?.insertAdjacentHTML('beforeend', 
@@ -75,8 +116,26 @@
             <td>${isValidIcon}</td>
             <td>${escapedContent.ipAddress}</td>
             <td>${statusBadge}</td>
+            <td>
+              ${escapedContent.rawUserName === ''
+                ? ''
+                : `<button
+                      class="button is-small is-warning reset-api-key"
+                      data-user-name="${escapedContent.userName}"
+                      title="Reset API Key for ${escapedContent.userName}"
+                    >
+                      <span class="icon is-small">
+                        <i class="fa-solid fa-rotate"></i>
+                      </span>
+                      <span>Reset Key</span>
+                    </button>`}
+            </td>
           </tr>
         `);
+        }
+        // Add event listeners for reset API key buttons
+        for (const button of tableElement.querySelectorAll('.reset-api-key')) {
+            button.addEventListener('click', resetApiKeyFromButton);
         }
         containerElement.replaceChildren(tableElement);
     }

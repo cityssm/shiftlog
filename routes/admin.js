@@ -22,6 +22,7 @@ import handler_doGetOrphanedTags from '../handlers/admin-post/doGetOrphanedTags.
 import handler_doAddUser from '../handlers/admin-post/doAddUser.js';
 import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js';
 import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupMember.js';
+import handler_doResetUserApiKey from '../handlers/admin-post/doResetUserApiKey.js';
 import handler_doAddWorkOrderType from '../handlers/admin-post/doAddWorkOrderType.js';
 import handler_doDeleteDataListItem from '../handlers/admin-post/doDeleteDataListItem.js';
 import handler_doDeleteEmployee from '../handlers/admin-post/doDeleteEmployee.js';
@@ -62,6 +63,7 @@ router
     .post('/doUpdateUser', handler_doUpdateUser)
     .post('/doUpdateUserSettings', handler_doUpdateUserSettings)
     .post('/doToggleUserPermission', handler_doToggleUserPermission)
+    .post('/doResetUserApiKey', handler_doResetUserApiKey)
     .post('/doDeleteUser', handler_doDeleteUser);
 /*
  * User Groups
