@@ -2840,6 +2840,7 @@ declare const exports: {
 
     employeeFilter?.addEventListener('input', () => {
       filterCheckboxes(
+        modalElement,
         '#builderAddResource--employeeList',
         employeeFilter.value
       )
@@ -2852,6 +2853,7 @@ declare const exports: {
 
     equipmentFilter?.addEventListener('input', () => {
       filterCheckboxes(
+        modalElement,
         '#builderAddResource--equipmentList',
         equipmentFilter.value
       )
@@ -2863,15 +2865,16 @@ declare const exports: {
     ) as HTMLInputElement | null
 
     crewFilter?.addEventListener('input', () => {
-      filterCheckboxes('#builderAddResource--crewList', crewFilter.value)
+      filterCheckboxes(modalElement, '#builderAddResource--crewList', crewFilter.value)
     })
   }
 
   function filterCheckboxes(
+    modalElement: HTMLElement,
     containerSelector: string,
     filterText: string
   ): void {
-    const container = document.querySelector(
+    const container = modalElement.querySelector(
       containerSelector
     ) as HTMLElement | null
 

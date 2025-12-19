@@ -2058,21 +2058,21 @@
         // Employee filter
         const employeeFilter = modalElement.querySelector('#builderAddResource--employeeFilter');
         employeeFilter?.addEventListener('input', () => {
-            filterCheckboxes('#builderAddResource--employeeList', employeeFilter.value);
+            filterCheckboxes(modalElement, '#builderAddResource--employeeList', employeeFilter.value);
         });
         // Equipment filter
         const equipmentFilter = modalElement.querySelector('#builderAddResource--equipmentFilter');
         equipmentFilter?.addEventListener('input', () => {
-            filterCheckboxes('#builderAddResource--equipmentList', equipmentFilter.value);
+            filterCheckboxes(modalElement, '#builderAddResource--equipmentList', equipmentFilter.value);
         });
         // Crew filter
         const crewFilter = modalElement.querySelector('#builderAddResource--crewFilter');
         crewFilter?.addEventListener('input', () => {
-            filterCheckboxes('#builderAddResource--crewList', crewFilter.value);
+            filterCheckboxes(modalElement, '#builderAddResource--crewList', crewFilter.value);
         });
     }
-    function filterCheckboxes(containerSelector, filterText) {
-        const container = document.querySelector(containerSelector);
+    function filterCheckboxes(modalElement, containerSelector, filterText) {
+        const container = modalElement.querySelector(containerSelector);
         if (container === null)
             return;
         const labels = container.querySelectorAll('label.checkbox');
@@ -2285,3 +2285,4 @@
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};
