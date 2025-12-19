@@ -1,8 +1,8 @@
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
-import type { WorkOrder } from '../../types/record.types.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import type { WorkOrder } from '../../types/record.types.js'
 
 export interface ShiftWorkOrder extends WorkOrder {
   shiftWorkOrderNote: string
@@ -29,6 +29,8 @@ export default async function getShiftWorkOrders(
           wt.workOrderType,
           w.workOrderStatusDataListItemId,
           wsd.dataListItem as workOrderStatusDataListItem,
+          w.workOrderPriorityDataListItemId,
+          wpd.dataListItem as workOrderPriorityDataListItem,
           w.workOrderDetails,
           w.workOrderOpenDateTime,
           w.workOrderDueDateTime,
@@ -51,6 +53,7 @@ export default async function getShiftWorkOrders(
         inner join ShiftLog.WorkOrders w on sw.workOrderId = w.workOrderId
         inner join ShiftLog.WorkOrderTypes wt on w.workOrderTypeId = wt.workOrderTypeId
         left join ShiftLog.DataListItems wsd on w.workOrderStatusDataListItemId = wsd.dataListItemId
+        left join ShiftLog.DataListItems wpd on w.workOrderPriorityDataListItemId = wpd.dataListItemId
         left join ShiftLog.DataListItems atd on w.assignedToDataListItemId = atd.dataListItemId
         where sw.shiftId = @shiftId
           and w.instance = @instance

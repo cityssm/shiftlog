@@ -81,7 +81,7 @@
                     return `<span class="tag is-small" ${style}>${cityssm.escapeHTML(tag.tagName)}</span>`;
                 })
                     .join(' ');
-                tagsHTML = `<div class="tags" style="margin-top: 0.25rem;">${tagsElements}</div>`;
+                tagsHTML = `<div class="tags mt-1">${tagsElements}</div>`;
             }
             // Build attachment icon HTML
             const attachmentIconHTML = workOrder.attachmentsCount && workOrder.attachmentsCount > 0
@@ -129,6 +129,8 @@
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -
             ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}
+            -
+            ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem ?? '(No Priority)')}
           </span>
           ${tagsHTML}
         </td>

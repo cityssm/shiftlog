@@ -1,6 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable unicorn/no-null */
-
 import type { DateString } from '@cityssm/utils-datetime'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -17,23 +14,30 @@ export interface ShiftForBuilder extends Shift {
     employeeNumber: string
     firstName: string
     lastName: string
+
     crewId: number | null
     crewName: string | null
-    shiftEmployeeNote: string
+
     isSupervisor: boolean
+    shiftEmployeeNote: string
   }>
   equipment: Array<{
     equipmentNumber: string
+
     equipmentName: string
+
     employeeNumber: string | null
     employeeFirstName: string | null
     employeeLastName: string | null
+
     shiftEquipmentNote: string
   }>
   workOrders: Array<{
     workOrderId: number
     workOrderNumber: string
+
     workOrderDetails: string
+
     shiftWorkOrderNote: string
   }>
 }
@@ -123,7 +127,12 @@ export default async function getShiftsForBuilder(
     order by c.crewName
   `
 
-  const crewsResult = await pool.request().query(crewsSql)
+  const crewsResult = await pool.request().query<{
+    shiftId: number
+    crewId: number
+    crewName: string
+    shiftCrewNote: string
+  }>(crewsSql)
 
   // Get employees
   const employeesSql = /* sql */ `
@@ -147,7 +156,17 @@ export default async function getShiftsForBuilder(
     order by e.lastName, e.firstName
   `
 
-  const employeesResult = await pool.request().query(employeesSql)
+  const employeesResult = await pool.request().query<{
+    shiftId: number
+    employeeNumber: string
+    firstName: string
+    lastName: string
+
+    crewId: number | null
+    crewName: string | null
+    shiftEmployeeNote: string
+    isSupervisor: boolean
+  }>(employeesSql)
 
   // Get equipment
   const equipmentSql = /* sql */ `
@@ -171,7 +190,15 @@ export default async function getShiftsForBuilder(
     order by eq.equipmentName
   `
 
-  const equipmentResult = await pool.request().query(equipmentSql)
+  const equipmentResult = await pool.request().query<{
+    shiftId: number
+    equipmentNumber: string
+    equipmentName: string
+    employeeNumber: string | null
+    employeeFirstName: string | null
+    employeeLastName: string | null
+    shiftEquipmentNote: string
+  }>(equipmentSql)
 
   // Get work orders
   const workOrdersSql = /* sql */ `
@@ -189,20 +216,31 @@ export default async function getShiftsForBuilder(
     order by wo.workOrderNumber
   `
 
-  const workOrdersResult = await pool.request().query(workOrdersSql)
+  const workOrdersResult = await pool.request().query<{
+    shiftId: number
+    workOrderId: number
+    workOrderNumber: string
+    workOrderDetails: string
+    shiftWorkOrderNote: string
+  }>(workOrdersSql)
 
   // Combine data
   for (const shift of shifts) {
-    shift.crews =
-      crewsResult.recordset.filter((c) => c.shiftId === shift.shiftId) ?? []
-    shift.employees =
-      employeesResult.recordset.filter((e) => e.shiftId === shift.shiftId) ?? []
-    shift.equipment =
-      equipmentResult.recordset.filter((eq) => eq.shiftId === shift.shiftId) ??
-      []
-    shift.workOrders =
-      workOrdersResult.recordset.filter((w) => w.shiftId === shift.shiftId) ??
-      []
+    shift.crews = crewsResult.recordset.filter(
+      (crew) => crew.shiftId === shift.shiftId
+    )
+
+    shift.employees = employeesResult.recordset.filter(
+      (employee) => employee.shiftId === shift.shiftId
+    )
+
+    shift.equipment = equipmentResult.recordset.filter(
+      (equipment) => equipment.shiftId === shift.shiftId
+    )
+
+    shift.workOrders = workOrdersResult.recordset.filter(
+      (workOrder) => workOrder.shiftId === shift.shiftId
+    )
   }
 
   return shifts

@@ -1,5 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable unicorn/no-null */
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShiftsForBuilder(shiftDateString, user) {
@@ -138,16 +136,10 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
     const workOrdersResult = await pool.request().query(workOrdersSql);
     // Combine data
     for (const shift of shifts) {
-        shift.crews =
-            crewsResult.recordset.filter((c) => c.shiftId === shift.shiftId) ?? [];
-        shift.employees =
-            employeesResult.recordset.filter((e) => e.shiftId === shift.shiftId) ?? [];
-        shift.equipment =
-            equipmentResult.recordset.filter((eq) => eq.shiftId === shift.shiftId) ??
-                [];
-        shift.workOrders =
-            workOrdersResult.recordset.filter((w) => w.shiftId === shift.shiftId) ??
-                [];
+        shift.crews = crewsResult.recordset.filter((crew) => crew.shiftId === shift.shiftId);
+        shift.employees = employeesResult.recordset.filter((employee) => employee.shiftId === shift.shiftId);
+        shift.equipment = equipmentResult.recordset.filter((equipment) => equipment.shiftId === shift.shiftId);
+        shift.workOrders = workOrdersResult.recordset.filter((workOrder) => workOrder.shiftId === shift.shiftId);
     }
     return shifts;
 }

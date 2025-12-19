@@ -46,11 +46,10 @@ declare const exports: {
     // Show/hide tasks icon indicator
     const hasTasksIconElement = document.querySelector('#icon--hasTasks')
     if (hasTasksIconElement !== null) {
-      if (shiftWorkOrders.length > 0) {
-        hasTasksIconElement.classList.remove('is-hidden')
-      } else {
-        hasTasksIconElement.classList.add('is-hidden')
-      }
+      hasTasksIconElement.classList.toggle(
+        'is-hidden',
+        shiftWorkOrders.length === 0
+      )
     }
   }
 
@@ -97,11 +96,15 @@ declare const exports: {
       trElement.innerHTML = /* html */ `
         <td>
           <a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">
-            #${cityssm.escapeHTML(workOrder.workOrderNumber)}
+            ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a>
         </td>
         <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
-        <td>${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '')}</td>
+        <td>
+          ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '')}
+          -
+          ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem ?? '')}
+        </td>
         <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 100))}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
         <td>${cityssm.escapeHTML(workOrder.shiftWorkOrderNote)}</td>
         ${
@@ -204,7 +207,11 @@ declare const exports: {
           ${
             workOrder === undefined
               ? ''
-              : /* html */ `<a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">#${cityssm.escapeHTML(workOrder.workOrderNumber)}</a>`
+              : /* html */ `
+                <a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">
+                  ${cityssm.escapeHTML(workOrder.workOrderNumber)}
+                </a>
+              `
           }
         </td>
         <td>${cityssm.escapeHTML(milestone.milestoneTitle)}</td>
@@ -249,23 +256,6 @@ declare const exports: {
         button.addEventListener('click', completeMilestone)
       }
     }
-  }
-
-  function refreshWorkOrderData(): void {
-    cityssm.postJSON(
-      `${urlPrefix}/doGetShiftWorkOrders`,
-      { shiftId },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          success: boolean
-          shiftWorkOrders: ShiftWorkOrder[]
-        }
-        shiftWorkOrders = responseJSON.shiftWorkOrders
-        renderShiftWorkOrders()
-        updateCounts()
-        loadMilestones()
-      }
-    )
   }
 
   function loadMilestones(): void {
@@ -447,7 +437,9 @@ declare const exports: {
               ).dataset.workOrderId
 
               const selectedWorkOrder = responseJSON.workOrders.find(
-                (possibleWorkOrder) => possibleWorkOrder.workOrderId.toString() === selectedWorkOrderId
+                (possibleWorkOrder) =>
+                  possibleWorkOrder.workOrderId.toString() ===
+                  selectedWorkOrderId
               )
 
               if (selectedWorkOrder !== undefined) {
@@ -487,7 +479,6 @@ declare const exports: {
         '#addWorkOrder--selectedWorkOrder'
       ) as HTMLElement
 
-      // eslint-disable-next-line no-unsanitized/property
       selectedWorkOrderDiv.innerHTML = /* html */ `
         <p class="mb-2">
           <strong>Work Order #${cityssm.escapeHTML(workOrder.workOrderNumber)}</strong>
@@ -790,47 +781,6 @@ declare const exports: {
         }
       }
     })
-  }
-
-  /*
-   * Initialize tabs
-   */
-
-  const tabsContainerElement = document.querySelector(
-    '#tab-content--workOrders'
-  )
-  if (tabsContainerElement !== null) {
-    const tabLinks = document.querySelectorAll(
-      '#tab--tasks .tabs a'
-    ) as NodeListOf<HTMLAnchorElement>
-
-    for (const tabLink of tabLinks) {
-      tabLink.addEventListener('click', (clickEvent) => {
-        clickEvent.preventDefault()
-
-        const targetId = tabLink.getAttribute('href') ?? ''
-
-        // Update active link
-        for (const link of tabLinks) {
-          link.parentElement?.classList.toggle(
-            'is-active',
-            link.getAttribute('href') === targetId
-          )
-        }
-
-        // Show/hide tabs
-        const allTabContent = document.querySelectorAll(
-          '[id^="tab-content--"]'
-        ) as NodeListOf<HTMLElement>
-
-        for (const tabContent of allTabContent) {
-          tabContent.classList.toggle(
-            'is-hidden',
-            `#${tabContent.id}` !== targetId
-          )
-        }
-      })
-    }
   }
 
   if (isEdit) {

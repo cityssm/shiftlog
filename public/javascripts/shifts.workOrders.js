@@ -22,12 +22,7 @@
         // Show/hide tasks icon indicator
         const hasTasksIconElement = document.querySelector('#icon--hasTasks');
         if (hasTasksIconElement !== null) {
-            if (shiftWorkOrders.length > 0) {
-                hasTasksIconElement.classList.remove('is-hidden');
-            }
-            else {
-                hasTasksIconElement.classList.add('is-hidden');
-            }
+            hasTasksIconElement.classList.toggle('is-hidden', shiftWorkOrders.length === 0);
         }
     }
     function renderShiftWorkOrders() {
@@ -63,11 +58,15 @@
             trElement.innerHTML = /* html */ `
         <td>
           <a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">
-            #${cityssm.escapeHTML(workOrder.workOrderNumber)}
+            ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a>
         </td>
         <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
-        <td>${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '')}</td>
+        <td>
+          ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '')}
+          -
+          ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem ?? '')}
+        </td>
         <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 100))}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
         <td>${cityssm.escapeHTML(workOrder.shiftWorkOrderNote)}</td>
         ${isEdit
@@ -146,7 +145,11 @@
         <td>
           ${workOrder === undefined
                 ? ''
-                : /* html */ `<a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">#${cityssm.escapeHTML(workOrder.workOrderNumber)}</a>`}
+                : /* html */ `
+                <a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">
+                  ${cityssm.escapeHTML(workOrder.workOrderNumber)}
+                </a>
+              `}
         </td>
         <td>${cityssm.escapeHTML(milestone.milestoneTitle)}</td>
         <td>${cityssm.escapeHTML(milestone.milestoneDescription)}</td>
@@ -182,15 +185,6 @@
                 button.addEventListener('click', completeMilestone);
             }
         }
-    }
-    function refreshWorkOrderData() {
-        cityssm.postJSON(`${urlPrefix}/doGetShiftWorkOrders`, { shiftId }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            shiftWorkOrders = responseJSON.shiftWorkOrders;
-            renderShiftWorkOrders();
-            updateCounts();
-            loadMilestones();
-        });
     }
     function loadMilestones() {
         // Load milestones for all work orders
@@ -313,7 +307,8 @@
                     button.addEventListener('click', (selectEvent) => {
                         selectEvent.preventDefault();
                         const selectedWorkOrderId = selectEvent.currentTarget.dataset.workOrderId;
-                        const selectedWorkOrder = responseJSON.workOrders.find((possibleWorkOrder) => possibleWorkOrder.workOrderId.toString() === selectedWorkOrderId);
+                        const selectedWorkOrder = responseJSON.workOrders.find((possibleWorkOrder) => possibleWorkOrder.workOrderId.toString() ===
+                            selectedWorkOrderId);
                         if (selectedWorkOrder !== undefined) {
                             selectWorkOrder(selectedWorkOrder);
                         }
@@ -331,7 +326,6 @@
             submitButton.classList.remove('is-hidden');
             modalElement.querySelector('#addWorkOrder--selectedWorkOrderId').value = workOrder.workOrderId.toString();
             const selectedWorkOrderDiv = modalElement.querySelector('#addWorkOrder--selectedWorkOrder');
-            // eslint-disable-next-line no-unsanitized/property
             selectedWorkOrderDiv.innerHTML = /* html */ `
         <p class="mb-2">
           <strong>Work Order #${cityssm.escapeHTML(workOrder.workOrderNumber)}</strong>
@@ -515,28 +509,6 @@
                 }
             }
         });
-    }
-    /*
-     * Initialize tabs
-     */
-    const tabsContainerElement = document.querySelector('#tab-content--workOrders');
-    if (tabsContainerElement !== null) {
-        const tabLinks = document.querySelectorAll('#tab--tasks .tabs a');
-        for (const tabLink of tabLinks) {
-            tabLink.addEventListener('click', (clickEvent) => {
-                clickEvent.preventDefault();
-                const targetId = tabLink.getAttribute('href') ?? '';
-                // Update active link
-                for (const link of tabLinks) {
-                    link.parentElement?.classList.toggle('is-active', link.getAttribute('href') === targetId);
-                }
-                // Show/hide tabs
-                const allTabContent = document.querySelectorAll('[id^="tab-content--"]');
-                for (const tabContent of allTabContent) {
-                    tabContent.classList.toggle('is-hidden', `#${tabContent.id}` !== targetId);
-                }
-            });
-        }
     }
     if (isEdit) {
         document

@@ -3058,7 +3058,7 @@ declare const exports: {
 
         const content = document.querySelector(
           `#available--${section} .resource-section-content`
-        ) as HTMLElement
+        ) as HTMLElement | null
 
         if (content !== null) {
           header.classList.toggle('is-collapsed')

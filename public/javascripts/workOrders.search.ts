@@ -121,7 +121,7 @@ declare const exports: {
           })
           .join(' ')
 
-        tagsHTML = `<div class="tags" style="margin-top: 0.25rem;">${tagsElements}</div>`
+        tagsHTML = `<div class="tags mt-1">${tagsElements}</div>`
       }
 
       // Build attachment icon HTML
@@ -178,6 +178,8 @@ declare const exports: {
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -
             ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}
+            -
+            ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem ?? '(No Priority)')}
           </span>
           ${tagsHTML}
         </td>

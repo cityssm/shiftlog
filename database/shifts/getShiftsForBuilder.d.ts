@@ -12,8 +12,8 @@ export interface ShiftForBuilder extends Shift {
         lastName: string;
         crewId: number | null;
         crewName: string | null;
-        shiftEmployeeNote: string;
         isSupervisor: boolean;
+        shiftEmployeeNote: string;
     }>;
     equipment: Array<{
         equipmentNumber: string;
