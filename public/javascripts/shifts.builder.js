@@ -2089,7 +2089,8 @@
         }
         const successText = modalElement.querySelector('#builderAddResource--successText');
         const successMessage = modalElement.querySelector('#builderAddResource--successMessage');
-        let addedCount = 0;
+        let processedCount = 0;
+        let successCount = 0;
         const totalToAdd = checkedBoxes.length;
         for (const checkbox of checkedBoxes) {
             const resourceType = checkbox.dataset.resourceType;
@@ -2101,10 +2102,11 @@
                         shiftCrewNote: '',
                         shiftId
                     }, (response) => {
-                        addedCount += 1;
+                        processedCount += 1;
+                        successCount += 1;
                         checkbox.checked = false;
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                        if (processedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
                             loadAvailableResources();
@@ -2118,10 +2120,11 @@
                         shiftEmployeeNote: '',
                         shiftId
                     }, (response) => {
-                        addedCount += 1;
+                        processedCount += 1;
+                        successCount += 1;
                         checkbox.checked = false;
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                        if (processedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
                             loadAvailableResources();
@@ -2135,10 +2138,11 @@
                         shiftEquipmentNote: '',
                         shiftId
                     }, (response) => {
-                        addedCount += 1;
+                        processedCount += 1;
+                        successCount += 1;
                         checkbox.checked = false;
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                        if (processedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
                             loadAvailableResources();
@@ -2152,7 +2156,7 @@
                         shiftWorkOrderNote: '',
                         workOrderId: resourceId
                     }, (response) => {
-                        addedCount++;
+                        processedCount++;
                         if (!response.success) {
                             // Show error for this specific work order
                             bulmaJS.alert({
@@ -2162,10 +2166,11 @@
                             });
                         }
                         else {
+                            successCount++;
                             checkbox.checked = false;
                         }
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                        if (processedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${successCount} of ${totalToAdd} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
                             loadAvailableResources();

@@ -2899,7 +2899,8 @@ declare const exports: {
       '#builderAddResource--successMessage'
     ) as HTMLElement
 
-    let addedCount = 0
+    let processedCount = 0
+    let successCount = 0
     const totalToAdd = checkedBoxes.length
 
     for (const checkbox of checkedBoxes) {
@@ -2916,11 +2917,12 @@ declare const exports: {
               shiftId
             },
             (response) => {
-              addedCount += 1
+              processedCount += 1
+              successCount += 1
               checkbox.checked = false
 
-              if (addedCount === totalToAdd) {
-                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+              if (processedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
 
                 loadShifts()
@@ -2939,11 +2941,12 @@ declare const exports: {
               shiftId
             },
             (response) => {
-              addedCount += 1
+              processedCount += 1
+              successCount += 1
               checkbox.checked = false
 
-              if (addedCount === totalToAdd) {
-                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+              if (processedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
 
                 loadShifts()
@@ -2962,11 +2965,12 @@ declare const exports: {
               shiftId
             },
             (response) => {
-              addedCount += 1
+              processedCount += 1
+              successCount += 1
               checkbox.checked = false
 
-              if (addedCount === totalToAdd) {
-                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+              if (processedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
 
                 loadShifts()
@@ -2985,7 +2989,7 @@ declare const exports: {
               workOrderId: resourceId
             },
             (response: { success: boolean; errorMessage?: string }) => {
-              addedCount++
+              processedCount++
               
               if (!response.success) {
                 // Show error for this specific work order
@@ -2995,11 +2999,12 @@ declare const exports: {
                   title: 'Could Not Add Resource'
                 })
               } else {
+                successCount++
                 checkbox.checked = false
               }
 
-              if (addedCount === totalToAdd) {
-                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+              if (processedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${successCount} of ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
                 loadShifts()
                 loadAvailableResources()

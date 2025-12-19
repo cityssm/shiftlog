@@ -1,10 +1,9 @@
 import addShiftWorkOrder from '../../database/shifts/addShiftWorkOrder.js';
 import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js';
+import isWorkOrderOnShift from '../../database/shifts/isWorkOrderOnShift.js';
 export default async function handler(request, response) {
     // Check if work order is already on this shift
-    const existingWorkOrders = await getShiftWorkOrders(request.body.shiftId);
-    const workOrderId = Number(request.body.workOrderId);
-    const alreadyExists = existingWorkOrders.some((wo) => wo.workOrderId === workOrderId);
+    const alreadyExists = await isWorkOrderOnShift(request.body.shiftId, request.body.workOrderId);
     if (alreadyExists) {
         response.json({
             success: false,
