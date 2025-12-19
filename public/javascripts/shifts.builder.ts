@@ -942,8 +942,18 @@ declare const exports: {
   }
 
   function handleDragEnd(event: DragEvent): void {
-    const target = event.target as HTMLElement
-    target.classList.remove('is-dragging')
+    // Find the actual draggable element (might be parent of event.target)
+    const target = (event.target as HTMLElement).closest('[draggable="true"]') as HTMLElement
+    
+    if (target !== null) {
+      target.classList.remove('is-dragging')
+    }
+    
+    // Also clean up the stored draggedElement if it exists
+    if (draggedElement !== null) {
+      draggedElement.classList.remove('is-dragging')
+    }
+    
     draggedElement = null
     draggedData = null
 
@@ -2023,6 +2033,7 @@ declare const exports: {
               'Failed to add work order to new shift.',
             title: 'Error'
           })
+          loadShifts()
         }
       }
     )

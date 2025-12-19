@@ -685,8 +685,15 @@
         }
     }
     function handleDragEnd(event) {
-        const target = event.target;
-        target.classList.remove('is-dragging');
+        // Find the actual draggable element (might be parent of event.target)
+        const target = event.target.closest('[draggable="true"]');
+        if (target !== null) {
+            target.classList.remove('is-dragging');
+        }
+        // Also clean up the stored draggedElement if it exists
+        if (draggedElement !== null) {
+            draggedElement.classList.remove('is-dragging');
+        }
         draggedElement = null;
         draggedData = null;
         // Remove all drop zone highlights
@@ -1506,6 +1513,7 @@
                         'Failed to add work order to new shift.',
                     title: 'Error'
                 });
+                loadShifts();
             }
         });
     }
@@ -2277,3 +2285,4 @@
     // Load shifts for today on page load
     loadShifts();
 })();
+export {};
