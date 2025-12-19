@@ -55,7 +55,8 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'API Key Reset',
-                  message: 'API key has been successfully reset for user "${userName}".'
+                  
+                  message: `API key has been successfully reset for user "${userName}".`
                 })
 
                 // Reload the audit logs to reflect any changes
