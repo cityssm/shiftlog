@@ -1,3 +1,4 @@
+import type { ChildProcess } from 'node:child_process'
 import cluster, { type Worker } from 'node:cluster'
 import os from 'node:os'
 import path from 'node:path'
@@ -6,7 +7,6 @@ import { fileURLToPath } from 'node:url'
 import { secondsToMillis } from '@cityssm/to-millis'
 import Debug from 'debug'
 import exitHook, { gracefulExit } from 'exit-hook'
-import type { ChildProcess } from 'node:child_process'
 
 import { DEBUG_NAMESPACE } from './debug.config.js'
 import { getConfigProperty } from './helpers/config.helpers.js'

@@ -641,7 +641,7 @@
             else if (!fromAvailable) {
                 // Check in current shifts
                 for (const shift of currentShifts) {
-                    const employee = shift.employees.find((e) => e.employeeNumber === employeeNumber);
+                    const employee = shift.employees.find((potentialEmployee) => potentialEmployee.employeeNumber === employeeNumber);
                     if (employee !== undefined) {
                         isSupervisor = employee.isSupervisor;
                         break;

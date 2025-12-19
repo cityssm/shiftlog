@@ -46,10 +46,9 @@ declare const exports: {
   // Track items appearing on multiple shifts
   type DuplicateTracker = Record<string, number[]>
 
-  function getItemKey(
-    type: 'crew' | 'employee' | 'equipment' | 'workOrder',
-    id: number | string
-  ): string {
+  type ItemType = 'crew' | 'employee' | 'equipment' | 'workOrder'
+
+  function getItemKey(type: ItemType, id: number | string): string {
     return `${type}:${id}`
   }
 
@@ -99,7 +98,7 @@ declare const exports: {
 
   function isDuplicate(
     duplicates: DuplicateTracker,
-    type: 'crew' | 'employee' | 'equipment' | 'workOrder',
+    type: ItemType,
     id: number | string
   ): boolean {
     const key = getItemKey(type, id)
@@ -856,7 +855,7 @@ declare const exports: {
   let draggedData: {
     fromShiftId: number
     id: number | string
-    type: 'crew' | 'employee' | 'equipment' | 'workOrder'
+    type: ItemType
     isSupervisor?: boolean
   } | null = null
 
@@ -895,7 +894,8 @@ declare const exports: {
         // Check in current shifts
         for (const shift of currentShifts) {
           const employee = shift.employees.find(
-            (e) => e.employeeNumber === employeeNumber
+            (potentialEmployee) =>
+              potentialEmployee.employeeNumber === employeeNumber
           )
           if (employee !== undefined) {
             isSupervisor = employee.isSupervisor
@@ -979,13 +979,13 @@ declare const exports: {
     // Check for specific drop targets first
     const supervisorTarget = target.closest(
       '.drop-target-supervisor'
-    ) as HTMLElement
+    ) as HTMLElement | null
 
-    const crewTarget = target.closest('.drop-target-crew') as HTMLElement
+    const crewTarget = target.closest('.drop-target-crew') as HTMLElement | null
 
     const employeeTarget = target.closest(
       '.drop-target-employee'
-    ) as HTMLElement
+    ) as HTMLElement | null
 
     // Highlight specific drop targets based on what's being dragged
     if (draggedData?.type === 'employee' && supervisorTarget !== null) {
@@ -1225,7 +1225,7 @@ declare const exports: {
   function removeFromShift(draggedData: {
     fromShiftId: number
     id: number | string
-    type: 'crew' | 'employee' | 'equipment' | 'workOrder'
+    type: ItemType
   }): void {
     switch (draggedData.type) {
       case 'crew': {
@@ -1262,7 +1262,7 @@ declare const exports: {
             crewId: draggedData.id,
             shiftId: draggedData.fromShiftId
           },
-          (response) => {
+          (response: { success: boolean }) => {
             if (response.success) {
               // Also delete crew employees and their equipment
               let employeesDeletedCount = 0
@@ -1288,7 +1288,7 @@ declare const exports: {
                       employeeNumber: employee.employeeNumber,
                       shiftId: draggedData.fromShiftId
                     },
-                    (empResponse) => {
+                    (empResponse: { success: boolean }) => {
                       if (empResponse.success) {
                         employeesDeletedCount += 1
                       } else {
@@ -1391,7 +1391,7 @@ declare const exports: {
             employeeNumber: draggedData.id,
             shiftId: draggedData.fromShiftId
           },
-          (response) => {
+          (response: { success: boolean }) => {
             if (response.success) {
               // Also delete assigned equipment
               let equipmentDeletedCount = 0
@@ -1446,7 +1446,7 @@ declare const exports: {
             equipmentNumber: draggedData.id,
             shiftId: draggedData.fromShiftId
           },
-          (response) => {
+          (response: { success: boolean }) => {
             if (response.success) {
               bulmaJS.alert({
                 contextualColorName: 'success',
@@ -1485,7 +1485,7 @@ declare const exports: {
           shiftEmployeeNote: '',
           shiftId: toShiftId
         },
-        (addResponse) => {
+        (addResponse: { success: boolean }) => {
           if (addResponse.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -1515,7 +1515,7 @@ declare const exports: {
         employeeNumber,
         shiftId: fromShiftId
       },
-      (deleteResponse) => {
+      (deleteResponse: { success: boolean }) => {
         if (deleteResponse.success) {
           // Add to new shift
           cityssm.postJSON(
@@ -1525,7 +1525,7 @@ declare const exports: {
               shiftEmployeeNote: '',
               shiftId: toShiftId
             },
-            (addResponse) => {
+            (addResponse: { success: boolean }) => {
               if (addResponse.success) {
                 // Move assigned equipment too
                 let equipmentMovedCount = 0
@@ -1547,7 +1547,7 @@ declare const exports: {
                         equipmentNumber: equipment.equipmentNumber,
                         shiftId: fromShiftId
                       },
-                      (deleteEquipResponse) => {
+                      (deleteEquipResponse: { success: boolean }) => {
                         if (deleteEquipResponse.success) {
                           // Add equipment to new shift with operator assignment
                           cityssm.postJSON(
@@ -1613,11 +1613,12 @@ declare const exports: {
           shiftEquipmentNote: '',
           shiftId: toShiftId
         },
-        (addResponse) => {
+        (addResponse: { success: boolean; message?: string }) => {
           if (addResponse.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Equipment Added',
+
               message: 'Equipment has been added to the shift.'
             })
             loadShifts()
@@ -1641,7 +1642,7 @@ declare const exports: {
         equipmentNumber,
         shiftId: fromShiftId
       },
-      (deleteResponse) => {
+      (deleteResponse: { success: boolean; message?: string }) => {
         if (deleteResponse.success) {
           // Add to new shift
           cityssm.postJSON(
@@ -1651,7 +1652,7 @@ declare const exports: {
               shiftEquipmentNote: '',
               shiftId: toShiftId
             },
-            (addResponse) => {
+            (addResponse: { success: boolean; message?: string }) => {
               if (addResponse.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -1748,7 +1749,7 @@ declare const exports: {
         crewId,
         shiftId: fromShiftId
       },
-      (deleteResponse) => {
+      (deleteResponse: { success: boolean }) => {
         if (deleteResponse.success) {
           // Add crew to new shift
           cityssm.postJSON(
@@ -1758,7 +1759,7 @@ declare const exports: {
               shiftCrewNote: '',
               shiftId: toShiftId
             },
-            (addResponse) => {
+            (addResponse: { success: boolean }) => {
               if (addResponse.success) {
                 // Now move employees
                 let employeesProcessed = 0
@@ -1930,7 +1931,7 @@ declare const exports: {
               shiftWorkOrderNote: '',
               workOrderId
             },
-            (addResponse) => {
+            (addResponse: { success: boolean }) => {
               if (addResponse.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
