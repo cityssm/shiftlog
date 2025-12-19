@@ -8,7 +8,7 @@ export default async function handler(
   request: Request<unknown, unknown, { userName: string }>,
   response: Response
 ): Promise<void> {
-  if (request.body.userName === '') {
+  if (!request.body.userName?.trim()) {
     response.status(400).json({
       message: 'User name is required',
       success: false
