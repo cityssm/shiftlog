@@ -863,8 +863,10 @@ declare const exports: {
   // Drag and drop handlers
   function handleDragStart(event: DragEvent): void {
     // Find the actual draggable element (might be parent of event.target)
-    const target = (event.target as HTMLElement).closest('[draggable="true"]') as HTMLElement
-    
+    const target = (event.target as HTMLElement).closest(
+      '[draggable="true"]'
+    ) as HTMLElement
+
     if (target === null) {
       return
     }
@@ -943,17 +945,19 @@ declare const exports: {
 
   function handleDragEnd(event: DragEvent): void {
     // Find the actual draggable element (might be parent of event.target)
-    const target = (event.target as HTMLElement).closest('[draggable="true"]') as HTMLElement
-    
+    const target = (event.target as HTMLElement).closest(
+      '[draggable="true"]'
+    ) as HTMLElement
+
     if (target !== null) {
       target.classList.remove('is-dragging')
     }
-    
+
     // Also clean up the stored draggedElement if it exists
     if (draggedElement !== null) {
       draggedElement.classList.remove('is-dragging')
     }
-    
+
     draggedElement = null
     draggedData = null
 
@@ -1978,7 +1982,8 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               message:
-                addResponse.errorMessage ?? 'Failed to add work order to shift.',
+                addResponse.errorMessage ??
+                'Failed to add work order to shift.',
               title: 'Error'
             })
           }
@@ -2865,7 +2870,11 @@ declare const exports: {
     ) as HTMLInputElement | null
 
     crewFilter?.addEventListener('input', () => {
-      filterCheckboxes(modalElement, '#builderAddResource--crewList', crewFilter.value)
+      filterCheckboxes(
+        modalElement,
+        '#builderAddResource--crewList',
+        crewFilter.value
+      )
     })
   }
 
@@ -2884,23 +2893,19 @@ declare const exports: {
     }
 
     const labels = container.querySelectorAll('label.checkbox')
-    
+
     if (labels.length === 0) {
       console.warn(`No checkboxes found in container: ${containerSelector}`)
       return
     }
-    
+
     const lowerFilter = filterText.toLowerCase()
 
     for (const label of labels) {
       const labelElement = label as HTMLElement
       const text = (label.textContent ?? '').toLowerCase()
 
-      if (text.includes(lowerFilter)) {
-        labelElement.style.display = ''
-      } else {
-        labelElement.style.display = 'none'
-      }
+      labelElement.classList.toggle('is-hidden', !text.includes(lowerFilter))
     }
   }
 
@@ -3018,7 +3023,7 @@ declare const exports: {
             },
             (response: { success: boolean; errorMessage?: string }) => {
               processedCount++
-              
+
               if (!response.success) {
                 // Show error for this specific work order
                 bulmaJS.alert({

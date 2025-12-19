@@ -1467,7 +1467,8 @@
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        message: addResponse.errorMessage ?? 'Failed to add work order to shift.',
+                        message: addResponse.errorMessage ??
+                            'Failed to add work order to shift.',
                         title: 'Error'
                     });
                 }
@@ -2086,12 +2087,7 @@
         for (const label of labels) {
             const labelElement = label;
             const text = (label.textContent ?? '').toLowerCase();
-            if (text.includes(lowerFilter)) {
-                labelElement.style.display = '';
-            }
-            else {
-                labelElement.style.display = 'none';
-            }
+            labelElement.classList.toggle('is-hidden', !text.includes(lowerFilter));
         }
     }
     function addSelectedResources(modalElement, shiftId) {
@@ -2290,4 +2286,3 @@
     // Load shifts for today on page load
     loadShifts();
 })();
-export {};
