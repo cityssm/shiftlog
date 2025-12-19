@@ -862,7 +862,14 @@ declare const exports: {
 
   // Drag and drop handlers
   function handleDragStart(event: DragEvent): void {
-    const target = event.target as HTMLElement
+    // Find the actual draggable element (might be parent of event.target)
+    const target = (event.target as HTMLElement).closest(
+      '[draggable="true"]'
+    ) as HTMLElement
+
+    if (target === null) {
+      return
+    }
 
     const employeeNumber = target.dataset.employeeNumber
     const equipmentNumber = target.dataset.equipmentNumber
@@ -937,8 +944,20 @@ declare const exports: {
   }
 
   function handleDragEnd(event: DragEvent): void {
-    const target = event.target as HTMLElement
-    target.classList.remove('is-dragging')
+    // Find the actual draggable element (might be parent of event.target)
+    const target = (event.target as HTMLElement).closest(
+      '[draggable="true"]'
+    ) as HTMLElement
+
+    if (target !== null) {
+      target.classList.remove('is-dragging')
+    }
+
+    // Also clean up the stored draggedElement if it exists
+    if (draggedElement !== null) {
+      draggedElement.classList.remove('is-dragging')
+    }
+
     draggedElement = null
     draggedData = null
 
@@ -1467,6 +1486,32 @@ declare const exports: {
 
         break
       }
+      case 'workOrder': {
+        cityssm.postJSON(
+          `${shiftUrlPrefix}/doDeleteShiftWorkOrder`,
+          {
+            shiftId: draggedData.fromShiftId,
+            workOrderId: draggedData.id
+          },
+          (response: { success: boolean }) => {
+            if (response.success) {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Work order removed from shift.'
+              })
+              loadShifts()
+            } else {
+              bulmaJS.alert({
+                contextualColorName: 'danger',
+                message: 'Failed to remove work order from shift.',
+                title: 'Error'
+              })
+            }
+          }
+        )
+
+        break
+      }
       // No default
     }
   }
@@ -1915,25 +1960,58 @@ declare const exports: {
     fromShiftId: number,
     toShiftId: number
   ): void {
-    // Delete from old shift
+    // If fromShiftId is 0, work order is being added (not moved)
+    if (fromShiftId === 0) {
+      // Just add to new shift
+      cityssm.postJSON(
+        `${shiftUrlPrefix}/doAddShiftWorkOrder`,
+        {
+          shiftId: toShiftId,
+          shiftWorkOrderNote: '',
+          workOrderId
+        },
+        (addResponse: { success: boolean; errorMessage?: string }) => {
+          if (addResponse.success) {
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Work order has been added to the shift.',
+              title: 'Work Order Added'
+            })
+            loadShifts()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message:
+                addResponse.errorMessage ??
+                'Failed to add work order to shift.',
+              title: 'Error'
+            })
+          }
+        }
+      )
+      return
+    }
+
+    // Moving between shifts - check if work order is already on target shift first
+    // This prevents data loss if the add fails due to duplicate
     cityssm.postJSON(
-      `${shiftUrlPrefix}/doDeleteShiftWorkOrder`,
+      `${shiftUrlPrefix}/doAddShiftWorkOrder`,
       {
-        shiftId: fromShiftId,
+        shiftId: toShiftId,
+        shiftWorkOrderNote: '',
         workOrderId
       },
-      (deleteResponse) => {
-        if (deleteResponse.success) {
-          // Add to new shift
+      (addResponse: { success: boolean; errorMessage?: string }) => {
+        if (addResponse.success) {
+          // Successfully added to new shift, now remove from old shift
           cityssm.postJSON(
-            `${shiftUrlPrefix}/doAddShiftWorkOrder`,
+            `${shiftUrlPrefix}/doDeleteShiftWorkOrder`,
             {
-              shiftId: toShiftId,
-              shiftWorkOrderNote: '',
+              shiftId: fromShiftId,
               workOrderId
             },
-            (addResponse: { success: boolean }) => {
-              if (addResponse.success) {
+            (deleteResponse) => {
+              if (deleteResponse.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   message: 'Work order has been moved to the new shift.',
@@ -1942,19 +2020,25 @@ declare const exports: {
                 loadShifts()
               } else {
                 bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  message: 'Failed to add work order to new shift.',
-                  title: 'Error'
+                  contextualColorName: 'warning',
+                  message:
+                    'Work order was added to the new shift but could not be removed from the original shift.',
+                  title: 'Partial Success'
                 })
+                loadShifts()
               }
             }
           )
         } else {
+          // Add failed (likely already on target shift), don't delete from source
           bulmaJS.alert({
             contextualColorName: 'danger',
-            message: 'Failed to remove work order from original shift.',
+            message:
+              addResponse.errorMessage ??
+              'Failed to add work order to new shift.',
             title: 'Error'
           })
+          loadShifts()
         }
       }
     )
@@ -2761,6 +2845,7 @@ declare const exports: {
 
     employeeFilter?.addEventListener('input', () => {
       filterCheckboxes(
+        modalElement,
         '#builderAddResource--employeeList',
         employeeFilter.value
       )
@@ -2773,6 +2858,7 @@ declare const exports: {
 
     equipmentFilter?.addEventListener('input', () => {
       filterCheckboxes(
+        modalElement,
         '#builderAddResource--equipmentList',
         equipmentFilter.value
       )
@@ -2784,31 +2870,40 @@ declare const exports: {
     ) as HTMLInputElement | null
 
     crewFilter?.addEventListener('input', () => {
-      filterCheckboxes('#builderAddResource--crewList', crewFilter.value)
+      filterCheckboxes(
+        modalElement,
+        '#builderAddResource--crewList',
+        crewFilter.value
+      )
     })
   }
 
   function filterCheckboxes(
+    modalElement: HTMLElement,
     containerSelector: string,
     filterText: string
   ): void {
-    const container = document.querySelector(
+    const container = modalElement.querySelector(
       containerSelector
     ) as HTMLElement | null
 
-    if (container === null) return
+    if (container === null) {
+      return
+    }
 
     const labels = container.querySelectorAll('label.checkbox')
+
+    if (labels.length === 0) {
+      return
+    }
+
     const lowerFilter = filterText.toLowerCase()
 
     for (const label of labels) {
-      const text = label.textContent.toLowerCase()
+      const labelElement = label as HTMLElement
+      const text = (label.textContent ?? '').toLowerCase()
 
-      if (text.includes(lowerFilter)) {
-        ;(label as HTMLElement).style.display = 'block'
-      } else {
-        ;(label as HTMLElement).style.display = 'none'
-      }
+      labelElement.classList.toggle('is-hidden', !text.includes(lowerFilter))
     }
   }
 
@@ -2835,7 +2930,8 @@ declare const exports: {
       '#builderAddResource--successMessage'
     ) as HTMLElement
 
-    let addedCount = 0
+    let processedCount = 0
+    let successCount = 0
     const totalToAdd = checkedBoxes.length
 
     for (const checkbox of checkedBoxes) {
@@ -2852,11 +2948,12 @@ declare const exports: {
               shiftId
             },
             (response) => {
-              addedCount += 1
+              processedCount += 1
+              successCount += 1
               checkbox.checked = false
 
-              if (addedCount === totalToAdd) {
-                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+              if (processedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
 
                 loadShifts()
@@ -2875,11 +2972,12 @@ declare const exports: {
               shiftId
             },
             (response) => {
-              addedCount += 1
+              processedCount += 1
+              successCount += 1
               checkbox.checked = false
 
-              if (addedCount === totalToAdd) {
-                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+              if (processedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
 
                 loadShifts()
@@ -2898,11 +2996,12 @@ declare const exports: {
               shiftId
             },
             (response) => {
-              addedCount += 1
+              processedCount += 1
+              successCount += 1
               checkbox.checked = false
 
-              if (addedCount === totalToAdd) {
-                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+              if (processedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
 
                 loadShifts()
@@ -2920,12 +3019,23 @@ declare const exports: {
               shiftWorkOrderNote: '',
               workOrderId: resourceId
             },
-            (response) => {
-              addedCount++
-              checkbox.checked = false
+            (response: { success: boolean; errorMessage?: string }) => {
+              processedCount++
 
-              if (addedCount === totalToAdd) {
-                successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`
+              if (!response.success) {
+                // Show error for this specific work order
+                bulmaJS.alert({
+                  contextualColorName: 'warning',
+                  message: response.errorMessage ?? 'Failed to add work order.',
+                  title: 'Could Not Add Resource'
+                })
+              } else {
+                successCount++
+                checkbox.checked = false
+              }
+
+              if (processedCount === totalToAdd) {
+                successText.textContent = `Successfully added ${successCount} of ${totalToAdd} resource(s) to the shift.`
                 successMessage.classList.remove('is-hidden')
                 loadShifts()
                 loadAvailableResources()

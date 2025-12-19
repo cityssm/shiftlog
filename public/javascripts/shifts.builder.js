@@ -614,7 +614,11 @@
     let draggedData = null;
     // Drag and drop handlers
     function handleDragStart(event) {
-        const target = event.target;
+        // Find the actual draggable element (might be parent of event.target)
+        const target = event.target.closest('[draggable="true"]');
+        if (target === null) {
+            return;
+        }
         const employeeNumber = target.dataset.employeeNumber;
         const equipmentNumber = target.dataset.equipmentNumber;
         const crewId = target.dataset.crewId;
@@ -681,8 +685,15 @@
         }
     }
     function handleDragEnd(event) {
-        const target = event.target;
-        target.classList.remove('is-dragging');
+        // Find the actual draggable element (might be parent of event.target)
+        const target = event.target.closest('[draggable="true"]');
+        if (target !== null) {
+            target.classList.remove('is-dragging');
+        }
+        // Also clean up the stored draggedElement if it exists
+        if (draggedElement !== null) {
+            draggedElement.classList.remove('is-dragging');
+        }
         draggedElement = null;
         draggedData = null;
         // Remove all drop zone highlights
@@ -1072,6 +1083,28 @@
                 });
                 break;
             }
+            case 'workOrder': {
+                cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
+                    shiftId: draggedData.fromShiftId,
+                    workOrderId: draggedData.id
+                }, (response) => {
+                    if (response.success) {
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            message: 'Work order removed from shift.'
+                        });
+                        loadShifts();
+                    }
+                    else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            message: 'Failed to remove work order from shift.',
+                            title: 'Error'
+                        });
+                    }
+                });
+                break;
+            }
             // No default
         }
     }
@@ -1415,19 +1448,47 @@
         });
     }
     function moveWorkOrder(workOrderId, fromShiftId, toShiftId) {
-        // Delete from old shift
-        cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
-            shiftId: fromShiftId,
+        // If fromShiftId is 0, work order is being added (not moved)
+        if (fromShiftId === 0) {
+            // Just add to new shift
+            cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftWorkOrder`, {
+                shiftId: toShiftId,
+                shiftWorkOrderNote: '',
+                workOrderId
+            }, (addResponse) => {
+                if (addResponse.success) {
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Work order has been added to the shift.',
+                        title: 'Work Order Added'
+                    });
+                    loadShifts();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        message: addResponse.errorMessage ??
+                            'Failed to add work order to shift.',
+                        title: 'Error'
+                    });
+                }
+            });
+            return;
+        }
+        // Moving between shifts - check if work order is already on target shift first
+        // This prevents data loss if the add fails due to duplicate
+        cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftWorkOrder`, {
+            shiftId: toShiftId,
+            shiftWorkOrderNote: '',
             workOrderId
-        }, (deleteResponse) => {
-            if (deleteResponse.success) {
-                // Add to new shift
-                cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftWorkOrder`, {
-                    shiftId: toShiftId,
-                    shiftWorkOrderNote: '',
+        }, (addResponse) => {
+            if (addResponse.success) {
+                // Successfully added to new shift, now remove from old shift
+                cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
+                    shiftId: fromShiftId,
                     workOrderId
-                }, (addResponse) => {
-                    if (addResponse.success) {
+                }, (deleteResponse) => {
+                    if (deleteResponse.success) {
                         bulmaJS.alert({
                             contextualColorName: 'success',
                             message: 'Work order has been moved to the new shift.',
@@ -1437,19 +1498,23 @@
                     }
                     else {
                         bulmaJS.alert({
-                            contextualColorName: 'danger',
-                            message: 'Failed to add work order to new shift.',
-                            title: 'Error'
+                            contextualColorName: 'warning',
+                            message: 'Work order was added to the new shift but could not be removed from the original shift.',
+                            title: 'Partial Success'
                         });
+                        loadShifts();
                     }
                 });
             }
             else {
+                // Add failed (likely already on target shift), don't delete from source
                 bulmaJS.alert({
                     contextualColorName: 'danger',
-                    message: 'Failed to remove work order from original shift.',
+                    message: addResponse.errorMessage ??
+                        'Failed to add work order to new shift.',
                     title: 'Error'
                 });
+                loadShifts();
             }
         });
     }
@@ -1994,35 +2059,33 @@
         // Employee filter
         const employeeFilter = modalElement.querySelector('#builderAddResource--employeeFilter');
         employeeFilter?.addEventListener('input', () => {
-            filterCheckboxes('#builderAddResource--employeeList', employeeFilter.value);
+            filterCheckboxes(modalElement, '#builderAddResource--employeeList', employeeFilter.value);
         });
         // Equipment filter
         const equipmentFilter = modalElement.querySelector('#builderAddResource--equipmentFilter');
         equipmentFilter?.addEventListener('input', () => {
-            filterCheckboxes('#builderAddResource--equipmentList', equipmentFilter.value);
+            filterCheckboxes(modalElement, '#builderAddResource--equipmentList', equipmentFilter.value);
         });
         // Crew filter
         const crewFilter = modalElement.querySelector('#builderAddResource--crewFilter');
         crewFilter?.addEventListener('input', () => {
-            filterCheckboxes('#builderAddResource--crewList', crewFilter.value);
+            filterCheckboxes(modalElement, '#builderAddResource--crewList', crewFilter.value);
         });
     }
-    function filterCheckboxes(containerSelector, filterText) {
-        const container = document.querySelector(containerSelector);
-        if (container === null)
+    function filterCheckboxes(modalElement, containerSelector, filterText) {
+        const container = modalElement.querySelector(containerSelector);
+        if (container === null) {
             return;
+        }
         const labels = container.querySelectorAll('label.checkbox');
+        if (labels.length === 0) {
+            return;
+        }
         const lowerFilter = filterText.toLowerCase();
         for (const label of labels) {
-            const text = label.textContent.toLowerCase();
-            if (text.includes(lowerFilter)) {
-                ;
-                label.style.display = 'block';
-            }
-            else {
-                ;
-                label.style.display = 'none';
-            }
+            const labelElement = label;
+            const text = (label.textContent ?? '').toLowerCase();
+            labelElement.classList.toggle('is-hidden', !text.includes(lowerFilter));
         }
     }
     function addSelectedResources(modalElement, shiftId) {
@@ -2036,7 +2099,8 @@
         }
         const successText = modalElement.querySelector('#builderAddResource--successText');
         const successMessage = modalElement.querySelector('#builderAddResource--successMessage');
-        let addedCount = 0;
+        let processedCount = 0;
+        let successCount = 0;
         const totalToAdd = checkedBoxes.length;
         for (const checkbox of checkedBoxes) {
             const resourceType = checkbox.dataset.resourceType;
@@ -2048,10 +2112,11 @@
                         shiftCrewNote: '',
                         shiftId
                     }, (response) => {
-                        addedCount += 1;
+                        processedCount += 1;
+                        successCount += 1;
                         checkbox.checked = false;
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                        if (processedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
                             loadAvailableResources();
@@ -2065,10 +2130,11 @@
                         shiftEmployeeNote: '',
                         shiftId
                     }, (response) => {
-                        addedCount += 1;
+                        processedCount += 1;
+                        successCount += 1;
                         checkbox.checked = false;
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                        if (processedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
                             loadAvailableResources();
@@ -2082,10 +2148,11 @@
                         shiftEquipmentNote: '',
                         shiftId
                     }, (response) => {
-                        addedCount += 1;
+                        processedCount += 1;
+                        successCount += 1;
                         checkbox.checked = false;
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                        if (processedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${successCount} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
                             loadAvailableResources();
@@ -2099,10 +2166,21 @@
                         shiftWorkOrderNote: '',
                         workOrderId: resourceId
                     }, (response) => {
-                        addedCount++;
-                        checkbox.checked = false;
-                        if (addedCount === totalToAdd) {
-                            successText.textContent = `Successfully added ${totalToAdd} resource(s) to the shift.`;
+                        processedCount++;
+                        if (!response.success) {
+                            // Show error for this specific work order
+                            bulmaJS.alert({
+                                contextualColorName: 'warning',
+                                message: response.errorMessage ?? 'Failed to add work order.',
+                                title: 'Could Not Add Resource'
+                            });
+                        }
+                        else {
+                            successCount++;
+                            checkbox.checked = false;
+                        }
+                        if (processedCount === totalToAdd) {
+                            successText.textContent = `Successfully added ${successCount} of ${totalToAdd} resource(s) to the shift.`;
                             successMessage.classList.remove('is-hidden');
                             loadShifts();
                             loadAvailableResources();
