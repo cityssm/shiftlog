@@ -3,6 +3,12 @@
     const filtersFormElement = document.querySelector('#form--shiftSearch');
     const offsetInputElement = document.querySelector('#searchSearch--offset');
     const resultsContainerElement = document.querySelector('#container--shiftSearchResults');
+    function dateIsToday(date) {
+        const today = new Date();
+        return (date.getFullYear() === today.getFullYear() &&
+            date.getMonth() === today.getMonth() &&
+            date.getDate() === today.getDate());
+    }
     function renderShiftsTable(data) {
         if (data.shifts.length === 0) {
             resultsContainerElement.innerHTML = /* html */ `
@@ -81,12 +87,11 @@
           </a><br />
           <span class="is-size-7">#${cityssm.escapeHTML(shift.shiftId.toString())}</span>
         </td>
-        <td>
+        <td class="${dateIsToday(shiftDate) ? 'has-background-success-light' : ''}">
           ${cityssm.dateToString(shiftDate)}<br />
           <span class="is-size-7">${shiftLog.daysOfWeek[shiftDate.getDay()]}</span>
         </td>
-
-        <td>
+        <td class="${shift.supervisorUserName === shiftLog.userName ? 'has-background-success-light' : ''}">
           ${cityssm.escapeHTML(shift.supervisorLastName ?? '')}, ${cityssm.escapeHTML(shift.supervisorFirstName ?? '')}
         </td>
         <td class="has-text-right">

@@ -24,6 +24,15 @@ declare const exports: {
     '#container--shiftSearchResults'
   ) as HTMLDivElement
 
+  function dateIsToday(date: Date): boolean {
+    const today = new Date()
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    )
+  }
+
   function renderShiftsTable(data: DoSearchShiftsResponse): void {
     if (data.shifts.length === 0) {
       resultsContainerElement.innerHTML = /* html */ `
@@ -120,12 +129,11 @@ declare const exports: {
           </a><br />
           <span class="is-size-7">#${cityssm.escapeHTML(shift.shiftId.toString())}</span>
         </td>
-        <td>
+        <td class="${dateIsToday(shiftDate) ? 'has-background-success-light' : ''}">
           ${cityssm.dateToString(shiftDate)}<br />
           <span class="is-size-7">${shiftLog.daysOfWeek[shiftDate.getDay()]}</span>
         </td>
-
-        <td>
+        <td class="${shift.supervisorUserName === shiftLog.userName ? 'has-background-success-light' : ''}">
           ${cityssm.escapeHTML(shift.supervisorLastName ?? '')}, ${cityssm.escapeHTML(shift.supervisorFirstName ?? '')}
         </td>
         <td class="has-text-right">
