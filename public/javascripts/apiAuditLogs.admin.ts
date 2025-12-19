@@ -1,5 +1,5 @@
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
+import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { ApiAuditLog } from '../../types/record.types.js'
 
@@ -37,6 +37,7 @@ declare const exports: {
       okButton: {
         contextualColorName: 'warning',
         text: 'Reset API Key',
+        
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doResetUserApiKey`,
@@ -54,7 +55,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'API Key Reset',
-                  message: `API key has been successfully reset for user "${userName}".${responseJSON.apiKey !== undefined ? `<br><strong>New API Key:</strong> ${cityssm.escapeHTML(responseJSON.apiKey)}` : ''}`
+                  message: 'API key has been successfully reset for user "${userName}".'
                 })
 
                 // Reload the audit logs to reflect any changes
@@ -160,8 +161,9 @@ declare const exports: {
             <td>${statusBadge}</td>
             <td>
               ${
-                escapedContent.rawUserName !== ''
-                  ? `<button
+                escapedContent.rawUserName === ''
+                  ? ''
+                  : `<button
                       class="button is-small is-warning reset-api-key"
                       data-user-name="${escapedContent.userName}"
                       title="Reset API Key for ${escapedContent.userName}"
@@ -171,7 +173,6 @@ declare const exports: {
                       </span>
                       <span>Reset Key</span>
                     </button>`
-                  : ''
               }
             </td>
           </tr>

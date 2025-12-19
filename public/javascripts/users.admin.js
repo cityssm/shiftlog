@@ -202,8 +202,12 @@
                 bulmaJS.alert({
                     contextualColorName: 'success',
                     title: 'API Key Reset',
-                    message: `API key has been successfully reset.${responseJSON.apiKey !== undefined ? `<br><strong>New API Key:</strong> ${cityssm.escapeHTML(responseJSON.apiKey)}` : ''}`
+                    message: 'API key has been successfully reset.'
                 });
+                const apiKeyInput = document.querySelector('#apiKey');
+                if (apiKeyInput !== null) {
+                    apiKeyInput.value = responseJSON.apiKey ?? '';
+                }
             }
             else {
                 bulmaJS.alert({

@@ -258,10 +258,12 @@ declare const exports: {
             bulmaJS.confirm({
               contextualColorName: 'warning',
               title: 'Reset API Key',
+
               message: `Are you sure you want to reset the API key for user "${userName}"? The old key will no longer work.`,
               okButton: {
                 contextualColorName: 'warning',
                 text: 'Reset API Key',
+
                 callbackFunction() {
                   resetUserApiKey(userName)
                 }
@@ -309,8 +311,17 @@ declare const exports: {
           bulmaJS.alert({
             contextualColorName: 'success',
             title: 'API Key Reset',
-            message: `API key has been successfully reset.${responseJSON.apiKey !== undefined ? `<br><strong>New API Key:</strong> ${cityssm.escapeHTML(responseJSON.apiKey)}` : ''}`
+
+            message: 'API key has been successfully reset.'
           })
+
+          const apiKeyInput = document.querySelector(
+            '#apiKey'
+          ) as HTMLInputElement | null
+
+          if (apiKeyInput !== null) {
+            apiKeyInput.value = responseJSON.apiKey ?? ''
+          }
         } else {
           bulmaJS.alert({
             contextualColorName: 'danger',

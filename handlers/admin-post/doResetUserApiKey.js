@@ -14,6 +14,7 @@ export default async function handler(request, response) {
         const newApiKey = await updateApiKeyUserSetting(request.body.userName);
         // If the reset user is the current user in the session, update the session
         if (request.session.user?.userName === request.body.userName) {
+            ;
             request.session.user.userSettings = await getUserSettings(request.body.userName);
         }
         // Get the updated users list to return
