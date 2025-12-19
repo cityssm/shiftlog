@@ -73,7 +73,7 @@ declare const exports: {
 
       // Build counts icons HTML
       const workOrdersIconHTML =
-        shift.workOrdersCount && shift.workOrdersCount > 0
+        (shift.workOrdersCount ?? 0) > 0
           ? /* html */ `
             <span class="icon" title="${shift.workOrdersCount} work order(s)">
               <i class="fa-solid fa-clipboard-list"></i>
@@ -82,7 +82,7 @@ declare const exports: {
           : ''
 
       const employeesIconHTML =
-        shift.employeesCount && shift.employeesCount > 0
+        (shift.employeesCount ?? 0) > 0
           ? /* html */ `
             <span class="icon" title="${shift.employeesCount} employee(s)">
               <i class="fa-solid fa-users"></i>
@@ -91,7 +91,7 @@ declare const exports: {
           : ''
 
       const crewsIconHTML =
-        shift.crewsCount && shift.crewsCount > 0
+        (shift.crewsCount ?? 0) > 0
           ? /* html */ `
             <span class="icon" title="${shift.crewsCount} crew(s)">
               <i class="fa-solid fa-users-gear"></i>
@@ -100,7 +100,7 @@ declare const exports: {
           : ''
 
       const equipmentIconHTML =
-        shift.equipmentCount && shift.equipmentCount > 0
+        (shift.equipmentCount ?? 0) > 0
           ? /* html */ `
             <span class="icon" title="${shift.equipmentCount} equipment">
               <i class="fa-solid fa-truck"></i>
@@ -109,7 +109,7 @@ declare const exports: {
           : ''
 
       const timesheetsIconHTML =
-        shift.timesheetsCount && shift.timesheetsCount > 0
+        (shift.timesheetsCount ?? 0) > 0
           ? /* html */ `
             <span class="icon" title="${shift.timesheetsCount} timesheet(s)">
               <i class="fa-solid fa-clock"></i>
@@ -167,7 +167,7 @@ declare const exports: {
         totalCount: data.totalCount,
         currentPageOrOffset: data.offset,
         itemsPerPageOrLimit: data.limit,
-        
+
         clickHandler: (pageNumber) => {
           offsetInputElement.value = ((pageNumber - 1) * data.limit).toString()
           getSearchResults()

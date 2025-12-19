@@ -41,35 +41,35 @@
         for (const shift of data.shifts) {
             const tableRowElement = document.createElement('tr');
             // Build counts icons HTML
-            const workOrdersIconHTML = shift.workOrdersCount && shift.workOrdersCount > 0
+            const workOrdersIconHTML = (shift.workOrdersCount ?? 0) > 0
                 ? /* html */ `
             <span class="icon" title="${shift.workOrdersCount} work order(s)">
               <i class="fa-solid fa-clipboard-list"></i>
             </span>
           `
                 : '';
-            const employeesIconHTML = shift.employeesCount && shift.employeesCount > 0
+            const employeesIconHTML = (shift.employeesCount ?? 0) > 0
                 ? /* html */ `
             <span class="icon" title="${shift.employeesCount} employee(s)">
               <i class="fa-solid fa-users"></i>
             </span>
           `
                 : '';
-            const crewsIconHTML = shift.crewsCount && shift.crewsCount > 0
+            const crewsIconHTML = (shift.crewsCount ?? 0) > 0
                 ? /* html */ `
             <span class="icon" title="${shift.crewsCount} crew(s)">
               <i class="fa-solid fa-users-gear"></i>
             </span>
           `
                 : '';
-            const equipmentIconHTML = shift.equipmentCount && shift.equipmentCount > 0
+            const equipmentIconHTML = (shift.equipmentCount ?? 0) > 0
                 ? /* html */ `
             <span class="icon" title="${shift.equipmentCount} equipment">
               <i class="fa-solid fa-truck"></i>
             </span>
           `
                 : '';
-            const timesheetsIconHTML = shift.timesheetsCount && shift.timesheetsCount > 0
+            const timesheetsIconHTML = (shift.timesheetsCount ?? 0) > 0
                 ? /* html */ `
             <span class="icon" title="${shift.timesheetsCount} timesheet(s)">
               <i class="fa-solid fa-clock"></i>
