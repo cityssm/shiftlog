@@ -45,8 +45,8 @@
             name="shiftDate"
             type="text"
             value="<%= new Date().toISOString().split('T')[0] %>"
-            required
             placeholder="YYYY-MM-DD"
+            required
           />
           <span class="icon is-small is-left">
             <i class="fa-solid fa-calendar"></i>
@@ -120,8 +120,21 @@
           </span>
         </div>
       </div>
+
+      <div class="mb-4" id="available--crews">
+        <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="crews">
+          <span class="icon is-small">
+            <i class="fa-solid fa-chevron-down"></i>
+          </span>
+          <span>Crews</span>
+          <span class="tag is-info is-light ml-2" id="crews-count">0</span>
+        </h4>
+        <div class="available-resources-list resource-section-content" data-resource-type="crew">
+          <p class="has-text-grey-light is-size-7">No available crews</p>
+        </div>
+      </div>
       
-      <div id="available--employees" class="mb-4">
+      <div class="mb-4" id="available--employees">
         <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="employees">
           <span class="icon is-small">
             <i class="fa-solid fa-chevron-down"></i>
@@ -134,7 +147,7 @@
         </div>
       </div>
       
-      <div id="available--equipment" class="mb-4">
+      <div id="available--equipment">
         <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="equipment">
           <span class="icon is-small">
             <i class="fa-solid fa-chevron-down"></i>
@@ -144,19 +157,6 @@
         </h4>
         <div class="available-resources-list resource-section-content" data-resource-type="equipment">
           <p class="has-text-grey-light is-size-7">No available equipment</p>
-        </div>
-      </div>
-      
-      <div id="available--crews">
-        <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="crews">
-          <span class="icon is-small">
-            <i class="fa-solid fa-chevron-down"></i>
-          </span>
-          <span>Crews</span>
-          <span class="tag is-info is-light ml-2" id="crews-count">0</span>
-        </h4>
-        <div class="available-resources-list resource-section-content" data-resource-type="crew">
-          <p class="has-text-grey-light is-size-7">No available crews</p>
         </div>
       </div>
     </div>
@@ -276,17 +276,10 @@
 </style>
 
 <script>
-  // Override sessionKeepAliveMillis to prevent excessive keepAlive requests
-  if (exports.shiftLog) {
-    exports.shiftLog.sessionKeepAliveMillis = 0;
-  }
-  
   exports.shiftLog = Object.assign(exports.shiftLog || {}, {
-    urlPrefix: '<%= urlPrefix %>',
     canManage: <%= user.userProperties.shifts.canManage %>,
     canUpdate: <%= user.userProperties.shifts.canUpdate %>,
-    currentUser: '<%= user.userName %>',
-    sessionKeepAliveMillis: 0
+    currentUser: '<%= user.userName %>'
   });
 </script>
 <script src="<%= urlPrefix %>/javascripts/shifts.builder.js"></script>

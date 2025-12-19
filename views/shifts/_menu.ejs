@@ -47,7 +47,6 @@
       </a>
     </li>
     <% } %>
-    <% if (user.userProperties.shifts.canView) { %>
     <li>
       <a
         href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/builder"
@@ -62,7 +61,6 @@
         </div>
       </a>
     </li>
-    <% } %>
     <% if (user.userProperties.shifts.canManage) { %>
     <li>
       <a

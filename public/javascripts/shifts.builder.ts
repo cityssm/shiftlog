@@ -9,6 +9,7 @@ import type { ShiftForBuilder } from '../../database/shifts/getShiftsForBuilder.
 import type { DoGetShiftsForBuilderResponse } from '../../handlers/shifts-post/doGetShiftsForBuilder.js'
 
 import type { ShiftLogGlobal } from './types.js'
+import { off } from 'node:cluster'
 
 declare const bulmaJS: BulmaJS
 declare const cityssm: cityssmGlobal
@@ -2704,7 +2705,7 @@ declare const exports: {
 
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`,
-      { searchString, orderBy: 'workOrderNumber desc' },
+      { searchString, orderBy: 'workOrderNumber desc', limit: 20, offset: 0 },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
           count: number

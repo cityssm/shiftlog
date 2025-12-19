@@ -1963,7 +1963,7 @@
             });
             return;
         }
-        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`, { searchString, orderBy: 'workOrderNumber desc' }, (rawResponseJSON) => {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`, { searchString, orderBy: 'workOrderNumber desc', limit: 20, offset: 0 }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 const workOrderList = modalElement.querySelector('#builderAddResource--workOrderList');
