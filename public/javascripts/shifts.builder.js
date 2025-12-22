@@ -294,7 +294,11 @@
             const adhocTasksList = document.createElement('ul');
             adhocTasksList.className = 'ml-4';
             for (const adhocTask of shift.adhocTasks) {
+                const isDup = isDuplicate(duplicates, 'adhocTask', adhocTask.adhocTaskId);
                 const adhocTaskItem = document.createElement('li');
+                if (isDup) {
+                    adhocTaskItem.classList.add('has-background-warning-light');
+                }
                 if (isEditable) {
                     adhocTaskItem.classList.add('drop-target-adhocTask');
                 }
