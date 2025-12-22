@@ -170,6 +170,36 @@ create table ShiftLog.Tags (
 )
 GO
 
+-- EQUIPMENT
+
+CREATE TABLE ShiftLog.Equipment (
+  instance varchar(20) not null,
+  equipmentNumber varchar(20) not null,
+  equipmentName varchar(100) not null,
+  equipmentDescription varchar(200) not null default '',
+
+  equipmentTypeDataListItemId int not null,
+  employeeListId int,
+  userGroupId int,
+
+  recordSync_isSynced bit not null default 0,
+  recordSync_source varchar(20),
+  recordSync_dateTime datetime,
+  
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  primary key (instance, equipmentNumber),
+  foreign key (equipmentTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
+  foreign key (employeeListId) references ShiftLog.EmployeeLists(employeeListId),
+  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
+)
+GO
+
 -- EMPLOYEES
 
 CREATE TABLE ShiftLog.Employees (
@@ -271,36 +301,6 @@ CREATE TABLE ShiftLog.EmployeeListMembers (
   primary key (employeeListId, employeeNumber),
   foreign key (employeeListId) references ShiftLog.EmployeeLists(employeeListId),
   foreign key (instance, employeeNumber) references ShiftLog.Employees(instance, employeeNumber)
-)
-GO
-
--- EQUIPMENT
-
-CREATE TABLE ShiftLog.Equipment (
-  instance varchar(20) not null,
-  equipmentNumber varchar(20) not null,
-  equipmentName varchar(100) not null,
-  equipmentDescription varchar(200) not null default '',
-
-  equipmentTypeDataListItemId int not null,
-  employeeListId int,
-  userGroupId int,
-
-  recordSync_isSynced bit not null default 0,
-  recordSync_source varchar(20),
-  recordSync_dateTime datetime,
-  
-  recordCreate_userName varchar(30) not null,
-  recordCreate_dateTime datetime not null default getdate(),
-  recordUpdate_userName varchar(30) not null,
-  recordUpdate_dateTime datetime not null default getdate(),
-  recordDelete_userName varchar(30),
-  recordDelete_dateTime datetime,
-
-  primary key (instance, equipmentNumber),
-  foreign key (equipmentTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId),
-  foreign key (employeeListId) references ShiftLog.EmployeeLists(employeeListId),
-  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
 )
 GO
 
