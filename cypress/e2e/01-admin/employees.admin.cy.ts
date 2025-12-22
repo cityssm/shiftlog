@@ -39,9 +39,7 @@ describe('Admin - Employee Management', () => {
     cy.wait(ajaxDelayMillis)
 
     // Verify the employee appears in the container
-    cy.get('#container--employees')
-      .contains(testEmployeeNumber)
-      .should('exist')
+    cy.get('#container--employees').contains(testEmployeeNumber).should('exist')
   })
 
   it('Can update an employee', () => {
@@ -59,10 +57,10 @@ describe('Admin - Employee Management', () => {
 
     cy.get('#editEmployee--lastName')
       .invoke('val')
-      .then((originalValue) => {
-        cy.get('#editEmployee--lastName')
-          .clear()
-          .type(originalValue + updatedText)
+      .then((originalValue: string) => {
+        const newValue = (originalValue + updatedText).slice(-50)
+
+        cy.get('#editEmployee--lastName').clear().type(newValue)
       })
 
     // Submit the form
@@ -72,9 +70,7 @@ describe('Admin - Employee Management', () => {
     cy.wait(ajaxDelayMillis)
 
     // Verify the updated employee appears
-    cy.get('#container--employees')
-      .contains(updatedText)
-      .should('exist')
+    cy.get('#container--employees').contains(updatedText).should('exist')
   })
 
   it('Can delete an employee', () => {
@@ -104,9 +100,7 @@ describe('Admin - Employee Management', () => {
     cy.wait(200)
 
     // Confirm deletion
-    cy.get('.modal.is-active')
-      .contains('button', 'Delete Employee')
-      .click()
+    cy.get('.modal.is-active').contains('button', 'Delete Employee').click()
 
     // Wait for AJAX response
     cy.wait(ajaxDelayMillis)
