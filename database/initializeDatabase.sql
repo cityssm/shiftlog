@@ -172,6 +172,24 @@ GO
 
 -- EQUIPMENT
 
+CREATE TABLE ShiftLog.EmployeeLists (
+  employeeListId int not null primary key identity(1,1),
+  instance varchar(20) not null,
+  employeeListName varchar(50) not null,
+
+  userGroupId int,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
+)
+GO
+
 CREATE TABLE ShiftLog.Equipment (
   instance varchar(20) not null,
   equipmentNumber varchar(20) not null,
@@ -270,23 +288,6 @@ CREATE TABLE ShiftLog.CrewEquipment (
   primary key (crewId, equipmentNumber),
   foreign key (crewId) references ShiftLog.Crews(crewId),
   foreign key (instance, equipmentNumber) references ShiftLog.Equipment(instance, equipmentNumber)
-)
-
-CREATE TABLE ShiftLog.EmployeeLists (
-  employeeListId int not null primary key identity(1,1),
-  instance varchar(20) not null,
-  employeeListName varchar(50) not null,
-
-  userGroupId int,
-
-  recordCreate_userName varchar(30) not null,
-  recordCreate_dateTime datetime not null default getdate(),
-  recordUpdate_userName varchar(30) not null,
-  recordUpdate_dateTime datetime not null default getdate(),
-  recordDelete_userName varchar(30),
-  recordDelete_dateTime datetime,
-
-  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
 )
 GO
 
