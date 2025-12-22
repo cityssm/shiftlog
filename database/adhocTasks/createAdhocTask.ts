@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
+
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function createAdhocTask(
@@ -33,20 +36,38 @@ export default async function createAdhocTask(
     .input('locationAddress1', locationAddress1)
     .input('locationAddress2', locationAddress2)
     .input('locationCityProvince', locationCityProvince)
-    .input('locationLatitude', (locationLatitude ?? '') === '' ? null : locationLatitude)
-    .input('locationLongitude', (locationLongitude ?? '') === '' ? null : locationLongitude)
+    .input(
+      'locationLatitude',
+      (locationLatitude ?? '') === '' ? null : locationLatitude
+    )
+    .input(
+      'locationLongitude',
+      (locationLongitude ?? '') === '' ? null : locationLongitude
+    )
 
     .input('fromLocationAddress1', fromLocationAddress1)
     .input('fromLocationAddress2', fromLocationAddress2)
     .input('fromLocationCityProvince', fromLocationCityProvince)
-    .input('fromLocationLatitude', (fromLocationLatitude ?? '') === '' ? null : fromLocationLatitude)
-    .input('fromLocationLongitude', (fromLocationLongitude ?? '') === '' ? null : fromLocationLongitude)
+    .input(
+      'fromLocationLatitude',
+      (fromLocationLatitude ?? '') === '' ? null : fromLocationLatitude
+    )
+    .input(
+      'fromLocationLongitude',
+      (fromLocationLongitude ?? '') === '' ? null : fromLocationLongitude
+    )
 
     .input('toLocationAddress1', toLocationAddress1)
     .input('toLocationAddress2', toLocationAddress2)
     .input('toLocationCityProvince', toLocationCityProvince)
-    .input('toLocationLatitude', (toLocationLatitude ?? '') === '' ? null : toLocationLatitude)
-    .input('toLocationLongitude', (toLocationLongitude ?? '') === '' ? null : toLocationLongitude)
+    .input(
+      'toLocationLatitude',
+      (toLocationLatitude ?? '') === '' ? null : toLocationLatitude
+    )
+    .input(
+      'toLocationLongitude',
+      (toLocationLongitude ?? '') === '' ? null : toLocationLongitude
+    )
 
     .input('taskDueDateTimeString', taskDueDateTimeString ?? null)
     .input('recordCreate_userName', sessionUser.userName)

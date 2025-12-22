@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createAdhocTask(adhocTaskTypeDataListItemId, taskDescription, locationAddress1, locationAddress2, locationCityProvince, locationLatitude, locationLongitude, fromLocationAddress1, fromLocationAddress2, fromLocationCityProvince, fromLocationLatitude, fromLocationLongitude, toLocationAddress1, toLocationAddress2, toLocationCityProvince, toLocationLatitude, toLocationLongitude, taskDueDateTimeString, sessionUser) {
     const pool = await getShiftLogConnectionPool();
