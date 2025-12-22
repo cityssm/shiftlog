@@ -112,11 +112,22 @@
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = crew.crewName;
                 crewItem.append(nameSpan);
+                // Add note icon if note exists
                 if (crew.shiftCrewNote !== '') {
-                    const noteSpan = document.createElement('span');
-                    noteSpan.className = 'has-text-grey-light';
-                    noteSpan.textContent = ` - ${crew.shiftCrewNote}`;
-                    crewItem.append(noteSpan);
+                    const noteIcon = document.createElement('span');
+                    noteIcon.className = 'icon is-small has-text-grey-light ml-1';
+                    noteIcon.innerHTML = '<i class="fa-solid fa-note-sticky"></i>';
+                    noteIcon.title = crew.shiftCrewNote;
+                    crewItem.append(' ', noteIcon);
+                }
+                // Add double-click handler
+                if (isEditable) {
+                    crewItem.addEventListener('dblclick', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        openEditCrewNoteModal(shift.shiftId, crew);
+                    });
+                    crewItem.style.cursor = 'pointer';
                 }
                 crewsList.append(crewItem);
             }
@@ -165,11 +176,22 @@
                     crewTag.textContent = employee.crewName;
                     employeeItem.append(' ', crewTag);
                 }
+                // Add note icon if note exists
                 if (employee.shiftEmployeeNote !== '') {
-                    const noteSpan = document.createElement('span');
-                    noteSpan.className = 'has-text-grey-light';
-                    noteSpan.textContent = ` - ${employee.shiftEmployeeNote}`;
-                    employeeItem.append(noteSpan);
+                    const noteIcon = document.createElement('span');
+                    noteIcon.className = 'icon is-small has-text-grey-light ml-1';
+                    noteIcon.innerHTML = '<i class="fa-solid fa-note-sticky"></i>';
+                    noteIcon.title = employee.shiftEmployeeNote;
+                    employeeItem.append(' ', noteIcon);
+                }
+                // Add double-click handler
+                if (isEditable) {
+                    employeeItem.addEventListener('dblclick', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        openEditEmployeeCrewNoteModal(shift.shiftId, employee, shift.crews);
+                    });
+                    employeeItem.style.cursor = 'pointer';
                 }
                 employeesList.append(employeeItem);
             }
@@ -214,11 +236,22 @@
                     operatorTag.textContent = `${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName}`;
                     equipmentItem.append(' ', operatorTag);
                 }
+                // Add note icon if note exists
                 if (equipment.shiftEquipmentNote !== '') {
-                    const noteSpan = document.createElement('span');
-                    noteSpan.className = 'has-text-grey-light';
-                    noteSpan.textContent = ` - ${equipment.shiftEquipmentNote}`;
-                    equipmentItem.append(noteSpan);
+                    const noteIcon = document.createElement('span');
+                    noteIcon.className = 'icon is-small has-text-grey-light ml-1';
+                    noteIcon.innerHTML = '<i class="fa-solid fa-note-sticky"></i>';
+                    noteIcon.title = equipment.shiftEquipmentNote;
+                    equipmentItem.append(' ', noteIcon);
+                }
+                // Add double-click handler
+                if (isEditable) {
+                    equipmentItem.addEventListener('dblclick', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        openEditEquipmentEmployeeNoteModal(shift.shiftId, equipment, shift.employees);
+                    });
+                    equipmentItem.style.cursor = 'pointer';
                 }
                 equipmentList.append(equipmentItem);
             }
@@ -273,11 +306,22 @@
                 if (workOrder.workOrderDetails !== '') {
                     workOrderItem.append(` - ${workOrder.workOrderDetails}`);
                 }
+                // Add note icon if note exists
                 if (workOrder.shiftWorkOrderNote !== '') {
-                    const noteSpan = document.createElement('span');
-                    noteSpan.className = 'has-text-grey-light';
-                    noteSpan.textContent = ` - ${workOrder.shiftWorkOrderNote}`;
-                    workOrderItem.append(noteSpan);
+                    const noteIcon = document.createElement('span');
+                    noteIcon.className = 'icon is-small has-text-grey-light ml-1';
+                    noteIcon.innerHTML = '<i class="fa-solid fa-note-sticky"></i>';
+                    noteIcon.title = workOrder.shiftWorkOrderNote;
+                    workOrderItem.append(' ', noteIcon);
+                }
+                // Add double-click handler
+                if (isEditable) {
+                    workOrderItem.addEventListener('dblclick', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        openEditWorkOrderNoteModal(shift.shiftId, workOrder);
+                    });
+                    workOrderItem.style.cursor = 'pointer';
                 }
                 workOrdersList.append(workOrderItem);
             }
@@ -2716,6 +2760,269 @@
                     bulmaJS.toggleHtmlClipped();
                 }
             });
+        });
+    }
+    // Modal functions for editing notes in builder
+    function openEditCrewNoteModal(shiftId, crew) {
+        let closeModalFunction;
+        cityssm.openHtmlModal('shifts-editCrewNote', {
+            onshow(modalElement) {
+                const formElement = modalElement.querySelector('#form--editCrewNote');
+                formElement.querySelector('[name="shiftId"]').value =
+                    shiftId.toString();
+                formElement.querySelector('[name="crewId"]').value =
+                    crew.crewId.toString();
+                formElement.querySelector('[name="shiftCrewNote"]').value = crew.shiftCrewNote;
+                // Handle form submission
+                formElement.addEventListener('submit', (submitEvent) => {
+                    submitEvent.preventDefault();
+                    cityssm.postJSON(`${shiftUrlPrefix}/doUpdateShiftCrewNote`, formElement, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success) {
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Crew note updated successfully!'
+                            });
+                            closeModalFunction();
+                            loadShifts();
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                message: 'Failed to update crew note.',
+                                title: 'Update Error'
+                            });
+                        }
+                    });
+                });
+            },
+            onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+                // Focus the textarea
+                const textarea = modalElement.querySelector('[name="shiftCrewNote"]');
+                textarea?.focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function openEditEmployeeCrewNoteModal(shiftId, employee, shiftCrews) {
+        let closeModalFunction;
+        cityssm.openHtmlModal('shifts-builder-editEmployeeCrewNote', {
+            onshow(modalElement) {
+                const formElement = modalElement.querySelector('#form--builderEditEmployeeCrewNote');
+                formElement.querySelector('[name="shiftId"]').value =
+                    shiftId.toString();
+                formElement.querySelector('[name="employeeNumber"]').value = employee.employeeNumber;
+                modalElement.querySelector('#builderEditEmployeeCrewNote--employeeName').value = `${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`;
+                // Populate crew dropdown
+                const crewSelect = formElement.querySelector('[name="crewId"]');
+                crewSelect.innerHTML = '<option value="">(None)</option>';
+                for (const crew of shiftCrews) {
+                    const option = document.createElement('option');
+                    option.value = crew.crewId.toString();
+                    option.textContent = crew.crewName;
+                    if (employee.crewId === crew.crewId) {
+                        option.selected = true;
+                    }
+                    crewSelect.append(option);
+                }
+                // Set note value
+                ;
+                formElement.querySelector('[name="shiftEmployeeNote"]').value = employee.shiftEmployeeNote;
+                // Handle form submission
+                formElement.addEventListener('submit', (submitEvent) => {
+                    submitEvent.preventDefault();
+                    const formData = new FormData(formElement);
+                    const crewId = formData.get('crewId');
+                    const shiftEmployeeNote = formData.get('shiftEmployeeNote');
+                    // Update crew assignment
+                    cityssm.postJSON(`${shiftUrlPrefix}/doUpdateShiftEmployee`, {
+                        shiftId,
+                        employeeNumber: employee.employeeNumber,
+                        crewId: crewId === '' ? null : crewId
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success) {
+                            // Update note
+                            cityssm.postJSON(`${shiftUrlPrefix}/doUpdateShiftEmployeeNote`, {
+                                shiftId,
+                                employeeNumber: employee.employeeNumber,
+                                shiftEmployeeNote
+                            }, (noteResponseJSON) => {
+                                const noteResponse = noteResponseJSON;
+                                if (noteResponse.success) {
+                                    bulmaJS.alert({
+                                        contextualColorName: 'success',
+                                        message: 'Employee updated successfully!'
+                                    });
+                                    closeModalFunction();
+                                    loadShifts();
+                                }
+                                else {
+                                    bulmaJS.alert({
+                                        contextualColorName: 'warning',
+                                        message: 'Crew updated but failed to update note.',
+                                        title: 'Partial Update'
+                                    });
+                                    closeModalFunction();
+                                    loadShifts();
+                                }
+                            });
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                message: 'Failed to update employee.',
+                                title: 'Update Error'
+                            });
+                        }
+                    });
+                });
+            },
+            onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+                // Focus the crew dropdown
+                const crewSelect = modalElement.querySelector('[name="crewId"]');
+                crewSelect?.focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function openEditEquipmentEmployeeNoteModal(shiftId, equipment, shiftEmployees) {
+        let closeModalFunction;
+        cityssm.openHtmlModal('shifts-builder-editEquipmentEmployeeNote', {
+            onshow(modalElement) {
+                const formElement = modalElement.querySelector('#form--builderEditEquipmentEmployeeNote');
+                formElement.querySelector('[name="shiftId"]').value =
+                    shiftId.toString();
+                formElement.querySelector('[name="equipmentNumber"]').value = equipment.equipmentNumber;
+                modalElement.querySelector('#builderEditEquipmentEmployeeNote--equipmentName').value = `${equipment.equipmentName} (#${equipment.equipmentNumber})`;
+                // Populate employee dropdown
+                const employeeSelect = formElement.querySelector('[name="employeeNumber"]');
+                employeeSelect.innerHTML = '<option value="">(None)</option>';
+                for (const employee of shiftEmployees) {
+                    const option = document.createElement('option');
+                    option.value = employee.employeeNumber;
+                    option.textContent = `${employee.lastName}, ${employee.firstName}`;
+                    if (equipment.employeeNumber === employee.employeeNumber) {
+                        option.selected = true;
+                    }
+                    employeeSelect.append(option);
+                }
+                // Set note value
+                ;
+                formElement.querySelector('[name="shiftEquipmentNote"]').value = equipment.shiftEquipmentNote;
+                // Handle form submission
+                formElement.addEventListener('submit', (submitEvent) => {
+                    submitEvent.preventDefault();
+                    const formData = new FormData(formElement);
+                    const employeeNumber = formData.get('employeeNumber');
+                    const shiftEquipmentNote = formData.get('shiftEquipmentNote');
+                    // Update employee assignment
+                    cityssm.postJSON(`${shiftUrlPrefix}/doUpdateShiftEquipment`, {
+                        shiftId,
+                        equipmentNumber: equipment.equipmentNumber,
+                        employeeNumber: employeeNumber === '' ? null : employeeNumber
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success) {
+                            // Update note
+                            cityssm.postJSON(`${shiftUrlPrefix}/doUpdateShiftEquipmentNote`, {
+                                shiftId,
+                                equipmentNumber: equipment.equipmentNumber,
+                                shiftEquipmentNote
+                            }, (noteResponseJSON) => {
+                                const noteResponse = noteResponseJSON;
+                                if (noteResponse.success) {
+                                    bulmaJS.alert({
+                                        contextualColorName: 'success',
+                                        message: 'Equipment updated successfully!'
+                                    });
+                                    closeModalFunction();
+                                    loadShifts();
+                                }
+                                else {
+                                    bulmaJS.alert({
+                                        contextualColorName: 'warning',
+                                        message: 'Employee assignment updated but failed to update note.',
+                                        title: 'Partial Update'
+                                    });
+                                    closeModalFunction();
+                                    loadShifts();
+                                }
+                            });
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                message: responseJSON.message ?? 'Failed to update equipment.',
+                                title: 'Update Error'
+                            });
+                        }
+                    });
+                });
+            },
+            onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+                // Focus the employee dropdown
+                const employeeSelect = modalElement.querySelector('[name="employeeNumber"]');
+                employeeSelect?.focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function openEditWorkOrderNoteModal(shiftId, workOrder) {
+        let closeModalFunction;
+        cityssm.openHtmlModal('shifts-editWorkOrderNote', {
+            onshow(modalElement) {
+                const formElement = modalElement.querySelector('#editWorkOrderNote--form');
+                formElement.querySelector('[name="shiftId"]').value =
+                    shiftId.toString();
+                formElement.querySelector('[name="workOrderId"]').value = workOrder.workOrderId.toString();
+                formElement.querySelector('[name="shiftWorkOrderNote"]').value = workOrder.shiftWorkOrderNote;
+                // Handle form submission
+                formElement.addEventListener('submit', (submitEvent) => {
+                    submitEvent.preventDefault();
+                    cityssm.postJSON(`${shiftUrlPrefix}/doUpdateShiftWorkOrderNote`, formElement, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success) {
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Work order note updated successfully!'
+                            });
+                            closeModalFunction();
+                            loadShifts();
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                message: responseJSON.errorMessage ??
+                                    'Failed to update work order note.',
+                                title: 'Update Error'
+                            });
+                        }
+                    });
+                });
+            },
+            onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+                // Focus the textarea
+                const textarea = modalElement.querySelector('[name="shiftWorkOrderNote"]');
+                textarea?.focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
         });
     }
     // Initialize resource section features
