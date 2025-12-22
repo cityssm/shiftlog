@@ -24,6 +24,7 @@ import handler_doDeleteCrewEquipment from '../handlers/shifts-post/doDeleteCrewE
 import handler_doDeleteCrewMember from '../handlers/shifts-post/doDeleteCrewMember.js'
 import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js'
 import handler_doDeleteShiftAdhocTask from '../handlers/shifts-post/doDeleteShiftAdhocTask.js'
+import handler_doGetAdhocTaskTypes from '../handlers/shifts-post/doGetAdhocTaskTypes.js'
 import handler_doGetAvailableAdhocTasks from '../handlers/shifts-post/doGetAvailableAdhocTasks.js'
 import handler_doGetAvailableResources from '../handlers/shifts-post/doGetAvailableResources.js'
 import handler_doGetShiftCreationData from '../handlers/shifts-post/doGetShiftCreationData.js'
@@ -187,6 +188,7 @@ router.post(
 // Shift ad hoc tasks endpoints
 router.post('/doGetShiftAdhocTasks', handler_doGetShiftAdhocTasks)
 router.post('/doGetAvailableAdhocTasks', handler_doGetAvailableAdhocTasks)
+router.post('/doGetAdhocTaskTypes', handler_doGetAdhocTaskTypes)
 router.post('/doCreateAdhocTask', updateHandler, handler_doCreateAdhocTask)
 router.post('/doUpdateAdhocTask', updateHandler, handler_doUpdateAdhocTask)
 router.post('/doAddShiftAdhocTask', updateHandler, handler_doAddShiftAdhocTask)

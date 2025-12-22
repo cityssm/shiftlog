@@ -4,6 +4,7 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
+import type Leaflet from 'leaflet'
 
 import type { AdhocTask } from '../../types/record.types.js'
 
@@ -12,6 +13,7 @@ import type { ShiftLogGlobal } from './types.js'
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
 declare const flatpickr: typeof FlatPickr
+declare const L: typeof Leaflet
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
@@ -29,6 +31,49 @@ declare const exports: {
   const isEdit = document.querySelector('#button--createAdhocTask') !== null
 
   let shiftAdhocTasks = exports.shiftAdhocTasks
+  let adhocTaskTypes: Array<{ dataListItemId: number; dataListItem: string }> =
+    []
+
+  // Load task types
+  function loadAdhocTaskTypes(): void {
+    cityssm.postJSON(
+      `${urlPrefix}/doGetAdhocTaskTypes`,
+      {},
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as {
+          success: boolean
+          adhocTaskTypes: Array<{
+            dataListItemId: number
+            dataListItem: string
+          }>
+        }
+
+        if (responseJSON.success && responseJSON.adhocTaskTypes) {
+          adhocTaskTypes = responseJSON.adhocTaskTypes
+        }
+      }
+    )
+  }
+
+  function populateTaskTypeDropdown(
+    selectElement: HTMLSelectElement,
+    selectedId?: number
+  ): void {
+    // Clear existing options except the first one
+    while (selectElement.options.length > 1) {
+      selectElement.remove(1)
+    }
+
+    for (const taskType of adhocTaskTypes) {
+      const option = document.createElement('option')
+      option.value = taskType.dataListItemId.toString()
+      option.textContent = taskType.dataListItem
+      if (selectedId !== undefined && taskType.dataListItemId === selectedId) {
+        option.selected = true
+      }
+      selectElement.append(option)
+    }
+  }
 
   function updateCount(): void {
     const adhocTasksCountElement = document.querySelector('#adhocTasksCount')
@@ -241,6 +286,12 @@ declare const exports: {
           modalElement.querySelector('input[name="shiftId"]') as HTMLInputElement
         ).value = shiftId
 
+        // Populate task types
+        const taskTypeSelect = modalElement.querySelector(
+          '#createAdhocTask--adhocTaskTypeDataListItemId'
+        ) as HTMLSelectElement
+        populateTaskTypeDropdown(taskTypeSelect)
+
         // Set default city/province
         const defaultCityProvince = shiftLog.defaultCityProvince ?? ''
         ;(
@@ -281,6 +332,69 @@ declare const exports: {
           nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
           prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
         })
+
+        // Initialize map
+        const latitudeInput = modalElement.querySelector(
+          '#createAdhocTask--locationLatitude'
+        ) as HTMLInputElement
+        const longitudeInput = modalElement.querySelector(
+          '#createAdhocTask--locationLongitude'
+        ) as HTMLInputElement
+
+        const defaultLat = shiftLog.defaultLatitude
+        const defaultLng = shiftLog.defaultLongitude
+
+        const map = new L.Map('map--createAdhocTask--location').setView(
+          [defaultLat, defaultLng],
+          13
+        )
+
+        new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map)
+
+        // eslint-disable-next-line unicorn/no-null
+        let marker: L.Marker | null = null
+
+        map.on('click', (event: { latlng: { lat: number; lng: number } }) => {
+          const lat = event.latlng.lat
+          const lng = event.latlng.lng
+
+          latitudeInput.value = lat.toFixed(7)
+          longitudeInput.value = lng.toFixed(7)
+
+          if (marker !== null) {
+            map.removeLayer(marker)
+          }
+
+          marker = new L.Marker([lat, lng]).addTo(map)
+        })
+
+        // Update map when coordinates are manually entered
+        function updateMapFromInputs(): void {
+          const lat = Number.parseFloat(latitudeInput.value)
+          const lng = Number.parseFloat(longitudeInput.value)
+
+          if (
+            !Number.isNaN(lat) &&
+            !Number.isNaN(lng) &&
+            lat >= -90 &&
+            lat <= 90 &&
+            lng >= -180 &&
+            lng <= 180
+          ) {
+            if (marker !== null) {
+              map.removeLayer(marker)
+            }
+
+            marker = new L.Marker([lat, lng]).addTo(map)
+            map.setView([lat, lng], 15)
+          }
+        }
+
+        latitudeInput.addEventListener('change', updateMapFromInputs)
+        longitudeInput.addEventListener('change', updateMapFromInputs)
 
         // Focus on description
         ;(
@@ -352,12 +466,16 @@ declare const exports: {
           ) as HTMLInputElement
         ).value = adhocTaskId ?? ''
 
+        // Populate task types
+        const taskTypeSelect = modalElement.querySelector(
+          'select[name="adhocTaskTypeDataListItemId"]'
+        ) as HTMLSelectElement
+        populateTaskTypeDropdown(
+          taskTypeSelect,
+          task.adhocTaskTypeDataListItemId
+        )
+
         // Populate form
-        ;(
-          modalElement.querySelector(
-            'select[name="adhocTaskTypeDataListItemId"]'
-          ) as HTMLSelectElement
-        ).value = task.adhocTaskTypeDataListItemId.toString()
         ;(
           modalElement.querySelector(
             'textarea[name="taskDescription"]'
@@ -476,6 +594,90 @@ declare const exports: {
           nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
           prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
         })
+
+        // Initialize map
+        const latitudeInput = modalElement.querySelector(
+          'input[name="locationLatitude"]'
+        ) as HTMLInputElement
+        const longitudeInput = modalElement.querySelector(
+          'input[name="locationLongitude"]'
+        ) as HTMLInputElement
+
+        let defaultLat = shiftLog.defaultLatitude
+        let defaultLng = shiftLog.defaultLongitude
+        let defaultZoom = 13
+
+        if (
+          task.locationLatitude !== null &&
+          task.locationLatitude !== undefined &&
+          task.locationLongitude !== null &&
+          task.locationLongitude !== undefined
+        ) {
+          defaultLat = task.locationLatitude
+          defaultLng = task.locationLongitude
+          defaultZoom = 15
+        }
+
+        const map = new L.Map('map--editAdhocTask--location').setView(
+          [defaultLat, defaultLng],
+          defaultZoom
+        )
+
+        new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map)
+
+        // eslint-disable-next-line unicorn/no-null
+        let marker: L.Marker | null = null
+
+        if (
+          task.locationLatitude !== null &&
+          task.locationLatitude !== undefined &&
+          task.locationLongitude !== null &&
+          task.locationLongitude !== undefined
+        ) {
+          marker = new L.Marker([defaultLat, defaultLng]).addTo(map)
+        }
+
+        map.on('click', (event: { latlng: { lat: number; lng: number } }) => {
+          const lat = event.latlng.lat
+          const lng = event.latlng.lng
+
+          latitudeInput.value = lat.toFixed(7)
+          longitudeInput.value = lng.toFixed(7)
+
+          if (marker !== null) {
+            map.removeLayer(marker)
+          }
+
+          marker = new L.Marker([lat, lng]).addTo(map)
+        })
+
+        // Update map when coordinates are manually entered
+        function updateMapFromInputs(): void {
+          const lat = Number.parseFloat(latitudeInput.value)
+          const lng = Number.parseFloat(longitudeInput.value)
+
+          if (
+            !Number.isNaN(lat) &&
+            !Number.isNaN(lng) &&
+            lat >= -90 &&
+            lat <= 90 &&
+            lng >= -180 &&
+            lng <= 180
+          ) {
+            if (marker !== null) {
+              map.removeLayer(marker)
+            }
+
+            marker = new L.Marker([lat, lng]).addTo(map)
+            map.setView([lat, lng], 15)
+          }
+        }
+
+        latitudeInput.addEventListener('change', updateMapFromInputs)
+        longitudeInput.addEventListener('change', updateMapFromInputs)
       },
       onremoved() {
         bulmaJS.toggleHtmlClipped()
@@ -850,6 +1052,9 @@ declare const exports: {
     document
       .querySelector('#button--addExistingAdhocTask')
       ?.addEventListener('click', addExistingAdhocTask)
+
+    // Load task types for modals
+    loadAdhocTaskTypes()
   }
 
   // Initial render
