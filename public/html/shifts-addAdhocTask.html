@@ -1,0 +1,47 @@
+<div class="modal" id="modal-shifts-addAdhocTask">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Add Ad Hoc Task to Shift</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="Close"
+      ></button>
+    </header>
+    <section class="modal-card-body">
+      <form id="addAdhocTask--form">
+        <input name="shiftId" type="hidden" />
+        <input name="adhocTaskId" type="hidden" />
+
+        <div id="addAdhocTask--taskDetails" class="box mb-4"></div>
+
+        <div class="field">
+          <label class="label" for="addAdhocTask--shiftAdhocTaskNote">
+            Shift Note
+          </label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="addAdhocTask--shiftAdhocTaskNote"
+              name="shiftAdhocTaskNote"
+              maxlength="200"
+              placeholder="Optional note about this task's relation to the shift"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-end">
+      <button
+        class="button is-success"
+        type="submit"
+        form="addAdhocTask--form"
+      >
+        <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+        <span>Add Task</span>
+      </button>
+    </footer>
+  </div>
+</div>
