@@ -18,32 +18,32 @@
             // Track employees
             for (const employee of shift.employees) {
                 const key = getItemKey('employee', employee.employeeNumber);
-                tracker[key] ?? (tracker[key] = []);
+                tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
             // Track equipment
             for (const equipment of shift.equipment) {
                 const key = getItemKey('equipment', equipment.equipmentNumber);
-                tracker[key] ?? (tracker[key] = []);
+                tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
             // Track crews
             for (const crew of shift.crews) {
                 const key = getItemKey('crew', crew.crewId);
-                tracker[key] ?? (tracker[key] = []);
+                tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
             // Track work orders
             for (const workOrder of shift.workOrders) {
                 const key = getItemKey('workOrder', workOrder.workOrderId);
-                tracker[key] ?? (tracker[key] = []);
+                tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
             // Track adhoc tasks
             if (shift.adhocTasks) {
                 for (const adhocTask of shift.adhocTasks) {
                     const key = getItemKey('adhocTask', adhocTask.adhocTaskId);
-                    tracker[key] ?? (tracker[key] = []);
+                    tracker[key] ??= [];
                     tracker[key].push(shift.shiftId);
                 }
             }
@@ -3031,4 +3031,3 @@
     // Load shifts for today on page load
     loadShifts();
 })();
-export {};
