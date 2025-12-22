@@ -21,6 +21,117 @@ declare const exports: {
     '#container--tags'
   ) as HTMLDivElement
 
+  // WCAG Contrast Calculation Functions
+  const WCAG_AA_NORMAL_RATIO = 4.5
+  const WCAG_AAA_NORMAL_RATIO = 7
+
+  /**
+   * Convert a hex color to RGB values
+   */
+  function hexToRgb(hex: string): { r: number; g: number; b: number } {
+    const cleanHex = hex.replace(/^#/, '')
+    // Validate hex string
+    if (!/^[\dA-Fa-f]{6}$/.test(cleanHex)) {
+      // Default to black if invalid
+      return { r: 0, g: 0, b: 0 }
+    }
+    const bigint = Number.parseInt(cleanHex, 16)
+    const r = (bigint >> 16) & 255
+    const g = (bigint >> 8) & 255
+    const b = bigint & 255
+    return { r, g, b }
+  }
+
+  /**
+   * Calculate relative luminance according to WCAG 2.0
+   */
+  function getRelativeLuminance(rgb: {
+    r: number
+    g: number
+    b: number
+  }): number {
+    const rsRGB = rgb.r / 255
+    const gsRGB = rgb.g / 255
+    const bsRGB = rgb.b / 255
+
+    const r =
+      rsRGB <= 0.03928 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4
+    const g =
+      gsRGB <= 0.03928 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4
+    const b =
+      bsRGB <= 0.03928 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4
+
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+
+  /**
+   * Calculate contrast ratio between two colors
+   */
+  function getContrastRatio(color1: string, color2: string): number {
+    const rgb1 = hexToRgb(color1)
+    const rgb2 = hexToRgb(color2)
+
+    const lum1 = getRelativeLuminance(rgb1)
+    const lum2 = getRelativeLuminance(rgb2)
+
+    const lighter = Math.max(lum1, lum2)
+    const darker = Math.min(lum1, lum2)
+
+    return (lighter + 0.05) / (darker + 0.05)
+  }
+
+  /**
+   * Get WCAG compliance level for a contrast ratio
+   */
+  function getWCAGCompliance(contrastRatio: number): {
+    aa: boolean
+    aaa: boolean
+  } {
+    return {
+      aa: contrastRatio >= WCAG_AA_NORMAL_RATIO,
+      aaa: contrastRatio >= WCAG_AAA_NORMAL_RATIO
+    }
+  }
+
+  /**
+   * Update the preview and contrast information for a tag
+   */
+  function updateTagPreview(
+    previewElement: HTMLElement,
+    contrastRatioElement: HTMLElement,
+    wcagAAElement: HTMLElement,
+    wcagAAAElement: HTMLElement,
+    backgroundColor: string,
+    textColor: string,
+    tagName?: string
+  ): void {
+    previewElement.style.backgroundColor = backgroundColor
+    previewElement.style.color = textColor
+    if (tagName !== undefined) {
+      previewElement.textContent = tagName
+    }
+
+    const contrastRatio = getContrastRatio(backgroundColor, textColor)
+    const compliance = getWCAGCompliance(contrastRatio)
+
+    contrastRatioElement.textContent = contrastRatio.toFixed(2)
+
+    // Clear existing content
+    wcagAAElement.textContent = ''
+    wcagAAAElement.textContent = ''
+
+    // Create and append status badges
+    const aaSpan = document.createElement('span')
+    aaSpan.className = compliance.aa ? 'tag is-success' : 'tag is-danger'
+    aaSpan.textContent = compliance.aa ? 'Pass' : 'Fail'
+    wcagAAElement.append(aaSpan)
+
+    const aaaSpan = document.createElement('span')
+    aaaSpan.className = compliance.aaa ? 'tag is-success' : 'tag is-danger'
+    aaaSpan.textContent = compliance.aaa ? 'Pass' : 'Fail'
+    wcagAAAElement.append(aaaSpan)
+  }
+
   // Pagination settings
   const ITEMS_PER_PAGE = 20
   let currentPage = 1
@@ -147,24 +258,55 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTags-edit', {
       onshow(modalElement) {
-        ;(
-          modalElement.querySelector('#editTag--tagName') as HTMLInputElement
-        ).value = tag.tagName
-        ;(
-          modalElement.querySelector(
-            '#editTag--tagNameDisplay'
-          ) as HTMLInputElement
-        ).value = tag.tagName
-        ;(
-          modalElement.querySelector(
-            '#editTag--tagBackgroundColor'
-          ) as HTMLInputElement
-        ).value = `#${tag.tagBackgroundColor}`
-        ;(
-          modalElement.querySelector(
-            '#editTag--tagTextColor'
-          ) as HTMLInputElement
-        ).value = `#${tag.tagTextColor}`
+        const tagNameInput = modalElement.querySelector(
+          '#editTag--tagName'
+        ) as HTMLInputElement
+        const tagNameDisplayInput = modalElement.querySelector(
+          '#editTag--tagNameDisplay'
+        ) as HTMLInputElement
+        const backgroundColorInput = modalElement.querySelector(
+          '#editTag--tagBackgroundColor'
+        ) as HTMLInputElement
+        const textColorInput = modalElement.querySelector(
+          '#editTag--tagTextColor'
+        ) as HTMLInputElement
+        const previewElement = modalElement.querySelector(
+          '#editTag--preview'
+        ) as HTMLElement
+        const contrastRatioElement = modalElement.querySelector(
+          '#editTag--contrastRatio'
+        ) as HTMLElement
+        const wcagAAElement = modalElement.querySelector(
+          '#editTag--wcagAA'
+        ) as HTMLElement
+        const wcagAAAElement = modalElement.querySelector(
+          '#editTag--wcagAAA'
+        ) as HTMLElement
+
+        tagNameInput.value = tag.tagName
+        tagNameDisplayInput.value = tag.tagName
+        backgroundColorInput.value = `#${tag.tagBackgroundColor}`
+        textColorInput.value = `#${tag.tagTextColor}`
+
+        // Update preview when colors change
+        function updatePreview(): void {
+          updateTagPreview(
+            previewElement,
+            contrastRatioElement,
+            wcagAAElement,
+            wcagAAAElement,
+            backgroundColorInput.value,
+            textColorInput.value,
+            tag.tagName
+          )
+        }
+
+        // Initialize preview with current values
+        updatePreview()
+
+        // Add event listeners for real-time updates
+        backgroundColorInput.addEventListener('input', updatePreview)
+        textColorInput.addEventListener('input', updatePreview)
 
         modalElement
           .querySelector('form')
@@ -229,6 +371,49 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTags-add', {
       onshow(modalElement) {
+        const tagNameInput = modalElement.querySelector(
+          '#addTag--tagName'
+        ) as HTMLInputElement
+        const backgroundColorInput = modalElement.querySelector(
+          '#addTag--tagBackgroundColor'
+        ) as HTMLInputElement
+        const textColorInput = modalElement.querySelector(
+          '#addTag--tagTextColor'
+        ) as HTMLInputElement
+        const previewElement = modalElement.querySelector(
+          '#addTag--preview'
+        ) as HTMLElement
+        const contrastRatioElement = modalElement.querySelector(
+          '#addTag--contrastRatio'
+        ) as HTMLElement
+        const wcagAAElement = modalElement.querySelector(
+          '#addTag--wcagAA'
+        ) as HTMLElement
+        const wcagAAAElement = modalElement.querySelector(
+          '#addTag--wcagAAA'
+        ) as HTMLElement
+
+        // Update preview when colors or name change
+        function updatePreview(): void {
+          updateTagPreview(
+            previewElement,
+            contrastRatioElement,
+            wcagAAElement,
+            wcagAAAElement,
+            backgroundColorInput.value,
+            textColorInput.value,
+            tagNameInput.value || 'Sample Tag'
+          )
+        }
+
+        // Initialize preview with default values
+        updatePreview()
+
+        // Add event listeners for real-time updates
+        tagNameInput.addEventListener('input', updatePreview)
+        backgroundColorInput.addEventListener('input', updatePreview)
+        textColorInput.addEventListener('input', updatePreview)
+
         modalElement.querySelector('form')?.addEventListener('submit', doAddTag)
       },
       onshown(_modalElement, closeFunction) {
