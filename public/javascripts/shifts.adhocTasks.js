@@ -12,7 +12,7 @@
     function loadAdhocTaskTypes() {
         cityssm.postJSON(`${urlPrefix}/doGetAdhocTaskTypes`, {}, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
-            if (responseJSON.success && responseJSON.adhocTaskTypes) {
+            if (responseJSON.success && responseJSON.adhocTaskTypes !== undefined) {
                 adhocTaskTypes = responseJSON.adhocTaskTypes;
             }
         });
@@ -172,8 +172,9 @@
                 ? /* html */ `
               <td class="has-text-right">
                 <div class="buttons is-right">
-                  ${!isComplete
-                    ? /* html */ `
+                  ${isComplete
+                    ? ''
+                    : /* html */ `
                         <button
                           class="button is-small is-info button--edit"
                           data-adhoc-task-id="${task.adhocTaskId}"
@@ -182,8 +183,7 @@
                         >
                           <span class="icon is-small"><i class="fa-solid fa-pencil"></i></span>
                         </button>
-                      `
-                    : ''}
+                      `}
                   <button
                     class="button is-small is-info button--editNote"
                     data-adhoc-task-id="${task.adhocTaskId}"

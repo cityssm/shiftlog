@@ -31,7 +31,7 @@ declare const exports: {
   const isEdit = document.querySelector('#button--createAdhocTask') !== null
 
   let shiftAdhocTasks = exports.shiftAdhocTasks
-  let adhocTaskTypes: Array<{ dataListItemId: number; dataListItem: string }> =
+  let adhocTaskTypes: Array<{ dataListItem: string; dataListItemId: number }> =
     []
 
   // Load task types
@@ -42,13 +42,14 @@ declare const exports: {
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
           success: boolean
-          adhocTaskTypes: Array<{
-            dataListItemId: number
+
+          adhocTaskTypes?: Array<{
             dataListItem: string
+            dataListItemId: number
           }>
         }
 
-        if (responseJSON.success && responseJSON.adhocTaskTypes) {
+        if (responseJSON.success && responseJSON.adhocTaskTypes !== undefined) {
           adhocTaskTypes = responseJSON.adhocTaskTypes
         }
       }
@@ -266,8 +267,9 @@ declare const exports: {
               <td class="has-text-right">
                 <div class="buttons is-right">
                   ${
-                    !isComplete
-                      ? /* html */ `
+                    isComplete
+                      ? ''
+                      : /* html */ `
                         <button
                           class="button is-small is-info button--edit"
                           data-adhoc-task-id="${task.adhocTaskId}"
@@ -277,7 +279,6 @@ declare const exports: {
                           <span class="icon is-small"><i class="fa-solid fa-pencil"></i></span>
                         </button>
                       `
-                      : ''
                   }
                   <button
                     class="button is-small is-info button--editNote"
@@ -455,6 +456,7 @@ declare const exports: {
           ) as HTMLSelectElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -684,6 +686,7 @@ declare const exports: {
           task.toLocationLongitude
         )
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -772,6 +775,7 @@ declare const exports: {
           ) as HTMLTextAreaElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -830,6 +834,7 @@ declare const exports: {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Adding Task',
+
                     message:
                       addResponseJSON.errorMessage ??
                       'An unknown error occurred.'
@@ -898,6 +903,7 @@ declare const exports: {
                 ) as HTMLTextAreaElement
               ).focus()
             },
+
             onremoved() {
               bulmaJS.toggleHtmlClipped()
             }
@@ -973,6 +979,7 @@ declare const exports: {
             ) as HTMLElement
             container.replaceChildren(tableElement)
           },
+
           onremoved() {
             bulmaJS.toggleHtmlClipped()
           }
@@ -1013,6 +1020,7 @@ declare const exports: {
 
       okButton: {
         text: 'Remove',
+
         callbackFunction: () => {
           const deleteOption = (
             document.querySelector(
@@ -1042,6 +1050,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Removing Task',
+
                   message:
                     responseJSON.errorMessage ?? 'An unknown error occurred.'
                 })

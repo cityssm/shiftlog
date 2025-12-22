@@ -599,11 +599,11 @@
         const employeesSection = document.querySelector('#available--employees');
         const equipmentSection = document.querySelector('#available--equipment');
         const crewsSection = document.querySelector('#available--crews');
-        if (employeesSection)
+        if (employeesSection !== null)
             employeesSection.style.display = 'block';
-        if (equipmentSection)
+        if (equipmentSection !== null)
             equipmentSection.style.display = 'block';
-        if (crewsSection)
+        if (crewsSection !== null)
             crewsSection.style.display = 'block';
         // Hide adhoc tasks section if it exists
         const adhocTasksSection = document.querySelector('#available--adhocTasks');
@@ -741,11 +741,11 @@
         const employeesSection = document.querySelector('#available--employees');
         const equipmentSection = document.querySelector('#available--equipment');
         const crewsSection = document.querySelector('#available--crews');
-        if (employeesSection)
+        if (employeesSection !== null)
             employeesSection.style.display = 'none';
-        if (equipmentSection)
+        if (equipmentSection !== null)
             equipmentSection.style.display = 'none';
-        if (crewsSection)
+        if (crewsSection !== null)
             crewsSection.style.display = 'none';
         // Show or create adhoc tasks section
         let adhocTasksSection = document.querySelector('#available--adhocTasks');
@@ -753,28 +753,28 @@
             adhocTasksSection = document.createElement('div');
             adhocTasksSection.id = 'available--adhocTasks';
             adhocTasksSection.className = 'mb-4';
-            adhocTasksSection.innerHTML = `
-                <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="adhocTasks">
-                    <span class="icon is-small">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </span>
-                    <span>Ad Hoc Tasks</span>
-                    <span class="tag is-info is-light ml-2" id="adhocTasks-count">0</span>
-                </h4>
-                <div class="available-resources-list resource-section-content" data-resource-type="adhocTask">
-                    <p class="has-text-grey-light is-size-7">No available tasks</p>
-                </div>
-                <button class="button is-small is-success is-fullwidth mt-3" id="button--createStandaloneAdhocTask" type="button">
-                    <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
-                    <span>Create Ad Hoc Task</span>
-                </button>
-            `;
+            adhocTasksSection.innerHTML = /* html */ `
+        <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="adhocTasks">
+          <span class="icon is-small">
+            <i class="fa-solid fa-chevron-down"></i>
+          </span>
+          <span>Ad Hoc Tasks</span>
+          <span class="tag is-info is-light ml-2" id="adhocTasks-count">0</span>
+        </h4>
+        <div class="available-resources-list resource-section-content" data-resource-type="adhocTask">
+          <p class="has-text-grey-light is-size-7">No available tasks</p>
+        </div>
+        <button class="button is-small is-success is-fullwidth mt-3" id="button--createStandaloneAdhocTask" type="button">
+          <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
+          <span>Create Ad Hoc Task</span>
+        </button>
+      `;
             const container = document.querySelector('#container--availableResources .box');
             const filterField = container.querySelector('.field');
             container.insertBefore(adhocTasksSection, filterField.nextSibling);
             // Setup collapsible for the newly created section
             const header = adhocTasksSection.querySelector('.resource-section-header');
-            if (header) {
+            if (header !== null) {
                 header.addEventListener('click', () => {
                     const section = header.dataset.section;
                     if (section === undefined)
@@ -1045,8 +1045,8 @@
                 if (!isSupervisor) {
                     bulmaJS.alert({
                         contextualColorName: 'warning',
-                        message: 'Only employees marked as supervisors can be assigned to the supervisor position.',
-                        title: 'Invalid Assignment'
+                        title: 'Invalid Assignment',
+                        message: 'Only employees marked as supervisors can be assigned to the supervisor position.'
                     });
                     return;
                 }
@@ -1103,6 +1103,10 @@
         }
         // Handle different drop scenarios
         switch (draggedData.type) {
+            case 'adhocTask': {
+                moveAdhocTask(draggedData.id, draggedData.fromShiftId, toShiftId);
+                break;
+            }
             case 'crew': {
                 moveCrew(draggedData.id, draggedData.fromShiftId, toShiftId);
                 break;
@@ -1117,10 +1121,6 @@
             }
             case 'workOrder': {
                 moveWorkOrder(draggedData.id, draggedData.fromShiftId, toShiftId);
-                break;
-            }
-            case 'adhocTask': {
-                moveAdhocTask(draggedData.id, draggedData.fromShiftId, toShiftId);
                 break;
             }
         }
@@ -1154,6 +1154,28 @@
     }
     function removeFromShift(draggedData) {
         switch (draggedData.type) {
+            case 'adhocTask': {
+                cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftAdhocTask`, {
+                    shiftId: draggedData.fromShiftId,
+                    adhocTaskId: draggedData.id
+                }, (response) => {
+                    if (response.success) {
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            message: 'Ad hoc task removed from shift.'
+                        });
+                        loadShifts();
+                    }
+                    else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            message: 'Failed to remove ad hoc task from shift.',
+                            title: 'Error'
+                        });
+                    }
+                });
+                break;
+            }
             case 'crew': {
                 // Get employees assigned to this crew
                 const crewEmployees = getCrewEmployees(draggedData.fromShiftId, draggedData.id);
@@ -1361,28 +1383,6 @@
                         bulmaJS.alert({
                             contextualColorName: 'danger',
                             message: 'Failed to remove work order from shift.',
-                            title: 'Error'
-                        });
-                    }
-                });
-                break;
-            }
-            case 'adhocTask': {
-                cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftAdhocTask`, {
-                    shiftId: draggedData.fromShiftId,
-                    adhocTaskId: draggedData.id
-                }, (response) => {
-                    if (response.success) {
-                        bulmaJS.alert({
-                            contextualColorName: 'success',
-                            message: 'Ad hoc task removed from shift.'
-                        });
-                        loadShifts();
-                    }
-                    else {
-                        bulmaJS.alert({
-                            contextualColorName: 'danger',
-                            message: 'Failed to remove ad hoc task from shift.',
                             title: 'Error'
                         });
                     }
@@ -1822,7 +1822,8 @@
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        message: addResponse.errorMessage ?? 'Failed to add ad hoc task to shift.',
+                        message: addResponse.errorMessage ??
+                            'Failed to add ad hoc task to shift.',
                         title: 'Error'
                     });
                 }
@@ -1864,7 +1865,8 @@
                 // Add failed (likely already on target shift), don't delete from source
                 bulmaJS.alert({
                     contextualColorName: 'danger',
-                    message: addResponse.errorMessage ?? 'Failed to add ad hoc task to new shift.',
+                    message: addResponse.errorMessage ??
+                        'Failed to add ad hoc task to new shift.',
                     title: 'Error'
                 });
                 loadShifts();
@@ -2166,9 +2168,9 @@
                 shiftNumberElement.textContent = `#${shift.shiftId}`;
                 shiftTimeElement.textContent = shift.shiftTimeDataListItem ?? '';
                 supervisorElement.textContent =
-                    shift.supervisorLastName !== null
-                        ? `${shift.supervisorLastName}, ${shift.supervisorFirstName}`
-                        : 'None';
+                    shift.supervisorLastName === null
+                        ? 'None'
+                        : `${shift.supervisorLastName}, ${shift.supervisorFirstName}`;
                 // Setup tabs based on view mode
                 const tabsElement = modalElement.querySelector('#builderAddResource--tabs');
                 tabsElement.innerHTML = '';
@@ -2640,13 +2642,13 @@
         cityssm.postJSON(`${shiftUrlPrefix}/doGetAdhocTaskTypes`, {}, (typesResponse) => {
             if (!typesResponse.success) {
                 bulmaJS.alert({
-                    message: 'Failed to load task types.',
+                    contextualColorName: 'danger',
                     title: 'Error',
-                    contextualColorName: 'danger'
+                    message: 'Failed to load task types.',
                 });
                 return;
             }
-            const adhocTaskTypes = typesResponse.adhocTaskTypes || [];
+            const adhocTaskTypes = typesResponse.adhocTaskTypes ?? [];
             cityssm.openHtmlModal('shifts-createAdhocTask', {
                 onshow(modalElement) {
                     // Remove the shiftId input (not needed for standalone)
@@ -2747,7 +2749,8 @@
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Error Creating Task',
-                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                    message: responseJSON.errorMessage ??
+                                        'An unknown error occurred.'
                                 });
                             }
                         });
@@ -2768,10 +2771,8 @@
         cityssm.openHtmlModal('shifts-editCrewNote', {
             onshow(modalElement) {
                 const formElement = modalElement.querySelector('#form--editCrewNote');
-                formElement.querySelector('[name="shiftId"]').value =
-                    shiftId.toString();
-                formElement.querySelector('[name="crewId"]').value =
-                    crew.crewId.toString();
+                formElement.querySelector('[name="shiftId"]').value = shiftId.toString();
+                formElement.querySelector('[name="crewId"]').value = crew.crewId.toString();
                 formElement.querySelector('[name="shiftCrewNote"]').value = crew.shiftCrewNote;
                 // Handle form submission
                 formElement.addEventListener('submit', (submitEvent) => {
@@ -2813,10 +2814,10 @@
         cityssm.openHtmlModal('shifts-builder-editEmployeeCrewNote', {
             onshow(modalElement) {
                 const formElement = modalElement.querySelector('#form--builderEditEmployeeCrewNote');
-                formElement.querySelector('[name="shiftId"]').value =
-                    shiftId.toString();
+                formElement.querySelector('[name="shiftId"]').value = shiftId.toString();
                 formElement.querySelector('[name="employeeNumber"]').value = employee.employeeNumber;
-                modalElement.querySelector('#builderEditEmployeeCrewNote--employeeName').value = `${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`;
+                modalElement.querySelector('#builderEditEmployeeCrewNote--employeeName').value =
+                    `${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`;
                 // Populate crew dropdown
                 const crewSelect = formElement.querySelector('[name="crewId"]');
                 crewSelect.innerHTML = '<option value="">(None)</option>';
@@ -2899,8 +2900,7 @@
         cityssm.openHtmlModal('shifts-builder-editEquipmentEmployeeNote', {
             onshow(modalElement) {
                 const formElement = modalElement.querySelector('#form--builderEditEquipmentEmployeeNote');
-                formElement.querySelector('[name="shiftId"]').value =
-                    shiftId.toString();
+                formElement.querySelector('[name="shiftId"]').value = shiftId.toString();
                 formElement.querySelector('[name="equipmentNumber"]').value = equipment.equipmentNumber;
                 modalElement.querySelector('#builderEditEquipmentEmployeeNote--equipmentName').value = `${equipment.equipmentName} (#${equipment.equipmentNumber})`;
                 // Populate employee dropdown
@@ -2985,8 +2985,7 @@
         cityssm.openHtmlModal('shifts-editWorkOrderNote', {
             onshow(modalElement) {
                 const formElement = modalElement.querySelector('#editWorkOrderNote--form');
-                formElement.querySelector('[name="shiftId"]').value =
-                    shiftId.toString();
+                formElement.querySelector('[name="shiftId"]').value = shiftId.toString();
                 formElement.querySelector('[name="workOrderId"]').value = workOrder.workOrderId.toString();
                 formElement.querySelector('[name="shiftWorkOrderNote"]').value = workOrder.shiftWorkOrderNote;
                 // Handle form submission

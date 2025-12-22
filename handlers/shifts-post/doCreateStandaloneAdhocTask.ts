@@ -32,24 +32,26 @@ export default async function handler(
 ): Promise<void> {
   // Create the ad hoc task without assigning to a shift
   const adhocTaskId = await createAdhocTask(
-    request.body.adhocTaskTypeDataListItemId,
-    request.body.taskDescription,
-    request.body.locationAddress1,
-    request.body.locationAddress2,
-    request.body.locationCityProvince,
-    request.body.locationLatitude,
-    request.body.locationLongitude,
-    request.body.fromLocationAddress1,
-    request.body.fromLocationAddress2,
-    request.body.fromLocationCityProvince,
-    request.body.fromLocationLatitude,
-    request.body.fromLocationLongitude,
-    request.body.toLocationAddress1,
-    request.body.toLocationAddress2,
-    request.body.toLocationCityProvince,
-    request.body.toLocationLatitude,
-    request.body.toLocationLongitude,
-    request.body.taskDueDateTimeString,
+    {
+      adhocTaskTypeDataListItemId: request.body.adhocTaskTypeDataListItemId,
+      taskDescription: request.body.taskDescription,
+      locationAddress1: request.body.locationAddress1,
+      locationAddress2: request.body.locationAddress2,
+      locationCityProvince: request.body.locationCityProvince,
+      locationLatitude: request.body.locationLatitude,
+      locationLongitude: request.body.locationLongitude,
+      fromLocationAddress1: request.body.fromLocationAddress1,
+      fromLocationAddress2: request.body.fromLocationAddress2,
+      fromLocationCityProvince: request.body.fromLocationCityProvince,
+      fromLocationLatitude: request.body.fromLocationLatitude,
+      fromLocationLongitude: request.body.fromLocationLongitude,
+      toLocationAddress1: request.body.toLocationAddress1,
+      toLocationAddress2: request.body.toLocationAddress2,
+      toLocationCityProvince: request.body.toLocationCityProvince,
+      toLocationLatitude: request.body.toLocationLatitude,
+      toLocationLongitude: request.body.toLocationLongitude,
+      taskDueDateTimeString: request.body.taskDueDateTimeString
+    },
     request.session.user as { userName: string }
   )
 

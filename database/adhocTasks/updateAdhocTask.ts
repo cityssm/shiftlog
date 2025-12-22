@@ -4,26 +4,28 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function updateAdhocTask(
-  adhocTaskId: number | string,
-  adhocTaskTypeDataListItemId: number | string,
-  taskDescription: string,
-  locationAddress1: string,
-  locationAddress2: string,
-  locationCityProvince: string,
-  locationLatitude: number | string | null | undefined,
-  locationLongitude: number | string | null | undefined,
-  fromLocationAddress1: string,
-  fromLocationAddress2: string,
-  fromLocationCityProvince: string,
-  fromLocationLatitude: number | string | null | undefined,
-  fromLocationLongitude: number | string | null | undefined,
-  toLocationAddress1: string,
-  toLocationAddress2: string,
-  toLocationCityProvince: string,
-  toLocationLatitude: number | string | null | undefined,
-  toLocationLongitude: number | string | null | undefined,
-  taskDueDateTimeString: string | null | undefined,
-  taskCompleteDateTimeString: string | null | undefined,
+  task: {
+    adhocTaskId: number | string
+    adhocTaskTypeDataListItemId: number | string
+    taskDescription: string
+    locationAddress1: string
+    locationAddress2: string
+    locationCityProvince: string
+    locationLatitude: number | string | null | undefined
+    locationLongitude: number | string | null | undefined
+    fromLocationAddress1: string
+    fromLocationAddress2: string
+    fromLocationCityProvince: string
+    fromLocationLatitude: number | string | null | undefined
+    fromLocationLongitude: number | string | null | undefined
+    toLocationAddress1: string
+    toLocationAddress2: string
+    toLocationCityProvince: string
+    toLocationLatitude: number | string | null | undefined
+    toLocationLongitude: number | string | null | undefined
+    taskDueDateTimeString: string | null | undefined
+    taskCompleteDateTimeString: string | null | undefined
+  },
   sessionUser: {
     userName: string
   }
@@ -32,52 +34,58 @@ export default async function updateAdhocTask(
 
   const result = await pool
     .request()
-    .input('adhocTaskId', adhocTaskId)
-    .input('adhocTaskTypeDataListItemId', adhocTaskTypeDataListItemId)
-    .input('taskDescription', taskDescription)
-    .input('locationAddress1', locationAddress1)
-    .input('locationAddress2', locationAddress2)
-    .input('locationCityProvince', locationCityProvince)
+    .input('adhocTaskId', task.adhocTaskId)
+    .input('adhocTaskTypeDataListItemId', task.adhocTaskTypeDataListItemId)
+    .input('taskDescription', task.taskDescription)
+    .input('locationAddress1', task.locationAddress1)
+    .input('locationAddress2', task.locationAddress2)
+    .input('locationCityProvince', task.locationCityProvince)
     .input(
       'locationLatitude',
-      (locationLatitude ?? '') === '' ? null : locationLatitude
+      (task.locationLatitude ?? '') === '' ? null : task.locationLatitude
     )
     .input(
       'locationLongitude',
-      (locationLongitude ?? '') === '' ? null : locationLongitude
+      (task.locationLongitude ?? '') === '' ? null : task.locationLongitude
     )
-    .input('fromLocationAddress1', fromLocationAddress1)
-    .input('fromLocationAddress2', fromLocationAddress2)
-    .input('fromLocationCityProvince', fromLocationCityProvince)
+    .input('fromLocationAddress1', task.fromLocationAddress1)
+    .input('fromLocationAddress2', task.fromLocationAddress2)
+    .input('fromLocationCityProvince', task.fromLocationCityProvince)
     .input(
       'fromLocationLatitude',
-      (fromLocationLatitude ?? '') === '' ? null : fromLocationLatitude
+      (task.fromLocationLatitude ?? '') === ''
+        ? null
+        : task.fromLocationLatitude
     )
     .input(
       'fromLocationLongitude',
-      (fromLocationLongitude ?? '') === '' ? null : fromLocationLongitude
+      (task.fromLocationLongitude ?? '') === ''
+        ? null
+        : task.fromLocationLongitude
     )
-    .input('toLocationAddress1', toLocationAddress1)
-    .input('toLocationAddress2', toLocationAddress2)
-    .input('toLocationCityProvince', toLocationCityProvince)
+    .input('toLocationAddress1', task.toLocationAddress1)
+    .input('toLocationAddress2', task.toLocationAddress2)
+    .input('toLocationCityProvince', task.toLocationCityProvince)
     .input(
       'toLocationLatitude',
-      (toLocationLatitude ?? '') === '' ? null : toLocationLatitude
+      (task.toLocationLatitude ?? '') === '' ? null : task.toLocationLatitude
     )
     .input(
       'toLocationLongitude',
-      (toLocationLongitude ?? '') === '' ? null : toLocationLongitude
+      (task.toLocationLongitude ?? '') === '' ? null : task.toLocationLongitude
     )
     .input(
       'taskDueDateTimeString',
-      (taskDueDateTimeString ?? '') === '' ? null : taskDueDateTimeString
+      (task.taskDueDateTimeString ?? '') === ''
+        ? null
+        : task.taskDueDateTimeString
     )
 
     .input(
       'taskCompleteDateTimeString',
-      (taskCompleteDateTimeString ?? '') === ''
+      (task.taskCompleteDateTimeString ?? '') === ''
         ? null
-        : taskCompleteDateTimeString
+        : task.taskCompleteDateTimeString
     )
 
     .input('recordUpdate_userName', sessionUser.userName).query(/* sql */ `
