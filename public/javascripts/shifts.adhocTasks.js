@@ -1,0 +1,654 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+(() => {
+    const shiftLog = exports.shiftLog;
+    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
+    const shiftIdElement = document.querySelector('#shift--shiftId');
+    const shiftId = shiftIdElement.value;
+    const isEdit = document.querySelector('#button--createAdhocTask') !== null;
+    let shiftAdhocTasks = exports.shiftAdhocTasks;
+    let adhocTaskTypes = [];
+    // Load task types
+    function loadAdhocTaskTypes() {
+        cityssm.postJSON(`${urlPrefix}/doGetAdhocTaskTypes`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success && responseJSON.adhocTaskTypes) {
+                adhocTaskTypes = responseJSON.adhocTaskTypes;
+            }
+        });
+    }
+    function populateTaskTypeDropdown(selectElement, selectedId) {
+        // Clear existing options except the first one
+        while (selectElement.options.length > 1) {
+            selectElement.remove(1);
+        }
+        for (const taskType of adhocTaskTypes) {
+            const option = document.createElement('option');
+            option.value = taskType.dataListItemId.toString();
+            option.textContent = taskType.dataListItem;
+            if (selectedId !== undefined && taskType.dataListItemId === selectedId) {
+                option.selected = true;
+            }
+            selectElement.append(option);
+        }
+    }
+    function updateCount() {
+        const adhocTasksCountElement = document.querySelector('#adhocTasksCount');
+        if (adhocTasksCountElement !== null) {
+            adhocTasksCountElement.textContent = shiftAdhocTasks.length.toString();
+        }
+        // Show/hide tasks icon indicator
+        const hasTasksIconElement = document.querySelector('#icon--hasTasks');
+        if (hasTasksIconElement !== null) {
+            const hasAnyTasks = shiftAdhocTasks.length > 0 ||
+                (document.querySelector('#workOrdersCount')?.textContent ?? '0') !==
+                    '0';
+            hasTasksIconElement.classList.toggle('is-hidden', !hasAnyTasks);
+        }
+    }
+    function renderShiftAdhocTasks() {
+        const containerElement = document.querySelector('#container--shiftAdhocTasks');
+        if (shiftAdhocTasks.length === 0) {
+            containerElement.innerHTML = /* html */ `
+        <div class="message">
+          <div class="message-body">No ad hoc tasks assigned to this shift.</div>
+        </div>
+      `;
+            return;
+        }
+        const tableElement = document.createElement('table');
+        tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+        // eslint-disable-next-line no-unsanitized/property
+        tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Location</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Note</th>
+          ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+        const tbodyElement = tableElement.querySelector('tbody');
+        for (const task of shiftAdhocTasks) {
+            const trElement = document.createElement('tr');
+            const isComplete = task.taskCompleteDateTime !== null &&
+                task.taskCompleteDateTime !== undefined;
+            let locationString = '';
+            if (task.locationAddress1) {
+                locationString = cityssm.escapeHTML(task.locationAddress1);
+                if (task.locationAddress2) {
+                    locationString += '<br />' + cityssm.escapeHTML(task.locationAddress2);
+                }
+            }
+            if (task.fromLocationAddress1 || task.toLocationAddress1) {
+                locationString += '<br /><small>';
+                if (task.fromLocationAddress1) {
+                    locationString +=
+                        'From: ' + cityssm.escapeHTML(task.fromLocationAddress1);
+                }
+                if (task.toLocationAddress1) {
+                    if (task.fromLocationAddress1)
+                        locationString += '<br />';
+                    locationString +=
+                        'To: ' + cityssm.escapeHTML(task.toLocationAddress1);
+                }
+                locationString += '</small>';
+            }
+            const dueDateString = task.taskDueDateTime !== null && task.taskDueDateTime !== undefined
+                ? cityssm.dateToString(new Date(task.taskDueDateTime))
+                : '';
+            const statusHtml = isComplete
+                ? '<span class="tag is-success">Complete</span>'
+                : dueDateString &&
+                    new Date(task.taskDueDateTime ?? '').getTime() < Date.now()
+                    ? '<span class="tag is-danger">Overdue</span>'
+                    : '<span class="tag is-warning">Pending</span>';
+            // eslint-disable-next-line no-unsanitized/property
+            trElement.innerHTML = /* html */ `
+        <td>${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}</td>
+        <td>${cityssm.escapeHTML(task.taskDescription)}</td>
+        <td>${locationString}</td>
+        <td>${dueDateString}</td>
+        <td>${statusHtml}</td>
+        <td>${cityssm.escapeHTML(task.shiftAdhocTaskNote ?? '')}</td>
+        ${isEdit
+                ? /* html */ `
+              <td class="has-text-right">
+                <div class="buttons is-right">
+                  ${!isComplete
+                    ? /* html */ `
+                        <button
+                          class="button is-small is-info button--edit"
+                          data-adhoc-task-id="${task.adhocTaskId}"
+                          type="button"
+                          aria-label="Edit Task"
+                        >
+                          <span class="icon is-small"><i class="fa-solid fa-pencil"></i></span>
+                        </button>
+                      `
+                    : ''}
+                  <button
+                    class="button is-small is-info button--editNote"
+                    data-adhoc-task-id="${task.adhocTaskId}"
+                    type="button"
+                    aria-label="Edit Note"
+                  >
+                    <span class="icon is-small"><i class="fa-solid fa-comment"></i></span>
+                  </button>
+                  <button
+                    class="button is-small is-danger is-light button--remove"
+                    data-adhoc-task-id="${task.adhocTaskId}"
+                    type="button"
+                    aria-label="Remove"
+                  >
+                    <span class="icon is-small"><i class="fa-solid fa-trash"></i></span>
+                  </button>
+                </div>
+              </td>
+            `
+                : ''}
+      `;
+            tbodyElement.append(trElement);
+        }
+        containerElement.replaceChildren(tableElement);
+        if (isEdit) {
+            const editButtons = containerElement.querySelectorAll('.button--edit');
+            for (const button of editButtons) {
+                button.addEventListener('click', editAdhocTask);
+            }
+            const editNoteButtons = containerElement.querySelectorAll('.button--editNote');
+            for (const button of editNoteButtons) {
+                button.addEventListener('click', editAdhocTaskNote);
+            }
+            const removeButtons = containerElement.querySelectorAll('.button--remove');
+            for (const button of removeButtons) {
+                button.addEventListener('click', removeAdhocTask);
+            }
+        }
+    }
+    function createAdhocTask(clickEvent) {
+        clickEvent.preventDefault();
+        let closeModalFunction;
+        let modalElement;
+        function doCreate(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doCreateAdhocTask`, formEvent.currentTarget, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+                    shiftAdhocTasks = responseJSON.shiftAdhocTasks;
+                    renderShiftAdhocTasks();
+                    updateCount();
+                    closeModalFunction();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Creating Task',
+                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('shifts-createAdhocTask', {
+            onshow(modalElementParameter) {
+                modalElement = modalElementParameter;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                // Populate task types
+                const taskTypeSelect = modalElement.querySelector('#createAdhocTask--adhocTaskTypeDataListItemId');
+                populateTaskTypeDropdown(taskTypeSelect);
+                // Set default city/province
+                const defaultCityProvince = shiftLog.defaultCityProvince ?? '';
+                modalElement.querySelector('#createAdhocTask--locationCityProvince').value = defaultCityProvince;
+                modalElement.querySelector('#createAdhocTask--fromLocationCityProvince').value = defaultCityProvince;
+                modalElement.querySelector('#createAdhocTask--toLocationCityProvince').value = defaultCityProvince;
+            },
+            onshown(modalElementParameter, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                modalElement = modalElementParameter;
+                const formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doCreate);
+                // Initialize date picker
+                const dueDateInput = modalElement.querySelector('#createAdhocTask--taskDueDateTimeString');
+                flatpickr(dueDateInput, {
+                    allowInput: true,
+                    enableTime: true,
+                    minuteIncrement: 15,
+                    nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+                    prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+                });
+                // Initialize map
+                const latitudeInput = modalElement.querySelector('#createAdhocTask--locationLatitude');
+                const longitudeInput = modalElement.querySelector('#createAdhocTask--locationLongitude');
+                const defaultLat = shiftLog.defaultLatitude;
+                const defaultLng = shiftLog.defaultLongitude;
+                const map = new L.Map('map--createAdhocTask--location').setView([defaultLat, defaultLng], 13);
+                new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                // eslint-disable-next-line unicorn/no-null
+                let marker = null;
+                map.on('click', (event) => {
+                    const lat = event.latlng.lat;
+                    const lng = event.latlng.lng;
+                    latitudeInput.value = lat.toFixed(7);
+                    longitudeInput.value = lng.toFixed(7);
+                    if (marker !== null) {
+                        map.removeLayer(marker);
+                    }
+                    marker = new L.Marker([lat, lng]).addTo(map);
+                });
+                // Update map when coordinates are manually entered
+                function updateMapFromInputs() {
+                    const lat = Number.parseFloat(latitudeInput.value);
+                    const lng = Number.parseFloat(longitudeInput.value);
+                    if (!Number.isNaN(lat) &&
+                        !Number.isNaN(lng) &&
+                        lat >= -90 &&
+                        lat <= 90 &&
+                        lng >= -180 &&
+                        lng <= 180) {
+                        if (marker !== null) {
+                            map.removeLayer(marker);
+                        }
+                        marker = new L.Marker([lat, lng]).addTo(map);
+                        map.setView([lat, lng], 15);
+                    }
+                }
+                latitudeInput.addEventListener('change', updateMapFromInputs);
+                longitudeInput.addEventListener('change', updateMapFromInputs);
+                modalElement.querySelector('#createAdhocTask--taskDescription').focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function editAdhocTask(clickEvent) {
+        clickEvent.preventDefault();
+        const adhocTaskId = clickEvent.currentTarget.dataset
+            .adhocTaskId;
+        const task = shiftAdhocTasks.find((possibleTask) => possibleTask.adhocTaskId.toString() === adhocTaskId);
+        if (task === undefined) {
+            return;
+        }
+        let closeModalFunction;
+        let modalElement;
+        function doUpdate(formEvent) {
+            formEvent.preventDefault();
+            cityssm.postJSON(`${urlPrefix}/doUpdateAdhocTask`, formEvent.currentTarget, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+                    shiftAdhocTasks = responseJSON.shiftAdhocTasks;
+                    renderShiftAdhocTasks();
+                    closeModalFunction();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Updating Task',
+                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('shifts-editAdhocTask', {
+            onshow(modalElementParameter) {
+                modalElement = modalElementParameter;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                modalElement.querySelector('input[name="adhocTaskId"]').value = adhocTaskId ?? '';
+                // Populate task types
+                const taskTypeSelect = modalElement.querySelector('select[name="adhocTaskTypeDataListItemId"]');
+                populateTaskTypeDropdown(taskTypeSelect, task.adhocTaskTypeDataListItemId);
+                modalElement.querySelector('textarea[name="taskDescription"]').value = task.taskDescription;
+                modalElement.querySelector('input[name="locationAddress1"]').value = task.locationAddress1;
+                modalElement.querySelector('input[name="locationAddress2"]').value = task.locationAddress2;
+                modalElement.querySelector('input[name="locationCityProvince"]').value = task.locationCityProvince;
+                modalElement.querySelector('input[name="locationLatitude"]').value = task.locationLatitude?.toString() ?? '';
+                modalElement.querySelector('input[name="locationLongitude"]').value = task.locationLongitude?.toString() ?? '';
+                modalElement.querySelector('input[name="fromLocationAddress1"]').value = task.fromLocationAddress1;
+                modalElement.querySelector('input[name="fromLocationAddress2"]').value = task.fromLocationAddress2;
+                modalElement.querySelector('input[name="fromLocationCityProvince"]').value = task.fromLocationCityProvince;
+                modalElement.querySelector('input[name="fromLocationLatitude"]').value = task.fromLocationLatitude?.toString() ?? '';
+                modalElement.querySelector('input[name="fromLocationLongitude"]').value = task.fromLocationLongitude?.toString() ?? '';
+                modalElement.querySelector('input[name="toLocationAddress1"]').value = task.toLocationAddress1;
+                modalElement.querySelector('input[name="toLocationAddress2"]').value = task.toLocationAddress2;
+                modalElement.querySelector('input[name="toLocationCityProvince"]').value = task.toLocationCityProvince;
+                modalElement.querySelector('input[name="toLocationLatitude"]').value = task.toLocationLatitude?.toString() ?? '';
+                modalElement.querySelector('input[name="toLocationLongitude"]').value = task.toLocationLongitude?.toString() ?? '';
+                const dueDateInput = modalElement.querySelector('input[name="taskDueDateTimeString"]');
+                if (task.taskDueDateTime !== null &&
+                    task.taskDueDateTime !== undefined) {
+                    dueDateInput.value = cityssm.dateToString(new Date(task.taskDueDateTime));
+                }
+            },
+            onshown(modalElementParameter, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                modalElement = modalElementParameter;
+                const formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doUpdate);
+                // Initialize date picker
+                const dueDateInput = modalElement.querySelector('input[name="taskDueDateTimeString"]');
+                flatpickr(dueDateInput, {
+                    allowInput: true,
+                    enableTime: true,
+                    minuteIncrement: 15,
+                    nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+                    prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+                });
+                // Initialize map
+                const latitudeInput = modalElement.querySelector('input[name="locationLatitude"]');
+                const longitudeInput = modalElement.querySelector('input[name="locationLongitude"]');
+                let defaultLat = shiftLog.defaultLatitude;
+                let defaultLng = shiftLog.defaultLongitude;
+                let defaultZoom = 13;
+                if (task.locationLatitude !== null &&
+                    task.locationLatitude !== undefined &&
+                    task.locationLongitude !== null &&
+                    task.locationLongitude !== undefined) {
+                    defaultLat = task.locationLatitude;
+                    defaultLng = task.locationLongitude;
+                    defaultZoom = 15;
+                }
+                const map = new L.Map('map--editAdhocTask--location').setView([defaultLat, defaultLng], defaultZoom);
+                new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                // eslint-disable-next-line unicorn/no-null
+                let marker = null;
+                if (task.locationLatitude !== null &&
+                    task.locationLatitude !== undefined &&
+                    task.locationLongitude !== null &&
+                    task.locationLongitude !== undefined) {
+                    marker = new L.Marker([defaultLat, defaultLng]).addTo(map);
+                }
+                map.on('click', (event) => {
+                    const lat = event.latlng.lat;
+                    const lng = event.latlng.lng;
+                    latitudeInput.value = lat.toFixed(7);
+                    longitudeInput.value = lng.toFixed(7);
+                    if (marker !== null) {
+                        map.removeLayer(marker);
+                    }
+                    marker = new L.Marker([lat, lng]).addTo(map);
+                });
+                // Update map when coordinates are manually entered
+                function updateMapFromInputs() {
+                    const lat = Number.parseFloat(latitudeInput.value);
+                    const lng = Number.parseFloat(longitudeInput.value);
+                    if (!Number.isNaN(lat) &&
+                        !Number.isNaN(lng) &&
+                        lat >= -90 &&
+                        lat <= 90 &&
+                        lng >= -180 &&
+                        lng <= 180) {
+                        if (marker !== null) {
+                            map.removeLayer(marker);
+                        }
+                        marker = new L.Marker([lat, lng]).addTo(map);
+                        map.setView([lat, lng], 15);
+                    }
+                }
+                latitudeInput.addEventListener('change', updateMapFromInputs);
+                longitudeInput.addEventListener('change', updateMapFromInputs);
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function editAdhocTaskNote(clickEvent) {
+        clickEvent.preventDefault();
+        const adhocTaskId = clickEvent.currentTarget.dataset
+            .adhocTaskId;
+        const task = shiftAdhocTasks.find((possibleTask) => possibleTask.adhocTaskId.toString() === adhocTaskId);
+        if (task === undefined) {
+            return;
+        }
+        let closeModalFunction;
+        function doUpdate(formEvent) {
+            formEvent.preventDefault();
+            const note = formEvent.currentTarget.querySelector('[name="shiftAdhocTaskNote"]').value;
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftAdhocTaskNote`, formEvent.currentTarget, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    ;
+                    task.shiftAdhocTaskNote = note;
+                    renderShiftAdhocTasks();
+                    closeModalFunction();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Updating Note',
+                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('shifts-editAdhocTaskNote', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                modalElement.querySelector('input[name="adhocTaskId"]').value = adhocTaskId ?? '';
+                modalElement.querySelector('textarea[name="shiftAdhocTaskNote"]').value = task.shiftAdhocTaskNote ?? '';
+            },
+            onshown(modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                const formElement = modalElement.querySelector('form');
+                formElement.addEventListener('submit', doUpdate);
+                modalElement.querySelector('textarea[name="shiftAdhocTaskNote"]').focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function addExistingAdhocTask(clickEvent) {
+        clickEvent.preventDefault();
+        let closeModalFunction;
+        let modalElement;
+        // Load available tasks
+        cityssm.postJSON(`${urlPrefix}/doGetAvailableAdhocTasks`, { shiftId }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (!responseJSON.success || responseJSON.adhocTasks.length === 0) {
+                bulmaJS.alert({
+                    contextualColorName: 'info',
+                    message: 'No incomplete ad hoc tasks available to add.'
+                });
+                return;
+            }
+            function selectTask(task) {
+                let selectedCloseModalFunction;
+                function doAdd(formEvent) {
+                    formEvent.preventDefault();
+                    cityssm.postJSON(`${urlPrefix}/doAddShiftAdhocTask`, formEvent.currentTarget, (rawAddResponseJSON) => {
+                        const addResponseJSON = rawAddResponseJSON;
+                        if (addResponseJSON.success &&
+                            addResponseJSON.shiftAdhocTasks) {
+                            shiftAdhocTasks = addResponseJSON.shiftAdhocTasks;
+                            renderShiftAdhocTasks();
+                            updateCount();
+                            selectedCloseModalFunction();
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                title: 'Error Adding Task',
+                                message: addResponseJSON.errorMessage ??
+                                    'An unknown error occurred.'
+                            });
+                        }
+                    });
+                }
+                cityssm.openHtmlModal('shifts-addAdhocTask', {
+                    onshow(addModalElement) {
+                        ;
+                        addModalElement.querySelector('input[name="shiftId"]').value = shiftId;
+                        addModalElement.querySelector('input[name="adhocTaskId"]').value = task.adhocTaskId.toString();
+                        // Display task details
+                        const detailsDiv = addModalElement.querySelector('#addAdhocTask--taskDetails');
+                        detailsDiv.innerHTML = /* html */ `
+                <p class="mb-2">
+                  <strong>Type:</strong> ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
+                </p>
+                <p class="mb-2">
+                  <strong>Description:</strong> ${cityssm.escapeHTML(task.taskDescription)}
+                </p>
+                ${task.locationAddress1
+                            ? /* html */ `
+                      <p class="mb-2">
+                        <strong>Location:</strong> ${cityssm.escapeHTML(task.locationAddress1)}
+                      </p>
+                    `
+                            : ''}
+                ${task.taskDueDateTime
+                            ? /* html */ `
+                      <p class="mb-2">
+                        <strong>Due:</strong> ${cityssm.dateToString(new Date(task.taskDueDateTime))}
+                      </p>
+                    `
+                            : ''}
+              `;
+                    },
+                    onshown(addModalElement, _selectedCloseModalFunction) {
+                        bulmaJS.toggleHtmlClipped();
+                        selectedCloseModalFunction = _selectedCloseModalFunction;
+                        const formElement = addModalElement.querySelector('form');
+                        formElement.addEventListener('submit', doAdd);
+                        addModalElement.querySelector('textarea[name="shiftAdhocTaskNote"]').focus();
+                    },
+                    onremoved() {
+                        bulmaJS.toggleHtmlClipped();
+                    }
+                });
+            }
+            cityssm.openHtmlModal('shifts-selectAdhocTask', {
+                onshow(selectModalElement) {
+                    modalElement = selectModalElement;
+                },
+                onshown(selectModalElement, _closeModalFunction) {
+                    bulmaJS.toggleHtmlClipped();
+                    closeModalFunction = _closeModalFunction;
+                    modalElement = selectModalElement;
+                    // Render task list
+                    const tableElement = document.createElement('table');
+                    tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+                    tableElement.innerHTML = /* html */ `
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Location</th>
+                  <th>Due Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            `;
+                    const tbodyElement = tableElement.querySelector('tbody');
+                    for (const task of responseJSON.adhocTasks) {
+                        const trElement = document.createElement('tr');
+                        const dueDateString = task.taskDueDateTime !== null &&
+                            task.taskDueDateTime !== undefined
+                            ? cityssm.dateToString(new Date(task.taskDueDateTime))
+                            : '';
+                        // eslint-disable-next-line no-unsanitized/property
+                        trElement.innerHTML = /* html */ `
+                <td>${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}</td>
+                <td>${cityssm.escapeHTML(task.taskDescription)}</td>
+                <td>${cityssm.escapeHTML(task.locationAddress1)}</td>
+                <td>${dueDateString}</td>
+                <td class="has-text-right">
+                  <button class="button is-small is-success button--select" type="button">
+                    <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+                    <span>Select</span>
+                  </button>
+                </td>
+              `;
+                        trElement
+                            .querySelector('.button--select')
+                            ?.addEventListener('click', () => {
+                            closeModalFunction();
+                            selectTask(task);
+                        });
+                        tbodyElement.append(trElement);
+                    }
+                    const container = modalElement.querySelector('#selectAdhocTask--container');
+                    container.replaceChildren(tableElement);
+                },
+                onremoved() {
+                    bulmaJS.toggleHtmlClipped();
+                }
+            });
+        });
+    }
+    function removeAdhocTask(clickEvent) {
+        clickEvent.preventDefault();
+        const adhocTaskId = clickEvent.currentTarget.dataset
+            .adhocTaskId;
+        const task = shiftAdhocTasks.find((possibleTask) => possibleTask.adhocTaskId.toString() === adhocTaskId);
+        if (task === undefined) {
+            return;
+        }
+        bulmaJS.confirm({
+            contextualColorName: 'warning',
+            title: 'Remove Ad Hoc Task from Shift',
+            message: `Are you sure you want to remove this task from this shift?<br /><br />
+        <strong>Would you like to:</strong><br />
+        <label class="radio">
+          <input type="radio" name="deleteOption" value="remove" checked />
+          Just remove from this shift (keep available for other shifts)
+        </label><br />
+        <label class="radio">
+          <input type="radio" name="deleteOption" value="delete" />
+          Delete the task entirely
+        </label>`,
+            okButton: {
+                text: 'Remove',
+                callbackFunction: () => {
+                    const deleteOption = document.querySelector('input[name="deleteOption"]:checked')?.value;
+                    cityssm.postJSON(`${urlPrefix}/doDeleteShiftAdhocTask`, {
+                        shiftId,
+                        adhocTaskId,
+                        deleteTask: deleteOption === 'delete'
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+                            shiftAdhocTasks = responseJSON.shiftAdhocTasks;
+                            renderShiftAdhocTasks();
+                            updateCount();
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                title: 'Error Removing Task',
+                                message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    }
+    if (isEdit) {
+        document
+            .querySelector('#button--createAdhocTask')
+            ?.addEventListener('click', createAdhocTask);
+        document
+            .querySelector('#button--addExistingAdhocTask')
+            ?.addEventListener('click', addExistingAdhocTask);
+        // Load task types for modals
+        loadAdhocTaskTypes();
+    }
+    // Initial render
+    renderShiftAdhocTasks();
+    updateCount();
+})();

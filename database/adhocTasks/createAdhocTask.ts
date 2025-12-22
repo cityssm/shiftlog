@@ -29,26 +29,28 @@ export default async function createAdhocTask(
     .request()
     .input('adhocTaskTypeDataListItemId', adhocTaskTypeDataListItemId)
     .input('taskDescription', taskDescription)
+
     .input('locationAddress1', locationAddress1)
     .input('locationAddress2', locationAddress2)
     .input('locationCityProvince', locationCityProvince)
     .input('locationLatitude', locationLatitude ?? null)
     .input('locationLongitude', locationLongitude ?? null)
+
     .input('fromLocationAddress1', fromLocationAddress1)
     .input('fromLocationAddress2', fromLocationAddress2)
     .input('fromLocationCityProvince', fromLocationCityProvince)
     .input('fromLocationLatitude', fromLocationLatitude ?? null)
     .input('fromLocationLongitude', fromLocationLongitude ?? null)
+
     .input('toLocationAddress1', toLocationAddress1)
     .input('toLocationAddress2', toLocationAddress2)
     .input('toLocationCityProvince', toLocationCityProvince)
     .input('toLocationLatitude', toLocationLatitude ?? null)
     .input('toLocationLongitude', toLocationLongitude ?? null)
+    
     .input('taskDueDateTimeString', taskDueDateTimeString ?? null)
     .input('recordCreate_userName', sessionUser.userName)
-    .input('recordUpdate_userName', sessionUser.userName)
-    .query(
-      /* sql */ `
+    .input('recordUpdate_userName', sessionUser.userName).query(/* sql */ `
         insert into ShiftLog.AdhocTasks (
           adhocTaskTypeDataListItemId,
           taskDescription,
@@ -94,8 +96,7 @@ export default async function createAdhocTask(
         )
 
         select SCOPE_IDENTITY() as adhocTaskId
-      `
-    )
+      `)
 
   return result.recordset[0]?.adhocTaskId as number | undefined
 }

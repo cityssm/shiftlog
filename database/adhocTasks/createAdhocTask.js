@@ -22,9 +22,7 @@ export default async function createAdhocTask(adhocTaskTypeDataListItemId, taskD
         .input('toLocationLongitude', toLocationLongitude ?? null)
         .input('taskDueDateTimeString', taskDueDateTimeString ?? null)
         .input('recordCreate_userName', sessionUser.userName)
-        .input('recordUpdate_userName', sessionUser.userName)
-        .query(
-    /* sql */ `
+        .input('recordUpdate_userName', sessionUser.userName).query(/* sql */ `
         insert into ShiftLog.AdhocTasks (
           adhocTaskTypeDataListItemId,
           taskDescription,
