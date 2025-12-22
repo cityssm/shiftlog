@@ -1,4 +1,5 @@
 import type {
+  AdhocTask,
   DataListItem,
   Employee,
   Shift,
@@ -19,6 +20,7 @@ export interface ShiftEditResponse {
   shiftEmployees: ShiftEmployee[]
   shiftEquipment: ShiftEquipment[]
   shiftWorkOrders: ShiftWorkOrder[]
+  shiftAdhocTasks: AdhocTask[]
 
   shiftTimes: DataListItem[]
   shiftTypes: DataListItem[]
