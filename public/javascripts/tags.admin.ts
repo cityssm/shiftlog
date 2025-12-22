@@ -30,6 +30,11 @@ declare const exports: {
    */
   function hexToRgb(hex: string): { r: number; g: number; b: number } {
     const cleanHex = hex.replace(/^#/, '')
+    // Validate hex string
+    if (!/^[\dA-Fa-f]{6}$/.test(cleanHex)) {
+      // Default to black if invalid
+      return { r: 0, g: 0, b: 0 }
+    }
     const bigint = Number.parseInt(cleanHex, 16)
     const r = (bigint >> 16) & 255
     const g = (bigint >> 8) & 255
@@ -111,13 +116,20 @@ declare const exports: {
 
     contrastRatioElement.textContent = contrastRatio.toFixed(2)
 
-    wcagAAElement.innerHTML = compliance.aa
-      ? '<span class="tag is-success">Pass</span>'
-      : '<span class="tag is-danger">Fail</span>'
+    // Clear existing content
+    wcagAAElement.textContent = ''
+    wcagAAAElement.textContent = ''
 
-    wcagAAAElement.innerHTML = compliance.aaa
-      ? '<span class="tag is-success">Pass</span>'
-      : '<span class="tag is-danger">Fail</span>'
+    // Create and append status badges
+    const aaSpan = document.createElement('span')
+    aaSpan.className = compliance.aa ? 'tag is-success' : 'tag is-danger'
+    aaSpan.textContent = compliance.aa ? 'Pass' : 'Fail'
+    wcagAAElement.append(aaSpan)
+
+    const aaaSpan = document.createElement('span')
+    aaaSpan.className = compliance.aaa ? 'tag is-success' : 'tag is-danger'
+    aaaSpan.textContent = compliance.aaa ? 'Pass' : 'Fail'
+    wcagAAAElement.append(aaaSpan)
   }
 
   // Pagination settings

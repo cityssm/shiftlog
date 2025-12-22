@@ -14,6 +14,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
      */
     function hexToRgb(hex) {
         var cleanHex = hex.replace(/^#/, '');
+        // Validate hex string
+        if (!/^[\dA-Fa-f]{6}$/.test(cleanHex)) {
+            // Default to black if invalid
+            return { r: 0, g: 0, b: 0 };
+        }
         var bigint = Number.parseInt(cleanHex, 16);
         var r = (bigint >> 16) & 255;
         var g = (bigint >> 8) & 255;
@@ -65,12 +70,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
         var contrastRatio = getContrastRatio(backgroundColor, textColor);
         var compliance = getWCAGCompliance(contrastRatio);
         contrastRatioElement.textContent = contrastRatio.toFixed(2);
-        wcagAAElement.innerHTML = compliance.aa
-            ? '<span class="tag is-success">Pass</span>'
-            : '<span class="tag is-danger">Fail</span>';
-        wcagAAAElement.innerHTML = compliance.aaa
-            ? '<span class="tag is-success">Pass</span>'
-            : '<span class="tag is-danger">Fail</span>';
+        // Clear existing content
+        wcagAAElement.textContent = '';
+        wcagAAAElement.textContent = '';
+        // Create and append status badges
+        var aaSpan = document.createElement('span');
+        aaSpan.className = compliance.aa ? 'tag is-success' : 'tag is-danger';
+        aaSpan.textContent = compliance.aa ? 'Pass' : 'Fail';
+        wcagAAElement.append(aaSpan);
+        var aaaSpan = document.createElement('span');
+        aaaSpan.className = compliance.aaa ? 'tag is-success' : 'tag is-danger';
+        aaaSpan.textContent = compliance.aaa ? 'Pass' : 'Fail';
+        wcagAAAElement.append(aaaSpan);
     }
     // Pagination settings
     var ITEMS_PER_PAGE = 20;
