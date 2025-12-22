@@ -156,7 +156,6 @@ declare const exports: {
       crewsSection.append(crewsLabel)
 
       const crewsList = document.createElement('ul')
-      crewsList.className = 'ml-4'
 
       for (const crew of shift.crews) {
         const isDup = isDuplicate(duplicates, 'crew', crew.crewId)
@@ -220,7 +219,6 @@ declare const exports: {
       employeesSection.append(employeesLabel)
 
       const employeesList = document.createElement('ul')
-      employeesList.className = 'ml-4'
 
       for (const employee of shift.employees) {
         const isDup = isDuplicate(
@@ -301,7 +299,6 @@ declare const exports: {
       equipmentSection.append(equipmentLabel)
 
       const equipmentList = document.createElement('ul')
-      equipmentList.className = 'ml-4'
 
       for (const equipment of shift.equipment) {
         const isDup = isDuplicate(
@@ -405,7 +402,6 @@ declare const exports: {
       workOrdersSection.append(workOrdersLabel)
 
       const workOrdersList = document.createElement('ul')
-      workOrdersList.className = 'ml-4'
 
       for (const workOrder of shift.workOrders) {
         const isDup = isDuplicate(
@@ -476,7 +472,6 @@ declare const exports: {
       adhocTasksSection.append(adhocTasksLabel)
 
       const adhocTasksList = document.createElement('ul')
-      adhocTasksList.className = 'ml-4'
 
       for (const adhocTask of shift.adhocTasks) {
         const isDup = isDuplicate(
@@ -587,7 +582,7 @@ declare const exports: {
       const lockButton = document.createElement('button')
       lockButton.className = 'button is-small is-ghost'
       lockButton.type = 'button'
-      lockButton.title = 'Lock/Unlock shift'
+      lockButton.title = `Lock/Unlock ${shiftLog.shiftsSectionNameSingular} Drag and Drop`
       lockButton.dataset.shiftId = shift.shiftId.toString()
 
       const isLocked = lockedShifts.has(shift.shiftId)
@@ -3681,7 +3676,7 @@ declare const exports: {
             contextualColorName: 'danger',
             title: 'Error',
 
-            message: 'Failed to load task types.',
+            message: 'Failed to load task types.'
           })
           return
         }

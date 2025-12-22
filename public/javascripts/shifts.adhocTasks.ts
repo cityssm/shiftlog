@@ -1025,7 +1025,7 @@ declare const exports: {
           const deleteOption = (
             document.querySelector(
               'input[name="deleteOption"]:checked'
-            ) as HTMLInputElement
+            ) as HTMLInputElement | null
           )?.value
 
           cityssm.postJSON(

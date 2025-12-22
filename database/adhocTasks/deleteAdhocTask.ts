@@ -11,17 +11,14 @@ export default async function deleteAdhocTask(
   const result = await pool
     .request()
     .input('adhocTaskId', adhocTaskId)
-    .input('recordDelete_userName', sessionUser.userName)
-    .query(
-      /* sql */ `
-        update ShiftLog.AdhocTasks
-        set
-          recordDelete_userName = @recordDelete_userName,
-          recordDelete_dateTime = getdate()
-        where adhocTaskId = @adhocTaskId
-          and recordDelete_dateTime is null
-      `
-    )
+    .input('recordDelete_userName', sessionUser.userName).query(/* sql */ `
+      update ShiftLog.AdhocTasks
+      set
+        recordDelete_userName = @recordDelete_userName,
+        recordDelete_dateTime = getdate()
+      where adhocTaskId = @adhocTaskId
+        and recordDelete_dateTime is null
+    `)
 
   return result.rowsAffected[0] > 0
 }

@@ -3,28 +3,34 @@
 
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+type LatitudeLongitude = number | string | null | undefined
+
 export default async function updateAdhocTask(
   task: {
     adhocTaskId: number | string
     adhocTaskTypeDataListItemId: number | string
     taskDescription: string
+
     locationAddress1: string
     locationAddress2: string
     locationCityProvince: string
-    locationLatitude: number | string | null | undefined
-    locationLongitude: number | string | null | undefined
+    locationLatitude: LatitudeLongitude
+    locationLongitude: LatitudeLongitude
+
     fromLocationAddress1: string
     fromLocationAddress2: string
     fromLocationCityProvince: string
-    fromLocationLatitude: number | string | null | undefined
-    fromLocationLongitude: number | string | null | undefined
+    fromLocationLatitude: LatitudeLongitude
+    fromLocationLongitude: LatitudeLongitude
+
     toLocationAddress1: string
     toLocationAddress2: string
     toLocationCityProvince: string
-    toLocationLatitude: number | string | null | undefined
-    toLocationLongitude: number | string | null | undefined
-    taskDueDateTimeString: string | null | undefined
+    toLocationLatitude: LatitudeLongitude
+    toLocationLongitude: LatitudeLongitude
+
     taskCompleteDateTimeString: string | null | undefined
+    taskDueDateTimeString: string | null | undefined
   },
   sessionUser: {
     userName: string

@@ -4,12 +4,10 @@ export default async function deleteShiftAdhocTask(shiftId, adhocTaskId) {
     const result = await pool
         .request()
         .input('shiftId', shiftId)
-        .input('adhocTaskId', adhocTaskId)
-        .query(
-    /* sql */ `
-        delete from ShiftLog.ShiftAdhocTasks
-        where shiftId = @shiftId
-          and adhocTaskId = @adhocTaskId
-      `);
+        .input('adhocTaskId', adhocTaskId).query(/* sql */ `
+      delete from ShiftLog.ShiftAdhocTasks
+      where shiftId = @shiftId
+        and adhocTaskId = @adhocTaskId
+    `);
     return result.rowsAffected[0] > 0;
 }

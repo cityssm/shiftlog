@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { AdhocTask } from '../../types/record.types.js'
 
@@ -57,7 +55,7 @@ export default async function getAvailableAdhocTasks(
     order by t.taskDueDateTime, t.recordCreate_dateTime desc
   `
 
-  const result = (await request.query(query)) as mssql.IResult<AdhocTask>
+  const result = await request.query<AdhocTask>(query)
 
   return result.recordset
 }

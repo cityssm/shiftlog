@@ -4,9 +4,7 @@ export default async function isAdhocTaskOnShift(shiftId, adhocTaskId) {
     const result = (await pool
         .request()
         .input('shiftId', shiftId)
-        .input('adhocTaskId', adhocTaskId)
-        .query(
-    /* sql */ `
+        .input('adhocTaskId', adhocTaskId).query(/* sql */ `
         select count(*) as recordCount
         from ShiftLog.ShiftAdhocTasks
         where shiftId = @shiftId

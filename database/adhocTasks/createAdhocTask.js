@@ -15,14 +15,20 @@ export default async function createAdhocTask(task, sessionUser) {
         .input('fromLocationAddress1', task.fromLocationAddress1)
         .input('fromLocationAddress2', task.fromLocationAddress2)
         .input('fromLocationCityProvince', task.fromLocationCityProvince)
-        .input('fromLocationLatitude', (task.fromLocationLatitude ?? '') === '' ? null : task.fromLocationLatitude)
-        .input('fromLocationLongitude', (task.fromLocationLongitude ?? '') === '' ? null : task.fromLocationLongitude)
+        .input('fromLocationLatitude', (task.fromLocationLatitude ?? '') === ''
+        ? null
+        : task.fromLocationLatitude)
+        .input('fromLocationLongitude', (task.fromLocationLongitude ?? '') === ''
+        ? null
+        : task.fromLocationLongitude)
         .input('toLocationAddress1', task.toLocationAddress1)
         .input('toLocationAddress2', task.toLocationAddress2)
         .input('toLocationCityProvince', task.toLocationCityProvince)
         .input('toLocationLatitude', (task.toLocationLatitude ?? '') === '' ? null : task.toLocationLatitude)
         .input('toLocationLongitude', (task.toLocationLongitude ?? '') === '' ? null : task.toLocationLongitude)
-        .input('taskDueDateTimeString', (task.taskDueDateTimeString ?? '') === '' ? null : task.taskDueDateTimeString)
+        .input('taskDueDateTimeString', (task.taskDueDateTimeString ?? '') === ''
+        ? null
+        : task.taskDueDateTimeString)
         .input('recordCreate_userName', sessionUser.userName)
         .input('recordUpdate_userName', sessionUser.userName).query(/* sql */ `
         insert into ShiftLog.AdhocTasks (
@@ -71,5 +77,5 @@ export default async function createAdhocTask(task, sessionUser) {
 
         select SCOPE_IDENTITY() as adhocTaskId
       `);
-    return result.recordset[0]?.adhocTaskId;
+    return result.recordset[0].adhocTaskId;
 }

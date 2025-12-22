@@ -20,8 +20,8 @@ export default async function handler(request, response) {
         toLocationCityProvince: request.body.toLocationCityProvince,
         toLocationLatitude: request.body.toLocationLatitude,
         toLocationLongitude: request.body.toLocationLongitude,
-        taskDueDateTimeString: request.body.taskDueDateTimeString,
-        taskCompleteDateTimeString: request.body.taskCompleteDateTimeString
+        taskCompleteDateTimeString: request.body.taskCompleteDateTimeString,
+        taskDueDateTimeString: request.body.taskDueDateTimeString
     }, request.session.user);
     if (success) {
         const shiftAdhocTasks = await getShiftAdhocTasks(request.body.shiftId);

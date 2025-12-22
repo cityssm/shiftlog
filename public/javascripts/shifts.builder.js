@@ -89,7 +89,6 @@
             crewsLabel.textContent = 'Crews:';
             crewsSection.append(crewsLabel);
             const crewsList = document.createElement('ul');
-            crewsList.className = 'ml-4';
             for (const crew of shift.crews) {
                 const isDup = isDuplicate(duplicates, 'crew', crew.crewId);
                 const crewItem = document.createElement('li');
@@ -142,7 +141,6 @@
             employeesLabel.textContent = 'Employees:';
             employeesSection.append(employeesLabel);
             const employeesList = document.createElement('ul');
-            employeesList.className = 'ml-4';
             for (const employee of shift.employees) {
                 const isDup = isDuplicate(duplicates, 'employee', employee.employeeNumber);
                 const employeeItem = document.createElement('li');
@@ -206,7 +204,6 @@
             equipmentLabel.textContent = 'Equipment:';
             equipmentSection.append(equipmentLabel);
             const equipmentList = document.createElement('ul');
-            equipmentList.className = 'ml-4';
             for (const equipment of shift.equipment) {
                 const isDup = isDuplicate(duplicates, 'equipment', equipment.equipmentNumber);
                 const equipmentItem = document.createElement('li');
@@ -281,7 +278,6 @@
             workOrdersLabel.textContent = 'Work Orders:';
             workOrdersSection.append(workOrdersLabel);
             const workOrdersList = document.createElement('ul');
-            workOrdersList.className = 'ml-4';
             for (const workOrder of shift.workOrders) {
                 const isDup = isDuplicate(duplicates, 'workOrder', workOrder.workOrderId);
                 const workOrderItem = document.createElement('li');
@@ -336,7 +332,6 @@
             adhocTasksLabel.textContent = 'Ad Hoc Tasks:';
             adhocTasksSection.append(adhocTasksLabel);
             const adhocTasksList = document.createElement('ul');
-            adhocTasksList.className = 'ml-4';
             for (const adhocTask of shift.adhocTasks) {
                 const isDup = isDuplicate(duplicates, 'adhocTask', adhocTask.adhocTaskId);
                 const adhocTaskItem = document.createElement('li');
@@ -418,7 +413,7 @@
             const lockButton = document.createElement('button');
             lockButton.className = 'button is-small is-ghost';
             lockButton.type = 'button';
-            lockButton.title = 'Lock/Unlock shift';
+            lockButton.title = `Lock/Unlock ${shiftLog.shiftsSectionNameSingular} Drag and Drop`;
             lockButton.dataset.shiftId = shift.shiftId.toString();
             const isLocked = lockedShifts.has(shift.shiftId);
             const lockIcon = document.createElement('span');
@@ -2644,7 +2639,7 @@
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error',
-                    message: 'Failed to load task types.',
+                    message: 'Failed to load task types.'
                 });
                 return;
             }

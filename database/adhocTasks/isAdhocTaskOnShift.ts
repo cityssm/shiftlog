@@ -11,15 +11,12 @@ export default async function isAdhocTaskOnShift(
   const result = (await pool
     .request()
     .input('shiftId', shiftId)
-    .input('adhocTaskId', adhocTaskId)
-    .query(
-      /* sql */ `
+    .input('adhocTaskId', adhocTaskId).query(/* sql */ `
         select count(*) as recordCount
         from ShiftLog.ShiftAdhocTasks
         where shiftId = @shiftId
           and adhocTaskId = @adhocTaskId
-      `
-    )) as mssql.IResult<{ recordCount: number }>
+      `)) as mssql.IResult<{ recordCount: number }>
 
   return result.recordset[0].recordCount > 0
 }

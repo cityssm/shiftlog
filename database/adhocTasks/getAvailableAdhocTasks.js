@@ -46,6 +46,6 @@ export default async function getAvailableAdhocTasks(shiftId) {
     query += /* sql */ `
     order by t.taskDueDateTime, t.recordCreate_dateTime desc
   `;
-    const result = (await request.query(query));
+    const result = await request.query(query);
     return result.recordset;
 }

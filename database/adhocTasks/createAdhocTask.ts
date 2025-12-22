@@ -3,25 +3,31 @@
 
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+type LatitudeLongitude = number | string | null | undefined
+
 export default async function createAdhocTask(
   task: {
     adhocTaskTypeDataListItemId: number | string
     taskDescription: string
+
     locationAddress1: string
     locationAddress2: string
     locationCityProvince: string
-    locationLatitude: number | string | null | undefined
-    locationLongitude: number | string | null | undefined
+    locationLatitude: LatitudeLongitude
+    locationLongitude: LatitudeLongitude
+
     fromLocationAddress1: string
     fromLocationAddress2: string
     fromLocationCityProvince: string
-    fromLocationLatitude: number | string | null | undefined
-    fromLocationLongitude: number | string | null | undefined
+    fromLocationLatitude: LatitudeLongitude
+    fromLocationLongitude: LatitudeLongitude
+
     toLocationAddress1: string
     toLocationAddress2: string
     toLocationCityProvince: string
-    toLocationLatitude: number | string | null | undefined
-    toLocationLongitude: number | string | null | undefined
+    toLocationLatitude: LatitudeLongitude
+    toLocationLongitude: LatitudeLongitude
+
     taskDueDateTimeString: string | null | undefined
   },
   sessionUser: {
@@ -52,11 +58,15 @@ export default async function createAdhocTask(
     .input('fromLocationCityProvince', task.fromLocationCityProvince)
     .input(
       'fromLocationLatitude',
-      (task.fromLocationLatitude ?? '') === '' ? null : task.fromLocationLatitude
+      (task.fromLocationLatitude ?? '') === ''
+        ? null
+        : task.fromLocationLatitude
     )
     .input(
       'fromLocationLongitude',
-      (task.fromLocationLongitude ?? '') === '' ? null : task.fromLocationLongitude
+      (task.fromLocationLongitude ?? '') === ''
+        ? null
+        : task.fromLocationLongitude
     )
 
     .input('toLocationAddress1', task.toLocationAddress1)
@@ -73,11 +83,15 @@ export default async function createAdhocTask(
 
     .input(
       'taskDueDateTimeString',
-      (task.taskDueDateTimeString ?? '') === '' ? null : task.taskDueDateTimeString
+      (task.taskDueDateTimeString ?? '') === ''
+        ? null
+        : task.taskDueDateTimeString
     )
 
     .input('recordCreate_userName', sessionUser.userName)
-    .input('recordUpdate_userName', sessionUser.userName).query(/* sql */ `
+    .input('recordUpdate_userName', sessionUser.userName).query<{
+    adhocTaskId: number
+  }>(/* sql */ `
         insert into ShiftLog.AdhocTasks (
           adhocTaskTypeDataListItemId,
           taskDescription,
@@ -125,5 +139,5 @@ export default async function createAdhocTask(
         select SCOPE_IDENTITY() as adhocTaskId
       `)
 
-  return result.recordset[0]?.adhocTaskId as number | undefined
+  return result.recordset[0].adhocTaskId as number | undefined
 }
