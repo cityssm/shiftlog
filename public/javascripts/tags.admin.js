@@ -3,6 +3,83 @@
 (() => {
     const shiftLog = exports.shiftLog;
     const tagsContainerElement = document.querySelector('#container--tags');
+    // WCAG Contrast Calculation Functions
+    const WCAG_AA_NORMAL_RATIO = 4.5;
+    const WCAG_AAA_NORMAL_RATIO = 7;
+    /**
+     * Convert a hex color to RGB values
+     */
+    function hexToRgb(hex) {
+        const cleanHex = hex.replace(/^#/, '');
+        // Validate hex string
+        if (!/^[\dA-Fa-f]{6}$/.test(cleanHex)) {
+            // Default to black if invalid
+            return { r: 0, g: 0, b: 0 };
+        }
+        const bigint = Number.parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return { r, g, b };
+    }
+    /**
+     * Calculate relative luminance according to WCAG 2.0
+     */
+    function getRelativeLuminance(rgb) {
+        const rsRGB = rgb.r / 255;
+        const gsRGB = rgb.g / 255;
+        const bsRGB = rgb.b / 255;
+        const r = rsRGB <= 0.03928 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
+        const g = gsRGB <= 0.03928 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
+        const b = bsRGB <= 0.03928 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+    /**
+     * Calculate contrast ratio between two colors
+     */
+    function getContrastRatio(color1, color2) {
+        const rgb1 = hexToRgb(color1);
+        const rgb2 = hexToRgb(color2);
+        const lum1 = getRelativeLuminance(rgb1);
+        const lum2 = getRelativeLuminance(rgb2);
+        const lighter = Math.max(lum1, lum2);
+        const darker = Math.min(lum1, lum2);
+        return (lighter + 0.05) / (darker + 0.05);
+    }
+    /**
+     * Get WCAG compliance level for a contrast ratio
+     */
+    function getWCAGCompliance(contrastRatio) {
+        return {
+            aa: contrastRatio >= WCAG_AA_NORMAL_RATIO,
+            aaa: contrastRatio >= WCAG_AAA_NORMAL_RATIO
+        };
+    }
+    /**
+     * Update the preview and contrast information for a tag
+     */
+    function updateTagPreview(previewElement, contrastRatioElement, wcagAAElement, wcagAAAElement, backgroundColor, textColor, tagName) {
+        previewElement.style.backgroundColor = backgroundColor;
+        previewElement.style.color = textColor;
+        if (tagName !== undefined) {
+            previewElement.textContent = tagName;
+        }
+        const contrastRatio = getContrastRatio(backgroundColor, textColor);
+        const compliance = getWCAGCompliance(contrastRatio);
+        contrastRatioElement.textContent = contrastRatio.toFixed(2);
+        // Clear existing content
+        wcagAAElement.textContent = '';
+        wcagAAAElement.textContent = '';
+        // Create and append status badges
+        const aaSpan = document.createElement('span');
+        aaSpan.className = compliance.aa ? 'tag is-success' : 'tag is-danger';
+        aaSpan.textContent = compliance.aa ? 'Pass' : 'Fail';
+        wcagAAElement.append(aaSpan);
+        const aaaSpan = document.createElement('span');
+        aaaSpan.className = compliance.aaa ? 'tag is-success' : 'tag is-danger';
+        aaaSpan.textContent = compliance.aaa ? 'Pass' : 'Fail';
+        wcagAAAElement.append(aaaSpan);
+    }
     // Pagination settings
     const ITEMS_PER_PAGE = 20;
     let currentPage = 1;
@@ -94,11 +171,27 @@
         }
         cityssm.openHtmlModal('adminTags-edit', {
             onshow(modalElement) {
-                ;
-                modalElement.querySelector('#editTag--tagName').value = tag.tagName;
-                modalElement.querySelector('#editTag--tagNameDisplay').value = tag.tagName;
-                modalElement.querySelector('#editTag--tagBackgroundColor').value = `#${tag.tagBackgroundColor}`;
-                modalElement.querySelector('#editTag--tagTextColor').value = `#${tag.tagTextColor}`;
+                const tagNameInput = modalElement.querySelector('#editTag--tagName');
+                const tagNameDisplayInput = modalElement.querySelector('#editTag--tagNameDisplay');
+                const backgroundColorInput = modalElement.querySelector('#editTag--tagBackgroundColor');
+                const textColorInput = modalElement.querySelector('#editTag--tagTextColor');
+                const previewElement = modalElement.querySelector('#editTag--preview');
+                const contrastRatioElement = modalElement.querySelector('#editTag--contrastRatio');
+                const wcagAAElement = modalElement.querySelector('#editTag--wcagAA');
+                const wcagAAAElement = modalElement.querySelector('#editTag--wcagAAA');
+                tagNameInput.value = tag.tagName;
+                tagNameDisplayInput.value = tag.tagName;
+                backgroundColorInput.value = `#${tag.tagBackgroundColor}`;
+                textColorInput.value = `#${tag.tagTextColor}`;
+                // Update preview when colors change
+                function updatePreview() {
+                    updateTagPreview(previewElement, contrastRatioElement, wcagAAElement, wcagAAAElement, backgroundColorInput.value, textColorInput.value, tag.tagName);
+                }
+                // Initialize preview with current values
+                updatePreview();
+                // Add event listeners for real-time updates
+                backgroundColorInput.addEventListener('input', updatePreview);
+                textColorInput.addEventListener('input', updatePreview);
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateTag);
@@ -147,6 +240,23 @@
         }
         cityssm.openHtmlModal('adminTags-add', {
             onshow(modalElement) {
+                const tagNameInput = modalElement.querySelector('#addTag--tagName');
+                const backgroundColorInput = modalElement.querySelector('#addTag--tagBackgroundColor');
+                const textColorInput = modalElement.querySelector('#addTag--tagTextColor');
+                const previewElement = modalElement.querySelector('#addTag--preview');
+                const contrastRatioElement = modalElement.querySelector('#addTag--contrastRatio');
+                const wcagAAElement = modalElement.querySelector('#addTag--wcagAA');
+                const wcagAAAElement = modalElement.querySelector('#addTag--wcagAAA');
+                // Update preview when colors or name change
+                function updatePreview() {
+                    updateTagPreview(previewElement, contrastRatioElement, wcagAAElement, wcagAAAElement, backgroundColorInput.value, textColorInput.value, tagNameInput.value || 'Sample Tag');
+                }
+                // Initialize preview with default values
+                updatePreview();
+                // Add event listeners for real-time updates
+                tagNameInput.addEventListener('input', updatePreview);
+                backgroundColorInput.addEventListener('input', updatePreview);
+                textColorInput.addEventListener('input', updatePreview);
                 modalElement.querySelector('form')?.addEventListener('submit', doAddTag);
             },
             onshown(_modalElement, closeFunction) {
