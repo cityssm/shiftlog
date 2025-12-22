@@ -16,6 +16,7 @@ export const REQUIRED_SYSTEM_LISTS = {
   workOrderPriorities: 'Work Orders - Priorities',
   workOrderStatuses: 'Work Orders - Statuses',
 
+  adhocTaskTypes: 'Adhoc Task Types',
   shiftTimes: 'Shifts - Times',
   shiftTypes: 'Shifts - Types',
 

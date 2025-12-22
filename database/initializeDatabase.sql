@@ -620,6 +620,49 @@ create table ShiftLog.ShiftWorkOrders (
 )
 GO
 
+create table ShiftLog.AdhocTasks (
+  adhocTaskId int not null primary key identity(1,1),
+
+  adhocTaskTypeDataListItemId int not null,
+  taskDescription varchar(200) not null,
+
+  locationAddress varchar(100) not null default '',
+  locationLatitude decimal(10,7),
+  locationLongitude decimal(10,7),
+
+  fromLocationAddress varchar(100) not null default '',
+  fromLocationLatitude decimal(10,7),
+  fromLocationLongitude decimal(10,7),
+
+  toLocationAddress varchar(100) not null default '',
+  toLocationLatitude decimal(10,7),
+  toLocationLongitude decimal(10,7),
+
+  taskDueDateTime datetime,
+  taskCompleteDateTime datetime,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  foreign key (adhocTaskTypeDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+)
+GO
+
+create table ShiftLog.ShiftAdhocTasks (
+  shiftId int not null,
+  adhocTaskId int not null,
+  shiftAdhocTaskNote varchar(200) not null default '',
+
+  primary key (shiftId, adhocTaskId),
+  foreign key (shiftId) references ShiftLog.Shifts(shiftId),
+  foreign key (adhocTaskId) references ShiftLog.AdhocTasks(adhocTaskId)
+)
+GO
+
 -- TIMESHEETS
 
 CREATE TABLE ShiftLog.Timesheets (
