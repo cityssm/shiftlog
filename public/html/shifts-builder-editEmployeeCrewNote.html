@@ -1,0 +1,68 @@
+<div
+  class="modal"
+  id="modal--builderEditEmployeeCrewNote"
+  role="dialog"
+  aria-label="Edit Employee Crew and Note"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Employee Crew and Note</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--builderEditEmployeeCrewNote">
+        <input name="shiftId" type="hidden" />
+        <input name="employeeNumber" type="hidden" />
+        
+        <div class="field mb-3">
+          <label class="label">Employee</label>
+          <div class="control">
+            <input class="input" type="text" id="builderEditEmployeeCrewNote--employeeName" readonly />
+          </div>
+        </div>
+        
+        <div class="field">
+          <label class="label">Crew</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="crewId">
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="field">
+          <label class="label">Note</label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              name="shiftEmployeeNote"
+              maxlength="200"
+              placeholder="Optional note about this employee on the shift"
+            ></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--builderEditEmployeeCrewNote"
+        >
+          Update
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

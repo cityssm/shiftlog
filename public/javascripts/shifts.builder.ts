@@ -183,11 +183,23 @@ declare const exports: {
         nameSpan.textContent = crew.crewName
         crewItem.append(nameSpan)
 
+        // Add note icon if note exists
         if (crew.shiftCrewNote !== '') {
-          const noteSpan = document.createElement('span')
-          noteSpan.className = 'has-text-grey-light'
-          noteSpan.textContent = ` - ${crew.shiftCrewNote}`
-          crewItem.append(noteSpan)
+          const noteIcon = document.createElement('span')
+          noteIcon.className = 'icon is-small has-text-grey-light ml-1'
+          noteIcon.innerHTML = '<i class="fa-solid fa-note-sticky"></i>'
+          noteIcon.title = crew.shiftCrewNote
+          crewItem.append(' ', noteIcon)
+        }
+
+        // Add double-click handler
+        if (isEditable) {
+          crewItem.addEventListener('dblclick', (event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            openEditCrewNoteModal(shift.shiftId, crew)
+          })
+          crewItem.style.cursor = 'pointer'
         }
 
         crewsList.append(crewItem)
@@ -252,11 +264,23 @@ declare const exports: {
           employeeItem.append(' ', crewTag)
         }
 
+        // Add note icon if note exists
         if (employee.shiftEmployeeNote !== '') {
-          const noteSpan = document.createElement('span')
-          noteSpan.className = 'has-text-grey-light'
-          noteSpan.textContent = ` - ${employee.shiftEmployeeNote}`
-          employeeItem.append(noteSpan)
+          const noteIcon = document.createElement('span')
+          noteIcon.className = 'icon is-small has-text-grey-light ml-1'
+          noteIcon.innerHTML = '<i class="fa-solid fa-note-sticky"></i>'
+          noteIcon.title = employee.shiftEmployeeNote
+          employeeItem.append(' ', noteIcon)
+        }
+
+        // Add double-click handler
+        if (isEditable) {
+          employeeItem.addEventListener('dblclick', (event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            openEditEmployeeCrewNoteModal(shift.shiftId, employee, shift.crews)
+          })
+          employeeItem.style.cursor = 'pointer'
         }
 
         employeesList.append(employeeItem)
@@ -317,11 +341,23 @@ declare const exports: {
           equipmentItem.append(' ', operatorTag)
         }
 
+        // Add note icon if note exists
         if (equipment.shiftEquipmentNote !== '') {
-          const noteSpan = document.createElement('span')
-          noteSpan.className = 'has-text-grey-light'
-          noteSpan.textContent = ` - ${equipment.shiftEquipmentNote}`
-          equipmentItem.append(noteSpan)
+          const noteIcon = document.createElement('span')
+          noteIcon.className = 'icon is-small has-text-grey-light ml-1'
+          noteIcon.innerHTML = '<i class="fa-solid fa-note-sticky"></i>'
+          noteIcon.title = equipment.shiftEquipmentNote
+          equipmentItem.append(' ', noteIcon)
+        }
+
+        // Add double-click handler
+        if (isEditable) {
+          equipmentItem.addEventListener('dblclick', (event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            openEditEquipmentEmployeeNoteModal(shift.shiftId, equipment, shift.employees)
+          })
+          equipmentItem.style.cursor = 'pointer'
         }
 
         equipmentList.append(equipmentItem)
@@ -399,11 +435,23 @@ declare const exports: {
           workOrderItem.append(` - ${workOrder.workOrderDetails}`)
         }
 
+        // Add note icon if note exists
         if (workOrder.shiftWorkOrderNote !== '') {
-          const noteSpan = document.createElement('span')
-          noteSpan.className = 'has-text-grey-light'
-          noteSpan.textContent = ` - ${workOrder.shiftWorkOrderNote}`
-          workOrderItem.append(noteSpan)
+          const noteIcon = document.createElement('span')
+          noteIcon.className = 'icon is-small has-text-grey-light ml-1'
+          noteIcon.innerHTML = '<i class="fa-solid fa-note-sticky"></i>'
+          noteIcon.title = workOrder.shiftWorkOrderNote
+          workOrderItem.append(' ', noteIcon)
+        }
+
+        // Add double-click handler
+        if (isEditable) {
+          workOrderItem.addEventListener('dblclick', (event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            openEditWorkOrderNoteModal(shift.shiftId, workOrder)
+          })
+          workOrderItem.style.cursor = 'pointer'
         }
 
         workOrdersList.append(workOrderItem)
@@ -3788,6 +3836,422 @@ declare const exports: {
         })
       }
     )
+  }
+
+  // Modal functions for editing notes in builder
+  function openEditCrewNoteModal(
+    shiftId: number,
+    crew: { crewId: number; crewName: string; shiftCrewNote: string }
+  ): void {
+    let closeModalFunction: () => void
+
+    cityssm.openHtmlModal('shifts-editCrewNote', {
+      onshow(modalElement) {
+        const formElement = modalElement.querySelector(
+          '#form--editCrewNote'
+        ) as HTMLFormElement
+
+        // Set hidden fields
+        ;(formElement.querySelector('[name="shiftId"]') as HTMLInputElement).value =
+          shiftId.toString()
+        ;(formElement.querySelector('[name="crewId"]') as HTMLInputElement).value =
+          crew.crewId.toString()
+
+        // Set note value
+        ;(
+          formElement.querySelector(
+            '[name="shiftCrewNote"]'
+          ) as HTMLTextAreaElement
+        ).value = crew.shiftCrewNote
+
+        // Handle form submission
+        formElement.addEventListener('submit', (submitEvent) => {
+          submitEvent.preventDefault()
+
+          cityssm.postJSON(
+            `${shiftUrlPrefix}/doUpdateShiftCrewNote`,
+            formElement,
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as { success: boolean }
+
+              if (responseJSON.success) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Crew note updated successfully!'
+                })
+                closeModalFunction()
+                loadShifts()
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to update crew note.',
+                  title: 'Update Error'
+                })
+              }
+            }
+          )
+        })
+      },
+      onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+        // Focus the textarea
+        const textarea = modalElement.querySelector(
+          '[name="shiftCrewNote"]'
+        ) as HTMLTextAreaElement
+        textarea?.focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function openEditEmployeeCrewNoteModal(
+    shiftId: number,
+    employee: {
+      employeeNumber: string
+      firstName: string
+      lastName: string
+      crewId: number | null
+      shiftEmployeeNote: string
+    },
+    shiftCrews: Array<{ crewId: number; crewName: string }>
+  ): void {
+    let closeModalFunction: () => void
+
+    cityssm.openHtmlModal('shifts-builder-editEmployeeCrewNote', {
+      onshow(modalElement) {
+        const formElement = modalElement.querySelector(
+          '#form--builderEditEmployeeCrewNote'
+        ) as HTMLFormElement
+
+        // Set hidden fields
+        ;(formElement.querySelector('[name="shiftId"]') as HTMLInputElement).value =
+          shiftId.toString()
+        ;(
+          formElement.querySelector('[name="employeeNumber"]') as HTMLInputElement
+        ).value = employee.employeeNumber
+
+        // Set employee name (readonly field)
+        ;(
+          modalElement.querySelector(
+            '#builderEditEmployeeCrewNote--employeeName'
+          ) as HTMLInputElement
+        ).value = `${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`
+
+        // Populate crew dropdown
+        const crewSelect = formElement.querySelector(
+          '[name="crewId"]'
+        ) as HTMLSelectElement
+        crewSelect.innerHTML = '<option value="">(None)</option>'
+        for (const crew of shiftCrews) {
+          const option = document.createElement('option')
+          option.value = crew.crewId.toString()
+          option.textContent = crew.crewName
+          if (employee.crewId === crew.crewId) {
+            option.selected = true
+          }
+          crewSelect.append(option)
+        }
+
+        // Set note value
+        ;(
+          formElement.querySelector(
+            '[name="shiftEmployeeNote"]'
+          ) as HTMLTextAreaElement
+        ).value = employee.shiftEmployeeNote
+
+        // Handle form submission
+        formElement.addEventListener('submit', (submitEvent) => {
+          submitEvent.preventDefault()
+
+          const formData = new FormData(formElement)
+          const crewId = formData.get('crewId')
+          const shiftEmployeeNote = formData.get('shiftEmployeeNote')
+
+          // Update crew assignment
+          cityssm.postJSON(
+            `${shiftUrlPrefix}/doUpdateShiftEmployee`,
+            {
+              shiftId,
+              employeeNumber: employee.employeeNumber,
+              crewId: crewId === '' ? null : crewId
+            },
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as { success: boolean }
+
+              if (responseJSON.success) {
+                // Update note
+                cityssm.postJSON(
+                  `${shiftUrlPrefix}/doUpdateShiftEmployeeNote`,
+                  {
+                    shiftId,
+                    employeeNumber: employee.employeeNumber,
+                    shiftEmployeeNote
+                  },
+                  (noteResponseJSON) => {
+                    const noteResponse = noteResponseJSON as { success: boolean }
+
+                    if (noteResponse.success) {
+                      bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Employee updated successfully!'
+                      })
+                      closeModalFunction()
+                      loadShifts()
+                    } else {
+                      bulmaJS.alert({
+                        contextualColorName: 'warning',
+                        message:
+                          'Crew updated but failed to update note.',
+                        title: 'Partial Update'
+                      })
+                      closeModalFunction()
+                      loadShifts()
+                    }
+                  }
+                )
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to update employee.',
+                  title: 'Update Error'
+                })
+              }
+            }
+          )
+        })
+      },
+      onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+        // Focus the crew dropdown
+        const crewSelect = modalElement.querySelector(
+          '[name="crewId"]'
+        ) as HTMLSelectElement
+        crewSelect?.focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function openEditEquipmentEmployeeNoteModal(
+    shiftId: number,
+    equipment: {
+      equipmentNumber: string
+      equipmentName: string
+      employeeNumber: string | null
+      shiftEquipmentNote: string
+    },
+    shiftEmployees: Array<{
+      employeeNumber: string
+      firstName: string
+      lastName: string
+    }>
+  ): void {
+    let closeModalFunction: () => void
+
+    cityssm.openHtmlModal('shifts-builder-editEquipmentEmployeeNote', {
+      onshow(modalElement) {
+        const formElement = modalElement.querySelector(
+          '#form--builderEditEquipmentEmployeeNote'
+        ) as HTMLFormElement
+
+        // Set hidden fields
+        ;(formElement.querySelector('[name="shiftId"]') as HTMLInputElement).value =
+          shiftId.toString()
+        ;(
+          formElement.querySelector('[name="equipmentNumber"]') as HTMLInputElement
+        ).value = equipment.equipmentNumber
+
+        // Set equipment name (readonly field)
+        ;(
+          modalElement.querySelector(
+            '#builderEditEquipmentEmployeeNote--equipmentName'
+          ) as HTMLInputElement
+        ).value = `${equipment.equipmentName} (#${equipment.equipmentNumber})`
+
+        // Populate employee dropdown
+        const employeeSelect = formElement.querySelector(
+          '[name="employeeNumber"]'
+        ) as HTMLSelectElement
+        employeeSelect.innerHTML = '<option value="">(None)</option>'
+        for (const employee of shiftEmployees) {
+          const option = document.createElement('option')
+          option.value = employee.employeeNumber
+          option.textContent = `${employee.lastName}, ${employee.firstName}`
+          if (equipment.employeeNumber === employee.employeeNumber) {
+            option.selected = true
+          }
+          employeeSelect.append(option)
+        }
+
+        // Set note value
+        ;(
+          formElement.querySelector(
+            '[name="shiftEquipmentNote"]'
+          ) as HTMLTextAreaElement
+        ).value = equipment.shiftEquipmentNote
+
+        // Handle form submission
+        formElement.addEventListener('submit', (submitEvent) => {
+          submitEvent.preventDefault()
+
+          const formData = new FormData(formElement)
+          const employeeNumber = formData.get('employeeNumber')
+          const shiftEquipmentNote = formData.get('shiftEquipmentNote')
+
+          // Update employee assignment
+          cityssm.postJSON(
+            `${shiftUrlPrefix}/doUpdateShiftEquipment`,
+            {
+              shiftId,
+              equipmentNumber: equipment.equipmentNumber,
+              employeeNumber: employeeNumber === '' ? null : employeeNumber
+            },
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as {
+                success: boolean
+                message?: string
+              }
+
+              if (responseJSON.success) {
+                // Update note
+                cityssm.postJSON(
+                  `${shiftUrlPrefix}/doUpdateShiftEquipmentNote`,
+                  {
+                    shiftId,
+                    equipmentNumber: equipment.equipmentNumber,
+                    shiftEquipmentNote
+                  },
+                  (noteResponseJSON) => {
+                    const noteResponse = noteResponseJSON as { success: boolean }
+
+                    if (noteResponse.success) {
+                      bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Equipment updated successfully!'
+                      })
+                      closeModalFunction()
+                      loadShifts()
+                    } else {
+                      bulmaJS.alert({
+                        contextualColorName: 'warning',
+                        message:
+                          'Employee assignment updated but failed to update note.',
+                        title: 'Partial Update'
+                      })
+                      closeModalFunction()
+                      loadShifts()
+                    }
+                  }
+                )
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message:
+                    responseJSON.message ?? 'Failed to update equipment.',
+                  title: 'Update Error'
+                })
+              }
+            }
+          )
+        })
+      },
+      onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+        // Focus the employee dropdown
+        const employeeSelect = modalElement.querySelector(
+          '[name="employeeNumber"]'
+        ) as HTMLSelectElement
+        employeeSelect?.focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function openEditWorkOrderNoteModal(
+    shiftId: number,
+    workOrder: {
+      workOrderId: number
+      workOrderNumber: string
+      shiftWorkOrderNote: string
+    }
+  ): void {
+    let closeModalFunction: () => void
+
+    cityssm.openHtmlModal('shifts-editWorkOrderNote', {
+      onshow(modalElement) {
+        const formElement = modalElement.querySelector(
+          '#editWorkOrderNote--form'
+        ) as HTMLFormElement
+
+        // Set hidden fields
+        ;(formElement.querySelector('[name="shiftId"]') as HTMLInputElement).value =
+          shiftId.toString()
+        ;(
+          formElement.querySelector('[name="workOrderId"]') as HTMLInputElement
+        ).value = workOrder.workOrderId.toString()
+
+        // Set note value
+        ;(
+          formElement.querySelector(
+            '[name="shiftWorkOrderNote"]'
+          ) as HTMLTextAreaElement
+        ).value = workOrder.shiftWorkOrderNote
+
+        // Handle form submission
+        formElement.addEventListener('submit', (submitEvent) => {
+          submitEvent.preventDefault()
+
+          cityssm.postJSON(
+            `${shiftUrlPrefix}/doUpdateShiftWorkOrderNote`,
+            formElement,
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as {
+                success: boolean
+                errorMessage?: string
+              }
+
+              if (responseJSON.success) {
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Work order note updated successfully!'
+                })
+                closeModalFunction()
+                loadShifts()
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message:
+                    responseJSON.errorMessage ??
+                    'Failed to update work order note.',
+                  title: 'Update Error'
+                })
+              }
+            }
+          )
+        })
+      },
+      onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+        // Focus the textarea
+        const textarea = modalElement.querySelector(
+          '[name="shiftWorkOrderNote"]'
+        ) as HTMLTextAreaElement
+        textarea?.focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
   }
 
   // Initialize resource section features
