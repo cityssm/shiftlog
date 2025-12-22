@@ -33,14 +33,13 @@
 
         <div class="field">
           <label class="label" for="editAdhocTask--taskDescription">
-            Description <span class="has-text-danger">*</span>
+            Description
           </label>
           <div class="control">
             <textarea
               class="textarea"
               id="editAdhocTask--taskDescription"
               name="taskDescription"
-              required
               maxlength="200"
               rows="3"
             ></textarea>
@@ -219,6 +218,12 @@
           </div>
         </div>
 
+        <div class="field">
+          <label class="label">From Location Map</label>
+          <div id="map--editAdhocTask--fromLocation" style="height: 300px;"></div>
+          <p class="help">Click on the map to set from location coordinates</p>
+        </div>
+
         <h3 class="subtitle is-5 mt-4">To Location (Optional)</h3>
         
         <div class="field">
@@ -300,6 +305,12 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="field">
+          <label class="label">To Location Map</label>
+          <div id="map--editAdhocTask--toLocation" style="height: 300px;"></div>
+          <p class="help">Click on the map to set to location coordinates</p>
         </div>
 
         <div class="field">
