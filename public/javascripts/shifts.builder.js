@@ -39,6 +39,14 @@
                 tracker[key] ??= [];
                 tracker[key].push(shift.shiftId);
             }
+            // Track adhoc tasks
+            if (shift.adhocTasks) {
+                for (const adhocTask of shift.adhocTasks) {
+                    const key = getItemKey('adhocTask', adhocTask.adhocTaskId);
+                    tracker[key] ??= [];
+                    tracker[key].push(shift.shiftId);
+                }
+            }
         }
         // Remove items that only appear once
         for (const key in tracker) {
@@ -276,10 +284,69 @@
             workOrdersSection.append(workOrdersList);
             containerElement.append(workOrdersSection);
         }
-        else {
+        // Add adhoc tasks section
+        if (shift.adhocTasks && shift.adhocTasks.length > 0) {
+            const adhocTasksSection = document.createElement('div');
+            adhocTasksSection.className = 'mb-3';
+            const adhocTasksLabel = document.createElement('strong');
+            adhocTasksLabel.textContent = 'Ad Hoc Tasks:';
+            adhocTasksSection.append(adhocTasksLabel);
+            const adhocTasksList = document.createElement('ul');
+            adhocTasksList.className = 'ml-4';
+            for (const adhocTask of shift.adhocTasks) {
+                const isDup = isDuplicate(duplicates, 'adhocTask', adhocTask.adhocTaskId);
+                const adhocTaskItem = document.createElement('li');
+                if (isDup) {
+                    adhocTaskItem.classList.add('has-background-warning-light');
+                }
+                if (isEditable) {
+                    adhocTaskItem.classList.add('drop-target-adhocTask');
+                }
+                if (isDraggable) {
+                    adhocTaskItem.draggable = true;
+                }
+                adhocTaskItem.dataset.adhocTaskId = adhocTask.adhocTaskId.toString();
+                // Add icon
+                const icon = document.createElement('span');
+                icon.className = 'icon is-small';
+                icon.innerHTML = '<i class="fa-solid fa-tasks"></i>';
+                adhocTaskItem.append(icon, ' ');
+                // Add task type badge if available
+                if (adhocTask.adhocTaskTypeDataListItem) {
+                    const taskTypeBadge = document.createElement('span');
+                    taskTypeBadge.className = 'tag is-small is-info mr-1';
+                    taskTypeBadge.textContent = adhocTask.adhocTaskTypeDataListItem;
+                    adhocTaskItem.append(taskTypeBadge);
+                }
+                // Add task description
+                const descriptionSpan = document.createElement('span');
+                descriptionSpan.textContent = adhocTask.taskDescription;
+                adhocTaskItem.append(descriptionSpan);
+                // Add location if available
+                if (adhocTask.locationAddress1) {
+                    const locationSpan = document.createElement('span');
+                    locationSpan.className = 'has-text-grey-light is-size-7';
+                    locationSpan.textContent = ` (${adhocTask.locationAddress1}${adhocTask.locationCityProvince
+                        ? ', ' + adhocTask.locationCityProvince
+                        : ''})`;
+                    adhocTaskItem.append(locationSpan);
+                }
+                if (adhocTask.shiftAdhocTaskNote !== '') {
+                    const noteSpan = document.createElement('span');
+                    noteSpan.className = 'has-text-grey-light';
+                    noteSpan.textContent = ` - ${adhocTask.shiftAdhocTaskNote}`;
+                    adhocTaskItem.append(noteSpan);
+                }
+                adhocTasksList.append(adhocTaskItem);
+            }
+            adhocTasksSection.append(adhocTasksList);
+            containerElement.append(adhocTasksSection);
+        }
+        if (shift.workOrders.length === 0 &&
+            (!shift.adhocTasks || shift.adhocTasks.length === 0)) {
             const emptyMessage = document.createElement('p');
             emptyMessage.className = 'has-text-grey-light';
-            emptyMessage.textContent = 'No work orders assigned';
+            emptyMessage.textContent = 'No tasks assigned';
             containerElement.append(emptyMessage);
         }
         return containerElement;
@@ -461,16 +528,43 @@
         if (shiftDateString === '') {
             return;
         }
-        cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableResources`, {
-            shiftDateString
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (responseJSON.success) {
-                renderAvailableResources(responseJSON);
-            }
-        });
+        const viewMode = viewModeElement.value;
+        if (viewMode === 'tasks') {
+            // Load available adhoc tasks for tasks view
+            cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableAdhocTasks`, {}, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    renderAvailableAdhocTasks(responseJSON.adhocTasks);
+                }
+            });
+        }
+        else {
+            // Load employees, equipment, crews for employees view
+            cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableResources`, {
+                shiftDateString
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    renderAvailableResources(responseJSON);
+                }
+            });
+        }
     }
     function renderAvailableResources(resources) {
+        // Show employees, equipment, and crews sections
+        const employeesSection = document.querySelector('#available--employees');
+        const equipmentSection = document.querySelector('#available--equipment');
+        const crewsSection = document.querySelector('#available--crews');
+        if (employeesSection)
+            employeesSection.style.display = 'block';
+        if (equipmentSection)
+            equipmentSection.style.display = 'block';
+        if (crewsSection)
+            crewsSection.style.display = 'block';
+        // Hide adhoc tasks section if it exists
+        const adhocTasksSection = document.querySelector('#available--adhocTasks');
+        if (adhocTasksSection)
+            adhocTasksSection.style.display = 'none';
         // Render employees
         const employeesList = document.querySelector('#available--employees .available-resources-list');
         if (employeesList !== null) {
@@ -598,6 +692,118 @@
             crewsCountTag.textContent = resources.crews.length.toString();
         }
     }
+    function renderAvailableAdhocTasks(adhocTasks) {
+        // Hide employees, equipment, and crews sections
+        const employeesSection = document.querySelector('#available--employees');
+        const equipmentSection = document.querySelector('#available--equipment');
+        const crewsSection = document.querySelector('#available--crews');
+        if (employeesSection)
+            employeesSection.style.display = 'none';
+        if (equipmentSection)
+            equipmentSection.style.display = 'none';
+        if (crewsSection)
+            crewsSection.style.display = 'none';
+        // Show or create adhoc tasks section
+        let adhocTasksSection = document.querySelector('#available--adhocTasks');
+        if (!adhocTasksSection) {
+            adhocTasksSection = document.createElement('div');
+            adhocTasksSection.id = 'available--adhocTasks';
+            adhocTasksSection.className = 'mb-4';
+            adhocTasksSection.innerHTML = `
+                <h4 class="subtitle is-6 is-clickable resource-section-header" data-section="adhocTasks">
+                    <span class="icon is-small">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </span>
+                    <span>Ad Hoc Tasks</span>
+                    <span class="tag is-info is-light ml-2" id="adhocTasks-count">0</span>
+                </h4>
+                <div class="available-resources-list resource-section-content" data-resource-type="adhocTask">
+                    <p class="has-text-grey-light is-size-7">No available tasks</p>
+                </div>
+                <button class="button is-small is-success is-fullwidth mt-3" id="button--createStandaloneAdhocTask" type="button">
+                    <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
+                    <span>Create Ad Hoc Task</span>
+                </button>
+            `;
+            const container = document.querySelector('#container--availableResources .box');
+            const filterField = container.querySelector('.field');
+            container.insertBefore(adhocTasksSection, filterField.nextSibling);
+            // Setup collapsible for the newly created section
+            const header = adhocTasksSection.querySelector('.resource-section-header');
+            if (header) {
+                header.addEventListener('click', () => {
+                    const section = header.dataset.section;
+                    if (section === undefined)
+                        return;
+                    const content = document.querySelector(`#available--${section} .resource-section-content`);
+                    if (content !== null) {
+                        header.classList.toggle('is-collapsed');
+                        content.classList.toggle('is-hidden');
+                    }
+                });
+            }
+        }
+        adhocTasksSection.style.display = 'block';
+        // Render adhoc tasks
+        const adhocTasksList = adhocTasksSection.querySelector('.available-resources-list');
+        adhocTasksList.textContent = '';
+        if (adhocTasks.length === 0) {
+            const emptyMessage = document.createElement('p');
+            emptyMessage.className = 'has-text-grey-light is-size-7';
+            emptyMessage.textContent = 'No available tasks';
+            adhocTasksList.append(emptyMessage);
+        }
+        else {
+            const itemsContainer = document.createElement('div');
+            itemsContainer.className = 'available-items';
+            for (const adhocTask of adhocTasks) {
+                const itemBox = document.createElement('div');
+                itemBox.className = 'box p-2 mb-2';
+                itemBox.draggable = true;
+                itemBox.dataset.adhocTaskId = adhocTask.adhocTaskId.toString();
+                itemBox.dataset.fromAvailable = 'true';
+                // Add icon
+                const icon = document.createElement('span');
+                icon.className = 'icon';
+                icon.innerHTML = '<i class="fa-solid fa-tasks"></i>';
+                itemBox.append(icon, ' ');
+                // Add task type badge if available
+                if (adhocTask.adhocTaskTypeDataListItem) {
+                    const taskTypeBadge = document.createElement('span');
+                    taskTypeBadge.className = 'tag is-small is-info mr-1';
+                    taskTypeBadge.textContent = adhocTask.adhocTaskTypeDataListItem;
+                    itemBox.append(taskTypeBadge);
+                }
+                // Add task description
+                const itemText = document.createElement('div');
+                itemText.className = 'is-size-7';
+                itemText.textContent = adhocTask.taskDescription;
+                itemBox.append(itemText);
+                // Add location if available
+                if (adhocTask.locationAddress1) {
+                    const locationSpan = document.createElement('div');
+                    locationSpan.className = 'has-text-grey is-size-7';
+                    locationSpan.textContent = `${adhocTask.locationAddress1}${adhocTask.locationCityProvince
+                        ? ', ' + adhocTask.locationCityProvince
+                        : ''}`;
+                    itemBox.append(locationSpan);
+                }
+                itemsContainer.append(itemBox);
+            }
+            adhocTasksList.append(itemsContainer);
+        }
+        // Update adhoc tasks count
+        const adhocTasksCountTag = document.querySelector('#adhocTasks-count');
+        if (adhocTasksCountTag !== null) {
+            adhocTasksCountTag.textContent = adhocTasks.length.toString();
+        }
+        // Setup create adhoc task button handler
+        const createButton = document.querySelector('#button--createStandaloneAdhocTask');
+        if (createButton && !createButton.dataset.hasListener) {
+            createButton.dataset.hasListener = 'true';
+            createButton.addEventListener('click', openCreateStandaloneAdhocTaskModal);
+        }
+    }
     // Lock/unlock functionality
     function toggleShiftLock(shiftId) {
         if (lockedShifts.has(shiftId)) {
@@ -623,6 +829,7 @@
         const equipmentNumber = target.dataset.equipmentNumber;
         const crewId = target.dataset.crewId;
         const workOrderId = target.dataset.workOrderId;
+        const adhocTaskId = target.dataset.adhocTaskId;
         const fromAvailable = target.dataset.fromAvailable === 'true';
         const shiftCard = target.closest('[data-shift-id]');
         const fromShiftId = fromAvailable
@@ -678,6 +885,13 @@
                 fromShiftId,
                 id: Number.parseInt(workOrderId, 10),
                 type: 'workOrder'
+            };
+        }
+        else if (adhocTaskId !== undefined) {
+            draggedData = {
+                fromShiftId,
+                id: Number.parseInt(adhocTaskId, 10),
+                type: 'adhocTask'
             };
         }
         if (event.dataTransfer !== null) {
@@ -859,6 +1073,10 @@
             }
             case 'workOrder': {
                 moveWorkOrder(draggedData.id, draggedData.fromShiftId, toShiftId);
+                break;
+            }
+            case 'adhocTask': {
+                moveAdhocTask(draggedData.id, draggedData.fromShiftId, toShiftId);
                 break;
             }
         }
@@ -1099,6 +1317,28 @@
                         bulmaJS.alert({
                             contextualColorName: 'danger',
                             message: 'Failed to remove work order from shift.',
+                            title: 'Error'
+                        });
+                    }
+                });
+                break;
+            }
+            case 'adhocTask': {
+                cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftAdhocTask`, {
+                    shiftId: draggedData.fromShiftId,
+                    adhocTaskId: draggedData.id
+                }, (response) => {
+                    if (response.success) {
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            message: 'Ad hoc task removed from shift.'
+                        });
+                        loadShifts();
+                    }
+                    else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            message: 'Failed to remove ad hoc task from shift.',
                             title: 'Error'
                         });
                     }
@@ -1518,6 +1758,75 @@
             }
         });
     }
+    function moveAdhocTask(adhocTaskId, fromShiftId, toShiftId) {
+        // If fromShiftId is 0, adhoc task is being added (not moved)
+        if (fromShiftId === 0) {
+            // Just add to new shift
+            cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftAdhocTask`, {
+                shiftId: toShiftId,
+                shiftAdhocTaskNote: '',
+                adhocTaskId
+            }, (addResponse) => {
+                if (addResponse.success) {
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Ad hoc task has been added to the shift.',
+                        title: 'Task Added'
+                    });
+                    loadShifts();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        message: addResponse.errorMessage ?? 'Failed to add ad hoc task to shift.',
+                        title: 'Error'
+                    });
+                }
+            });
+            return;
+        }
+        // Moving between shifts - check if adhoc task is already on target shift first
+        // This prevents data loss if the add fails due to duplicate
+        cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftAdhocTask`, {
+            shiftId: toShiftId,
+            shiftAdhocTaskNote: '',
+            adhocTaskId
+        }, (addResponse) => {
+            if (addResponse.success) {
+                // Successfully added to new shift, now remove from old shift
+                cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftAdhocTask`, {
+                    shiftId: fromShiftId,
+                    adhocTaskId
+                }, (deleteResponse) => {
+                    if (deleteResponse.success) {
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            message: 'Ad hoc task has been moved to the new shift.',
+                            title: 'Task Moved'
+                        });
+                        loadShifts();
+                    }
+                    else {
+                        bulmaJS.alert({
+                            contextualColorName: 'warning',
+                            message: 'Ad hoc task was added to the new shift but could not be removed from the original shift.',
+                            title: 'Partial Success'
+                        });
+                        loadShifts();
+                    }
+                });
+            }
+            else {
+                // Add failed (likely already on target shift), don't delete from source
+                bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: addResponse.errorMessage ?? 'Failed to add ad hoc task to new shift.',
+                    title: 'Error'
+                });
+                loadShifts();
+            }
+        });
+    }
     function makeEmployeeSupervisor(employeeNumber, shiftId) {
         // Get the shift details first to get current values
         const shift = currentShifts.find((s) => s.shiftId === shiftId);
@@ -1688,7 +1997,10 @@
     }
     // Event listeners
     shiftDateElement.addEventListener('change', loadShifts);
-    viewModeElement.addEventListener('change', renderShifts);
+    viewModeElement.addEventListener('change', () => {
+        renderShifts();
+        loadAvailableResources();
+    });
     // Set up drag and drop event delegation on the results container
     resultsContainerElement.addEventListener('dragstart', handleDragStart);
     resultsContainerElement.addEventListener('dragend', handleDragEnd);
@@ -2276,6 +2588,134 @@
                     crewsCountTag.textContent = `${crewsVisible}/${totals.crews}`;
                 }
             }
+        });
+    }
+    // Function to create a standalone adhoc task (not assigned to a shift)
+    function openCreateStandaloneAdhocTaskModal() {
+        // Load task types first
+        cityssm.postJSON(`${shiftUrlPrefix}/doGetAdhocTaskTypes`, {}, (typesResponse) => {
+            if (!typesResponse.success) {
+                bulmaJS.alert({
+                    message: 'Failed to load task types.',
+                    title: 'Error',
+                    contextualColorName: 'danger'
+                });
+                return;
+            }
+            const adhocTaskTypes = typesResponse.adhocTaskTypes || [];
+            cityssm.openHtmlModal('shifts-createAdhocTask', {
+                onshow(modalElement) {
+                    // Remove the shiftId input (not needed for standalone)
+                    const shiftIdInput = modalElement.querySelector('input[name="shiftId"]');
+                    if (shiftIdInput) {
+                        shiftIdInput.remove();
+                    }
+                    // Remove shift note field (not needed for standalone)
+                    const shiftNoteField = modalElement.querySelector('[name="shiftAdhocTaskNote"]');
+                    if (shiftNoteField) {
+                        shiftNoteField.closest('.field')?.remove();
+                    }
+                    // Populate task types
+                    const taskTypeSelect = modalElement.querySelector('#createAdhocTask--adhocTaskTypeDataListItemId');
+                    if (taskTypeSelect) {
+                        // Clear existing options except first
+                        while (taskTypeSelect.options.length > 1) {
+                            taskTypeSelect.remove(1);
+                        }
+                        for (const taskType of adhocTaskTypes) {
+                            const option = document.createElement('option');
+                            option.value = taskType.dataListItemId.toString();
+                            option.textContent = taskType.dataListItem;
+                            taskTypeSelect.append(option);
+                        }
+                    }
+                    // Set default city/province
+                    const defaultCityProvince = shiftLog.defaultCityProvince ?? '';
+                    const locationCity = modalElement.querySelector('#createAdhocTask--locationCityProvince');
+                    const fromLocationCity = modalElement.querySelector('#createAdhocTask--fromLocationCityProvince');
+                    const toLocationCity = modalElement.querySelector('#createAdhocTask--toLocationCityProvince');
+                    if (locationCity)
+                        locationCity.value = defaultCityProvince;
+                    if (fromLocationCity)
+                        fromLocationCity.value = defaultCityProvince;
+                    if (toLocationCity)
+                        toLocationCity.value = defaultCityProvince;
+                },
+                onshown(modalElement, closeModalFunction) {
+                    bulmaJS.toggleHtmlClipped();
+                    const formElement = modalElement.querySelector('form');
+                    // Initialize date picker
+                    const dueDateInput = modalElement.querySelector('#createAdhocTask--taskDueDateTimeString');
+                    if (dueDateInput && typeof flatpickr !== 'undefined') {
+                        flatpickr(dueDateInput, {
+                            allowInput: true,
+                            enableTime: true,
+                            minuteIncrement: 15,
+                            nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+                            prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+                        });
+                    }
+                    // Initialize maps if Leaflet is available
+                    if (typeof L !== 'undefined') {
+                        const initMap = (mapId, latInput, lngInput) => {
+                            const mapElement = modalElement.querySelector(`#${mapId}`);
+                            if (!mapElement)
+                                return;
+                            const defaultLat = shiftLog.defaultLatitude || 43.65;
+                            const defaultLng = shiftLog.defaultLongitude || -79.38;
+                            const map = new L.Map(mapId).setView([defaultLat, defaultLng], 13);
+                            new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(map);
+                            let marker = null;
+                            map.on('click', (event) => {
+                                const lat = event.latlng.lat;
+                                const lng = event.latlng.lng;
+                                if (latInput)
+                                    latInput.value = lat.toFixed(7);
+                                if (lngInput)
+                                    lngInput.value = lng.toFixed(7);
+                                if (marker)
+                                    map.removeLayer(marker);
+                                marker = new L.Marker([lat, lng]).addTo(map);
+                            });
+                        };
+                        initMap('map--createAdhocTask--location', modalElement.querySelector('#createAdhocTask--locationLatitude'), modalElement.querySelector('#createAdhocTask--locationLongitude'));
+                        initMap('map--createAdhocTask--fromLocation', modalElement.querySelector('#createAdhocTask--fromLocationLatitude'), modalElement.querySelector('#createAdhocTask--fromLocationLongitude'));
+                        initMap('map--createAdhocTask--toLocation', modalElement.querySelector('#createAdhocTask--toLocationLatitude'), modalElement.querySelector('#createAdhocTask--toLocationLongitude'));
+                    }
+                    // Handle form submission
+                    formElement.addEventListener('submit', (formEvent) => {
+                        formEvent.preventDefault();
+                        cityssm.postJSON(`${shiftUrlPrefix}/doCreateStandaloneAdhocTask`, formEvent.currentTarget, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
+                            if (responseJSON.success) {
+                                bulmaJS.alert({
+                                    contextualColorName: 'success',
+                                    message: 'Ad hoc task created successfully.',
+                                    title: 'Success'
+                                });
+                                closeModalFunction();
+                                // Reload available resources to show the new task
+                                loadAvailableResources();
+                            }
+                            else {
+                                bulmaJS.alert({
+                                    contextualColorName: 'danger',
+                                    title: 'Error Creating Task',
+                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                });
+                            }
+                        });
+                    });
+                    modalElement
+                        .querySelector('#createAdhocTask--adhocTaskTypeDataListItemId')
+                        ?.focus();
+                },
+                onremoved() {
+                    bulmaJS.toggleHtmlClipped();
+                }
+            });
         });
     }
     // Initialize resource section features

@@ -29,5 +29,16 @@ export interface ShiftForBuilder extends Shift {
         workOrderDetails: string;
         shiftWorkOrderNote: string;
     }>;
+    adhocTasks: Array<{
+        adhocTaskId: number;
+        adhocTaskTypeDataListItemId: number;
+        adhocTaskTypeDataListItem: string;
+        taskDescription: string;
+        locationAddress1: string;
+        locationAddress2: string;
+        locationCityProvince: string;
+        taskDueDateTime: Date | string | null;
+        shiftAdhocTaskNote: string;
+    }>;
 }
 export default function getShiftsForBuilder(shiftDateString: DateString, user?: User): Promise<ShiftForBuilder[]>;

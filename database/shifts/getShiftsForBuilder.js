@@ -134,12 +134,36 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
     order by wo.workOrderNumber
   `;
     const workOrdersResult = await pool.request().query(workOrdersSql);
+    // Get adhoc tasks
+    const adhocTasksSql = /* sql */ `
+    select
+      st.shiftId,
+      st.adhocTaskId,
+      t.adhocTaskTypeDataListItemId,
+      td.dataListItem as adhocTaskTypeDataListItem,
+      t.taskDescription,
+      t.locationAddress1,
+      t.locationAddress2,
+      t.locationCityProvince,
+      t.taskDueDateTime,
+      st.shiftAdhocTaskNote
+    from ShiftLog.ShiftAdhocTasks st
+    inner join ShiftLog.AdhocTasks t
+      on st.adhocTaskId = t.adhocTaskId
+    left join ShiftLog.DataListItems td
+      on t.adhocTaskTypeDataListItemId = td.dataListItemId
+    where st.shiftId in (${shiftIds.join(',')})
+    and t.recordDelete_dateTime is null
+    order by t.taskDueDateTime, t.recordCreate_dateTime desc
+  `;
+    const adhocTasksResult = await pool.request().query(adhocTasksSql);
     // Combine data
     for (const shift of shifts) {
         shift.crews = crewsResult.recordset.filter((crew) => crew.shiftId === shift.shiftId);
         shift.employees = employeesResult.recordset.filter((employee) => employee.shiftId === shift.shiftId);
         shift.equipment = equipmentResult.recordset.filter((equipment) => equipment.shiftId === shift.shiftId);
         shift.workOrders = workOrdersResult.recordset.filter((workOrder) => workOrder.shiftId === shift.shiftId);
+        shift.adhocTasks = adhocTasksResult.recordset.filter((adhocTask) => adhocTask.shiftId === shift.shiftId);
     }
     return shifts;
 }

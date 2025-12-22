@@ -17,6 +17,7 @@ import handler_doAddShiftEquipment from '../handlers/shifts-post/doAddShiftEquip
 import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkOrder.js';
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js';
 import handler_doCreateAdhocTask from '../handlers/shifts-post/doCreateAdhocTask.js';
+import handler_doCreateStandaloneAdhocTask from '../handlers/shifts-post/doCreateStandaloneAdhocTask.js';
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js';
 import handler_doDeleteCrew from '../handlers/shifts-post/doDeleteCrew.js';
 import handler_doDeleteCrewEquipment from '../handlers/shifts-post/doDeleteCrewEquipment.js';
@@ -122,6 +123,7 @@ router.post('/doGetShiftAdhocTasks', handler_doGetShiftAdhocTasks);
 router.post('/doGetAvailableAdhocTasks', handler_doGetAvailableAdhocTasks);
 router.post('/doGetAdhocTaskTypes', handler_doGetAdhocTaskTypes);
 router.post('/doCreateAdhocTask', updateHandler, handler_doCreateAdhocTask);
+router.post('/doCreateStandaloneAdhocTask', updateHandler, handler_doCreateStandaloneAdhocTask);
 router.post('/doUpdateAdhocTask', updateHandler, handler_doUpdateAdhocTask);
 router.post('/doAddShiftAdhocTask', updateHandler, handler_doAddShiftAdhocTask);
 router.post('/doUpdateShiftAdhocTaskNote', updateHandler, handler_doUpdateShiftAdhocTaskNote);
