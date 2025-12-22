@@ -1033,6 +1033,24 @@ declare const exports: {
       ) as HTMLElement
       const filterField = container.querySelector('.field') as HTMLElement
       container.insertBefore(adhocTasksSection, filterField.nextSibling)
+
+      // Setup collapsible for the newly created section
+      const header = adhocTasksSection.querySelector(
+        '.resource-section-header'
+      ) as HTMLElement
+      if (header) {
+        header.addEventListener('click', () => {
+          const section = header.dataset.section
+          if (section === undefined) return
+          const content = document.querySelector(
+            `#available--${section} .resource-section-content`
+          ) as HTMLElement
+          if (content !== null) {
+            header.classList.toggle('is-collapsed')
+            content.classList.toggle('is-hidden')
+          }
+        })
+      }
     }
     adhocTasksSection.style.display = 'block'
 
@@ -2660,7 +2678,10 @@ declare const exports: {
 
   // Event listeners
   shiftDateElement.addEventListener('change', loadShifts)
-  viewModeElement.addEventListener('change', renderShifts)
+  viewModeElement.addEventListener('change', () => {
+    renderShifts()
+    loadAvailableResources()
+  })
 
   // Set up drag and drop event delegation on the results container
   resultsContainerElement.addEventListener('dragstart', handleDragStart)
@@ -3569,17 +3590,204 @@ declare const exports: {
 
   // Function to create a standalone adhoc task (not assigned to a shift)
   function openCreateStandaloneAdhocTaskModal(): void {
-    // For now, open a simple prompt to create an adhoc task
-    // In a full implementation, this would be a modal with full form
-    bulmaJS.alert({
-      message:
-        'This feature allows creating ad hoc tasks without assigning them to a shift. The task will appear in the available resources and can be dragged to any shift.',
-      title: 'Create Ad Hoc Task',
-      contextualColorName: 'info'
-    })
+    // Load task types first
+    cityssm.postJSON(
+      `${shiftUrlPrefix}/doGetAdhocTaskTypes`,
+      {},
+      (typesResponse: {
+        success: boolean
+        adhocTaskTypes?: Array<{ dataListItemId: number; dataListItem: string }>
+      }) => {
+        if (!typesResponse.success) {
+          bulmaJS.alert({
+            message: 'Failed to load task types.',
+            title: 'Error',
+            contextualColorName: 'danger'
+          })
+          return
+        }
+        const adhocTaskTypes = typesResponse.adhocTaskTypes || []
 
-    // TODO: Implement full modal form similar to shifts.adhocTasks.js
-    // For now, just indicate the feature is in progress
+        cityssm.openHtmlModal('shifts-createAdhocTask', {
+          onshow(modalElement: HTMLElement) {
+            // Remove the shiftId input (not needed for standalone)
+            const shiftIdInput = modalElement.querySelector(
+              'input[name="shiftId"]'
+            )
+            if (shiftIdInput) {
+              shiftIdInput.remove()
+            }
+
+            // Remove shift note field (not needed for standalone)
+            const shiftNoteField = modalElement.querySelector(
+              '[name="shiftAdhocTaskNote"]'
+            )
+            if (shiftNoteField) {
+              shiftNoteField.closest('.field')?.remove()
+            }
+
+            // Populate task types
+            const taskTypeSelect = modalElement.querySelector(
+              '#createAdhocTask--adhocTaskTypeDataListItemId'
+            ) as HTMLSelectElement
+            if (taskTypeSelect) {
+              // Clear existing options except first
+              while (taskTypeSelect.options.length > 1) {
+                taskTypeSelect.remove(1)
+              }
+              for (const taskType of adhocTaskTypes) {
+                const option = document.createElement('option')
+                option.value = taskType.dataListItemId.toString()
+                option.textContent = taskType.dataListItem
+                taskTypeSelect.append(option)
+              }
+            }
+
+            // Set default city/province
+            const defaultCityProvince = shiftLog.defaultCityProvince ?? ''
+            const locationCity = modalElement.querySelector(
+              '#createAdhocTask--locationCityProvince'
+            ) as HTMLInputElement
+            const fromLocationCity = modalElement.querySelector(
+              '#createAdhocTask--fromLocationCityProvince'
+            ) as HTMLInputElement
+            const toLocationCity = modalElement.querySelector(
+              '#createAdhocTask--toLocationCityProvince'
+            ) as HTMLInputElement
+            if (locationCity) locationCity.value = defaultCityProvince
+            if (fromLocationCity) fromLocationCity.value = defaultCityProvince
+            if (toLocationCity) toLocationCity.value = defaultCityProvince
+          },
+          onshown(modalElement: HTMLElement, closeModalFunction: () => void) {
+            bulmaJS.toggleHtmlClipped()
+
+            const formElement = modalElement.querySelector(
+              'form'
+            ) as HTMLFormElement
+
+            // Initialize date picker
+            const dueDateInput = modalElement.querySelector(
+              '#createAdhocTask--taskDueDateTimeString'
+            ) as HTMLInputElement
+            if (dueDateInput && typeof flatpickr !== 'undefined') {
+              flatpickr(dueDateInput, {
+                allowInput: true,
+                enableTime: true,
+                minuteIncrement: 15,
+                nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
+                prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
+              })
+            }
+
+            // Initialize maps if Leaflet is available
+            if (typeof L !== 'undefined') {
+              const initMap = (
+                mapId: string,
+                latInput: HTMLInputElement | null,
+                lngInput: HTMLInputElement | null
+              ): void => {
+                const mapElement = modalElement.querySelector(`#${mapId}`)
+                if (!mapElement) return
+
+                const defaultLat = shiftLog.defaultLatitude || 43.65
+                const defaultLng = shiftLog.defaultLongitude || -79.38
+
+                const map = new L.Map(mapId).setView(
+                  [defaultLat, defaultLng],
+                  13
+                )
+                new L.TileLayer(
+                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  {
+                    attribution:
+                      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  }
+                ).addTo(map)
+
+                let marker: L.Marker | null = null
+
+                map.on('click', (event: L.LeafletMouseEvent) => {
+                  const lat = event.latlng.lat
+                  const lng = event.latlng.lng
+                  if (latInput) latInput.value = lat.toFixed(7)
+                  if (lngInput) lngInput.value = lng.toFixed(7)
+                  if (marker) map.removeLayer(marker)
+                  marker = new L.Marker([lat, lng]).addTo(map)
+                })
+              }
+
+              initMap(
+                'map--createAdhocTask--location',
+                modalElement.querySelector(
+                  '#createAdhocTask--locationLatitude'
+                ) as HTMLInputElement,
+                modalElement.querySelector(
+                  '#createAdhocTask--locationLongitude'
+                ) as HTMLInputElement
+              )
+              initMap(
+                'map--createAdhocTask--fromLocation',
+                modalElement.querySelector(
+                  '#createAdhocTask--fromLocationLatitude'
+                ) as HTMLInputElement,
+                modalElement.querySelector(
+                  '#createAdhocTask--fromLocationLongitude'
+                ) as HTMLInputElement
+              )
+              initMap(
+                'map--createAdhocTask--toLocation',
+                modalElement.querySelector(
+                  '#createAdhocTask--toLocationLatitude'
+                ) as HTMLInputElement,
+                modalElement.querySelector(
+                  '#createAdhocTask--toLocationLongitude'
+                ) as HTMLInputElement
+              )
+            }
+
+            // Handle form submission
+            formElement.addEventListener('submit', (formEvent) => {
+              formEvent.preventDefault()
+
+              cityssm.postJSON(
+                `${shiftUrlPrefix}/doCreateStandaloneAdhocTask`,
+                formEvent.currentTarget as HTMLFormElement,
+                (rawResponseJSON) => {
+                  const responseJSON = rawResponseJSON as {
+                    success: boolean
+                    errorMessage?: string
+                  }
+                  if (responseJSON.success) {
+                    bulmaJS.alert({
+                      contextualColorName: 'success',
+                      message: 'Ad hoc task created successfully.',
+                      title: 'Success'
+                    })
+                    closeModalFunction()
+                    // Reload available resources to show the new task
+                    loadAvailableResources()
+                  } else {
+                    bulmaJS.alert({
+                      contextualColorName: 'danger',
+                      title: 'Error Creating Task',
+                      message:
+                        responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    })
+                  }
+                }
+              )
+            })
+
+            modalElement
+              .querySelector('#createAdhocTask--adhocTaskTypeDataListItemId')
+              ?.focus()
+          },
+          onremoved() {
+            bulmaJS.toggleHtmlClipped()
+          }
+        })
+      }
+    )
   }
 
   // Initialize resource section features
