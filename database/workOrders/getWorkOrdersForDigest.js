@@ -8,8 +8,7 @@ export async function getWorkOrdersForDigest(assignedToDataListItemId) {
         .request()
         .input('assignedToDataListItemId', assignedToDataListItemId)
         .input('instance', getConfigProperty('application.instance'))
-        .input('newItemHours', newItemHours)
-        .query(/* sql */ `
+        .input('newItemHours', newItemHours).query(/* sql */ `
       select
         w.workOrderId,
         w.workOrderNumberPrefix,

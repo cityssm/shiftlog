@@ -30,7 +30,7 @@ export default async function getLocations(): Promise<
     for (const [fieldName, mapping] of Object.entries(
       locationConfig.mappings
     )) {
-      let value: unknown = undefined
+      let value: unknown
 
       if (typeof mapping === 'function') {
         value = mapping(gisRecord)

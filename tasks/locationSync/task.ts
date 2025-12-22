@@ -52,6 +52,7 @@ async function runSync(): Promise<void> {
   }
 
   for (const locationToSync of locationList ?? []) {
+    // eslint-disable-next-line no-await-in-loop
     await addOrUpdateSyncedLocation(locationToSync, systemUserName)
   }
 }

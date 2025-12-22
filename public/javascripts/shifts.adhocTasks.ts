@@ -1031,15 +1031,18 @@ declare const exports: {
           cityssm.postJSON(
             `${urlPrefix}/doDeleteShiftAdhocTask`,
             {
-              shiftId,
               adhocTaskId,
+              shiftId,
+
               deleteTask: deleteOption === 'delete'
             },
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
                 success: boolean
-                shiftAdhocTasks?: AdhocTask[]
+
                 errorMessage?: string
+
+                shiftAdhocTasks?: AdhocTask[]
               }
 
               if (responseJSON.success && responseJSON.shiftAdhocTasks) {

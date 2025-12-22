@@ -583,8 +583,8 @@
                 callbackFunction: () => {
                     const deleteOption = document.querySelector('input[name="deleteOption"]:checked')?.value;
                     cityssm.postJSON(`${urlPrefix}/doDeleteShiftAdhocTask`, {
-                        shiftId,
                         adhocTaskId,
+                        shiftId,
                         deleteTask: deleteOption === 'delete'
                     }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;

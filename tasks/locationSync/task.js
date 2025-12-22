@@ -34,6 +34,7 @@ async function runSync() {
         debug('Error occurred during location sync:', error);
     }
     for (const locationToSync of locationList ?? []) {
+        // eslint-disable-next-line no-await-in-loop
         await addOrUpdateSyncedLocation(locationToSync, systemUserName);
     }
 }

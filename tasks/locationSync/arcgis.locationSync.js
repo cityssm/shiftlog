@@ -15,7 +15,7 @@ export default async function getLocations() {
             recordSync_source: 'arcgis'
         };
         for (const [fieldName, mapping] of Object.entries(locationConfig.mappings)) {
-            let value = undefined;
+            let value;
             if (typeof mapping === 'function') {
                 value = mapping(gisRecord);
             }

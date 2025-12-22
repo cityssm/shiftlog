@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder, WorkOrderMilestone } from '../../types/record.types.js'
@@ -30,8 +28,7 @@ export async function getWorkOrdersForDigest(
     .request()
     .input('assignedToDataListItemId', assignedToDataListItemId)
     .input('instance', getConfigProperty('application.instance'))
-    .input('newItemHours', newItemHours)
-    .query<WorkOrderDigestItem>(/* sql */ `
+    .input('newItemHours', newItemHours).query<WorkOrderDigestItem>(/* sql */ `
       select
         w.workOrderId,
         w.workOrderNumberPrefix,

@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable unicorn/no-null */
+
 import mssqlPool from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -35,6 +38,7 @@ export default async function addShiftCrew(
 
     // Add crew members to shift employees (if not already there)
     for (const member of crewMembersResult.recordset) {
+      // eslint-disable-next-line no-await-in-loop
       await pool
         .request()
         .input('shiftId', form.shiftId)
@@ -53,8 +57,9 @@ export default async function addShiftCrew(
     }
 
     // Get crew equipment
-    const crewEquipmentResult = await pool.request().input('crewId', form.crewId)
-      .query(/* sql */ `
+    const crewEquipmentResult = await pool
+      .request()
+      .input('crewId', form.crewId).query(/* sql */ `
         select equipmentNumber, employeeNumber
         from ShiftLog.CrewEquipment
         where crewId = @crewId
@@ -62,6 +67,7 @@ export default async function addShiftCrew(
 
     // Add crew equipment to shift equipment (if not already there)
     for (const equipment of crewEquipmentResult.recordset) {
+      // eslint-disable-next-line no-await-in-loop
       await pool
         .request()
         .input('shiftId', form.shiftId)

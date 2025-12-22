@@ -1835,7 +1835,7 @@ declare const exports: {
                       equipmentNumber: equipment.equipmentNumber,
                       shiftId: draggedData.fromShiftId
                     },
-                    (equipResponse) => {
+                    (_equipResponse) => {
                       equipmentDeletedCount += 1
 
                       if (equipmentDeletedCount === totalEquipment) {
@@ -3064,9 +3064,11 @@ declare const exports: {
         const searchButton = modalElement.querySelector(
           '#builderAddResource--searchWorkOrders'
         ) as HTMLButtonElement
+
         const workOrderFilter = modalElement.querySelector(
           '#builderAddResource--workOrderFilter'
         ) as HTMLInputElement
+
         searchButton.addEventListener('click', () => {
           searchWorkOrders(modalElement, workOrderFilter.value)
         })
@@ -3096,7 +3098,7 @@ declare const exports: {
           successMessage.classList.add('is-hidden')
         })
       },
-      onshown(modalElement, closeFunction) {
+      onshown() {
         bulmaJS.toggleHtmlClipped()
       },
 
@@ -3443,7 +3445,7 @@ declare const exports: {
               shiftCrewNote: '',
               shiftId
             },
-            (response) => {
+            (_response) => {
               processedCount += 1
               successCount += 1
               checkbox.checked = false
@@ -3467,7 +3469,7 @@ declare const exports: {
               shiftEmployeeNote: '',
               shiftId
             },
-            (response) => {
+            (_response) => {
               processedCount += 1
               successCount += 1
               checkbox.checked = false

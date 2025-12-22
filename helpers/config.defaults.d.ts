@@ -1,7 +1,6 @@
 import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorConfiguration, FunctionAuthenticatorConfiguration, PlainTextAuthenticatorConfiguration } from '@cityssm/authentication-helper';
 import type { AvantiApiConfiguration } from '@cityssm/avanti-api';
 import type { config as MSSQLConfig } from 'mssql';
-import type { TransportOptions } from 'nodemailer';
 import type { ConfigEmployees, ConfigEquipment, ConfigLocations } from '../types/config.types.js';
 export declare const configDefaultValues: {
     'application.applicationName': string;
@@ -34,14 +33,11 @@ export declare const configDefaultValues: {
     'reverseProxy.urlPrefix': string;
     'session.cookieName': string;
     'session.doKeepAlive': boolean;
-    'session.maxAgeMillis': any;
+    'session.maxAgeMillis': number;
     'session.secret': string;
     'connectors.shiftLog': MSSQLConfig;
     'connectors.avanti': AvantiApiConfiguration | undefined;
     'connectors.pearl': MSSQLConfig | undefined;
-    'connectors.email': (TransportOptions & {
-        from?: string;
-    }) | undefined;
     'shifts.isEnabled': boolean;
     'shifts.router': string;
     'shifts.sectionName': string;

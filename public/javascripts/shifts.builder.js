@@ -1317,7 +1317,7 @@
                                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEquipment`, {
                                     equipmentNumber: equipment.equipmentNumber,
                                     shiftId: draggedData.fromShiftId
-                                }, (equipResponse) => {
+                                }, (_equipResponse) => {
                                     equipmentDeletedCount += 1;
                                     if (equipmentDeletedCount === totalEquipment) {
                                         bulmaJS.alert({
@@ -2278,7 +2278,7 @@
                     successMessage.classList.add('is-hidden');
                 });
             },
-            onshown(modalElement, closeFunction) {
+            onshown() {
                 bulmaJS.toggleHtmlClipped();
             },
             onremoved() {
@@ -2464,7 +2464,7 @@
                         crewId: resourceId,
                         shiftCrewNote: '',
                         shiftId
-                    }, (response) => {
+                    }, (_response) => {
                         processedCount += 1;
                         successCount += 1;
                         checkbox.checked = false;
@@ -2482,7 +2482,7 @@
                         employeeNumber: resourceId,
                         shiftEmployeeNote: '',
                         shiftId
-                    }, (response) => {
+                    }, (_response) => {
                         processedCount += 1;
                         successCount += 1;
                         checkbox.checked = false;
