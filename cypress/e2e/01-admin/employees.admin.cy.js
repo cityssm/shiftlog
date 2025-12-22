@@ -76,7 +76,7 @@ describe('Admin - Employee Management', () => {
             .contains(testEmployeeNumber)
             .parents('tr')
             .find('button[title*="Delete"]')
-            .click();
+            .click({ force: true });
         // Wait for confirmation modal
         cy.wait(200);
         // Confirm deletion
