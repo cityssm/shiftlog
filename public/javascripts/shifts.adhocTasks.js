@@ -32,6 +32,60 @@
             selectElement.append(option);
         }
     }
+    function initializeMap(mapElementId, latitudeInput, longitudeInput, existingLat, existingLng) {
+        let defaultLat = shiftLog.defaultLatitude;
+        let defaultLng = shiftLog.defaultLongitude;
+        let defaultZoom = 13;
+        if (existingLat !== null &&
+            existingLat !== undefined &&
+            existingLng !== null &&
+            existingLng !== undefined) {
+            defaultLat = existingLat;
+            defaultLng = existingLng;
+            defaultZoom = 15;
+        }
+        const map = new L.Map(mapElementId).setView([defaultLat, defaultLng], defaultZoom);
+        new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        // eslint-disable-next-line unicorn/no-null
+        let marker = null;
+        if (existingLat !== null &&
+            existingLat !== undefined &&
+            existingLng !== null &&
+            existingLng !== undefined) {
+            marker = new L.Marker([defaultLat, defaultLng]).addTo(map);
+        }
+        map.on('click', (event) => {
+            const lat = event.latlng.lat;
+            const lng = event.latlng.lng;
+            latitudeInput.value = lat.toFixed(7);
+            longitudeInput.value = lng.toFixed(7);
+            if (marker !== null) {
+                map.removeLayer(marker);
+            }
+            marker = new L.Marker([lat, lng]).addTo(map);
+        });
+        // Update map when coordinates are manually entered
+        function updateMapFromInputs() {
+            const lat = Number.parseFloat(latitudeInput.value);
+            const lng = Number.parseFloat(longitudeInput.value);
+            if (!Number.isNaN(lat) &&
+                !Number.isNaN(lng) &&
+                lat >= -90 &&
+                lat <= 90 &&
+                lng >= -180 &&
+                lng <= 180) {
+                if (marker !== null) {
+                    map.removeLayer(marker);
+                }
+                marker = new L.Marker([lat, lng]).addTo(map);
+                map.setView([lat, lng], 15);
+            }
+        }
+        latitudeInput.addEventListener('change', updateMapFromInputs);
+        longitudeInput.addEventListener('change', updateMapFromInputs);
+    }
     function updateCount() {
         const adhocTasksCountElement = document.querySelector('#adhocTasksCount');
         if (adhocTasksCountElement !== null) {
@@ -220,47 +274,11 @@
                     nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
                     prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
                 });
-                // Initialize map
-                const latitudeInput = modalElement.querySelector('#createAdhocTask--locationLatitude');
-                const longitudeInput = modalElement.querySelector('#createAdhocTask--locationLongitude');
-                const defaultLat = shiftLog.defaultLatitude;
-                const defaultLng = shiftLog.defaultLongitude;
-                const map = new L.Map('map--createAdhocTask--location').setView([defaultLat, defaultLng], 13);
-                new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
-                // eslint-disable-next-line unicorn/no-null
-                let marker = null;
-                map.on('click', (event) => {
-                    const lat = event.latlng.lat;
-                    const lng = event.latlng.lng;
-                    latitudeInput.value = lat.toFixed(7);
-                    longitudeInput.value = lng.toFixed(7);
-                    if (marker !== null) {
-                        map.removeLayer(marker);
-                    }
-                    marker = new L.Marker([lat, lng]).addTo(map);
-                });
-                // Update map when coordinates are manually entered
-                function updateMapFromInputs() {
-                    const lat = Number.parseFloat(latitudeInput.value);
-                    const lng = Number.parseFloat(longitudeInput.value);
-                    if (!Number.isNaN(lat) &&
-                        !Number.isNaN(lng) &&
-                        lat >= -90 &&
-                        lat <= 90 &&
-                        lng >= -180 &&
-                        lng <= 180) {
-                        if (marker !== null) {
-                            map.removeLayer(marker);
-                        }
-                        marker = new L.Marker([lat, lng]).addTo(map);
-                        map.setView([lat, lng], 15);
-                    }
-                }
-                latitudeInput.addEventListener('change', updateMapFromInputs);
-                longitudeInput.addEventListener('change', updateMapFromInputs);
-                modalElement.querySelector('#createAdhocTask--taskDescription').focus();
+                // Initialize maps for all three locations
+                initializeMap('map--createAdhocTask--location', modalElement.querySelector('#createAdhocTask--locationLatitude'), modalElement.querySelector('#createAdhocTask--locationLongitude'));
+                initializeMap('map--createAdhocTask--fromLocation', modalElement.querySelector('#createAdhocTask--fromLocationLatitude'), modalElement.querySelector('#createAdhocTask--fromLocationLongitude'));
+                initializeMap('map--createAdhocTask--toLocation', modalElement.querySelector('#createAdhocTask--toLocationLatitude'), modalElement.querySelector('#createAdhocTask--toLocationLongitude'));
+                modalElement.querySelector('#createAdhocTask--adhocTaskTypeDataListItemId').focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
@@ -340,61 +358,10 @@
                     nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
                     prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
                 });
-                // Initialize map
-                const latitudeInput = modalElement.querySelector('input[name="locationLatitude"]');
-                const longitudeInput = modalElement.querySelector('input[name="locationLongitude"]');
-                let defaultLat = shiftLog.defaultLatitude;
-                let defaultLng = shiftLog.defaultLongitude;
-                let defaultZoom = 13;
-                if (task.locationLatitude !== null &&
-                    task.locationLatitude !== undefined &&
-                    task.locationLongitude !== null &&
-                    task.locationLongitude !== undefined) {
-                    defaultLat = task.locationLatitude;
-                    defaultLng = task.locationLongitude;
-                    defaultZoom = 15;
-                }
-                const map = new L.Map('map--editAdhocTask--location').setView([defaultLat, defaultLng], defaultZoom);
-                new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
-                // eslint-disable-next-line unicorn/no-null
-                let marker = null;
-                if (task.locationLatitude !== null &&
-                    task.locationLatitude !== undefined &&
-                    task.locationLongitude !== null &&
-                    task.locationLongitude !== undefined) {
-                    marker = new L.Marker([defaultLat, defaultLng]).addTo(map);
-                }
-                map.on('click', (event) => {
-                    const lat = event.latlng.lat;
-                    const lng = event.latlng.lng;
-                    latitudeInput.value = lat.toFixed(7);
-                    longitudeInput.value = lng.toFixed(7);
-                    if (marker !== null) {
-                        map.removeLayer(marker);
-                    }
-                    marker = new L.Marker([lat, lng]).addTo(map);
-                });
-                // Update map when coordinates are manually entered
-                function updateMapFromInputs() {
-                    const lat = Number.parseFloat(latitudeInput.value);
-                    const lng = Number.parseFloat(longitudeInput.value);
-                    if (!Number.isNaN(lat) &&
-                        !Number.isNaN(lng) &&
-                        lat >= -90 &&
-                        lat <= 90 &&
-                        lng >= -180 &&
-                        lng <= 180) {
-                        if (marker !== null) {
-                            map.removeLayer(marker);
-                        }
-                        marker = new L.Marker([lat, lng]).addTo(map);
-                        map.setView([lat, lng], 15);
-                    }
-                }
-                latitudeInput.addEventListener('change', updateMapFromInputs);
-                longitudeInput.addEventListener('change', updateMapFromInputs);
+                // Initialize maps for all three locations
+                initializeMap('map--editAdhocTask--location', modalElement.querySelector('input[name="locationLatitude"]'), modalElement.querySelector('input[name="locationLongitude"]'), task.locationLatitude, task.locationLongitude);
+                initializeMap('map--editAdhocTask--fromLocation', modalElement.querySelector('input[name="fromLocationLatitude"]'), modalElement.querySelector('input[name="fromLocationLongitude"]'), task.fromLocationLatitude, task.fromLocationLongitude);
+                initializeMap('map--editAdhocTask--toLocation', modalElement.querySelector('input[name="toLocationLatitude"]'), modalElement.querySelector('input[name="toLocationLongitude"]'), task.toLocationLatitude, task.toLocationLongitude);
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
