@@ -40,6 +40,21 @@ export interface ShiftForBuilder extends Shift {
 
     shiftWorkOrderNote: string
   }>
+  adhocTasks: Array<{
+    adhocTaskId: number
+    adhocTaskTypeDataListItemId: number
+    adhocTaskTypeDataListItem: string
+
+    taskDescription: string
+
+    locationAddress1: string
+    locationAddress2: string
+    locationCityProvince: string
+
+    taskDueDateTime: Date | string | null
+
+    shiftAdhocTaskNote: string
+  }>
 }
 
 export default async function getShiftsForBuilder(
@@ -224,6 +239,42 @@ export default async function getShiftsForBuilder(
     shiftWorkOrderNote: string
   }>(workOrdersSql)
 
+  // Get adhoc tasks
+  const adhocTasksSql = /* sql */ `
+    select
+      st.shiftId,
+      st.adhocTaskId,
+      t.adhocTaskTypeDataListItemId,
+      td.dataListItem as adhocTaskTypeDataListItem,
+      t.taskDescription,
+      t.locationAddress1,
+      t.locationAddress2,
+      t.locationCityProvince,
+      t.taskDueDateTime,
+      st.shiftAdhocTaskNote
+    from ShiftLog.ShiftAdhocTasks st
+    inner join ShiftLog.AdhocTasks t
+      on st.adhocTaskId = t.adhocTaskId
+    left join ShiftLog.DataListItems td
+      on t.adhocTaskTypeDataListItemId = td.dataListItemId
+    where st.shiftId in (${shiftIds.join(',')})
+    and t.recordDelete_dateTime is null
+    order by t.taskDueDateTime, t.recordCreate_dateTime desc
+  `
+
+  const adhocTasksResult = await pool.request().query<{
+    shiftId: number
+    adhocTaskId: number
+    adhocTaskTypeDataListItemId: number
+    adhocTaskTypeDataListItem: string
+    taskDescription: string
+    locationAddress1: string
+    locationAddress2: string
+    locationCityProvince: string
+    taskDueDateTime: Date | string | null
+    shiftAdhocTaskNote: string
+  }>(adhocTasksSql)
+
   // Combine data
   for (const shift of shifts) {
     shift.crews = crewsResult.recordset.filter(
@@ -240,6 +291,10 @@ export default async function getShiftsForBuilder(
 
     shift.workOrders = workOrdersResult.recordset.filter(
       (workOrder) => workOrder.shiftId === shift.shiftId
+    )
+
+    shift.adhocTasks = adhocTasksResult.recordset.filter(
+      (adhocTask) => adhocTask.shiftId === shift.shiftId
     )
   }
 
