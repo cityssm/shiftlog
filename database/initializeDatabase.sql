@@ -624,7 +624,7 @@ create table ShiftLog.AdhocTasks (
   adhocTaskId int not null primary key identity(1,1),
 
   adhocTaskTypeDataListItemId int not null,
-  taskDescription varchar(200) not null,
+  taskDescription varchar(200) not null default '',
 
   locationAddress1 varchar(100) not null default '',
   locationAddress2 varchar(100) not null default '',
