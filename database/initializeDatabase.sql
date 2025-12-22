@@ -626,15 +626,21 @@ create table ShiftLog.AdhocTasks (
   adhocTaskTypeDataListItemId int not null,
   taskDescription varchar(200) not null,
 
-  locationAddress varchar(100) not null default '',
+  locationAddress1 varchar(100) not null default '',
+  locationAddress2 varchar(100) not null default '',
+  locationCityProvince varchar(50) not null default '',
   locationLatitude decimal(10,7),
   locationLongitude decimal(10,7),
 
-  fromLocationAddress varchar(100) not null default '',
+  fromLocationAddress1 varchar(100) not null default '',
+  fromLocationAddress2 varchar(100) not null default '',
+  fromLocationCityProvince varchar(50) not null default '',
   fromLocationLatitude decimal(10,7),
   fromLocationLongitude decimal(10,7),
 
-  toLocationAddress varchar(100) not null default '',
+  toLocationAddress1 varchar(100) not null default '',
+  toLocationAddress2 varchar(100) not null default '',
+  toLocationCityProvince varchar(50) not null default '',
   toLocationLatitude decimal(10,7),
   toLocationLongitude decimal(10,7),
 
