@@ -5,6 +5,7 @@ export interface ShiftLogGlobal {
     urlPrefix: string;
     defaultLatitude: number;
     defaultLongitude: number;
+    defaultCityProvince: string;
     shiftsAreEnabled: boolean;
     shiftsRouter: string;
     shiftsSectionName: string;

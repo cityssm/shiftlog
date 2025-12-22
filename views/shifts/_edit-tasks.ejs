@@ -2,21 +2,31 @@
   <div class="column">
     <h2 class="title is-4">Tasks</h2>
   </div>
-  <% if (isEdit && configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+  <% if (isEdit) { %>
   <div class="column is-narrow">
     <div class="buttons">
+      <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
       <button class="button is-small is-success" id="button--addWorkOrder" type="button">
         <span class="icon"><i class="fa-solid fa-plus"></i></span>
         <span>Add <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
+      </button>
+      <% } %>
+      <button class="button is-small is-success" id="button--createAdhocTask" type="button">
+        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+        <span>Create Ad Hoc Task</span>
+      </button>
+      <button class="button is-small is-info" id="button--addExistingAdhocTask" type="button">
+        <span class="icon"><i class="fa-solid fa-link"></i></span>
+        <span>Add Existing Task</span>
       </button>
     </div>
   </div>
   <% } %>
 </div>
 
-<% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
 <div class="tabs is-boxed is-small">
   <ul>
+    <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
     <li class="is-active">
       <a href="#tab-content--workOrders">
         <span class="icon is-small"><i class="fa-solid fa-clipboard-list"></i></span>
@@ -31,9 +41,18 @@
         <span class="tag is-rounded ml-2" id="milestonesCount">0</span>
       </a>
     </li>
+    <% } %>
+    <li<%= configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView ? '' : ' class="is-active"' %>>
+      <a href="#tab-content--adhocTasks">
+        <span class="icon is-small"><i class="fa-solid fa-tasks"></i></span>
+        <span>Ad Hoc Tasks</span>
+        <span class="tag is-rounded ml-2" id="adhocTasksCount">0</span>
+      </a>
+    </li>
   </ul>
 </div>
 
+<% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
 <div id="tab-content--workOrders">
   <div id="container--shiftWorkOrders"></div>
 </div>
@@ -41,8 +60,12 @@
 <div class="is-hidden" id="tab-content--milestones">
   <div id="container--shiftMilestones"></div>
 </div>
+
+<div class="is-hidden" id="tab-content--adhocTasks">
+  <div id="container--shiftAdhocTasks"></div>
+</div>
 <% } else { %>
-<div class="message">
-  <div class="message-body">Work order functionality is not enabled.</div>
+<div id="tab-content--adhocTasks">
+  <div id="container--shiftAdhocTasks"></div>
 </div>
 <% } %>

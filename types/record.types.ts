@@ -445,3 +445,39 @@ export interface WorkOrderAttachment extends BaseRecord {
 
   fileSystemPath: string
 }
+
+// Ad Hoc Tasks
+
+export interface AdhocTask extends BaseRecord {
+  adhocTaskId: number
+
+  adhocTaskTypeDataListItemId: number
+  adhocTaskTypeDataListItem?: string
+
+  taskDescription: string
+
+  locationAddress1: string
+  locationAddress2: string
+  locationCityProvince: string
+  locationLatitude?: number | null
+  locationLongitude?: number | null
+
+  fromLocationAddress1: string
+  fromLocationAddress2: string
+  fromLocationCityProvince: string
+  fromLocationLatitude?: number | null
+  fromLocationLongitude?: number | null
+
+  toLocationAddress1: string
+  toLocationAddress2: string
+  toLocationCityProvince: string
+  toLocationLatitude?: number | null
+  toLocationLongitude?: number | null
+
+  taskDueDateTime?: Date | string | null
+  taskCompleteDateTime?: Date | string | null
+
+  // For shift association
+  shiftAdhocTaskNote?: string
+  shiftsCount?: number
+}

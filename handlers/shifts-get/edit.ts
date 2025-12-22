@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 
 import getEmployees from '../../database/employees/getEmployees.js'
+import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 import getShift from '../../database/shifts/getShift.js'
 import getShiftCrews from '../../database/shifts/getShiftCrews.js'
 import getShiftEmployees from '../../database/shifts/getShiftEmployees.js'
@@ -46,6 +47,8 @@ export default async function handler(
 
   const shiftWorkOrders = await getShiftWorkOrders(request.params.shiftId)
 
+  const shiftAdhocTasks = await getShiftAdhocTasks(request.params.shiftId)
+
   let supervisors = await getEmployees({ isSupervisor: true })
 
   if (!(request.session.user?.userProperties.shifts.canManage ?? false)) {
@@ -71,6 +74,7 @@ export default async function handler(
     shiftEmployees,
     shiftEquipment,
     shiftWorkOrders,
+    shiftAdhocTasks,
 
     shiftTimes,
     shiftTypes,

@@ -32,6 +32,7 @@
 
     defaultLatitude: <%= await settingFunctions.getSettingValue('locations.defaultLatitude') %>,
     defaultLongitude: <%= await settingFunctions.getSettingValue('locations.defaultLongitude') %>,
+    defaultCityProvince: "<%= await settingFunctions.getSettingValue('locations.defaultCityProvince') %>",
 
     shiftsAreEnabled: <%= configFunctions.getConfigProperty('shifts.isEnabled') %>,
     shiftsRouter: "<%= configFunctions.getConfigProperty('shifts.router') %>",

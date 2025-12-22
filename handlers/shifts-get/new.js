@@ -38,6 +38,7 @@ export default async function handler(request, response) {
         shiftEmployees: [],
         shiftEquipment: [],
         shiftWorkOrders: [],
+        shiftAdhocTasks: [],
         shiftTimes,
         shiftTypes,
         supervisors
