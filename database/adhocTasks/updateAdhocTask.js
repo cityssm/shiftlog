@@ -23,8 +23,10 @@ export default async function updateAdhocTask(adhocTaskId, adhocTaskTypeDataList
         .input('toLocationCityProvince', toLocationCityProvince)
         .input('toLocationLatitude', (toLocationLatitude ?? '') === '' ? null : toLocationLatitude)
         .input('toLocationLongitude', (toLocationLongitude ?? '') === '' ? null : toLocationLongitude)
-        .input('taskDueDateTimeString', taskDueDateTimeString ?? null)
-        .input('taskCompleteDateTimeString', taskCompleteDateTimeString ?? null)
+        .input('taskDueDateTimeString', (taskDueDateTimeString ?? '') === '' ? null : taskDueDateTimeString)
+        .input('taskCompleteDateTimeString', (taskCompleteDateTimeString ?? '') === ''
+        ? null
+        : taskCompleteDateTimeString)
         .input('recordUpdate_userName', sessionUser.userName).query(/* sql */ `
         update ShiftLog.AdhocTasks
         set

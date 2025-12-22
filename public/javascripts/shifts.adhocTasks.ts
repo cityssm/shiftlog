@@ -86,8 +86,7 @@ declare const exports: {
     if (hasTasksIconElement !== null) {
       const hasAnyTasks =
         shiftAdhocTasks.length > 0 ||
-        (document.querySelector('#workOrdersCount')?.textContent ?? '0') !==
-          '0'
+        (document.querySelector('#workOrdersCount')?.textContent ?? '0') !== '0'
       hasTasksIconElement.classList.toggle('is-hidden', !hasAnyTasks)
     }
   }
@@ -152,8 +151,7 @@ declare const exports: {
         }
         if (task.toLocationAddress1) {
           if (task.fromLocationAddress1) locationString += '<br />'
-          locationString +=
-            'To: ' + cityssm.escapeHTML(task.toLocationAddress1)
+          locationString += 'To: ' + cityssm.escapeHTML(task.toLocationAddress1)
         }
         locationString += '</small>'
       }
@@ -283,7 +281,9 @@ declare const exports: {
       onshow(modalElementParameter) {
         modalElement = modalElementParameter
         ;(
-          modalElement.querySelector('input[name="shiftId"]') as HTMLInputElement
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
         ).value = shiftId
 
         // Populate task types
@@ -458,7 +458,9 @@ declare const exports: {
       onshow(modalElementParameter) {
         modalElement = modalElementParameter
         ;(
-          modalElement.querySelector('input[name="shiftId"]') as HTMLInputElement
+          modalElement.querySelector(
+            'input[name="shiftId"]'
+          ) as HTMLInputElement
         ).value = shiftId
         ;(
           modalElement.querySelector(
@@ -506,7 +508,6 @@ declare const exports: {
             'input[name="locationLongitude"]'
           ) as HTMLInputElement
         ).value = task.locationLongitude?.toString() ?? ''
-
         ;(
           modalElement.querySelector(
             'input[name="fromLocationAddress1"]'
@@ -532,7 +533,6 @@ declare const exports: {
             'input[name="fromLocationLongitude"]'
           ) as HTMLInputElement
         ).value = task.fromLocationLongitude?.toString() ?? ''
-
         ;(
           modalElement.querySelector(
             'input[name="toLocationAddress1"]'
@@ -910,7 +910,8 @@ declare const exports: {
 
             // Render task list
             const tableElement = document.createElement('table')
-            tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+            tableElement.className =
+              'table is-fullwidth is-striped is-hoverable'
 
             tableElement.innerHTML = /* html */ `
               <thead>
@@ -992,6 +993,7 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Remove Ad Hoc Task from Shift',
+
       message: `Are you sure you want to remove this task from this shift?<br /><br />
         <strong>Would you like to:</strong><br />
         <label class="radio">
@@ -1002,6 +1004,8 @@ declare const exports: {
           <input type="radio" name="deleteOption" value="delete" />
           Delete the task entirely
         </label>`,
+      messageIsHtml: true,
+
       okButton: {
         text: 'Remove',
         callbackFunction: () => {

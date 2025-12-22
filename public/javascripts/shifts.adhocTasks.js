@@ -41,8 +41,7 @@
         const hasTasksIconElement = document.querySelector('#icon--hasTasks');
         if (hasTasksIconElement !== null) {
             const hasAnyTasks = shiftAdhocTasks.length > 0 ||
-                (document.querySelector('#workOrdersCount')?.textContent ?? '0') !==
-                    '0';
+                (document.querySelector('#workOrdersCount')?.textContent ?? '0') !== '0';
             hasTasksIconElement.classList.toggle('is-hidden', !hasAnyTasks);
         }
     }
@@ -94,8 +93,7 @@
                 if (task.toLocationAddress1) {
                     if (task.fromLocationAddress1)
                         locationString += '<br />';
-                    locationString +=
-                        'To: ' + cityssm.escapeHTML(task.toLocationAddress1);
+                    locationString += 'To: ' + cityssm.escapeHTML(task.toLocationAddress1);
                 }
                 locationString += '</small>';
             }
@@ -540,7 +538,8 @@
                     modalElement = selectModalElement;
                     // Render task list
                     const tableElement = document.createElement('table');
-                    tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+                    tableElement.className =
+                        'table is-fullwidth is-striped is-hoverable';
                     tableElement.innerHTML = /* html */ `
               <thead>
                 <tr>
@@ -611,6 +610,7 @@
           <input type="radio" name="deleteOption" value="delete" />
           Delete the task entirely
         </label>`,
+            messageIsHtml: true,
             okButton: {
                 text: 'Remove',
                 callbackFunction: () => {
