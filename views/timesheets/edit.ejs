@@ -230,18 +230,64 @@
 
 <% if (!isCreate) { %>
 <div class="mt-4">
-  <h2 class="title is-3">Timesheet Data</h2>
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <h2 class="title is-3">Timesheet Data</h2>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <div class="field is-grouped">
+          <p class="control">
+            <label class="checkbox">
+              <input type="checkbox" id="display--hideEmptyRows" />
+              Hide Empty Rows
+            </label>
+          </p>
+          <p class="control">
+            <label class="checkbox">
+              <input type="checkbox" id="display--hideEmptyColumns" />
+              Hide Empty Columns
+            </label>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if (isEdit) { %>
   <div class="box">
-    <p class="has-text-centered has-text-grey">
-      <span class="icon is-large"><i class="fa-solid fa-3x fa-table"></i></span><br />
-      Timesheet data grid will be displayed here.
-    </p>
+    <div class="buttons">
+      <button class="button is-primary" id="button--addColumn">
+        <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
+        <span>Add Column</span>
+      </button>
+      <button class="button is-primary" id="button--addRow">
+        <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
+        <span>Add Row</span>
+      </button>
+      <button class="button is-info" id="button--copyFromShift">
+        <span class="icon is-small"><i class="fa-solid fa-copy"></i></span>
+        <span>Copy from Shift</span>
+      </button>
+      <button class="button is-info" id="button--copyFromPrevious">
+        <span class="icon is-small"><i class="fa-solid fa-copy"></i></span>
+        <span>Copy from Previous Timesheet</span>
+      </button>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="box">
+    <div id="timesheet-grid-container"></div>
   </div>
 </div>
 <% } %>
 
 <%- await include('../_footerA'); -%>
 
+<script src="<%= urlPrefix %>/javascripts/timesheets.grid.js"></script>
 <script src="<%= urlPrefix %>/javascripts/timesheets.viewEdit.js"></script>
 
 <% if (isEdit) { %>
