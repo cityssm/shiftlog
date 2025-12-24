@@ -1,10 +1,12 @@
-import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 
 import type { ShiftLogGlobal } from './types.js'
+import type { TimesheetGrid as TimesheetGridClass } from './timesheets.grid.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const TimesheetGrid: typeof TimesheetGridClass
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
@@ -60,4 +62,80 @@ declare const exports: {
   }
 
   formElement.addEventListener('submit', doSaveTimesheet)
+
+  /*
+   * Initialize timesheet grid (edit mode)
+   */
+
+  if (!isCreate) {
+    const gridContainer = document.querySelector('#timesheet-grid-container') as HTMLElement | null
+
+    if (gridContainer !== null) {
+      const timesheetId = Number.parseInt(timesheetIdElement.value, 10)
+      
+      const grid = new TimesheetGrid(gridContainer, {
+        timesheetId,
+        isEditable: true,
+        hideEmptyRows: false,
+        hideEmptyColumns: false
+      })
+
+      // Display options
+      const hideEmptyRowsCheckbox = document.querySelector('#display--hideEmptyRows') as HTMLInputElement | null
+      const hideEmptyColumnsCheckbox = document.querySelector('#display--hideEmptyColumns') as HTMLInputElement | null
+
+      if (hideEmptyRowsCheckbox !== null) {
+        hideEmptyRowsCheckbox.addEventListener('change', () => {
+          grid.setDisplayOptions({ hideEmptyRows: hideEmptyRowsCheckbox.checked })
+        })
+      }
+
+      if (hideEmptyColumnsCheckbox !== null) {
+        hideEmptyColumnsCheckbox.addEventListener('change', () => {
+          grid.setDisplayOptions({ hideEmptyColumns: hideEmptyColumnsCheckbox.checked })
+        })
+      }
+
+      // Initialize grid
+      grid.init().catch((error) => {
+        console.error('Error initializing grid:', error)
+      })
+
+      // Add column button
+      const addColumnButton = document.querySelector('#button--addColumn') as HTMLButtonElement | null
+      if (addColumnButton !== null) {
+        addColumnButton.addEventListener('click', () => {
+          // TODO: Show add column modal
+          console.log('Add column')
+        })
+      }
+
+      // Add row button
+      const addRowButton = document.querySelector('#button--addRow') as HTMLButtonElement | null
+      if (addRowButton !== null) {
+        addRowButton.addEventListener('click', () => {
+          // TODO: Show add row modal
+          console.log('Add row')
+        })
+      }
+
+      // Copy from shift button
+      const copyFromShiftButton = document.querySelector('#button--copyFromShift') as HTMLButtonElement | null
+      if (copyFromShiftButton !== null) {
+        copyFromShiftButton.addEventListener('click', () => {
+          // TODO: Show copy from shift modal
+          console.log('Copy from shift')
+        })
+      }
+
+      // Copy from previous timesheet button
+      const copyFromPreviousButton = document.querySelector('#button--copyFromPrevious') as HTMLButtonElement | null
+      if (copyFromPreviousButton !== null) {
+        copyFromPreviousButton.addEventListener('click', () => {
+          // TODO: Show copy from previous modal
+          console.log('Copy from previous')
+        })
+      }
+    }
+  }
 })()

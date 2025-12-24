@@ -316,3 +316,50 @@ details.collapsable-panel[open] .details-chevron {
 .control.has-icons-right .select:has(select:hover) ~ .icon {
   color: var(--bulma-input-icon-hover-color);
 }
+
+/*
+ * Timesheet Grid
+ */
+
+.timesheet-grid {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.timesheet-grid th,
+.timesheet-grid td {
+  vertical-align: middle;
+  padding: 0.5rem;
+}
+
+.timesheet-grid .timesheet-cell input {
+  max-width: 80px;
+}
+
+.timesheet-grid .timesheet-row-label {
+  position: sticky;
+  left: 0;
+  background-color: var(--bulma-table-background-color);
+  z-index: 1;
+}
+
+.timesheet-grid thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--bulma-table-head-background-color);
+  z-index: 2;
+}
+
+.timesheet-grid thead th:first-child {
+  z-index: 3;
+}
+
+@media screen and (max-width: 768px) {
+  .timesheet-grid {
+    font-size: 0.75rem;
+  }
+  
+  .timesheet-grid .timesheet-cell input {
+    max-width: 60px;
+  }
+}

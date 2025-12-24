@@ -6,6 +6,30 @@ export default async function copyFromShift(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
+  // Copy work orders as columns
+  await pool
+    .request()
+    .input('shiftId', shiftId)
+    .input('timesheetId', timesheetId)
+    .query(/* sql */ `
+      insert into ShiftLog.TimesheetColumns (
+        timesheetId,
+        columnTitle,
+        workOrderNumber,
+        orderNumber
+      )
+      select
+        @timesheetId,
+        w.workOrderNumber,
+        w.workOrderNumber,
+        row_number() over (order by w.workOrderNumber) - 1
+      from ShiftLog.ShiftWorkOrders sw
+      inner join ShiftLog.WorkOrders w
+        on sw.workOrderId = w.workOrderId
+      where sw.shiftId = @shiftId
+        and w.recordDelete_dateTime is null
+    `)
+
   // Copy employees as rows
   await pool
     .request()
@@ -13,7 +37,7 @@ export default async function copyFromShift(
     .input('timesheetId', timesheetId)
     .query(/* sql */ `
       insert into ShiftLog.TimesheetRows (
-        instance
+        instance,
         timesheetId,
         rowTitle,
         employeeNumber
