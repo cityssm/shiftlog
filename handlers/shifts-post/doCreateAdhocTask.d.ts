@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+type LatitudeLongitude = number | string | null | undefined;
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;
     adhocTaskTypeDataListItemId: number | string;
@@ -6,18 +7,19 @@ export default function handler(request: Request<unknown, unknown, {
     locationAddress1: string;
     locationAddress2: string;
     locationCityProvince: string;
-    locationLatitude: number | string | null | undefined;
-    locationLongitude: number | string | null | undefined;
+    locationLatitude: LatitudeLongitude;
+    locationLongitude: LatitudeLongitude;
     fromLocationAddress1: string;
     fromLocationAddress2: string;
     fromLocationCityProvince: string;
-    fromLocationLatitude: number | string | null | undefined;
-    fromLocationLongitude: number | string | null | undefined;
+    fromLocationLatitude: LatitudeLongitude;
+    fromLocationLongitude: LatitudeLongitude;
     toLocationAddress1: string;
     toLocationAddress2: string;
     toLocationCityProvince: string;
-    toLocationLatitude: number | string | null | undefined;
-    toLocationLongitude: number | string | null | undefined;
+    toLocationLatitude: LatitudeLongitude;
+    toLocationLongitude: LatitudeLongitude;
     taskDueDateTimeString: string | null | undefined;
     shiftAdhocTaskNote: string;
 }>, response: Response): Promise<void>;
+export {};

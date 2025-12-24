@@ -4,6 +4,8 @@ import addShiftAdhocTask from '../../database/adhocTasks/addShiftAdhocTask.js'
 import createAdhocTask from '../../database/adhocTasks/createAdhocTask.js'
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 
+type LatitudeLongitude = number | string | null | undefined
+
 export default async function handler(
   request: Request<
     unknown,
@@ -12,21 +14,25 @@ export default async function handler(
       shiftId: number | string
       adhocTaskTypeDataListItemId: number | string
       taskDescription: string
+
       locationAddress1: string
       locationAddress2: string
       locationCityProvince: string
-      locationLatitude: number | string | null | undefined
-      locationLongitude: number | string | null | undefined
+      locationLatitude: LatitudeLongitude
+      locationLongitude: LatitudeLongitude
+
       fromLocationAddress1: string
       fromLocationAddress2: string
       fromLocationCityProvince: string
-      fromLocationLatitude: number | string | null | undefined
-      fromLocationLongitude: number | string | null | undefined
+      fromLocationLatitude: LatitudeLongitude
+      fromLocationLongitude: LatitudeLongitude
+
       toLocationAddress1: string
       toLocationAddress2: string
       toLocationCityProvince: string
-      toLocationLatitude: number | string | null | undefined
-      toLocationLongitude: number | string | null | undefined
+      toLocationLatitude: LatitudeLongitude
+      toLocationLongitude: LatitudeLongitude
+      
       taskDueDateTimeString: string | null | undefined
       shiftAdhocTaskNote: string
     }
@@ -56,7 +62,7 @@ export default async function handler(
       toLocationCityProvince: request.body.toLocationCityProvince,
       toLocationLatitude: request.body.toLocationLatitude,
       toLocationLongitude: request.body.toLocationLongitude,
-      
+
       taskDueDateTimeString: request.body.taskDueDateTimeString
     },
     request.session.user as { userName: string }

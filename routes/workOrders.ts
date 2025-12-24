@@ -20,9 +20,8 @@ import handler_doCreateWorkOrderCost from '../handlers/workOrders-post/doCreateW
 import handler_doCreateWorkOrderMilestone from '../handlers/workOrders-post/doCreateWorkOrderMilestone.js'
 import handler_doCreateWorkOrderNote from '../handlers/workOrders-post/doCreateWorkOrderNote.js'
 import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkOrder.js'
-import handler_doDeleteWorkOrderCost from '../handlers/workOrders-post/doDeleteWorkOrderCost.js'
 import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js'
-import handler_doSetWorkOrderAttachmentThumbnail from '../handlers/workOrders-post/doSetWorkOrderAttachmentThumbnail.js'
+import handler_doDeleteWorkOrderCost from '../handlers/workOrders-post/doDeleteWorkOrderCost.js'
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js'
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js'
 import handler_doDeleteWorkOrderTag from '../handlers/workOrders-post/doDeleteWorkOrderTag.js'
@@ -39,6 +38,7 @@ import handler_doGetWorkOrderTags from '../handlers/workOrders-post/doGetWorkOrd
 import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js'
 import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkOrder.js'
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js'
+import handler_doSetWorkOrderAttachmentThumbnail from '../handlers/workOrders-post/doSetWorkOrderAttachmentThumbnail.js'
 import handler_doUpdateWorkOrder from '../handlers/workOrders-post/doUpdateWorkOrder.js'
 import handler_doUpdateWorkOrderCost from '../handlers/workOrders-post/doUpdateWorkOrderCost.js'
 import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUpdateWorkOrderMilestone.js'
@@ -168,17 +168,20 @@ router
   .post('/doAddWorkOrderTag', updateHandler, handler_doAddWorkOrderTag)
   .post('/doDeleteWorkOrderTag', updateHandler, handler_doDeleteWorkOrderTag)
 
-router.get('/attachments/:workOrderAttachmentId/download', handler_download)
-
-router.get('/attachments/:workOrderAttachmentId/inline', handler_inline)
+router
+  .get('/attachments/:workOrderAttachmentId/download', handler_download)
+  .get('/attachments/:workOrderAttachmentId/inline', handler_inline)
 
 router
   .get('/recovery', manageHandler, handler_recovery)
-  .post('/doGetDeletedWorkOrders', manageHandler, handler_doGetDeletedWorkOrders)
+  .post(
+    '/doGetDeletedWorkOrders',
+    manageHandler,
+    handler_doGetDeletedWorkOrders
+  )
   .post('/doRecoverWorkOrder', manageHandler, handler_doRecoverWorkOrder)
 
 router.get('/:workOrderId/print', handler_print)
-
 router.get('/:workOrderId', handler_view)
 
 export default router

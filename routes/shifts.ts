@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response, Router } from 'express'
 
-import handler_crews from '../handlers/shifts-get/crews.js'
 import handler_builder from '../handlers/shifts-get/builder.js'
+import handler_crews from '../handlers/shifts-get/crews.js'
 import handler_edit from '../handlers/shifts-get/edit.js'
 import handler_new from '../handlers/shifts-get/new.js'
 import handler_print from '../handlers/shifts-get/print.js'
@@ -18,31 +18,31 @@ import handler_doAddShiftEquipment from '../handlers/shifts-post/doAddShiftEquip
 import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkOrder.js'
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js'
 import handler_doCreateAdhocTask from '../handlers/shifts-post/doCreateAdhocTask.js'
-import handler_doCreateStandaloneAdhocTask from '../handlers/shifts-post/doCreateStandaloneAdhocTask.js'
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js'
+import handler_doCreateStandaloneAdhocTask from '../handlers/shifts-post/doCreateStandaloneAdhocTask.js'
 import handler_doDeleteCrew from '../handlers/shifts-post/doDeleteCrew.js'
 import handler_doDeleteCrewEquipment from '../handlers/shifts-post/doDeleteCrewEquipment.js'
 import handler_doDeleteCrewMember from '../handlers/shifts-post/doDeleteCrewMember.js'
 import handler_doDeleteShift from '../handlers/shifts-post/doDeleteShift.js'
 import handler_doDeleteShiftAdhocTask from '../handlers/shifts-post/doDeleteShiftAdhocTask.js'
-import handler_doGetAdhocTaskTypes from '../handlers/shifts-post/doGetAdhocTaskTypes.js'
-import handler_doGetAvailableAdhocTasks from '../handlers/shifts-post/doGetAvailableAdhocTasks.js'
-import handler_doGetAvailableResources from '../handlers/shifts-post/doGetAvailableResources.js'
-import handler_doGetShiftCreationData from '../handlers/shifts-post/doGetShiftCreationData.js'
-import handler_doGetShiftsForBuilder from '../handlers/shifts-post/doGetShiftsForBuilder.js'
 import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew.js'
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js'
 import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShiftEquipment.js'
 import handler_doDeleteShiftWorkOrder from '../handlers/shifts-post/doDeleteShiftWorkOrder.js'
+import handler_doGetAdhocTaskTypes from '../handlers/shifts-post/doGetAdhocTaskTypes.js'
+import handler_doGetAvailableAdhocTasks from '../handlers/shifts-post/doGetAvailableAdhocTasks.js'
 import handler_doGetAvailableCrewsEmployeesEquipment from '../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js'
-import handler_doGetEligibleEmployeesForEquipment from '../handlers/shifts-post/doGetEligibleEmployeesForEquipment.js'
+import handler_doGetAvailableResources from '../handlers/shifts-post/doGetAvailableResources.js'
 import handler_doGetCrew from '../handlers/shifts-post/doGetCrew.js'
 import handler_doGetDeletedShifts from '../handlers/shifts-post/doGetDeletedShifts.js'
+import handler_doGetEligibleEmployeesForEquipment from '../handlers/shifts-post/doGetEligibleEmployeesForEquipment.js'
 import handler_doGetPreviousShifts from '../handlers/shifts-post/doGetPreviousShifts.js'
 import handler_doGetShiftAdhocTasks from '../handlers/shifts-post/doGetShiftAdhocTasks.js'
+import handler_doGetShiftCreationData from '../handlers/shifts-post/doGetShiftCreationData.js'
 import handler_doGetShiftCrews from '../handlers/shifts-post/doGetShiftCrews.js'
 import handler_doGetShiftEmployees from '../handlers/shifts-post/doGetShiftEmployees.js'
 import handler_doGetShiftEquipment from '../handlers/shifts-post/doGetShiftEquipment.js'
+import handler_doGetShiftsForBuilder from '../handlers/shifts-post/doGetShiftsForBuilder.js'
 import handler_doGetShiftWorkOrders from '../handlers/shifts-post/doGetShiftWorkOrders.js'
 import handler_doRecoverShift from '../handlers/shifts-post/doRecoverShift.js'
 import handler_doSearchShifts from '../handlers/shifts-post/doSearchShifts.js'
@@ -82,24 +82,12 @@ function manageHandler(
   }
 }
 
-function viewHandler(
-  request: Request<unknown, unknown, unknown, { error?: string }>,
-  response: Response,
-  next: NextFunction
-): void {
-  if (request.session.user?.userProperties.shifts.canView ?? false) {
-    next()
-  } else {
-    response.status(403).send('Forbidden')
-  }
-}
-
 export const router = Router()
 
 router.get('/', handler_search).post('/doSearchShifts', handler_doSearchShifts)
 
 router
-  .get('/builder', viewHandler, handler_builder)
+  .get('/builder', handler_builder)
   .post('/doGetShiftsForBuilder', handler_doGetShiftsForBuilder)
   .post('/doGetAvailableResources', handler_doGetAvailableResources)
   .post('/doGetShiftCreationData', handler_doGetShiftCreationData)
@@ -114,9 +102,10 @@ router
   .post('/doDeleteShift', updateHandler, handler_doDeleteShift)
 
 // Shift crews, employees, and equipment endpoints
-router.post('/doGetShiftCrews', handler_doGetShiftCrews)
-router.post('/doGetShiftEmployees', handler_doGetShiftEmployees)
-router.post('/doGetShiftEquipment', handler_doGetShiftEquipment)
+router
+  .post('/doGetShiftCrews', handler_doGetShiftCrews)
+  .post('/doGetShiftEmployees', handler_doGetShiftEmployees)
+  .post('/doGetShiftEquipment', handler_doGetShiftEquipment)
 
 router.post(
   // eslint-disable-next-line no-secrets/no-secrets
@@ -129,9 +118,10 @@ router.post(
   handler_doGetEligibleEmployeesForEquipment
 )
 
-router.post('/doAddShiftCrew', updateHandler, handler_doAddShiftCrew)
-router.post('/doAddShiftEmployee', updateHandler, handler_doAddShiftEmployee)
-router.post('/doAddShiftEquipment', updateHandler, handler_doAddShiftEquipment)
+router
+  .post('/doAddShiftCrew', updateHandler, handler_doAddShiftCrew)
+  .post('/doAddShiftEmployee', updateHandler, handler_doAddShiftEmployee)
+  .post('/doAddShiftEquipment', updateHandler, handler_doAddShiftEquipment)
 
 router.post(
   '/doUpdateShiftEmployee',
@@ -144,33 +134,27 @@ router.post(
   handler_doUpdateShiftEquipment
 )
 
-router.post(
-  '/doUpdateShiftCrewNote',
-  updateHandler,
-  handler_doUpdateShiftCrewNote
-)
-router.post(
-  '/doUpdateShiftEmployeeNote',
-  updateHandler,
-  handler_doUpdateShiftEmployeeNote
-)
-router.post(
-  '/doUpdateShiftEquipmentNote',
-  updateHandler,
-  handler_doUpdateShiftEquipmentNote
-)
+router
+  .post('/doUpdateShiftCrewNote', updateHandler, handler_doUpdateShiftCrewNote)
+  .post(
+    '/doUpdateShiftEmployeeNote',
+    updateHandler,
+    handler_doUpdateShiftEmployeeNote
+  )
+  .post(
+    '/doUpdateShiftEquipmentNote',
+    updateHandler,
+    handler_doUpdateShiftEquipmentNote
+  )
 
-router.post('/doDeleteShiftCrew', updateHandler, handler_doDeleteShiftCrew)
-router.post(
-  '/doDeleteShiftEmployee',
-  updateHandler,
-  handler_doDeleteShiftEmployee
-)
-router.post(
-  '/doDeleteShiftEquipment',
-  updateHandler,
-  handler_doDeleteShiftEquipment
-)
+router
+  .post('/doDeleteShiftCrew', updateHandler, handler_doDeleteShiftCrew)
+  .post('/doDeleteShiftEmployee', updateHandler, handler_doDeleteShiftEmployee)
+  .post(
+    '/doDeleteShiftEquipment',
+    updateHandler,
+    handler_doDeleteShiftEquipment
+  )
 
 // Shift work orders endpoints
 router.post('/doGetShiftWorkOrders', handler_doGetShiftWorkOrders)
@@ -187,52 +171,49 @@ router.post(
 )
 
 // Shift ad hoc tasks endpoints
-router.post('/doGetShiftAdhocTasks', handler_doGetShiftAdhocTasks)
-router.post('/doGetAvailableAdhocTasks', handler_doGetAvailableAdhocTasks)
-router.post('/doGetAdhocTaskTypes', handler_doGetAdhocTaskTypes)
-router.post('/doCreateAdhocTask', updateHandler, handler_doCreateAdhocTask)
+router
+  .post('/doGetShiftAdhocTasks', handler_doGetShiftAdhocTasks)
+  .post('/doGetAvailableAdhocTasks', handler_doGetAvailableAdhocTasks)
+  .post('/doGetAdhocTaskTypes', handler_doGetAdhocTaskTypes)
+  .post('/doCreateAdhocTask', updateHandler, handler_doCreateAdhocTask)
+  .post(
+    '/doCreateStandaloneAdhocTask',
+    updateHandler,
+    handler_doCreateStandaloneAdhocTask
+  )
+  .post('/doUpdateAdhocTask', updateHandler, handler_doUpdateAdhocTask)
+  .post('/doAddShiftAdhocTask', updateHandler, handler_doAddShiftAdhocTask)
+  .post(
+    '/doUpdateShiftAdhocTaskNote',
+    updateHandler,
+    handler_doUpdateShiftAdhocTaskNote
+  )
+  .post(
+    '/doDeleteShiftAdhocTask',
+    updateHandler,
+    handler_doDeleteShiftAdhocTask
+  )
 
-router.post(
-  '/doCreateStandaloneAdhocTask',
-  updateHandler,
-  handler_doCreateStandaloneAdhocTask
-)
-
-router.post('/doUpdateAdhocTask', updateHandler, handler_doUpdateAdhocTask)
-router.post('/doAddShiftAdhocTask', updateHandler, handler_doAddShiftAdhocTask)
-router.post(
-  '/doUpdateShiftAdhocTaskNote',
-  updateHandler,
-  handler_doUpdateShiftAdhocTaskNote
-)
-router.post(
-  '/doDeleteShiftAdhocTask',
-  updateHandler,
-  handler_doDeleteShiftAdhocTask
-)
-
-router.post(
-  '/doGetPreviousShifts',
-  handler_doGetPreviousShifts
-)
-
-router.post(
-  '/doCopyFromPreviousShift',
-  updateHandler,
-  handler_doCopyFromPreviousShift
-)
+router
+  .post('/doGetPreviousShifts', handler_doGetPreviousShifts)
+  .post(
+    '/doCopyFromPreviousShift',
+    updateHandler,
+    handler_doCopyFromPreviousShift
+  )
 
 // Crew maintenance endpoints
-router.get('/crews', updateHandler, handler_crews)
-router.post('/doGetCrew', updateHandler, handler_doGetCrew)
-router.post('/doAddCrew', updateHandler, handler_doAddCrew)
-router.post('/doUpdateCrew', updateHandler, handler_doUpdateCrew)
-router.post('/doDeleteCrew', updateHandler, handler_doDeleteCrew)
-router.post('/doAddCrewMember', updateHandler, handler_doAddCrewMember)
-router.post('/doDeleteCrewMember', updateHandler, handler_doDeleteCrewMember)
-router.post('/doAddCrewEquipment', updateHandler, handler_doAddCrewEquipment)
-router.post('/doUpdateCrewEquipment', updateHandler, handler_doUpdateCrewEquipment)
-router.post('/doDeleteCrewEquipment', updateHandler, handler_doDeleteCrewEquipment)
+router
+  .get('/crews', updateHandler, handler_crews)
+  .post('/doGetCrew', updateHandler, handler_doGetCrew)
+  .post('/doAddCrew', updateHandler, handler_doAddCrew)
+  .post('/doUpdateCrew', updateHandler, handler_doUpdateCrew)
+  .post('/doDeleteCrew', updateHandler, handler_doDeleteCrew)
+  .post('/doAddCrewMember', updateHandler, handler_doAddCrewMember)
+  .post('/doDeleteCrewMember', updateHandler, handler_doDeleteCrewMember)
+  .post('/doAddCrewEquipment', updateHandler, handler_doAddCrewEquipment)
+  .post('/doUpdateCrewEquipment', updateHandler, handler_doUpdateCrewEquipment)
+  .post('/doDeleteCrewEquipment', updateHandler, handler_doDeleteCrewEquipment)
 
 router
   .get('/recovery', manageHandler, handler_recovery)
