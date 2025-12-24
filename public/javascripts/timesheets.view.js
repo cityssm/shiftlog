@@ -3,11 +3,11 @@
      * Make form read only
      */
     const formElement = document.querySelector('#form--timesheet');
-    formElement === null || formElement === void 0 ? void 0 : formElement.addEventListener('submit', (formEvent) => {
+    formElement?.addEventListener('submit', (formEvent) => {
         formEvent.preventDefault();
     });
-    const inputElements = formElement === null || formElement === void 0 ? void 0 : formElement.querySelectorAll('input, select, textarea');
-    inputElements === null || inputElements === void 0 ? void 0 : inputElements.forEach((inputElement) => {
+    const inputElements = formElement?.querySelectorAll('input, select, textarea');
+    inputElements?.forEach((inputElement) => {
         inputElement.disabled = true;
         if (inputElement.tagName.toLowerCase() !== 'select') {
             ;
@@ -46,4 +46,3 @@
         });
     }
 })();
-export {};

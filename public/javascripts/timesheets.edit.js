@@ -8,11 +8,10 @@
         formEvent.preventDefault();
         const endpoint = isCreate ? 'doCreateTimesheet' : 'doUpdateTimesheet';
         cityssm.postJSON(`${urlPrefix}/${endpoint}`, formElement, (rawResponseJSON) => {
-            var _a;
             const result = rawResponseJSON;
             if (result.success) {
                 if (isCreate) {
-                    globalThis.location.href = `${urlPrefix}/${(_a = result.timesheetId) !== null && _a !== void 0 ? _a : ''}/edit`;
+                    globalThis.location.href = `${urlPrefix}/${result.timesheetId ?? ''}/edit`;
                 }
                 else {
                     bulmaJS.alert({
@@ -95,4 +94,3 @@
         }
     }
 })();
-export {};

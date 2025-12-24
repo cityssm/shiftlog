@@ -1,8 +1,11 @@
 class TimesheetGrid {
+    config;
+    columns = [];
+    rows = [];
+    cells = new Map();
+    containerElement;
+    shiftLog;
     constructor(containerElement, config) {
-        this.columns = [];
-        this.rows = [];
-        this.cells = new Map();
         this.containerElement = containerElement;
         this.config = config;
         this.shiftLog = exports.shiftLog;
@@ -11,9 +14,8 @@ class TimesheetGrid {
         return `${rowId}_${columnId}`;
     }
     getCellHours(rowId, columnId) {
-        var _a, _b;
         const key = this.getCellKey(rowId, columnId);
-        return (_b = (_a = this.cells.get(key)) === null || _a === void 0 ? void 0 : _a.recordHours) !== null && _b !== void 0 ? _b : 0;
+        return this.cells.get(key)?.recordHours ?? 0;
     }
     setCellHours(rowId, columnId, hours) {
         const key = this.getCellKey(rowId, columnId);
@@ -332,4 +334,3 @@ class TimesheetGrid {
 }
 // Add to exports for use in other scripts
 exports.TimesheetGrid = TimesheetGrid;
-export {};
