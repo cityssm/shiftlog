@@ -37,7 +37,7 @@
         const gridContainer = document.querySelector('#timesheet-grid-container');
         if (gridContainer !== null) {
             const timesheetId = Number.parseInt(timesheetIdElement.value, 10);
-            const grid = new TimesheetGrid(gridContainer, {
+            const grid = new exports.TimesheetGrid(gridContainer, {
                 timesheetId,
                 isEditable: true,
                 hideEmptyRows: false,

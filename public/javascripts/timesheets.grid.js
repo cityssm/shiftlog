@@ -1,4 +1,4 @@
-export class TimesheetGrid {
+class TimesheetGrid {
     constructor(containerElement, config) {
         this.columns = [];
         this.rows = [];
@@ -381,4 +381,6 @@ export class TimesheetGrid {
         this.render();
     }
 }
-window.TimesheetGrid = TimesheetGrid;
+// Add to exports for use in other scripts
+exports.TimesheetGrid = TimesheetGrid;
+export {};

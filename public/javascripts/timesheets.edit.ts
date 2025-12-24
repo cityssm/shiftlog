@@ -2,14 +2,21 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 
 import type { ShiftLogGlobal } from './types.js'
-import type { TimesheetGrid as TimesheetGridClass } from './timesheets.grid.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
-declare const TimesheetGrid: typeof TimesheetGridClass
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+  TimesheetGrid: new (containerElement: HTMLElement, config: {
+    timesheetId: number
+    isEditable: boolean
+    hideEmptyRows: boolean
+    hideEmptyColumns: boolean
+  }) => {
+    init(): Promise<void>
+    setDisplayOptions(options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean }): void
+  }
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -73,7 +80,7 @@ declare const exports: {
     if (gridContainer !== null) {
       const timesheetId = Number.parseInt(timesheetIdElement.value, 10)
       
-      const grid = new TimesheetGrid(gridContainer, {
+      const grid = new exports.TimesheetGrid(gridContainer, {
         timesheetId,
         isEditable: true,
         hideEmptyRows: false,

@@ -1,6 +1,17 @@
-import type { TimesheetGrid as TimesheetGridClass } from './timesheets.grid.js'
+import type { ShiftLogGlobal } from './types.js'
 
-declare const TimesheetGrid: typeof TimesheetGridClass
+declare const exports: {
+  shiftLog: ShiftLogGlobal
+  TimesheetGrid: new (containerElement: HTMLElement, config: {
+    timesheetId: number
+    isEditable: boolean
+    hideEmptyRows: boolean
+    hideEmptyColumns: boolean
+  }) => {
+    init(): Promise<void>
+    setDisplayOptions(options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean }): void
+  }
+}
 
 ;(() => {
   /*
@@ -37,7 +48,7 @@ declare const TimesheetGrid: typeof TimesheetGridClass
   if (gridContainer !== null && timesheetIdInput !== null && timesheetIdInput.value !== '') {
     const timesheetId = Number.parseInt(timesheetIdInput.value, 10)
     
-    const grid = new TimesheetGrid(gridContainer, {
+    const grid = new exports.TimesheetGrid(gridContainer, {
       timesheetId,
       isEditable: false,
       hideEmptyRows: false,

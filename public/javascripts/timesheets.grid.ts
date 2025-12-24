@@ -10,6 +10,7 @@ declare const bulmaJS: BulmaJS
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+  TimesheetGrid?: typeof TimesheetGrid
 }
 
 interface TimesheetGridConfig {
@@ -19,7 +20,7 @@ interface TimesheetGridConfig {
   hideEmptyColumns: boolean
 }
 
-export class TimesheetGrid {
+class TimesheetGrid {
   private readonly config: TimesheetGridConfig
   private columns: TimesheetColumn[] = []
   private rows: TimesheetRow[] = []
@@ -463,11 +464,5 @@ export class TimesheetGrid {
   }
 }
 
-// Export for use in other scripts
-declare global {
-  interface Window {
-    TimesheetGrid: typeof TimesheetGrid
-  }
-}
-
-window.TimesheetGrid = TimesheetGrid
+// Add to exports for use in other scripts
+exports.TimesheetGrid = TimesheetGrid
