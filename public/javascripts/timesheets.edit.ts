@@ -77,7 +77,9 @@ declare const exports: {
         }
 
         if (response.success && response.shifts !== undefined) {
-          const currentShiftId = shiftIdElement.value
+          // Check if we have a temporarily stored shift ID (from initial page load)
+          const tempShiftId = shiftIdElement.getAttribute('data-temp-shift-id')
+          const currentShiftId = tempShiftId ?? shiftIdElement.value
 
           // Rebuild shift dropdown
           shiftIdElement.innerHTML = '<option value="">(No Shift)</option>'
@@ -93,6 +95,11 @@ declare const exports: {
 
             shiftIdElement.append(optionElement)
           }
+          
+          // Clear the temporary attribute after first load
+          if (tempShiftId !== null) {
+            shiftIdElement.removeAttribute('data-temp-shift-id')
+          }
         }
       }
     )
@@ -107,8 +114,16 @@ declare const exports: {
     timesheetDateElement.addEventListener('change', loadAvailableShifts)
   }
 
-  // Load shifts on page load
-  if (isCreate && supervisorElement !== null && timesheetDateElement !== null) {
+  // Load shifts on page load (for both create and edit modes)
+  if (supervisorElement !== null && timesheetDateElement !== null) {
+    // Get initial shift ID from data attribute
+    const initialShiftId = shiftIdElement?.getAttribute('data-initial-value') ?? ''
+    
+    // Store it temporarily
+    if (shiftIdElement !== null && initialShiftId !== '') {
+      shiftIdElement.setAttribute('data-temp-shift-id', initialShiftId)
+    }
+    
     loadAvailableShifts()
   }
 

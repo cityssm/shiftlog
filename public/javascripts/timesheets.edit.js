@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 (function () {
+    var _a;
     var shiftLog = exports.shiftLog;
     var urlPrefix = "".concat(shiftLog.urlPrefix, "/").concat(shiftLog.timesheetsRouter);
     var formElement = document.querySelector('#form--timesheet');
@@ -30,7 +31,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
             var _a;
             var response = rawResponseJSON;
             if (response.success && response.shifts !== undefined) {
-                var currentShiftId = shiftIdElement.value;
+                // Check if we have a temporarily stored shift ID (from initial page load)
+                var tempShiftId = shiftIdElement.getAttribute('data-temp-shift-id');
+                var currentShiftId = tempShiftId !== null && tempShiftId !== void 0 ? tempShiftId : shiftIdElement.value;
                 // Rebuild shift dropdown
                 shiftIdElement.innerHTML = '<option value="">(No Shift)</option>';
                 for (var _i = 0, _b = response.shifts; _i < _b.length; _i++) {
@@ -43,6 +46,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     }
                     shiftIdElement.append(optionElement);
                 }
+                // Clear the temporary attribute after first load
+                if (tempShiftId !== null) {
+                    shiftIdElement.removeAttribute('data-temp-shift-id');
+                }
             }
         });
     }
@@ -53,8 +60,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
     if (timesheetDateElement !== null) {
         timesheetDateElement.addEventListener('change', loadAvailableShifts);
     }
-    // Load shifts on page load
-    if (isCreate && supervisorElement !== null && timesheetDateElement !== null) {
+    // Load shifts on page load (for both create and edit modes)
+    if (supervisorElement !== null && timesheetDateElement !== null) {
+        // Get initial shift ID from data attribute
+        var initialShiftId = (_a = shiftIdElement === null || shiftIdElement === void 0 ? void 0 : shiftIdElement.getAttribute('data-initial-value')) !== null && _a !== void 0 ? _a : '';
+        // Store it temporarily
+        if (shiftIdElement !== null && initialShiftId !== '') {
+            shiftIdElement.setAttribute('data-temp-shift-id', initialShiftId);
+        }
         loadAvailableShifts();
     }
     function doSaveTimesheet(formEvent) {
