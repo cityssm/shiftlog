@@ -1,3 +1,4 @@
+import type { ShiftWorkOrder } from '../../database/shifts/getShiftWorkOrders.js'
 import type {
   AdhocTask,
   DataListItem,
@@ -7,7 +8,6 @@ import type {
   ShiftEmployee,
   ShiftEquipment
 } from '../../types/record.types.js'
-import type { ShiftWorkOrder } from '../../database/shifts/getShiftWorkOrders.js'
 
 export interface ShiftEditResponse {
   headTitle: string
