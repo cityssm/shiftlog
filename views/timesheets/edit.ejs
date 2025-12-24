@@ -254,7 +254,7 @@
     #<%= timesheet.timesheetId %>
     <% } %>
   </div>
-  <div class="column is-narrow has-text-right">
+  <div class="column is-narrow">
     <div class="buttons is-right">
       <% if (isCreate) { %>
       <a class="button is-danger is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
@@ -262,15 +262,15 @@
       </a>
       <% } %>
       <% if (isEdit) { %>
-      <div class="dropdown" id="dropdown--add">
+      <div class="dropdown is-up is-right">
         <div class="dropdown-trigger">
-          <button class="button is-primary" aria-haspopup="true" aria-controls="dropdown-menu-add">
+          <button class="button is-primary">
             <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
             <span>Add</span>
             <span class="icon is-small"><i class="fa-solid fa-angle-down"></i></span>
           </button>
         </div>
-        <div class="dropdown-menu" id="dropdown-menu-add" role="menu">
+        <div class="dropdown-menu" role="menu">
           <div class="dropdown-content">
             <a href="#" class="dropdown-item" id="button--addColumn">
               <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
