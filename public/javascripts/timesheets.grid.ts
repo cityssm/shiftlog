@@ -19,12 +19,6 @@ interface TimesheetGridConfig {
   hideEmptyColumns: boolean
 }
 
-interface CellData {
-  timesheetRowId: number
-  timesheetColumnId: number
-  recordHours: number
-}
-
 export class TimesheetGrid {
   private readonly config: TimesheetGridConfig
   private columns: TimesheetColumn[] = []
