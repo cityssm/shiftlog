@@ -201,8 +201,27 @@ class TimesheetGrid {
     
     // First column is for row labels
     const thCorner = document.createElement('th')
-    thCorner.textContent = 'Employee / Equipment'
     thCorner.style.minWidth = '200px'
+    
+    const cornerTitle = document.createElement('div')
+    cornerTitle.textContent = 'Employee / Equipment'
+    thCorner.append(cornerTitle)
+    
+    if (this.config.isEditable) {
+      const addRowButton = document.createElement('button')
+      addRowButton.className = 'button is-primary is-small mt-2'
+      addRowButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>'
+      addRowButton.title = 'Add Row'
+      addRowButton.addEventListener('click', () => {
+        // Trigger the add row button in the toolbar
+        const addRowToolbarButton = document.querySelector('#button--addRow') as HTMLAnchorElement | null
+        if (addRowToolbarButton !== null) {
+          addRowToolbarButton.click()
+        }
+      })
+      thCorner.append(addRowButton)
+    }
+    
     headerRow.append(thCorner)
     
     // Column headers
@@ -245,6 +264,27 @@ class TimesheetGrid {
       }
       
       headerRow.append(th)
+    }
+    
+    // Add column header (before Total Hours)
+    if (this.config.isEditable) {
+      const thAddColumn = document.createElement('th')
+      thAddColumn.style.width = '80px'
+      thAddColumn.style.textAlign = 'center'
+      
+      const addColumnButton = document.createElement('button')
+      addColumnButton.className = 'button is-primary is-small'
+      addColumnButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>'
+      addColumnButton.title = 'Add Column'
+      addColumnButton.addEventListener('click', () => {
+        // Trigger the add column button in the toolbar
+        const addColumnToolbarButton = document.querySelector('#button--addColumn') as HTMLAnchorElement | null
+        if (addColumnToolbarButton !== null) {
+          addColumnToolbarButton.click()
+        }
+      })
+      thAddColumn.append(addColumnButton)
+      headerRow.append(thAddColumn)
     }
     
     // Total column
@@ -311,6 +351,13 @@ class TimesheetGrid {
       for (const column of visibleColumns) {
         const td = this.createCellElement(row, column)
         tr.append(td)
+      }
+      
+      // Empty cell for the add column header (if editable)
+      if (this.config.isEditable) {
+        const tdEmpty = document.createElement('td')
+        tdEmpty.className = 'has-background-light'
+        tr.append(tdEmpty)
       }
       
       // Total cell

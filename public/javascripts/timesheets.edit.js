@@ -120,10 +120,28 @@
             grid.init().catch((error) => {
                 console.error('Error initializing grid:', error);
             });
+            // Initialize dropdown
+            const dropdownElement = document.querySelector('#dropdown--add');
+            if (dropdownElement !== null) {
+                const dropdownTrigger = dropdownElement.querySelector('.dropdown-trigger button');
+                if (dropdownTrigger !== null) {
+                    dropdownTrigger.addEventListener('click', () => {
+                        dropdownElement.classList.toggle('is-active');
+                    });
+                }
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (event) => {
+                    if (!dropdownElement.contains(event.target)) {
+                        dropdownElement.classList.remove('is-active');
+                    }
+                });
+            }
             // Add column button
             const addColumnButton = document.querySelector('#button--addColumn');
             if (addColumnButton !== null) {
-                addColumnButton.addEventListener('click', () => {
+                addColumnButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    dropdownElement?.classList.remove('is-active');
                     // TODO: Show add column modal
                     console.log('Add column');
                 });
@@ -131,7 +149,9 @@
             // Add row button
             const addRowButton = document.querySelector('#button--addRow');
             if (addRowButton !== null) {
-                addRowButton.addEventListener('click', () => {
+                addRowButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    dropdownElement?.classList.remove('is-active');
                     // TODO: Show add row modal
                     console.log('Add row');
                 });
@@ -139,7 +159,9 @@
             // Copy from shift button
             const copyFromShiftButton = document.querySelector('#button--copyFromShift');
             if (copyFromShiftButton !== null) {
-                copyFromShiftButton.addEventListener('click', () => {
+                copyFromShiftButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    dropdownElement?.classList.remove('is-active');
                     // TODO: Show copy from shift modal
                     console.log('Copy from shift');
                 });
@@ -147,7 +169,9 @@
             // Copy from previous timesheet button
             const copyFromPreviousButton = document.querySelector('#button--copyFromPrevious');
             if (copyFromPreviousButton !== null) {
-                copyFromPreviousButton.addEventListener('click', () => {
+                copyFromPreviousButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    dropdownElement?.classList.remove('is-active');
                     // TODO: Show copy from previous modal
                     console.log('Copy from previous');
                 });
