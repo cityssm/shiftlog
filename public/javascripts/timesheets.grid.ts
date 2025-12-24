@@ -87,46 +87,46 @@ class TimesheetGrid {
     return this.getColumnTotal(column.timesheetColumnId) > 0
   }
 
-  async loadData(): Promise<void> {
+  loadData(): Promise<void> {
     const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
 
-    // Load columns
-    const columnsResponse = await fetch(`${timesheetUrlPrefix}/doGetTimesheetColumns`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ timesheetId: this.config.timesheetId })
-    })
-    const columnsData = await columnsResponse.json() as { columns: TimesheetColumn[] }
-    this.columns = columnsData.columns
+    return new Promise((resolve, reject) => {
+      // Load columns
+      cityssm.postJSON(
+        `${timesheetUrlPrefix}/doGetTimesheetColumns`,
+        { timesheetId: this.config.timesheetId },
+        (rawResponseJSON) => {
+          const columnsData = rawResponseJSON as { columns: TimesheetColumn[] }
+          this.columns = columnsData.columns
 
-    // Load rows
-    const rowsResponse = await fetch(`${timesheetUrlPrefix}/doGetTimesheetRows`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ timesheetId: this.config.timesheetId })
-    })
-    const rowsData = await rowsResponse.json() as { rows: TimesheetRow[] }
-    this.rows = rowsData.rows
+          // Load rows
+          cityssm.postJSON(
+            `${timesheetUrlPrefix}/doGetTimesheetRows`,
+            { timesheetId: this.config.timesheetId },
+            (rawResponseJSON) => {
+              const rowsData = rawResponseJSON as { rows: TimesheetRow[] }
+              this.rows = rowsData.rows
 
-    // Load cells
-    const cellsResponse = await fetch(`${timesheetUrlPrefix}/doGetTimesheetCells`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ timesheetId: this.config.timesheetId })
+              // Load cells
+              cityssm.postJSON(
+                `${timesheetUrlPrefix}/doGetTimesheetCells`,
+                { timesheetId: this.config.timesheetId },
+                (rawResponseJSON) => {
+                  const cellsData = rawResponseJSON as { cells: TimesheetCell[] }
+                  
+                  this.cells.clear()
+                  for (const cell of cellsData.cells) {
+                    const key = this.getCellKey(cell.timesheetRowId, cell.timesheetColumnId)
+                    this.cells.set(key, cell)
+                  }
+                  resolve()
+                }
+              )
+            }
+          )
+        }
+      )
     })
-    const cellsData = await cellsResponse.json() as { cells: TimesheetCell[] }
-    
-    this.cells.clear()
-    for (const cell of cellsData.cells) {
-      const key = this.getCellKey(cell.timesheetRowId, cell.timesheetColumnId)
-      this.cells.set(key, cell)
-    }
   }
 
   private createCellElement(row: TimesheetRow, column: TimesheetColumn): HTMLTableCellElement {
@@ -146,9 +146,9 @@ class TimesheetGrid {
       input.style.width = '80px'
       input.style.textAlign = 'right'
       
-      input.addEventListener('change', async () => {
+      input.addEventListener('change', () => {
         const newHours = input.value === '' ? 0 : Number.parseFloat(input.value)
-        await this.updateCell(row.timesheetRowId, column.timesheetColumnId, newHours)
+        this.updateCell(row.timesheetRowId, column.timesheetColumnId, newHours)
         this.render()
       })
       
@@ -161,41 +161,30 @@ class TimesheetGrid {
     return td
   }
 
-  private async updateCell(rowId: number, columnId: number, hours: number): Promise<void> {
+  private updateCell(rowId: number, columnId: number, hours: number): void {
     const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
     
-    try {
-      const response = await fetch(`${timesheetUrlPrefix}/doUpdateTimesheetCell`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          timesheetRowId: rowId,
-          timesheetColumnId: columnId,
-          recordHours: hours
-        })
-      })
-      
-      const result = await response.json() as { success: boolean }
-      
-      if (result.success) {
-        this.setCellHours(rowId, columnId, hours)
-      } else {
-        bulmaJS.alert({
-          title: 'Error',
-          message: 'Failed to update cell',
-          contextualColorName: 'danger'
-        })
+    cityssm.postJSON(
+      `${timesheetUrlPrefix}/doUpdateTimesheetCell`,
+      {
+        timesheetRowId: rowId,
+        timesheetColumnId: columnId,
+        recordHours: hours
+      },
+      (rawResponseJSON) => {
+        const result = rawResponseJSON as { success: boolean }
+        
+        if (result.success) {
+          this.setCellHours(rowId, columnId, hours)
+        } else {
+          bulmaJS.alert({
+            title: 'Error',
+            message: 'Failed to update cell',
+            contextualColorName: 'danger'
+          })
+        }
       }
-    } catch (error) {
-      console.error('Error updating cell:', error)
-      bulmaJS.alert({
-        title: 'Error',
-        message: 'Failed to update cell',
-        contextualColorName: 'danger'
-      })
-    }
+    )
   }
 
   render(): void {
@@ -358,40 +347,32 @@ class TimesheetGrid {
       contextualColorName: 'danger',
       okButton: {
         text: 'Delete',
-        callbackFunction: async () => {
+        callbackFunction: () => {
           const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
           
-          try {
-            const response = await fetch(`${timesheetUrlPrefix}/doDeleteTimesheetColumn`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                timesheetColumnId: column.timesheetColumnId
-              })
-            })
-            
-            const result = await response.json() as { success: boolean }
-            
-            if (result.success) {
-              await this.loadData()
-              this.render()
-            } else {
-              bulmaJS.alert({
-                title: 'Error',
-                message: 'Failed to delete column',
-                contextualColorName: 'danger'
-              })
+          cityssm.postJSON(
+            `${timesheetUrlPrefix}/doDeleteTimesheetColumn`,
+            {
+              timesheetColumnId: column.timesheetColumnId
+            },
+            (rawResponseJSON) => {
+              const result = rawResponseJSON as { success: boolean }
+              
+              if (result.success) {
+                this.loadData().then(() => {
+                  this.render()
+                }).catch((error) => {
+                  console.error('Error reloading data:', error)
+                })
+              } else {
+                bulmaJS.alert({
+                  title: 'Error',
+                  message: 'Failed to delete column',
+                  contextualColorName: 'danger'
+                })
+              }
             }
-          } catch (error) {
-            console.error('Error deleting column:', error)
-            bulmaJS.alert({
-              title: 'Error',
-              message: 'Failed to delete column',
-              contextualColorName: 'danger'
-            })
-          }
+          )
         }
       }
     })
@@ -409,40 +390,32 @@ class TimesheetGrid {
       contextualColorName: 'danger',
       okButton: {
         text: 'Delete',
-        callbackFunction: async () => {
+        callbackFunction: () => {
           const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
           
-          try {
-            const response = await fetch(`${timesheetUrlPrefix}/doDeleteTimesheetRow`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                timesheetRowId: row.timesheetRowId
-              })
-            })
-            
-            const result = await response.json() as { success: boolean }
-            
-            if (result.success) {
-              await this.loadData()
-              this.render()
-            } else {
-              bulmaJS.alert({
-                title: 'Error',
-                message: 'Failed to delete row',
-                contextualColorName: 'danger'
-              })
+          cityssm.postJSON(
+            `${timesheetUrlPrefix}/doDeleteTimesheetRow`,
+            {
+              timesheetRowId: row.timesheetRowId
+            },
+            (rawResponseJSON) => {
+              const result = rawResponseJSON as { success: boolean }
+              
+              if (result.success) {
+                this.loadData().then(() => {
+                  this.render()
+                }).catch((error) => {
+                  console.error('Error reloading data:', error)
+                })
+              } else {
+                bulmaJS.alert({
+                  title: 'Error',
+                  message: 'Failed to delete row',
+                  contextualColorName: 'danger'
+                })
+              }
             }
-          } catch (error) {
-            console.error('Error deleting row:', error)
-            bulmaJS.alert({
-              title: 'Error',
-              message: 'Failed to delete row',
-              contextualColorName: 'danger'
-            })
-          }
+          )
         }
       }
     })
