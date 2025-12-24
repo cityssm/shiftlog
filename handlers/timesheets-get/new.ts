@@ -18,7 +18,9 @@ export default async function handler(
     )
   }
 
-  const timesheetTypes = await getTimesheetTypeDataListItems(request.session.user)
+  const timesheetTypes = await getTimesheetTypeDataListItems(
+    request.session.user
+  )
 
   response.render('timesheets/edit', {
     headTitle: `Create New ${getConfigProperty('timesheets.sectionNameSingular')}`,
@@ -29,13 +31,14 @@ export default async function handler(
     timesheet: {
       timesheetId: -1,
       timesheetDate: new Date(),
-      timesheetTypeDataListItemId: -1,
+      timesheetTypeDataListItemId:
+        timesheetTypes.length === 1 ? timesheetTypes[0].dataListItemId : -1,
       supervisorEmployeeNumber: '',
       timesheetTitle: '',
       timesheetNote: ''
     },
 
     supervisors,
-    timesheetTypes,
+    timesheetTypes
   } satisfies TimesheetEditResponse)
 }

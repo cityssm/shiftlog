@@ -14,12 +14,12 @@ export default async function handler(request, response) {
         timesheet: {
             timesheetId: -1,
             timesheetDate: new Date(),
-            timesheetTypeDataListItemId: -1,
+            timesheetTypeDataListItemId: timesheetTypes.length === 1 ? timesheetTypes[0].dataListItemId : -1,
             supervisorEmployeeNumber: '',
             timesheetTitle: '',
             timesheetNote: ''
         },
         supervisors,
-        timesheetTypes,
+        timesheetTypes
     });
 }

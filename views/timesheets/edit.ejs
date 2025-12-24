@@ -34,21 +34,39 @@
 <% if (isEdit) { %>
   <% if (timesheetTypes.length === 0) { %>
   <div class="message is-danger">
-    <p class="message-body">
-      <strong>No timesheet types available.</strong><br />
-      Please contact your system administrator to set up timesheet types before creating
-      <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular').toLowerCase() %>s.
-    </p>
+    <div class="message-body">
+      <p>
+        <strong>No timesheet types available.</strong><br />
+        Please contact your system administrator to set up timesheet types before creating
+        <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular').toLowerCase() %>s.
+      </p>
+      <% if (user.userProperties.isAdmin) { %>
+      <p class="has-text-right">
+        <a class="button is-link" href="<%= urlPrefix %>/admin/dataLists">
+          Data List Management
+        </a>
+      </p>
+      <% } %>
+    </div>
   </div>
   <% } %>
 
   <% if (supervisors.length === 0) { %>
   <div class="message is-danger">
-    <p class="message-body">
-      <strong>No supervisors available.</strong><br />
-      Please contact your system administrator to set up supervisors before creating
-      <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular').toLowerCase() %>s.
-    </p>
+    <div class="message-body">
+      <p>
+        <strong>No supervisors available.</strong><br />
+        Please contact your system administrator to set up supervisors before creating
+        <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular').toLowerCase() %>s.
+      </p>
+      <% if (user.userProperties.isAdmin) { %>
+      <p class="has-text-right">
+        <a class="button is-link" href="<%= urlPrefix %>/admin/dataLists">
+          Data List Management
+        </a>
+      </p>
+      <% } %>
+    </div>
   </div>
   <% } %>
 <% } %>
