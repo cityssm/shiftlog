@@ -12,6 +12,7 @@ import handler_doCopyFromShift from '../handlers/timesheets-post/doCopyFromShift
 import handler_doCreateTimesheet from '../handlers/timesheets-post/doCreateTimesheet.js'
 import handler_doDeleteTimesheetColumn from '../handlers/timesheets-post/doDeleteTimesheetColumn.js'
 import handler_doDeleteTimesheetRow from '../handlers/timesheets-post/doDeleteTimesheetRow.js'
+import handler_doGetAvailableShifts from '../handlers/timesheets-post/doGetAvailableShifts.js'
 import handler_doGetDeletedTimesheets from '../handlers/timesheets-post/doGetDeletedTimesheets.js'
 import handler_doGetTimesheetCells from '../handlers/timesheets-post/doGetTimesheetCells.js'
 import handler_doGetTimesheetColumns from '../handlers/timesheets-post/doGetTimesheetColumns.js'
@@ -67,6 +68,7 @@ router
 router.post('/doGetTimesheetColumns', handler_doGetTimesheetColumns)
 router.post('/doGetTimesheetRows', handler_doGetTimesheetRows)
 router.post('/doGetTimesheetCells', handler_doGetTimesheetCells)
+router.post('/doGetAvailableShifts', handler_doGetAvailableShifts)
 
 router.post('/doAddTimesheetColumn', updateHandler, handler_doAddTimesheetColumn)
 router.post('/doAddTimesheetRow', updateHandler, handler_doAddTimesheetRow)

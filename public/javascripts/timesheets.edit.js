@@ -4,6 +4,67 @@
     const formElement = document.querySelector('#form--timesheet');
     const timesheetIdElement = formElement.querySelector('#timesheet--timesheetId');
     const isCreate = timesheetIdElement.value === '' || timesheetIdElement.value === '-1';
+    /*
+     * Load available shifts based on supervisor and date
+     */
+    const supervisorElement = formElement.querySelector('#timesheet--supervisorEmployeeNumber');
+    const timesheetDateElement = formElement.querySelector('#timesheet--timesheetDateString');
+    const shiftIdElement = formElement.querySelector('#timesheet--shiftId');
+    function loadAvailableShifts() {
+        if (supervisorElement === null || timesheetDateElement === null || shiftIdElement === null) {
+            return;
+        }
+        const supervisorEmployeeNumber = supervisorElement.value;
+        const shiftDateString = timesheetDateElement.value;
+        if (supervisorEmployeeNumber === '' || shiftDateString === '') {
+            // Clear shift dropdown except the "No Shift" option
+            shiftIdElement.innerHTML = '<option value="">(No Shift)</option>';
+            return;
+        }
+        cityssm.postJSON(`${urlPrefix}/doGetAvailableShifts`, {
+            supervisorEmployeeNumber,
+            shiftDateString
+        }, (rawResponseJSON) => {
+            const response = rawResponseJSON;
+            if (response.success && response.shifts !== undefined) {
+                // Check if we have a temporarily stored shift ID (from initial page load)
+                const tempShiftId = shiftIdElement.getAttribute('data-temp-shift-id');
+                const currentShiftId = tempShiftId ?? shiftIdElement.value;
+                // Rebuild shift dropdown
+                shiftIdElement.innerHTML = '<option value="">(No Shift)</option>';
+                for (const shift of response.shifts) {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = shift.shiftId.toString();
+                    optionElement.textContent = `Shift #${shift.shiftId} - ${shift.shiftTimeDataListItem ?? ''} (${shift.shiftDescription})`;
+                    if (shift.shiftId.toString() === currentShiftId) {
+                        optionElement.selected = true;
+                    }
+                    shiftIdElement.append(optionElement);
+                }
+                // Clear the temporary attribute after first load
+                if (tempShiftId !== null) {
+                    shiftIdElement.removeAttribute('data-temp-shift-id');
+                }
+            }
+        });
+    }
+    // Load shifts when supervisor or date changes
+    if (supervisorElement !== null) {
+        supervisorElement.addEventListener('change', loadAvailableShifts);
+    }
+    if (timesheetDateElement !== null) {
+        timesheetDateElement.addEventListener('change', loadAvailableShifts);
+    }
+    // Load shifts on page load (for both create and edit modes)
+    if (supervisorElement !== null && timesheetDateElement !== null) {
+        // Get initial shift ID from data attribute
+        const initialShiftId = shiftIdElement?.getAttribute('data-initial-value') ?? '';
+        // Store it temporarily
+        if (shiftIdElement !== null && initialShiftId !== '') {
+            shiftIdElement.setAttribute('data-temp-shift-id', initialShiftId);
+        }
+        loadAvailableShifts();
+    }
     function doSaveTimesheet(formEvent) {
         formEvent.preventDefault();
         const endpoint = isCreate ? 'doCreateTimesheet' : 'doUpdateTimesheet';
