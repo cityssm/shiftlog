@@ -192,39 +192,6 @@
         </div>
       </div>
     </div>
-    <div class="panel-block is-justify-content-end">
-      <div class="buttons is-right">
-        <% if (isCreate) { %>
-        <a class="button is-danger is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
-          Cancel
-        </a>
-        <% } %>
-        <% if (isEdit) { %>
-        <button class="button is-primary is-light" type="submit" form="form--timesheet">
-          <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
-          <span>
-            <%= (isCreate ? "Create": "Update") %>
-            <span class="is-hidden-mobile">
-              <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>
-            </span>
-          </span>
-        </button>
-        <% } else if (
-          user.userProperties.timesheets.canUpdate && 
-          (timesheet.employeesEntered_dateTime === null || timesheet.employeesEntered_dateTime === undefined) &&
-          (timesheet.equipmentEntered_dateTime === null || timesheet.equipmentEntered_dateTime === undefined) &&
-          (timesheet.supervisorEmployeeNumber === user.employeeNumber || user.userProperties.timesheets.canManage)) { 
-        %>
-        <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/<%= timesheet.timesheetId %>/edit">
-          <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
-          <span>
-            Edit
-            <span class="is-hidden-mobile"><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
-          </span>
-        </a>
-        <% } %>
-      </div>
-    </div>
   </div>
 </form>
 
@@ -256,31 +223,84 @@
     </div>
   </div>
 
-  <% if (isEdit) { %>
-  <div class="box">
-    <div class="buttons">
-      <button class="button is-primary" id="button--addColumn">
-        <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
-        <span>Add Column</span>
-      </button>
-      <button class="button is-primary" id="button--addRow">
-        <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
-        <span>Add Row</span>
-      </button>
-      <button class="button is-info" id="button--copyFromShift">
-        <span class="icon is-small"><i class="fa-solid fa-copy"></i></span>
-        <span>Copy from Shift</span>
-      </button>
-      <button class="button is-info" id="button--copyFromPrevious">
-        <span class="icon is-small"><i class="fa-solid fa-copy"></i></span>
-        <span>Copy from Previous Timesheet</span>
-      </button>
-    </div>
-  </div>
-  <% } %>
+
 
   <div class="box">
     <div id="timesheet-grid-container"></div>
+  </div>
+</div>
+<% } %>
+
+<% if (!isCreate) { %>
+<div class="columns is-vcentered is-fixed-bottom has-background-white has-shadow is-hidden-print">
+  <div class="column">
+    <% if (!isCreate) { %>
+      <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>
+    #<%= timesheet.timesheetId %>
+    <% } %>
+  </div>
+  <div class="column is-narrow has-text-right">
+    <div class="buttons is-right">
+      <% if (isCreate) { %>
+      <a class="button is-danger is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
+        Cancel
+      </a>
+      <% } %>
+      <% if (isEdit) { %>
+      <div class="dropdown" id="dropdown--add">
+        <div class="dropdown-trigger">
+          <button class="button is-primary" aria-haspopup="true" aria-controls="dropdown-menu-add">
+            <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
+            <span>Add</span>
+            <span class="icon is-small"><i class="fa-solid fa-angle-down"></i></span>
+          </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu-add" role="menu">
+          <div class="dropdown-content">
+            <a href="#" class="dropdown-item" id="button--addColumn">
+              <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
+              <span>Add Column</span>
+            </a>
+            <a href="#" class="dropdown-item" id="button--addRow">
+              <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
+              <span>Add Row</span>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item" id="button--copyFromShift">
+              <span class="icon is-small"><i class="fa-solid fa-copy"></i></span>
+              <span>Copy from Shift</span>
+            </a>
+            <a href="#" class="dropdown-item" id="button--copyFromPrevious">
+              <span class="icon is-small"><i class="fa-solid fa-copy"></i></span>
+              <span>Copy from Previous Timesheet</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <button class="button is-primary is-light" type="submit" form="form--timesheet">
+        <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
+        <span>
+          <%= (isCreate ? "Create": "Update") %>
+          <span class="is-hidden-mobile">
+            <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>
+          </span>
+        </span>
+      </button>
+      <% } else if (
+        user.userProperties.timesheets.canUpdate && 
+        (timesheet.employeesEntered_dateTime === null || timesheet.employeesEntered_dateTime === undefined) &&
+        (timesheet.equipmentEntered_dateTime === null || timesheet.equipmentEntered_dateTime === undefined) &&
+        (timesheet.supervisorEmployeeNumber === user.employeeNumber || user.userProperties.timesheets.canManage)) { 
+      %>
+      <a class="button is-info is-light" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/<%= timesheet.timesheetId %>/edit">
+        <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
+        <span>
+          Edit
+          <span class="is-hidden-mobile"><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
+        </span>
+      </a>
+      <% } %>
+    </div>
   </div>
 </div>
 <% } %>

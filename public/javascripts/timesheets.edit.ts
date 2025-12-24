@@ -108,37 +108,63 @@ declare const exports: {
         console.error('Error initializing grid:', error)
       })
 
+      // Initialize dropdown
+      const dropdownElement = document.querySelector('#dropdown--add') as HTMLElement | null
+      if (dropdownElement !== null) {
+        const dropdownTrigger = dropdownElement.querySelector('.dropdown-trigger button') as HTMLButtonElement | null
+        if (dropdownTrigger !== null) {
+          dropdownTrigger.addEventListener('click', () => {
+            dropdownElement.classList.toggle('is-active')
+          })
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+          if (!dropdownElement.contains(event.target as Node)) {
+            dropdownElement.classList.remove('is-active')
+          }
+        })
+      }
+
       // Add column button
-      const addColumnButton = document.querySelector('#button--addColumn') as HTMLButtonElement | null
+      const addColumnButton = document.querySelector('#button--addColumn') as HTMLAnchorElement | null
       if (addColumnButton !== null) {
-        addColumnButton.addEventListener('click', () => {
+        addColumnButton.addEventListener('click', (event) => {
+          event.preventDefault()
+          dropdownElement?.classList.remove('is-active')
           // TODO: Show add column modal
           console.log('Add column')
         })
       }
 
       // Add row button
-      const addRowButton = document.querySelector('#button--addRow') as HTMLButtonElement | null
+      const addRowButton = document.querySelector('#button--addRow') as HTMLAnchorElement | null
       if (addRowButton !== null) {
-        addRowButton.addEventListener('click', () => {
+        addRowButton.addEventListener('click', (event) => {
+          event.preventDefault()
+          dropdownElement?.classList.remove('is-active')
           // TODO: Show add row modal
           console.log('Add row')
         })
       }
 
       // Copy from shift button
-      const copyFromShiftButton = document.querySelector('#button--copyFromShift') as HTMLButtonElement | null
+      const copyFromShiftButton = document.querySelector('#button--copyFromShift') as HTMLAnchorElement | null
       if (copyFromShiftButton !== null) {
-        copyFromShiftButton.addEventListener('click', () => {
+        copyFromShiftButton.addEventListener('click', (event) => {
+          event.preventDefault()
+          dropdownElement?.classList.remove('is-active')
           // TODO: Show copy from shift modal
           console.log('Copy from shift')
         })
       }
 
       // Copy from previous timesheet button
-      const copyFromPreviousButton = document.querySelector('#button--copyFromPrevious') as HTMLButtonElement | null
+      const copyFromPreviousButton = document.querySelector('#button--copyFromPrevious') as HTMLAnchorElement | null
       if (copyFromPreviousButton !== null) {
-        copyFromPreviousButton.addEventListener('click', () => {
+        copyFromPreviousButton.addEventListener('click', (event) => {
+          event.preventDefault()
+          dropdownElement?.classList.remove('is-active')
           // TODO: Show copy from previous modal
           console.log('Copy from previous')
         })
