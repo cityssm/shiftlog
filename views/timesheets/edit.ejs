@@ -178,6 +178,18 @@
           </div>
         </div>
       </div>
+
+      <div class="field">
+        <label class="label" for="timesheet--shiftId">Related <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> (Optional)</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="timesheet--shiftId" name="shiftId">
+              <option value="">(No Shift)</option>
+            </select>
+          </div>
+        </div>
+        <p class="help">Select a shift to link this timesheet. Filters by supervisor and date.</p>
+      </div>
     
       <div class="field">
         <label class="label" for="timesheet--timesheetNote">Note</label>
