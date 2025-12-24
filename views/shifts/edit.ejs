@@ -429,6 +429,73 @@
 <script src="<%= urlPrefix %>/javascripts/shifts.workOrders.js"></script>
 <% } %>
 <script src="<%= urlPrefix %>/javascripts/shifts.adhocTasks.js"></script>
+<% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
+<script>
+;(function() {
+  const shiftId = '<%= shift.shiftId %>';
+  const urlPrefix = '<%= urlPrefix %>/<%= configFunctions.getConfigProperty("shifts.router") %>';
+  
+  function loadShiftTimesheets() {
+    const container = document.querySelector('#container--shiftTimesheets');
+    if (!container) return;
+    
+    cityssm.postJSON(
+      urlPrefix + '/doGetShiftTimesheets',
+      { shiftId: shiftId },
+      function(rawResponseJSON) {
+        const response = rawResponseJSON;
+        
+        if (response.success && response.timesheets) {
+          if (response.timesheets.length === 0) {
+            container.innerHTML = '<p class="has-text-centered has-text-grey"><span class="icon is-large"><i class="fa-solid fa-3x <%= configFunctions.getConfigProperty("timesheets.iconClass") %>"></i></span><br />No related timesheets found.</p>';
+            return;
+          }
+          
+          let html = '<div class="table-container"><table class="table is-fullwidth is-striped is-hoverable">';
+          html += '<thead><tr><th>Timesheet ID</th><th>Date</th><th>Type</th><th>Title</th><th>Supervisor</th><th>Status</th></tr></thead><tbody>';
+          
+          for (const timesheet of response.timesheets) {
+            const timesheetDate = new Date(timesheet.timesheetDate).toLocaleDateString();
+            const timesheetUrl = '<%= urlPrefix %>/<%= configFunctions.getConfigProperty("timesheets.router") %>/' + timesheet.timesheetId;
+            
+            let statusBadge = '';
+            if (timesheet.recordSubmitted_dateTime) {
+              statusBadge = '<span class="tag is-success">Submitted</span>';
+            } else if (timesheet.employeesEntered_dateTime || timesheet.equipmentEntered_dateTime) {
+              statusBadge = '<span class="tag is-warning">Data Entered</span>';
+            } else {
+              statusBadge = '<span class="tag is-info">Draft</span>';
+            }
+            
+            html += '<tr>';
+            html += '<td><a href="' + cityssm.escapeHTML(timesheetUrl) + '">#' + timesheet.timesheetId + '</a></td>';
+            html += '<td>' + cityssm.escapeHTML(timesheetDate) + '</td>';
+            html += '<td>' + cityssm.escapeHTML(timesheet.timesheetTypeDataListItem || '') + '</td>';
+            html += '<td>' + cityssm.escapeHTML(timesheet.timesheetTitle || '') + '</td>';
+            html += '<td>' + cityssm.escapeHTML((timesheet.supervisorLastName || '') + ', ' + (timesheet.supervisorFirstName || '')) + '</td>';
+            html += '<td>' + statusBadge + '</td>';
+            html += '</tr>';
+          }
+          
+          html += '</tbody></table></div>';
+          container.innerHTML = html;
+        } else {
+          container.innerHTML = '<p class="has-text-centered has-text-danger">Error loading timesheets.</p>';
+        }
+      }
+    );
+  }
+  
+  // Load timesheets when the tab is shown
+  const timesheetsTabLink = document.querySelector('a[href="#tab--timesheets"]');
+  if (timesheetsTabLink) {
+    timesheetsTabLink.addEventListener('click', function() {
+      loadShiftTimesheets();
+    });
+  }
+})();
+</script>
+<% } %>
 <% } %>
 
 <%- await include('../_footerB'); -%>
