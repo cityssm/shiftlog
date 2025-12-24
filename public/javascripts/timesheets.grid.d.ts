@@ -33,4 +33,9 @@ export declare class TimesheetGrid {
         hideEmptyColumns?: boolean;
     }): void;
 }
+declare global {
+    interface Window {
+        TimesheetGrid: typeof TimesheetGrid;
+    }
+}
 export {};

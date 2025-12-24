@@ -7,16 +7,13 @@
         formEvent.preventDefault();
     });
     const inputElements = formElement === null || formElement === void 0 ? void 0 : formElement.querySelectorAll('input, select, textarea');
-    if (inputElements !== null) {
-        for (let i = 0; i < inputElements.length; i++) {
-            const inputElement = inputElements[i];
-            inputElement.disabled = true;
-            if (inputElement.tagName.toLowerCase() !== 'select') {
-                ;
-                inputElement.readOnly = true;
-            }
+    inputElements === null || inputElements === void 0 ? void 0 : inputElements.forEach((inputElement) => {
+        inputElement.disabled = true;
+        if (inputElement.tagName.toLowerCase() !== 'select') {
+            ;
+            inputElement.readOnly = true;
         }
-    }
+    });
     /*
      * Initialize timesheet grid (view-only mode)
      */

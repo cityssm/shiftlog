@@ -470,4 +470,10 @@ export class TimesheetGrid {
 }
 
 // Export for use in other scripts
-;(window as unknown as { TimesheetGrid: typeof TimesheetGrid }).TimesheetGrid = TimesheetGrid
+declare global {
+  interface Window {
+    TimesheetGrid: typeof TimesheetGrid
+  }
+}
+
+window.TimesheetGrid = TimesheetGrid

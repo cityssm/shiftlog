@@ -381,6 +381,4 @@ export class TimesheetGrid {
         this.render();
     }
 }
-// Export for use in other scripts
-;
 window.TimesheetGrid = TimesheetGrid;

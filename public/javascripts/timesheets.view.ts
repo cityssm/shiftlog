@@ -19,16 +19,13 @@ declare const TimesheetGrid: typeof TimesheetGridClass
     'input, select, textarea'
   ) as NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 
-  if (inputElements !== null) {
-    for (let i = 0; i < inputElements.length; i++) {
-      const inputElement = inputElements[i]
-      inputElement.disabled = true
+  inputElements?.forEach((inputElement) => {
+    inputElement.disabled = true
 
-      if (inputElement.tagName.toLowerCase() !== 'select') {
-        ;(inputElement as HTMLInputElement | HTMLTextAreaElement).readOnly = true
-      }
+    if (inputElement.tagName.toLowerCase() !== 'select') {
+      ;(inputElement as HTMLInputElement | HTMLTextAreaElement).readOnly = true
     }
-  }
+  })
 
   /*
    * Initialize timesheet grid (view-only mode)
