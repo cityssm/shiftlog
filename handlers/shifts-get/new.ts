@@ -29,7 +29,7 @@ export default async function handler(
   if (request.query.date !== undefined && request.query.date !== '') {
     try {
       const parsedDate = new Date(request.query.date)
-      if (!isNaN(parsedDate.getTime())) {
+      if (!Number.isNaN(parsedDate.getTime())) {
         shiftDate = parsedDate
       }
     } catch {
