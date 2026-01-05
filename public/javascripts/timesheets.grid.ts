@@ -132,6 +132,7 @@ class TimesheetGrid {
   private createCellElement(row: TimesheetRow, column: TimesheetColumn): HTMLTableCellElement {
     const td = document.createElement('td')
     td.className = 'timesheet-cell'
+    td.style.textAlign = 'right'
     
     const hours = this.getCellHours(row.timesheetRowId, column.timesheetColumnId)
     
@@ -149,13 +150,12 @@ class TimesheetGrid {
       input.addEventListener('change', () => {
         const newHours = input.value === '' ? 0 : Number.parseFloat(input.value)
         this.updateCell(row.timesheetRowId, column.timesheetColumnId, newHours)
-        this.render()
+        this.updateTotals()
       })
       
       td.append(input)
     } else {
       td.textContent = hours > 0 ? hours.toString() : ''
-      td.style.textAlign = 'right'
     }
     
     return td
@@ -187,13 +187,49 @@ class TimesheetGrid {
     )
   }
 
+  private updateTotals(): void {
+    // Update column totals
+    for (const column of this.columns) {
+      const columnTotal = this.getColumnTotal(column.timesheetColumnId)
+      const columnHeader = document.querySelector(
+        `th[data-column-id="${column.timesheetColumnId}"]`
+      ) as HTMLElement | null
+      
+      if (columnHeader !== null) {
+        if (columnTotal === 0) {
+          columnHeader.classList.add('has-background-warning-light')
+        } else {
+          columnHeader.classList.remove('has-background-warning-light')
+        }
+      }
+    }
+
+    // Update row totals
+    for (const row of this.rows) {
+      const rowTotal = this.getRowTotal(row.timesheetRowId)
+      const totalCell = document.querySelector(
+        `td[data-row-total="${row.timesheetRowId}"]`
+      ) as HTMLElement | null
+      
+      if (totalCell !== null) {
+        totalCell.textContent = rowTotal.toString()
+        
+        if (rowTotal === 0) {
+          totalCell.classList.add('has-background-warning-light')
+        } else {
+          totalCell.classList.remove('has-background-warning-light')
+        }
+      }
+    }
+  }
+
   render(): void {
     const visibleColumns = this.columns.filter(col => this.shouldShowColumn(col))
     const visibleRows = this.rows.filter(row => this.shouldShowRow(row))
 
     // Create table
     const table = document.createElement('table')
-    table.className = 'table is-bordered is-striped is-hoverable is-fullwidth timesheet-grid'
+    table.className = 'table is-bordered is-striped is-hoverable is-fullwidth has-sticky-header timesheet-grid'
     
     // Create header
     const thead = document.createElement('thead')
@@ -228,6 +264,7 @@ class TimesheetGrid {
     for (let colIndex = 0; colIndex < visibleColumns.length; colIndex++) {
       const column = visibleColumns[colIndex]
       const th = document.createElement('th')
+      th.dataset.columnId = column.timesheetColumnId.toString()
       th.textContent = column.columnTitle
       th.style.minWidth = '100px'
       th.style.textAlign = 'center'
@@ -383,6 +420,7 @@ class TimesheetGrid {
       
       // Total cell
       const tdTotal = document.createElement('td')
+      tdTotal.dataset.rowTotal = row.timesheetRowId.toString()
       const rowTotal = this.getRowTotal(row.timesheetRowId)
       tdTotal.textContent = rowTotal.toString()
       tdTotal.style.textAlign = 'right'

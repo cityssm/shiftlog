@@ -135,6 +135,7 @@ var TimesheetGrid = /** @class */ (function () {
         var _this = this;
         var td = document.createElement('td');
         td.className = 'timesheet-cell';
+        td.style.textAlign = 'right';
         var hours = this.getCellHours(row.timesheetRowId, column.timesheetColumnId);
         if (this.config.isEditable) {
             var input_1 = document.createElement('input');
@@ -149,13 +150,12 @@ var TimesheetGrid = /** @class */ (function () {
             input_1.addEventListener('change', function () {
                 var newHours = input_1.value === '' ? 0 : Number.parseFloat(input_1.value);
                 _this.updateCell(row.timesheetRowId, column.timesheetColumnId, newHours);
-                _this.render();
+                _this.updateTotals();
             });
             td.append(input_1);
         }
         else {
             td.textContent = hours > 0 ? hours.toString() : '';
-            td.style.textAlign = 'right';
         }
         return td;
     };
@@ -180,13 +180,44 @@ var TimesheetGrid = /** @class */ (function () {
             }
         });
     };
+    TimesheetGrid.prototype.updateTotals = function () {
+        // Update column totals
+        for (var _i = 0, _a = this.columns; _i < _a.length; _i++) {
+            var column = _a[_i];
+            var columnTotal = this.getColumnTotal(column.timesheetColumnId);
+            var columnHeader = document.querySelector("th[data-column-id=\"".concat(column.timesheetColumnId, "\"]"));
+            if (columnHeader !== null) {
+                if (columnTotal === 0) {
+                    columnHeader.classList.add('has-background-warning-light');
+                }
+                else {
+                    columnHeader.classList.remove('has-background-warning-light');
+                }
+            }
+        }
+        // Update row totals
+        for (var _b = 0, _c = this.rows; _b < _c.length; _b++) {
+            var row = _c[_b];
+            var rowTotal = this.getRowTotal(row.timesheetRowId);
+            var totalCell = document.querySelector("td[data-row-total=\"".concat(row.timesheetRowId, "\"]"));
+            if (totalCell !== null) {
+                totalCell.textContent = rowTotal.toString();
+                if (rowTotal === 0) {
+                    totalCell.classList.add('has-background-warning-light');
+                }
+                else {
+                    totalCell.classList.remove('has-background-warning-light');
+                }
+            }
+        }
+    };
     TimesheetGrid.prototype.render = function () {
         var _this = this;
         var visibleColumns = this.columns.filter(function (col) { return _this.shouldShowColumn(col); });
         var visibleRows = this.rows.filter(function (row) { return _this.shouldShowRow(row); });
         // Create table
         var table = document.createElement('table');
-        table.className = 'table is-bordered is-striped is-hoverable is-fullwidth timesheet-grid';
+        table.className = 'table is-bordered is-striped is-hoverable is-fullwidth has-sticky-header timesheet-grid';
         // Create header
         var thead = document.createElement('thead');
         var headerRow = document.createElement('tr');
@@ -214,6 +245,7 @@ var TimesheetGrid = /** @class */ (function () {
         var _loop_1 = function (colIndex) {
             var column = visibleColumns[colIndex];
             var th = document.createElement('th');
+            th.dataset.columnId = column.timesheetColumnId.toString();
             th.textContent = column.columnTitle;
             th.style.minWidth = '100px';
             th.style.textAlign = 'center';
@@ -348,6 +380,7 @@ var TimesheetGrid = /** @class */ (function () {
             }
             // Total cell
             var tdTotal = document.createElement('td');
+            tdTotal.dataset.rowTotal = row.timesheetRowId.toString();
             var rowTotal = this_2.getRowTotal(row.timesheetRowId);
             tdTotal.textContent = rowTotal.toString();
             tdTotal.style.textAlign = 'right';
