@@ -150,7 +150,6 @@ class TimesheetGrid {
       input.addEventListener('change', () => {
         const newHours = input.value === '' ? 0 : Number.parseFloat(input.value)
         this.updateCell(row.timesheetRowId, column.timesheetColumnId, newHours)
-        this.updateTotals()
       })
       
       td.append(input)
@@ -176,6 +175,7 @@ class TimesheetGrid {
         
         if (result.success) {
           this.setCellHours(rowId, columnId, hours)
+          this.updateTotals()
         } else {
           bulmaJS.alert({
             title: 'Error',
