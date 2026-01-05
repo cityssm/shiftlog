@@ -1,7 +1,8 @@
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
+import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { Shift } from '../../record.types.js'
+import type { Shift } from '../../types/record.types.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -15,8 +16,8 @@ declare const exports: {
     hideEmptyRows: boolean
     hideEmptyColumns: boolean
   }) => {
-    init(): Promise<void>
-    setDisplayOptions(options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean }): void
+    init: () => Promise<void>
+    setDisplayOptions: (options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean }) => void
   }
 }
 ;(() => {
@@ -78,7 +79,7 @@ declare const exports: {
 
         if (response.success && response.shifts !== undefined) {
           // Check if we have a temporarily stored shift ID (from initial page load)
-          const tempShiftId = shiftIdElement.getAttribute('data-temp-shift-id')
+          const tempShiftId = shiftIdElement.dataset.tempShiftId
           const currentShiftId = tempShiftId ?? shiftIdElement.value
 
           // Rebuild shift dropdown
@@ -87,7 +88,7 @@ declare const exports: {
           for (const shift of response.shifts) {
             const optionElement = document.createElement('option')
             optionElement.value = shift.shiftId.toString()
-            optionElement.textContent = `Shift #${shift.shiftId} - ${shift.shiftTimeDataListItem ?? ''} (${shift.shiftDescription})`
+            optionElement.textContent = `Shift #${shift.shiftId} - ${shift.shiftTimeDataListItem ?? ''} (${shift.shiftTypeDataListItem ?? ''})`
             
             if (shift.shiftId.toString() === currentShiftId) {
               optionElement.selected = true
@@ -98,7 +99,7 @@ declare const exports: {
           
           // Clear the temporary attribute after first load
           if (tempShiftId !== null) {
-            shiftIdElement.removeAttribute('data-temp-shift-id')
+            delete shiftIdElement.dataset.tempShiftId
           }
         }
       }
@@ -117,11 +118,11 @@ declare const exports: {
   // Load shifts on page load (for both create and edit modes)
   if (supervisorElement !== null && timesheetDateElement !== null) {
     // Get initial shift ID from data attribute
-    const initialShiftId = shiftIdElement?.getAttribute('data-initial-value') ?? ''
+    const initialShiftId = shiftIdElement?.dataset.initialValue ?? ''
     
     // Store it temporarily
     if (shiftIdElement !== null && initialShiftId !== '') {
-      shiftIdElement.setAttribute('data-temp-shift-id', initialShiftId)
+      shiftIdElement.dataset.tempShiftId = initialShiftId
     }
     
     loadAvailableShifts()
@@ -198,7 +199,7 @@ declare const exports: {
       }
 
       // Initialize grid
-      grid.init().catch((error) => {
+      grid.init().catch((error: unknown) => {
         console.error('Error initializing grid:', error)
       })
 

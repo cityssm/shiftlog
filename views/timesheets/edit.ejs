@@ -61,8 +61,8 @@
       </p>
       <% if (user.userProperties.isAdmin) { %>
       <p class="has-text-right">
-        <a class="button is-link" href="<%= urlPrefix %>/admin/dataLists">
-          Data List Management
+        <a class="button is-link" href="<%= urlPrefix %>/admin/employees">
+          Employee Management
         </a>
       </p>
       <% } %>
@@ -246,7 +246,6 @@
 </div>
 <% } %>
 
-<% if (!isCreate) { %>
 <div class="columns is-vcentered is-fixed-bottom has-background-white has-shadow is-hidden-print">
   <div class="column">
     <% if (!isCreate) { %>
@@ -261,7 +260,7 @@
         Cancel
       </a>
       <% } %>
-      <% if (isEdit) { %>
+      <% if (!isCreate && isEdit) { %>
       <div class="dropdown is-up is-right">
         <div class="dropdown-trigger">
           <button class="button is-primary">
@@ -292,6 +291,8 @@
           </div>
         </div>
       </div>
+      <% } %>
+      <% if (isEdit) { %>
       <button class="button is-primary is-light" type="submit" form="form--timesheet">
         <span class="icon is-small"><i class="fa-solid fa-save"></i></span>
         <span>
@@ -318,7 +319,6 @@
     </div>
   </div>
 </div>
-<% } %>
 
 <%- await include('../_footerA'); -%>
 
