@@ -36,27 +36,45 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = getDataListItems;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var config_helpers_js_1 = require("../../helpers/config.helpers.js");
-function getDataListItems(dataListKey, userName) {
+exports.default = handler;
+var getDataListItems_js_1 = require("../../database/app/getDataListItems.js");
+var getEmployees_js_1 = require("../../database/employees/getEmployees.js");
+var getEquipmentList_js_1 = require("../../database/equipment/getEquipmentList.js");
+function handler(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool, dataListItemsResult;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+        var _a, employees, equipment, jobClassifications, timeCodes;
+        var _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0: return [4 /*yield*/, Promise.all([
+                        (0, getEmployees_js_1.default)(),
+                        (0, getEquipmentList_js_1.default)(),
+                        (0, getDataListItems_js_1.default)('jobClassifications', (_b = request.session.user) === null || _b === void 0 ? void 0 : _b.userName),
+                        (0, getDataListItems_js_1.default)('timeCodes', (_c = request.session.user) === null || _c === void 0 ? void 0 : _c.userName)
+                    ])];
                 case 1:
-                    pool = _a.sent();
-                    return [4 /*yield*/, pool
-                            .request()
-                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
-                            .input('dataListKey', dataListKey)
-                            .input('userName', userName).query(/* sql */ "\n      select\n        i.dataListItemId, i.dataListKey, i.dataListItem\n      from ShiftLog.DataListItems i\n      where i.instance = @instance\n        and i.dataListKey = @dataListKey\n        and i.recordDelete_dateTime is null\n        ".concat(userName === undefined
-                            ? ''
-                            : "\n                and (i.userGroupId is null or i.userGroupId in (\n                  select userGroupId\n                  from ShiftLog.UserGroupMembers\n                  where userName = @userName\n                ))\n              ", "\n      order by i.orderNumber, i.dataListItem\n    "))];
-                case 2:
-                    dataListItemsResult = _a.sent();
-                    return [2 /*return*/, dataListItemsResult.recordset];
+                    _a = _d.sent(), employees = _a[0], equipment = _a[1], jobClassifications = _a[2], timeCodes = _a[3];
+                    response.json({
+                        success: true,
+                        employees: employees.map(function (e) { return ({
+                            employeeNumber: e.employeeNumber,
+                            firstName: e.firstName,
+                            lastName: e.lastName
+                        }); }),
+                        equipment: equipment.map(function (e) { return ({
+                            equipmentNumber: e.equipmentNumber,
+                            equipmentName: e.equipmentName
+                        }); }),
+                        jobClassifications: jobClassifications.map(function (j) { return ({
+                            dataListItemId: j.dataListItemId,
+                            dataListItem: j.dataListItem
+                        }); }),
+                        timeCodes: timeCodes.map(function (t) { return ({
+                            dataListItemId: t.dataListItemId,
+                            dataListItem: t.dataListItem
+                        }); })
+                    });
+                    return [2 /*return*/];
             }
         });
     });

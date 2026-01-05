@@ -564,6 +564,131 @@ class TimesheetGrid {
     })
   }
 
+  addRow(): void {
+    let closeModalFunction: () => void
+
+    const doAddRow = (submitEvent: Event): void => {
+      submitEvent.preventDefault()
+
+      const addForm = submitEvent.currentTarget as HTMLFormElement
+
+      cityssm.postJSON(
+        `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`,
+        addForm,
+        (rawResponseJSON) => {
+          const result = rawResponseJSON as { 
+            success: boolean
+            timesheetRowId?: number
+          }
+
+          if (result.success) {
+            closeModalFunction()
+            this.loadData().then(() => {
+              this.render()
+            }).catch((error) => {
+              console.error('Error reloading data:', error)
+            })
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'Row Added',
+              message: 'The row has been successfully added.'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error Adding Row',
+              message: 'Please try again.'
+            })
+          }
+        }
+      )
+    }
+
+    // Load options for the modal
+    cityssm.postJSON(
+      `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`,
+      {},
+      (rawResponseJSON) => {
+        const optionsData = rawResponseJSON as {
+          success: boolean
+          employees: Array<{ employeeNumber: string; firstName: string; lastName: string }>
+          equipment: Array<{ equipmentNumber: string; equipmentName: string }>
+          jobClassifications: Array<{ dataListItemId: number; dataListItem: string }>
+          timeCodes: Array<{ dataListItemId: number; dataListItem: string }>
+        }
+
+        if (!optionsData.success) {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            title: 'Error',
+            message: 'Failed to load row options.'
+          })
+          return
+        }
+
+        cityssm.openHtmlModal('timesheets-addRow', {
+          onshow: (modalElement) => {
+            // Set the timesheet ID
+            ;(modalElement.querySelector('#addTimesheetRow--timesheetId') as HTMLInputElement).value = this.config.timesheetId.toString()
+
+            // Clear form fields
+            ;(modalElement.querySelector('#addTimesheetRow--rowTitle') as HTMLInputElement).value = ''
+
+            // Populate employees
+            const employeeSelect = modalElement.querySelector('#addTimesheetRow--employeeNumber') as HTMLSelectElement
+            employeeSelect.innerHTML = '<option value="">(None)</option>'
+            for (const employee of optionsData.employees) {
+              employeeSelect.insertAdjacentHTML(
+                'beforeend',
+                `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)} (${cityssm.escapeHTML(employee.employeeNumber)})</option>`
+              )
+            }
+
+            // Populate equipment
+            const equipmentSelect = modalElement.querySelector('#addTimesheetRow--equipmentNumber') as HTMLSelectElement
+            equipmentSelect.innerHTML = '<option value="">(None)</option>'
+            for (const equip of optionsData.equipment) {
+              equipmentSelect.insertAdjacentHTML(
+                'beforeend',
+                `<option value="${cityssm.escapeHTML(equip.equipmentNumber)}">${cityssm.escapeHTML(equip.equipmentName)} (${cityssm.escapeHTML(equip.equipmentNumber)})</option>`
+              )
+            }
+
+            // Populate job classifications
+            const jobClassSelect = modalElement.querySelector('#addTimesheetRow--jobClassificationDataListItemId') as HTMLSelectElement
+            jobClassSelect.innerHTML = '<option value="">(None)</option>'
+            for (const jobClass of optionsData.jobClassifications) {
+              jobClassSelect.insertAdjacentHTML(
+                'beforeend',
+                `<option value="${jobClass.dataListItemId.toString()}">${cityssm.escapeHTML(jobClass.dataListItem)}</option>`
+              )
+            }
+
+            // Populate time codes
+            const timeCodeSelect = modalElement.querySelector('#addTimesheetRow--timeCodeDataListItemId') as HTMLSelectElement
+            timeCodeSelect.innerHTML = '<option value="">(None)</option>'
+            for (const timeCode of optionsData.timeCodes) {
+              timeCodeSelect.insertAdjacentHTML(
+                'beforeend',
+                `<option value="${timeCode.dataListItemId.toString()}">${cityssm.escapeHTML(timeCode.dataListItem)}</option>`
+              )
+            }
+
+            // Attach form submit handler
+            modalElement.querySelector('form')?.addEventListener('submit', doAddRow)
+          },
+          onshown(_modalElement, closeFunction) {
+            bulmaJS.toggleHtmlClipped()
+            closeModalFunction = closeFunction
+          },
+          onremoved() {
+            bulmaJS.toggleHtmlClipped()
+          }
+        })
+      }
+    )
+  }
+
   deleteColumn(column: TimesheetColumn): void {
     const columnTotal = this.getColumnTotal(column.timesheetColumnId)
     
@@ -676,14 +801,134 @@ class TimesheetGrid {
   }
 
   private editRow(row: TimesheetRow): void {
-    // TODO: Implement row edit modal
-    console.log('Edit row', row)
+    let closeModalFunction: () => void
+
+    const doUpdateRow = (submitEvent: Event): void => {
+      submitEvent.preventDefault()
+
+      const editForm = submitEvent.currentTarget as HTMLFormElement
+
+      cityssm.postJSON(
+        `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetRow`,
+        editForm,
+        (rawResponseJSON) => {
+          const result = rawResponseJSON as { success: boolean }
+
+          if (result.success) {
+            closeModalFunction()
+            this.loadData().then(() => {
+              this.render()
+            }).catch((error) => {
+              console.error('Error reloading data:', error)
+            })
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'Row Updated',
+              message: 'The row has been successfully updated.'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error Updating Row',
+              message: 'Please try again.'
+            })
+          }
+        }
+      )
+    }
+
+    // Load options for the modal
+    cityssm.postJSON(
+      `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`,
+      {},
+      (rawResponseJSON) => {
+        const optionsData = rawResponseJSON as {
+          success: boolean
+          jobClassifications: Array<{ dataListItemId: number; dataListItem: string }>
+          timeCodes: Array<{ dataListItemId: number; dataListItem: string }>
+        }
+
+        if (!optionsData.success) {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            title: 'Error',
+            message: 'Failed to load row options.'
+          })
+          return
+        }
+
+        cityssm.openHtmlModal('timesheets-editRow', {
+          onshow(modalElement) {
+            // Set form values
+            ;(modalElement.querySelector('#editTimesheetRow--timesheetRowId') as HTMLInputElement).value = row.timesheetRowId.toString()
+            ;(modalElement.querySelector('#editTimesheetRow--rowTitle') as HTMLInputElement).value = row.rowTitle
+
+            // Display employee (read-only)
+            const employeeDisplay = modalElement.querySelector('#editTimesheetRow--employeeDisplay') as HTMLInputElement
+            if (row.employeeNumber !== undefined && row.employeeNumber !== null) {
+              employeeDisplay.value = `${row.employeeLastName ?? ''}, ${row.employeeFirstName ?? ''} (${row.employeeNumber})`
+            } else {
+              employeeDisplay.value = '(None)'
+            }
+
+            // Display equipment (read-only)
+            const equipmentDisplay = modalElement.querySelector('#editTimesheetRow--equipmentDisplay') as HTMLInputElement
+            if (row.equipmentNumber !== undefined && row.equipmentNumber !== null) {
+              equipmentDisplay.value = `${row.equipmentName ?? ''} (${row.equipmentNumber})`
+            } else {
+              equipmentDisplay.value = '(None)'
+            }
+
+            // Populate job classifications
+            const jobClassSelect = modalElement.querySelector('#editTimesheetRow--jobClassificationDataListItemId') as HTMLSelectElement
+            jobClassSelect.innerHTML = '<option value="">(None)</option>'
+            for (const jobClass of optionsData.jobClassifications) {
+              const selected = row.jobClassificationDataListItemId === jobClass.dataListItemId
+              jobClassSelect.insertAdjacentHTML(
+                'beforeend',
+                `<option value="${jobClass.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(jobClass.dataListItem)}</option>`
+              )
+            }
+
+            // Populate time codes
+            const timeCodeSelect = modalElement.querySelector('#editTimesheetRow--timeCodeDataListItemId') as HTMLSelectElement
+            timeCodeSelect.innerHTML = '<option value="">(None)</option>'
+            for (const timeCode of optionsData.timeCodes) {
+              const selected = row.timeCodeDataListItemId === timeCode.dataListItemId
+              timeCodeSelect.insertAdjacentHTML(
+                'beforeend',
+                `<option value="${timeCode.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(timeCode.dataListItem)}</option>`
+              )
+            }
+
+            // Attach form submit handler
+            modalElement.querySelector('form')?.addEventListener('submit', doUpdateRow)
+          },
+          onshown(_modalElement, closeFunction) {
+            bulmaJS.toggleHtmlClipped()
+            closeModalFunction = closeFunction
+          },
+          onremoved() {
+            bulmaJS.toggleHtmlClipped()
+          }
+        })
+      }
+    )
   }
 
   private deleteRow(row: TimesheetRow): void {
+    const rowTotal = this.getRowTotal(row.timesheetRowId)
+    
+    let message = 'Are you sure you want to delete this row?'
+    
+    if (rowTotal > 0) {
+      message = `<strong>Warning:</strong> This row has <strong>${rowTotal} recorded hours</strong>. All associated hours will be permanently lost.<br><br>Are you sure you want to delete this row?`
+    }
+    
     bulmaJS.confirm({
       title: 'Delete Row',
-      message: 'Are you sure you want to delete this row? All associated hours will be lost.',
+      message,
+      messageIsHtml: true,
       contextualColorName: 'danger',
       okButton: {
         text: 'Delete',
@@ -703,6 +948,11 @@ class TimesheetGrid {
                   this.render()
                 }).catch((error) => {
                   console.error('Error reloading data:', error)
+                })
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  title: 'Row Deleted',
+                  message: 'The row has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
