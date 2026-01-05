@@ -225,7 +225,8 @@ class TimesheetGrid {
     headerRow.append(thCorner)
     
     // Column headers
-    for (const column of visibleColumns) {
+    for (let colIndex = 0; colIndex < visibleColumns.length; colIndex++) {
+      const column = visibleColumns[colIndex]
       const th = document.createElement('th')
       th.textContent = column.columnTitle
       th.style.minWidth = '100px'
@@ -246,6 +247,26 @@ class TimesheetGrid {
       if (this.config.isEditable) {
         const columnActions = document.createElement('div')
         columnActions.className = 'buttons are-small is-centered mt-2'
+        
+        // Move left button (only if not first column)
+        if (colIndex > 0) {
+          const moveLeftButton = document.createElement('button')
+          moveLeftButton.className = 'button is-light is-small'
+          moveLeftButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>'
+          moveLeftButton.title = 'Move Left'
+          moveLeftButton.addEventListener('click', () => this.moveColumn(column, 'left'))
+          columnActions.append(moveLeftButton)
+        }
+        
+        // Move right button (only if not last column)
+        if (colIndex < visibleColumns.length - 1) {
+          const moveRightButton = document.createElement('button')
+          moveRightButton.className = 'button is-light is-small'
+          moveRightButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>'
+          moveRightButton.title = 'Move Right'
+          moveRightButton.addEventListener('click', () => this.moveColumn(column, 'right'))
+          columnActions.append(moveRightButton)
+        }
         
         const editButton = document.createElement('button')
         editButton.className = 'button is-info is-small'
@@ -555,6 +576,65 @@ class TimesheetGrid {
         }
       }
     })
+  }
+
+  moveColumn(column: TimesheetColumn, direction: 'left' | 'right'): void {
+    // Find the current column and the adjacent one
+    const currentIndex = this.columns.findIndex(c => c.timesheetColumnId === column.timesheetColumnId)
+    
+    if (currentIndex === -1) {
+      return
+    }
+    
+    let targetIndex: number
+    if (direction === 'left') {
+      targetIndex = currentIndex - 1
+      if (targetIndex < 0) {
+        return
+      }
+    } else {
+      targetIndex = currentIndex + 1
+      if (targetIndex >= this.columns.length) {
+        return
+      }
+    }
+    
+    // Swap the columns in the array
+    const newColumns = [...this.columns]
+    const temp = newColumns[currentIndex]
+    newColumns[currentIndex] = newColumns[targetIndex]
+    newColumns[targetIndex] = temp
+    
+    // Build the new order array
+    const timesheetColumnIds = newColumns.map(c => c.timesheetColumnId)
+    
+    // Send the reorder request
+    const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
+    
+    cityssm.postJSON(
+      `${timesheetUrlPrefix}/doReorderTimesheetColumns`,
+      {
+        timesheetId: this.config.timesheetId,
+        timesheetColumnIds
+      },
+      (rawResponseJSON) => {
+        const result = rawResponseJSON as { success: boolean }
+        
+        if (result.success) {
+          this.loadData().then(() => {
+            this.render()
+          }).catch((error) => {
+            console.error('Error reloading data:', error)
+          })
+        } else {
+          bulmaJS.alert({
+            title: 'Error',
+            message: 'Failed to reorder columns',
+            contextualColorName: 'danger'
+          })
+        }
+      }
+    )
   }
 
   private editRow(row: TimesheetRow): void {

@@ -35,6 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var TimesheetGrid = /** @class */ (function () {
     function TimesheetGrid(containerElement, config) {
@@ -202,7 +211,8 @@ var TimesheetGrid = /** @class */ (function () {
             thCorner.append(addRowButton);
         }
         headerRow.append(thCorner);
-        var _loop_1 = function (column) {
+        var _loop_1 = function (colIndex) {
+            var column = visibleColumns[colIndex];
             var th = document.createElement('th');
             th.textContent = column.columnTitle;
             th.style.minWidth = '100px';
@@ -220,6 +230,24 @@ var TimesheetGrid = /** @class */ (function () {
             if (this_1.config.isEditable) {
                 var columnActions = document.createElement('div');
                 columnActions.className = 'buttons are-small is-centered mt-2';
+                // Move left button (only if not first column)
+                if (colIndex > 0) {
+                    var moveLeftButton = document.createElement('button');
+                    moveLeftButton.className = 'button is-light is-small';
+                    moveLeftButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>';
+                    moveLeftButton.title = 'Move Left';
+                    moveLeftButton.addEventListener('click', function () { return _this.moveColumn(column, 'left'); });
+                    columnActions.append(moveLeftButton);
+                }
+                // Move right button (only if not last column)
+                if (colIndex < visibleColumns.length - 1) {
+                    var moveRightButton = document.createElement('button');
+                    moveRightButton.className = 'button is-light is-small';
+                    moveRightButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>';
+                    moveRightButton.title = 'Move Right';
+                    moveRightButton.addEventListener('click', function () { return _this.moveColumn(column, 'right'); });
+                    columnActions.append(moveRightButton);
+                }
                 var editButton = document.createElement('button');
                 editButton.className = 'button is-info is-small';
                 editButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
@@ -237,9 +265,8 @@ var TimesheetGrid = /** @class */ (function () {
         };
         var this_1 = this;
         // Column headers
-        for (var _i = 0, visibleColumns_1 = visibleColumns; _i < visibleColumns_1.length; _i++) {
-            var column = visibleColumns_1[_i];
-            _loop_1(column);
+        for (var colIndex = 0; colIndex < visibleColumns.length; colIndex++) {
+            _loop_1(colIndex);
         }
         // Add column header (before Total Hours)
         if (this.config.isEditable) {
@@ -308,8 +335,8 @@ var TimesheetGrid = /** @class */ (function () {
             }
             tr.append(tdLabel);
             // Create cells for each column
-            for (var _b = 0, visibleColumns_2 = visibleColumns; _b < visibleColumns_2.length; _b++) {
-                var column = visibleColumns_2[_b];
+            for (var _a = 0, visibleColumns_1 = visibleColumns; _a < visibleColumns_1.length; _a++) {
+                var column = visibleColumns_1[_a];
                 var td = this_2.createCellElement(row, column);
                 tr.append(td);
             }
@@ -332,8 +359,8 @@ var TimesheetGrid = /** @class */ (function () {
             tbody.append(tr);
         };
         var this_2 = this;
-        for (var _a = 0, visibleRows_1 = visibleRows; _a < visibleRows_1.length; _a++) {
-            var row = visibleRows_1[_a];
+        for (var _i = 0, visibleRows_1 = visibleRows; _i < visibleRows_1.length; _i++) {
+            var row = visibleRows_1[_i];
             _loop_2(row);
         }
         table.append(tbody);
@@ -486,6 +513,56 @@ var TimesheetGrid = /** @class */ (function () {
                         }
                     });
                 }
+            }
+        });
+    };
+    TimesheetGrid.prototype.moveColumn = function (column, direction) {
+        var _this = this;
+        // Find the current column and the adjacent one
+        var currentIndex = this.columns.findIndex(function (c) { return c.timesheetColumnId === column.timesheetColumnId; });
+        if (currentIndex === -1) {
+            return;
+        }
+        var targetIndex;
+        if (direction === 'left') {
+            targetIndex = currentIndex - 1;
+            if (targetIndex < 0) {
+                return;
+            }
+        }
+        else {
+            targetIndex = currentIndex + 1;
+            if (targetIndex >= this.columns.length) {
+                return;
+            }
+        }
+        // Swap the columns in the array
+        var newColumns = __spreadArray([], this.columns, true);
+        var temp = newColumns[currentIndex];
+        newColumns[currentIndex] = newColumns[targetIndex];
+        newColumns[targetIndex] = temp;
+        // Build the new order array
+        var timesheetColumnIds = newColumns.map(function (c) { return c.timesheetColumnId; });
+        // Send the reorder request
+        var timesheetUrlPrefix = "".concat(this.shiftLog.urlPrefix, "/").concat(this.shiftLog.timesheetsRouter);
+        cityssm.postJSON("".concat(timesheetUrlPrefix, "/doReorderTimesheetColumns"), {
+            timesheetId: this.config.timesheetId,
+            timesheetColumnIds: timesheetColumnIds
+        }, function (rawResponseJSON) {
+            var result = rawResponseJSON;
+            if (result.success) {
+                _this.loadData().then(function () {
+                    _this.render();
+                }).catch(function (error) {
+                    console.error('Error reloading data:', error);
+                });
+            }
+            else {
+                bulmaJS.alert({
+                    title: 'Error',
+                    message: 'Failed to reorder columns',
+                    contextualColorName: 'danger'
+                });
             }
         });
     };
