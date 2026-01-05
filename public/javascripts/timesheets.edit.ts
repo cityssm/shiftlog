@@ -258,8 +258,7 @@ declare const exports: {
         copyFromShiftButton.addEventListener('click', (event) => {
           event.preventDefault()
           dropdownElement?.classList.remove('is-active')
-          // TODO: Show copy from shift modal
-          console.log('Copy from shift')
+          openCopyFromShiftModal()
         })
       }
 
@@ -269,8 +268,342 @@ declare const exports: {
         copyFromPreviousButton.addEventListener('click', (event) => {
           event.preventDefault()
           dropdownElement?.classList.remove('is-active')
-          // TODO: Show copy from previous modal
-          console.log('Copy from previous')
+          openCopyFromPreviousTimesheetModal()
+        })
+      }
+
+      /*
+       * Copy from Shift Modal
+       */
+      function openCopyFromShiftModal(): void {
+        let closeModalFunction: () => void
+
+        cityssm.openHtmlModal('timesheets-copyFromShift', {
+          onshow(modalElement) {
+            const timesheetId = timesheetIdElement.value
+            ;(modalElement.querySelector('#copyFromShift--timesheetId') as HTMLInputElement).value = timesheetId
+
+            const submitButton = modalElement.querySelector('#button--copyFromShift') as HTMLButtonElement
+            const listContainer = modalElement.querySelector('#list--shifts') as HTMLElement
+            const loadingNotice = modalElement.querySelector('#notice--loading') as HTMLElement
+            const noShiftsNotice = modalElement.querySelector('#notice--noShifts') as HTMLElement
+
+            let selectedShiftId: number | null = null
+
+            // Load available shifts
+            const supervisorEmployeeNumber = supervisorElement?.value ?? ''
+            const shiftDateString = timesheetDateElement?.value ?? ''
+
+            cityssm.postJSON(
+              `${urlPrefix}/doGetAvailableShifts`,
+              {
+                supervisorEmployeeNumber,
+                shiftDateString
+              },
+              (rawResponseJSON) => {
+                const response = rawResponseJSON as {
+                  success: boolean
+                  shifts?: Shift[]
+                }
+
+                loadingNotice.classList.add('is-hidden')
+
+                if (response.success && response.shifts !== undefined && response.shifts.length > 0) {
+                  listContainer.classList.remove('is-hidden')
+
+                  for (const shift of response.shifts) {
+                    const shiftElement = document.createElement('div')
+                    shiftElement.className = 'box is-clickable mb-2'
+                    shiftElement.dataset.shiftId = shift.shiftId.toString()
+                    
+                    shiftElement.innerHTML = `
+                      <div class="columns is-mobile is-vcentered">
+                        <div class="column">
+                          <strong>Shift #${cityssm.escapeHTML(shift.shiftId.toString())}</strong><br />
+                          <span class="is-size-7">
+                            ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '')}<br />
+                            ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}<br />
+                            Employees: ${shift.employeesCount ?? 0}, Equipment: ${shift.equipmentCount ?? 0}
+                          </span>
+                        </div>
+                        <div class="column is-narrow">
+                          <span class="icon is-hidden" data-shift-check>
+                            <i class="fa-solid fa-check has-text-success"></i>
+                          </span>
+                        </div>
+                      </div>
+                    `
+
+                    shiftElement.addEventListener('click', () => {
+                      // Deselect all
+                      listContainer.querySelectorAll('.box').forEach((box) => {
+                        box.classList.remove('has-background-success-light')
+                        ;(box.querySelector('[data-shift-check]') as HTMLElement)?.classList.add('is-hidden')
+                      })
+
+                      // Select this one
+                      shiftElement.classList.add('has-background-success-light')
+                      ;(shiftElement.querySelector('[data-shift-check]') as HTMLElement)?.classList.remove('is-hidden')
+                      selectedShiftId = shift.shiftId
+                      submitButton.disabled = false
+                    })
+
+                    listContainer.append(shiftElement)
+                  }
+                } else {
+                  noShiftsNotice.classList.remove('is-hidden')
+                }
+              }
+            )
+
+            // Handle form submission
+            modalElement.querySelector('#form--copyFromShift')?.addEventListener('submit', (formEvent) => {
+              formEvent.preventDefault()
+
+              if (selectedShiftId === null) {
+                return
+              }
+
+              submitButton.disabled = true
+
+              cityssm.postJSON(
+                `${urlPrefix}/doCopyFromShift`,
+                {
+                  shiftId: selectedShiftId,
+                  timesheetId
+                },
+                (rawResponseJSON) => {
+                  const response = rawResponseJSON as {
+                    success: boolean
+                  }
+
+                  if (response.success) {
+                    closeModalFunction()
+                    bulmaJS.alert({
+                      contextualColorName: 'success',
+                      message: 'Successfully copied data from shift.'
+                    })
+                    // Refresh the grid
+                    grid.init().catch((error: unknown) => {
+                      console.error('Error reinitializing grid:', error)
+                    })
+                  } else {
+                    bulmaJS.alert({
+                      contextualColorName: 'danger',
+                      message: 'An error occurred while copying from shift.'
+                    })
+                    submitButton.disabled = false
+                  }
+                }
+              )
+            })
+          },
+          onshown(_modalElement, closeFunction) {
+            closeModalFunction = closeFunction
+          }
+        })
+      }
+
+      /*
+       * Copy from Previous Timesheet Modal
+       */
+      function openCopyFromPreviousTimesheetModal(): void {
+        let closeModalFunction: () => void
+
+        cityssm.openHtmlModal('timesheets-copyFromPreviousTimesheet', {
+          onshow(modalElement) {
+            const timesheetId = timesheetIdElement.value
+            const timesheetTypeDataListItemId = (formElement.querySelector('#timesheet--timesheetTypeDataListItemId') as HTMLSelectElement)?.value ?? ''
+            const supervisorEmployeeNumber = supervisorElement?.value ?? ''
+
+            ;(modalElement.querySelector('#copyFromPreviousTimesheet--targetTimesheetId') as HTMLInputElement).value = timesheetId
+            ;(modalElement.querySelector('#searchTimesheets--currentTimesheetId') as HTMLInputElement).value = timesheetId
+
+            const submitButton = modalElement.querySelector('#button--copyFromPreviousTimesheet') as HTMLButtonElement
+            const listContainer = modalElement.querySelector('#list--timesheets') as HTMLElement
+            const searchResultsContainer = modalElement.querySelector('#container--searchResults') as HTMLElement
+            const noTimesheetsNotice = modalElement.querySelector('#notice--noTimesheets') as HTMLElement
+
+            // Populate timesheet type dropdown
+            const timesheetTypeSelect = modalElement.querySelector('#searchTimesheets--timesheetTypeDataListItemId') as HTMLSelectElement
+            const originalTimesheetTypeSelect = formElement.querySelector('#timesheet--timesheetTypeDataListItemId') as HTMLSelectElement
+            if (originalTimesheetTypeSelect !== null) {
+              Array.from(originalTimesheetTypeSelect.options).forEach((option) => {
+                if (option.value !== '') {
+                  const newOption = document.createElement('option')
+                  newOption.value = option.value
+                  newOption.textContent = option.textContent
+                  if (option.value === timesheetTypeDataListItemId) {
+                    newOption.selected = true
+                  }
+                  timesheetTypeSelect.append(newOption)
+                }
+              })
+            }
+
+            // Populate supervisor dropdown
+            const supervisorSelect = modalElement.querySelector('#searchTimesheets--supervisorEmployeeNumber') as HTMLSelectElement
+            const originalSupervisorSelect = formElement.querySelector('#timesheet--supervisorEmployeeNumber') as HTMLSelectElement
+            if (originalSupervisorSelect !== null) {
+              Array.from(originalSupervisorSelect.options).forEach((option) => {
+                if (option.value !== '') {
+                  const newOption = document.createElement('option')
+                  newOption.value = option.value
+                  newOption.textContent = option.textContent
+                  if (option.value === supervisorEmployeeNumber) {
+                    newOption.selected = true
+                  }
+                  supervisorSelect.append(newOption)
+                }
+              })
+            }
+
+            let selectedTimesheetId: number | null = null
+
+            // Search form submission
+            modalElement.querySelector('#form--searchTimesheets')?.addEventListener('submit', (formEvent) => {
+              formEvent.preventDefault()
+
+              const searchForm = formEvent.currentTarget as HTMLFormElement
+              const searchData = new FormData(searchForm)
+
+              // Clear previous results
+              listContainer.innerHTML = ''
+              selectedTimesheetId = null
+              submitButton.disabled = true
+
+              cityssm.postJSON(
+                `${urlPrefix}/doSearchTimesheets`,
+                {
+                  timesheetTypeDataListItemId: searchData.get('timesheetTypeDataListItemId') ?? '',
+                  supervisorEmployeeNumber: searchData.get('supervisorEmployeeNumber') ?? '',
+                  limit: 20,
+                  offset: 0
+                },
+                (rawResponseJSON) => {
+                  const response = rawResponseJSON as {
+                    success: boolean
+                    timesheets?: Array<{
+                      timesheetId: number
+                      timesheetDate: string
+                      timesheetTypeDataListItem?: string
+                      supervisorFirstName?: string
+                      supervisorLastName?: string
+                      timesheetTitle?: string
+                    }>
+                  }
+
+                  searchResultsContainer.classList.remove('is-hidden')
+
+                  if (response.success && response.timesheets !== undefined && response.timesheets.length > 0) {
+                    // Filter out the current timesheet
+                    const filteredTimesheets = response.timesheets.filter(
+                      (t) => t.timesheetId.toString() !== timesheetId
+                    )
+
+                    if (filteredTimesheets.length === 0) {
+                      noTimesheetsNotice.classList.remove('is-hidden')
+                      return
+                    }
+
+                    noTimesheetsNotice.classList.add('is-hidden')
+
+                    for (const timesheet of filteredTimesheets) {
+                      const timesheetElement = document.createElement('div')
+                      timesheetElement.className = 'box is-clickable mb-2'
+                      timesheetElement.dataset.timesheetId = timesheet.timesheetId.toString()
+                      
+                      const dateString = new Date(timesheet.timesheetDate).toLocaleDateString()
+                      const supervisorName = `${timesheet.supervisorLastName ?? ''}, ${timesheet.supervisorFirstName ?? ''}`
+                      
+                      timesheetElement.innerHTML = `
+                        <div class="columns is-mobile is-vcentered">
+                          <div class="column">
+                            <strong>Timesheet #${cityssm.escapeHTML(timesheet.timesheetId.toString())}</strong><br />
+                            <span class="is-size-7">
+                              ${cityssm.escapeHTML(timesheet.timesheetTypeDataListItem ?? '')}<br />
+                              ${cityssm.escapeHTML(dateString)}<br />
+                              Supervisor: ${cityssm.escapeHTML(supervisorName)}<br />
+                              ${timesheet.timesheetTitle ? cityssm.escapeHTML(timesheet.timesheetTitle) : ''}
+                            </span>
+                          </div>
+                          <div class="column is-narrow">
+                            <span class="icon is-hidden" data-timesheet-check>
+                              <i class="fa-solid fa-check has-text-success"></i>
+                            </span>
+                          </div>
+                        </div>
+                      `
+
+                      timesheetElement.addEventListener('click', () => {
+                        // Deselect all
+                        listContainer.querySelectorAll('.box').forEach((box) => {
+                          box.classList.remove('has-background-success-light')
+                          ;(box.querySelector('[data-timesheet-check]') as HTMLElement)?.classList.add('is-hidden')
+                        })
+
+                        // Select this one
+                        timesheetElement.classList.add('has-background-success-light')
+                        ;(timesheetElement.querySelector('[data-timesheet-check]') as HTMLElement)?.classList.remove('is-hidden')
+                        selectedTimesheetId = timesheet.timesheetId
+                        ;(modalElement.querySelector('#copyFromPreviousTimesheet--sourceTimesheetId') as HTMLInputElement).value = timesheet.timesheetId.toString()
+                        submitButton.disabled = false
+                      })
+
+                      listContainer.append(timesheetElement)
+                    }
+                  } else {
+                    noTimesheetsNotice.classList.remove('is-hidden')
+                  }
+                }
+              )
+            })
+
+            // Handle copy form submission
+            modalElement.querySelector('#form--copyFromPreviousTimesheet')?.addEventListener('submit', (formEvent) => {
+              formEvent.preventDefault()
+
+              if (selectedTimesheetId === null) {
+                return
+              }
+
+              submitButton.disabled = true
+
+              cityssm.postJSON(
+                `${urlPrefix}/doCopyFromPreviousTimesheet`,
+                {
+                  sourceTimesheetId: selectedTimesheetId,
+                  targetTimesheetId: timesheetId
+                },
+                (rawResponseJSON) => {
+                  const response = rawResponseJSON as {
+                    success: boolean
+                  }
+
+                  if (response.success) {
+                    closeModalFunction()
+                    bulmaJS.alert({
+                      contextualColorName: 'success',
+                      message: 'Successfully copied data from previous timesheet.'
+                    })
+                    // Refresh the grid
+                    grid.init().catch((error: unknown) => {
+                      console.error('Error reinitializing grid:', error)
+                    })
+                  } else {
+                    bulmaJS.alert({
+                      contextualColorName: 'danger',
+                      message: 'An error occurred while copying from previous timesheet.'
+                    })
+                    submitButton.disabled = false
+                  }
+                }
+              )
+            })
+          },
+          onshown(_modalElement, closeFunction) {
+            closeModalFunction = closeFunction
+          }
         })
       }
     }

@@ -47,7 +47,7 @@ export default async function copyFromShift(shiftId, timesheetId) {
       where se.shiftId = @shiftId
         and e.recordDelete_dateTime is null
     `);
-    // Copy equipment as rows
+    // Copy equipment as rows (with employee assignments maintained)
     await pool
         .request()
         .input('shiftId', shiftId)
@@ -56,13 +56,15 @@ export default async function copyFromShift(shiftId, timesheetId) {
         instance,
         timesheetId,
         rowTitle,
-        equipmentNumber
+        equipmentNumber,
+        employeeNumber
       )
       select
         se.instance,
         @timesheetId,
         eq.equipmentName,
-        se.equipmentNumber
+        se.equipmentNumber,
+        se.employeeNumber
       from ShiftLog.ShiftEquipment se
       inner join ShiftLog.Equipment eq
         on  se.instance = eq.instance and se.equipmentNumber = eq.equipmentNumber
