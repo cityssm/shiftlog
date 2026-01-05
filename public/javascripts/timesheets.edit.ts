@@ -15,9 +15,10 @@ declare const exports: {
     isEditable: boolean
     hideEmptyRows: boolean
     hideEmptyColumns: boolean
+    filterRows: string
   }) => {
     init: () => Promise<void>
-    setDisplayOptions: (options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean }) => void
+    setDisplayOptions: (options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean; filterRows?: string }) => void
     addColumn: () => void
     addRow: () => void
   }
@@ -181,12 +182,14 @@ declare const exports: {
         timesheetId,
         isEditable: true,
         hideEmptyRows: false,
-        hideEmptyColumns: false
+        hideEmptyColumns: false,
+        filterRows: ''
       })
 
       // Display options
       const hideEmptyRowsCheckbox = document.querySelector('#display--hideEmptyRows') as HTMLInputElement | null
       const hideEmptyColumnsCheckbox = document.querySelector('#display--hideEmptyColumns') as HTMLInputElement | null
+      const filterRowsInput = document.querySelector('#display--filterRows') as HTMLInputElement | null
 
       if (hideEmptyRowsCheckbox !== null) {
         hideEmptyRowsCheckbox.addEventListener('change', () => {
@@ -197,6 +200,12 @@ declare const exports: {
       if (hideEmptyColumnsCheckbox !== null) {
         hideEmptyColumnsCheckbox.addEventListener('change', () => {
           grid.setDisplayOptions({ hideEmptyColumns: hideEmptyColumnsCheckbox.checked })
+        })
+      }
+
+      if (filterRowsInput !== null) {
+        filterRowsInput.addEventListener('input', () => {
+          grid.setDisplayOptions({ filterRows: filterRowsInput.value })
         })
       }
 

@@ -46,6 +46,22 @@ class TimesheetGrid {
         return total;
     }
     shouldShowRow(row) {
+        // Check filter first
+        if (this.config.filterRows !== '') {
+            const filterLower = this.config.filterRows.toLowerCase();
+            const rowTitleLower = row.rowTitle.toLowerCase();
+            const employeeName = row.employeeFirstName !== undefined && row.employeeLastName !== undefined
+                ? `${row.employeeLastName}, ${row.employeeFirstName}`.toLowerCase()
+                : '';
+            const equipmentName = row.equipmentName !== undefined ? row.equipmentName.toLowerCase() : '';
+            const matchesFilter = rowTitleLower.includes(filterLower) ||
+                employeeName.includes(filterLower) ||
+                equipmentName.includes(filterLower);
+            if (!matchesFilter) {
+                return false;
+            }
+        }
+        // Check empty rows
         if (!this.config.hideEmptyRows) {
             return true;
         }
@@ -442,7 +458,19 @@ class TimesheetGrid {
         const doAddRow = (submitEvent) => {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`, addForm, (rawResponseJSON) => {
+            const formData = new FormData(addForm);
+            // Convert empty strings to null for foreign key fields
+            const requestData = {};
+            for (const [key, value] of formData.entries()) {
+                const stringValue = value.toString();
+                if (key === 'jobClassificationDataListItemId' || key === 'timeCodeDataListItemId') {
+                    requestData[key] = stringValue === '' ? null : stringValue;
+                }
+                else {
+                    requestData[key] = stringValue === '' ? null : stringValue;
+                }
+            }
+            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`, requestData, (rawResponseJSON) => {
                 const result = rawResponseJSON;
                 if (result.success) {
                     closeModalFunction();
@@ -482,7 +510,9 @@ class TimesheetGrid {
                     // Set the timesheet ID
                     ;
                     modalElement.querySelector('#addTimesheetRow--timesheetId').value = this.config.timesheetId.toString();
-                    modalElement.querySelector('#addTimesheetRow--rowTitle').value = '';
+                    // Clear form fields
+                    const rowTitleInput = modalElement.querySelector('#addTimesheetRow--rowTitle');
+                    rowTitleInput.value = '';
                     // Populate employees
                     const employeeSelect = modalElement.querySelector('#addTimesheetRow--employeeNumber');
                     employeeSelect.innerHTML = '<option value="">(None)</option>';
@@ -495,6 +525,26 @@ class TimesheetGrid {
                     for (const equip of optionsData.equipment) {
                         equipmentSelect.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(equip.equipmentNumber)}">${cityssm.escapeHTML(equip.equipmentName)} (${cityssm.escapeHTML(equip.equipmentNumber)})</option>`);
                     }
+                    // Auto-populate row title when employee or equipment is selected
+                    const updateRowTitle = () => {
+                        const selectedEquipment = equipmentSelect.value;
+                        const selectedEmployee = employeeSelect.value;
+                        // Equipment takes precedence
+                        if (selectedEquipment !== '') {
+                            const equipOption = optionsData.equipment.find(e => e.equipmentNumber === selectedEquipment);
+                            if (equipOption !== undefined) {
+                                rowTitleInput.value = equipOption.equipmentName;
+                            }
+                        }
+                        else if (selectedEmployee !== '') {
+                            const empOption = optionsData.employees.find(e => e.employeeNumber === selectedEmployee);
+                            if (empOption !== undefined) {
+                                rowTitleInput.value = `${empOption.lastName}, ${empOption.firstName}`;
+                            }
+                        }
+                    };
+                    employeeSelect.addEventListener('change', updateRowTitle);
+                    equipmentSelect.addEventListener('change', updateRowTitle);
                     // Populate job classifications
                     const jobClassSelect = modalElement.querySelector('#addTimesheetRow--jobClassificationDataListItemId');
                     jobClassSelect.innerHTML = '<option value="">(None)</option>';
@@ -507,7 +557,7 @@ class TimesheetGrid {
                     for (const timeCode of optionsData.timeCodes) {
                         timeCodeSelect.insertAdjacentHTML('beforeend', `<option value="${timeCode.dataListItemId.toString()}">${cityssm.escapeHTML(timeCode.dataListItem)}</option>`);
                     }
-                    // Attach form submit handler
+                    // Attach form submit handler with preprocessing
                     modalElement.querySelector('form')?.addEventListener('submit', doAddRow);
                 },
                 onshown(_modalElement, closeFunction) {
@@ -617,7 +667,19 @@ class TimesheetGrid {
         const doUpdateRow = (submitEvent) => {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetRow`, editForm, (rawResponseJSON) => {
+            const formData = new FormData(editForm);
+            // Convert empty strings to null for foreign key fields
+            const requestData = {};
+            for (const [key, value] of formData.entries()) {
+                const stringValue = value.toString();
+                if (key === 'jobClassificationDataListItemId' || key === 'timeCodeDataListItemId') {
+                    requestData[key] = stringValue === '' ? null : stringValue;
+                }
+                else {
+                    requestData[key] = stringValue === '' ? null : stringValue;
+                }
+            }
+            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetRow`, requestData, (rawResponseJSON) => {
                 const result = rawResponseJSON;
                 if (result.success) {
                     closeModalFunction();
@@ -754,6 +816,9 @@ class TimesheetGrid {
         }
         if (options.hideEmptyColumns !== undefined) {
             this.config.hideEmptyColumns = options.hideEmptyColumns;
+        }
+        if (options.filterRows !== undefined) {
+            this.config.filterRows = options.filterRows;
         }
         this.render();
     }

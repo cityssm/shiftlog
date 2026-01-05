@@ -18,6 +18,7 @@ interface TimesheetGridConfig {
   isEditable: boolean
   hideEmptyRows: boolean
   hideEmptyColumns: boolean
+  filterRows: string
 }
 
 class TimesheetGrid {
@@ -74,6 +75,25 @@ class TimesheetGrid {
   }
 
   private shouldShowRow(row: TimesheetRow): boolean {
+    // Check filter first
+    if (this.config.filterRows !== '') {
+      const filterLower = this.config.filterRows.toLowerCase()
+      const rowTitleLower = row.rowTitle.toLowerCase()
+      const employeeName = row.employeeFirstName !== undefined && row.employeeLastName !== undefined
+        ? `${row.employeeLastName}, ${row.employeeFirstName}`.toLowerCase()
+        : ''
+      const equipmentName = row.equipmentName !== undefined ? row.equipmentName.toLowerCase() : ''
+      
+      const matchesFilter = rowTitleLower.includes(filterLower) ||
+                           employeeName.includes(filterLower) ||
+                           equipmentName.includes(filterLower)
+      
+      if (!matchesFilter) {
+        return false
+      }
+    }
+    
+    // Check empty rows
     if (!this.config.hideEmptyRows) {
       return true
     }
@@ -571,10 +591,22 @@ class TimesheetGrid {
       submitEvent.preventDefault()
 
       const addForm = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(addForm)
+      
+      // Convert empty strings to null for foreign key fields
+      const requestData: Record<string, string | null> = {}
+      for (const [key, value] of formData.entries()) {
+        const stringValue = value.toString()
+        if (key === 'jobClassificationDataListItemId' || key === 'timeCodeDataListItemId') {
+          requestData[key] = stringValue === '' ? null : stringValue
+        } else {
+          requestData[key] = stringValue === '' ? null : stringValue
+        }
+      }
 
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`,
-        addForm,
+        requestData,
         (rawResponseJSON) => {
           const result = rawResponseJSON as { 
             success: boolean
@@ -632,7 +664,8 @@ class TimesheetGrid {
             ;(modalElement.querySelector('#addTimesheetRow--timesheetId') as HTMLInputElement).value = this.config.timesheetId.toString()
 
             // Clear form fields
-            ;(modalElement.querySelector('#addTimesheetRow--rowTitle') as HTMLInputElement).value = ''
+            const rowTitleInput = modalElement.querySelector('#addTimesheetRow--rowTitle') as HTMLInputElement
+            rowTitleInput.value = ''
 
             // Populate employees
             const employeeSelect = modalElement.querySelector('#addTimesheetRow--employeeNumber') as HTMLSelectElement
@@ -654,6 +687,28 @@ class TimesheetGrid {
               )
             }
 
+            // Auto-populate row title when employee or equipment is selected
+            const updateRowTitle = (): void => {
+              const selectedEquipment = equipmentSelect.value
+              const selectedEmployee = employeeSelect.value
+              
+              // Equipment takes precedence
+              if (selectedEquipment !== '') {
+                const equipOption = optionsData.equipment.find(e => e.equipmentNumber === selectedEquipment)
+                if (equipOption !== undefined) {
+                  rowTitleInput.value = equipOption.equipmentName
+                }
+              } else if (selectedEmployee !== '') {
+                const empOption = optionsData.employees.find(e => e.employeeNumber === selectedEmployee)
+                if (empOption !== undefined) {
+                  rowTitleInput.value = `${empOption.lastName}, ${empOption.firstName}`
+                }
+              }
+            }
+
+            employeeSelect.addEventListener('change', updateRowTitle)
+            equipmentSelect.addEventListener('change', updateRowTitle)
+
             // Populate job classifications
             const jobClassSelect = modalElement.querySelector('#addTimesheetRow--jobClassificationDataListItemId') as HTMLSelectElement
             jobClassSelect.innerHTML = '<option value="">(None)</option>'
@@ -674,7 +729,7 @@ class TimesheetGrid {
               )
             }
 
-            // Attach form submit handler
+            // Attach form submit handler with preprocessing
             modalElement.querySelector('form')?.addEventListener('submit', doAddRow)
           },
           onshown(_modalElement, closeFunction) {
@@ -807,10 +862,22 @@ class TimesheetGrid {
       submitEvent.preventDefault()
 
       const editForm = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(editForm)
+      
+      // Convert empty strings to null for foreign key fields
+      const requestData: Record<string, string | null> = {}
+      for (const [key, value] of formData.entries()) {
+        const stringValue = value.toString()
+        if (key === 'jobClassificationDataListItemId' || key === 'timeCodeDataListItemId') {
+          requestData[key] = stringValue === '' ? null : stringValue
+        } else {
+          requestData[key] = stringValue === '' ? null : stringValue
+        }
+      }
 
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetRow`,
-        editForm,
+        requestData,
         (rawResponseJSON) => {
           const result = rawResponseJSON as { success: boolean }
 
@@ -973,12 +1040,15 @@ class TimesheetGrid {
     this.render()
   }
 
-  setDisplayOptions(options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean }): void {
+  setDisplayOptions(options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean; filterRows?: string }): void {
     if (options.hideEmptyRows !== undefined) {
       this.config.hideEmptyRows = options.hideEmptyRows
     }
     if (options.hideEmptyColumns !== undefined) {
       this.config.hideEmptyColumns = options.hideEmptyColumns
+    }
+    if (options.filterRows !== undefined) {
+      this.config.filterRows = options.filterRows
     }
     this.render()
   }

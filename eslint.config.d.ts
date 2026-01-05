@@ -1,2 +1,2 @@
-export declare const config: import("eslint-config-cityssm").Config[];
+export declare const config: any;
 export default config;
