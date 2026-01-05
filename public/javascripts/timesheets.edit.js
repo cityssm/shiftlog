@@ -363,8 +363,8 @@
                                         const dateString = new Date(timesheet.timesheetDate).toLocaleDateString();
                                         const supervisorLastName = timesheet.supervisorLastName ?? '';
                                         const supervisorFirstName = timesheet.supervisorFirstName ?? '';
-                                        const supervisorName = supervisorLastName && supervisorFirstName 
-                                            ? `${supervisorLastName}, ${supervisorFirstName}` 
+                                        const supervisorName = supervisorLastName && supervisorFirstName
+                                            ? `${supervisorLastName}, ${supervisorFirstName}`
                                             : supervisorLastName || supervisorFirstName || '(Unknown)';
                                         timesheetElement.innerHTML = `
                         <div class="columns is-mobile is-vcentered">
