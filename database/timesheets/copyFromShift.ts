@@ -45,7 +45,7 @@ export default async function copyFromShift(
       select
         se.instance,
         @timesheetId,
-        e.firstName + ' ' + e.lastName,
+        e.lastName + ', ' + e.firstName,
         se.employeeNumber
       from ShiftLog.ShiftEmployees se
       inner join ShiftLog.Employees e
