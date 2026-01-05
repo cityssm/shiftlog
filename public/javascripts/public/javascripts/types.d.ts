@@ -1,0 +1,39 @@
+export interface ShiftLogGlobal {
+    daysOfWeek: string[];
+    apiKey: string;
+    sessionKeepAliveMillis: number;
+    urlPrefix: string;
+    defaultLatitude: number;
+    defaultLongitude: number;
+    defaultCityProvince: string;
+    shiftsAreEnabled: boolean;
+    shiftsRouter: string;
+    shiftsSectionName: string;
+    shiftsSectionNameSingular: string;
+    buildShiftURL: (shiftId: number, edit?: boolean) => string;
+    workOrdersAreEnabled: boolean;
+    workOrdersRouter: string;
+    workOrdersSectionName: string;
+    workOrdersSectionNameSingular: string;
+    workOrdersIconClass: string;
+    userCanManageWorkOrders: boolean;
+    userCanUpdateWorkOrders: boolean;
+    buildWorkOrderURL: (workOrderId: number, edit?: boolean) => string;
+    timesheetsAreEnabled: boolean;
+    timesheetsRouter: string;
+    timesheetsSectionName: string;
+    timesheetsSectionNameSingular: string;
+    buildTimesheetURL: (timesheetId: number, edit?: boolean) => string;
+    isAdmin: boolean;
+    userName: string;
+    clearUnsavedChanges: () => void;
+    hasUnsavedChanges: () => boolean;
+    setUnsavedChanges: () => void;
+    initializeRecordTabs: (tabsContainerElement: HTMLElement) => void;
+    buildPaginationControls: (options: {
+        totalCount: number;
+        currentPageOrOffset: number;
+        itemsPerPageOrLimit: number;
+        clickHandler: (pageNumber: number) => void;
+    }) => HTMLElement;
+}

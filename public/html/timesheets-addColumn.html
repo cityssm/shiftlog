@@ -1,0 +1,101 @@
+<div
+  class="modal"
+  id="modal--addTimesheetColumn"
+  role="dialog"
+  aria-label="Add Timesheet Column"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Column</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addTimesheetColumn">
+        <input
+          id="addTimesheetColumn--timesheetId"
+          name="timesheetId"
+          type="hidden"
+        />
+        <div class="field">
+          <label class="label" for="addTimesheetColumn--columnTitle">
+            Column Title
+            <span class="has-text-danger">*</span>
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addTimesheetColumn--columnTitle"
+              name="columnTitle"
+              type="text"
+              maxlength="50"
+              required
+              autofocus
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addTimesheetColumn--workOrderNumber">
+            Work Order Number (Optional)
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addTimesheetColumn--workOrderNumber"
+              name="workOrderNumber"
+              type="text"
+              maxlength="20"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addTimesheetColumn--costCenterA">
+            Cost Center A (Optional)
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addTimesheetColumn--costCenterA"
+              name="costCenterA"
+              type="text"
+              maxlength="20"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addTimesheetColumn--costCenterB">
+            Cost Center B (Optional)
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addTimesheetColumn--costCenterB"
+              name="costCenterB"
+              type="text"
+              maxlength="20"
+            />
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--addTimesheetColumn"
+        >
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Add Column</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

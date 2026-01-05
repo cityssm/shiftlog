@@ -18,6 +18,7 @@ declare const exports: {
   }) => {
     init: () => Promise<void>
     setDisplayOptions: (options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean }) => void
+    addColumn: () => void
   }
 }
 ;(() => {
@@ -227,8 +228,7 @@ declare const exports: {
         addColumnButton.addEventListener('click', (event) => {
           event.preventDefault()
           dropdownElement?.classList.remove('is-active')
-          // TODO: Show add column modal
-          console.log('Add column')
+          grid.addColumn()
         })
       }
 

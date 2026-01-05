@@ -382,15 +382,142 @@ class TimesheetGrid {
     this.containerElement.append(table)
   }
 
-  private editColumn(column: TimesheetColumn): void {
-    // TODO: Implement column edit modal
-    console.log('Edit column', column)
+  editColumn(column: TimesheetColumn): void {
+    let closeModalFunction: () => void
+
+    const doUpdateColumn = (submitEvent: Event): void => {
+      submitEvent.preventDefault()
+
+      const editForm = submitEvent.currentTarget as HTMLFormElement
+
+      cityssm.postJSON(
+        `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetColumn`,
+        editForm,
+        (rawResponseJSON) => {
+          const result = rawResponseJSON as { success: boolean }
+
+          if (result.success) {
+            closeModalFunction()
+            this.loadData().then(() => {
+              this.render()
+            }).catch((error) => {
+              console.error('Error reloading data:', error)
+            })
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'Column Updated',
+              message: 'The column has been successfully updated.'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error Updating Column',
+              message: 'Please try again.'
+            })
+          }
+        }
+      )
+    }
+
+    cityssm.openHtmlModal('timesheets-editColumn', {
+      onshow(modalElement) {
+        // Set form values
+        ;(modalElement.querySelector('#editTimesheetColumn--timesheetColumnId') as HTMLInputElement).value = column.timesheetColumnId.toString()
+        ;(modalElement.querySelector('#editTimesheetColumn--columnTitle') as HTMLInputElement).value = column.columnTitle
+        ;(modalElement.querySelector('#editTimesheetColumn--workOrderNumber') as HTMLInputElement).value = column.workOrderNumber ?? ''
+        ;(modalElement.querySelector('#editTimesheetColumn--costCenterA') as HTMLInputElement).value = column.costCenterA ?? ''
+        ;(modalElement.querySelector('#editTimesheetColumn--costCenterB') as HTMLInputElement).value = column.costCenterB ?? ''
+
+        // Attach form submit handler
+        modalElement.querySelector('form')?.addEventListener('submit', doUpdateColumn)
+      },
+      onshown(_modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
   }
 
-  private deleteColumn(column: TimesheetColumn): void {
+  addColumn(): void {
+    let closeModalFunction: () => void
+
+    const doAddColumn = (submitEvent: Event): void => {
+      submitEvent.preventDefault()
+
+      const addForm = submitEvent.currentTarget as HTMLFormElement
+
+      cityssm.postJSON(
+        `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetColumn`,
+        addForm,
+        (rawResponseJSON) => {
+          const result = rawResponseJSON as { 
+            success: boolean
+            timesheetColumnId?: number
+          }
+
+          if (result.success) {
+            closeModalFunction()
+            this.loadData().then(() => {
+              this.render()
+            }).catch((error) => {
+              console.error('Error reloading data:', error)
+            })
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'Column Added',
+              message: 'The column has been successfully added.'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error Adding Column',
+              message: 'Please try again.'
+            })
+          }
+        }
+      )
+    }
+
+    cityssm.openHtmlModal('timesheets-addColumn', {
+      onshow: (modalElement) => {
+        // Set the timesheet ID
+        ;(modalElement.querySelector('#addTimesheetColumn--timesheetId') as HTMLInputElement).value = this.config.timesheetId.toString()
+
+        // Clear form fields
+        ;(modalElement.querySelector('#addTimesheetColumn--columnTitle') as HTMLInputElement).value = ''
+        ;(modalElement.querySelector('#addTimesheetColumn--workOrderNumber') as HTMLInputElement).value = ''
+        ;(modalElement.querySelector('#addTimesheetColumn--costCenterA') as HTMLInputElement).value = ''
+        ;(modalElement.querySelector('#addTimesheetColumn--costCenterB') as HTMLInputElement).value = ''
+
+        // Attach form submit handler
+        modalElement.querySelector('form')?.addEventListener('submit', doAddColumn)
+      },
+      onshown(_modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  deleteColumn(column: TimesheetColumn): void {
+    const columnTotal = this.getColumnTotal(column.timesheetColumnId)
+    
+    let message = 'Are you sure you want to delete this column?'
+    
+    if (columnTotal > 0) {
+      message = `<strong>Warning:</strong> This column has <strong>${columnTotal} recorded hours</strong>. All associated hours will be permanently lost.<br><br>Are you sure you want to delete this column?`
+    }
+    
     bulmaJS.confirm({
       title: 'Delete Column',
-      message: 'Are you sure you want to delete this column? All associated hours will be lost.',
+      message,
+      messageIsHtml: true,
       contextualColorName: 'danger',
       okButton: {
         text: 'Delete',
@@ -403,13 +530,18 @@ class TimesheetGrid {
               timesheetColumnId: column.timesheetColumnId
             },
             (rawResponseJSON) => {
-              const result = rawResponseJSON as { success: boolean }
+              const result = rawResponseJSON as { success: boolean; totalHours?: number }
               
               if (result.success) {
                 this.loadData().then(() => {
                   this.render()
                 }).catch((error) => {
                   console.error('Error reloading data:', error)
+                })
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  title: 'Column Deleted',
+                  message: 'The column has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
