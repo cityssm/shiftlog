@@ -1,0 +1,121 @@
+<div
+  class="modal"
+  id="modal--copyFromPreviousTimesheet"
+  role="dialog"
+  aria-label="Copy from Previous Timesheet"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Copy from Previous Timesheet</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <div class="notification is-info is-light">
+        <p>
+          Search for a previous timesheet to copy rows, columns, and hours. 
+          The search defaults to the same timesheet type and supervisor.
+        </p>
+      </div>
+
+      <!-- Search filters -->
+      <div class="box mt-4">
+        <h3 class="title is-5">Search Past Timesheets</h3>
+        <form id="form--searchTimesheets">
+          <input
+            id="searchTimesheets--currentTimesheetId"
+            name="currentTimesheetId"
+            type="hidden"
+          />
+          
+          <div class="field">
+            <label class="label" for="searchTimesheets--timesheetTypeDataListItemId">
+              Timesheet Type
+            </label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select
+                  id="searchTimesheets--timesheetTypeDataListItemId"
+                  name="timesheetTypeDataListItemId"
+                >
+                  <option value="">(All Types)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field">
+            <label class="label" for="searchTimesheets--supervisorEmployeeNumber">
+              Supervisor
+            </label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select
+                  id="searchTimesheets--supervisorEmployeeNumber"
+                  name="supervisorEmployeeNumber"
+                >
+                  <option value="">(All Supervisors)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field">
+            <div class="control">
+              <button class="button is-info is-fullwidth" type="submit">
+                <span class="icon"><i class="fa-solid fa-search"></i></span>
+                <span>Search</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <hr />
+        
+        <!-- Search results -->
+        <div id="container--searchResults" class="is-hidden mt-4">
+          <h4 class="title is-6">Recent Timesheets</h4>
+          <div id="notice--noTimesheets" class="notification is-warning is-light is-hidden">
+            <p>No timesheets found matching the search criteria.</p>
+          </div>
+          <div id="list--timesheets"></div>
+        </div>
+      </div>
+      
+      <!-- Copy form -->
+      <form id="form--copyFromPreviousTimesheet">
+        <input
+          id="copyFromPreviousTimesheet--targetTimesheetId"
+          name="targetTimesheetId"
+          type="hidden"
+        />
+        <input
+          id="copyFromPreviousTimesheet--sourceTimesheetId"
+          name="sourceTimesheetId"
+          type="hidden"
+        />
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--copyFromPreviousTimesheet"
+          id="button--copyFromPreviousTimesheet"
+          disabled
+        >
+          <span class="icon"><i class="fa-solid fa-copy"></i></span>
+          <span>Copy from Timesheet</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

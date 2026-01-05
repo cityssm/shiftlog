@@ -1,0 +1,68 @@
+<div
+  class="modal"
+  id="modal--copyFromShift"
+  role="dialog"
+  aria-label="Copy from Shift"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Copy from Shift</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--copyFromShift">
+        <input
+          id="copyFromShift--timesheetId"
+          name="timesheetId"
+          type="hidden"
+        />
+        
+        <div class="notification is-info is-light">
+          <p>
+            Select a shift from the timesheet date to copy all employees and equipment. 
+            Equipment assignments to employees will be maintained.
+          </p>
+        </div>
+
+        <div id="container--availableShifts" class="mt-4">
+          <div class="notification is-warning is-light" id="notice--loading">
+            <p class="has-text-centered">
+              <span class="icon">
+                <i class="fa-solid fa-spinner fa-pulse"></i>
+              </span>
+              Loading available shifts...
+            </p>
+          </div>
+          
+          <div id="notice--noShifts" class="notification is-warning is-light is-hidden">
+            <p>No shifts found for the timesheet date and supervisor.</p>
+          </div>
+
+          <div id="list--shifts" class="is-hidden"></div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--copyFromShift"
+          id="button--copyFromShift"
+          disabled
+        >
+          <span class="icon"><i class="fa-solid fa-copy"></i></span>
+          <span>Copy from Shift</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>
