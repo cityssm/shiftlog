@@ -2,7 +2,11 @@
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 
-import type { TimesheetColumn, TimesheetRow, TimesheetCell } from '../../types/record.types.js'
+import type {
+  TimesheetColumn,
+  TimesheetRow,
+  TimesheetCell
+} from '../../types/record.types.js'
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -79,20 +83,23 @@ class TimesheetGrid {
     if (this.config.filterRows !== '') {
       const filterLower = this.config.filterRows.toLowerCase()
       const rowTitleLower = row.rowTitle.toLowerCase()
-      const employeeName = row.employeeFirstName !== undefined && row.employeeLastName !== undefined
-        ? `${row.employeeLastName}, ${row.employeeFirstName}`.toLowerCase()
-        : ''
-      const equipmentName = row.equipmentName !== undefined ? row.equipmentName.toLowerCase() : ''
-      
-      const matchesFilter = rowTitleLower.includes(filterLower) ||
-                           employeeName.includes(filterLower) ||
-                           equipmentName.includes(filterLower)
-      
+      const employeeName =
+        row.employeeFirstName !== undefined &&
+        row.employeeLastName !== undefined
+          ? `${row.employeeLastName}, ${row.employeeFirstName}`.toLowerCase()
+          : ''
+      const equipmentName = row.equipmentName?.toLowerCase() ?? ''
+
+      const matchesFilter =
+        rowTitleLower.includes(filterLower) ||
+        employeeName.includes(filterLower) ||
+        equipmentName.includes(filterLower)
+
       if (!matchesFilter) {
         return false
       }
     }
-    
+
     // Check empty rows
     if (!this.config.hideEmptyRows) {
       return true
@@ -132,11 +139,16 @@ class TimesheetGrid {
                 `${timesheetUrlPrefix}/doGetTimesheetCells`,
                 { timesheetId: this.config.timesheetId },
                 (rawResponseJSON) => {
-                  const cellsData = rawResponseJSON as { cells: TimesheetCell[] }
-                  
+                  const cellsData = rawResponseJSON as {
+                    cells: TimesheetCell[]
+                  }
+
                   this.cells.clear()
                   for (const cell of cellsData.cells) {
-                    const key = this.getCellKey(cell.timesheetRowId, cell.timesheetColumnId)
+                    const key = this.getCellKey(
+                      cell.timesheetRowId,
+                      cell.timesheetColumnId
+                    )
                     this.cells.set(key, cell)
                   }
                   resolve()
@@ -149,13 +161,19 @@ class TimesheetGrid {
     })
   }
 
-  private createCellElement(row: TimesheetRow, column: TimesheetColumn): HTMLTableCellElement {
+  private createCellElement(
+    row: TimesheetRow,
+    column: TimesheetColumn
+  ): HTMLTableCellElement {
     const td = document.createElement('td')
     td.className = 'timesheet-cell'
     td.style.textAlign = 'right'
-    
-    const hours = this.getCellHours(row.timesheetRowId, column.timesheetColumnId)
-    
+
+    const hours = this.getCellHours(
+      row.timesheetRowId,
+      column.timesheetColumnId
+    )
+
     if (this.config.isEditable) {
       const input = document.createElement('input')
       input.type = 'number'
@@ -166,23 +184,23 @@ class TimesheetGrid {
       input.placeholder = '0'
       input.style.width = '80px'
       input.style.textAlign = 'right'
-      
+
       input.addEventListener('change', () => {
         const newHours = input.value === '' ? 0 : Number.parseFloat(input.value)
         this.updateCell(row.timesheetRowId, column.timesheetColumnId, newHours)
       })
-      
+
       td.append(input)
     } else {
       td.textContent = hours > 0 ? hours.toString() : ''
     }
-    
+
     return td
   }
 
   private updateCell(rowId: number, columnId: number, hours: number): void {
     const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
-    
+
     cityssm.postJSON(
       `${timesheetUrlPrefix}/doUpdateTimesheetCell`,
       {
@@ -192,7 +210,7 @@ class TimesheetGrid {
       },
       (rawResponseJSON) => {
         const result = rawResponseJSON as { success: boolean }
-        
+
         if (result.success) {
           this.setCellHours(rowId, columnId, hours)
           this.updateTotals()
@@ -214,7 +232,7 @@ class TimesheetGrid {
       const columnHeader = document.querySelector(
         `th[data-column-id="${column.timesheetColumnId}"]`
       ) as HTMLElement | null
-      
+
       if (columnHeader !== null) {
         if (columnTotal === 0) {
           columnHeader.classList.add('has-background-warning-light')
@@ -230,10 +248,10 @@ class TimesheetGrid {
       const totalCell = document.querySelector(
         `td[data-row-total="${row.timesheetRowId}"]`
       ) as HTMLElement | null
-      
+
       if (totalCell !== null) {
         totalCell.textContent = rowTotal.toString()
-        
+
         if (rowTotal === 0) {
           totalCell.classList.add('has-background-warning-light')
         } else {
@@ -244,42 +262,48 @@ class TimesheetGrid {
   }
 
   render(): void {
-    const visibleColumns = this.columns.filter(col => this.shouldShowColumn(col))
-    const visibleRows = this.rows.filter(row => this.shouldShowRow(row))
+    const visibleColumns = this.columns.filter((col) =>
+      this.shouldShowColumn(col)
+    )
+    const visibleRows = this.rows.filter((row) => this.shouldShowRow(row))
 
     // Create table
     const table = document.createElement('table')
-    table.className = 'table is-bordered is-striped is-hoverable is-fullwidth has-sticky-header timesheet-grid'
-    
+    table.className =
+      'table is-bordered is-striped is-hoverable is-fullwidth has-sticky-header timesheet-grid'
+
     // Create header
     const thead = document.createElement('thead')
     const headerRow = document.createElement('tr')
-    
+
     // First column is for row labels
     const thCorner = document.createElement('th')
     thCorner.style.minWidth = '200px'
-    
+
     const cornerTitle = document.createElement('div')
     cornerTitle.textContent = 'Employee / Equipment'
     thCorner.append(cornerTitle)
-    
+
     if (this.config.isEditable) {
       const addRowButton = document.createElement('button')
       addRowButton.className = 'button is-primary is-small mt-2'
-      addRowButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>'
+      addRowButton.innerHTML =
+        '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>'
       addRowButton.title = 'Add Row'
       addRowButton.addEventListener('click', () => {
         // Trigger the add row button in the toolbar
-        const addRowToolbarButton = document.querySelector('#button--addRow') as HTMLAnchorElement | null
+        const addRowToolbarButton = document.querySelector(
+          '#button--addRow'
+        ) as HTMLAnchorElement | null
         if (addRowToolbarButton !== null) {
           addRowToolbarButton.click()
         }
       })
       thCorner.append(addRowButton)
     }
-    
+
     headerRow.append(thCorner)
-    
+
     // Column headers
     for (let colIndex = 0; colIndex < visibleColumns.length; colIndex++) {
       const column = visibleColumns[colIndex]
@@ -288,75 +312,86 @@ class TimesheetGrid {
       th.textContent = column.columnTitle
       th.style.minWidth = '100px'
       th.style.textAlign = 'center'
-      
+
       const columnTotal = this.getColumnTotal(column.timesheetColumnId)
       if (columnTotal === 0) {
         th.classList.add('has-background-warning-light')
       }
-      
+
       if (column.workOrderNumber) {
         const small = document.createElement('small')
         small.className = 'is-block has-text-grey'
         small.textContent = `WO: ${column.workOrderNumber}`
         th.append(document.createElement('br'), small)
       }
-      
+
       if (this.config.isEditable) {
         const columnActions = document.createElement('div')
         columnActions.className = 'buttons are-small is-centered mt-2'
-        
+
         // Move left button (only if not first column)
         if (colIndex > 0) {
           const moveLeftButton = document.createElement('button')
           moveLeftButton.className = 'button is-light is-small'
-          moveLeftButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>'
+          moveLeftButton.innerHTML =
+            '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>'
           moveLeftButton.title = 'Move Left'
-          moveLeftButton.addEventListener('click', () => this.moveColumn(column, 'left'))
+          moveLeftButton.addEventListener('click', () =>
+            this.moveColumn(column, 'left')
+          )
           columnActions.append(moveLeftButton)
         }
-        
+
         // Move right button (only if not last column)
         if (colIndex < visibleColumns.length - 1) {
           const moveRightButton = document.createElement('button')
           moveRightButton.className = 'button is-light is-small'
-          moveRightButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>'
+          moveRightButton.innerHTML =
+            '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>'
           moveRightButton.title = 'Move Right'
-          moveRightButton.addEventListener('click', () => this.moveColumn(column, 'right'))
+          moveRightButton.addEventListener('click', () =>
+            this.moveColumn(column, 'right')
+          )
           columnActions.append(moveRightButton)
         }
-        
+
         const editButton = document.createElement('button')
         editButton.className = 'button is-info is-small'
-        editButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
+        editButton.innerHTML =
+          '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
         editButton.title = 'Edit Column'
         editButton.addEventListener('click', () => this.editColumn(column))
-        
+
         const deleteButton = document.createElement('button')
         deleteButton.className = 'button is-danger is-small'
-        deleteButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
+        deleteButton.innerHTML =
+          '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
         deleteButton.title = 'Delete Column'
         deleteButton.addEventListener('click', () => this.deleteColumn(column))
-        
+
         columnActions.append(editButton, deleteButton)
         th.append(columnActions)
       }
-      
+
       headerRow.append(th)
     }
-    
+
     // Add column header (before Total Hours)
     if (this.config.isEditable) {
       const thAddColumn = document.createElement('th')
       thAddColumn.style.width = '80px'
       thAddColumn.style.textAlign = 'center'
-      
+
       const addColumnButton = document.createElement('button')
       addColumnButton.className = 'button is-primary is-small'
-      addColumnButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>'
+      addColumnButton.innerHTML =
+        '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>'
       addColumnButton.title = 'Add Column'
       addColumnButton.addEventListener('click', () => {
         // Trigger the add column button in the toolbar
-        const addColumnToolbarButton = document.querySelector('#button--addColumn') as HTMLAnchorElement | null
+        const addColumnToolbarButton = document.querySelector(
+          '#button--addColumn'
+        ) as HTMLAnchorElement | null
         if (addColumnToolbarButton !== null) {
           addColumnToolbarButton.click()
         }
@@ -364,80 +399,82 @@ class TimesheetGrid {
       thAddColumn.append(addColumnButton)
       headerRow.append(thAddColumn)
     }
-    
+
     // Total column
     const thTotal = document.createElement('th')
     thTotal.textContent = 'Total Hours'
     thTotal.style.textAlign = 'center'
     thTotal.style.fontWeight = 'bold'
     headerRow.append(thTotal)
-    
+
     thead.append(headerRow)
     table.append(thead)
-    
+
     // Create body
     const tbody = document.createElement('tbody')
-    
+
     for (const row of visibleRows) {
       const tr = document.createElement('tr')
-      
+
       // Row label
       const tdLabel = document.createElement('td')
       tdLabel.className = 'timesheet-row-label'
-      
+
       const rowTitle = document.createElement('strong')
       rowTitle.textContent = row.rowTitle
       tdLabel.append(rowTitle)
-      
+
       if (row.employeeNumber) {
         const employeeInfo = document.createElement('small')
         employeeInfo.className = 'is-block has-text-grey'
         employeeInfo.textContent = `Employee: ${row.employeeNumber}`
         tdLabel.append(document.createElement('br'), employeeInfo)
       }
-      
+
       if (row.equipmentNumber) {
         const equipmentInfo = document.createElement('small')
         equipmentInfo.className = 'is-block has-text-grey'
         equipmentInfo.textContent = `Equipment: ${row.equipmentNumber}`
         tdLabel.append(document.createElement('br'), equipmentInfo)
       }
-      
+
       if (this.config.isEditable) {
         const rowActions = document.createElement('div')
         rowActions.className = 'buttons are-small mt-2'
-        
+
         const editButton = document.createElement('button')
         editButton.className = 'button is-info is-small'
-        editButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
+        editButton.innerHTML =
+          '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
         editButton.title = 'Edit Row'
         editButton.addEventListener('click', () => this.editRow(row))
-        
+
         const deleteButton = document.createElement('button')
         deleteButton.className = 'button is-danger is-small'
-        deleteButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
+        deleteButton.innerHTML =
+          '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
         deleteButton.title = 'Delete Row'
         deleteButton.addEventListener('click', () => this.deleteRow(row))
-        
+
         rowActions.append(editButton, deleteButton)
         tdLabel.append(rowActions)
       }
-      
+
       tr.append(tdLabel)
-      
+
       // Create cells for each column
       for (const column of visibleColumns) {
         const td = this.createCellElement(row, column)
         tr.append(td)
       }
-      
+
       // Empty cell for the add column header (if editable)
       if (this.config.isEditable) {
         const tdEmpty = document.createElement('td')
         tdEmpty.className = 'has-background-light'
         tr.append(tdEmpty)
       }
-      
+
       // Total cell
       const tdTotal = document.createElement('td')
       tdTotal.dataset.rowTotal = row.timesheetRowId.toString()
@@ -445,17 +482,17 @@ class TimesheetGrid {
       tdTotal.textContent = rowTotal.toString()
       tdTotal.style.textAlign = 'right'
       tdTotal.style.fontWeight = 'bold'
-      
+
       if (rowTotal === 0) {
         tdTotal.classList.add('has-background-warning-light')
       }
-      
+
       tr.append(tdTotal)
       tbody.append(tr)
     }
-    
+
     table.append(tbody)
-    
+
     // Clear container and add table
     this.containerElement.innerHTML = ''
     this.containerElement.append(table)
@@ -477,11 +514,13 @@ class TimesheetGrid {
 
           if (result.success) {
             closeModalFunction()
-            this.loadData().then(() => {
-              this.render()
-            }).catch((error) => {
-              console.error('Error reloading data:', error)
-            })
+            this.loadData()
+              .then(() => {
+                this.render()
+              })
+              .catch((error) => {
+                console.error('Error reloading data:', error)
+              })
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Column Updated',
@@ -501,14 +540,36 @@ class TimesheetGrid {
     cityssm.openHtmlModal('timesheets-editColumn', {
       onshow(modalElement) {
         // Set form values
-        ;(modalElement.querySelector('#editTimesheetColumn--timesheetColumnId') as HTMLInputElement).value = column.timesheetColumnId.toString()
-        ;(modalElement.querySelector('#editTimesheetColumn--columnTitle') as HTMLInputElement).value = column.columnTitle
-        ;(modalElement.querySelector('#editTimesheetColumn--workOrderNumber') as HTMLInputElement).value = column.workOrderNumber ?? ''
-        ;(modalElement.querySelector('#editTimesheetColumn--costCenterA') as HTMLInputElement).value = column.costCenterA ?? ''
-        ;(modalElement.querySelector('#editTimesheetColumn--costCenterB') as HTMLInputElement).value = column.costCenterB ?? ''
+        ;(
+          modalElement.querySelector(
+            '#editTimesheetColumn--timesheetColumnId'
+          ) as HTMLInputElement
+        ).value = column.timesheetColumnId.toString()
+        ;(
+          modalElement.querySelector(
+            '#editTimesheetColumn--columnTitle'
+          ) as HTMLInputElement
+        ).value = column.columnTitle
+        ;(
+          modalElement.querySelector(
+            '#editTimesheetColumn--workOrderNumber'
+          ) as HTMLInputElement
+        ).value = column.workOrderNumber ?? ''
+        ;(
+          modalElement.querySelector(
+            '#editTimesheetColumn--costCenterA'
+          ) as HTMLInputElement
+        ).value = column.costCenterA ?? ''
+        ;(
+          modalElement.querySelector(
+            '#editTimesheetColumn--costCenterB'
+          ) as HTMLInputElement
+        ).value = column.costCenterB ?? ''
 
         // Attach form submit handler
-        modalElement.querySelector('form')?.addEventListener('submit', doUpdateColumn)
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', doUpdateColumn)
       },
       onshown(_modalElement, closeFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -532,18 +593,20 @@ class TimesheetGrid {
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetColumn`,
         addForm,
         (rawResponseJSON) => {
-          const result = rawResponseJSON as { 
+          const result = rawResponseJSON as {
             success: boolean
             timesheetColumnId?: number
           }
 
           if (result.success) {
             closeModalFunction()
-            this.loadData().then(() => {
-              this.render()
-            }).catch((error) => {
-              console.error('Error reloading data:', error)
-            })
+            this.loadData()
+              .then(() => {
+                this.render()
+              })
+              .catch((error) => {
+                console.error('Error reloading data:', error)
+              })
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Column Added',
@@ -563,16 +626,38 @@ class TimesheetGrid {
     cityssm.openHtmlModal('timesheets-addColumn', {
       onshow: (modalElement) => {
         // Set the timesheet ID
-        ;(modalElement.querySelector('#addTimesheetColumn--timesheetId') as HTMLInputElement).value = this.config.timesheetId.toString()
+        ;(
+          modalElement.querySelector(
+            '#addTimesheetColumn--timesheetId'
+          ) as HTMLInputElement
+        ).value = this.config.timesheetId.toString()
 
         // Clear form fields
-        ;(modalElement.querySelector('#addTimesheetColumn--columnTitle') as HTMLInputElement).value = ''
-        ;(modalElement.querySelector('#addTimesheetColumn--workOrderNumber') as HTMLInputElement).value = ''
-        ;(modalElement.querySelector('#addTimesheetColumn--costCenterA') as HTMLInputElement).value = ''
-        ;(modalElement.querySelector('#addTimesheetColumn--costCenterB') as HTMLInputElement).value = ''
+        ;(
+          modalElement.querySelector(
+            '#addTimesheetColumn--columnTitle'
+          ) as HTMLInputElement
+        ).value = ''
+        ;(
+          modalElement.querySelector(
+            '#addTimesheetColumn--workOrderNumber'
+          ) as HTMLInputElement
+        ).value = ''
+        ;(
+          modalElement.querySelector(
+            '#addTimesheetColumn--costCenterA'
+          ) as HTMLInputElement
+        ).value = ''
+        ;(
+          modalElement.querySelector(
+            '#addTimesheetColumn--costCenterB'
+          ) as HTMLInputElement
+        ).value = ''
 
         // Attach form submit handler
-        modalElement.querySelector('form')?.addEventListener('submit', doAddColumn)
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', doAddColumn)
       },
       onshown(_modalElement, closeFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -592,12 +677,15 @@ class TimesheetGrid {
 
       const addForm = submitEvent.currentTarget as HTMLFormElement
       const formData = new FormData(addForm)
-      
+
       // Convert empty strings to null for foreign key fields
       const requestData: Record<string, string | null> = {}
       for (const [key, value] of formData.entries()) {
         const stringValue = value.toString()
-        if (key === 'jobClassificationDataListItemId' || key === 'timeCodeDataListItemId') {
+        if (
+          key === 'jobClassificationDataListItemId' ||
+          key === 'timeCodeDataListItemId'
+        ) {
           requestData[key] = stringValue === '' ? null : stringValue
         } else {
           requestData[key] = stringValue === '' ? null : stringValue
@@ -608,18 +696,20 @@ class TimesheetGrid {
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`,
         requestData,
         (rawResponseJSON) => {
-          const result = rawResponseJSON as { 
+          const result = rawResponseJSON as {
             success: boolean
             timesheetRowId?: number
           }
 
           if (result.success) {
             closeModalFunction()
-            this.loadData().then(() => {
-              this.render()
-            }).catch((error) => {
-              console.error('Error reloading data:', error)
-            })
+            this.loadData()
+              .then(() => {
+                this.render()
+              })
+              .catch((error) => {
+                console.error('Error reloading data:', error)
+              })
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Row Added',
@@ -643,9 +733,16 @@ class TimesheetGrid {
       (rawResponseJSON) => {
         const optionsData = rawResponseJSON as {
           success: boolean
-          employees: Array<{ employeeNumber: string; firstName: string; lastName: string }>
+          employees: Array<{
+            employeeNumber: string
+            firstName: string
+            lastName: string
+          }>
           equipment: Array<{ equipmentNumber: string; equipmentName: string }>
-          jobClassifications: Array<{ dataListItemId: number; dataListItem: string }>
+          jobClassifications: Array<{
+            dataListItemId: number
+            dataListItem: string
+          }>
           timeCodes: Array<{ dataListItemId: number; dataListItem: string }>
         }
 
@@ -661,14 +758,22 @@ class TimesheetGrid {
         cityssm.openHtmlModal('timesheets-addRow', {
           onshow: (modalElement) => {
             // Set the timesheet ID
-            ;(modalElement.querySelector('#addTimesheetRow--timesheetId') as HTMLInputElement).value = this.config.timesheetId.toString()
+            ;(
+              modalElement.querySelector(
+                '#addTimesheetRow--timesheetId'
+              ) as HTMLInputElement
+            ).value = this.config.timesheetId.toString()
 
             // Clear form fields
-            const rowTitleInput = modalElement.querySelector('#addTimesheetRow--rowTitle') as HTMLInputElement
+            const rowTitleInput = modalElement.querySelector(
+              '#addTimesheetRow--rowTitle'
+            ) as HTMLInputElement
             rowTitleInput.value = ''
 
             // Populate employees
-            const employeeSelect = modalElement.querySelector('#addTimesheetRow--employeeNumber') as HTMLSelectElement
+            const employeeSelect = modalElement.querySelector(
+              '#addTimesheetRow--employeeNumber'
+            ) as HTMLSelectElement
             employeeSelect.innerHTML = '<option value="">(None)</option>'
             for (const employee of optionsData.employees) {
               employeeSelect.insertAdjacentHTML(
@@ -678,7 +783,9 @@ class TimesheetGrid {
             }
 
             // Populate equipment
-            const equipmentSelect = modalElement.querySelector('#addTimesheetRow--equipmentNumber') as HTMLSelectElement
+            const equipmentSelect = modalElement.querySelector(
+              '#addTimesheetRow--equipmentNumber'
+            ) as HTMLSelectElement
             equipmentSelect.innerHTML = '<option value="">(None)</option>'
             for (const equip of optionsData.equipment) {
               equipmentSelect.insertAdjacentHTML(
@@ -691,15 +798,19 @@ class TimesheetGrid {
             const updateRowTitle = (): void => {
               const selectedEquipment = equipmentSelect.value
               const selectedEmployee = employeeSelect.value
-              
+
               // Equipment takes precedence
               if (selectedEquipment !== '') {
-                const equipOption = optionsData.equipment.find(e => e.equipmentNumber === selectedEquipment)
+                const equipOption = optionsData.equipment.find(
+                  (e) => e.equipmentNumber === selectedEquipment
+                )
                 if (equipOption !== undefined) {
                   rowTitleInput.value = equipOption.equipmentName
                 }
               } else if (selectedEmployee !== '') {
-                const empOption = optionsData.employees.find(e => e.employeeNumber === selectedEmployee)
+                const empOption = optionsData.employees.find(
+                  (e) => e.employeeNumber === selectedEmployee
+                )
                 if (empOption !== undefined) {
                   rowTitleInput.value = `${empOption.lastName}, ${empOption.firstName}`
                 }
@@ -710,7 +821,9 @@ class TimesheetGrid {
             equipmentSelect.addEventListener('change', updateRowTitle)
 
             // Populate job classifications
-            const jobClassSelect = modalElement.querySelector('#addTimesheetRow--jobClassificationDataListItemId') as HTMLSelectElement
+            const jobClassSelect = modalElement.querySelector(
+              '#addTimesheetRow--jobClassificationDataListItemId'
+            ) as HTMLSelectElement
             jobClassSelect.innerHTML = '<option value="">(None)</option>'
             for (const jobClass of optionsData.jobClassifications) {
               jobClassSelect.insertAdjacentHTML(
@@ -720,7 +833,9 @@ class TimesheetGrid {
             }
 
             // Populate time codes
-            const timeCodeSelect = modalElement.querySelector('#addTimesheetRow--timeCodeDataListItemId') as HTMLSelectElement
+            const timeCodeSelect = modalElement.querySelector(
+              '#addTimesheetRow--timeCodeDataListItemId'
+            ) as HTMLSelectElement
             timeCodeSelect.innerHTML = '<option value="">(None)</option>'
             for (const timeCode of optionsData.timeCodes) {
               timeCodeSelect.insertAdjacentHTML(
@@ -730,7 +845,9 @@ class TimesheetGrid {
             }
 
             // Attach form submit handler with preprocessing
-            modalElement.querySelector('form')?.addEventListener('submit', doAddRow)
+            modalElement
+              .querySelector('form')
+              ?.addEventListener('submit', doAddRow)
           },
           onshown(_modalElement, closeFunction) {
             bulmaJS.toggleHtmlClipped()
@@ -746,13 +863,13 @@ class TimesheetGrid {
 
   deleteColumn(column: TimesheetColumn): void {
     const columnTotal = this.getColumnTotal(column.timesheetColumnId)
-    
+
     let message = 'Are you sure you want to delete this column?'
-    
+
     if (columnTotal > 0) {
       message = `<strong>Warning:</strong> This column has <strong>${columnTotal} recorded hours</strong>. All associated hours will be permanently lost.<br><br>Are you sure you want to delete this column?`
     }
-    
+
     bulmaJS.confirm({
       title: 'Delete Column',
       message,
@@ -762,21 +879,26 @@ class TimesheetGrid {
         text: 'Delete',
         callbackFunction: () => {
           const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
-          
+
           cityssm.postJSON(
             `${timesheetUrlPrefix}/doDeleteTimesheetColumn`,
             {
               timesheetColumnId: column.timesheetColumnId
             },
             (rawResponseJSON) => {
-              const result = rawResponseJSON as { success: boolean; totalHours?: number }
-              
+              const result = rawResponseJSON as {
+                success: boolean
+                totalHours?: number
+              }
+
               if (result.success) {
-                this.loadData().then(() => {
-                  this.render()
-                }).catch((error) => {
-                  console.error('Error reloading data:', error)
-                })
+                this.loadData()
+                  .then(() => {
+                    this.render()
+                  })
+                  .catch((error) => {
+                    console.error('Error reloading data:', error)
+                  })
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Column Deleted',
@@ -798,12 +920,14 @@ class TimesheetGrid {
 
   moveColumn(column: TimesheetColumn, direction: 'left' | 'right'): void {
     // Find the current column and the adjacent one
-    const currentIndex = this.columns.findIndex(c => c.timesheetColumnId === column.timesheetColumnId)
-    
+    const currentIndex = this.columns.findIndex(
+      (c) => c.timesheetColumnId === column.timesheetColumnId
+    )
+
     if (currentIndex === -1) {
       return
     }
-    
+
     let targetIndex: number
     if (direction === 'left') {
       targetIndex = currentIndex - 1
@@ -816,19 +940,19 @@ class TimesheetGrid {
         return
       }
     }
-    
+
     // Swap the columns in the array
     const newColumns = [...this.columns]
     const temp = newColumns[currentIndex]
     newColumns[currentIndex] = newColumns[targetIndex]
     newColumns[targetIndex] = temp
-    
+
     // Build the new order array
-    const timesheetColumnIds = newColumns.map(c => c.timesheetColumnId)
-    
+    const timesheetColumnIds = newColumns.map((c) => c.timesheetColumnId)
+
     // Send the reorder request
     const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
-    
+
     cityssm.postJSON(
       `${timesheetUrlPrefix}/doReorderTimesheetColumns`,
       {
@@ -837,13 +961,15 @@ class TimesheetGrid {
       },
       (rawResponseJSON) => {
         const result = rawResponseJSON as { success: boolean }
-        
+
         if (result.success) {
-          this.loadData().then(() => {
-            this.render()
-          }).catch((error) => {
-            console.error('Error reloading data:', error)
-          })
+          this.loadData()
+            .then(() => {
+              this.render()
+            })
+            .catch((error) => {
+              console.error('Error reloading data:', error)
+            })
         } else {
           bulmaJS.alert({
             title: 'Error',
@@ -863,12 +989,15 @@ class TimesheetGrid {
 
       const editForm = submitEvent.currentTarget as HTMLFormElement
       const formData = new FormData(editForm)
-      
+
       // Convert empty strings to null for foreign key fields
       const requestData: Record<string, string | null> = {}
       for (const [key, value] of formData.entries()) {
         const stringValue = value.toString()
-        if (key === 'jobClassificationDataListItemId' || key === 'timeCodeDataListItemId') {
+        if (
+          key === 'jobClassificationDataListItemId' ||
+          key === 'timeCodeDataListItemId'
+        ) {
           requestData[key] = stringValue === '' ? null : stringValue
         } else {
           requestData[key] = stringValue === '' ? null : stringValue
@@ -883,11 +1012,13 @@ class TimesheetGrid {
 
           if (result.success) {
             closeModalFunction()
-            this.loadData().then(() => {
-              this.render()
-            }).catch((error) => {
-              console.error('Error reloading data:', error)
-            })
+            this.loadData()
+              .then(() => {
+                this.render()
+              })
+              .catch((error) => {
+                console.error('Error reloading data:', error)
+              })
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Row Updated',
@@ -911,7 +1042,10 @@ class TimesheetGrid {
       (rawResponseJSON) => {
         const optionsData = rawResponseJSON as {
           success: boolean
-          jobClassifications: Array<{ dataListItemId: number; dataListItem: string }>
+          jobClassifications: Array<{
+            dataListItemId: number
+            dataListItem: string
+          }>
           timeCodes: Array<{ dataListItemId: number; dataListItem: string }>
         }
 
@@ -927,30 +1061,51 @@ class TimesheetGrid {
         cityssm.openHtmlModal('timesheets-editRow', {
           onshow(modalElement) {
             // Set form values
-            ;(modalElement.querySelector('#editTimesheetRow--timesheetRowId') as HTMLInputElement).value = row.timesheetRowId.toString()
-            ;(modalElement.querySelector('#editTimesheetRow--rowTitle') as HTMLInputElement).value = row.rowTitle
+            ;(
+              modalElement.querySelector(
+                '#editTimesheetRow--timesheetRowId'
+              ) as HTMLInputElement
+            ).value = row.timesheetRowId.toString()
+            ;(
+              modalElement.querySelector(
+                '#editTimesheetRow--rowTitle'
+              ) as HTMLInputElement
+            ).value = row.rowTitle
 
             // Display employee (read-only)
-            const employeeDisplay = modalElement.querySelector('#editTimesheetRow--employeeDisplay') as HTMLInputElement
-            if (row.employeeNumber !== undefined && row.employeeNumber !== null) {
+            const employeeDisplay = modalElement.querySelector(
+              '#editTimesheetRow--employeeDisplay'
+            ) as HTMLInputElement
+            if (
+              row.employeeNumber !== undefined &&
+              row.employeeNumber !== null
+            ) {
               employeeDisplay.value = `${row.employeeLastName ?? ''}, ${row.employeeFirstName ?? ''} (${row.employeeNumber})`
             } else {
               employeeDisplay.value = '(None)'
             }
 
             // Display equipment (read-only)
-            const equipmentDisplay = modalElement.querySelector('#editTimesheetRow--equipmentDisplay') as HTMLInputElement
-            if (row.equipmentNumber !== undefined && row.equipmentNumber !== null) {
+            const equipmentDisplay = modalElement.querySelector(
+              '#editTimesheetRow--equipmentDisplay'
+            ) as HTMLInputElement
+            if (
+              row.equipmentNumber !== undefined &&
+              row.equipmentNumber !== null
+            ) {
               equipmentDisplay.value = `${row.equipmentName ?? ''} (${row.equipmentNumber})`
             } else {
               equipmentDisplay.value = '(None)'
             }
 
             // Populate job classifications
-            const jobClassSelect = modalElement.querySelector('#editTimesheetRow--jobClassificationDataListItemId') as HTMLSelectElement
+            const jobClassSelect = modalElement.querySelector(
+              '#editTimesheetRow--jobClassificationDataListItemId'
+            ) as HTMLSelectElement
             jobClassSelect.innerHTML = '<option value="">(None)</option>'
             for (const jobClass of optionsData.jobClassifications) {
-              const selected = row.jobClassificationDataListItemId === jobClass.dataListItemId
+              const selected =
+                row.jobClassificationDataListItemId === jobClass.dataListItemId
               jobClassSelect.insertAdjacentHTML(
                 'beforeend',
                 `<option value="${jobClass.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(jobClass.dataListItem)}</option>`
@@ -958,10 +1113,13 @@ class TimesheetGrid {
             }
 
             // Populate time codes
-            const timeCodeSelect = modalElement.querySelector('#editTimesheetRow--timeCodeDataListItemId') as HTMLSelectElement
+            const timeCodeSelect = modalElement.querySelector(
+              '#editTimesheetRow--timeCodeDataListItemId'
+            ) as HTMLSelectElement
             timeCodeSelect.innerHTML = '<option value="">(None)</option>'
             for (const timeCode of optionsData.timeCodes) {
-              const selected = row.timeCodeDataListItemId === timeCode.dataListItemId
+              const selected =
+                row.timeCodeDataListItemId === timeCode.dataListItemId
               timeCodeSelect.insertAdjacentHTML(
                 'beforeend',
                 `<option value="${timeCode.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(timeCode.dataListItem)}</option>`
@@ -969,7 +1127,9 @@ class TimesheetGrid {
             }
 
             // Attach form submit handler
-            modalElement.querySelector('form')?.addEventListener('submit', doUpdateRow)
+            modalElement
+              .querySelector('form')
+              ?.addEventListener('submit', doUpdateRow)
           },
           onshown(_modalElement, closeFunction) {
             bulmaJS.toggleHtmlClipped()
@@ -985,13 +1145,13 @@ class TimesheetGrid {
 
   private deleteRow(row: TimesheetRow): void {
     const rowTotal = this.getRowTotal(row.timesheetRowId)
-    
+
     let message = 'Are you sure you want to delete this row?'
-    
+
     if (rowTotal > 0) {
       message = `<strong>Warning:</strong> This row has <strong>${rowTotal} recorded hours</strong>. All associated hours will be permanently lost.<br><br>Are you sure you want to delete this row?`
     }
-    
+
     bulmaJS.confirm({
       title: 'Delete Row',
       message,
@@ -1001,7 +1161,7 @@ class TimesheetGrid {
         text: 'Delete',
         callbackFunction: () => {
           const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
-          
+
           cityssm.postJSON(
             `${timesheetUrlPrefix}/doDeleteTimesheetRow`,
             {
@@ -1009,13 +1169,15 @@ class TimesheetGrid {
             },
             (rawResponseJSON) => {
               const result = rawResponseJSON as { success: boolean }
-              
+
               if (result.success) {
-                this.loadData().then(() => {
-                  this.render()
-                }).catch((error) => {
-                  console.error('Error reloading data:', error)
-                })
+                this.loadData()
+                  .then(() => {
+                    this.render()
+                  })
+                  .catch((error) => {
+                    console.error('Error reloading data:', error)
+                  })
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Row Deleted',
@@ -1040,7 +1202,11 @@ class TimesheetGrid {
     this.render()
   }
 
-  setDisplayOptions(options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean; filterRows?: string }): void {
+  setDisplayOptions(options: {
+    hideEmptyRows?: boolean
+    hideEmptyColumns?: boolean
+    filterRows?: string
+  }): void {
     if (options.hideEmptyRows !== undefined) {
       this.config.hideEmptyRows = options.hideEmptyRows
     }

@@ -50,10 +50,11 @@ class TimesheetGrid {
         if (this.config.filterRows !== '') {
             const filterLower = this.config.filterRows.toLowerCase();
             const rowTitleLower = row.rowTitle.toLowerCase();
-            const employeeName = row.employeeFirstName !== undefined && row.employeeLastName !== undefined
+            const employeeName = row.employeeFirstName !== undefined &&
+                row.employeeLastName !== undefined
                 ? `${row.employeeLastName}, ${row.employeeFirstName}`.toLowerCase()
                 : '';
-            const equipmentName = row.equipmentName !== undefined ? row.equipmentName.toLowerCase() : '';
+            const equipmentName = row.equipmentName?.toLowerCase() ?? '';
             const matchesFilter = rowTitleLower.includes(filterLower) ||
                 employeeName.includes(filterLower) ||
                 equipmentName.includes(filterLower);
@@ -175,11 +176,12 @@ class TimesheetGrid {
         }
     }
     render() {
-        const visibleColumns = this.columns.filter(col => this.shouldShowColumn(col));
-        const visibleRows = this.rows.filter(row => this.shouldShowRow(row));
+        const visibleColumns = this.columns.filter((col) => this.shouldShowColumn(col));
+        const visibleRows = this.rows.filter((row) => this.shouldShowRow(row));
         // Create table
         const table = document.createElement('table');
-        table.className = 'table is-bordered is-striped is-hoverable is-fullwidth has-sticky-header timesheet-grid';
+        table.className =
+            'table is-bordered is-striped is-hoverable is-fullwidth has-sticky-header timesheet-grid';
         // Create header
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
@@ -192,7 +194,8 @@ class TimesheetGrid {
         if (this.config.isEditable) {
             const addRowButton = document.createElement('button');
             addRowButton.className = 'button is-primary is-small mt-2';
-            addRowButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>';
+            addRowButton.innerHTML =
+                '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>';
             addRowButton.title = 'Add Row';
             addRowButton.addEventListener('click', () => {
                 // Trigger the add row button in the toolbar
@@ -229,7 +232,8 @@ class TimesheetGrid {
                 if (colIndex > 0) {
                     const moveLeftButton = document.createElement('button');
                     moveLeftButton.className = 'button is-light is-small';
-                    moveLeftButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>';
+                    moveLeftButton.innerHTML =
+                        '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>';
                     moveLeftButton.title = 'Move Left';
                     moveLeftButton.addEventListener('click', () => this.moveColumn(column, 'left'));
                     columnActions.append(moveLeftButton);
@@ -238,19 +242,22 @@ class TimesheetGrid {
                 if (colIndex < visibleColumns.length - 1) {
                     const moveRightButton = document.createElement('button');
                     moveRightButton.className = 'button is-light is-small';
-                    moveRightButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>';
+                    moveRightButton.innerHTML =
+                        '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>';
                     moveRightButton.title = 'Move Right';
                     moveRightButton.addEventListener('click', () => this.moveColumn(column, 'right'));
                     columnActions.append(moveRightButton);
                 }
                 const editButton = document.createElement('button');
                 editButton.className = 'button is-info is-small';
-                editButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
+                editButton.innerHTML =
+                    '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
                 editButton.title = 'Edit Column';
                 editButton.addEventListener('click', () => this.editColumn(column));
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'button is-danger is-small';
-                deleteButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>';
+                deleteButton.innerHTML =
+                    '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>';
                 deleteButton.title = 'Delete Column';
                 deleteButton.addEventListener('click', () => this.deleteColumn(column));
                 columnActions.append(editButton, deleteButton);
@@ -265,7 +272,8 @@ class TimesheetGrid {
             thAddColumn.style.textAlign = 'center';
             const addColumnButton = document.createElement('button');
             addColumnButton.className = 'button is-primary is-small';
-            addColumnButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>';
+            addColumnButton.innerHTML =
+                '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>';
             addColumnButton.title = 'Add Column';
             addColumnButton.addEventListener('click', () => {
                 // Trigger the add column button in the toolbar
@@ -312,12 +320,14 @@ class TimesheetGrid {
                 rowActions.className = 'buttons are-small mt-2';
                 const editButton = document.createElement('button');
                 editButton.className = 'button is-info is-small';
-                editButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
+                editButton.innerHTML =
+                    '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
                 editButton.title = 'Edit Row';
                 editButton.addEventListener('click', () => this.editRow(row));
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'button is-danger is-small';
-                deleteButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>';
+                deleteButton.innerHTML =
+                    '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>';
                 deleteButton.title = 'Delete Row';
                 deleteButton.addEventListener('click', () => this.deleteRow(row));
                 rowActions.append(editButton, deleteButton);
@@ -362,9 +372,11 @@ class TimesheetGrid {
                 const result = rawResponseJSON;
                 if (result.success) {
                     closeModalFunction();
-                    this.loadData().then(() => {
+                    this.loadData()
+                        .then(() => {
                         this.render();
-                    }).catch((error) => {
+                    })
+                        .catch((error) => {
                         console.error('Error reloading data:', error);
                     });
                     bulmaJS.alert({
@@ -392,7 +404,9 @@ class TimesheetGrid {
                 modalElement.querySelector('#editTimesheetColumn--costCenterA').value = column.costCenterA ?? '';
                 modalElement.querySelector('#editTimesheetColumn--costCenterB').value = column.costCenterB ?? '';
                 // Attach form submit handler
-                modalElement.querySelector('form')?.addEventListener('submit', doUpdateColumn);
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doUpdateColumn);
             },
             onshown(_modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -412,9 +426,11 @@ class TimesheetGrid {
                 const result = rawResponseJSON;
                 if (result.success) {
                     closeModalFunction();
-                    this.loadData().then(() => {
+                    this.loadData()
+                        .then(() => {
                         this.render();
-                    }).catch((error) => {
+                    })
+                        .catch((error) => {
                         console.error('Error reloading data:', error);
                     });
                     bulmaJS.alert({
@@ -442,7 +458,9 @@ class TimesheetGrid {
                 modalElement.querySelector('#addTimesheetColumn--costCenterA').value = '';
                 modalElement.querySelector('#addTimesheetColumn--costCenterB').value = '';
                 // Attach form submit handler
-                modalElement.querySelector('form')?.addEventListener('submit', doAddColumn);
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doAddColumn);
             },
             onshown(_modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -463,7 +481,8 @@ class TimesheetGrid {
             const requestData = {};
             for (const [key, value] of formData.entries()) {
                 const stringValue = value.toString();
-                if (key === 'jobClassificationDataListItemId' || key === 'timeCodeDataListItemId') {
+                if (key === 'jobClassificationDataListItemId' ||
+                    key === 'timeCodeDataListItemId') {
                     requestData[key] = stringValue === '' ? null : stringValue;
                 }
                 else {
@@ -474,9 +493,11 @@ class TimesheetGrid {
                 const result = rawResponseJSON;
                 if (result.success) {
                     closeModalFunction();
-                    this.loadData().then(() => {
+                    this.loadData()
+                        .then(() => {
                         this.render();
-                    }).catch((error) => {
+                    })
+                        .catch((error) => {
                         console.error('Error reloading data:', error);
                     });
                     bulmaJS.alert({
@@ -531,13 +552,13 @@ class TimesheetGrid {
                         const selectedEmployee = employeeSelect.value;
                         // Equipment takes precedence
                         if (selectedEquipment !== '') {
-                            const equipOption = optionsData.equipment.find(e => e.equipmentNumber === selectedEquipment);
+                            const equipOption = optionsData.equipment.find((e) => e.equipmentNumber === selectedEquipment);
                             if (equipOption !== undefined) {
                                 rowTitleInput.value = equipOption.equipmentName;
                             }
                         }
                         else if (selectedEmployee !== '') {
-                            const empOption = optionsData.employees.find(e => e.employeeNumber === selectedEmployee);
+                            const empOption = optionsData.employees.find((e) => e.employeeNumber === selectedEmployee);
                             if (empOption !== undefined) {
                                 rowTitleInput.value = `${empOption.lastName}, ${empOption.firstName}`;
                             }
@@ -558,7 +579,9 @@ class TimesheetGrid {
                         timeCodeSelect.insertAdjacentHTML('beforeend', `<option value="${timeCode.dataListItemId.toString()}">${cityssm.escapeHTML(timeCode.dataListItem)}</option>`);
                     }
                     // Attach form submit handler with preprocessing
-                    modalElement.querySelector('form')?.addEventListener('submit', doAddRow);
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doAddRow);
                 },
                 onshown(_modalElement, closeFunction) {
                     bulmaJS.toggleHtmlClipped();
@@ -590,9 +613,11 @@ class TimesheetGrid {
                     }, (rawResponseJSON) => {
                         const result = rawResponseJSON;
                         if (result.success) {
-                            this.loadData().then(() => {
+                            this.loadData()
+                                .then(() => {
                                 this.render();
-                            }).catch((error) => {
+                            })
+                                .catch((error) => {
                                 console.error('Error reloading data:', error);
                             });
                             bulmaJS.alert({
@@ -615,7 +640,7 @@ class TimesheetGrid {
     }
     moveColumn(column, direction) {
         // Find the current column and the adjacent one
-        const currentIndex = this.columns.findIndex(c => c.timesheetColumnId === column.timesheetColumnId);
+        const currentIndex = this.columns.findIndex((c) => c.timesheetColumnId === column.timesheetColumnId);
         if (currentIndex === -1) {
             return;
         }
@@ -638,7 +663,7 @@ class TimesheetGrid {
         newColumns[currentIndex] = newColumns[targetIndex];
         newColumns[targetIndex] = temp;
         // Build the new order array
-        const timesheetColumnIds = newColumns.map(c => c.timesheetColumnId);
+        const timesheetColumnIds = newColumns.map((c) => c.timesheetColumnId);
         // Send the reorder request
         const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`;
         cityssm.postJSON(`${timesheetUrlPrefix}/doReorderTimesheetColumns`, {
@@ -647,9 +672,11 @@ class TimesheetGrid {
         }, (rawResponseJSON) => {
             const result = rawResponseJSON;
             if (result.success) {
-                this.loadData().then(() => {
+                this.loadData()
+                    .then(() => {
                     this.render();
-                }).catch((error) => {
+                })
+                    .catch((error) => {
                     console.error('Error reloading data:', error);
                 });
             }
@@ -672,7 +699,8 @@ class TimesheetGrid {
             const requestData = {};
             for (const [key, value] of formData.entries()) {
                 const stringValue = value.toString();
-                if (key === 'jobClassificationDataListItemId' || key === 'timeCodeDataListItemId') {
+                if (key === 'jobClassificationDataListItemId' ||
+                    key === 'timeCodeDataListItemId') {
                     requestData[key] = stringValue === '' ? null : stringValue;
                 }
                 else {
@@ -683,9 +711,11 @@ class TimesheetGrid {
                 const result = rawResponseJSON;
                 if (result.success) {
                     closeModalFunction();
-                    this.loadData().then(() => {
+                    this.loadData()
+                        .then(() => {
                         this.render();
-                    }).catch((error) => {
+                    })
+                        .catch((error) => {
                         console.error('Error reloading data:', error);
                     });
                     bulmaJS.alert({
@@ -722,7 +752,8 @@ class TimesheetGrid {
                     modalElement.querySelector('#editTimesheetRow--rowTitle').value = row.rowTitle;
                     // Display employee (read-only)
                     const employeeDisplay = modalElement.querySelector('#editTimesheetRow--employeeDisplay');
-                    if (row.employeeNumber !== undefined && row.employeeNumber !== null) {
+                    if (row.employeeNumber !== undefined &&
+                        row.employeeNumber !== null) {
                         employeeDisplay.value = `${row.employeeLastName ?? ''}, ${row.employeeFirstName ?? ''} (${row.employeeNumber})`;
                     }
                     else {
@@ -730,7 +761,8 @@ class TimesheetGrid {
                     }
                     // Display equipment (read-only)
                     const equipmentDisplay = modalElement.querySelector('#editTimesheetRow--equipmentDisplay');
-                    if (row.equipmentNumber !== undefined && row.equipmentNumber !== null) {
+                    if (row.equipmentNumber !== undefined &&
+                        row.equipmentNumber !== null) {
                         equipmentDisplay.value = `${row.equipmentName ?? ''} (${row.equipmentNumber})`;
                     }
                     else {
@@ -751,7 +783,9 @@ class TimesheetGrid {
                         timeCodeSelect.insertAdjacentHTML('beforeend', `<option value="${timeCode.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(timeCode.dataListItem)}</option>`);
                     }
                     // Attach form submit handler
-                    modalElement.querySelector('form')?.addEventListener('submit', doUpdateRow);
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doUpdateRow);
                 },
                 onshown(_modalElement, closeFunction) {
                     bulmaJS.toggleHtmlClipped();
@@ -783,9 +817,11 @@ class TimesheetGrid {
                     }, (rawResponseJSON) => {
                         const result = rawResponseJSON;
                         if (result.success) {
-                            this.loadData().then(() => {
+                            this.loadData()
+                                .then(() => {
                                 this.render();
-                            }).catch((error) => {
+                            })
+                                .catch((error) => {
                                 console.error('Error reloading data:', error);
                             });
                             bulmaJS.alert({
