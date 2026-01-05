@@ -513,8 +513,12 @@ declare const exports: {
                       timesheetElement.className = 'box is-clickable mb-2'
                       timesheetElement.dataset.timesheetId = timesheet.timesheetId.toString()
                       
-                      const dateString = new Date(timesheet.timesheetDate).toLocaleDateString()
-                      const supervisorName = `${timesheet.supervisorLastName ?? ''}, ${timesheet.supervisorFirstName ?? ''}`
+                      const dateString = new Date(timesheet.timesheetDate).toLocaleDateString('en-CA')
+                      const supervisorLastName = timesheet.supervisorLastName ?? ''
+                      const supervisorFirstName = timesheet.supervisorFirstName ?? ''
+                      const supervisorName = supervisorLastName && supervisorFirstName 
+                        ? `${supervisorLastName}, ${supervisorFirstName}` 
+                        : supervisorLastName || supervisorFirstName || '(Unknown)'
                       
                       timesheetElement.innerHTML = `
                         <div class="columns is-mobile is-vcentered">

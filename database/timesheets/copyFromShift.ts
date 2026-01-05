@@ -58,7 +58,8 @@ export default async function copyFromShift(
   await pool
     .request()
     .input('shiftId', shiftId)
-    .input('timesheetId', timesheetId).query(/* sql */ `
+    .input('timesheetId', timesheetId)
+    .query(/* sql */ `
       insert into ShiftLog.TimesheetRows (
         instance,
         timesheetId,
