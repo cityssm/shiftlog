@@ -9,17 +9,36 @@
         <span><%= configFunctions.getConfigProperty('timesheets.sectionName') %></span>
       </a>
     </li>
-    <li class="is-active">
-      <a href="#" aria-current="page">
-        <span>
-          <% if (isCreate) { %>
-          Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>
-          <% } else { %>
-          <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> #<%= timesheet.timesheetId %>
-          <% } %>
-        </span>
-      </a>
-    </li>
+    <% if (isCreate) { %>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          <span>
+            Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>
+          </span>
+        </a>
+      </li>
+    <% } else if (isEdit) { %>
+      <li>
+        <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/<%= timesheet.timesheetId %>">
+          <span>
+            <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> #<%= timesheet.timesheetId %>
+          </span>
+        </a>
+      </li>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          <span>Edit <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
+        </a>
+      </li>
+    <% } else { %>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          <span>
+            <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> #<%= timesheet.timesheetId %>
+          </span>
+        </a>
+      </li>
+    <% } %>
   </ul>
 </nav>
 
