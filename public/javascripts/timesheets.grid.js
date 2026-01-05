@@ -85,6 +85,7 @@ class TimesheetGrid {
     createCellElement(row, column) {
         const td = document.createElement('td');
         td.className = 'timesheet-cell';
+        td.style.textAlign = 'right';
         const hours = this.getCellHours(row.timesheetRowId, column.timesheetColumnId);
         if (this.config.isEditable) {
             const input = document.createElement('input');
@@ -99,13 +100,11 @@ class TimesheetGrid {
             input.addEventListener('change', () => {
                 const newHours = input.value === '' ? 0 : Number.parseFloat(input.value);
                 this.updateCell(row.timesheetRowId, column.timesheetColumnId, newHours);
-                this.render();
             });
             td.append(input);
         }
         else {
             td.textContent = hours > 0 ? hours.toString() : '';
-            td.style.textAlign = 'right';
         }
         return td;
     }
@@ -119,6 +118,7 @@ class TimesheetGrid {
             const result = rawResponseJSON;
             if (result.success) {
                 this.setCellHours(rowId, columnId, hours);
+                this.updateTotals();
             }
             else {
                 bulmaJS.alert({
@@ -129,12 +129,41 @@ class TimesheetGrid {
             }
         });
     }
+    updateTotals() {
+        // Update column totals
+        for (const column of this.columns) {
+            const columnTotal = this.getColumnTotal(column.timesheetColumnId);
+            const columnHeader = document.querySelector(`th[data-column-id="${column.timesheetColumnId}"]`);
+            if (columnHeader !== null) {
+                if (columnTotal === 0) {
+                    columnHeader.classList.add('has-background-warning-light');
+                }
+                else {
+                    columnHeader.classList.remove('has-background-warning-light');
+                }
+            }
+        }
+        // Update row totals
+        for (const row of this.rows) {
+            const rowTotal = this.getRowTotal(row.timesheetRowId);
+            const totalCell = document.querySelector(`td[data-row-total="${row.timesheetRowId}"]`);
+            if (totalCell !== null) {
+                totalCell.textContent = rowTotal.toString();
+                if (rowTotal === 0) {
+                    totalCell.classList.add('has-background-warning-light');
+                }
+                else {
+                    totalCell.classList.remove('has-background-warning-light');
+                }
+            }
+        }
+    }
     render() {
         const visibleColumns = this.columns.filter(col => this.shouldShowColumn(col));
         const visibleRows = this.rows.filter(row => this.shouldShowRow(row));
         // Create table
         const table = document.createElement('table');
-        table.className = 'table is-bordered is-striped is-hoverable is-fullwidth timesheet-grid';
+        table.className = 'table is-bordered is-striped is-hoverable is-fullwidth has-sticky-header timesheet-grid';
         // Create header
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
@@ -160,8 +189,10 @@ class TimesheetGrid {
         }
         headerRow.append(thCorner);
         // Column headers
-        for (const column of visibleColumns) {
+        for (let colIndex = 0; colIndex < visibleColumns.length; colIndex++) {
+            const column = visibleColumns[colIndex];
             const th = document.createElement('th');
+            th.dataset.columnId = column.timesheetColumnId.toString();
             th.textContent = column.columnTitle;
             th.style.minWidth = '100px';
             th.style.textAlign = 'center';
@@ -178,6 +209,24 @@ class TimesheetGrid {
             if (this.config.isEditable) {
                 const columnActions = document.createElement('div');
                 columnActions.className = 'buttons are-small is-centered mt-2';
+                // Move left button (only if not first column)
+                if (colIndex > 0) {
+                    const moveLeftButton = document.createElement('button');
+                    moveLeftButton.className = 'button is-light is-small';
+                    moveLeftButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>';
+                    moveLeftButton.title = 'Move Left';
+                    moveLeftButton.addEventListener('click', () => this.moveColumn(column, 'left'));
+                    columnActions.append(moveLeftButton);
+                }
+                // Move right button (only if not last column)
+                if (colIndex < visibleColumns.length - 1) {
+                    const moveRightButton = document.createElement('button');
+                    moveRightButton.className = 'button is-light is-small';
+                    moveRightButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>';
+                    moveRightButton.title = 'Move Right';
+                    moveRightButton.addEventListener('click', () => this.moveColumn(column, 'right'));
+                    columnActions.append(moveRightButton);
+                }
                 const editButton = document.createElement('button');
                 editButton.className = 'button is-info is-small';
                 editButton.innerHTML = '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
@@ -272,6 +321,7 @@ class TimesheetGrid {
             }
             // Total cell
             const tdTotal = document.createElement('td');
+            tdTotal.dataset.rowTotal = row.timesheetRowId.toString();
             const rowTotal = this.getRowTotal(row.timesheetRowId);
             tdTotal.textContent = rowTotal.toString();
             tdTotal.style.textAlign = 'right';
@@ -288,13 +338,115 @@ class TimesheetGrid {
         this.containerElement.append(table);
     }
     editColumn(column) {
-        // TODO: Implement column edit modal
-        console.log('Edit column', column);
+        let closeModalFunction;
+        const doUpdateColumn = (submitEvent) => {
+            submitEvent.preventDefault();
+            const editForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetColumn`, editForm, (rawResponseJSON) => {
+                const result = rawResponseJSON;
+                if (result.success) {
+                    closeModalFunction();
+                    this.loadData().then(() => {
+                        this.render();
+                    }).catch((error) => {
+                        console.error('Error reloading data:', error);
+                    });
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        title: 'Column Updated',
+                        message: 'The column has been successfully updated.'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Updating Column',
+                        message: 'Please try again.'
+                    });
+                }
+            });
+        };
+        cityssm.openHtmlModal('timesheets-editColumn', {
+            onshow(modalElement) {
+                // Set form values
+                ;
+                modalElement.querySelector('#editTimesheetColumn--timesheetColumnId').value = column.timesheetColumnId.toString();
+                modalElement.querySelector('#editTimesheetColumn--columnTitle').value = column.columnTitle;
+                modalElement.querySelector('#editTimesheetColumn--workOrderNumber').value = column.workOrderNumber ?? '';
+                modalElement.querySelector('#editTimesheetColumn--costCenterA').value = column.costCenterA ?? '';
+                modalElement.querySelector('#editTimesheetColumn--costCenterB').value = column.costCenterB ?? '';
+                // Attach form submit handler
+                modalElement.querySelector('form')?.addEventListener('submit', doUpdateColumn);
+            },
+            onshown(_modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    addColumn() {
+        let closeModalFunction;
+        const doAddColumn = (submitEvent) => {
+            submitEvent.preventDefault();
+            const addForm = submitEvent.currentTarget;
+            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetColumn`, addForm, (rawResponseJSON) => {
+                const result = rawResponseJSON;
+                if (result.success) {
+                    closeModalFunction();
+                    this.loadData().then(() => {
+                        this.render();
+                    }).catch((error) => {
+                        console.error('Error reloading data:', error);
+                    });
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        title: 'Column Added',
+                        message: 'The column has been successfully added.'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Adding Column',
+                        message: 'Please try again.'
+                    });
+                }
+            });
+        };
+        cityssm.openHtmlModal('timesheets-addColumn', {
+            onshow: (modalElement) => {
+                // Set the timesheet ID
+                ;
+                modalElement.querySelector('#addTimesheetColumn--timesheetId').value = this.config.timesheetId.toString();
+                modalElement.querySelector('#addTimesheetColumn--columnTitle').value = '';
+                modalElement.querySelector('#addTimesheetColumn--workOrderNumber').value = '';
+                modalElement.querySelector('#addTimesheetColumn--costCenterA').value = '';
+                modalElement.querySelector('#addTimesheetColumn--costCenterB').value = '';
+                // Attach form submit handler
+                modalElement.querySelector('form')?.addEventListener('submit', doAddColumn);
+            },
+            onshown(_modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
     }
     deleteColumn(column) {
+        const columnTotal = this.getColumnTotal(column.timesheetColumnId);
+        let message = 'Are you sure you want to delete this column?';
+        if (columnTotal > 0) {
+            message = `<strong>Warning:</strong> This column has <strong>${columnTotal} recorded hours</strong>. All associated hours will be permanently lost.<br><br>Are you sure you want to delete this column?`;
+        }
         bulmaJS.confirm({
             title: 'Delete Column',
-            message: 'Are you sure you want to delete this column? All associated hours will be lost.',
+            message,
+            messageIsHtml: true,
             contextualColorName: 'danger',
             okButton: {
                 text: 'Delete',
@@ -310,6 +462,11 @@ class TimesheetGrid {
                             }).catch((error) => {
                                 console.error('Error reloading data:', error);
                             });
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                title: 'Column Deleted',
+                                message: 'The column has been successfully deleted.'
+                            });
                         }
                         else {
                             bulmaJS.alert({
@@ -320,6 +477,55 @@ class TimesheetGrid {
                         }
                     });
                 }
+            }
+        });
+    }
+    moveColumn(column, direction) {
+        // Find the current column and the adjacent one
+        const currentIndex = this.columns.findIndex(c => c.timesheetColumnId === column.timesheetColumnId);
+        if (currentIndex === -1) {
+            return;
+        }
+        let targetIndex;
+        if (direction === 'left') {
+            targetIndex = currentIndex - 1;
+            if (targetIndex < 0) {
+                return;
+            }
+        }
+        else {
+            targetIndex = currentIndex + 1;
+            if (targetIndex >= this.columns.length) {
+                return;
+            }
+        }
+        // Swap the columns in the array
+        const newColumns = [...this.columns];
+        const temp = newColumns[currentIndex];
+        newColumns[currentIndex] = newColumns[targetIndex];
+        newColumns[targetIndex] = temp;
+        // Build the new order array
+        const timesheetColumnIds = newColumns.map(c => c.timesheetColumnId);
+        // Send the reorder request
+        const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`;
+        cityssm.postJSON(`${timesheetUrlPrefix}/doReorderTimesheetColumns`, {
+            timesheetId: this.config.timesheetId,
+            timesheetColumnIds
+        }, (rawResponseJSON) => {
+            const result = rawResponseJSON;
+            if (result.success) {
+                this.loadData().then(() => {
+                    this.render();
+                }).catch((error) => {
+                    console.error('Error reloading data:', error);
+                });
+            }
+            else {
+                bulmaJS.alert({
+                    title: 'Error',
+                    message: 'Failed to reorder columns',
+                    contextualColorName: 'danger'
+                });
             }
         });
     }
