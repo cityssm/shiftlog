@@ -212,28 +212,30 @@
 
 <% if (!isCreate) { %>
 <div class="mt-4">
-  <div class="level">
-    <div class="level-left">
-      <div class="level-item">
-        <h2 class="title is-3">Timesheet Data</h2>
-      </div>
+  <div class="columns is-vcentered">
+    <div class="column is-narrow">
+      <h2 class="title is-3">Timesheet Data</h2>
     </div>
-    <div class="level-right">
-      <div class="level-item">
-        <div class="field is-grouped">
-          <p class="control">
-            <label class="checkbox">
-              <input type="checkbox" id="display--hideEmptyRows" />
-              Hide Empty Rows
-            </label>
-          </p>
-          <p class="control">
-            <label class="checkbox">
-              <input type="checkbox" id="display--hideEmptyColumns" />
-              Hide Empty Columns
-            </label>
-          </p>
-        </div>
+    <div class="column">
+      <div class="field is-grouped is-grouped-right">
+        <p class="control has-icons-left">
+          <input type="text" class="input" id="display--filterRows" placeholder="Filter rows by name..." />
+          <span class="icon is-small is-left">
+            <i class="fa-solid fa-filter"></i>
+          </span>
+        </p>
+        <p class="control">
+          <label class="checkbox">
+            <input type="checkbox" id="display--hideEmptyRows" />
+            Hide Empty Rows
+          </label>
+        </p>
+        <p class="control">
+          <label class="checkbox">
+            <input type="checkbox" id="display--hideEmptyColumns" />
+            Hide Empty Columns
+          </label>
+        </p>
       </div>
     </div>
   </div>

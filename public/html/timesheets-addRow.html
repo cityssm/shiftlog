@@ -1,0 +1,119 @@
+<div
+  class="modal"
+  id="modal--addTimesheetRow"
+  role="dialog"
+  aria-label="Add Timesheet Row"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Row</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addTimesheetRow">
+        <input
+          id="addTimesheetRow--timesheetId"
+          name="timesheetId"
+          type="hidden"
+        />
+        <div class="field">
+          <label class="label" for="addTimesheetRow--rowTitle">
+            Row Title
+            <span class="has-text-danger">*</span>
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addTimesheetRow--rowTitle"
+              name="rowTitle"
+              type="text"
+              maxlength="50"
+              required
+              autofocus
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addTimesheetRow--employeeNumber">
+            Employee (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="addTimesheetRow--employeeNumber"
+                name="employeeNumber"
+              >
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addTimesheetRow--equipmentNumber">
+            Equipment (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="addTimesheetRow--equipmentNumber"
+                name="equipmentNumber"
+              >
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addTimesheetRow--jobClassificationDataListItemId">
+            Job Classification (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="addTimesheetRow--jobClassificationDataListItemId"
+                name="jobClassificationDataListItemId"
+              >
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addTimesheetRow--timeCodeDataListItemId">
+            Time Code (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="addTimesheetRow--timeCodeDataListItemId"
+                name="timeCodeDataListItemId"
+              >
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--addTimesheetRow"
+        >
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Add Row</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

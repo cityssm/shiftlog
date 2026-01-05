@@ -101,11 +101,13 @@
                 timesheetId,
                 isEditable: true,
                 hideEmptyRows: false,
-                hideEmptyColumns: false
+                hideEmptyColumns: false,
+                filterRows: ''
             });
             // Display options
             const hideEmptyRowsCheckbox = document.querySelector('#display--hideEmptyRows');
             const hideEmptyColumnsCheckbox = document.querySelector('#display--hideEmptyColumns');
+            const filterRowsInput = document.querySelector('#display--filterRows');
             if (hideEmptyRowsCheckbox !== null) {
                 hideEmptyRowsCheckbox.addEventListener('change', () => {
                     grid.setDisplayOptions({ hideEmptyRows: hideEmptyRowsCheckbox.checked });
@@ -114,6 +116,11 @@
             if (hideEmptyColumnsCheckbox !== null) {
                 hideEmptyColumnsCheckbox.addEventListener('change', () => {
                     grid.setDisplayOptions({ hideEmptyColumns: hideEmptyColumnsCheckbox.checked });
+                });
+            }
+            if (filterRowsInput !== null) {
+                filterRowsInput.addEventListener('input', () => {
+                    grid.setDisplayOptions({ filterRows: filterRowsInput.value });
                 });
             }
             // Initialize grid
@@ -151,8 +158,7 @@
                 addRowButton.addEventListener('click', (event) => {
                     event.preventDefault();
                     dropdownElement?.classList.remove('is-active');
-                    // TODO: Show add row modal
-                    console.log('Add row');
+                    grid.addRow();
                 });
             }
             // Copy from shift button

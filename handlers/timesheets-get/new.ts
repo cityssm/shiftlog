@@ -4,6 +4,7 @@ import getEmployees from '../../database/employees/getEmployees.js'
 import getShift from '../../database/shifts/getShift.js'
 import getTimesheetTypeDataListItems from '../../database/timesheets/getTimesheetTypeDataListItems.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import type { Shift } from '../../types/record.types.js'
 
 import type { TimesheetEditResponse } from './types.js'
 

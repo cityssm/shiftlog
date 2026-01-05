@@ -16,6 +16,7 @@ import handler_doGetDeletedTimesheets from '../handlers/timesheets-post/doGetDel
 import handler_doGetTimesheetCells from '../handlers/timesheets-post/doGetTimesheetCells.js';
 import handler_doGetTimesheetColumns from '../handlers/timesheets-post/doGetTimesheetColumns.js';
 import handler_doGetTimesheetRows from '../handlers/timesheets-post/doGetTimesheetRows.js';
+import handler_doGetTimesheetRowOptions from '../handlers/timesheets-post/doGetTimesheetRowOptions.js';
 import handler_doMarkEmployeesAsEntered from '../handlers/timesheets-post/doMarkEmployeesAsEntered.js';
 import handler_doMarkEquipmentAsEntered from '../handlers/timesheets-post/doMarkEquipmentAsEntered.js';
 import handler_doMarkTimesheetAsSubmitted from '../handlers/timesheets-post/doMarkTimesheetAsSubmitted.js';
@@ -53,6 +54,7 @@ router
 // Timesheet data endpoints
 router.post('/doGetTimesheetColumns', handler_doGetTimesheetColumns);
 router.post('/doGetTimesheetRows', handler_doGetTimesheetRows);
+router.post('/doGetTimesheetRowOptions', handler_doGetTimesheetRowOptions);
 router.post('/doGetTimesheetCells', handler_doGetTimesheetCells);
 router.post('/doGetAvailableShifts', handler_doGetAvailableShifts);
 router.post('/doAddTimesheetColumn', updateHandler, handler_doAddTimesheetColumn);
