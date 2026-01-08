@@ -1,4 +1,5 @@
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
+import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js';
 import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js';
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
@@ -12,6 +13,8 @@ export default async function handler(request, response) {
         return;
     }
     const workOrderType = (await getWorkOrderType(workOrder.workOrderTypeId, request.session.user, true));
+    // Get thumbnail attachment
+    const thumbnailAttachment = await getWorkOrderThumbnailAttachment(request.params.workOrderId);
     // Check if work order can be reopened
     let canReopen = false;
     if (workOrder.workOrderCloseDateTime !== null &&
@@ -31,6 +34,7 @@ export default async function handler(request, response) {
         isEdit: false,
         canReopen,
         workOrder,
+        thumbnailAttachment,
         assignedToOptions: [],
         workOrderStatuses: [],
         workOrderPriorities: [],
