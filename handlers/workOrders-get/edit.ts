@@ -8,6 +8,7 @@ import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.j
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 import type { WorkOrderEditResponse } from './types.js'
+import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`
 
@@ -35,6 +36,11 @@ export default async function handler(
     return
   }
 
+  // Get thumbnail attachment
+    const thumbnailAttachment = await getWorkOrderThumbnailAttachment(
+      request.params.workOrderId
+    )
+
   const workOrderTypes = await getWorkOrderTypes(request.session.user)
 
   const workOrderStatuses = await getWorkOrderStatusDataListItems(
@@ -58,6 +64,7 @@ export default async function handler(
     isEdit: true,
 
     workOrder,
+    thumbnailAttachment,
 
     assignedToOptions,
     workOrderStatuses,

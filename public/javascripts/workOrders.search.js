@@ -136,9 +136,10 @@
         </td>
         <td>
           <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
-            ${thumbnailIconHTML}
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
-          </a><br />
+          </a>
+          ${thumbnailIconHTML}
+          <br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -

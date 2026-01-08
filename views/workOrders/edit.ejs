@@ -362,8 +362,9 @@
         <figure class="image">
           <img 
             src="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= thumbnailAttachment.workOrderAttachmentId %>/inline" 
-            alt="<%= cityssm.escapeHTML(thumbnailAttachment.attachmentDescription || 'Work order thumbnail') %>"
+            alt="<%= (thumbnailAttachment.attachmentDescription || 'Work order thumbnail') %>"
             style="max-width: 100%; height: auto;"
+            loading="lazy"
           />
         </figure>
       </div>
