@@ -95,7 +95,7 @@
                 closeModalFunction = closeFunction;
                 bulmaJS.toggleHtmlClipped();
             },
-            onhidden() {
+            onremoved() {
                 bulmaJS.toggleHtmlClipped();
             }
         });
@@ -137,7 +137,7 @@
                 closeModalFunction = closeFunction;
                 bulmaJS.toggleHtmlClipped();
             },
-            onhidden() {
+            onremoved() {
                 bulmaJS.toggleHtmlClipped();
             }
         });
@@ -192,8 +192,7 @@
             }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`, formElement, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
-                if (responseJSON.success &&
-                    responseJSON.employeeList !== undefined) {
+                if (responseJSON.success && responseJSON.employeeList !== undefined) {
                     renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -225,7 +224,7 @@
                 }
                 // Initialize flatpickr for seniority date
                 const seniorityDateInput = formElement.querySelector('#employeeListMember--seniorityDate');
-                window.flatpickr(seniorityDateInput, {
+                globalThis.flatpickr(seniorityDateInput, {
                     dateFormat: 'Y-m-d',
                     allowInput: true
                 });
@@ -235,7 +234,7 @@
                 closeModalFunction = closeFunction;
                 bulmaJS.toggleHtmlClipped();
             },
-            onhidden() {
+            onremoved() {
                 bulmaJS.toggleHtmlClipped();
             }
         });
@@ -251,8 +250,7 @@
             submitEvent.preventDefault();
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`, formElement, (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON;
-                if (responseJSON.success &&
-                    responseJSON.employeeList !== undefined) {
+                if (responseJSON.success && responseJSON.employeeList !== undefined) {
                     renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -275,16 +273,15 @@
                 formElement = modalElement.querySelector('form');
                 formElement.querySelector('#employeeListMemberEdit--employeeListId').value = employeeListId.toString();
                 formElement.querySelector('#employeeListMemberEdit--employeeNumber').value = employeeNumber;
-                formElement.querySelector('#employeeListMemberEdit--employeeName').value = `${member.firstName ?? ''} ${member.lastName ?? ''} (${employeeNumber})`;
+                formElement.querySelector('#employeeListMemberEdit--employeeName').value =
+                    `${member.firstName ?? ''} ${member.lastName ?? ''} (${employeeNumber})`;
                 // Initialize flatpickr for seniority date
                 const seniorityDateInput = formElement.querySelector('#employeeListMemberEdit--seniorityDate');
                 // Set initial value
                 if (member.seniorityDate) {
                     seniorityDateInput.value = cityssm.dateToString(new Date(member.seniorityDate));
                 }
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                ;
-                window.flatpickr(seniorityDateInput, {
+                globalThis.flatpickr(seniorityDateInput, {
                     dateFormat: 'Y-m-d',
                     allowInput: true
                 });
@@ -295,7 +292,7 @@
                 closeModalFunction = closeFunction;
                 bulmaJS.toggleHtmlClipped();
             },
-            onhidden() {
+            onremoved() {
                 bulmaJS.toggleHtmlClipped();
             }
         });
@@ -303,7 +300,7 @@
     function initializeSortable(employeeListId, seniorityDate, panelElement) {
         // Sanitize dateKey for use in CSS selector (remove special characters)
         const sanitizedDateKey = seniorityDate
-            ? seniorityDate.replace(/[^a-zA-Z0-9-]/g, '-')
+            ? seniorityDate.replaceAll(/[^a-z0-9-]/gi, '-')
             : 'nodate';
         const containerId = `members--${employeeListId}--${sanitizedDateKey}`;
         const tbodyElement = document.querySelector(`#${containerId}`);
@@ -367,11 +364,13 @@
     function renderEmployeeListMembers(employeeList, panelElement) {
         const membersContainerElement = panelElement.querySelector('.panel-block-members');
         if (employeeList.members.length === 0) {
-            membersContainerElement.innerHTML = `<div class="panel-block">
-        <p class="has-text-grey">
-          No employees in this list. Click "Add Member" to add an employee.
-        </p>
-      </div>`;
+            membersContainerElement.innerHTML = /* html */ `
+        <div class="panel-block">
+          <p class="has-text-grey">
+            No employees in this list. Click "Add Member" to add an employee.
+          </p>
+        </div>
+      `;
             return;
         }
         // Group members by seniority date
@@ -381,14 +380,14 @@
             if (!membersByDate.has(dateKey)) {
                 membersByDate.set(dateKey, []);
             }
-            membersByDate.get(dateKey).push(member);
+            membersByDate.get(dateKey)?.push(member);
         }
         let membersHtml = '';
         for (const [dateKey, members] of membersByDate) {
             // Sanitize dateKey for use in CSS selector (remove special characters)
             const sanitizedDateKey = dateKey === 'no-date'
                 ? 'nodate'
-                : dateKey.replace(/[^a-zA-Z0-9-]/g, '-');
+                : dateKey.replaceAll(/[^a-z0-9-]/gi, '-');
             const containerId = `members--${employeeList.employeeListId}--${sanitizedDateKey}`;
             const dateDisplay = dateKey === 'no-date'
                 ? 'No Seniority Date'
@@ -401,7 +400,9 @@
           <table class="table is-striped is-hoverable is-fullwidth mb-0">
             <thead>
               <tr>
-                <th style="width: 60px;">Order</th>
+                <th class="has-width-1">
+                  <span class="is-sr-only">Order</span>
+                </th>
                 <th>Employee Name</th>
                 <th>Employee Number</th>
                 <th>
@@ -411,50 +412,52 @@
             </thead>
             <tbody class="is-sortable" id="${containerId}">`;
             for (const member of members) {
-                // eslint-disable-next-line no-unsanitized/method
-                membersHtml += `<tr data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}">
-          <td class="has-text-centered">
-            <span class="icon is-small has-text-grey handle" style="cursor: move;">
-              <i class="fa-solid fa-grip-vertical"></i>
-            </span>
-          </td>
-          <td>
-            ${cityssm.escapeHTML(member.firstName ?? '')} ${cityssm.escapeHTML(member.lastName ?? '')}
-          </td>
-          <td>
-            ${cityssm.escapeHTML(member.employeeNumber)}
-          </td>
-          <td class="has-text-right">
-            <div class="buttons are-small is-justify-content-end mb-0">
-              <button
-                class="button is-info button--editMember"
-                data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
-                type="button"
-                aria-label="Edit"
-              >
-                <span class="icon">
-                  <i class="fa-solid fa-pencil"></i>
-                </span>
-              </button>
-              <button
-                class="button is-danger button--deleteMember"
-                data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
-                type="button"
-                aria-label="Delete"
-              >
-                <span class="icon">
-                  <i class="fa-solid fa-trash"></i>
-                </span>
-              </button>
-            </div>
-          </td>
-        </tr>`;
+                membersHtml += /* html */ `
+          <tr data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}">
+            <td class="has-text-centered">
+              <span class="icon is-small has-text-grey handle" style="cursor: move;">
+                <i class="fa-solid fa-grip-vertical"></i>
+              </span>
+            </td>
+            <td>
+              ${cityssm.escapeHTML(member.firstName ?? '')} ${cityssm.escapeHTML(member.lastName ?? '')}
+            </td>
+            <td>
+              ${cityssm.escapeHTML(member.employeeNumber)}
+            </td>
+            <td class="has-text-right">
+              <div class="buttons are-small is-justify-content-end mb-0">
+                <button
+                  class="button is-info button--editMember"
+                  data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
+                  type="button"
+                  aria-label="Edit"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-pencil"></i>
+                  </span>
+                </button>
+                <button
+                  class="button is-danger button--deleteMember"
+                  data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
+                  type="button"
+                  aria-label="Delete"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-trash"></i>
+                  </span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
             }
             membersHtml += `</tbody>
           </table>
         </div>
       </div>`;
         }
+        // eslint-disable-next-line no-unsanitized/property
         membersContainerElement.innerHTML = membersHtml;
         // Add event listeners for edit buttons
         const editButtons = membersContainerElement.querySelectorAll('.button--editMember');
@@ -490,27 +493,25 @@
             });
         }
         // Initialize sortable for each date group
-        for (const [dateKey, _members] of membersByDate) {
-            initializeSortable(employeeList.employeeListId, dateKey === 'no-date' ? null : dateKey, panelElement);
+        for (const [dateKey] of membersByDate) {
+            initializeSortable(employeeList.employeeListId, dateKey === 'no-date' ? undefined : dateKey, panelElement);
         }
     }
     function renderEmployeeLists() {
         if (exports.employeeLists.length === 0) {
-            employeeListsContainerElement.innerHTML = `<div class="message is-info">
-        <div class="message-body">
-          <p class="has-text-centered">
-            No employee lists have been created yet.
-          </p>
-          <p class="has-text-centered mt-3">
-            Click "Add Employee List" to create one.
-          </p>
+            employeeListsContainerElement.innerHTML = /* html */ `
+        <div class="message is-info">
+          <div class="message-body">
+            No employee lists available.
+          </div>
         </div>
-      </div>`;
+      `;
             return;
         }
         employeeListsContainerElement.innerHTML = '';
         for (const employeeList of exports.employeeLists) {
-            const userGroup = employeeList.userGroupId
+            const userGroup = employeeList.userGroupId !== undefined &&
+                employeeList.userGroupId !== null
                 ? exports.userGroups.find((ug) => ug.userGroupId === employeeList.userGroupId)
                 : undefined;
             const panelElement = document.createElement('details');
@@ -518,67 +519,69 @@
             panelElement.dataset.employeeListId =
                 employeeList.employeeListId.toString();
             // eslint-disable-next-line no-unsanitized/property
-            panelElement.innerHTML = `<summary class="panel-heading is-clickable">
-        <span class="icon-text">
-          <span class="icon">
-            <i class="fa-solid fa-chevron-right details-chevron"></i>
+            panelElement.innerHTML = /* html */ `
+        <summary class="panel-heading is-clickable">
+          <span class="icon-text">
+            <span class="icon">
+              <i class="fa-solid fa-chevron-right details-chevron"></i>
+            </span>
+            <span class="has-text-weight-semibold mr-2">
+              ${cityssm.escapeHTML(employeeList.employeeListName)}
+            </span>
+            ${userGroup === undefined
+                ? ''
+                : `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`}
+            <span class="tag is-rounded ml-2">${employeeList.memberCount ?? 0}</span>
           </span>
-          <span class="has-text-weight-semibold mr-2">
-            ${cityssm.escapeHTML(employeeList.employeeListName)}
-          </span>
-          ${userGroup !== undefined
-                ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
-                : ''}
-          <span class="tag is-rounded ml-2">${employeeList.memberCount ?? 0}</span>
-        </span>
-      </summary>
-      <div class="panel-block is-justify-content-space-between is-align-items-center">
-        <div class="buttons are-small mb-0">
-          <button
-            class="button is-primary button--addMember"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-plus"></i>
-            </span>
-            <span>Add Member</span>
-          </button>
+        </summary>
+        <div class="panel-block is-justify-content-space-between is-align-items-center">
+          <div class="buttons are-small mb-0">
+            <button
+              class="button is-primary button--addMember"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-plus"></i>
+              </span>
+              <span>Add Member</span>
+            </button>
+          </div>
+          <div class="buttons are-small mb-0">
+            <button
+              class="button is-info button--editEmployeeList"
+              data-employee-list-id="${employeeList.employeeListId}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-pencil"></i>
+              </span>
+              <span>Edit List</span>
+            </button>
+            <button
+              class="button is-danger button--deleteEmployeeList"
+              data-employee-list-id="${employeeList.employeeListId}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-trash"></i>
+              </span>
+              <span>Delete List</span>
+            </button>
+          </div>
         </div>
-        <div class="buttons are-small mb-0">
-          <button
-            class="button is-info button--editEmployeeList"
-            data-employee-list-id="${employeeList.employeeListId}"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-pencil"></i>
-            </span>
-            <span>Edit List</span>
-          </button>
-          <button
-            class="button is-danger button--deleteEmployeeList"
-            data-employee-list-id="${employeeList.employeeListId}"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-trash"></i>
-            </span>
-            <span>Delete List</span>
-          </button>
-        </div>
-      </div>
-      <div class="panel-block-members"></div>`;
+        <div class="panel-block-members"></div>
+      `;
             employeeListsContainerElement.append(panelElement);
             // Add event listeners
             panelElement
                 .querySelector('.button--editEmployeeList')
-                .addEventListener('click', editEmployeeList);
+                ?.addEventListener('click', editEmployeeList);
             panelElement
                 .querySelector('.button--deleteEmployeeList')
-                .addEventListener('click', deleteEmployeeList);
+                ?.addEventListener('click', deleteEmployeeList);
             panelElement
                 .querySelector('.button--addMember')
-                .addEventListener('click', () => {
+                ?.addEventListener('click', () => {
                 addEmployeeListMember(employeeList.employeeListId, panelElement);
             });
             // Load details when panel is opened

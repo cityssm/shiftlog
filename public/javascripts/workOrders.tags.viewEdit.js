@@ -15,6 +15,7 @@
                 tagsCountElement.textContent = tags.length.toString();
             }
             if (tags.length === 0) {
+                ;
                 tagsContainerElement.innerHTML = /* html */ `
           <div class="message is-info">
             <p class="message-body">No tags have been added yet.</p>
@@ -22,6 +23,7 @@
         `;
                 return;
             }
+            ;
             tagsContainerElement.innerHTML = '';
             const tagsElement = document.createElement('div');
             tagsElement.className = 'tags';
@@ -50,7 +52,7 @@
                 }
                 tagsElement.append(tagElement);
             }
-            tagsContainerElement.append(tagsElement);
+            tagsContainerElement?.append(tagsElement);
         }
         function deleteTag(tagName) {
             bulmaJS.confirm({
@@ -125,6 +127,10 @@
                 },
                 onshown(_modalElement, closeFunction) {
                     closeModalFunction = closeFunction;
+                    bulmaJS.toggleHtmlClipped();
+                },
+                onremoved() {
+                    bulmaJS.toggleHtmlClipped();
                 }
             });
         }

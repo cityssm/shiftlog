@@ -36,24 +36,25 @@ declare const bulmaJS: BulmaJS
     interface WorkOrderCost {
       workOrderCostId: number
       workOrderId: number
+
       costAmount: number
       costDescription: string
-      recordCreate_userName: string
       recordCreate_dateTime: string
-      recordUpdate_userName: string
+      recordCreate_userName: string
       recordUpdate_dateTime: string
+      recordUpdate_userName: string
     }
 
     function renderCosts(costs: WorkOrderCost[]): void {
       // Update costs count
       const costsCountElement = document.querySelector('#costsCount')
-      
+
       if (costsCountElement !== null) {
         costsCountElement.textContent = costs.length.toString()
       }
 
       if (costs.length === 0) {
-        costsContainerElement.innerHTML = /* html */ `
+        ;(costsContainerElement as HTMLElement).innerHTML = /* html */ `
           <div class="message is-info">
             <p class="message-body">No costs have been added yet.</p>
           </div>
@@ -79,7 +80,7 @@ declare const bulmaJS: BulmaJS
         <tfoot>
           <tr>
             <th>Total</th>
-            <th id="costs--total" class="has-text-right">$0.00</th>
+            <th class="has-text-right" id="costs--total">$0.00</th>
             <th colspan="${exports.isEdit ? '3' : '2'}"></th>
           </tr>
         </tfoot>
@@ -110,7 +111,7 @@ declare const bulmaJS: BulmaJS
             exports.isEdit && canEdit
               ? /* html */ `
                 <td class="is-hidden-print">
-                  <div class="buttons are-small">
+                  <div class="buttons are-small is-justify-content-end">
                     <button
                       class="button edit-cost"
                       data-cost-id="${cost.workOrderCostId}"
@@ -161,7 +162,7 @@ declare const bulmaJS: BulmaJS
         totalElement.textContent = `$${total.toFixed(2)}`
       }
 
-      costsContainerElement.replaceChildren(tableElement)
+      costsContainerElement?.replaceChildren(tableElement)
     }
 
     function showEditCostModal(cost: WorkOrderCost): void {
@@ -220,7 +221,9 @@ declare const bulmaJS: BulmaJS
       })
     }
 
-    function showAddCostModal(): void {
+    function showAddCostModal(event?: Event): void {
+      event?.preventDefault()
+
       let closeModalFunction: () => void
 
       function doAddCost(submitEvent: Event): void {
@@ -321,14 +324,9 @@ declare const bulmaJS: BulmaJS
     }
 
     // Add cost button
-    const addCostButton = document.querySelector(
-      '#button--addCost'
-    ) as HTMLButtonElement | null
-    if (addCostButton !== null) {
-      addCostButton.addEventListener('click', () => {
-        showAddCostModal()
-      })
-    }
+    document
+      .querySelector('#button--addCost')
+      ?.addEventListener('click', showAddCostModal)
 
     // Load costs initially
     loadCosts()

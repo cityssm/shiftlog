@@ -366,7 +366,7 @@
                     const locationSpan = document.createElement('span');
                     locationSpan.className = 'has-text-grey-light is-size-7';
                     locationSpan.textContent = ` (${adhocTask.locationAddress1}${adhocTask.locationCityProvince
-                        ? ', ' + adhocTask.locationCityProvince
+                        ? `, ${adhocTask.locationCityProvince}`
                         : ''})`;
                     adhocTaskItem.append(locationSpan);
                 }
@@ -823,7 +823,7 @@
                     const locationSpan = document.createElement('div');
                     locationSpan.className = 'has-text-grey is-size-7';
                     locationSpan.textContent = `${adhocTask.locationAddress1}${adhocTask.locationCityProvince
-                        ? ', ' + adhocTask.locationCityProvince
+                        ? `, ${adhocTask.locationCityProvince}`
                         : ''}`;
                     itemBox.append(locationSpan);
                 }

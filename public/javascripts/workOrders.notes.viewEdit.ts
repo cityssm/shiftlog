@@ -149,7 +149,7 @@ declare const bulmaJS: BulmaJS
           })
         }
 
-        notesContainerElement.append(noteElement)
+        notesContainerElement?.append(noteElement)
       }
     }
 
@@ -243,7 +243,9 @@ declare const bulmaJS: BulmaJS
       })
     }
 
-    function showAddNoteModal(): void {
+    function showAddNoteModal(event?: Event): void {
+      event?.preventDefault()
+
       let closeModalFunction: () => void
       function doAddNote(submitEvent: Event): void {
         submitEvent.preventDefault()
@@ -344,14 +346,9 @@ declare const bulmaJS: BulmaJS
     }
 
     // Add note button
-    const addNoteButton = document.querySelector(
-      '#button--addNote'
-    ) as HTMLButtonElement | null
-    if (addNoteButton !== null) {
-      addNoteButton.addEventListener('click', () => {
-        showAddNoteModal()
-      })
-    }
+    document
+      .querySelector('#button--addNote')
+      ?.addEventListener('click', showAddNoteModal)
 
     // Load notes initially
     loadNotes()

@@ -91,7 +91,7 @@
                         deleteNote(note.noteSequence);
                     });
                 }
-                notesContainerElement.append(noteElement);
+                notesContainerElement?.append(noteElement);
             }
         }
         function showFullNoteModal(note) {
@@ -161,7 +161,8 @@
                 }
             });
         }
-        function showAddNoteModal() {
+        function showAddNoteModal(event) {
+            event?.preventDefault();
             let closeModalFunction;
             function doAddNote(submitEvent) {
                 submitEvent.preventDefault();
@@ -233,12 +234,9 @@
             });
         }
         // Add note button
-        const addNoteButton = document.querySelector('#button--addNote');
-        if (addNoteButton !== null) {
-            addNoteButton.addEventListener('click', () => {
-                showAddNoteModal();
-            });
-        }
+        document
+            .querySelector('#button--addNote')
+            ?.addEventListener('click', showAddNoteModal);
         // Load notes initially
         loadNotes();
     }

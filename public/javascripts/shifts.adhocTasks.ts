@@ -17,6 +17,7 @@ declare const L: typeof Leaflet
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
   shiftAdhocTasks: AdhocTask[]
 }
 ;(() => {
@@ -355,6 +356,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Creating Task',
+
               message: responseJSON.errorMessage ?? 'An unknown error occurred.'
             })
           }
@@ -489,8 +491,9 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
-            shiftAdhocTasks?: AdhocTask[]
+
             errorMessage?: string
+            shiftAdhocTasks?: AdhocTask[]
           }
 
           if (responseJSON.success && responseJSON.shiftAdhocTasks) {
@@ -501,6 +504,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Task',
+              
               message: responseJSON.errorMessage ?? 'An unknown error occurred.'
             })
           }
@@ -736,6 +740,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Note',
+
               message: responseJSON.errorMessage ?? 'An unknown error occurred.'
             })
           }
@@ -1006,16 +1011,24 @@ declare const exports: {
       contextualColorName: 'warning',
       title: 'Remove Ad Hoc Task from Shift',
 
-      message: `Are you sure you want to remove this task from this shift?<br /><br />
+      message: /* html */ `
+        Are you sure you want to remove this task from this shift?<br /><br />
         <strong>Would you like to:</strong><br />
         <label class="radio">
-          <input type="radio" name="deleteOption" value="remove" checked />
+          <input
+            name="deleteOption"
+            type="radio"
+            value="remove"
+            checked
+          />
           Just remove from this shift (keep available for other shifts)
-        </label><br />
+        </label>
+        <br />
         <label class="radio">
-          <input type="radio" name="deleteOption" value="delete" />
+          <input name="deleteOption" type="radio" value="delete" />
           Delete the task entirely
-        </label>`,
+        </label>
+      `,
       messageIsHtml: true,
 
       okButton: {

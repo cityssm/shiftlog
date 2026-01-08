@@ -47,6 +47,7 @@ interface UserGroup {
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
   dataLists: DataListWithItems[]
   userGroups: UserGroup[]
 }
@@ -80,11 +81,13 @@ declare const exports: {
     updateItemCount(dataListKey, items.length)
 
     if (items.length === 0) {
-      tbodyElement.innerHTML = `<tr>
-        <td colspan="4" class="has-text-centered has-text-grey">
-          No items in this list. Click "Add Item" to create one.
-        </td>
-      </tr>`
+      tbodyElement.innerHTML = /* html */ `
+        <tr>
+          <td class="has-text-centered has-text-grey" colspan="4">
+            No items in this list. Click "Add Item" to create one.
+          </td>
+        </tr>
+      `
       return
     }
 
@@ -154,6 +157,7 @@ declare const exports: {
 
     // Re-attach event listeners
     attachEventListeners(dataListKey)
+
     // Re-initialize sortable
     initializeSortable(dataListKey)
   }
@@ -181,13 +185,16 @@ declare const exports: {
 
       const addForm = submitEvent.currentTarget as HTMLFormElement
       const formData = new FormData(addForm)
-      const dataListItem = (formData.get('dataListItem') as string)?.trim()
+      const dataListItem = (
+        formData.get('dataListItem') as string | null
+      )?.trim()
 
       if (dataListItem === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
-          message: 'Please enter an item name.',
-          title: 'Item Name Required'
+          title: 'Item Name Required',
+
+          message: 'Please enter an item name.'
         })
         return
       }
@@ -198,6 +205,7 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+
             items?: DataListItemWithDetails[]
           }
 
@@ -213,17 +221,19 @@ declare const exports: {
               detailsElement.open = true
             }
 
-            renderDataListItems(dataListKey, responseJSON.items)
+            renderDataListItems(dataListKey as string, responseJSON.items)
 
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Item Added',
+
               message: 'The item has been successfully added.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Item',
+
               message: 'Please try again.'
             })
           }
@@ -269,6 +279,7 @@ declare const exports: {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -305,13 +316,16 @@ declare const exports: {
 
       const editForm = submitEvent.currentTarget as HTMLFormElement
       const formData = new FormData(editForm)
-      const dataListItem = (formData.get('dataListItem') as string)?.trim()
+      const dataListItem = (
+        formData.get('dataListItem') as string | null
+      )?.trim()
 
       if (dataListItem === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
-          message: 'Please enter an item name.',
-          title: 'Item Name Required'
+          title: 'Item Name Required',
+
+          message: 'Please enter an item name.'
         })
         return
       }
@@ -322,21 +336,25 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+
             items?: DataListItemWithDetails[]
           }
 
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
-            renderDataListItems(dataListKey, responseJSON.items)
+            renderDataListItems(dataListKey as string, responseJSON.items)
+
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Item Updated',
+
               message: 'The item has been successfully updated.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Item',
+
               message: 'Please try again.'
             })
           }
@@ -408,6 +426,7 @@ declare const exports: {
         itemInput.focus()
         itemInput.select()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -519,10 +538,12 @@ declare const exports: {
     if (!hasItems) {
       // Destroy existing instance if no items
       const existingInstance = sortableInstances.get(dataListKey)
+
       if (existingInstance !== undefined) {
         existingInstance.destroy()
         sortableInstances.delete(dataListKey)
       }
+
       return
     }
 
@@ -561,6 +582,7 @@ declare const exports: {
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
               success: boolean
+
               items?: DataListItemWithDetails[]
             }
 

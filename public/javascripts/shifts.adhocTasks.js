@@ -567,16 +567,24 @@
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Remove Ad Hoc Task from Shift',
-            message: `Are you sure you want to remove this task from this shift?<br /><br />
+            message: /* html */ `
+        Are you sure you want to remove this task from this shift?<br /><br />
         <strong>Would you like to:</strong><br />
         <label class="radio">
-          <input type="radio" name="deleteOption" value="remove" checked />
+          <input
+            name="deleteOption"
+            type="radio"
+            value="remove"
+            checked
+          />
           Just remove from this shift (keep available for other shifts)
-        </label><br />
+        </label>
+        <br />
         <label class="radio">
-          <input type="radio" name="deleteOption" value="delete" />
+          <input name="deleteOption" type="radio" value="delete" />
           Delete the task entirely
-        </label>`,
+        </label>
+      `,
             messageIsHtml: true,
             okButton: {
                 text: 'Remove',

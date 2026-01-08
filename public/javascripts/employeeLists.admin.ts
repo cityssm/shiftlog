@@ -37,6 +37,7 @@ interface EmployeeListWithMembers extends EmployeeList {
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
   employeeLists: EmployeeList[]
   employees: Employee[]
   userGroups: UserGroup[]
@@ -143,6 +144,7 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+
             employeeLists?: EmployeeList[]
           }
 
@@ -177,10 +179,7 @@ declare const exports: {
         modalElement.querySelector('.modal-card-title')!.textContent =
           'Edit Employee List'
 
-        formElement = modalElement.querySelector(
-          'form'
-        ) as HTMLFormElement
-
+        formElement = modalElement.querySelector('form') as HTMLFormElement
         ;(
           formElement.querySelector(
             '#employeeListEdit--employeeListId'
@@ -204,7 +203,8 @@ declare const exports: {
 
         bulmaJS.toggleHtmlClipped()
       },
-      onhidden() {
+
+      onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
     })
@@ -223,6 +223,7 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+
             employeeListId?: number
             employeeLists?: EmployeeList[]
           }
@@ -255,9 +256,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminEmployeeLists-add', {
       onshow(modalElement) {
-        formElement = modalElement.querySelector(
-          'form'
-        ) as HTMLFormElement
+        formElement = modalElement.querySelector('form') as HTMLFormElement
 
         formElement.addEventListener('submit', doAdd)
       },
@@ -266,7 +265,8 @@ declare const exports: {
 
         bulmaJS.toggleHtmlClipped()
       },
-      onhidden() {
+
+      onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
     })
@@ -287,10 +287,7 @@ declare const exports: {
         }
 
         if (responseJSON.employeeList !== undefined) {
-          renderEmployeeListMembers(
-            responseJSON.employeeList,
-            panelElement
-          )
+          renderEmployeeListMembers(responseJSON.employeeList, panelElement)
         }
       }
     )
@@ -310,6 +307,7 @@ declare const exports: {
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
           success: boolean
+
           employeeList?: EmployeeListWithMembers
         }
 
@@ -352,6 +350,7 @@ declare const exports: {
         bulmaJS.alert({
           contextualColorName: 'danger',
           title: 'Missing Employee',
+
           message: 'Please select an employee.'
         })
         return
@@ -363,13 +362,11 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+
             employeeList?: EmployeeListWithMembers
           }
 
-          if (
-            responseJSON.success &&
-            responseJSON.employeeList !== undefined
-          ) {
+          if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
             bulmaJS.alert({
@@ -395,10 +392,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminEmployeeLists-addMember', {
       onshow(modalElement) {
-        formElement = modalElement.querySelector(
-          'form'
-        ) as HTMLFormElement
-
+        formElement = modalElement.querySelector('form') as HTMLFormElement
         ;(
           formElement.querySelector(
             '#employeeListMember--employeeListId'
@@ -422,8 +416,7 @@ declare const exports: {
           '#employeeListMember--seniorityDate'
         ) as HTMLInputElement
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(window as any).flatpickr(seniorityDateInput, {
+        globalThis.flatpickr(seniorityDateInput, {
           dateFormat: 'Y-m-d',
           allowInput: true
         })
@@ -435,7 +428,8 @@ declare const exports: {
 
         bulmaJS.toggleHtmlClipped()
       },
-      onhidden() {
+
+      onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
     })
@@ -467,13 +461,11 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+
             employeeList?: EmployeeListWithMembers
           }
 
-          if (
-            responseJSON.success &&
-            responseJSON.employeeList !== undefined
-          ) {
+          if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
             bulmaJS.alert({
@@ -498,10 +490,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminEmployeeLists-editMember', {
       onshow(modalElement) {
-        formElement = modalElement.querySelector(
-          'form'
-        ) as HTMLFormElement
-
+        formElement = modalElement.querySelector('form') as HTMLFormElement
         ;(
           formElement.querySelector(
             '#employeeListMemberEdit--employeeListId'
@@ -516,7 +505,8 @@ declare const exports: {
           formElement.querySelector(
             '#employeeListMemberEdit--employeeName'
           ) as HTMLInputElement
-        ).value = `${member.firstName ?? ''} ${member.lastName ?? ''} (${employeeNumber})`
+        ).value =
+          `${member.firstName ?? ''} ${member.lastName ?? ''} (${employeeNumber})`
 
         // Initialize flatpickr for seniority date
         const seniorityDateInput = formElement.querySelector(
@@ -530,12 +520,10 @@ declare const exports: {
           )
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(window as any).flatpickr(seniorityDateInput, {
+        globalThis.flatpickr(seniorityDateInput, {
           dateFormat: 'Y-m-d',
           allowInput: true
         })
-
         ;(
           formElement.querySelector(
             '#employeeListMemberEdit--seniorityOrderNumber'
@@ -549,7 +537,8 @@ declare const exports: {
 
         bulmaJS.toggleHtmlClipped()
       },
-      onhidden() {
+
+      onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
     })
@@ -562,9 +551,9 @@ declare const exports: {
   ): void {
     // Sanitize dateKey for use in CSS selector (remove special characters)
     const sanitizedDateKey = seniorityDate
-      ? seniorityDate.replace(/[^a-zA-Z0-9-]/g, '-')
+      ? seniorityDate.replaceAll(/[^a-z0-9-]/gi, '-')
       : 'nodate'
-    
+
     const containerId = `members--${employeeListId}--${sanitizedDateKey}`
 
     const tbodyElement = document.querySelector(
@@ -625,6 +614,7 @@ declare const exports: {
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
               success: boolean
+
               employeeList?: EmployeeListWithMembers
             }
 
@@ -632,10 +622,7 @@ declare const exports: {
               responseJSON.success &&
               responseJSON.employeeList !== undefined
             ) {
-              renderEmployeeListMembers(
-                responseJSON.employeeList,
-                panelElement
-              )
+              renderEmployeeListMembers(responseJSON.employeeList, panelElement)
             } else {
               bulmaJS.alert({
                 contextualColorName: 'danger',
@@ -662,11 +649,13 @@ declare const exports: {
     ) as HTMLElement
 
     if (employeeList.members.length === 0) {
-      membersContainerElement.innerHTML = `<div class="panel-block">
-        <p class="has-text-grey">
-          No employees in this list. Click "Add Member" to add an employee.
-        </p>
-      </div>`
+      membersContainerElement.innerHTML = /* html */ `
+        <div class="panel-block">
+          <p class="has-text-grey">
+            No employees in this list. Click "Add Member" to add an employee.
+          </p>
+        </div>
+      `
       return
     }
 
@@ -680,17 +669,18 @@ declare const exports: {
         membersByDate.set(dateKey, [])
       }
 
-      membersByDate.get(dateKey)!.push(member)
+      membersByDate.get(dateKey)?.push(member)
     }
 
     let membersHtml = ''
 
     for (const [dateKey, members] of membersByDate) {
       // Sanitize dateKey for use in CSS selector (remove special characters)
-      const sanitizedDateKey = dateKey === 'no-date' 
-        ? 'nodate'
-        : dateKey.replace(/[^a-zA-Z0-9-]/g, '-')
-      
+      const sanitizedDateKey =
+        dateKey === 'no-date'
+          ? 'nodate'
+          : dateKey.replaceAll(/[^a-z0-9-]/gi, '-')
+
       const containerId = `members--${employeeList.employeeListId}--${sanitizedDateKey}`
 
       const dateDisplay =
@@ -706,7 +696,9 @@ declare const exports: {
           <table class="table is-striped is-hoverable is-fullwidth mb-0">
             <thead>
               <tr>
-                <th style="width: 60px;">Order</th>
+                <th class="has-width-1">
+                  <span class="is-sr-only">Order</span>
+                </th>
                 <th>Employee Name</th>
                 <th>Employee Number</th>
                 <th>
@@ -717,44 +709,45 @@ declare const exports: {
             <tbody class="is-sortable" id="${containerId}">`
 
       for (const member of members) {
-        // eslint-disable-next-line no-unsanitized/method
-        membersHtml += `<tr data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}">
-          <td class="has-text-centered">
-            <span class="icon is-small has-text-grey handle" style="cursor: move;">
-              <i class="fa-solid fa-grip-vertical"></i>
-            </span>
-          </td>
-          <td>
-            ${cityssm.escapeHTML(member.firstName ?? '')} ${cityssm.escapeHTML(member.lastName ?? '')}
-          </td>
-          <td>
-            ${cityssm.escapeHTML(member.employeeNumber)}
-          </td>
-          <td class="has-text-right">
-            <div class="buttons are-small is-justify-content-end mb-0">
-              <button
-                class="button is-info button--editMember"
-                data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
-                type="button"
-                aria-label="Edit"
-              >
-                <span class="icon">
-                  <i class="fa-solid fa-pencil"></i>
-                </span>
-              </button>
-              <button
-                class="button is-danger button--deleteMember"
-                data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
-                type="button"
-                aria-label="Delete"
-              >
-                <span class="icon">
-                  <i class="fa-solid fa-trash"></i>
-                </span>
-              </button>
-            </div>
-          </td>
-        </tr>`
+        membersHtml += /* html */ `
+          <tr data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}">
+            <td class="has-text-centered">
+              <span class="icon is-small has-text-grey handle" style="cursor: move;">
+                <i class="fa-solid fa-grip-vertical"></i>
+              </span>
+            </td>
+            <td>
+              ${cityssm.escapeHTML(member.firstName ?? '')} ${cityssm.escapeHTML(member.lastName ?? '')}
+            </td>
+            <td>
+              ${cityssm.escapeHTML(member.employeeNumber)}
+            </td>
+            <td class="has-text-right">
+              <div class="buttons are-small is-justify-content-end mb-0">
+                <button
+                  class="button is-info button--editMember"
+                  data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
+                  type="button"
+                  aria-label="Edit"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-pencil"></i>
+                  </span>
+                </button>
+                <button
+                  class="button is-danger button--deleteMember"
+                  data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}"
+                  type="button"
+                  aria-label="Delete"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-trash"></i>
+                  </span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `
       }
 
       membersHtml += `</tbody>
@@ -763,6 +756,7 @@ declare const exports: {
       </div>`
     }
 
+    // eslint-disable-next-line no-unsanitized/property
     membersContainerElement.innerHTML = membersHtml
 
     // Add event listeners for edit buttons
@@ -825,10 +819,10 @@ declare const exports: {
     }
 
     // Initialize sortable for each date group
-    for (const [dateKey, _members] of membersByDate) {
+    for (const [dateKey] of membersByDate) {
       initializeSortable(
         employeeList.employeeListId,
-        dateKey === 'no-date' ? null : dateKey,
+        dateKey === 'no-date' ? undefined : dateKey,
         panelElement
       )
     }
@@ -836,27 +830,26 @@ declare const exports: {
 
   function renderEmployeeLists(): void {
     if (exports.employeeLists.length === 0) {
-      employeeListsContainerElement.innerHTML = `<div class="message is-info">
-        <div class="message-body">
-          <p class="has-text-centered">
-            No employee lists have been created yet.
-          </p>
-          <p class="has-text-centered mt-3">
-            Click "Add Employee List" to create one.
-          </p>
+      employeeListsContainerElement.innerHTML = /* html */ `
+        <div class="message is-info">
+          <div class="message-body">
+            No employee lists available.
+          </div>
         </div>
-      </div>`
+      `
       return
     }
 
     employeeListsContainerElement.innerHTML = ''
 
     for (const employeeList of exports.employeeLists) {
-      const userGroup = employeeList.userGroupId
-        ? exports.userGroups.find(
-            (ug) => ug.userGroupId === employeeList.userGroupId
-          )
-        : undefined
+      const userGroup =
+        employeeList.userGroupId !== undefined &&
+        employeeList.userGroupId !== null
+          ? exports.userGroups.find(
+              (ug) => ug.userGroupId === employeeList.userGroupId
+            )
+          : undefined
 
       const panelElement = document.createElement('details')
       panelElement.className = 'panel mb-5 collapsable-panel'
@@ -864,83 +857,82 @@ declare const exports: {
         employeeList.employeeListId.toString()
 
       // eslint-disable-next-line no-unsanitized/property
-      panelElement.innerHTML = `<summary class="panel-heading is-clickable">
-        <span class="icon-text">
-          <span class="icon">
-            <i class="fa-solid fa-chevron-right details-chevron"></i>
+      panelElement.innerHTML = /* html */ `
+        <summary class="panel-heading is-clickable">
+          <span class="icon-text">
+            <span class="icon">
+              <i class="fa-solid fa-chevron-right details-chevron"></i>
+            </span>
+            <span class="has-text-weight-semibold mr-2">
+              ${cityssm.escapeHTML(employeeList.employeeListName)}
+            </span>
+            ${
+              userGroup === undefined
+                ? ''
+                : `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
+            }
+            <span class="tag is-rounded ml-2">${employeeList.memberCount ?? 0}</span>
           </span>
-          <span class="has-text-weight-semibold mr-2">
-            ${cityssm.escapeHTML(employeeList.employeeListName)}
-          </span>
-          ${
-            userGroup !== undefined
-              ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
-              : ''
-          }
-          <span class="tag is-rounded ml-2">${employeeList.memberCount ?? 0}</span>
-        </span>
-      </summary>
-      <div class="panel-block is-justify-content-space-between is-align-items-center">
-        <div class="buttons are-small mb-0">
-          <button
-            class="button is-primary button--addMember"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-plus"></i>
-            </span>
-            <span>Add Member</span>
-          </button>
+        </summary>
+        <div class="panel-block is-justify-content-space-between is-align-items-center">
+          <div class="buttons are-small mb-0">
+            <button
+              class="button is-primary button--addMember"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-plus"></i>
+              </span>
+              <span>Add Member</span>
+            </button>
+          </div>
+          <div class="buttons are-small mb-0">
+            <button
+              class="button is-info button--editEmployeeList"
+              data-employee-list-id="${employeeList.employeeListId}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-pencil"></i>
+              </span>
+              <span>Edit List</span>
+            </button>
+            <button
+              class="button is-danger button--deleteEmployeeList"
+              data-employee-list-id="${employeeList.employeeListId}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-trash"></i>
+              </span>
+              <span>Delete List</span>
+            </button>
+          </div>
         </div>
-        <div class="buttons are-small mb-0">
-          <button
-            class="button is-info button--editEmployeeList"
-            data-employee-list-id="${employeeList.employeeListId}"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-pencil"></i>
-            </span>
-            <span>Edit List</span>
-          </button>
-          <button
-            class="button is-danger button--deleteEmployeeList"
-            data-employee-list-id="${employeeList.employeeListId}"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-trash"></i>
-            </span>
-            <span>Delete List</span>
-          </button>
-        </div>
-      </div>
-      <div class="panel-block-members"></div>`
+        <div class="panel-block-members"></div>
+      `
 
       employeeListsContainerElement.append(panelElement)
 
       // Add event listeners
       panelElement
-        .querySelector('.button--editEmployeeList')!
-        .addEventListener('click', editEmployeeList)
+        .querySelector('.button--editEmployeeList')
+        ?.addEventListener('click', editEmployeeList)
 
       panelElement
-        .querySelector('.button--deleteEmployeeList')!
-        .addEventListener('click', deleteEmployeeList)
+        .querySelector('.button--deleteEmployeeList')
+        ?.addEventListener('click', deleteEmployeeList)
 
       panelElement
-        .querySelector('.button--addMember')!
-        .addEventListener('click', () => {
+        .querySelector('.button--addMember')
+        ?.addEventListener('click', () => {
           addEmployeeListMember(employeeList.employeeListId, panelElement)
         })
 
       // Load details when panel is opened
       panelElement.addEventListener('toggle', () => {
         if (panelElement.open) {
-          loadEmployeeListDetails(
-            employeeList.employeeListId,
-            panelElement
-          )
+          loadEmployeeListDetails(employeeList.employeeListId, panelElement)
         }
       })
     }

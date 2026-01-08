@@ -18,11 +18,13 @@
         // Update the item count tag
         updateItemCount(dataListKey, items.length);
         if (items.length === 0) {
-            tbodyElement.innerHTML = `<tr>
-        <td colspan="4" class="has-text-centered has-text-grey">
-          No items in this list. Click "Add Item" to create one.
-        </td>
-      </tr>`;
+            tbodyElement.innerHTML = /* html */ `
+        <tr>
+          <td class="has-text-centered has-text-grey" colspan="4">
+            No items in this list. Click "Add Item" to create one.
+          </td>
+        </tr>
+      `;
             return;
         }
         // Clear existing items
@@ -107,8 +109,8 @@
             if (dataListItem === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
-                    message: 'Please enter an item name.',
-                    title: 'Item Name Required'
+                    title: 'Item Name Required',
+                    message: 'Please enter an item name.'
                 });
                 return;
             }
@@ -193,8 +195,8 @@
             if (dataListItem === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
-                    message: 'Please enter an item name.',
-                    title: 'Item Name Required'
+                    title: 'Item Name Required',
+                    message: 'Please enter an item name.'
                 });
                 return;
             }

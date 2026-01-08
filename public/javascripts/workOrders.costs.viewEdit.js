@@ -15,6 +15,7 @@
                 costsCountElement.textContent = costs.length.toString();
             }
             if (costs.length === 0) {
+                ;
                 costsContainerElement.innerHTML = /* html */ `
           <div class="message is-info">
             <p class="message-body">No costs have been added yet.</p>
@@ -39,7 +40,7 @@
         <tfoot>
           <tr>
             <th>Total</th>
-            <th id="costs--total" class="has-text-right">$0.00</th>
+            <th class="has-text-right" id="costs--total">$0.00</th>
             <th colspan="${exports.isEdit ? '3' : '2'}"></th>
           </tr>
         </tfoot>
@@ -60,7 +61,7 @@
           ${exports.isEdit && canEdit
                     ? /* html */ `
                 <td class="is-hidden-print">
-                  <div class="buttons are-small">
+                  <div class="buttons are-small is-justify-content-end">
                     <button
                       class="button edit-cost"
                       data-cost-id="${cost.workOrderCostId}"
@@ -101,7 +102,7 @@
             if (totalElement !== null) {
                 totalElement.textContent = `$${total.toFixed(2)}`;
             }
-            costsContainerElement.replaceChildren(tableElement);
+            costsContainerElement?.replaceChildren(tableElement);
         }
         function showEditCostModal(cost) {
             let closeModalFunction;
@@ -140,7 +141,8 @@
                 }
             });
         }
-        function showAddCostModal() {
+        function showAddCostModal(event) {
+            event?.preventDefault();
             let closeModalFunction;
             function doAddCost(submitEvent) {
                 submitEvent.preventDefault();
@@ -211,12 +213,9 @@
             });
         }
         // Add cost button
-        const addCostButton = document.querySelector('#button--addCost');
-        if (addCostButton !== null) {
-            addCostButton.addEventListener('click', () => {
-                showAddCostModal();
-            });
-        }
+        document
+            .querySelector('#button--addCost')
+            ?.addEventListener('click', showAddCostModal);
         // Load costs initially
         loadCosts();
     }

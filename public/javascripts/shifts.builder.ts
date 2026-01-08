@@ -48,7 +48,7 @@ declare const exports: {
   // Track items appearing on multiple shifts
   type DuplicateTracker = Record<string, number[]>
 
-  type ItemType = 'crew' | 'employee' | 'equipment' | 'workOrder' | 'adhocTask'
+  type ItemType = 'adhocTask' | 'crew' | 'employee' | 'equipment' | 'workOrder'
 
   function getItemKey(type: ItemType, id: number | string): string {
     return `${type}:${id}`
@@ -517,7 +517,7 @@ declare const exports: {
           locationSpan.className = 'has-text-grey-light is-size-7'
           locationSpan.textContent = ` (${adhocTask.locationAddress1}${
             adhocTask.locationCityProvince
-              ? ', ' + adhocTask.locationCityProvince
+              ? `, ${adhocTask.locationCityProvince}`
               : ''
           })`
           adhocTaskItem.append(locationSpan)
@@ -1169,7 +1169,7 @@ declare const exports: {
           locationSpan.className = 'has-text-grey is-size-7'
           locationSpan.textContent = `${adhocTask.locationAddress1}${
             adhocTask.locationCityProvince
-              ? ', ' + adhocTask.locationCityProvince
+              ? `, ${adhocTask.locationCityProvince}`
               : ''
           }`
           itemBox.append(locationSpan)

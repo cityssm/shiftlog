@@ -7,6 +7,7 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
   isEdit: boolean
 }
 
@@ -38,13 +39,13 @@ declare const bulmaJS: BulmaJS
     function renderTags(tags: WorkOrderTag[]): void {
       // Update tags count
       const tagsCountElement = document.querySelector('#tagsCount')
-      
+
       if (tagsCountElement !== null) {
         tagsCountElement.textContent = tags.length.toString()
       }
 
       if (tags.length === 0) {
-        tagsContainerElement.innerHTML = /* html */ `
+        ;(tagsContainerElement as HTMLElement).innerHTML = /* html */ `
           <div class="message is-info">
             <p class="message-body">No tags have been added yet.</p>
           </div>
@@ -52,7 +53,7 @@ declare const bulmaJS: BulmaJS
         return
       }
 
-      tagsContainerElement.innerHTML = ''
+      ;(tagsContainerElement as HTMLElement).innerHTML = ''
 
       const tagsElement = document.createElement('div')
       tagsElement.className = 'tags'
@@ -90,7 +91,7 @@ declare const bulmaJS: BulmaJS
         tagsElement.append(tagElement)
       }
 
-      tagsContainerElement.append(tagsElement)
+      tagsContainerElement?.append(tagsElement)
     }
 
     function deleteTag(tagName: string): void {
@@ -122,12 +123,15 @@ declare const bulmaJS: BulmaJS
                   bulmaJS.alert({
                     contextualColorName: 'success',
                     title: 'Tag Removed',
-                    message: 'Tag has been successfully removed from this work order.'
+
+                    message:
+                      'Tag has been successfully removed from this work order.'
                   })
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Removing Tag',
+
                     message:
                       responseJSON.message ??
                       'An error occurred while removing the tag.'
@@ -170,7 +174,7 @@ declare const bulmaJS: BulmaJS
               bulmaJS.alert({
                 contextualColorName: 'success',
                 title: 'Tag Added',
-                
+
                 message: 'Tag has been successfully added to this work order.'
               })
             } else {
@@ -195,6 +199,12 @@ declare const bulmaJS: BulmaJS
         },
         onshown(_modalElement, closeFunction) {
           closeModalFunction = closeFunction
+
+          bulmaJS.toggleHtmlClipped()
+        },
+
+        onremoved() {
+          bulmaJS.toggleHtmlClipped()
         }
       })
     }
