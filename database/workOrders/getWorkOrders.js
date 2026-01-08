@@ -175,6 +175,7 @@ export default async function getWorkOrders(filters, options, user) {
           milestones.milestonesCompletedCount,
 
           attachments.attachmentsCount,
+          thumbnails.thumbnailAttachmentId,
           notes.notesCount,
           costs.costsCount,
           costs.costsTotal
@@ -211,6 +212,14 @@ export default async function getWorkOrders(filters, options, user) {
           where recordDelete_dateTime is null
           group by workOrderId
         ) as attachments on attachments.workOrderId = w.workOrderId
+
+        left join (
+          select workOrderId,
+            workOrderAttachmentId as thumbnailAttachmentId
+          from ShiftLog.WorkOrderAttachments
+          where recordDelete_dateTime is null
+            and isWorkOrderThumbnail = 1
+        ) as thumbnails on thumbnails.workOrderId = w.workOrderId
 
         left join (
           select workOrderId,

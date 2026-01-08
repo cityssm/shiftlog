@@ -356,6 +356,19 @@
         </div>
         <% } %>
       </div>
+      <% if (!isCreate && thumbnailAttachment) { %>
+      <div class="box">
+        <label class="label">Thumbnail Image</label>
+        <figure class="image">
+          <img 
+            src="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= thumbnailAttachment.workOrderAttachmentId %>/inline" 
+            alt="<%= (thumbnailAttachment.attachmentDescription || 'Work order thumbnail') %>"
+            style="max-width: 100%; height: auto;"
+            loading="lazy"
+          />
+        </figure>
+      </div>
+      <% } %>
       <div class="box">
         <div class="field">
           <label class="label" for="workOrder--workOrderOpenDateTimeString">Open Date/Time</label>

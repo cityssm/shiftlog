@@ -2,6 +2,7 @@ import getAssignedToDataListItems from '../../database/workOrders/getAssignedToD
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
+import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js';
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`;
@@ -15,6 +16,8 @@ export default async function handler(request, response) {
         response.redirect(`${redirectRoot}/${workOrder.workOrderId}?error=recordClosed`);
         return;
     }
+    // Get thumbnail attachment
+    const thumbnailAttachment = await getWorkOrderThumbnailAttachment(request.params.workOrderId);
     const workOrderTypes = await getWorkOrderTypes(request.session.user);
     const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user);
     const workOrderPriorities = await getWorkOrderPriorityDataListItems(request.session.user);
@@ -24,6 +27,7 @@ export default async function handler(request, response) {
         isCreate: false,
         isEdit: true,
         workOrder,
+        thumbnailAttachment,
         assignedToOptions,
         workOrderStatuses,
         workOrderPriorities,

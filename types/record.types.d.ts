@@ -289,6 +289,7 @@ export interface WorkOrder extends BaseRecord {
     milestonesCompletedCount?: number;
     overdueMilestonesCount?: number;
     attachmentsCount?: number;
+    thumbnailAttachmentId?: number | null;
     notesCount?: number;
     costsCount?: number;
     costsTotal?: number;

@@ -74,6 +74,23 @@
         </p>
       </div>
     </div>
+    <% if (thumbnailAttachment) { %>
+    <div class="box avoid-page-break report-block">
+      <button class="button is-delete-report-block-button" type="button" title="Remove Thumbnail Image section from the report">
+        <span class="icon is-small">
+          <i class="fa-solid fa-xmark"></i>
+        </span>
+      </button>
+      <label class="label">Thumbnail Image</label>
+      <figure class="image">
+        <img 
+          src="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= thumbnailAttachment.workOrderAttachmentId %>/inline" 
+          alt="<%= thumbnailAttachment.attachmentDescription || 'Work order thumbnail' %>"
+          style="max-width: 100%; height: auto;"
+        />
+      </figure>
+    </div>
+    <% } %>
     <div class="box avoid-page-break">
       <div class="field">
         <label class="label">Open Date/Time</label>

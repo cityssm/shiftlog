@@ -91,6 +91,19 @@
             </span>
           `
                 : '';
+            // Build thumbnail icon HTML
+            const thumbnailIconHTML = workOrder.thumbnailAttachmentId
+                ? /* html */ `
+            <a 
+              href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline" 
+              target="_blank"
+              title="View thumbnail image"
+              class="icon has-text-info"
+            >
+              <i class="fa-solid fa-image"></i>
+            </a>
+          `
+                : '';
             // Build notes icon HTML
             const notesIconHTML = workOrder.notesCount && workOrder.notesCount > 0
                 ? /* html */ `
@@ -124,7 +137,9 @@
         <td>
           <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
-          </a><br />
+          </a>
+          ${thumbnailIconHTML}
+          <br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
             -

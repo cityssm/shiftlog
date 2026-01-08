@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
+import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js'
 import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -38,6 +39,11 @@ export default async function handler(
     true
   )) as WorkOrderType
 
+  // Get thumbnail attachment
+  const thumbnailAttachment = await getWorkOrderThumbnailAttachment(
+    request.params.workOrderId
+  )
+
   // Check if work order can be reopened
   let canReopen = false
   if (
@@ -70,6 +76,7 @@ export default async function handler(
 
     canReopen,
     workOrder,
+    thumbnailAttachment,
 
     assignedToOptions: [],
     workOrderStatuses: [],

@@ -129,6 +129,18 @@ interface WorkOrderWithOverdue {
       statusLine.append(dueDateSpan)
     }
 
+    // Add thumbnail image if exists
+    let thumbnailElement: HTMLImageElement | null = null
+    if (workOrder.thumbnailAttachmentId) {
+      thumbnailElement = document.createElement('img')
+      thumbnailElement.src = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline`
+      thumbnailElement.alt = 'Work order thumbnail'
+      thumbnailElement.style.maxWidth = '200px'
+      thumbnailElement.style.height = 'auto'
+      thumbnailElement.style.marginTop = '0.5em'
+      thumbnailElement.style.display = 'block'
+    }
+
     const addressLine = document.createElement('div')
     addressLine.style.marginTop = '0.5em'
     addressLine.textContent =
@@ -147,7 +159,14 @@ interface WorkOrderWithOverdue {
     workOrderDiv.append(
       titleLink,
       typeSpan,
-      statusLine,
+      statusLine
+    )
+    
+    if (thumbnailElement !== null) {
+      workOrderDiv.append(thumbnailElement)
+    }
+    
+    workOrderDiv.append(
       addressLine,
       assignedLine
     )

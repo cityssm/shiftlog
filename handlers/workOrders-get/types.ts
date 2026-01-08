@@ -1,4 +1,4 @@
-import type { DataListItem, WorkOrder, WorkOrderType } from '../../types/record.types.js'
+import type { DataListItem, WorkOrder, WorkOrderAttachment, WorkOrderType } from '../../types/record.types.js'
 
 export interface WorkOrderEditResponse {
   headTitle: string
@@ -8,6 +8,7 @@ export interface WorkOrderEditResponse {
 
   workOrder: Partial<WorkOrder>
   canReopen?: boolean
+  thumbnailAttachment?: WorkOrderAttachment
 
   workOrderTypes: WorkOrderType[]
   workOrderStatuses: DataListItem[]
