@@ -133,7 +133,7 @@ interface WorkOrderWithOverdue {
     let thumbnailElement: HTMLImageElement | null = null
     if (workOrder.thumbnailAttachmentId) {
       thumbnailElement = document.createElement('img')
-      thumbnailElement.src = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/${workOrder.workOrderId}/attachments/${workOrder.thumbnailAttachmentId}/inline`
+      thumbnailElement.src = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline`
       thumbnailElement.alt = 'Work order thumbnail'
       thumbnailElement.style.maxWidth = '200px'
       thumbnailElement.style.height = 'auto'

@@ -95,7 +95,7 @@
             const thumbnailIconHTML = workOrder.thumbnailAttachmentId
                 ? /* html */ `
             <a 
-              href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/${workOrder.workOrderId}/attachments/${workOrder.thumbnailAttachmentId}/inline" 
+              href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline" 
               target="_blank"
               title="View thumbnail image"
               class="icon has-text-info"
