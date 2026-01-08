@@ -2,9 +2,9 @@ import getAssignedToDataListItems from '../../database/workOrders/getAssignedToD
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
+import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js';
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
-import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`;
 export default async function handler(request, response) {
     const workOrder = await getWorkOrder(request.params.workOrderId, request.session.user?.userName);
