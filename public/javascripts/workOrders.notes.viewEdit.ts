@@ -5,6 +5,8 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
+  isEdit: boolean
 }
 
 declare const cityssm: cityssmGlobal
@@ -36,10 +38,11 @@ declare const bulmaJS: BulmaJS
       workOrderId: number
       noteSequence: number
       noteText: string
-      recordCreate_userName: string
+
       recordCreate_dateTime: string
-      recordUpdate_userName: string
+      recordCreate_userName: string
       recordUpdate_dateTime: string
+      recordUpdate_userName: string
     }
 
     function truncateText(text: string, maxLength: number): string {
@@ -72,8 +75,9 @@ declare const bulmaJS: BulmaJS
         noteElement.className = 'box'
 
         const canEdit =
-          exports.shiftLog.userCanManageWorkOrders ||
-          note.recordCreate_userName === exports.shiftLog.userName
+          exports.isEdit &&
+          (exports.shiftLog.userCanManageWorkOrders ||
+            note.recordCreate_userName === exports.shiftLog.userName)
 
         const truncatedText = truncateText(note.noteText, 200)
         const needsExpand = note.noteText.length > 200
@@ -103,20 +107,27 @@ declare const bulmaJS: BulmaJS
               ${
                 canEdit
                   ? /* html */ `
-                    <nav class="level is-mobile">
-                      <div class="level-left">
-                        <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
-                          <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
-                        </a>
-                        <a class="level-item delete-note" data-note-sequence="${note.noteSequence}">
-                          <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
-                        </a>
-                      </div>
-                    </nav>
+                    <div class="buttons">
+                      <a class="button is-small edit-note" data-note-sequence="${note.noteSequence}">
+                        <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
+                        <span>Edit Note</span>
+                      </a>
+                    </div>
                   `
                   : ''
               }
             </div>
+            ${
+              canEdit
+                ? /* html */ `
+                  <div class="media-right">
+                    <button class="button is-small is-light is-danger delete-note" data-note-sequence="${note.noteSequence}" title="Delete Note">
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
+                `
+                : ''
+            }
           </article>
         `
 

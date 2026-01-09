@@ -32,8 +32,9 @@
             for (const note of notes) {
                 const noteElement = document.createElement('div');
                 noteElement.className = 'box';
-                const canEdit = exports.shiftLog.userCanManageWorkOrders ||
-                    note.recordCreate_userName === exports.shiftLog.userName;
+                const canEdit = exports.isEdit &&
+                    (exports.shiftLog.userCanManageWorkOrders ||
+                        note.recordCreate_userName === exports.shiftLog.userName);
                 const truncatedText = truncateText(note.noteText, 200);
                 const needsExpand = note.noteText.length > 200;
                 // eslint-disable-next-line no-unsanitized/property
@@ -56,19 +57,24 @@
               </div>
               ${canEdit
                     ? /* html */ `
-                    <nav class="level is-mobile">
-                      <div class="level-left">
-                        <a class="level-item edit-note" data-note-sequence="${note.noteSequence}">
-                          <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
-                        </a>
-                        <a class="level-item delete-note" data-note-sequence="${note.noteSequence}">
-                          <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
-                        </a>
-                      </div>
-                    </nav>
+                    <div class="buttons">
+                      <a class="button is-small edit-note" data-note-sequence="${note.noteSequence}">
+                        <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
+                        <span>Edit Note</span>
+                      </a>
+                    </div>
                   `
                     : ''}
             </div>
+            ${canEdit
+                    ? /* html */ `
+                  <div class="media-right">
+                    <button class="button is-small is-light is-danger delete-note" data-note-sequence="${note.noteSequence}" title="Delete Note">
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
+                `
+                    : ''}
           </article>
         `;
                 // Add event listeners

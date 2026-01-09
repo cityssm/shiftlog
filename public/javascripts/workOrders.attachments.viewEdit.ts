@@ -5,7 +5,9 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
   attachmentMaximumFileSizeBytes: number
+  isEdit: boolean
 }
 
 declare const cityssm: cityssmGlobal
@@ -100,9 +102,10 @@ declare const bulmaJS: BulmaJS
         const attachmentElement = document.createElement('div')
         attachmentElement.className = 'box'
 
-        const canDelete =
-          exports.shiftLog.userCanManageWorkOrders ||
-          attachment.recordCreate_userName === exports.shiftLog.userName
+        const canEdit =
+          exports.isEdit &&
+          (exports.shiftLog.userCanManageWorkOrders ||
+            attachment.recordCreate_userName === exports.shiftLog.userName)
 
         const fileIcon = getFileIcon(attachment.attachmentFileType)
         const isImage = attachment.attachmentFileType.startsWith('image/')
@@ -132,7 +135,7 @@ declare const bulmaJS: BulmaJS
               <div class="content">
                 <p>
                   <strong>
-                    <a href="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/download" target="_blank">
+                    <a href="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/download" title="Download Attachment" target="_blank">
                       ${cityssm.escapeHTML(attachment.attachmentFileName)}
                     </a>
                     ${
@@ -162,44 +165,34 @@ declare const bulmaJS: BulmaJS
                 </p>
               </div>
               ${
-                canDelete
+                canEdit && isImage && !attachment.isWorkOrderThumbnail
                   ? /* html */ `
-                    <nav class="level is-mobile">
-                      <div class="level-left">
-                        <a class="level-item download-attachment" href="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/download" target="_blank">
-                          <span class="icon is-small"><i class="fa-solid fa-download"></i></span>
-                        </a>
-                        ${
-                          isImage && !attachment.isWorkOrderThumbnail
-                            ? /* html */ `
-                              <a class="level-item set-thumbnail" data-attachment-id="${attachment.workOrderAttachmentId}" title="Set as Thumbnail">
-                                <span class="icon is-small has-text-info"><i class="fa-solid fa-image"></i></span>
-                              </a>
-                            `
-                            : ''
-                        }
-                        <a class="level-item delete-attachment" data-attachment-id="${attachment.workOrderAttachmentId}">
-                          <span class="icon is-small has-text-danger"><i class="fa-solid fa-trash"></i></span>
-                        </a>
-                      </div>
-                    </nav>
+                    <div class="buttons">
+                      <button class="button is-small is-info is-light set-thumbnail" data-attachment-id="${attachment.workOrderAttachmentId}">
+                        <span class="icon is-small"><i class="fa-solid fa-image"></i></span>
+                        <span>Set as Thumbnail</span>
+                      </button>
+                    </div>
                   `
-                  : /* html */ `
-                    <nav class="level is-mobile">
-                      <div class="level-left">
-                        <a class="level-item download-attachment" href="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/download" target="_blank">
-                          <span class="icon is-small"><i class="fa-solid fa-download"></i></span>
-                        </a>
-                      </div>
-                    </nav>
-                  `
+                  : ''
               }
             </div>
+            ${
+              canEdit
+                ? /* html */ `
+                  <div class="media-right">
+                    <button class="button is-small is-light is-danger delete-attachment" data-attachment-id="${attachment.workOrderAttachmentId}" title="Delete Attachment">
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
+                `
+                : ''
+            }
           </article>
         `
 
         // Add event listeners
-        if (canDelete) {
+        if (canEdit) {
           const deleteLink = attachmentElement.querySelector(
             '.delete-attachment'
           ) as HTMLAnchorElement
