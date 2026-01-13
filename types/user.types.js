@@ -3,5 +3,5 @@ export const userSettingKeys = [
     'timesheets.canMarkEmployeesAsEntered',
     'timesheets.canMarkEquipmentAsEntered',
     // eslint-disable-next-line no-secrets/no-secrets
-    'workOrders.defaultAssignedToDataListItemId'
+    'workOrders.defaultAssignedToId'
 ];
