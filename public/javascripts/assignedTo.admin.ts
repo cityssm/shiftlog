@@ -2,6 +2,7 @@ import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { AssignedTo } from '../../types/record.types.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -27,7 +28,6 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
   userGroups: UserGroup[]
 }
-
 ;(() => {
   const shiftLog = exports.shiftLog
   let assignedToList = exports.assignedToList
@@ -132,8 +132,10 @@ declare const exports: {
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
-            assignedToId?: number
+
             errorMessage?: string
+
+            assignedToId?: number
           }
 
           if (responseJSON.success && responseJSON.assignedToId) {
@@ -166,9 +168,10 @@ declare const exports: {
             closeModalFunction()
           } else {
             bulmaJS.alert({
+              contextualColorName: 'danger',
               title: 'Error Adding Item',
-              message: responseJSON.errorMessage ?? 'An error occurred.',
-              contextualColorName: 'danger'
+
+              message: responseJSON.errorMessage ?? 'An error occurred.'
             })
           }
         }
@@ -202,6 +205,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -238,12 +242,13 @@ declare const exports: {
                 item.assignedToId === Number.parseInt(assignedToId, 10)
             )
 
-            if (itemIndex >= 0) {
+            if (itemIndex !== -1) {
               assignedToList[itemIndex].assignedToName = (
                 editForm.querySelector(
                   '#editAssignedTo--assignedToName'
                 ) as HTMLInputElement
               ).value
+
               assignedToList[itemIndex].userGroupId =
                 (
                   editForm.querySelector(
@@ -265,9 +270,10 @@ declare const exports: {
             closeModalFunction()
           } else {
             bulmaJS.alert({
+              contextualColorName: 'danger',
               title: 'Error Updating Item',
-              message: 'An error occurred while updating the item.',
-              contextualColorName: 'danger'
+
+              message: 'An error occurred while updating the item.'
             })
           }
         }
@@ -320,6 +326,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -352,9 +359,10 @@ declare const exports: {
             renderAssignedToList()
           } else {
             bulmaJS.alert({
+              contextualColorName: 'danger',
               title: 'Error Deleting Item',
-              message: 'An error occurred while deleting the item.',
-              contextualColorName: 'danger'
+
+              message: 'An error occurred while deleting the item.'
             })
           }
         }
@@ -362,13 +370,13 @@ declare const exports: {
     }
 
     bulmaJS.confirm({
-      title: 'Delete Assigned To Item',
-      message: `Are you sure you want to delete "${cityssm.escapeHTML(assignedToName)}"?`,
       contextualColorName: 'warning',
+      title: 'Delete Assigned To Item',
+
+      message: `Are you sure you want to delete "${cityssm.escapeHTML(assignedToName)}"?`,
       okButton: {
-        text: 'Yes, Delete',
-        colorName: 'danger',
-        callbackFunction: doDelete
+        callbackFunction: doDelete,
+        text: 'Yes, Delete'
       }
     })
   }
@@ -399,9 +407,10 @@ declare const exports: {
 
           if (!responseJSON.success) {
             bulmaJS.alert({
+              contextualColorName: 'danger',
               title: 'Error Reordering Items',
-              message: 'An error occurred while reordering the items.',
-              contextualColorName: 'danger'
+
+              message: 'An error occurred while reordering the items.'
             })
           }
         }
@@ -414,4 +423,3 @@ declare const exports: {
     .querySelector('#button--addAssignedTo')
     ?.addEventListener('click', addAssignedTo)
 })()
-

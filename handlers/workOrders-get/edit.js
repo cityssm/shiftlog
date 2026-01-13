@@ -1,4 +1,4 @@
-import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
+import getAssignedToList from '../../database/assignedTo/getAssignedToList.js';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
@@ -21,7 +21,7 @@ export default async function handler(request, response) {
     const workOrderTypes = await getWorkOrderTypes(request.session.user);
     const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user);
     const workOrderPriorities = await getWorkOrderPriorityDataListItems(request.session.user);
-    const assignedToOptions = await getAssignedToDataListItems(request.session.user);
+    const assignedToOptions = await getAssignedToList(request.session.user?.userName);
     response.render('workOrders/edit', {
         headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
         isCreate: false,

@@ -93,8 +93,10 @@ declare const exports: {
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
           success: boolean
-          workOrderId?: number
+
           errorMessage?: string
+          
+          workOrderId?: number
         }
 
         if (responseJSON.success) {

@@ -25,6 +25,7 @@ interface CrewWithDetails extends Crew {
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+  
   crews: Crew[]
   employees: Employee[]
   equipment: Equipment[]

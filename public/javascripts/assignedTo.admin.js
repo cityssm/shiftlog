@@ -93,9 +93,9 @@
                 }
                 else {
                     bulmaJS.alert({
+                        contextualColorName: 'danger',
                         title: 'Error Adding Item',
-                        message: responseJSON.errorMessage ?? 'An error occurred.',
-                        contextualColorName: 'danger'
+                        message: responseJSON.errorMessage ?? 'An error occurred.'
                     });
                 }
             });
@@ -141,7 +141,7 @@
                 if (responseJSON.success) {
                     const itemIndex = assignedToList.findIndex((item) => assignedToId !== undefined &&
                         item.assignedToId === Number.parseInt(assignedToId, 10));
-                    if (itemIndex >= 0) {
+                    if (itemIndex !== -1) {
                         assignedToList[itemIndex].assignedToName = editForm.querySelector('#editAssignedTo--assignedToName').value;
                         assignedToList[itemIndex].userGroupId =
                             editForm.querySelector('#editAssignedTo--userGroupId').value === ''
@@ -153,9 +153,9 @@
                 }
                 else {
                     bulmaJS.alert({
+                        contextualColorName: 'danger',
                         title: 'Error Updating Item',
-                        message: 'An error occurred while updating the item.',
-                        contextualColorName: 'danger'
+                        message: 'An error occurred while updating the item.'
                     });
                 }
             });
@@ -208,21 +208,20 @@
                 }
                 else {
                     bulmaJS.alert({
+                        contextualColorName: 'danger',
                         title: 'Error Deleting Item',
-                        message: 'An error occurred while deleting the item.',
-                        contextualColorName: 'danger'
+                        message: 'An error occurred while deleting the item.'
                     });
                 }
             });
         }
         bulmaJS.confirm({
+            contextualColorName: 'warning',
             title: 'Delete Assigned To Item',
             message: `Are you sure you want to delete "${cityssm.escapeHTML(assignedToName)}"?`,
-            contextualColorName: 'warning',
             okButton: {
-                text: 'Yes, Delete',
-                colorName: 'danger',
-                callbackFunction: doDelete
+                callbackFunction: doDelete,
+                text: 'Yes, Delete'
             }
         });
     }
@@ -244,9 +243,9 @@
                 const responseJSON = rawResponseJSON;
                 if (!responseJSON.success) {
                     bulmaJS.alert({
+                        contextualColorName: 'danger',
                         title: 'Error Reordering Items',
-                        message: 'An error occurred while reordering the items.',
-                        contextualColorName: 'danger'
+                        message: 'An error occurred while reordering the items.'
                     });
                 }
             });

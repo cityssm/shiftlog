@@ -1,5 +1,5 @@
+import getAssignedToItem from '../../database/assignedTo/getAssignedToItem.js';
 import { getUserByApiKey } from '../../database/users/getUser.js';
-import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
 import { getWorkOrdersForDigest } from '../../database/workOrders/getWorkOrdersForDigest.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
@@ -18,8 +18,7 @@ export default async function handler(request, response) {
     }
     // Get assigned to item
     const assignedToId = Number(request.query.assignedToId);
-    const assignedToList = await getAssignedToDataListItems(apiUser.userName);
-    const assignedToItem = assignedToList.find((item) => item.assignedToId === assignedToId);
+    const assignedToItem = await getAssignedToItem(assignedToId);
     // Get digest data
     const digestData = await getWorkOrdersForDigest(request.query.assignedToId);
     // Generate report date/time

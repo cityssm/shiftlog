@@ -148,7 +148,7 @@
                         });
                     }
                 }
-                attachmentsContainerElement.append(attachmentElement);
+                attachmentsContainerElement?.append(attachmentElement);
             }
         }
         function showAddAttachmentModal() {

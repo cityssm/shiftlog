@@ -1,11 +1,11 @@
+import getAssignedToList from '../../database/assignedTo/getAssignedToList.js';
 import getTags from '../../database/tags/getTags.js';
-import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js';
 import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js';
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js';
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
-    const assignedToItems = await getAssignedToDataListItems(request.session.user);
+    const assignedToItems = await getAssignedToList(request.session.user?.userName);
     const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user);
     const workOrderPriorities = await getWorkOrderPriorityDataListItems(request.session.user);
     const workOrderTypes = await getWorkOrderTypes(request.session.user);

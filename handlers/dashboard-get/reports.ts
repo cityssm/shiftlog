@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 
-import getAssignedToDataListItems from '../../database/workOrders/getAssignedToDataListItems.js'
+import getAssignedToList from '../../database/assignedTo/getAssignedToList.js'
 
 export default async function handler(
   request: Request<unknown, unknown, unknown, { tab?: string; error?: string }>,
@@ -8,7 +8,9 @@ export default async function handler(
 ): Promise<void> {
   const activeTab = request.query.tab ?? ''
 
-  const assignedToDataListItems = await getAssignedToDataListItems()
+  const assignedToDataListItems = await getAssignedToList(
+    request.session.user?.userName
+  )
 
   response.render('dashboard/reports', {
     headTitle: 'Reports and Exports',
