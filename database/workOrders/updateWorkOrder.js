@@ -48,9 +48,9 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .input('locationAddress1', updateWorkOrderForm.locationAddress1)
         .input('locationAddress2', updateWorkOrderForm.locationAddress2)
         .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
-        .input('assignedToDataListItemId', updateWorkOrderForm.assignedToDataListItemId === ''
+        .input('assignedToId', updateWorkOrderForm.assignedToId === ''
         ? null
-        : updateWorkOrderForm.assignedToDataListItemId)
+        : updateWorkOrderForm.assignedToId)
         .input('moreInfoFormDataJson', moreInfoFormDataJson)
         .input('userName', userName).query(/* sql */ `
       update ShiftLog.WorkOrders
@@ -69,7 +69,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         locationAddress1 = @locationAddress1,
         locationAddress2 = @locationAddress2,
         locationCityProvince = @locationCityProvince,
-        assignedToDataListItemId = @assignedToDataListItemId,
+        assignedToId = @assignedToId,
         moreInfoFormDataJson = @moreInfoFormDataJson,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()

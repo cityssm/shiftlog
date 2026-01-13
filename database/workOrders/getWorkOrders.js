@@ -22,12 +22,12 @@ function buildWhereClause(filters, user) {
         whereClause +=
             ' and (w.requestorName like @requestor or w.requestorContactInfo like @requestor)';
     }
-    if (filters.assignedToDataListItemId !== undefined &&
-        filters.assignedToDataListItemId !== '') {
-        whereClause += ` and (w.assignedToDataListItemId = @assignedToDataListItemId
+    if (filters.assignedToId !== undefined &&
+        filters.assignedToId !== '') {
+        whereClause += ` and (w.assignedToId = @assignedToId
       or w.workOrderId in (
         select workOrderId from ShiftLog.WorkOrderMilestones
-        where assignedToDataListItemId = @assignedToDataListItemId
+        where assignedToId = @assignedToId
           and recordDelete_dateTime is null
       )
     )`;
@@ -96,7 +96,7 @@ function applyParameters(sqlRequest, filters, user) {
         .input('workOrderStatusDataListItemId', filters.workOrderStatusDataListItemId ?? null)
         .input('requestorName', filters.requestorName === undefined ? null : `%${filters.requestorName}%`)
         .input('requestor', filters.requestor === undefined ? null : `%${filters.requestor}%`)
-        .input('assignedToDataListItemId', filters.assignedToDataListItemId ?? null)
+        .input('assignedToId', filters.assignedToId ?? null)
         .input('searchString', filters.searchString === undefined ? null : `%${filters.searchString}%`)
         .input('tagName', filters.tagName ?? null)
         .input('userName', user?.userName);
@@ -164,8 +164,8 @@ export default async function getWorkOrders(filters, options, user) {
           w.locationAddress2,
           w.locationCityProvince,
 
-          w.assignedToDataListItemId,
-          assignedTo.dataListItem as assignedToDataListItem,
+          w.assignedToId,
+          assignedTo.assignedToName,
 
           ${options.includeMoreInfoFormData === true
             ? 'w.moreInfoFormDataJson,'
@@ -191,8 +191,8 @@ export default async function getWorkOrders(filters, options, user) {
         left join ShiftLog.DataListItems wPriority
           on w.workOrderPriorityDataListItemId = wPriority.dataListItemId
 
-        left join ShiftLog.DataListItems assignedTo
-          on w.assignedToDataListItemId = assignedTo.dataListItemId
+        left join ShiftLog.AssignedTo assignedTo
+          on w.assignedToId = assignedTo.assignedToId
 
         left join (
           select workOrderId,

@@ -8,7 +8,7 @@ export interface WorkOrderMilestoneDigestItem extends WorkOrderMilestone {
     isOverdue: boolean;
     isNew: boolean;
 }
-export declare function getWorkOrdersForDigest(assignedToDataListItemId: number | string): Promise<{
+export declare function getWorkOrdersForDigest(assignedToId: number | string): Promise<{
     workOrders: WorkOrderDigestItem[];
     milestones: WorkOrderMilestoneDigestItem[];
 }>;

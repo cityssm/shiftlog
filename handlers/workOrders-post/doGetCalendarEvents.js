@@ -6,12 +6,12 @@ export default async function handler(request, response) {
     const month = typeof request.body.month === 'number'
         ? request.body.month
         : Number.parseInt(request.body.month, 10);
-    const assignedToDataListItemId = request.body.assignedToDataListItemId === undefined ||
-        request.body.assignedToDataListItemId === ''
+    const assignedToId = request.body.assignedToId === undefined ||
+        request.body.assignedToId === ''
         ? undefined
-        : typeof request.body.assignedToDataListItemId === 'number'
-            ? request.body.assignedToDataListItemId
-            : Number.parseInt(request.body.assignedToDataListItemId, 10);
+        : typeof request.body.assignedToId === 'number'
+            ? request.body.assignedToId
+            : Number.parseInt(request.body.assignedToId, 10);
     const showOpenDates = typeof request.body.showOpenDates === 'boolean'
         ? request.body.showOpenDates
         : request.body.showOpenDates === 'true';
@@ -30,7 +30,7 @@ export default async function handler(request, response) {
     const events = await getCalendarEvents({
         year,
         month,
-        assignedToDataListItemId,
+        assignedToId,
         showOpenDates,
         showDueDates,
         showCloseDates,

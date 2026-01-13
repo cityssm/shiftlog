@@ -4,6 +4,6 @@ export interface UpdateWorkOrderMilestoneForm {
     milestoneDescription?: string;
     milestoneDueDateTimeString?: string;
     milestoneCompleteDateTimeString?: string;
-    assignedToDataListItemId?: number | string;
+    assignedToId?: number | string;
 }
 export default function updateWorkOrderMilestone(form: UpdateWorkOrderMilestoneForm, userName: string): Promise<boolean>;

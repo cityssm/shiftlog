@@ -22,8 +22,8 @@ export default async function createWorkOrderMilestone(form, userName) {
         .input('milestoneCompleteDateTime', form.milestoneCompleteDateTimeString
         ? new Date(form.milestoneCompleteDateTimeString)
         : null)
-        .input('assignedToDataListItemId', form.assignedToDataListItemId && form.assignedToDataListItemId !== ''
-        ? form.assignedToDataListItemId
+        .input('assignedToId', form.assignedToId && form.assignedToId !== ''
+        ? form.assignedToId
         : null)
         .input('orderNumber', nextOrderNumber)
         .input('userName', userName).query(/* sql */ `
@@ -33,7 +33,7 @@ export default async function createWorkOrderMilestone(form, userName) {
         milestoneDescription,
         milestoneDueDateTime,
         milestoneCompleteDateTime,
-        assignedToDataListItemId,
+        assignedToId,
         orderNumber,
         recordCreate_userName,
         recordUpdate_userName
@@ -45,7 +45,7 @@ export default async function createWorkOrderMilestone(form, userName) {
         @milestoneDescription,
         @milestoneDueDateTime,
         @milestoneCompleteDateTime,
-        @assignedToDataListItemId,
+        @assignedToId,
         @orderNumber,
         @userName,
         @userName

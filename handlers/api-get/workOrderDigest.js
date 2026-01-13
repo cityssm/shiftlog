@@ -10,18 +10,18 @@ export default async function handler(request, response) {
         return;
     }
     // Validate required parameter
-    if (!request.query.assignedToDataListItemId) {
+    if (!request.query.assignedToId) {
         response
             .status(400)
-            .json({ error: 'Missing required parameter: assignedToDataListItemId' });
+            .json({ error: 'Missing required parameter: assignedToId' });
         return;
     }
-    // Get assigned to data list item
-    const assignedToDataListItemId = Number(request.query.assignedToDataListItemId);
-    const assignedToDataListItems = await getAssignedToDataListItems(apiUser.userName);
-    const assignedToDataListItem = assignedToDataListItems.find((item) => item.dataListItemId === assignedToDataListItemId);
+    // Get assigned to item
+    const assignedToId = Number(request.query.assignedToId);
+    const assignedToList = await getAssignedToDataListItems(apiUser.userName);
+    const assignedToItem = assignedToList.find((item) => item.assignedToId === assignedToId);
     // Get digest data
-    const digestData = await getWorkOrdersForDigest(request.query.assignedToDataListItemId);
+    const digestData = await getWorkOrdersForDigest(request.query.assignedToId);
     // Generate report date/time
     const reportDateTime = new Date();
     // Render the print view
@@ -30,6 +30,6 @@ export default async function handler(request, response) {
         reportDateTime,
         milestones: digestData.milestones,
         workOrders: digestData.workOrders,
-        assignedToDataListItem
+        assignedToItem
     });
 }

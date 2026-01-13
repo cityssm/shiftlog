@@ -48,8 +48,8 @@ export default async function getDeletedWorkOrders(user) {
           w.locationAddress2,
           w.locationCityProvince,
 
-          w.assignedToDataListItemId,
-          assignedTo.dataListItem as assignedToDataListItem,
+          w.assignedToId,
+          assignedTo.assignedToName,
 
           w.recordDelete_userName,
           w.recordDelete_dateTime
@@ -62,8 +62,8 @@ export default async function getDeletedWorkOrders(user) {
         left join ShiftLog.DataListItems wStatus
           on w.workOrderStatusDataListItemId = wStatus.dataListItemId
 
-        left join ShiftLog.DataListItems assignedTo
-          on w.assignedToDataListItemId = assignedTo.dataListItemId
+        left join ShiftLog.AssignedTo assignedTo
+          on w.assignedToId = assignedTo.assignedToId
 
         ${whereClause}    
 

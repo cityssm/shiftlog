@@ -3,7 +3,7 @@ import type { WorkOrderCalendarEvent } from '../../database/workOrders/getCalend
 export interface DoGetCalendarEventsRequest {
     year: number | string;
     month: number | string;
-    assignedToDataListItemId?: number | string;
+    assignedToId?: number | string;
     showOpenDates: boolean | string;
     showDueDates: boolean | string;
     showCloseDates: boolean | string;

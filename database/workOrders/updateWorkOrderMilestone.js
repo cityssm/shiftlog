@@ -14,8 +14,8 @@ export default async function updateWorkOrderMilestone(form, userName) {
         .input('milestoneCompleteDateTime', form.milestoneCompleteDateTimeString
         ? new Date(form.milestoneCompleteDateTimeString)
         : null)
-        .input('assignedToDataListItemId', form.assignedToDataListItemId && form.assignedToDataListItemId !== ''
-        ? form.assignedToDataListItemId
+        .input('assignedToId', form.assignedToId && form.assignedToId !== ''
+        ? form.assignedToId
         : null)
         .input('userName', userName).query(/* sql */ `
       update ShiftLog.WorkOrderMilestones
@@ -24,7 +24,7 @@ export default async function updateWorkOrderMilestone(form, userName) {
         milestoneDescription = @milestoneDescription,
         milestoneDueDateTime = @milestoneDueDateTime,
         milestoneCompleteDateTime = @milestoneCompleteDateTime,
-        assignedToDataListItemId = @assignedToDataListItemId,
+        assignedToId = @assignedToId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       where workOrderMilestoneId = @workOrderMilestoneId
