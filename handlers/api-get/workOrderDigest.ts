@@ -10,7 +10,7 @@ export default async function handler(
     { apiKey: string },
     unknown,
     unknown,
-    { assignedToDataListItemId?: string }
+    { assignedToId?: string }
   >,
   response: Response
 ): Promise<void> {
@@ -23,29 +23,29 @@ export default async function handler(
   }
 
   // Validate required parameter
-  if (!request.query.assignedToDataListItemId) {
+  if (!request.query.assignedToId) {
     response
       .status(400)
-      .json({ error: 'Missing required parameter: assignedToDataListItemId' })
+      .json({ error: 'Missing required parameter: assignedToId' })
     return
   }
 
-  // Get assigned to data list item
-  const assignedToDataListItemId = Number(
-    request.query.assignedToDataListItemId
+  // Get assigned to item
+  const assignedToId = Number(
+    request.query.assignedToId
   )
 
-  const assignedToDataListItems = await getAssignedToDataListItems(
+  const assignedToList = await getAssignedToDataListItems(
     apiUser.userName
   )
 
-  const assignedToDataListItem = assignedToDataListItems.find(
-    (item) => item.dataListItemId === assignedToDataListItemId
+  const assignedToItem = assignedToList.find(
+    (item) => item.assignedToId === assignedToId
   )
 
   // Get digest data
   const digestData = await getWorkOrdersForDigest(
-    request.query.assignedToDataListItemId
+    request.query.assignedToId
   )
 
   // Generate report date/time
@@ -60,6 +60,6 @@ export default async function handler(
     milestones: digestData.milestones,
     workOrders: digestData.workOrders,
 
-    assignedToDataListItem
+    assignedToItem
   })
 }

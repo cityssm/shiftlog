@@ -6,7 +6,7 @@ import type { WorkOrderCalendarEvent } from '../../database/workOrders/getCalend
 export interface DoGetCalendarEventsRequest {
   year: number | string
   month: number | string
-  assignedToDataListItemId?: number | string
+  assignedToId?: number | string
   showOpenDates: boolean | string
   showDueDates: boolean | string
   showCloseDates: boolean | string
@@ -33,14 +33,14 @@ export default async function handler(
       ? request.body.month
       : Number.parseInt(request.body.month, 10)
 
-  const assignedToDataListItemId =
-    request.body.assignedToDataListItemId === undefined ||
-    request.body.assignedToDataListItemId === ''
+  const assignedToId =
+    request.body.assignedToId === undefined ||
+    request.body.assignedToId === ''
       ? undefined
-      : typeof request.body.assignedToDataListItemId === 'number'
-        ? request.body.assignedToDataListItemId
+      : typeof request.body.assignedToId === 'number'
+        ? request.body.assignedToId
         : Number.parseInt(
-            request.body.assignedToDataListItemId as string,
+            request.body.assignedToId as string,
             10
           )
 
@@ -73,7 +73,7 @@ export default async function handler(
     {
       year,
       month,
-      assignedToDataListItemId,
+      assignedToId,
       showOpenDates,
       showDueDates,
       showCloseDates,
