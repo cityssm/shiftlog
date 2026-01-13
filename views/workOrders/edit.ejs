@@ -228,13 +228,13 @@
                 <% let assignedToFound = false %>
                 <% for (const assignedToOption of assignedToOptions) { %>
                   <option
-                    value="<%= assignedToOption.dataListItemId %>"
-                    <% if (workOrder.assignedToId === assignedToOption.dataListItemId) { %>
+                    value="<%= assignedToOption.assignedToId %>"
+                    <% if (workOrder.assignedToId === assignedToOption.assignedToId) { %>
                       <% assignedToFound = true; %>
                       selected
                     <% } %>
                   >
-                    <%= assignedToOption.dataListItem %>
+                    <%= assignedToOption.assignedToName %>
                   </option>
                 <% } %>
                 <% if (!assignedToFound && workOrder.assignedToId) { %>
@@ -690,7 +690,7 @@
 
 <script>
   exports.assignedToOptions = <%- JSON.stringify(assignedToOptions) %>;
-  exports.workOrderAssignedToDataListItemId = <%= workOrder.assignedToId ? workOrder.assignedToId : 'null' %>;
+  exports.workOrderAssignedToId = <%= workOrder.assignedToId ? workOrder.assignedToId : 'null' %>;
   exports.workOrderOpenDateTime = "<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>";
   exports.isEdit = <%= isEdit %>;
   exports.attachmentMaximumFileSizeBytes = <%= configFunctions.getConfigProperty('application.attachmentMaximumFileSizeBytes') %>;

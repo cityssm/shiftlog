@@ -8,15 +8,15 @@ import type FlatPickr from 'flatpickr'
 import type { ShiftLogGlobal } from './types.js'
 import { WorkOrderMilestone } from '../../types/record.types.js'
 
-interface DataListItem {
-  dataListItemId: number
-  dataListItem: string
+interface AssignedToOption {
+  assignedToId: number
+  assignedToName: string
 }
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
-  assignedToOptions: DataListItem[]
-  workOrderAssignedToDataListItemId: number | null
+  assignedToOptions: AssignedToOption[]
+  workOrderAssignedToId: number | null
   workOrderOpenDateTime: string
   isEdit: boolean
 }
@@ -267,8 +267,8 @@ declare const Sortable: {
     function populateAssignedToSelect(selectElement: HTMLSelectElement): void {
       for (const option of exports.assignedToOptions) {
         const optionElement = document.createElement('option')
-        optionElement.value = option.dataListItemId.toString()
-        optionElement.textContent = option.dataListItem
+        optionElement.value = option.assignedToId.toString()
+        optionElement.textContent = option.assignedToName
         selectElement.append(optionElement)
       }
     }
@@ -312,9 +312,9 @@ declare const Sortable: {
           populateAssignedToSelect(assignedToSelect)
 
           // Set the default value to the work order's "assigned to" value
-          if (exports.workOrderAssignedToDataListItemId !== null) {
+          if (exports.workOrderAssignedToId !== null) {
             assignedToSelect.value =
-              exports.workOrderAssignedToDataListItemId.toString()
+              exports.workOrderAssignedToId.toString()
           }
 
           // Initialize flatpickr on date fields
@@ -451,9 +451,9 @@ declare const Sortable: {
           if (milestone.assignedToId !== null) {
             assignedToSelect.value =
               milestone.assignedToId.toString()
-          } else if (exports.workOrderAssignedToDataListItemId !== null) {
+          } else if (exports.workOrderAssignedToId !== null) {
             assignedToSelect.value =
-              exports.workOrderAssignedToDataListItemId.toString()
+              exports.workOrderAssignedToId.toString()
           }
         },
         onshown(modalElement, _closeModalFunction) {

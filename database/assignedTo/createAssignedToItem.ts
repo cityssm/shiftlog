@@ -14,6 +14,47 @@ export default async function createAssignedToItem(
 ): Promise<number> {
   const pool = await getShiftLogConnectionPool()
 
+  // Check if a deleted item with the same name exists
+  const existingResult = (await pool
+    .request()
+    .input('instance', getConfigProperty('application.instance'))
+    .input('assignedToName', form.assignedToName).query(
+      /* sql */ `
+      select assignedToId
+      from ShiftLog.AssignedTo
+      where instance = @instance
+        and assignedToName = @assignedToName
+        and recordDelete_dateTime is not null
+    `
+    )) as mssql.IResult<{ assignedToId: number }>
+
+  // If a deleted item exists, undelete it
+  if (existingResult.recordset.length > 0) {
+    const assignedToId = existingResult.recordset[0].assignedToId
+
+    await pool
+      .request()
+      .input('instance', getConfigProperty('application.instance'))
+      .input('assignedToId', assignedToId)
+      .input(
+        'userGroupId',
+        form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null
+      )
+      .input('userName', userName).query(/* sql */ `
+        update ShiftLog.AssignedTo
+        set
+          userGroupId = @userGroupId,
+          recordDelete_userName = null,
+          recordDelete_dateTime = null,
+          recordUpdate_userName = @userName,
+          recordUpdate_dateTime = getdate()
+        where assignedToId = @assignedToId
+          and instance = @instance
+      `)
+
+    return assignedToId
+  }
+
   // Get the next order number
   const orderResult = (await pool
     .request()
