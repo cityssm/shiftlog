@@ -30,7 +30,7 @@ declare const exports: {
   ) as HTMLButtonElement
 
   const assignedToSelect = document.querySelector(
-    '#calendar--assignedToDataListItemId'
+    '#calendar--assignedToId'
   ) as HTMLSelectElement
 
   const showOpenDatesCheckbox = document.querySelector(
@@ -316,7 +316,7 @@ declare const exports: {
       {
         year: currentYear,
         month: currentMonth,
-        assignedToDataListItemId: assignedToSelect.value,
+        assignedToId: assignedToSelect.value,
         showOpenDates: showOpenDatesCheckbox.checked,
         showDueDates: showDueDatesCheckbox.checked,
         showCloseDates: showCloseDatesCheckbox.checked,

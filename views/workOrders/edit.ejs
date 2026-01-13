@@ -219,17 +219,17 @@
           </div>
         </div>
         <div class="field">
-          <label class="label" for="workOrder--assignedToDataListItemId">Assigned To</label>
+          <label class="label" for="workOrder--assignedToId">Assigned To</label>
           <div class="control">
             <% if (isEdit) { %>
             <div class="select is-fullwidth">
-              <select id="workOrder--assignedToDataListItemId" name="assignedToDataListItemId">
+              <select id="workOrder--assignedToId" name="assignedToId">
                 <option value="">(Not Assigned)</option>
                 <% let assignedToFound = false %>
                 <% for (const assignedToOption of assignedToOptions) { %>
                   <option
                     value="<%= assignedToOption.dataListItemId %>"
-                    <% if (workOrder.assignedToDataListItemId === assignedToOption.dataListItemId) { %>
+                    <% if (workOrder.assignedToId === assignedToOption.dataListItemId) { %>
                       <% assignedToFound = true; %>
                       selected
                     <% } %>
@@ -237,9 +237,9 @@
                     <%= assignedToOption.dataListItem %>
                   </option>
                 <% } %>
-                <% if (!assignedToFound && workOrder.assignedToDataListItemId) { %>
-                  <option value="<%= workOrder.assignedToDataListItemId %>" selected>
-                    <%= workOrder.assignedToDataListItem %> (Inactive)
+                <% if (!assignedToFound && workOrder.assignedToId) { %>
+                  <option value="<%= workOrder.assignedToId %>" selected>
+                    <%= workOrder.assignedToName %> (Inactive)
                   </option>
                 <% } %>
               </select>
@@ -248,7 +248,7 @@
             <input
               class="input"
               type="text"
-              value="<%= workOrder.assignedToDataListItem ?? '(Not Assigned)' %>"
+              value="<%= workOrder.assignedToName ?? '(Not Assigned)' %>"
               readonly
             />
             <% } %>
@@ -690,7 +690,7 @@
 
 <script>
   exports.assignedToOptions = <%- JSON.stringify(assignedToOptions) %>;
-  exports.workOrderAssignedToDataListItemId = <%= workOrder.assignedToDataListItemId ? workOrder.assignedToDataListItemId : 'null' %>;
+  exports.workOrderAssignedToDataListItemId = <%= workOrder.assignedToId ? workOrder.assignedToId : 'null' %>;
   exports.workOrderOpenDateTime = "<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>";
   exports.isEdit = <%= isEdit %>;
   exports.attachmentMaximumFileSizeBytes = <%= configFunctions.getConfigProperty('application.attachmentMaximumFileSizeBytes') %>;

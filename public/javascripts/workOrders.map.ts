@@ -35,7 +35,7 @@ interface WorkOrderWithOverdue {
   ) as HTMLSelectElement
 
   const assignedToSelect = document.querySelector(
-    '#workOrderMap--assignedToDataListItemId'
+    '#workOrderMap--assignedToId'
   ) as HTMLSelectElement
 
   const workOrderCountElement = document.querySelector(
@@ -154,7 +154,7 @@ interface WorkOrderWithOverdue {
     const assignedLine = document.createElement('div')
     assignedLine.style.marginTop = '0.5em'
     assignedLine.style.fontSize = '0.9em'
-    assignedLine.textContent = `Assigned to: ${workOrder.assignedToDataListItem ?? '(Not Assigned)'}`
+    assignedLine.textContent = `Assigned to: ${workOrder.assignedToName ?? '(Not Assigned)'}`
 
     workOrderDiv.append(
       titleLink,
@@ -249,9 +249,9 @@ interface WorkOrderWithOverdue {
       filters.workOrderTypeId = workOrderTypeId
     }
 
-    const assignedToDataListItemId = assignedToSelect.value
-    if (assignedToDataListItemId !== '') {
-      filters.assignedToDataListItemId = assignedToDataListItemId
+    const assignedToId = assignedToSelect.value
+    if (assignedToId !== '') {
+      filters.assignedToId = assignedToId
     }
 
     cityssm.postJSON(

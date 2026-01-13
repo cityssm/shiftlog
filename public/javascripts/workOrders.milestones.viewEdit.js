@@ -87,7 +87,7 @@
                     : ''}
           </td>
           <td class="is-hidden-touch">
-            ${milestone.assignedToDataListItem ? cityssm.escapeHTML(milestone.assignedToDataListItem) : '<span class="has-text-grey">(Not Assigned)</span>'}
+            ${milestone.assignedToName ? cityssm.escapeHTML(milestone.assignedToName) : '<span class="has-text-grey">(Not Assigned)</span>'}
           </td>
           <td>
             ${milestone.milestoneDueDateTime ? formatDateTime(milestone.milestoneDueDateTime) : '<span class="has-text-grey">-</span>'}
@@ -199,7 +199,7 @@
                     ;
                     modalElement.querySelector('#addWorkOrderMilestone--workOrderId').value = workOrderId;
                     // Populate Assigned To select
-                    const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToDataListItemId');
+                    const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToId');
                     populateAssignedToSelect(assignedToSelect);
                     // Set the default value to the work order's "assigned to" value
                     if (exports.workOrderAssignedToDataListItemId !== null) {
@@ -283,12 +283,12 @@
                         completeDatePicker.setDate(now, true);
                     });
                     // Populate Assigned To select
-                    const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToDataListItemId');
+                    const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToId');
                     populateAssignedToSelect(assignedToSelect);
                     // Set the selected option if there is one, otherwise default to work order's assigned to
-                    if (milestone.assignedToDataListItemId !== null) {
+                    if (milestone.assignedToId !== null) {
                         assignedToSelect.value =
-                            milestone.assignedToDataListItemId.toString();
+                            milestone.assignedToId.toString();
                     }
                     else if (exports.workOrderAssignedToDataListItemId !== null) {
                         assignedToSelect.value =

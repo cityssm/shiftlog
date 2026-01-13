@@ -42,18 +42,18 @@
             >
               <div class="field has-addons">
                 <div class="control">
-                  <label class="button is-static has-text-grey-dark" for="report--workOrderDigest-assignedToDataListItemId">Assigned To</label>
+                  <label class="button is-static has-text-grey-dark" for="report--workOrderDigest-assignedToId">Assigned To</label>
                 </div>
                 <div class="control is-expanded">
                   <div class="select is-fullwidth">
                     <select
-                      id="report--workOrderDigest-assignedToDataListItemId"
-                      name="assignedToDataListItemId"
+                      id="report--workOrderDigest-assignedToId"
+                      name="assignedToId"
                       required
                     >
                       <option value="" disabled selected>(Select)</option>
                       <% for (const item of assignedToDataListItems) { %>
-                      <option value="<%= item.dataListItemId %>"><%= item.dataListItem %></option>
+                      <option value="<%= item.assignedToId %>"><%= item.assignedToName %></option>
                       <% } %>
                     </select>
                   </div>

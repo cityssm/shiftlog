@@ -8,7 +8,7 @@ import updateUserSetting from '../../database/users/updateUserSetting.js'
 import type { UserSettingKey } from '../../types/user.types.js'
 
 const updatableUserSettingKeys = new Set<UserSettingKey>([
-  'workOrders.defaultAssignedToDataListItemId'
+  'workOrders.defaultAssignedToId'
 ])
 
 export default async function handler(
