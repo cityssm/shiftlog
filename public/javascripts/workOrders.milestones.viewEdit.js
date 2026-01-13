@@ -285,15 +285,12 @@
                     // Populate Assigned To select
                     const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToId');
                     populateAssignedToSelect(assignedToSelect);
-                    // Set the selected option if there is one, otherwise default to work order's assigned to
+                    // Set the selected option if there is one
                     if (milestone.assignedToId !== null) {
                         assignedToSelect.value =
                             milestone.assignedToId.toString();
                     }
-                    else if (exports.workOrderAssignedToId !== null) {
-                        assignedToSelect.value =
-                            exports.workOrderAssignedToId.toString();
-                    }
+                    // If no assignedTo is set, leave it as "(Not Assigned)" - don't default to work order's value
                 },
                 onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();
