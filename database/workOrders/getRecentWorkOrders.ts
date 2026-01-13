@@ -56,8 +56,8 @@ export default async function getRecentWorkOrders(
         w.locationAddress2,
         w.locationCityProvince,
 
-        w.assignedToDataListItemId,
-        assignedTo.dataListItem as assignedToDataListItem
+        w.assignedToId,
+        assignedTo.assignedToName
 
       from ShiftLog.WorkOrders w
 
@@ -67,8 +67,8 @@ export default async function getRecentWorkOrders(
       left join ShiftLog.DataListItems wStatus
         on w.workOrderStatusDataListItemId = wStatus.dataListItemId
 
-      left join ShiftLog.DataListItems assignedTo
-        on w.assignedToDataListItemId = assignedTo.dataListItemId
+      left join ShiftLog.AssignedTo assignedTo
+        on w.assignedToId = assignedTo.dataListItemId
 
       ${whereClause}
 

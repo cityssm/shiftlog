@@ -8,7 +8,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
 export interface GetWorkOrdersForPlannerFilters {
-  assignedToDataListItemId?: number | string
+  assignedToId?: number | string
   includeUnassigned?: boolean
 
   workOrderTypeId?: number | string
@@ -55,24 +55,24 @@ function buildWhereClause(
   // Handle assigned/unassigned filter
   if (filters.includeUnassigned === true) {
     whereClause += ` and (
-      w.assignedToDataListItemId is null
+      w.assignedToId is null
       or exists (
         select 1 from ShiftLog.WorkOrderMilestones
         where workOrderId = w.workOrderId
-          and assignedToDataListItemId is null
+          and assignedToId is null
           and recordDelete_dateTime is null
       )
     )`
   } else if (
-    filters.assignedToDataListItemId !== undefined &&
-    filters.assignedToDataListItemId !== ''
+    filters.assignedToId !== undefined &&
+    filters.assignedToId !== ''
   ) {
     whereClause += ` and (
-      w.assignedToDataListItemId = @assignedToDataListItemId
+      w.assignedToId = @assignedToId
       or exists (
         select 1 from ShiftLog.WorkOrderMilestones
         where workOrderId = w.workOrderId
-          and assignedToDataListItemId = @assignedToDataListItemId
+          and assignedToId = @assignedToId
           and recordDelete_dateTime is null
       )
     )`
@@ -155,7 +155,7 @@ function applyParameters(
       'workOrderStatusDataListItemId',
       filters.workOrderStatusDataListItemId ?? null
     )
-    .input('assignedToDataListItemId', filters.assignedToDataListItemId ?? null)
+    .input('assignedToId', filters.assignedToId ?? null)
     .input(
       'daysThreshold',
       filters.daysThreshold === undefined
@@ -254,8 +254,8 @@ export default async function getWorkOrdersForPlanner(
           w.locationAddress2,
           w.locationCityProvince,
 
-          w.assignedToDataListItemId,
-          assignedTo.dataListItem as assignedToDataListItem,
+          w.assignedToId,
+          assignedTo.assignedToName,
 
           milestones.milestonesCount,
           milestones.milestonesCompletedCount,
@@ -269,8 +269,8 @@ export default async function getWorkOrdersForPlanner(
         left join ShiftLog.DataListItems wStatus
           on w.workOrderStatusDataListItemId = wStatus.dataListItemId
 
-        left join ShiftLog.DataListItems assignedTo
-          on w.assignedToDataListItemId = assignedTo.dataListItemId
+        left join ShiftLog.AssignedTo assignedTo
+          on w.assignedToId = assignedTo.assignedToId
 
         left join (
           select workOrderId,
