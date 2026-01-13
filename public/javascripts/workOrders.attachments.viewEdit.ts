@@ -3,6 +3,22 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
+interface WorkOrderAttachment {
+  workOrderAttachmentId: number
+  workOrderId: number
+
+  attachmentDescription: string
+
+  attachmentFileName: string
+  attachmentFileSizeInBytes: number
+  attachmentFileType: string
+
+  isWorkOrderThumbnail: boolean
+
+  recordCreate_dateTime: string
+  recordCreate_userName: string
+}
+
 declare const exports: {
   shiftLog: ShiftLogGlobal
 
@@ -35,22 +51,6 @@ declare const bulmaJS: BulmaJS
   ) as HTMLElement | null
 
   if (attachmentsContainerElement !== null) {
-    interface WorkOrderAttachment {
-      workOrderAttachmentId: number
-      workOrderId: number
-
-      attachmentDescription: string
-
-      attachmentFileName: string
-      attachmentFileSizeInBytes: number
-      attachmentFileType: string
-
-      isWorkOrderThumbnail: boolean
-
-      recordCreate_dateTime: string
-      recordCreate_userName: string
-    }
-
     function formatFileSize(bytes: number): string {
       if (bytes === 0) return '0 Bytes'
       const k = 1024
@@ -125,9 +125,11 @@ declare const bulmaJS: BulmaJS
                         loading="lazy"
                       />
                     `
-                    : `<span class="icon is-large has-text-grey">
-                         <i class="fa-solid ${fileIcon} fa-2x"></i>
-                       </span>`
+                    : /* html */ `
+                      <span class="icon is-large has-text-grey">
+                        <i class="fa-solid ${fileIcon} fa-2x"></i>
+                      </span>
+                    `
                 }
               </p>
             </figure>

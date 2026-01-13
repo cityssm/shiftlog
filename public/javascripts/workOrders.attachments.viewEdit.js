@@ -75,9 +75,11 @@
                         loading="lazy"
                       />
                     `
-                    : `<span class="icon is-large has-text-grey">
-                         <i class="fa-solid ${fileIcon} fa-2x"></i>
-                       </span>`}
+                    : /* html */ `
+                      <span class="icon is-large has-text-grey">
+                        <i class="fa-solid ${fileIcon} fa-2x"></i>
+                      </span>
+                    `}
               </p>
             </figure>
             <div class="media-content">

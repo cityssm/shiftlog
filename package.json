@@ -44,7 +44,7 @@
     "windows:uninstall:legalAgreements": "node ./windowsService-uninstall.js --config data/legalAgreements.config.js"
   },
   "dependencies": {
-    "@cacheable/node-cache": "^1.7.6",
+    "@cacheable/node-cache": "^2.0.0",
     "@cityssm/authentication-helper": "^0.6.1",
     "@cityssm/avanti-api": "^1.0.0-beta.6",
     "@cityssm/bulma-js": "^1.0.0-rc.3",
@@ -93,7 +93,7 @@
     "@types/http-errors": "^2.0.5",
     "@types/leaflet": "^1.9.21",
     "@types/multer": "^2.0.0",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.0.7",
     "@types/node-schedule": "^2.1.8",
     "@types/node-windows": "^0.1.6",
     "@types/papaparse": "^5.5.2",
