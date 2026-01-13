@@ -1,6 +1,7 @@
 import { Router } from 'express'
 
 import handler_apiAuditLogs from '../handlers/admin-get/apiAuditLogs.js'
+import handler_assignedTo from '../handlers/admin-get/assignedTo.js'
 import handler_dataLists from '../handlers/admin-get/dataLists.js'
 import handler_employees from '../handlers/admin-get/employees.js'
 import handler_employeeLists from '../handlers/admin-get/employeeLists.js'
@@ -12,6 +13,7 @@ import handler_userGroups from '../handlers/admin-get/userGroups.js'
 import handler_users from '../handlers/admin-get/users.js'
 import handler_workOrderTypes from '../handlers/admin-get/workOrderTypes.js'
 import handler_doAddDataListItem from '../handlers/admin-post/doAddDataListItem.js'
+import handler_doAddAssignedToItem from '../handlers/admin-post/doAddAssignedToItem.js'
 import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js'
 import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.js'
 import handler_doAddEmployeeListMember from '../handlers/admin-post/doAddEmployeeListMember.js'
@@ -26,6 +28,7 @@ import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupM
 import handler_doResetUserApiKey from '../handlers/admin-post/doResetUserApiKey.js'
 import handler_doAddWorkOrderType from '../handlers/admin-post/doAddWorkOrderType.js'
 import handler_doDeleteDataListItem from '../handlers/admin-post/doDeleteDataListItem.js'
+import handler_doDeleteAssignedToItem from '../handlers/admin-post/doDeleteAssignedToItem.js'
 import handler_doDeleteEmployee from '../handlers/admin-post/doDeleteEmployee.js'
 import handler_doDeleteEmployeeList from '../handlers/admin-post/doDeleteEmployeeList.js'
 import handler_doDeleteEmployeeListMember from '../handlers/admin-post/doDeleteEmployeeListMember.js'
@@ -39,10 +42,12 @@ import handler_doDeleteWorkOrderType from '../handlers/admin-post/doDeleteWorkOr
 import handler_doGetEmployeeList from '../handlers/admin-post/doGetEmployeeList.js'
 import handler_doGetUserGroup from '../handlers/admin-post/doGetUserGroup.js'
 import handler_doReorderDataListItems from '../handlers/admin-post/doReorderDataListItems.js'
+import handler_doReorderAssignedToItems from '../handlers/admin-post/doReorderAssignedToItems.js'
 import handler_doReorderEmployeeListMembers from '../handlers/admin-post/doReorderEmployeeListMembers.js'
 import handler_doReorderWorkOrderTypes from '../handlers/admin-post/doReorderWorkOrderTypes.js'
 import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js'
 import handler_doUpdateDataListItem from '../handlers/admin-post/doUpdateDataListItem.js'
+import handler_doUpdateAssignedToItem from '../handlers/admin-post/doUpdateAssignedToItem.js'
 import handler_doUpdateEmployee from '../handlers/admin-post/doUpdateEmployee.js'
 import handler_doUpdateEmployeeList from '../handlers/admin-post/doUpdateEmployeeList.js'
 import handler_doUpdateEmployeeListMember from '../handlers/admin-post/doUpdateEmployeeListMember.js'
@@ -157,6 +162,17 @@ router
   .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
   .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
   .post('/doReorderDataListItems', handler_doReorderDataListItems)
+
+/*
+ * Assigned To Management
+ */
+
+router
+  .get('/assignedTo', handler_assignedTo)
+  .post('/doAddAssignedToItem', handler_doAddAssignedToItem)
+  .post('/doUpdateAssignedToItem', handler_doUpdateAssignedToItem)
+  .post('/doDeleteAssignedToItem', handler_doDeleteAssignedToItem)
+  .post('/doReorderAssignedToItems', handler_doReorderAssignedToItems)
 
 /*
  * Tag Management

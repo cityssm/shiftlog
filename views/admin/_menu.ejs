@@ -97,6 +97,24 @@
     </li>
     <li>
       <a
+        class="<%= headTitle === 'Assigned To Management' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/assignedTo"
+        title="Assigned To Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-user-check"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Assigned To
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
         class="<%= headTitle === 'Tag Management' ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/admin/tags"
         title="Tag Management"
