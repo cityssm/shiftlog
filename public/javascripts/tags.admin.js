@@ -289,7 +289,7 @@
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-striped is-hoverable is-fullwidth';
         const thead = document.createElement('thead');
-        thead.innerHTML = `
+        thead.innerHTML = /* html */ `
       <tr>
         <th>Tag Name</th>
         <th style="width: 200px;">Preview</th>
@@ -303,7 +303,7 @@
         for (let index = startIndex; index < endIndex; index += 1) {
             const tag = tags[index];
             const tr = document.createElement('tr');
-            tr.innerHTML = `
+            tr.innerHTML = /* html */ `
         <td>${cityssm.escapeHTML(tag.tagName)}</td>
         <td>
           <span class="tag" style="background-color: #${cityssm.escapeHTML(tag.tagBackgroundColor)}; color: #${cityssm.escapeHTML(tag.tagTextColor)};">
@@ -370,7 +370,8 @@
             tagsContainerElement.append(paginationElement);
         }
     }
-    function addTagFromWorkOrder() {
+    function addTagFromWorkOrder(event) {
+        event.preventDefault();
         let closeModalFunction = () => {
             // Initialized with no-op, will be assigned in onshown
         };

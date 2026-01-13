@@ -184,12 +184,14 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Tag Deleted',
+                  
                   message: 'Tag has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Deleting Tag',
+
                   message: responseJSON.message ?? 'Please try again.'
                 })
               }
@@ -243,12 +245,14 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Tag Updated',
+
               message: 'Tag has been successfully updated.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Tag',
+
               message: responseJSON.message ?? 'Please try again.'
             })
           }
@@ -356,12 +360,14 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Tag Added',
+
               message: 'Tag has been successfully added.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Tag',
+
               message: responseJSON.message ?? 'Please try again.'
             })
           }
@@ -452,7 +458,7 @@ declare const exports: {
     tableElement.className = 'table is-striped is-hoverable is-fullwidth'
 
     const thead = document.createElement('thead')
-    thead.innerHTML = `
+    thead.innerHTML = /* html */ `
       <tr>
         <th>Tag Name</th>
         <th style="width: 200px;">Preview</th>
@@ -470,7 +476,7 @@ declare const exports: {
 
       const tr = document.createElement('tr')
 
-      tr.innerHTML = `
+      tr.innerHTML = /* html */ `
         <td>${cityssm.escapeHTML(tag.tagName)}</td>
         <td>
           <span class="tag" style="background-color: #${cityssm.escapeHTML(tag.tagBackgroundColor)}; color: #${cityssm.escapeHTML(tag.tagTextColor)};">
@@ -553,7 +559,9 @@ declare const exports: {
     }
   }
 
-  function addTagFromWorkOrder(): void {
+  function addTagFromWorkOrder(event: Event): void {
+    event.preventDefault()
+
     let closeModalFunction: () => void = () => {
       // Initialized with no-op, will be assigned in onshown
     }
