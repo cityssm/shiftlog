@@ -179,7 +179,7 @@
                     <option value="unassigned">(Unassigned)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
                     <option value="<%= assignedToItem.assignedToId %>">
-                      <%= assignedToItem.dataListItem %>
+                      <%= assignedToItem.assignedToName %>
                     </option>
                     <% }); %>
                   </select>
