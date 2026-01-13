@@ -45,116 +45,89 @@
           Assigned To Management
         </h1>
       </div>
-    </div>
-
-    <div class="message is-info">
-      <div class="message-body">
-        <p>
-          Manage the list of people, teams, or departments that work orders can be assigned to.
-        </p>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-heading">
-        <span class="icon-text">
-          <span class="has-text-weight-semibold mr-2">
-            Assigned To Items
-          </span>
-          <span class="tag is-rounded" id="itemCount">
-            <%= assignedToList.length %>
-          </span>
-        </span>
-      </div>
-      <div class="panel-block is-justify-content-flex-end">
-        <button
-          class="button is-primary is-small button--addItem" 
-          type="button"
-        >
+      <div class="column is-narrow">
+        <button class="button is-primary" id="button--addAssignedTo" type="button">
           <span class="icon">
             <i class="fa-solid fa-plus"></i>
           </span>
-          <span>Add Item</span>
+          <span>Add Assigned To Item</span>
         </button>
       </div>
-      <div class="panel-block p-0">
-        <div class="table-container" style="width: 100%;">
-          <table class="table is-striped is-hoverable is-fullwidth mb-0">
-            <thead>
-              <tr>
-                <th style="width: 60px;">Order</th>
-                <th>Assigned To</th>
-                <th style="width: 180px;">User Group</th>
-                <th>
-                  <span class="is-sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="is-sortable" id="assignedToItems">
-              <% if (assignedToList.length === 0) { %>
-              <tr>
-                <td class="has-text-centered has-text-grey" colspan="4">
-                  No items in this list. Click "Add Item" to create one.
-                </td>
-              </tr>
-              <% } else { %>
-              <% for (const item of assignedToList) { %>
-              <tr data-assigned-to-id="<%= item.assignedToId %>">
-                <td class="has-text-centered">
-                  <span class="icon is-small has-text-grey handle" style="cursor: move;">
-                    <i class="fa-solid fa-grip-vertical"></i>
-                  </span>
-                </td>
-                <td>
-                  <span class="item-text"><%= item.assignedToName %></span>
-                </td>
-                <td>
-                  <% if (item.userGroupId) { %>
-                  <% const userGroup = userGroups.find(ug => ug.userGroupId === item.userGroupId) %>
-                  <% if (userGroup) { %>
-                  <span class="tag is-info"><%= userGroup.userGroupName %></span>
-                  <% } else { %>
-                  <span class="has-text-grey-light">-</span>
-                  <% } %>
-                  <% } else { %>
-                  <span class="has-text-grey-light">-</span>
-                  <% } %>
-                </td>
-                <td class="has-text-right">
-                  <div class="buttons are-small is-right">
-                    <button
-                      class="button is-info button--editItem" 
-                      data-assigned-to-id="<%= item.assignedToId %>"
-                      data-assigned-to-name="<%= item.assignedToName %>"
-                      data-user-group-id="<%= item.userGroupId || '' %>"
-                      type="button"
-                    >
-                      <span class="icon">
-                        <i class="fa-solid fa-pencil"></i>
-                      </span>
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      class="button is-danger button--deleteItem" 
-                      data-assigned-to-id="<%= item.assignedToId %>"
-                      data-assigned-to-name="<%= item.assignedToName %>"
-                      type="button"
-                    >
-                      <span class="icon">
-                        <i class="fa-solid fa-trash"></i>
-                      </span>
-                      <span>Delete</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <% } %>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
+
+    <table class="table is-striped is-hoverable is-fullwidth mb-0">
+      <thead>
+        <tr>
+          <th style="width: 60px;">Order</th>
+          <th>Assigned To</th>
+          <th style="width: 180px;">User Group</th>
+          <th style="width: 200px;">
+            <span class="is-sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="is-sortable" id="tbody--assignedTo">
+        <% if (assignedToList.length === 0) { %>
+        <tr id="tr--noAssignedTo">
+          <td class="has-text-centered has-text-grey" colspan="4">
+            No assigned to items found. Click "Add Assigned To Item" to create one.
+          </td>
+        </tr>
+        <% } else { %>
+        <% for (const item of assignedToList) { %>
+        <tr data-assigned-to-id="<%= item.assignedToId %>">
+          <td class="has-text-centered">
+            <span class="icon is-small has-text-grey handle" style="cursor: move;">
+              <i class="fa-solid fa-grip-vertical"></i>
+            </span>
+          </td>
+          <td>
+            <span class="assigned-to-name"><%= item.assignedToName %></span>
+          </td>
+          <td>
+            <% if (item.userGroupId) { %>
+            <% const userGroup = userGroups.find(ug => ug.userGroupId === item.userGroupId) %>
+            <% if (userGroup) { %>
+            <span class="tag is-info"><%= userGroup.userGroupName %></span>
+            <% } else { %>
+            <span class="has-text-grey-light">-</span>
+            <% } %>
+            <% } else { %>
+            <span class="has-text-grey-light">-</span>
+            <% } %>
+          </td>
+          <td class="has-text-right">
+            <div class="buttons are-small is-right">
+              <button
+                class="button is-info button--editAssignedTo" 
+                data-assigned-to-id="<%= item.assignedToId %>"
+                data-assigned-to-name="<%= item.assignedToName %>"
+                data-user-group-id="<%= item.userGroupId || '' %>"
+                type="button"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>Edit</span>
+              </button>
+              <button
+                class="button is-danger button--deleteAssignedTo" 
+                data-assigned-to-id="<%= item.assignedToId %>"
+                data-assigned-to-name="<%= item.assignedToName %>"
+                type="button"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-trash"></i>
+                </span>
+                <span>Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <% } %>
+        <% } %>
+      </tbody>
+    </table>
   </div>
 </div>
 

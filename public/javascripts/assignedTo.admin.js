@@ -1,301 +1,382 @@
-const assignedToExports = exports;
-let assignedToList = assignedToExports.assignedToList;
-const userGroups = assignedToExports.userGroups;
-delete assignedToExports.assignedToList;
-delete assignedToExports.userGroups;
-function renderAssignedToList() {
-    const containerElement = document.querySelector('#assignedToItems');
+(() => {
+  const shiftLog = exports.shiftLog
+  let assignedToList = exports.assignedToList
+
+  const tbodyElement = document.querySelector(
+    '#tbody--assignedTo'
+  )
+
+  function renderAssignedToList() {
     if (assignedToList.length === 0) {
-        containerElement.innerHTML = `<tr>
-      <td class="has-text-centered has-text-grey" colspan="4">
-        No items in this list. Click "Add Item" to create one.
-      </td>
-    </tr>`;
-        document.querySelector('#itemCount').textContent = '0';
-        return;
+      tbodyElement.innerHTML = `<tr id="tr--noAssignedTo">
+        <td colspan="4" class="has-text-centered has-text-grey">
+          No assigned to items found. Click "Add Assigned To Item" to create one.
+        </td>
+      </tr>`
+      return
     }
-    containerElement.innerHTML = '';
+
+    // Clear existing
+    tbodyElement.innerHTML = ''
+
     for (const item of assignedToList) {
-        const rowElement = document.createElement('tr');
-        rowElement.dataset.assignedToId = item.assignedToId.toString();
-        const userGroup = userGroups.find((ug) => ug.userGroupId === item.userGroupId);
-        rowElement.innerHTML = `<td class="has-text-centered">
-        <span class="icon is-small has-text-grey handle" style="cursor: move;">
-          <i class="fa-solid fa-grip-vertical"></i>
-        </span>
-      </td>
-      <td>
-        <span class="item-text">${cityssm.escapeHTML(item.assignedToName)}</span>
-      </td>
-      <td>
-        ${userGroup !== undefined
-            ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
-            : '<span class="has-text-grey-light">-</span>'}
-      </td>
-      <td class="has-text-right">
-        <div class="buttons are-small is-right">
-          <button
-            class="button is-info button--editItem"
-            data-assigned-to-id="${item.assignedToId}"
-            data-assigned-to-name="${cityssm.escapeHTML(item.assignedToName)}"
-            data-user-group-id="${item.userGroupId ?? ''}"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-pencil"></i>
-            </span>
-            <span>Edit</span>
-          </button>
-          <button
-            class="button is-danger button--deleteItem"
-            data-assigned-to-id="${item.assignedToId}"
-            data-assigned-to-name="${cityssm.escapeHTML(item.assignedToName)}"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-trash"></i>
-            </span>
-            <span>Delete</span>
-          </button>
-        </div>
-      </td>`;
-        containerElement.append(rowElement);
-    }
-    ;
-    document.querySelector('#itemCount').textContent =
-        assignedToList.length.toString();
-    // Add event listeners
-    const editButtons = containerElement.querySelectorAll('.button--editItem');
-    for (const editButton of editButtons) {
-        editButton.addEventListener('click', openEditItemModal);
-    }
-    const deleteButtons = containerElement.querySelectorAll('.button--deleteItem');
-    for (const deleteButton of deleteButtons) {
-        deleteButton.addEventListener('click', openDeleteItemModal);
-    }
-}
-function openAddItemModal() {
-    let addItemFormElement;
-    let addItemCloseModalFunction;
-    function addItem(formEvent) {
-        formEvent.preventDefault();
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddAssignedToItem`, addItemFormElement, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (responseJSON.success) {
-                assignedToList.push({
-                    assignedToId: responseJSON.assignedToId,
-                    assignedToName: addItemFormElement.querySelector('#item--assignedToName').value,
-                    userGroupId: addItemFormElement.querySelector('#item--userGroupId').value === '' ? undefined : Number.parseInt(addItemFormElement.querySelector('#item--userGroupId').value, 10),
-                    orderNumber: assignedToList.length
-                });
-                renderAssignedToList();
-                addItemCloseModalFunction();
-            }
-            else {
-                bulmaJS.alert({
-                    title: 'Error Adding Item',
-                    message: responseJSON.errorMessage ?? 'An error occurred.',
-                    contextualColorName: 'danger'
-                });
-            }
-        });
-    }
-    const modal = bulmaJS.modal({
-        title: 'Add Assigned To Item',
-        body: `<form id="form--addItem">
-        <div class="field">
-          <label class="label" for="item--assignedToName">
-            Assigned To Name
-            <span class="has-text-danger" title="Required" aria-label="Required">*</span>
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="item--assignedToName"
-              name="assignedToName"
-              type="text"
-              required
-              maxlength="200"
-            />
+      const userGroup = exports.userGroups.find(
+        (ug) => ug.userGroupId === item.userGroupId
+      )
+      const userGroupDisplay =
+        userGroup === undefined
+          ? '<span class="has-text-grey-light">-</span>'
+          : `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
+
+      const rowElement = document.createElement('tr')
+
+      rowElement.dataset.assignedToId = item.assignedToId.toString()
+
+      // eslint-disable-next-line no-unsanitized/property
+      rowElement.innerHTML = /* html */ `
+        <td class="has-text-centered">
+          <span class="icon is-small has-text-grey handle" style="cursor: move;">
+            <i class="fa-solid fa-grip-vertical"></i>
+          </span>
+        </td>
+        <td>
+          <span class="assigned-to-name">
+            ${cityssm.escapeHTML(item.assignedToName)}
+          </span>
+        </td>
+        <td>
+          ${userGroupDisplay}
+        </td>
+        <td class="has-text-right">
+          <div class="buttons are-small is-right">
+            <button
+              class="button is-info button--editAssignedTo"
+              data-assigned-to-id="${item.assignedToId}"
+              data-assigned-to-name="${cityssm.escapeHTML(item.assignedToName)}"
+              data-user-group-id="${item.userGroupId ?? ''}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-pencil"></i>
+              </span>
+              <span>Edit</span>
+            </button>
+            <button
+              class="button is-danger button--deleteAssignedTo"
+              data-assigned-to-id="${item.assignedToId}"
+              data-assigned-to-name="${cityssm.escapeHTML(item.assignedToName)}"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-trash"></i>
+              </span>
+              <span>Delete</span>
+            </button>
           </div>
-        </div>
-        <div class="field">
-          <label class="label" for="item--userGroupId">User Group (Optional)</label>
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select id="item--userGroupId" name="userGroupId">
-                <option value="">(All Users)</option>
-                ${userGroups
-            .map((ug) => `<option value="${ug.userGroupId}">${cityssm.escapeHTML(ug.userGroupName)}</option>`)
-            .join('')}
-              </select>
-            </div>
-          </div>
-        </div>
-      </form>`,
-        buttons: [
-            {
-                text: 'Add Item',
-                colorName: 'primary',
-                callbackFunction: () => {
-                    addItemFormElement.dispatchEvent(new Event('submit'));
-                }
-            },
-            {
-                text: 'Cancel',
-                colorName: 'light',
-                callbackFunction: () => {
-                    modal.close();
-                }
-            }
-        ]
-    });
-    addItemCloseModalFunction = modal.close;
-    addItemFormElement = document.querySelector('#form--addItem');
-    addItemFormElement.addEventListener('submit', addItem);
-}
-function openEditItemModal(clickEvent) {
-    const buttonElement = clickEvent.currentTarget;
-    const assignedToId = Number.parseInt(buttonElement.dataset.assignedToId, 10);
-    const assignedToName = buttonElement.dataset.assignedToName;
-    const userGroupId = buttonElement.dataset.userGroupId;
-    let editItemFormElement;
-    let editItemCloseModalFunction;
-    function editItem(formEvent) {
-        formEvent.preventDefault();
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`, editItemFormElement, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (responseJSON.success) {
-                const itemIndex = assignedToList.findIndex((item) => item.assignedToId === assignedToId);
-                assignedToList[itemIndex].assignedToName = editItemFormElement.querySelector('#item--assignedToName').value;
-                assignedToList[itemIndex].userGroupId = editItemFormElement.querySelector('#item--userGroupId').value === '' ? undefined : Number.parseInt(editItemFormElement.querySelector('#item--userGroupId').value, 10);
-                renderAssignedToList();
-                editItemCloseModalFunction();
-            }
-            else {
-                bulmaJS.alert({
-                    title: 'Error Updating Item',
-                    message: 'An error occurred while updating the item.',
-                    contextualColorName: 'danger'
-                });
-            }
-        });
+        </td>
+      `
+
+      rowElement
+        .querySelector('.button--editAssignedTo')
+        ?.addEventListener('click', editAssignedTo)
+
+      rowElement
+        .querySelector('.button--deleteAssignedTo')
+        ?.addEventListener('click', deleteAssignedTo)
+
+      tbodyElement.append(rowElement)
     }
-    const modal = bulmaJS.modal({
-        title: 'Edit Assigned To Item',
-        body: `<form id="form--editItem">
-        <input type="hidden" name="assignedToId" value="${assignedToId}" />
-        <div class="field">
-          <label class="label" for="item--assignedToName">
-            Assigned To Name
-            <span class="has-text-danger" title="Required" aria-label="Required">*</span>
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="item--assignedToName"
-              name="assignedToName"
-              type="text"
-              value="${cityssm.escapeHTML(assignedToName)}"
-              required
-              maxlength="200"
-            />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label" for="item--userGroupId">User Group (Optional)</label>
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select id="item--userGroupId" name="userGroupId">
-                <option value="" ${userGroupId === '' ? 'selected' : ''}>(All Users)</option>
-                ${userGroups
-            .map((ug) => `<option value="${ug.userGroupId}" ${ug.userGroupId.toString() === userGroupId ? 'selected' : ''}>${cityssm.escapeHTML(ug.userGroupName)}</option>`)
-            .join('')}
-              </select>
-            </div>
-          </div>
-        </div>
-      </form>`,
-        buttons: [
-            {
-                text: 'Save Changes',
-                colorName: 'primary',
-                callbackFunction: () => {
-                    editItemFormElement.dispatchEvent(new Event('submit'));
-                }
-            },
-            {
-                text: 'Cancel',
-                colorName: 'light',
-                callbackFunction: () => {
-                    modal.close();
-                }
-            }
-        ]
-    });
-    editItemCloseModalFunction = modal.close;
-    editItemFormElement = document.querySelector('#form--editItem');
-    editItemFormElement.addEventListener('submit', editItem);
-}
-function openDeleteItemModal(clickEvent) {
-    const buttonElement = clickEvent.currentTarget;
-    const assignedToId = Number.parseInt(buttonElement.dataset.assignedToId, 10);
-    const assignedToName = buttonElement.dataset.assignedToName;
-    function doDelete() {
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteAssignedToItem`, {
-            assignedToId
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (responseJSON.success) {
-                assignedToList = assignedToList.filter((item) => item.assignedToId !== assignedToId);
-                renderAssignedToList();
-            }
-            else {
-                bulmaJS.alert({
-                    title: 'Error Deleting Item',
-                    message: 'An error occurred while deleting the item.',
-                    contextualColorName: 'danger'
-                });
-            }
-        });
-    }
-    bulmaJS.confirm({
-        title: 'Delete Assigned To Item',
-        message: `Are you sure you want to delete "${cityssm.escapeHTML(assignedToName)}"?`,
-        contextualColorName: 'warning',
-        okButton: {
-            text: 'Yes, Delete',
-            colorName: 'danger',
-            callbackFunction: doDelete
+  }
+
+  function addAssignedTo() {
+    let closeModalFunction
+
+    function doAddAssignedTo(submitEvent) {
+      submitEvent.preventDefault()
+
+      const addForm = submitEvent.currentTarget
+
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/admin/doAddAssignedToItem`,
+        addForm,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON
+
+          if (responseJSON.success && responseJSON.assignedToId) {
+            assignedToList.push({
+              assignedToId: responseJSON.assignedToId,
+              assignedToName: (
+                addForm.querySelector(
+                  '#addAssignedTo--assignedToName'
+                )
+              ).value,
+              userGroupId:
+                (
+                  addForm.querySelector(
+                    '#addAssignedTo--userGroupId'
+                  )
+                ).value === ''
+                  ? undefined
+                  : Number.parseInt(
+                      (
+                        addForm.querySelector(
+                          '#addAssignedTo--userGroupId'
+                        )
+                      ).value,
+                      10
+                    ),
+              orderNumber: assignedToList.length
+            })
+
+            renderAssignedToList()
+            closeModalFunction()
+          } else {
+            bulmaJS.alert({
+              title: 'Error Adding Item',
+              message: responseJSON.errorMessage ?? 'An error occurred.',
+              contextualColorName: 'danger'
+            })
+          }
         }
-    });
-}
-// Initialize sortable
-const containerElement = document.querySelector('#assignedToItems');
-window.Sortable.create(containerElement, {
+      )
+    }
+
+    cityssm.openHtmlModal('adminAssignedTo-add', {
+      onshow(modalElement) {
+        // Populate user group options
+        const userGroupSelect = modalElement.querySelector(
+          '#addAssignedTo--userGroupId'
+        )
+
+        for (const userGroup of exports.userGroups) {
+          const option = document.createElement('option')
+          option.value = userGroup.userGroupId.toString()
+          option.textContent = userGroup.userGroupName
+          userGroupSelect.append(option)
+        }
+      },
+      onshown(modalElement, _closeModalFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
+
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', doAddAssignedTo)
+        ;(
+          modalElement.querySelector(
+            '#addAssignedTo--assignedToName'
+          )
+        ).focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function editAssignedTo(clickEvent) {
+    const buttonElement = clickEvent.currentTarget
+    const assignedToId = buttonElement.dataset.assignedToId
+    const currentAssignedToName = buttonElement.dataset.assignedToName
+    const currentUserGroupId = buttonElement.dataset.userGroupId
+
+    if (assignedToId === undefined || currentAssignedToName === undefined) {
+      return
+    }
+
+    let closeModalFunction
+
+    function doUpdateAssignedTo(submitEvent) {
+      submitEvent.preventDefault()
+
+      const editForm = submitEvent.currentTarget
+
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`,
+        editForm,
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON
+
+          if (responseJSON.success) {
+            const itemIndex = assignedToList.findIndex(
+              (item) =>
+                assignedToId !== undefined &&
+                item.assignedToId === Number.parseInt(assignedToId, 10)
+            )
+
+            if (itemIndex >= 0) {
+              assignedToList[itemIndex].assignedToName = (
+                editForm.querySelector(
+                  '#editAssignedTo--assignedToName'
+                )
+              ).value
+              assignedToList[itemIndex].userGroupId =
+                (
+                  editForm.querySelector(
+                    '#editAssignedTo--userGroupId'
+                  )
+                ).value === ''
+                  ? undefined
+                  : Number.parseInt(
+                      (
+                        editForm.querySelector(
+                          '#editAssignedTo--userGroupId'
+                        )
+                      ).value,
+                      10
+                    )
+            }
+
+            renderAssignedToList()
+            closeModalFunction()
+          } else {
+            bulmaJS.alert({
+              title: 'Error Updating Item',
+              message: 'An error occurred while updating the item.',
+              contextualColorName: 'danger'
+            })
+          }
+        }
+      )
+    }
+
+    cityssm.openHtmlModal('adminAssignedTo-edit', {
+      onshow(modalElement) {
+        // Set current values
+        ;(
+          modalElement.querySelector(
+            '#editAssignedTo--assignedToId'
+          )
+        ).value = assignedToId
+        ;(
+          modalElement.querySelector(
+            '#editAssignedTo--assignedToName'
+          )
+        ).value = currentAssignedToName
+
+        // Populate user group options
+        const userGroupSelect = modalElement.querySelector(
+          '#editAssignedTo--userGroupId'
+        )
+
+        for (const userGroup of exports.userGroups) {
+          const option = document.createElement('option')
+          option.value = userGroup.userGroupId.toString()
+          option.textContent = userGroup.userGroupName
+          if (
+            currentUserGroupId !== undefined &&
+            currentUserGroupId !== '' &&
+            userGroup.userGroupId === Number.parseInt(currentUserGroupId, 10)
+          ) {
+            option.selected = true
+          }
+          userGroupSelect.append(option)
+        }
+      },
+      onshown(modalElement, _closeModalFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
+
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', doUpdateAssignedTo)
+        ;(
+          modalElement.querySelector(
+            '#editAssignedTo--assignedToName'
+          )
+        ).focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function deleteAssignedTo(clickEvent) {
+    const buttonElement = clickEvent.currentTarget
+
+    const assignedToId = Number.parseInt(
+      buttonElement.dataset.assignedToId,
+      10
+    )
+    const assignedToName = buttonElement.dataset.assignedToName
+
+    function doDelete() {
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/admin/doDeleteAssignedToItem`,
+        {
+          assignedToId
+        },
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON
+
+          if (responseJSON.success) {
+            assignedToList = assignedToList.filter(
+              (item) => item.assignedToId !== assignedToId
+            )
+
+            renderAssignedToList()
+          } else {
+            bulmaJS.alert({
+              title: 'Error Deleting Item',
+              message: 'An error occurred while deleting the item.',
+              contextualColorName: 'danger'
+            })
+          }
+        }
+      )
+    }
+
+    bulmaJS.confirm({
+      title: 'Delete Assigned To Item',
+      message: `Are you sure you want to delete "${cityssm.escapeHTML(assignedToName)}"?`,
+      contextualColorName: 'warning',
+      okButton: {
+        text: 'Yes, Delete',
+        colorName: 'danger',
+        callbackFunction: doDelete
+      }
+    })
+  }
+
+  // Initialize sortable
+  Sortable.create(tbodyElement, {
     handle: '.handle',
     animation: 150,
-    onSort() {
-        const assignedToIds = [];
-        const rowElements = containerElement.querySelectorAll('tr');
-        for (const rowElement of rowElements) {
-            assignedToIds.push(Number.parseInt(rowElement.dataset.assignedToId, 10));
+    onEnd() {
+      const assignedToIds = []
+      const rowElements = tbodyElement.querySelectorAll('tr')
+
+      for (const rowElement of rowElements) {
+        if (rowElement.dataset.assignedToId !== undefined) {
+          assignedToIds.push(
+            Number.parseInt(rowElement.dataset.assignedToId, 10)
+          )
         }
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderAssignedToItems`, {
-            assignedToIds
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (!responseJSON.success) {
-                bulmaJS.alert({
-                    title: 'Error Reordering Items',
-                    message: 'An error occurred while reordering the items.',
-                    contextualColorName: 'danger'
-                });
-            }
-        });
+      }
+
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/admin/doReorderAssignedToItems`,
+        {
+          assignedToIds
+        },
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON
+
+          if (!responseJSON.success) {
+            bulmaJS.alert({
+              title: 'Error Reordering Items',
+              message: 'An error occurred while reordering the items.',
+              contextualColorName: 'danger'
+            })
+          }
+        }
+      )
     }
-});
-// Add event listener for add button
-document
-    .querySelector('.button--addItem')
-    ?.addEventListener('click', openAddItemModal);
+  })
+
+  // Add event listener for add button
+  document
+    .querySelector('#button--addAssignedTo')
+    ?.addEventListener('click', addAssignedTo)
+})()
