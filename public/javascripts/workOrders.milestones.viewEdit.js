@@ -171,8 +171,8 @@
         function populateAssignedToSelect(selectElement) {
             for (const option of exports.assignedToOptions) {
                 const optionElement = document.createElement('option');
-                optionElement.value = option.dataListItemId.toString();
-                optionElement.textContent = option.dataListItem;
+                optionElement.value = option.assignedToId.toString();
+                optionElement.textContent = option.assignedToName;
                 selectElement.append(optionElement);
             }
         }
