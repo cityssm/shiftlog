@@ -39,7 +39,7 @@ export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
   locationAddress2: string
   locationCityProvince: string
 
-  assignedToDataListItemId?: number | string
+  assignedToId?: number | string
 }
 
 function buildMoreInfoFormDataJson(
@@ -126,10 +126,10 @@ export default async function updateWorkOrder(
     .input('locationAddress2', updateWorkOrderForm.locationAddress2)
     .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
     .input(
-      'assignedToDataListItemId',
-      updateWorkOrderForm.assignedToDataListItemId === ''
+      'assignedToId',
+      updateWorkOrderForm.assignedToId === ''
         ? null
-        : updateWorkOrderForm.assignedToDataListItemId
+        : updateWorkOrderForm.assignedToId
     )
     .input('moreInfoFormDataJson', moreInfoFormDataJson)
     .input('userName', userName).query(/* sql */ `
@@ -149,7 +149,7 @@ export default async function updateWorkOrder(
         locationAddress1 = @locationAddress1,
         locationAddress2 = @locationAddress2,
         locationCityProvince = @locationCityProvince,
-        assignedToDataListItemId = @assignedToDataListItemId,
+        assignedToId = @assignedToId,
         moreInfoFormDataJson = @moreInfoFormDataJson,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()

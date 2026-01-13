@@ -336,6 +336,27 @@ CREATE TABLE ShiftLog.Locations (
 )
 GO
 
+-- ASSIGNED TO
+
+CREATE TABLE ShiftLog.AssignedTo (
+  assignedToId int not null primary key identity(1,1),
+  instance varchar(20) not null,
+  assignedToName varchar(200) not null,
+  orderNumber smallint not null default 0,
+  userGroupId int,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  unique (instance, assignedToName),
+  foreign key (userGroupId) references ShiftLog.UserGroups(userGroupId)
+)
+GO
+
 -- WORK ORDER TYPES
 
 CREATE TABLE ShiftLog.WorkOrderTypes (
@@ -424,7 +445,7 @@ create table ShiftLog.WorkOrders (
   locationAddress2 varchar(100) not null default '',
   locationCityProvince varchar(50) not null default '',
 
-  assignedToDataListItemId int,
+  assignedToId int,
 
   moreInfoFormDataJson nvarchar(max) not null default '{}',
 
@@ -439,7 +460,7 @@ create table ShiftLog.WorkOrders (
   foreign key (workOrderTypeId) references ShiftLog.WorkOrderTypes(workOrderTypeId),
   foreign key (workOrderStatusDataListItemId) references ShiftLog.DataListItems(dataListItemId),
   foreign key (workOrderPriorityDataListItemId) references ShiftLog.DataListItems(dataListItemId),
-  foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+  foreign key (assignedToId) references ShiftLog.AssignedTo(assignedToId)
 )
 GO
 
@@ -480,7 +501,7 @@ create table ShiftLog.WorkOrderMilestones (
   milestoneDueDateTime datetime,
   milestoneCompleteDateTime datetime,
 
-  assignedToDataListItemId int,
+  assignedToId int,
 
   orderNumber smallint not null default 0,
 
@@ -492,7 +513,7 @@ create table ShiftLog.WorkOrderMilestones (
   recordDelete_dateTime datetime,
 
   foreign key (workOrderId) references ShiftLog.WorkOrders(workOrderId),
-  foreign key (assignedToDataListItemId) references ShiftLog.DataListItems(dataListItemId)
+  foreign key (assignedToId) references ShiftLog.AssignedTo(assignedToId)
 )
 GO
 

@@ -7,7 +7,7 @@ export interface UpdateWorkOrderMilestoneForm {
   milestoneDescription?: string
   milestoneDueDateTimeString?: string
   milestoneCompleteDateTimeString?: string
-  assignedToDataListItemId?: number | string
+  assignedToId?: number | string
 }
 
 export default async function updateWorkOrderMilestone(
@@ -35,9 +35,9 @@ export default async function updateWorkOrderMilestone(
         : null
     )
     .input(
-      'assignedToDataListItemId',
-      form.assignedToDataListItemId && form.assignedToDataListItemId !== ''
-        ? form.assignedToDataListItemId
+      'assignedToId',
+      form.assignedToId && form.assignedToId !== ''
+        ? form.assignedToId
         : null
     )
     .input('userName', userName).query(/* sql */ `
@@ -47,7 +47,7 @@ export default async function updateWorkOrderMilestone(
         milestoneDescription = @milestoneDescription,
         milestoneDueDateTime = @milestoneDueDateTime,
         milestoneCompleteDateTime = @milestoneCompleteDateTime,
-        assignedToDataListItemId = @assignedToDataListItemId,
+        assignedToId = @assignedToId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       where workOrderMilestoneId = @workOrderMilestoneId

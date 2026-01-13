@@ -8,7 +8,7 @@ export interface CreateWorkOrderMilestoneForm {
   milestoneDescription?: string
   milestoneDueDateTimeString?: string
   milestoneCompleteDateTimeString?: string
-  assignedToDataListItemId?: number | string
+  assignedToId?: number | string
 }
 
 export default async function createWorkOrderMilestone(
@@ -47,9 +47,9 @@ export default async function createWorkOrderMilestone(
         : null
     )
     .input(
-      'assignedToDataListItemId',
-      form.assignedToDataListItemId && form.assignedToDataListItemId !== ''
-        ? form.assignedToDataListItemId
+      'assignedToId',
+      form.assignedToId && form.assignedToId !== ''
+        ? form.assignedToId
         : null
     )
     .input('orderNumber', nextOrderNumber)
@@ -60,7 +60,7 @@ export default async function createWorkOrderMilestone(
         milestoneDescription,
         milestoneDueDateTime,
         milestoneCompleteDateTime,
-        assignedToDataListItemId,
+        assignedToId,
         orderNumber,
         recordCreate_userName,
         recordUpdate_userName
@@ -72,7 +72,7 @@ export default async function createWorkOrderMilestone(
         @milestoneDescription,
         @milestoneDueDateTime,
         @milestoneCompleteDateTime,
-        @assignedToDataListItemId,
+        @assignedToId,
         @orderNumber,
         @userName,
         @userName

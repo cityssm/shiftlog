@@ -5,7 +5,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrderMilestone } from '../../types/record.types.js'
 
 type WorkOrderMilestoneWithAssignedTo = WorkOrderMilestone & {
-  assignedToDataListItem?: string
+  assignedToName?: string
 }
 
 export default async function getWorkOrderMilestones(
@@ -25,15 +25,15 @@ export default async function getWorkOrderMilestones(
         m.milestoneDescription,
         m.milestoneDueDateTime,
         m.milestoneCompleteDateTime,
-        m.assignedToDataListItemId,
-        d.dataListItem as assignedToDataListItem,
+        m.assignedToId,
+        a.assignedToName,
         m.orderNumber,
         m.recordCreate_userName,
         m.recordCreate_dateTime,
         m.recordUpdate_userName,
         m.recordUpdate_dateTime
       from ShiftLog.WorkOrderMilestones m
-      left join ShiftLog.DataListItems d on m.assignedToDataListItemId = d.dataListItemId
+      left join ShiftLog.AssignedTo a on m.assignedToId = a.assignedToId
       where m.workOrderId = @workOrderId
         and m.recordDelete_dateTime is null
         and m.workOrderId in (
