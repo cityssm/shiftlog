@@ -73,7 +73,7 @@ export default async function getOverdueWorkOrders(
         on w.workOrderStatusDataListItemId = wStatus.dataListItemId
 
       left join ShiftLog.AssignedTo assignedTo
-        on w.assignedToId = assignedTo.dataListItemId
+        on w.assignedToId = assignedTo.assignedToId
 
       ${whereClause}
 

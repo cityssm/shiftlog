@@ -178,7 +178,7 @@
                     <option value="">(All Assignees)</option>
                     <option value="unassigned">(Unassigned)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
-                    <option value="<%= assignedToItem.dataListItemId %>">
+                    <option value="<%= assignedToItem.assignedToId %>">
                       <%= assignedToItem.dataListItem %>
                     </option>
                     <% }); %>
