@@ -34,8 +34,8 @@ export default async function getWorkOrder(workOrderId, userName) {
       w.locationAddress2,
       w.locationCityProvince,
 
-      w.assignedToDataListItemId,
-      assignedTo.dataListItem as assignedToDataListItem,
+      w.assignedToId,
+      assignedTo.assignedToName,
 
       moreInfoFormDataJson
 
@@ -50,8 +50,8 @@ export default async function getWorkOrder(workOrderId, userName) {
     left join ShiftLog.DataListItems wPriority
       on w.workOrderPriorityDataListItemId = wPriority.dataListItemId
 
-    left join ShiftLog.DataListItems assignedTo
-      on w.assignedToDataListItemId = assignedTo.dataListItemId
+    left join ShiftLog.AssignedTo assignedTo
+      on w.assignedToId = assignedTo.assignedToId
 
     where w.recordDelete_dateTime is null
       and w.workOrderId = @workOrderId

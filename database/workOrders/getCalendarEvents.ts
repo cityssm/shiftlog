@@ -6,7 +6,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 export interface GetCalendarEventsFilters {
   year: number
   month: number
-  assignedToDataListItemId?: number
+  assignedToId?: number
   showOpenDates: boolean
   showDueDates: boolean
   showCloseDates: boolean
@@ -26,8 +26,8 @@ export interface WorkOrderCalendarEvent {
   workOrderNumber: string
   workOrderDetails: string
 
-  assignedToDataListItem?: string | null
-  assignedToDataListItemId?: number | null
+  assignedToName?: string | null
+  assignedToId?: number | null
 
   milestoneId?: number | null
   milestoneTitle?: string | null
@@ -81,8 +81,8 @@ export default async function getCalendarEvents(
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
-          w.assignedToDataListItemId,
-          dt.dataListItem as assignedToDataListItem,
+          w.assignedToId,
+          a.assignedToName,
           null as milestoneId,
           null as milestoneTitle,
           w.workOrderCloseDateTime,
@@ -91,11 +91,11 @@ export default async function getCalendarEvents(
           null as milestoneDueDateTime
         from ShiftLog.WorkOrders w
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
+        left join ShiftLog.AssignedTo a on w.assignedToId = a.assignedToId
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and w.workOrderOpenDateTime between @startDate and @endDate
-          ${filters.assignedToDataListItemId === undefined ? '' : 'and w.assignedToDataListItemId = @assignedToDataListItemId'}
+          ${filters.assignedToId === undefined ? '' : 'and w.assignedToId = @assignedToId'}
           ${userGroupWhereClause}
       `)
     }
@@ -108,8 +108,8 @@ export default async function getCalendarEvents(
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
-          w.assignedToDataListItemId,
-          dt.dataListItem as assignedToDataListItem,
+          w.assignedToId,
+          a.assignedToName,
           null as milestoneId,
           null as milestoneTitle,
           w.workOrderCloseDateTime,
@@ -118,12 +118,12 @@ export default async function getCalendarEvents(
           null as milestoneDueDateTime
         from ShiftLog.WorkOrders w
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
+        left join ShiftLog.AssignedTo a on w.assignedToId = a.assignedToId
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and w.workOrderDueDateTime is not null
           and w.workOrderDueDateTime between @startDate and @endDate
-          ${filters.assignedToDataListItemId === undefined ? '' : 'and w.assignedToDataListItemId = @assignedToDataListItemId'}
+          ${filters.assignedToId === undefined ? '' : 'and w.assignedToId = @assignedToId'}
           ${userGroupWhereClause}
       `)
     }
@@ -136,8 +136,8 @@ export default async function getCalendarEvents(
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
-          w.assignedToDataListItemId,
-          dt.dataListItem as assignedToDataListItem,
+          w.assignedToId,
+          a.assignedToName,
           null as milestoneId,
           null as milestoneTitle,
           w.workOrderCloseDateTime,
@@ -146,12 +146,12 @@ export default async function getCalendarEvents(
           null as milestoneDueDateTime
         from ShiftLog.WorkOrders w
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.DataListItems dt on w.assignedToDataListItemId = dt.dataListItemId
+        left join ShiftLog.AssignedTo a on w.assignedToId = a.assignedToId
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and w.workOrderCloseDateTime is not null
           and w.workOrderCloseDateTime between @startDate and @endDate
-          ${filters.assignedToDataListItemId === undefined ? '' : 'and w.assignedToDataListItemId = @assignedToDataListItemId'}
+          ${filters.assignedToId === undefined ? '' : 'and w.assignedToId = @assignedToId'}
           ${userGroupWhereClause}
       `)
     }
@@ -165,10 +165,10 @@ export default async function getCalendarEvents(
       request.input('startDate', startDate)
       request.input('endDate', endDate)
 
-      if (filters.assignedToDataListItemId !== undefined) {
+      if (filters.assignedToId !== undefined) {
         request.input(
-          'assignedToDataListItemId',
-          filters.assignedToDataListItemId
+          'assignedToId',
+          filters.assignedToId
         )
       }
 
@@ -194,8 +194,8 @@ export default async function getCalendarEvents(
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
-          coalesce(m.assignedToDataListItemId, w.assignedToDataListItemId) as assignedToDataListItemId,
-          coalesce(mdt.dataListItem, wdt.dataListItem) as assignedToDataListItem,
+          coalesce(m.assignedToId, w.assignedToId) as assignedToId,
+          coalesce(ma.assignedToName, wa.assignedToName) as assignedToName,
           m.workOrderMilestoneId as milestoneId,
           m.milestoneTitle,
           w.workOrderCloseDateTime,
@@ -205,18 +205,18 @@ export default async function getCalendarEvents(
         from ShiftLog.WorkOrderMilestones m
         inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.DataListItems mdt on m.assignedToDataListItemId = mdt.dataListItemId
-        left join ShiftLog.DataListItems wdt on w.assignedToDataListItemId = wdt.dataListItemId
+        left join ShiftLog.AssignedTo ma on m.assignedToId = ma.assignedToId
+        left join ShiftLog.AssignedTo wa on w.assignedToId = wa.assignedToId
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and m.recordDelete_dateTime is null
           and m.milestoneDueDateTime is not null
           and m.milestoneDueDateTime between @startDate and @endDate
           ${
-            filters.assignedToDataListItemId === undefined
+            filters.assignedToId === undefined
               ? ''
-              : `and (m.assignedToDataListItemId = @assignedToDataListItemId
-                   or (m.assignedToDataListItemId is null and w.assignedToDataListItemId = @assignedToDataListItemId))`
+              : `and (m.assignedToId = @assignedToId
+                   or (m.assignedToId is null and w.assignedToId = @assignedToId))`
           }
           ${userGroupWhereClause}
       `)
@@ -230,8 +230,8 @@ export default async function getCalendarEvents(
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
-          coalesce(m.assignedToDataListItemId, w.assignedToDataListItemId) as assignedToDataListItemId,
-          coalesce(mdt.dataListItem, wdt.dataListItem) as assignedToDataListItem,
+          coalesce(m.assignedToId, w.assignedToId) as assignedToId,
+          coalesce(ma.assignedToName, wa.assignedToName) as assignedToName,
           m.workOrderMilestoneId as milestoneId,
           m.milestoneTitle,
           w.workOrderCloseDateTime,
@@ -241,18 +241,18 @@ export default async function getCalendarEvents(
         from ShiftLog.WorkOrderMilestones m
         inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
         inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.DataListItems mdt on m.assignedToDataListItemId = mdt.dataListItemId
-        left join ShiftLog.DataListItems wdt on w.assignedToDataListItemId = wdt.dataListItemId
+        left join ShiftLog.AssignedTo ma on m.assignedToId = ma.assignedToId
+        left join ShiftLog.AssignedTo wa on w.assignedToId = wa.assignedToId
         where w.instance = @instance
           and w.recordDelete_dateTime is null
           and m.recordDelete_dateTime is null
           and m.milestoneCompleteDateTime is not null
           and m.milestoneCompleteDateTime between @startDate and @endDate
           ${
-            filters.assignedToDataListItemId === undefined
+            filters.assignedToId === undefined
               ? ''
-              : `and (m.assignedToDataListItemId = @assignedToDataListItemId
-                   or (m.assignedToDataListItemId is null and w.assignedToDataListItemId = @assignedToDataListItemId))`
+              : `and (m.assignedToId = @assignedToId
+                   or (m.assignedToId is null and w.assignedToId = @assignedToId))`
           }
           ${userGroupWhereClause}
       `)
@@ -267,10 +267,10 @@ export default async function getCalendarEvents(
       request.input('startDate', startDate)
       request.input('endDate', endDate)
 
-      if (filters.assignedToDataListItemId !== undefined) {
+      if (filters.assignedToId !== undefined) {
         request.input(
-          'assignedToDataListItemId',
-          filters.assignedToDataListItemId
+          'assignedToId',
+          filters.assignedToId
         )
       }
 

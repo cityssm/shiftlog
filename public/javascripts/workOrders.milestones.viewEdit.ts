@@ -8,15 +8,15 @@ import type FlatPickr from 'flatpickr'
 import type { ShiftLogGlobal } from './types.js'
 import { WorkOrderMilestone } from '../../types/record.types.js'
 
-interface DataListItem {
-  dataListItemId: number
-  dataListItem: string
+interface AssignedToOption {
+  assignedToId: number
+  assignedToName: string
 }
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
-  assignedToOptions: DataListItem[]
-  workOrderAssignedToDataListItemId: number | null
+  assignedToOptions: AssignedToOption[]
+  workOrderAssignedToId: number | null
   workOrderOpenDateTime: string
   isEdit: boolean
 }
@@ -156,7 +156,7 @@ declare const Sortable: {
             }
           </td>
           <td class="is-hidden-touch">
-            ${milestone.assignedToDataListItem ? cityssm.escapeHTML(milestone.assignedToDataListItem) : '<span class="has-text-grey">(Not Assigned)</span>'}
+            ${milestone.assignedToName ? cityssm.escapeHTML(milestone.assignedToName) : '<span class="has-text-grey">(Not Assigned)</span>'}
           </td>
           <td>
             ${milestone.milestoneDueDateTime ? formatDateTime(milestone.milestoneDueDateTime) : '<span class="has-text-grey">-</span>'}
@@ -267,8 +267,8 @@ declare const Sortable: {
     function populateAssignedToSelect(selectElement: HTMLSelectElement): void {
       for (const option of exports.assignedToOptions) {
         const optionElement = document.createElement('option')
-        optionElement.value = option.dataListItemId.toString()
-        optionElement.textContent = option.dataListItem
+        optionElement.value = option.assignedToId.toString()
+        optionElement.textContent = option.assignedToName
         selectElement.append(optionElement)
       }
     }
@@ -307,14 +307,14 @@ declare const Sortable: {
 
           // Populate Assigned To select
           const assignedToSelect = modalElement.querySelector(
-            '#addWorkOrderMilestone--assignedToDataListItemId'
+            '#addWorkOrderMilestone--assignedToId'
           ) as HTMLSelectElement
           populateAssignedToSelect(assignedToSelect)
 
           // Set the default value to the work order's "assigned to" value
-          if (exports.workOrderAssignedToDataListItemId !== null) {
+          if (exports.workOrderAssignedToId !== null) {
             assignedToSelect.value =
-              exports.workOrderAssignedToDataListItemId.toString()
+              exports.workOrderAssignedToId.toString()
           }
 
           // Initialize flatpickr on date fields
@@ -442,19 +442,17 @@ declare const Sortable: {
 
           // Populate Assigned To select
           const assignedToSelect = modalElement.querySelector(
-            '#editWorkOrderMilestone--assignedToDataListItemId'
+            '#editWorkOrderMilestone--assignedToId'
           ) as HTMLSelectElement
 
           populateAssignedToSelect(assignedToSelect)
 
-          // Set the selected option if there is one, otherwise default to work order's assigned to
-          if (milestone.assignedToDataListItemId !== null) {
+          // Set the selected option if there is one
+          if (milestone.assignedToId !== null) {
             assignedToSelect.value =
-              milestone.assignedToDataListItemId.toString()
-          } else if (exports.workOrderAssignedToDataListItemId !== null) {
-            assignedToSelect.value =
-              exports.workOrderAssignedToDataListItemId.toString()
+              milestone.assignedToId.toString()
           }
+          // If no assignedTo is set, leave it as "(Not Assigned)" - don't default to work order's value
         },
         onshown(modalElement, _closeModalFunction) {
           bulmaJS.toggleHtmlClipped()

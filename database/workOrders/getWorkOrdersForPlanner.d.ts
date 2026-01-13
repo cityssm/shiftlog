@@ -1,6 +1,6 @@
 import type { WorkOrder } from '../../types/record.types.js';
 export interface GetWorkOrdersForPlannerFilters {
-    assignedToDataListItemId?: number | string;
+    assignedToId?: number | string;
     includeUnassigned?: boolean;
     workOrderTypeId?: number | string;
     workOrderStatusDataListItemId?: number | string;

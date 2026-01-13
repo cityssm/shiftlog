@@ -1,12 +1,12 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 const newItemHours = 48;
-export async function getWorkOrdersForDigest(assignedToDataListItemId) {
+export async function getWorkOrdersForDigest(assignedToId) {
     const pool = await getShiftLogConnectionPool();
     // Fetch open work orders assigned to the selected value
     const workOrdersResult = await pool
         .request()
-        .input('assignedToDataListItemId', assignedToDataListItemId)
+        .input('assignedToId', assignedToId)
         .input('instance', getConfigProperty('application.instance'))
         .input('newItemHours', newItemHours).query(/* sql */ `
       select
@@ -31,8 +31,8 @@ export async function getWorkOrdersForDigest(assignedToDataListItemId) {
         w.locationAddress1,
         w.locationAddress2,
         w.locationCityProvince,
-        w.assignedToDataListItemId,
-        assignedTo.dataListItem as assignedToDataListItem,
+        w.assignedToId,
+        assignedTo.assignedToName,
         case
           when w.workOrderDueDateTime is not null and w.workOrderDueDateTime < getdate() then 1
           else 0
@@ -46,12 +46,12 @@ export async function getWorkOrdersForDigest(assignedToDataListItemId) {
         on w.workOrderTypeId = wType.workOrderTypeId
       left join ShiftLog.DataListItems wStatus
         on w.workOrderStatusDataListItemId = wStatus.dataListItemId
-      left join ShiftLog.DataListItems assignedTo
-        on w.assignedToDataListItemId = assignedTo.dataListItemId
+      left join ShiftLog.AssignedTo assignedTo
+        on w.assignedToId = assignedTo.assignedToId
       where w.instance = @instance
         and w.recordDelete_dateTime is null
         and w.workOrderCloseDateTime is null
-        and w.assignedToDataListItemId = @assignedToDataListItemId
+        and w.assignedToId = @assignedToId
       order by
         case when w.workOrderDueDateTime is not null and w.workOrderDueDateTime < getdate() then 0 else 1 end,
         w.workOrderDueDateTime,
@@ -60,7 +60,7 @@ export async function getWorkOrdersForDigest(assignedToDataListItemId) {
     // Fetch open milestones assigned to the selected value
     const milestonesResult = await pool
         .request()
-        .input('assignedToDataListItemId', assignedToDataListItemId)
+        .input('assignedToId', assignedToId)
         .input('instance', getConfigProperty('application.instance'))
         .input('newItemHours', newItemHours)
         .query(/* sql */ `
@@ -71,8 +71,8 @@ export async function getWorkOrdersForDigest(assignedToDataListItemId) {
         m.milestoneDescription,
         m.milestoneDueDateTime,
         m.milestoneCompleteDateTime,
-        m.assignedToDataListItemId,
-        assignedTo.dataListItem as assignedToDataListItem,
+        m.assignedToId,
+        assignedTo.assignedToName,
         m.orderNumber,
         w.workOrderNumber,
         case
@@ -86,14 +86,14 @@ export async function getWorkOrdersForDigest(assignedToDataListItemId) {
       from ShiftLog.WorkOrderMilestones m
       inner join ShiftLog.WorkOrders w
         on m.workOrderId = w.workOrderId
-      left join ShiftLog.DataListItems assignedTo
-        on m.assignedToDataListItemId = assignedTo.dataListItemId
+      left join ShiftLog.AssignedTo assignedTo
+        on m.assignedToId = assignedTo.assignedToId
       where w.instance = @instance
         and w.recordDelete_dateTime is null
         and m.recordDelete_dateTime is null
         and w.workOrderCloseDateTime is null
         and m.milestoneCompleteDateTime is null
-        and m.assignedToDataListItemId = @assignedToDataListItemId
+        and m.assignedToId = @assignedToId
       order by
         case when m.milestoneDueDateTime is not null and m.milestoneDueDateTime < getdate() then 0 else 1 end,
         m.milestoneDueDateTime,

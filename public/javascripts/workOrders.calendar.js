@@ -4,7 +4,7 @@
     const monthTitleElement = document.querySelector('#calendar--monthTitle');
     const previousMonthButtonElement = document.querySelector('#btn--previousMonth');
     const nextMonthButtonElement = document.querySelector('#btn--nextMonth');
-    const assignedToSelect = document.querySelector('#calendar--assignedToDataListItemId');
+    const assignedToSelect = document.querySelector('#calendar--assignedToId');
     const showOpenDatesCheckbox = document.querySelector('#calendar--showOpenDates');
     const showDueDatesCheckbox = document.querySelector('#calendar--showDueDates');
     const showCloseDatesCheckbox = document.querySelector('#calendar--showCloseDates');
@@ -238,7 +238,7 @@
         cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`, {
             year: currentYear,
             month: currentMonth,
-            assignedToDataListItemId: assignedToSelect.value,
+            assignedToId: assignedToSelect.value,
             showOpenDates: showOpenDatesCheckbox.checked,
             showDueDates: showDueDatesCheckbox.checked,
             showCloseDates: showCloseDatesCheckbox.checked,

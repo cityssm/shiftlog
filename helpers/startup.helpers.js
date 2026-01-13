@@ -8,7 +8,6 @@ const debug = Debug(`${DEBUG_NAMESPACE}:startup`);
  */
 export const REQUIRED_SYSTEM_LISTS = {
     equipmentTypes: 'Equipment Types',
-    assignedTo: 'Work Orders - Assigned To',
     workOrderPriorities: 'Work Orders - Priorities',
     workOrderStatuses: 'Work Orders - Statuses',
     adhocTaskTypes: 'Adhoc Task Types',

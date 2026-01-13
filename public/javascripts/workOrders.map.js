@@ -9,7 +9,7 @@ const shadowSize = [41, 41];
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`;
     const workOrderTypeSelect = document.querySelector('#workOrderMap--workOrderTypeId');
-    const assignedToSelect = document.querySelector('#workOrderMap--assignedToDataListItemId');
+    const assignedToSelect = document.querySelector('#workOrderMap--assignedToId');
     const workOrderCountElement = document.querySelector('#container--workOrderCount');
     // Initialize map
     const map = new L.Map('map--workOrders').setView([shiftLog.defaultLatitude, shiftLog.defaultLongitude], defaultZoom);
@@ -101,7 +101,7 @@ const shadowSize = [41, 41];
         const assignedLine = document.createElement('div');
         assignedLine.style.marginTop = '0.5em';
         assignedLine.style.fontSize = '0.9em';
-        assignedLine.textContent = `Assigned to: ${workOrder.assignedToDataListItem ?? '(Not Assigned)'}`;
+        assignedLine.textContent = `Assigned to: ${workOrder.assignedToName ?? '(Not Assigned)'}`;
         workOrderDiv.append(titleLink, typeSpan, statusLine);
         if (thumbnailElement !== null) {
             workOrderDiv.append(thumbnailElement);
@@ -167,9 +167,9 @@ const shadowSize = [41, 41];
         if (workOrderTypeId !== '') {
             filters.workOrderTypeId = workOrderTypeId;
         }
-        const assignedToDataListItemId = assignedToSelect.value;
-        if (assignedToDataListItemId !== '') {
-            filters.assignedToDataListItemId = assignedToDataListItemId;
+        const assignedToId = assignedToSelect.value;
+        if (assignedToId !== '') {
+            filters.assignedToId = assignedToId;
         }
         cityssm.postJSON(`${urlPrefix}/doSearchWorkOrders`, filters, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;

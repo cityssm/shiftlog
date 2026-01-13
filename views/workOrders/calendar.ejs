@@ -41,13 +41,13 @@
         <div class="columns">
           <div class="column is-half">
             <div class="field">
-              <label class="label" for="calendar--assignedToDataListItemId">Assigned To</label>
+              <label class="label" for="calendar--assignedToId">Assigned To</label>
               <div class="control has-icons-left">
                 <div class="select is-fullwidth">
-                  <select id="calendar--assignedToDataListItemId" name="assignedToDataListItemId">
+                  <select id="calendar--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
-                    <option value="<%= assignedToItem.dataListItemId %>">
+                    <option value="<%= assignedToItem.assignedToId %>">
                       <%= assignedToItem.dataListItem %>
                     </option>
                     <% }); %>

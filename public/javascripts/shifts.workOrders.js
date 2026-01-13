@@ -491,7 +491,7 @@
                         milestoneTitle: milestone.milestoneTitle,
                         milestoneDescription: milestone.milestoneDescription,
                         milestoneDueDateTimeString: milestone.milestoneDueDateTime,
-                        assignedToDataListItemId: milestone.assignedToDataListItemId,
+                        assignedToId: milestone.assignedToId,
                         milestoneCompleteDateTimeString: currentDateString
                     }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;

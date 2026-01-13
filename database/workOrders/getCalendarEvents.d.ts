@@ -1,7 +1,7 @@
 export interface GetCalendarEventsFilters {
     year: number;
     month: number;
-    assignedToDataListItemId?: number;
+    assignedToId?: number;
     showOpenDates: boolean;
     showDueDates: boolean;
     showCloseDates: boolean;
@@ -14,8 +14,8 @@ export interface WorkOrderCalendarEvent {
     workOrderId: number;
     workOrderNumber: string;
     workOrderDetails: string;
-    assignedToDataListItem?: string | null;
-    assignedToDataListItemId?: number | null;
+    assignedToName?: string | null;
+    assignedToId?: number | null;
     milestoneId?: number | null;
     milestoneTitle?: string | null;
     workOrderCloseDateTime?: Date | string | null;

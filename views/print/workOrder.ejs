@@ -50,7 +50,7 @@
       </div>
       <div class="field">
         <label class="label">Assigned To</label>
-        <p><%= workOrder.assignedToDataListItem ?? '(Not Assigned)' %></p>
+        <p><%= workOrder.assignedToName ?? '(Not Assigned)' %></p>
       </div>
     </div>
   </div>
@@ -179,7 +179,7 @@
           <%= milestone.milestoneTitle %><br />
           <span class="is-size-7"><%= milestone.milestoneDescription %></span>
         </td>
-        <td><%= milestone.assignedToDataListItem ?? '' %></td>
+        <td><%= milestone.assignedToName ?? '' %></td>
         <td>
           <% if (milestone.milestoneDueDateTime) { %>
           <%= dateTimeFunctions.dateToString(milestone.milestoneDueDateTime) %>

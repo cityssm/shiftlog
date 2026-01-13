@@ -14,6 +14,6 @@ export interface CreateWorkOrderForm {
     locationAddress1: string;
     locationAddress2: string;
     locationCityProvince: string;
-    assignedToDataListItemId?: number | string;
+    assignedToId?: number | string;
 }
 export default function createWorkOrder(createWorkOrderForm: CreateWorkOrderForm, user: User): Promise<number>;

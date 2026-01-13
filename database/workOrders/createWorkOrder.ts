@@ -40,7 +40,7 @@ export interface CreateWorkOrderForm {
   locationAddress2: string
   locationCityProvince: string
 
-  assignedToDataListItemId?: number | string
+  assignedToId?: number | string
 }
 
 export default async function createWorkOrder(
@@ -154,10 +154,10 @@ export default async function createWorkOrder(
     .input('locationAddress2', createWorkOrderForm.locationAddress2)
     .input('locationCityProvince', createWorkOrderForm.locationCityProvince)
     .input(
-      'assignedToDataListItemId',
-      createWorkOrderForm.assignedToDataListItemId === ''
+      'assignedToId',
+      createWorkOrderForm.assignedToId === ''
         ? null
-        : createWorkOrderForm.assignedToDataListItemId
+        : createWorkOrderForm.assignedToId
     )
     .input('userName', user.userName).query(/* sql */ `
       insert into ShiftLog.WorkOrders (
@@ -179,7 +179,7 @@ export default async function createWorkOrder(
         locationAddress1,
         locationAddress2,
         locationCityProvince,
-        assignedToDataListItemId,
+        assignedToId,
         recordCreate_userName,
         recordUpdate_userName
       )
@@ -203,7 +203,7 @@ export default async function createWorkOrder(
         @locationAddress1,
         @locationAddress2,
         @locationCityProvince,
-        @assignedToDataListItemId,
+        @assignedToId,
         @userName,
         @userName
       )

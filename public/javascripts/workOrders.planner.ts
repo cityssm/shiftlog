@@ -163,7 +163,7 @@ declare const exports: {
           ${cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName)}
         </td>
         <td>
-          ${cityssm.escapeHTML((workOrder.assignedToDataListItem ?? '') === '' ? '(Unassigned)' : (workOrder.assignedToDataListItem ?? ''))}
+          ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '(Unassigned)' : (workOrder.assignedToName ?? ''))}
         </td>
         <td class="is-hidden-print">
           <a
@@ -212,7 +212,7 @@ declare const exports: {
     const requestData: Record<string, boolean | string> = {}
 
     for (const [key, value] of formData.entries()) {
-      if (key === 'assignedToDataListItemId' && value === 'unassigned') {
+      if (key === 'assignedToId' && value === 'unassigned') {
         requestData.includeUnassigned = true
       } else {
         requestData[key] = value as string

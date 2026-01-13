@@ -15,6 +15,6 @@ export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
     locationAddress1: string;
     locationAddress2: string;
     locationCityProvince: string;
-    assignedToDataListItemId?: number | string;
+    assignedToId?: number | string;
 };
 export default function updateWorkOrder(updateWorkOrderForm: UpdateWorkOrderForm, userName: string): Promise<boolean>;

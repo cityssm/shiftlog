@@ -74,6 +74,13 @@ export interface Equipment extends SyncRecord {
     userGroupId?: number;
     userGroupName?: string;
 }
+export interface AssignedTo extends BaseRecord {
+    assignedToId: number;
+    assignedToName: string;
+    orderNumber: number;
+    userGroupId?: number | null;
+    userGroupName?: string;
+}
 export interface Location extends SyncRecord {
     locationId: number;
     latitude?: number | null;
@@ -279,8 +286,8 @@ export interface WorkOrder extends BaseRecord {
     locationAddress1: string;
     locationAddress2: string;
     locationCityProvince: string;
-    assignedToDataListItemId?: number | null;
-    assignedToDataListItem?: string;
+    assignedToId?: number | null;
+    assignedToName?: string;
     moreInfoFormDataJson?: string;
     moreInfoFormData?: Record<string, unknown>;
     userGroupId?: number | null;
@@ -308,8 +315,8 @@ export interface WorkOrderMilestone extends BaseRecord {
     milestoneDescription: string;
     milestoneDueDateTime?: Date | string | null;
     milestoneCompleteDateTime?: Date | string | null;
-    assignedToDataListItemId?: number | null;
-    assignedToDataListItem?: string;
+    assignedToId?: number | null;
+    assignedToName?: string;
     orderNumber: number;
 }
 export interface WorkOrderCost extends BaseRecord {

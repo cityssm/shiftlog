@@ -14,15 +14,15 @@ export default async function getWorkOrderMilestones(workOrderId) {
         m.milestoneDescription,
         m.milestoneDueDateTime,
         m.milestoneCompleteDateTime,
-        m.assignedToDataListItemId,
-        d.dataListItem as assignedToDataListItem,
+        m.assignedToId,
+        a.assignedToName,
         m.orderNumber,
         m.recordCreate_userName,
         m.recordCreate_dateTime,
         m.recordUpdate_userName,
         m.recordUpdate_dateTime
       from ShiftLog.WorkOrderMilestones m
-      left join ShiftLog.DataListItems d on m.assignedToDataListItemId = d.dataListItemId
+      left join ShiftLog.AssignedTo a on m.assignedToId = a.assignedToId
       where m.workOrderId = @workOrderId
         and m.recordDelete_dateTime is null
         and m.workOrderId in (

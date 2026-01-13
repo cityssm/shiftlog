@@ -1,0 +1,143 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <nav class="breadcrumb">
+          <ul>
+            <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+            <li>
+              <a href="#">
+                <span class="icon is-small"><i class="fa-solid fa-cog"></i></span>
+                <span>Administrator Tools</span>
+              </a>
+            </li>
+            <li class="is-active">
+              <a href="#" aria-current="page">
+                Assigned To Management
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="column is-narrow">
+        <a
+          class="is-size-7"
+          href="https://cityssm.github.io/shiftlog/docs/adminAssignedTo.html"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span class="icon is-small">
+            <i class="fa-solid fa-question-circle"></i>
+          </span>
+          <span>Help</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="columns is-vcentered">
+      <div class="column">
+        <h1 class="title is-1">
+          Assigned To Management
+        </h1>
+      </div>
+      <div class="column is-narrow">
+        <button class="button is-primary" id="button--addAssignedTo" type="button">
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Add Assigned To Item</span>
+        </button>
+      </div>
+    </div>
+
+    <table class="table is-striped is-hoverable is-fullwidth mb-0">
+      <thead>
+        <tr>
+          <th style="width: 60px;">Order</th>
+          <th>Assigned To</th>
+          <th style="width: 180px;">User Group</th>
+          <th style="width: 200px;">
+            <span class="is-sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="is-sortable" id="tbody--assignedTo">
+        <% if (assignedToList.length === 0) { %>
+        <tr id="tr--noAssignedTo">
+          <td class="has-text-centered has-text-grey" colspan="4">
+            No assigned to items found. Click "Add Assigned To Item" to create one.
+          </td>
+        </tr>
+        <% } else { %>
+        <% for (const item of assignedToList) { %>
+        <tr data-assigned-to-id="<%= item.assignedToId %>">
+          <td class="has-text-centered">
+            <span class="icon is-small has-text-grey handle" style="cursor: move;">
+              <i class="fa-solid fa-grip-vertical"></i>
+            </span>
+          </td>
+          <td>
+            <span class="assigned-to-name"><%= item.assignedToName %></span>
+          </td>
+          <td>
+            <% if (item.userGroupId) { %>
+            <% const userGroup = userGroups.find(ug => ug.userGroupId === item.userGroupId) %>
+            <% if (userGroup) { %>
+            <span class="tag is-info"><%= userGroup.userGroupName %></span>
+            <% } else { %>
+            <span class="has-text-grey-light">-</span>
+            <% } %>
+            <% } else { %>
+            <span class="has-text-grey-light">-</span>
+            <% } %>
+          </td>
+          <td class="has-text-right">
+            <div class="buttons are-small is-right">
+              <button
+                class="button is-info button--editAssignedTo" 
+                data-assigned-to-id="<%= item.assignedToId %>"
+                data-assigned-to-name="<%= item.assignedToName %>"
+                data-user-group-id="<%= item.userGroupId || '' %>"
+                type="button"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>Edit</span>
+              </button>
+              <button
+                class="button is-danger button--deleteAssignedTo" 
+                data-assigned-to-id="<%= item.assignedToId %>"
+                data-assigned-to-name="<%= item.assignedToName %>"
+                type="button"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-trash"></i>
+                </span>
+                <span>Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <% } %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/lib/sortablejs/Sortable.min.js"></script>
+<script>
+  exports.assignedToList = <%- JSON.stringify(assignedToList) %>;
+  exports.userGroups = <%- JSON.stringify(userGroups) %>;
+</script>
+<script src="<%= urlPrefix %>/javascripts/assignedTo.admin.js"></script>
+
+<%- await include('../_footerB'); -%>

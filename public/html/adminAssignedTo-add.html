@@ -1,0 +1,67 @@
+<div
+  class="modal"
+  id="modal--addAssignedTo"
+  role="dialog"
+  aria-label="Add Assigned To Item"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Assigned To Item</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addAssignedTo">
+        <div class="field">
+          <label class="label" for="addAssignedTo--assignedToName">
+            Assigned To Name
+            <span class="has-text-danger" title="Required" aria-label="Required">*</span>
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addAssignedTo--assignedToName"
+              name="assignedToName"
+              type="text"
+              maxlength="200"
+              required
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addAssignedTo--userGroupId">
+            User Group (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="addAssignedTo--userGroupId" name="userGroupId">
+                <option value="">None (Available to All)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            If specified, only members of this user group will see this assigned to option.
+          </p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--addAssignedTo"
+        >
+          Add Item
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

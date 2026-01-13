@@ -83,18 +83,18 @@
       <h2 class="panel-heading"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Settings</h2>
       <div class="panel-block is-block">
         <form class="userSettingForm">
-          <input type="hidden" name="settingKey" value="workOrders.defaultAssignedToDataListItemId" />
+          <input type="hidden" name="settingKey" value="workOrders.defaultAssignedToId" />
           <label class="label" for="userSettingForm--1">Default "Assigned To" Value</label>
           <div class="field has-addons">
             <div class="control is-expanded">
               <div class="select is-fullwidth">
                 <select id="userSettingForm--1" name="settingValue">
                   <option value="">-- None --</option>
-                  <% for (const dataListItem of assignedToDataListItems) { %>
+                  <% for (const item of assignedToDataListItems) { %>
                   <option
-                    value="<%= dataListItem.dataListItemId %>"
-                    <%= user.userSettings['workOrders.defaultAssignedToDataListItemId'] === dataListItem.dataListItemId.toString() ? 'selected' : '' %>>
-                    <%= dataListItem.dataListItem %>
+                    value="<%= item.assignedToId %>"
+                    <%= user.userSettings['workOrders.defaultAssignedToId'] === item.assignedToId.toString() ? 'selected' : '' %>>
+                    <%= item.assignedToName %>
                   </option>
                   <% } %>
                 </select>

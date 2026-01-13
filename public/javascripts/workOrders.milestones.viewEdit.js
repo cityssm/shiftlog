@@ -87,7 +87,7 @@
                     : ''}
           </td>
           <td class="is-hidden-touch">
-            ${milestone.assignedToDataListItem ? cityssm.escapeHTML(milestone.assignedToDataListItem) : '<span class="has-text-grey">(Not Assigned)</span>'}
+            ${milestone.assignedToName ? cityssm.escapeHTML(milestone.assignedToName) : '<span class="has-text-grey">(Not Assigned)</span>'}
           </td>
           <td>
             ${milestone.milestoneDueDateTime ? formatDateTime(milestone.milestoneDueDateTime) : '<span class="has-text-grey">-</span>'}
@@ -171,8 +171,8 @@
         function populateAssignedToSelect(selectElement) {
             for (const option of exports.assignedToOptions) {
                 const optionElement = document.createElement('option');
-                optionElement.value = option.dataListItemId.toString();
-                optionElement.textContent = option.dataListItem;
+                optionElement.value = option.assignedToId.toString();
+                optionElement.textContent = option.assignedToName;
                 selectElement.append(optionElement);
             }
         }
@@ -199,12 +199,12 @@
                     ;
                     modalElement.querySelector('#addWorkOrderMilestone--workOrderId').value = workOrderId;
                     // Populate Assigned To select
-                    const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToDataListItemId');
+                    const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToId');
                     populateAssignedToSelect(assignedToSelect);
                     // Set the default value to the work order's "assigned to" value
-                    if (exports.workOrderAssignedToDataListItemId !== null) {
+                    if (exports.workOrderAssignedToId !== null) {
                         assignedToSelect.value =
-                            exports.workOrderAssignedToDataListItemId.toString();
+                            exports.workOrderAssignedToId.toString();
                     }
                     // Initialize flatpickr on date fields
                     flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneDueDateTimeString'), dateTimePickerOptions);
@@ -283,17 +283,14 @@
                         completeDatePicker.setDate(now, true);
                     });
                     // Populate Assigned To select
-                    const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToDataListItemId');
+                    const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToId');
                     populateAssignedToSelect(assignedToSelect);
-                    // Set the selected option if there is one, otherwise default to work order's assigned to
-                    if (milestone.assignedToDataListItemId !== null) {
+                    // Set the selected option if there is one
+                    if (milestone.assignedToId !== null) {
                         assignedToSelect.value =
-                            milestone.assignedToDataListItemId.toString();
+                            milestone.assignedToId.toString();
                     }
-                    else if (exports.workOrderAssignedToDataListItemId !== null) {
-                        assignedToSelect.value =
-                            exports.workOrderAssignedToDataListItemId.toString();
-                    }
+                    // If no assignedTo is set, leave it as "(Not Assigned)" - don't default to work order's value
                 },
                 onshown(modalElement, _closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();

@@ -171,15 +171,15 @@
           </div>
           <div class="column">
             <div class="field">
-              <label class="label" for="workOrderPlanner--assignedToDataListItemId">Assigned To</label>
+              <label class="label" for="workOrderPlanner--assignedToId">Assigned To</label>
               <div class="control has-icons-left">
                 <div class="select is-fullwidth">
-                  <select id="workOrderPlanner--assignedToDataListItemId" name="assignedToDataListItemId">
+                  <select id="workOrderPlanner--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
                     <option value="unassigned">(Unassigned)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
-                    <option value="<%= assignedToItem.dataListItemId %>">
-                      <%= assignedToItem.dataListItem %>
+                    <option value="<%= assignedToItem.assignedToId %>">
+                      <%= assignedToItem.assignedToName %>
                     </option>
                     <% }); %>
                   </select>
