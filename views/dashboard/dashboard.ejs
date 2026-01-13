@@ -430,21 +430,6 @@
           </div>
         </div>
       </a>
-      <a class="panel-block" href="<%= urlPrefix %>/admin/locations">
-        <div class="media">
-          <div class="media-left">
-            <i class="fa-solid fa-3x fa-map-marker-alt"></i>
-          </div>
-          <div class="media-content">
-            <h2 class="title is-4 mb-0 has-text-link">
-              Location Maintenance
-            </h2>
-            <p>
-              Manage suggested locations.
-            </p>
-          </div>
-        </div>
-      </a>
     </details>
   </div>
   <div class="column">
@@ -478,6 +463,23 @@
           </div>
         </div>
       </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/assignedTo">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-3x fa-user-check"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Assigned To Management
+            </h2>
+            <p>
+              Manage groups and individuals to whom
+              <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>
+              can be assigned.
+            </p>
+          </div>
+        </div>
+      </a>
       <% } %>
       <a class="panel-block" href="<%= urlPrefix %>/admin/tags">
         <div class="media">
@@ -505,6 +507,21 @@
             </h2>
             <p>
               Manage equipment types, shift types, and other data lists.
+            </p>
+          </div>
+        </div>
+      </a>
+      <a class="panel-block" href="<%= urlPrefix %>/admin/locations">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-3x fa-map-marker-alt"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Location Maintenance
+            </h2>
+            <p>
+              Manage suggested locations.
             </p>
           </div>
         </div>
