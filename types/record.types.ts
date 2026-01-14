@@ -490,3 +490,15 @@ export interface AdhocTask extends BaseRecord {
   shiftAdhocTaskNote?: string
   shiftsCount?: number
 }
+
+// Notification Configuration
+
+export interface NotificationConfiguration extends BaseRecord {
+  notificationConfigurationId: number
+  notificationQueue: string
+  notificationType: string
+  notificationTypeFormJson: string
+  assignedToId?: number | null
+  assignedToName?: string
+  isActive: boolean
+}
