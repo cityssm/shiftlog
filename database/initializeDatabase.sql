@@ -790,6 +790,8 @@ CREATE TABLE ShiftLog.NotificationConfigurations (
 
   assignedToId int,
 
+  isActive bit not null default 1,
+
   recordCreate_userName varchar(30) not null,
   recordCreate_dateTime datetime not null default getdate(),
   recordUpdate_userName varchar(30) not null,
