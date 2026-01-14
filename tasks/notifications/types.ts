@@ -3,7 +3,11 @@ export const notificationQueueTypes = [
   'workOrder.update'
 ] as const
 
-export type NotificationQueueType = typeof notificationQueueTypes[number]
+export type NotificationQueueType = (typeof notificationQueueTypes)[number]
+
+export const notificationTypes = ['ntfy', 'email', 'msTeams'] as const
+
+export type NotificationType = (typeof notificationTypes)[number]
 
 export interface NtfyNotificationConfig {
   topic: string
