@@ -1,0 +1,146 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <nav class="breadcrumb">
+          <ul>
+            <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+            <li>
+              <a href="#">
+                <span class="icon is-small"><i class="fa-solid fa-cog"></i></span>
+                <span>Administrator Tools</span>
+              </a>
+            </li>
+            <li class="is-active">
+              <a href="#" aria-current="page">
+                Notification Configuration
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="columns is-vcentered">
+      <div class="column">
+        <h1 class="title is-1">
+          Notification Configuration
+        </h1>
+      </div>
+      <div class="column is-narrow">
+        <button class="button is-primary" id="button--addNotificationConfiguration" type="button">
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Add Notification Configuration</span>
+        </button>
+      </div>
+    </div>
+
+    <table class="table is-striped is-hoverable is-fullwidth mb-0">
+      <thead>
+        <tr>
+          <th>Notification Queue</th>
+          <th>Notification Type</th>
+          <th>Assigned To</th>
+          <th style="width: 100px;">Active</th>
+          <th style="width: 200px;">
+            <span class="is-sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody--notificationConfigurations">
+        <% if (notificationConfigurations.length === 0) { %>
+        <tr id="tr--noNotificationConfigurations">
+          <td class="has-text-centered has-text-grey" colspan="5">
+            No notification configurations found. Click "Add Notification Configuration" to create one.
+          </td>
+        </tr>
+        <% } else { %>
+        <% for (const config of notificationConfigurations) { %>
+        <tr data-notification-configuration-id="<%= config.notificationConfigurationId %>">
+          <td>
+            <span class="notification-queue"><%= config.notificationQueue %></span>
+          </td>
+          <td>
+            <span class="notification-type"><%= config.notificationType %></span>
+          </td>
+          <td>
+            <% if (config.assignedToName) { %>
+            <span class="assigned-to-name"><%= config.assignedToName %></span>
+            <% } else { %>
+            <span class="has-text-grey-light">All</span>
+            <% } %>
+          </td>
+          <td class="has-text-centered">
+            <% if (config.isActive) { %>
+            <span class="tag is-success">Active</span>
+            <% } else { %>
+            <span class="tag">Inactive</span>
+            <% } %>
+          </td>
+          <td class="has-text-right">
+            <div class="buttons are-small is-right">
+              <button
+                class="button is-light button--toggleIsActive"
+                data-notification-configuration-id="<%= config.notificationConfigurationId %>"
+                data-is-active="<%= config.isActive ? '1' : '0' %>"
+                type="button"
+                title="<%= config.isActive ? 'Deactivate' : 'Activate' %>"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-toggle-<%= config.isActive ? 'on' : 'off' %>"></i>
+                </span>
+              </button>
+              <button
+                class="button is-info button--editNotificationConfiguration" 
+                data-notification-configuration-id="<%= config.notificationConfigurationId %>"
+                data-notification-queue="<%= config.notificationQueue %>"
+                data-notification-type="<%= config.notificationType %>"
+                data-notification-type-form-json="<%= cityssm.escapeHTML(config.notificationTypeFormJson) %>"
+                data-assigned-to-id="<%= config.assignedToId || '' %>"
+                data-is-active="<%= config.isActive ? '1' : '0' %>"
+                type="button"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>Edit</span>
+              </button>
+              <button
+                class="button is-danger button--deleteNotificationConfiguration" 
+                data-notification-configuration-id="<%= config.notificationConfigurationId %>"
+                data-notification-queue="<%= config.notificationQueue %>"
+                type="button"
+              >
+                <span class="icon">
+                  <i class="fa-solid fa-trash"></i>
+                </span>
+                <span>Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <% } %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script>
+  exports.notificationConfigurations = <%- JSON.stringify(notificationConfigurations) %>;
+  exports.assignedToList = <%- JSON.stringify(assignedToList) %>;
+  exports.notificationQueueTypes = <%- JSON.stringify(notificationQueueTypes) %>;
+  exports.notificationTypes = <%- JSON.stringify(notificationTypes) %>;
+</script>
+<script src="<%= urlPrefix %>/javascripts/notificationConfigurations.admin.js"></script>
+
+<%- await include('../_footerB'); -%>

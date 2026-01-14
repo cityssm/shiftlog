@@ -1,0 +1,101 @@
+<div
+  class="modal"
+  id="modal--addNotificationConfiguration"
+  role="dialog"
+  aria-label="Add Notification Configuration"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Notification Configuration</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addNotificationConfiguration">
+        <div class="field">
+          <label class="label" for="addNotificationConfiguration--notificationQueue">
+            Notification Queue
+            <span class="has-text-danger" title="Required" aria-label="Required">*</span>
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="addNotificationConfiguration--notificationQueue" name="notificationQueue" required>
+                <!-- Options populated by JavaScript -->
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            The event that triggers this notification.
+          </p>
+        </div>
+        <div class="field">
+          <label class="label" for="addNotificationConfiguration--notificationType">
+            Notification Type
+            <span class="has-text-danger" title="Required" aria-label="Required">*</span>
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="addNotificationConfiguration--notificationType" name="notificationType" required>
+                <!-- Options populated by JavaScript -->
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            The type of notification to send.
+          </p>
+        </div>
+        <div id="notificationTypeFormContainer">
+          <!-- Notification type specific fields populated by JavaScript -->
+        </div>
+        <div class="field">
+          <label class="label" for="addNotificationConfiguration--assignedToId">
+            Assigned To (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="addNotificationConfiguration--assignedToId" name="assignedToId">
+                <option value="">All</option>
+                <!-- Options populated by JavaScript -->
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            If specified, only notify when the work order is assigned to this item.
+          </p>
+        </div>
+        <div class="field">
+          <label class="checkbox">
+            <input
+              id="addNotificationConfiguration--isActive"
+              name="isActive"
+              type="checkbox"
+              checked
+            />
+            Active
+          </label>
+          <p class="help">
+            Only active configurations will send notifications.
+          </p>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-primary"
+          type="submit"
+          form="form--addNotificationConfiguration"
+        >
+          Add Configuration
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
