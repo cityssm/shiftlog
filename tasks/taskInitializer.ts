@@ -48,6 +48,18 @@ export function initializeTasks(): ChildProcess[] {
   }
 
   /*
+   * Notification Task
+   */
+
+  const notificationTask = fork('./tasks/notifications/task.js', {
+    cwd: process.cwd(),
+    env: process.env,
+    stdio: 'inherit'
+  })
+
+  childProcesses.push(notificationTask)
+
+  /*
    * Database Cleanup Task
    */
 

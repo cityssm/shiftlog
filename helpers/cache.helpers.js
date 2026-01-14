@@ -35,8 +35,9 @@ export function clearCacheByTableName(tableName, relayMessage = true) {
             const workerMessage = {
                 messageType: 'clearCache',
                 tableName,
-                timeMillis: Date.now(),
-                pid: process.pid
+                sourcePid: process.pid,
+                sourceTimeMillis: Date.now(),
+                targetProcesses: 'workers'
             };
             debug(`Sending clear cache from worker: ${tableName}`);
             if (process.send !== undefined) {
@@ -53,7 +54,7 @@ export function clearCaches() {
     debug('Caches cleared');
 }
 process.on('message', (message) => {
-    if (message.messageType === 'clearCache' && message.pid !== process.pid) {
+    if (message.messageType === 'clearCache' && message.sourcePid !== process.pid) {
         debug(`Clearing cache: ${message.tableName}`);
         clearCacheByTableName(message.tableName, false);
     }

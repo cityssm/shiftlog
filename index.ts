@@ -54,15 +54,29 @@ function initializeCluster(): void {
     activeWorkers.set(worker.process.pid ?? 0, worker)
   }
 
-  cluster.on('message', (worker, message: WorkerMessage) => {
-    for (const [pid, activeWorker] of activeWorkers.entries()) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (activeWorker === undefined || pid === message.pid) {
-        continue
-      }
+  cluster.on('message', (_worker, message: WorkerMessage) => {
+    if (message.targetProcesses === 'tasks') {
+      for (const taskProcess of tasksChildProcesses) {
+        if (
+          taskProcess.pid === undefined ||
+          taskProcess.pid === message.sourcePid
+        ) {
+          continue
+        }
 
-      debug(`Relaying message to worker: ${pid}`)
-      activeWorker.send(message)
+        debug(`Relaying message to task process: ${taskProcess.pid}`)
+        taskProcess.send(message)
+      }
+    } else {
+      for (const [pid, activeWorker] of activeWorkers.entries()) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (activeWorker === undefined || pid === message.sourcePid) {
+          continue
+        }
+
+        debug(`Relaying message to worker: ${pid}`)
+        activeWorker.send(message)
+      }
     }
   })
 
@@ -74,7 +88,7 @@ function initializeCluster(): void {
       // eslint-disable-next-line sonarjs/pseudo-random
       const delaySeconds = 5 + 15 * Math.random()
 
-      debug(`Worker will be restarted in ${delaySeconds.toFixed(0)} seconds...`)
+      debug(`New worker will be started in ${delaySeconds.toFixed(0)} seconds...`)
 
       globalThis.setTimeout(() => {
         const newWorker = cluster.fork()

@@ -6,6 +6,7 @@ import type { DateString, TimeString } from '@cityssm/utils-datetime'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js'
 
 export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
   workOrderId: number | string
@@ -157,6 +158,16 @@ export default async function updateWorkOrder(
         and instance = @instance
         and recordDelete_dateTime is null
     `)
+
+  if (result.rowsAffected[0] > 0) {
+    // Send Notification
+    sendNotificationWorkerMessage(
+      'workOrder.update',
+      typeof updateWorkOrderForm.workOrderId === 'string'
+        ? Number.parseInt(updateWorkOrderForm.workOrderId, 10)
+        : updateWorkOrderForm.workOrderId
+    )
+  }
 
   return result.rowsAffected[0] > 0
 }

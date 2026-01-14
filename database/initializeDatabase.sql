@@ -777,3 +777,40 @@ CREATE TABLE ShiftLog.TimesheetCells (
   foreign key (timesheetColumnId) references ShiftLog.TimesheetColumns(timesheetColumnId)
 )
 GO
+
+-- NOTIFICATIONS
+
+CREATE TABLE ShiftLog.NotificationConfigurations (
+  notificationConfigurationId int not null primary key identity(1,1),
+  instance varchar(20) not null,
+
+  notificationQueue varchar(50) not null,
+  notificationType varchar(50) not null,
+  notificationTypeFormJson nvarchar(max) not null,
+
+  assignedToId int,
+
+  recordCreate_userName varchar(30) not null,
+  recordCreate_dateTime datetime not null default getdate(),
+  recordUpdate_userName varchar(30) not null,
+  recordUpdate_dateTime datetime not null default getdate(),
+  recordDelete_userName varchar(30),
+  recordDelete_dateTime datetime,
+
+  foreign key (assignedToId) references ShiftLog.AssignedTo(assignedToId)
+)
+GO
+
+CREATE TABLE ShiftLog.NotificationLogs (
+  notificationLogId bigint not null primary key identity(1,1),
+
+  notificationConfigurationId int not null,
+  recordId int not null,
+
+  notificationDateTime datetime not null default getdate(),
+  isSuccess bit not null,
+  errorMessage varchar(1000) not null default '',
+
+  foreign key (notificationConfigurationId) references ShiftLog.NotificationConfigurations(notificationConfigurationId)
+)
+GO

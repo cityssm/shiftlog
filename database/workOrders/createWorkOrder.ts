@@ -7,6 +7,7 @@ import type { DateString, TimeString } from '@cityssm/utils-datetime'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js'
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js'
 import getWorkOrderType from '../workOrderTypes/getWorkOrderType.js'
 import getWorkOrderTypeDefaultMilestones from '../workOrderTypes/getWorkOrderTypeDefaultMilestones.js'
 
@@ -258,6 +259,9 @@ export default async function createWorkOrder(
         )
       `)
   }
+
+  // Send notification
+  sendNotificationWorkerMessage('workOrder.create', workOrderId)
 
   return workOrderId
 }

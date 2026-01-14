@@ -3,6 +3,7 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js';
 import getWorkOrderType from '../workOrderTypes/getWorkOrderType.js';
 import getWorkOrderTypeDefaultMilestones from '../workOrderTypes/getWorkOrderTypeDefaultMilestones.js';
 export default async function createWorkOrder(createWorkOrderForm, user) {
@@ -165,5 +166,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         )
       `);
     }
+    // Send notification
+    sendNotificationWorkerMessage('workOrder.create', workOrderId);
     return workOrderId;
 }

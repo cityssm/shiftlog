@@ -65,6 +65,11 @@ export interface Config {
 
     avanti?: AvantiApiConfiguration
     pearl?: MSSQLConfig
+
+    ntfy?: {
+      serverUrl: string
+      defaultTopic: string
+    }
   }
 
   shifts?: ConfigSection

@@ -39,6 +39,10 @@ export interface Config {
         shiftLog: MSSQLConfig;
         avanti?: AvantiApiConfiguration;
         pearl?: MSSQLConfig;
+        ntfy?: {
+            serverUrl: string;
+            defaultTopic: string;
+        };
     };
     shifts?: ConfigSection;
     timesheets?: ConfigSection;

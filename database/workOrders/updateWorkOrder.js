@@ -3,6 +3,7 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js';
 function buildMoreInfoFormDataJson(updateWorkOrderForm) {
     const moreInfoFormData = {};
     for (const [key, value] of Object.entries(updateWorkOrderForm)) {
@@ -77,5 +78,11 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         and instance = @instance
         and recordDelete_dateTime is null
     `);
+    if (result.rowsAffected[0] > 0) {
+        // Send Notification
+        sendNotificationWorkerMessage('workOrder.update', typeof updateWorkOrderForm.workOrderId === 'string'
+            ? Number.parseInt(updateWorkOrderForm.workOrderId, 10)
+            : updateWorkOrderForm.workOrderId);
+    }
     return result.rowsAffected[0] > 0;
 }
