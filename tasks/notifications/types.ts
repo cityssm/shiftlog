@@ -1,4 +1,9 @@
-export type NotificationQueueType = 'workOrder.create' | 'workOrder.update'
+export const notificationQueueTypes = [
+  'workOrder.create',
+  'workOrder.update'
+] as const
+
+export type NotificationQueueType = typeof notificationQueueTypes[number]
 
 export interface NtfyNotificationConfig {
   topic: string
