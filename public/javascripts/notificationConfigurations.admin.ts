@@ -31,6 +31,28 @@ declare const exports: {
     '#tbody--notificationConfigurations'
   ) as HTMLElement
 
+  function getNotificationTypeDetail(
+    notificationType: string,
+    notificationTypeFormJson: string
+  ): string {
+    try {
+      const config = JSON.parse(notificationTypeFormJson)
+      if (notificationType === 'ntfy') {
+        return `Topic: ${cityssm.escapeHTML(config.topic ?? '')}`
+      } else if (notificationType === 'email') {
+        const emails = config.recipientEmails ?? []
+        return `Recipients: ${cityssm.escapeHTML(emails.length > 0 ? emails[0] : '')}${emails.length > 1 ? `, +${emails.length - 1} more` : ''}`
+      } else if (notificationType === 'msTeams') {
+        const url = config.webhookUrl ?? ''
+        const displayUrl = url.length > 40 ? url.substring(0, 40) + '...' : url
+        return `Webhook: ${cityssm.escapeHTML(displayUrl)}`
+      }
+    } catch {
+      // ignore parse errors
+    }
+    return ''
+  }
+
   function renderNotificationConfigurations(): void {
     if (notificationConfigurations.length === 0) {
       tbodyElement.innerHTML = `<tr id="tr--noNotificationConfigurations">
@@ -53,6 +75,11 @@ declare const exports: {
           ? '<span class="has-text-grey-light">All</span>'
           : `<span class="assigned-to-name">${cityssm.escapeHTML(assignedTo.assignedToName)}</span>`
 
+      const notificationTypeDetail = getNotificationTypeDetail(
+        config.notificationType,
+        config.notificationTypeFormJson
+      )
+
       const rowElement = document.createElement('tr')
 
       rowElement.dataset.notificationConfigurationId =
@@ -69,6 +96,7 @@ declare const exports: {
           <span class="notification-type">
             ${cityssm.escapeHTML(config.notificationType)}
           </span>
+          ${notificationTypeDetail ? `<br><span class="is-size-7 has-text-grey">${notificationTypeDetail}</span>` : ''}
         </td>
         <td>
           ${assignedToDisplay}
@@ -92,6 +120,7 @@ declare const exports: {
               <span class="icon">
                 <i class="fa-solid fa-toggle-${config.isActive ? 'on' : 'off'}"></i>
               </span>
+              <span>Toggle Active</span>
             </button>
             <button
               class="button is-info button--editNotificationConfiguration"
