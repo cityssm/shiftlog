@@ -5,7 +5,8 @@ export default async function getNotificationConfiguration(notificationConfigura
     const result = (await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('notificationConfigurationId', notificationConfigurationId).query(/* sql */ `
+        .input('notificationConfigurationId', notificationConfigurationId).query(
+    /* sql */ `
       select
         nc.notificationConfigurationId,
         nc.notificationQueue,

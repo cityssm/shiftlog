@@ -4,7 +4,8 @@ export default async function getNotificationConfigurations() {
     const pool = await getShiftLogConnectionPool();
     const result = (await pool
         .request()
-        .input('instance', getConfigProperty('application.instance')).query(/* sql */ `
+        .input('instance', getConfigProperty('application.instance')).query(
+    /* sql */ `
       select
         nc.notificationConfigurationId,
         nc.notificationQueue,

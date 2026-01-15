@@ -12,7 +12,7 @@
     function hexToRgb(hex) {
         const cleanHex = hex.replace(/^#/, '');
         // Validate hex string
-        if (!/^[\dA-Fa-f]{6}$/.test(cleanHex)) {
+        if (!/^[\dA-F]{6}$/i.test(cleanHex)) {
             // Default to black if invalid
             return { r: 0, g: 0, b: 0 };
         }
