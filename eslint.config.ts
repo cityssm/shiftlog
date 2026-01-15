@@ -43,13 +43,13 @@ export const config = defineConfig(configWebApp, {
             'javascripts',
             'radiusless',
             'rowspan',
-            'shiftlog',
-
+            
             // SQL
             'datediff',
-
+            
             // Shift Log
             'maint',
+            'shiftlog',
             'timesheet',
             'timesheets',
 
@@ -60,7 +60,9 @@ export const config = defineConfig(configWebApp, {
             'worktech',
 
             // ArcGIS
-            'arcgis'
+            'arcgis',
+
+            'ntfy'
           ]
         }
       }

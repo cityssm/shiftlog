@@ -1,15 +1,20 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { NotificationConfiguration } from '../../types/record.types.js'
-import type { AssignedTo } from '../../types/record.types.js'
 import type {
+  EmailNotificationConfig,
+  MsTeamsNotificationConfig,
   NotificationQueueType,
   NotificationType,
-  NtfyNotificationConfig,
-  EmailNotificationConfig,
-  MsTeamsNotificationConfig
+  NtfyNotificationConfig
 } from '../../tasks/notifications/types.js'
+import type {
+  AssignedTo,
+  NotificationConfiguration
+} from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -17,11 +22,13 @@ declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
 
 declare const exports: {
+  shiftLog: ShiftLogGlobal
+
   notificationConfigurations: NotificationConfiguration[]
+
   assignedToList: AssignedTo[]
   notificationQueueTypes: readonly NotificationQueueType[]
   notificationTypes: readonly NotificationType[]
-  shiftLog: ShiftLogGlobal
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -37,15 +44,24 @@ declare const exports: {
   ): string {
     try {
       const config = JSON.parse(notificationTypeFormJson)
-      if (notificationType === 'ntfy') {
-        return `Topic: ${cityssm.escapeHTML(config.topic ?? '')}`
-      } else if (notificationType === 'email') {
-        const emails = config.recipientEmails ?? []
-        return `Recipients: ${cityssm.escapeHTML(emails.length > 0 ? emails[0] : '')}${emails.length > 1 ? `, +${emails.length - 1} more` : ''}`
-      } else if (notificationType === 'msTeams') {
-        const url = config.webhookUrl ?? ''
-        const displayUrl = url.length > 40 ? url.substring(0, 40) + '...' : url
-        return `Webhook: ${cityssm.escapeHTML(displayUrl)}`
+
+      switch (notificationType) {
+        case 'email': {
+          const emails = config.recipientEmails ?? []
+
+          return `Recipients: ${cityssm.escapeHTML(emails.length > 0 ? emails[0] : '')}${emails.length > 1 ? `, +${emails.length - 1} more` : ''}`
+        }
+        case 'msTeams': {
+          const url = config.webhookUrl ?? ''
+
+          const displayUrl = url.length > 40 ? url.slice(0, 40) + '...' : url
+
+          return `Webhook: ${cityssm.escapeHTML(displayUrl)}`
+        }
+        case 'ntfy': {
+          return `Topic: ${cityssm.escapeHTML(config.topic ?? '')}`
+        }
+        // No default
       }
     } catch {
       // ignore parse errors
@@ -55,11 +71,13 @@ declare const exports: {
 
   function renderNotificationConfigurations(): void {
     if (notificationConfigurations.length === 0) {
-      tbodyElement.innerHTML = `<tr id="tr--noNotificationConfigurations">
-        <td colspan="5" class="has-text-centered has-text-grey">
-          No notification configurations found. Click "Add Notification Configuration" to create one.
-        </td>
-      </tr>`
+      tbodyElement.innerHTML = /* html */ `
+        <tr id="tr--noNotificationConfigurations">
+          <td class="has-text-centered has-text-grey" colspan="5">
+            No notification configurations found. Click "Add Notification Configuration" to create one.
+          </td>
+        </tr>
+      `
       return
     }
 
@@ -170,8 +188,8 @@ declare const exports: {
 
   function toggleIsActive(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
-    const notificationConfigurationId = buttonElement.dataset
-      .notificationConfigurationId
+    const notificationConfigurationId =
+      buttonElement.dataset.notificationConfigurationId
 
     if (notificationConfigurationId === undefined) {
       return
@@ -201,6 +219,7 @@ declare const exports: {
           bulmaJS.alert({
             contextualColorName: 'danger',
             title: 'Error Toggling Status',
+
             message: 'An error occurred toggling the active status.'
           })
         }
@@ -219,7 +238,11 @@ declare const exports: {
 
     formContainer.innerHTML = ''
 
-    let config: NtfyNotificationConfig | EmailNotificationConfig | MsTeamsNotificationConfig | undefined
+    let config:
+      | EmailNotificationConfig
+      | MsTeamsNotificationConfig
+      | NtfyNotificationConfig
+      | undefined
 
     if (existingConfig) {
       try {
@@ -229,64 +252,74 @@ declare const exports: {
       }
     }
 
-    if (notificationType === 'ntfy') {
-      const ntfyConfig = config as NtfyNotificationConfig | undefined
-      formContainer.innerHTML = /* html */ `
-        <div class="field">
-          <label class="label" for="notificationTypeForm--topic">
-            Ntfy Topic
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="notificationTypeForm--topic"
-              name="topic"
-              type="text"
-              required
-              value="${cityssm.escapeHTML(ntfyConfig?.topic ?? '')}"
-            />
+    switch (notificationType) {
+      case 'email': {
+        const emailConfig = config as EmailNotificationConfig | undefined
+        formContainer.innerHTML = /* html */ `
+          <div class="field">
+            <label class="label" for="notificationTypeForm--recipientEmails">
+              Recipient Email Addresses
+              <span class="has-text-weight-normal is-size-7">(comma-separated)</span>
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="notificationTypeForm--recipientEmails"
+                name="recipientEmails"
+                type="text"
+                value="${cityssm.escapeHTML(emailConfig?.recipientEmails?.join(', ') ?? '')}"
+                required
+              />
+            </div>
           </div>
-        </div>
-      `
-    } else if (notificationType === 'email') {
-      const emailConfig = config as EmailNotificationConfig | undefined
-      formContainer.innerHTML = /* html */ `
-        <div class="field">
-          <label class="label" for="notificationTypeForm--recipientEmails">
-            Recipient Email Addresses
-            <span class="has-text-weight-normal is-size-7">(comma-separated)</span>
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="notificationTypeForm--recipientEmails"
-              name="recipientEmails"
-              type="text"
-              required
-              value="${cityssm.escapeHTML(emailConfig?.recipientEmails?.join(', ') ?? '')}"
-            />
+        `
+
+        break
+      }
+      case 'msTeams': {
+        const msTeamsConfig = config as MsTeamsNotificationConfig | undefined
+        formContainer.innerHTML = /* html */ `
+          <div class="field">
+            <label class="label" for="notificationTypeForm--webhookUrl">
+              Microsoft Teams Webhook URL
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="notificationTypeForm--webhookUrl"
+                name="webhookUrl"
+                type="url"
+                value="${cityssm.escapeHTML(msTeamsConfig?.webhookUrl ?? '')}"
+                required
+              />
+            </div>
           </div>
-        </div>
-      `
-    } else if (notificationType === 'msTeams') {
-      const msTeamsConfig = config as MsTeamsNotificationConfig | undefined
-      formContainer.innerHTML = /* html */ `
-        <div class="field">
-          <label class="label" for="notificationTypeForm--webhookUrl">
-            Microsoft Teams Webhook URL
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="notificationTypeForm--webhookUrl"
-              name="webhookUrl"
-              type="url"
-              required
-              value="${cityssm.escapeHTML(msTeamsConfig?.webhookUrl ?? '')}"
-            />
+        `
+
+        break
+      }
+      case 'ntfy': {
+        const ntfyConfig = config as NtfyNotificationConfig | undefined
+        formContainer.innerHTML = /* html */ `
+          <div class="field">
+            <label class="label" for="notificationTypeForm--topic">
+              Ntfy Topic
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="notificationTypeForm--topic"
+                name="topic"
+                type="text"
+                value="${cityssm.escapeHTML(ntfyConfig?.topic ?? '')}"
+                required
+              />
+            </div>
           </div>
-        </div>
-      `
+        `
+
+        break
+      }
     }
   }
 
@@ -307,34 +340,44 @@ declare const exports: {
 
       let notificationTypeFormJson = '{}'
 
-      if (notificationType === 'ntfy') {
-        notificationTypeFormJson = JSON.stringify({
-          topic: (
+      switch (notificationType) {
+        case 'email': {
+          const recipientEmailsString = (
             addForm.querySelector(
-              '#notificationTypeForm--topic'
+              '#notificationTypeForm--recipientEmails'
             ) as HTMLInputElement
           ).value
-        } satisfies NtfyNotificationConfig)
-      } else if (notificationType === 'email') {
-        const recipientEmailsStr = (
-          addForm.querySelector(
-            '#notificationTypeForm--recipientEmails'
-          ) as HTMLInputElement
-        ).value
-        notificationTypeFormJson = JSON.stringify({
-          recipientEmails: recipientEmailsStr
-            .split(',')
-            .map((e) => e.trim())
-            .filter((e) => e !== '')
-        } satisfies EmailNotificationConfig)
-      } else if (notificationType === 'msTeams') {
-        notificationTypeFormJson = JSON.stringify({
-          webhookUrl: (
-            addForm.querySelector(
-              '#notificationTypeForm--webhookUrl'
-            ) as HTMLInputElement
-          ).value
-        } satisfies MsTeamsNotificationConfig)
+          notificationTypeFormJson = JSON.stringify({
+            recipientEmails: recipientEmailsString
+              .split(',')
+              .map((e) => e.trim())
+              .filter((e) => e !== '')
+          } satisfies EmailNotificationConfig)
+
+          break
+        }
+        case 'msTeams': {
+          notificationTypeFormJson = JSON.stringify({
+            webhookUrl: (
+              addForm.querySelector(
+                '#notificationTypeForm--webhookUrl'
+              ) as HTMLInputElement
+            ).value
+          } satisfies MsTeamsNotificationConfig)
+
+          break
+        }
+        case 'ntfy': {
+          notificationTypeFormJson = JSON.stringify({
+            topic: (
+              addForm.querySelector(
+                '#notificationTypeForm--topic'
+              ) as HTMLInputElement
+            ).value
+          } satisfies NtfyNotificationConfig)
+
+          break
+        }
       }
 
       const formData = {
@@ -367,7 +410,10 @@ declare const exports: {
             notificationConfigurationId?: number
           }
 
-          if (responseJSON.success && responseJSON.notificationConfigurationId) {
+          if (
+            responseJSON.success &&
+            responseJSON.notificationConfigurationId
+          ) {
             notificationConfigurations.push({
               notificationConfigurationId:
                 responseJSON.notificationConfigurationId,
@@ -463,14 +509,20 @@ declare const exports: {
 
   function editNotificationConfiguration(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
-    const notificationConfigurationId = buttonElement.dataset
-      .notificationConfigurationId
+
+    const notificationConfigurationId =
+      buttonElement.dataset.notificationConfigurationId
+
     const currentNotificationQueue =
       buttonElement.dataset.notificationQueue ?? ''
+
     const currentNotificationType = buttonElement.dataset.notificationType ?? ''
+
     const currentNotificationTypeFormJson =
       buttonElement.dataset.notificationTypeFormJson ?? '{}'
+
     const currentAssignedToId = buttonElement.dataset.assignedToId
+
     const currentIsActive = buttonElement.dataset.isActive === '1'
 
     if (notificationConfigurationId === undefined) {
@@ -493,34 +545,44 @@ declare const exports: {
 
       let notificationTypeFormJson = '{}'
 
-      if (notificationType === 'ntfy') {
-        notificationTypeFormJson = JSON.stringify({
-          topic: (
+      switch (notificationType) {
+        case 'email': {
+          const recipientEmailsString = (
             editForm.querySelector(
-              '#notificationTypeForm--topic'
+              '#notificationTypeForm--recipientEmails'
             ) as HTMLInputElement
           ).value
-        } satisfies NtfyNotificationConfig)
-      } else if (notificationType === 'email') {
-        const recipientEmailsStr = (
-          editForm.querySelector(
-            '#notificationTypeForm--recipientEmails'
-          ) as HTMLInputElement
-        ).value
-        notificationTypeFormJson = JSON.stringify({
-          recipientEmails: recipientEmailsStr
-            .split(',')
-            .map((e) => e.trim())
-            .filter((e) => e !== '')
-        } satisfies EmailNotificationConfig)
-      } else if (notificationType === 'msTeams') {
-        notificationTypeFormJson = JSON.stringify({
-          webhookUrl: (
-            editForm.querySelector(
-              '#notificationTypeForm--webhookUrl'
-            ) as HTMLInputElement
-          ).value
-        } satisfies MsTeamsNotificationConfig)
+          notificationTypeFormJson = JSON.stringify({
+            recipientEmails: recipientEmailsString
+              .split(',')
+              .map((e) => e.trim())
+              .filter((e) => e !== '')
+          } satisfies EmailNotificationConfig)
+
+          break
+        }
+        case 'msTeams': {
+          notificationTypeFormJson = JSON.stringify({
+            webhookUrl: (
+              editForm.querySelector(
+                '#notificationTypeForm--webhookUrl'
+              ) as HTMLInputElement
+            ).value
+          } satisfies MsTeamsNotificationConfig)
+
+          break
+        }
+        case 'ntfy': {
+          notificationTypeFormJson = JSON.stringify({
+            topic: (
+              editForm.querySelector(
+                '#notificationTypeForm--topic'
+              ) as HTMLInputElement
+            ).value
+          } satisfies NtfyNotificationConfig)
+
+          break
+        }
       }
 
       const formData = {
@@ -561,14 +623,18 @@ declare const exports: {
             if (configIndex !== -1) {
               notificationConfigurations[configIndex].notificationQueue =
                 formData.notificationQueue
+
               notificationConfigurations[configIndex].notificationType =
                 formData.notificationType
+
               notificationConfigurations[configIndex].notificationTypeFormJson =
                 formData.notificationTypeFormJson
+
               notificationConfigurations[configIndex].assignedToId =
                 formData.assignedToId === ''
                   ? undefined
                   : Number.parseInt(formData.assignedToId, 10)
+
               notificationConfigurations[configIndex].isActive =
                 formData.isActive
             }
@@ -579,6 +645,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Configuration',
+
               message: 'An error occurred updating the configuration.'
             })
           }
@@ -629,8 +696,7 @@ declare const exports: {
           option.textContent = assignedTo.assignedToName
           if (
             currentAssignedToId &&
-            assignedTo.assignedToId ===
-              Number.parseInt(currentAssignedToId, 10)
+            assignedTo.assignedToId === Number.parseInt(currentAssignedToId, 10)
           ) {
             option.selected = true
           }
@@ -676,8 +742,8 @@ declare const exports: {
 
   function deleteNotificationConfiguration(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
-    const notificationConfigurationId = buttonElement.dataset
-      .notificationConfigurationId
+    const notificationConfigurationId =
+      buttonElement.dataset.notificationConfigurationId
     const notificationQueue = buttonElement.dataset.notificationQueue ?? ''
 
     if (notificationConfigurationId === undefined) {
@@ -685,11 +751,13 @@ declare const exports: {
     }
 
     bulmaJS.confirm({
-      title: 'Delete Notification Configuration',
-      message: `Are you sure you want to delete the notification configuration for "${cityssm.escapeHTML(notificationQueue)}"?`,
       contextualColorName: 'warning',
+      title: 'Delete Notification Configuration',
+
+      message: `Are you sure you want to delete the notification configuration for "${cityssm.escapeHTML(notificationQueue)}"?`,
       okButton: {
         text: 'Yes, Delete Configuration',
+
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteNotificationConfiguration`,
@@ -700,18 +768,18 @@ declare const exports: {
               const responseJSON = rawResponseJSON as { success: boolean }
 
               if (responseJSON.success) {
-                notificationConfigurations =
-                  notificationConfigurations.filter(
-                    (c) =>
-                      c.notificationConfigurationId !==
-                      Number.parseInt(notificationConfigurationId, 10)
-                  )
+                notificationConfigurations = notificationConfigurations.filter(
+                  (c) =>
+                    c.notificationConfigurationId !==
+                    Number.parseInt(notificationConfigurationId, 10)
+                )
 
                 renderNotificationConfigurations()
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Deleting Configuration',
+
                   message: 'An error occurred deleting the configuration.'
                 })
               }
@@ -725,4 +793,6 @@ declare const exports: {
   document
     .querySelector('#button--addNotificationConfiguration')
     ?.addEventListener('click', addNotificationConfiguration)
+
+  renderNotificationConfigurations()
 })()
