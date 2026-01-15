@@ -38,11 +38,11 @@ export const config = defineConfig(configWebApp, {
                         'javascripts',
                         'radiusless',
                         'rowspan',
-                        'shiftlog',
                         // SQL
                         'datediff',
                         // Shift Log
                         'maint',
+                        'shiftlog',
                         'timesheet',
                         'timesheets',
                         // Avanti
@@ -50,7 +50,8 @@ export const config = defineConfig(configWebApp, {
                         // Pearl
                         'worktech',
                         // ArcGIS
-                        'arcgis'
+                        'arcgis',
+                        'ntfy'
                     ]
                 }
             }

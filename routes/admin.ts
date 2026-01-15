@@ -7,6 +7,7 @@ import handler_employees from '../handlers/admin-get/employees.js'
 import handler_employeeLists from '../handlers/admin-get/employeeLists.js'
 import handler_equipment from '../handlers/admin-get/equipment.js'
 import handler_locations from '../handlers/admin-get/locations.js'
+import handler_notificationConfigurations from '../handlers/admin-get/notificationConfigurations.js'
 import handler_settings from '../handlers/admin-get/settings.js'
 import handler_tags from '../handlers/admin-get/tags.js'
 import handler_userGroups from '../handlers/admin-get/userGroups.js'
@@ -19,6 +20,7 @@ import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.
 import handler_doAddEmployeeListMember from '../handlers/admin-post/doAddEmployeeListMember.js'
 import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js'
 import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js'
+import handler_doAddNotificationConfiguration from '../handlers/admin-post/doAddNotificationConfiguration.js'
 import handler_doAddTag from '../handlers/admin-post/doAddTag.js'
 import handler_doGetApiAuditLogs from '../handlers/admin-post/doGetApiAuditLogs.js'
 import handler_doGetOrphanedTags from '../handlers/admin-post/doGetOrphanedTags.js'
@@ -34,17 +36,20 @@ import handler_doDeleteEmployeeList from '../handlers/admin-post/doDeleteEmploye
 import handler_doDeleteEmployeeListMember from '../handlers/admin-post/doDeleteEmployeeListMember.js'
 import handler_doDeleteEquipment from '../handlers/admin-post/doDeleteEquipment.js'
 import handler_doDeleteLocation from '../handlers/admin-post/doDeleteLocation.js'
+import handler_doDeleteNotificationConfiguration from '../handlers/admin-post/doDeleteNotificationConfiguration.js'
 import handler_doDeleteTag from '../handlers/admin-post/doDeleteTag.js'
 import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js'
 import handler_doDeleteUserGroup from '../handlers/admin-post/doDeleteUserGroup.js'
 import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUserGroupMember.js'
 import handler_doDeleteWorkOrderType from '../handlers/admin-post/doDeleteWorkOrderType.js'
 import handler_doGetEmployeeList from '../handlers/admin-post/doGetEmployeeList.js'
+import handler_doGetNotificationConfigurations from '../handlers/admin-post/doGetNotificationConfigurations.js'
 import handler_doGetUserGroup from '../handlers/admin-post/doGetUserGroup.js'
 import handler_doReorderDataListItems from '../handlers/admin-post/doReorderDataListItems.js'
 import handler_doReorderAssignedToItems from '../handlers/admin-post/doReorderAssignedToItems.js'
 import handler_doReorderEmployeeListMembers from '../handlers/admin-post/doReorderEmployeeListMembers.js'
 import handler_doReorderWorkOrderTypes from '../handlers/admin-post/doReorderWorkOrderTypes.js'
+import handler_doToggleNotificationConfigurationIsActive from '../handlers/admin-post/doToggleNotificationConfigurationIsActive.js'
 import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js'
 import handler_doUpdateDataListItem from '../handlers/admin-post/doUpdateDataListItem.js'
 import handler_doUpdateAssignedToItem from '../handlers/admin-post/doUpdateAssignedToItem.js'
@@ -53,6 +58,7 @@ import handler_doUpdateEmployeeList from '../handlers/admin-post/doUpdateEmploye
 import handler_doUpdateEmployeeListMember from '../handlers/admin-post/doUpdateEmployeeListMember.js'
 import handler_doUpdateEquipment from '../handlers/admin-post/doUpdateEquipment.js'
 import handler_doUpdateLocation from '../handlers/admin-post/doUpdateLocation.js'
+import handler_doUpdateNotificationConfiguration from '../handlers/admin-post/doUpdateNotificationConfiguration.js'
 import handler_doUpdateSetting from '../handlers/admin-post/doUpdateSetting.js'
 import handler_doUpdateTag from '../handlers/admin-post/doUpdateTag.js'
 import handler_doUpdateUser from '../handlers/admin-post/doUpdateUser.js'
@@ -192,5 +198,32 @@ router
 router
   .get('/apiAuditLogs', handler_apiAuditLogs)
   .post('/doGetApiAuditLogs', handler_doGetApiAuditLogs)
+
+/*
+ * Notification Configurations
+ */
+
+router
+  .get('/notificationConfigurations', handler_notificationConfigurations)
+  .post(
+    '/doGetNotificationConfigurations',
+    handler_doGetNotificationConfigurations
+  )
+  .post(
+    '/doAddNotificationConfiguration',
+    handler_doAddNotificationConfiguration
+  )
+  .post(
+    '/doUpdateNotificationConfiguration',
+    handler_doUpdateNotificationConfiguration
+  )
+  .post(
+    '/doDeleteNotificationConfiguration',
+    handler_doDeleteNotificationConfiguration
+  )
+  .post(
+    '/doToggleNotificationConfigurationIsActive',
+    handler_doToggleNotificationConfigurationIsActive
+  )
 
 export default router

@@ -1,0 +1,72 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <nav class="breadcrumb">
+          <ul>
+            <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+            <li>
+              <a href="#">
+                <span class="icon is-small"><i class="fa-solid fa-cog"></i></span>
+                <span>Administrator Tools</span>
+              </a>
+            </li>
+            <li class="is-active">
+              <a href="#" aria-current="page">
+                Notification Configuration
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="columns is-vcentered">
+      <div class="column">
+        <h1 class="title is-1">
+          Notification Configuration
+        </h1>
+      </div>
+      <div class="column is-narrow">
+        <button class="button is-primary" id="button--addNotificationConfiguration" type="button">
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Add Notification Configuration</span>
+        </button>
+      </div>
+    </div>
+
+    <table class="table is-striped is-hoverable is-fullwidth mb-0">
+      <thead>
+        <tr>
+          <th>Notification Queue</th>
+          <th>Notification Type</th>
+          <th>Assigned To</th>
+          <th class="has-text-centered" style="width: 100px;">Active</th>
+          <th style="width: 200px;">
+            <span class="is-sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody--notificationConfigurations"></tbody>
+    </table>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script>
+  exports.notificationConfigurations = <%- JSON.stringify(notificationConfigurations) %>;
+  exports.assignedToList = <%- JSON.stringify(assignedToList) %>;
+  exports.notificationQueueTypes = <%- JSON.stringify(notificationQueueTypes) %>;
+  exports.notificationTypes = <%- JSON.stringify(notificationTypes) %>;
+</script>
+<script src="<%= urlPrefix %>/javascripts/notificationConfigurations.admin.js"></script>
+
+<%- await include('../_footerB'); -%>
