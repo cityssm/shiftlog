@@ -56,7 +56,7 @@
     "@cityssm/fa-glow": "^0.1.0",
     "@cityssm/jsbarcode-svg": "^0.1.1",
     "@cityssm/mssql-multi-pool": "^5.1.2",
-    "@cityssm/ntfy-publish": "^1.1.0",
+    "@cityssm/ntfy-publish": "^1.1.1",
     "@cityssm/scheduled-task": "^0.3.0",
     "@cityssm/to-millis": "^1.0.1",
     "@cityssm/unique-timed-entry-queue": "^0.2.0",
