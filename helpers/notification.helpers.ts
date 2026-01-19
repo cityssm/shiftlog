@@ -20,7 +20,7 @@ export function sendNotificationWorkerMessage(
     recordId,
     sourcePid: process.pid,
     sourceTimeMillis: Date.now(),
-    targetProcesses: 'tasks'
+    targetProcesses: 'task.notifications'
   }
 
   debug(

@@ -1,7 +1,7 @@
 import { fork } from 'node:child_process';
 import { getConfigProperty } from '../helpers/config.helpers.js';
 export function initializeTasks() {
-    const childProcesses = [];
+    const childProcesses = {};
     /*
      * Employee Sync Task
      */
@@ -11,7 +11,7 @@ export function initializeTasks() {
             env: process.env,
             stdio: 'inherit'
         });
-        childProcesses.push(childProcess);
+        childProcesses.employeeSync = childProcess;
     }
     /*
      * Equipment Sync Task
@@ -22,7 +22,7 @@ export function initializeTasks() {
             env: process.env,
             stdio: 'inherit'
         });
-        childProcesses.push(childProcess);
+        childProcesses.equipmentSync = childProcess;
     }
     /*
      * Location Sync Task
@@ -33,7 +33,7 @@ export function initializeTasks() {
             env: process.env,
             stdio: 'inherit'
         });
-        childProcesses.push(childProcess);
+        childProcesses.locationSync = childProcess;
     }
     /*
      * Notification Task
@@ -43,7 +43,7 @@ export function initializeTasks() {
         env: process.env,
         stdio: 'inherit'
     });
-    childProcesses.push(notificationTask);
+    childProcesses.notifications = notificationTask;
     /*
      * Database Cleanup Task
      */
@@ -52,6 +52,6 @@ export function initializeTasks() {
         env: process.env,
         stdio: 'inherit'
     });
-    childProcesses.push(cleanupTask);
+    childProcesses.databaseCleanup = cleanupTask;
     return childProcesses;
 }

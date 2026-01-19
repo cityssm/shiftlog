@@ -2,8 +2,15 @@ import { type ChildProcess, fork } from 'node:child_process'
 
 import { getConfigProperty } from '../helpers/config.helpers.js'
 
-export function initializeTasks(): ChildProcess[] {
-  const childProcesses: ChildProcess[] = []
+type OptionalTaskName = 'employeeSync' | 'equipmentSync' | 'locationSync'
+
+type RequiredTaskName = 'databaseCleanup' | 'notifications'
+
+export type InitializeTasksReturn = Partial<Record<OptionalTaskName, ChildProcess>> &
+  Record<RequiredTaskName, ChildProcess>
+
+export function initializeTasks(): InitializeTasksReturn {
+  const childProcesses: Partial<InitializeTasksReturn> = {}
 
   /*
    * Employee Sync Task
@@ -16,7 +23,7 @@ export function initializeTasks(): ChildProcess[] {
       stdio: 'inherit'
     })
 
-    childProcesses.push(childProcess)
+    childProcesses.employeeSync = childProcess
   }
 
   /*
@@ -30,7 +37,7 @@ export function initializeTasks(): ChildProcess[] {
       stdio: 'inherit'
     })
 
-    childProcesses.push(childProcess)
+    childProcesses.equipmentSync = childProcess
   }
 
   /*
@@ -44,7 +51,7 @@ export function initializeTasks(): ChildProcess[] {
       stdio: 'inherit'
     })
 
-    childProcesses.push(childProcess)
+    childProcesses.locationSync = childProcess
   }
 
   /*
@@ -57,7 +64,7 @@ export function initializeTasks(): ChildProcess[] {
     stdio: 'inherit'
   })
 
-  childProcesses.push(notificationTask)
+  childProcesses.notifications = notificationTask
 
   /*
    * Database Cleanup Task
@@ -69,7 +76,7 @@ export function initializeTasks(): ChildProcess[] {
     stdio: 'inherit'
   })
 
-  childProcesses.push(cleanupTask)
+  childProcesses.databaseCleanup = cleanupTask
 
-  return childProcesses
+  return childProcesses as InitializeTasksReturn
 }

@@ -1,4 +1,3 @@
-import type { ChildProcess } from 'node:child_process'
 import cluster, { type Worker } from 'node:cluster'
 import os from 'node:os'
 import path from 'node:path'
@@ -11,7 +10,10 @@ import exitHook, { gracefulExit } from 'exit-hook'
 import { DEBUG_NAMESPACE } from './debug.config.js'
 import { getConfigProperty } from './helpers/config.helpers.js'
 import { validateSystemLists } from './helpers/startup.helpers.js'
-import { initializeTasks } from './tasks/taskInitializer.js'
+import {
+  type InitializeTasksReturn,
+  initializeTasks
+} from './tasks/taskInitializer.js'
 import type { WorkerMessage } from './types/application.types.js'
 import version from './version.js'
 
@@ -20,7 +22,7 @@ const debug = Debug(`${DEBUG_NAMESPACE}:index`)
 let doShutdown = false
 
 const activeWorkers = new Map<number, Worker>()
-let tasksChildProcesses: ChildProcess[] = []
+let tasksChildProcesses: InitializeTasksReturn
 
 function initializeCluster(): void {
   const directoryName = path.dirname(fileURLToPath(import.meta.url))
@@ -37,7 +39,7 @@ function initializeCluster(): void {
   debug(`Primary pid:   ${process.pid}`)
   debug(`Primary title: ${process.title}`)
   debug(`Version:       ${version}`)
-  debug(`Launching ${processCount} processes`)
+  debug(`Launching ${processCount} worker processes...`)
 
   /*
    * Set up the cluster
@@ -55,18 +57,11 @@ function initializeCluster(): void {
   }
 
   cluster.on('message', (_worker, message: WorkerMessage) => {
-    if (message.targetProcesses === 'tasks') {
-      for (const taskProcess of tasksChildProcesses) {
-        if (
-          taskProcess.pid === undefined ||
-          taskProcess.pid === message.sourcePid
-        ) {
-          continue
-        }
-
-        debug(`Relaying message to task process: ${taskProcess.pid}`)
-        taskProcess.send(message)
-      }
+    if (message.targetProcesses === 'task.notifications') {
+      debug(
+        `Relaying message to task process: ${tasksChildProcesses.notifications.pid}`
+      )
+      tasksChildProcesses.notifications.send(message)
     } else {
       for (const [pid, activeWorker] of activeWorkers.entries()) {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -88,7 +83,9 @@ function initializeCluster(): void {
       // eslint-disable-next-line sonarjs/pseudo-random
       const delaySeconds = 5 + 15 * Math.random()
 
-      debug(`New worker will be started in ${delaySeconds.toFixed(0)} seconds...`)
+      debug(
+        `New worker will be started in ${delaySeconds.toFixed(0)} seconds...`
+      )
 
       globalThis.setTimeout(() => {
         const newWorker = cluster.fork()
@@ -134,7 +131,7 @@ async function startApplication(): Promise<void> {
 
     debug('Shutting down task child processes...')
 
-    for (const childProcess of tasksChildProcesses) {
+    for (const childProcess of Object.values(tasksChildProcesses)) {
       debug(`Killing process ${childProcess.pid}`)
       childProcess.kill()
     }

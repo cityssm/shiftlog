@@ -24,12 +24,17 @@ async function sendNotifications() {
         if (recordId === undefined) {
             continue;
         }
-        if (notificationConfigurationsByQueue[notificationQueueType] === undefined) {
-            notificationConfigurationsByQueue[notificationQueueType
+        let notificationConfigurations = notificationConfigurationsByQueue[notificationQueueType];
+        if (notificationConfigurations === undefined) {
             // eslint-disable-next-line no-await-in-loop
-            ] = await getNotificationConfigurations(notificationQueueType);
+            notificationConfigurations = await getNotificationConfigurations(notificationQueueType);
+            notificationConfigurationsByQueue[notificationQueueType] = notificationConfigurations;
         }
-        for (const notificationConfiguration of notificationConfigurationsByQueue[notificationQueueType] ?? []) {
+        if (notificationConfigurations.length === 0) {
+            notificationQueue.clearAll();
+            continue;
+        }
+        for (const notificationConfiguration of notificationConfigurations) {
             debug(`Sending notification: ${notificationQueueType} for record ID ${recordId}`);
             const protocolFunction = getProtocolFunction(notificationConfiguration.notificationType, notificationQueueType);
             if (protocolFunction === undefined) {

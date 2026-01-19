@@ -12,5 +12,5 @@ export interface WorkerMessage {
     messageType: string;
     sourcePid: number;
     sourceTimeMillis: number;
-    targetProcesses: 'tasks' | 'workers';
+    targetProcesses: 'task.notifications' | 'workers';
 }

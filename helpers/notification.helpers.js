@@ -11,7 +11,7 @@ export function sendNotificationWorkerMessage(notificationQueue, recordId) {
         recordId,
         sourcePid: process.pid,
         sourceTimeMillis: Date.now(),
-        targetProcesses: 'tasks'
+        targetProcesses: 'task.notifications'
     };
     debug(`Sending notification worker message: ${notificationQueue} for record ID ${recordId}`);
     process.send(workerMessage);

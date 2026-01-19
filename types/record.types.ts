@@ -211,11 +211,11 @@ export interface Shift extends BaseRecord {
   recordLock_dateTime?: Date | null
 
   // Counts for search results
-  workOrdersCount?: number
-  employeesCount?: number
   crewsCount?: number
+  employeesCount?: number
   equipmentCount?: number
   timesheetsCount?: number
+  workOrdersCount?: number
 }
 
 export interface ShiftCrew {

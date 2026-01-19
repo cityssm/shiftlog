@@ -13,7 +13,7 @@ import version from './version.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:index`);
 let doShutdown = false;
 const activeWorkers = new Map();
-let tasksChildProcesses = [];
+let tasksChildProcesses;
 function initializeCluster() {
     const directoryName = path.dirname(fileURLToPath(import.meta.url));
     const processCount = Math.min(getConfigProperty('application.maximumProcesses'), os.cpus().length * 2);
@@ -22,7 +22,7 @@ function initializeCluster() {
     debug(`Primary pid:   ${process.pid}`);
     debug(`Primary title: ${process.title}`);
     debug(`Version:       ${version}`);
-    debug(`Launching ${processCount} processes`);
+    debug(`Launching ${processCount} worker processes...`);
     /*
      * Set up the cluster
      */
@@ -35,15 +35,9 @@ function initializeCluster() {
         activeWorkers.set(worker.process.pid ?? 0, worker);
     }
     cluster.on('message', (_worker, message) => {
-        if (message.targetProcesses === 'tasks') {
-            for (const taskProcess of tasksChildProcesses) {
-                if (taskProcess.pid === undefined ||
-                    taskProcess.pid === message.sourcePid) {
-                    continue;
-                }
-                debug(`Relaying message to task process: ${taskProcess.pid}`);
-                taskProcess.send(message);
-            }
+        if (message.targetProcesses === 'task.notifications') {
+            debug(`Relaying message to task process: ${tasksChildProcesses.notifications.pid}`);
+            tasksChildProcesses.notifications.send(message);
         }
         else {
             for (const [pid, activeWorker] of activeWorkers.entries()) {
@@ -94,7 +88,7 @@ async function startApplication() {
             worker.kill();
         }
         debug('Shutting down task child processes...');
-        for (const childProcess of tasksChildProcesses) {
+        for (const childProcess of Object.values(tasksChildProcesses)) {
             debug(`Killing process ${childProcess.pid}`);
             childProcess.kill();
         }

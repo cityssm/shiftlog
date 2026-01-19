@@ -52,22 +52,28 @@ async function sendNotifications(): Promise<void> {
       continue
     }
 
-    if (
+    let notificationConfigurations =
       notificationConfigurationsByQueue[
         notificationQueueType as NotificationQueueType
-      ] === undefined
-    ) {
-      notificationConfigurationsByQueue[
-        notificationQueueType as NotificationQueueType
-        // eslint-disable-next-line no-await-in-loop
-      ] = await getNotificationConfigurations(
+      ]
+
+    if (notificationConfigurations === undefined) {
+      // eslint-disable-next-line no-await-in-loop
+      notificationConfigurations = await getNotificationConfigurations(
         notificationQueueType as NotificationQueueType
       )
+
+      notificationConfigurationsByQueue[
+        notificationQueueType as NotificationQueueType
+      ] = notificationConfigurations
     }
 
-    for (const notificationConfiguration of notificationConfigurationsByQueue[
-      notificationQueueType as NotificationQueueType
-    ] ?? []) {
+    if (notificationConfigurations.length === 0) {
+      notificationQueue.clearAll()
+      continue
+    }
+
+    for (const notificationConfiguration of notificationConfigurations) {
       debug(
         `Sending notification: ${notificationQueueType} for record ID ${recordId}`
       )
@@ -94,8 +100,11 @@ async function sendNotifications(): Promise<void> {
             notificationConfigurationId:
               notificationConfiguration.notificationConfigurationId,
             recordId,
+
             notificationDate: new Date(),
+
             isSuccess: notificationResult.success,
+
             errorMessage: notificationResult.success
               ? ''
               : (notificationResult.errorMessage ?? 'Unknown error')

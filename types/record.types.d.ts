@@ -158,11 +158,11 @@ export interface Shift extends BaseRecord {
     supervisorUserName?: string | null;
     shiftDescription: string;
     recordLock_dateTime?: Date | null;
-    workOrdersCount?: number;
-    employeesCount?: number;
     crewsCount?: number;
+    employeesCount?: number;
     equipmentCount?: number;
     timesheetsCount?: number;
+    workOrdersCount?: number;
 }
 export interface ShiftCrew {
     shiftId: number;
