@@ -74,6 +74,10 @@ async function sendNotifications(): Promise<void> {
     }
 
     for (const notificationConfiguration of notificationConfigurations) {
+      if (!notificationConfiguration.isActive) {
+        continue
+      }
+
       debug(
         `Sending notification: ${notificationQueueType} for record ID ${recordId}`
       )

@@ -35,6 +35,9 @@ async function sendNotifications() {
             continue;
         }
         for (const notificationConfiguration of notificationConfigurations) {
+            if (!notificationConfiguration.isActive) {
+                continue;
+            }
             debug(`Sending notification: ${notificationQueueType} for record ID ${recordId}`);
             const protocolFunction = getProtocolFunction(notificationConfiguration.notificationType, notificationQueueType);
             if (protocolFunction === undefined) {
