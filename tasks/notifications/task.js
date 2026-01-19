@@ -20,43 +20,45 @@ if (getConfigProperty('workOrders.isEnabled')) {
 async function sendNotifications() {
     const notificationConfigurationsByQueue = {};
     for (const [notificationQueueType, notificationQueue] of Object.entries(notificationQueues)) {
-        const recordId = notificationQueue.dequeue();
-        if (recordId === undefined) {
-            continue;
-        }
-        let notificationConfigurations = notificationConfigurationsByQueue[notificationQueueType];
-        if (notificationConfigurations === undefined) {
-            // eslint-disable-next-line no-await-in-loop
-            notificationConfigurations = await getNotificationConfigurations(notificationQueueType);
-            notificationConfigurationsByQueue[notificationQueueType] = notificationConfigurations;
-        }
-        if (notificationConfigurations.length === 0) {
-            notificationQueue.clearAll();
-            continue;
-        }
-        for (const notificationConfiguration of notificationConfigurations) {
-            if (!notificationConfiguration.isActive) {
+        while (!notificationQueue.isEmpty()) {
+            const recordId = notificationQueue.dequeue();
+            if (recordId === undefined) {
                 continue;
             }
-            debug(`Sending notification: ${notificationQueueType} for record ID ${recordId}`);
-            const protocolFunction = getProtocolFunction(notificationConfiguration.notificationType, notificationQueueType);
-            if (protocolFunction === undefined) {
-                debug(`No protocol function found for notification queue: ${notificationConfiguration.notificationQueue}`);
-            }
-            else {
+            let notificationConfigurations = notificationConfigurationsByQueue[notificationQueueType];
+            if (notificationConfigurations === undefined) {
                 // eslint-disable-next-line no-await-in-loop
-                const notificationResult = await protocolFunction(notificationConfiguration, recordId);
-                if (notificationResult !== undefined) {
+                notificationConfigurations = await getNotificationConfigurations(notificationQueueType);
+                notificationConfigurationsByQueue[notificationQueueType] = notificationConfigurations;
+            }
+            if (notificationConfigurations.length === 0) {
+                notificationQueue.clearAll();
+                continue;
+            }
+            for (const notificationConfiguration of notificationConfigurations) {
+                if (!notificationConfiguration.isActive) {
+                    continue;
+                }
+                debug(`Sending notification: ${notificationQueueType} for record ID ${recordId}`);
+                const protocolFunction = getProtocolFunction(notificationConfiguration.notificationType, notificationQueueType);
+                if (protocolFunction === undefined) {
+                    debug(`No protocol function found for notification queue: ${notificationConfiguration.notificationQueue}`);
+                }
+                else {
                     // eslint-disable-next-line no-await-in-loop
-                    await recordNotificationLog({
-                        notificationConfigurationId: notificationConfiguration.notificationConfigurationId,
-                        recordId,
-                        notificationDate: new Date(),
-                        isSuccess: notificationResult.success,
-                        errorMessage: notificationResult.success
-                            ? ''
-                            : (notificationResult.errorMessage ?? 'Unknown error')
-                    });
+                    const notificationResult = await protocolFunction(notificationConfiguration, recordId);
+                    if (notificationResult !== undefined) {
+                        // eslint-disable-next-line no-await-in-loop
+                        await recordNotificationLog({
+                            notificationConfigurationId: notificationConfiguration.notificationConfigurationId,
+                            recordId,
+                            notificationDate: new Date(),
+                            isSuccess: notificationResult.success,
+                            errorMessage: notificationResult.success
+                                ? ''
+                                : (notificationResult.errorMessage ?? 'Unknown error')
+                        });
+                    }
                 }
             }
         }

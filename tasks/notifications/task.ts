@@ -46,73 +46,75 @@ async function sendNotifications(): Promise<void> {
   for (const [notificationQueueType, notificationQueue] of Object.entries(
     notificationQueues
   )) {
-    const recordId = notificationQueue.dequeue()
+    while (!notificationQueue.isEmpty()) {
+      const recordId = notificationQueue.dequeue()
 
-    if (recordId === undefined) {
-      continue
-    }
-
-    let notificationConfigurations =
-      notificationConfigurationsByQueue[
-        notificationQueueType as NotificationQueueType
-      ]
-
-    if (notificationConfigurations === undefined) {
-      // eslint-disable-next-line no-await-in-loop
-      notificationConfigurations = await getNotificationConfigurations(
-        notificationQueueType as NotificationQueueType
-      )
-
-      notificationConfigurationsByQueue[
-        notificationQueueType as NotificationQueueType
-      ] = notificationConfigurations
-    }
-
-    if (notificationConfigurations.length === 0) {
-      notificationQueue.clearAll()
-      continue
-    }
-
-    for (const notificationConfiguration of notificationConfigurations) {
-      if (!notificationConfiguration.isActive) {
+      if (recordId === undefined) {
         continue
       }
 
-      debug(
-        `Sending notification: ${notificationQueueType} for record ID ${recordId}`
-      )
+      let notificationConfigurations =
+        notificationConfigurationsByQueue[
+          notificationQueueType as NotificationQueueType
+        ]
 
-      const protocolFunction = getProtocolFunction(
-        notificationConfiguration.notificationType as Protocol,
-        notificationQueueType as NotificationQueueType
-      )
-
-      if (protocolFunction === undefined) {
-        debug(
-          `No protocol function found for notification queue: ${notificationConfiguration.notificationQueue}`
-        )
-      } else {
+      if (notificationConfigurations === undefined) {
         // eslint-disable-next-line no-await-in-loop
-        const notificationResult = await protocolFunction(
-          notificationConfiguration,
-          recordId
+        notificationConfigurations = await getNotificationConfigurations(
+          notificationQueueType as NotificationQueueType
         )
 
-        if (notificationResult !== undefined) {
+        notificationConfigurationsByQueue[
+          notificationQueueType as NotificationQueueType
+        ] = notificationConfigurations
+      }
+
+      if (notificationConfigurations.length === 0) {
+        notificationQueue.clearAll()
+        continue
+      }
+
+      for (const notificationConfiguration of notificationConfigurations) {
+        if (!notificationConfiguration.isActive) {
+          continue
+        }
+
+        debug(
+          `Sending notification: ${notificationQueueType} for record ID ${recordId}`
+        )
+
+        const protocolFunction = getProtocolFunction(
+          notificationConfiguration.notificationType as Protocol,
+          notificationQueueType as NotificationQueueType
+        )
+
+        if (protocolFunction === undefined) {
+          debug(
+            `No protocol function found for notification queue: ${notificationConfiguration.notificationQueue}`
+          )
+        } else {
           // eslint-disable-next-line no-await-in-loop
-          await recordNotificationLog({
-            notificationConfigurationId:
-              notificationConfiguration.notificationConfigurationId,
-            recordId,
+          const notificationResult = await protocolFunction(
+            notificationConfiguration,
+            recordId
+          )
 
-            notificationDate: new Date(),
+          if (notificationResult !== undefined) {
+            // eslint-disable-next-line no-await-in-loop
+            await recordNotificationLog({
+              notificationConfigurationId:
+                notificationConfiguration.notificationConfigurationId,
+              recordId,
 
-            isSuccess: notificationResult.success,
+              notificationDate: new Date(),
 
-            errorMessage: notificationResult.success
-              ? ''
-              : (notificationResult.errorMessage ?? 'Unknown error')
-          })
+              isSuccess: notificationResult.success,
+
+              errorMessage: notificationResult.success
+                ? ''
+                : (notificationResult.errorMessage ?? 'Unknown error')
+            })
+          }
         }
       }
     }
