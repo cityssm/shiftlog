@@ -2,11 +2,11 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getNotificationConfiguration(notificationConfigurationId) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('notificationConfigurationId', notificationConfigurationId).query(
-    /* sql */ `
+        .input('notificationConfigurationId', notificationConfigurationId)
+        .query(/* sql */ `
       select
         nc.notificationConfigurationId,
         nc.notificationQueue,
@@ -24,6 +24,6 @@ export default async function getNotificationConfiguration(notificationConfigura
       where nc.instance = @instance
         and nc.notificationConfigurationId = @notificationConfigurationId
         and nc.recordDelete_dateTime is null
-    `));
+    `);
     return result.recordset[0];
 }

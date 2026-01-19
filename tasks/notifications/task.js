@@ -3,8 +3,11 @@ import UniqueTimedEntryQueue from '@cityssm/unique-timed-entry-queue';
 import Debug from 'debug';
 import exitHook from 'exit-hook';
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async/fixed';
+import getNotificationConfigurations from '../../database/notifications/getNotificationConfigurations.js';
+import recordNotificationLog from '../../database/notifications/recordNotificationLog.js';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getProtocolFunction } from './protocols/protocol.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.notifications`);
 const createMillis = minutesToMillis(1);
 const updateMillis = minutesToMillis(2);
@@ -15,12 +18,40 @@ if (getConfigProperty('workOrders.isEnabled')) {
     notificationQueues['workOrder.update'] = new UniqueTimedEntryQueue(updateMillis);
 }
 async function sendNotifications() {
+    const notificationConfigurationsByQueue = {};
     for (const [notificationQueueType, notificationQueue] of Object.entries(notificationQueues)) {
         const recordId = notificationQueue.dequeue();
         if (recordId === undefined) {
             continue;
         }
-        debug(`Sending notification: ${notificationQueueType} for record ID ${recordId}`);
+        if (notificationConfigurationsByQueue[notificationQueueType] === undefined) {
+            notificationConfigurationsByQueue[notificationQueueType
+            // eslint-disable-next-line no-await-in-loop
+            ] = await getNotificationConfigurations(notificationQueueType);
+        }
+        for (const notificationConfiguration of notificationConfigurationsByQueue[notificationQueueType] ?? []) {
+            debug(`Sending notification: ${notificationQueueType} for record ID ${recordId}`);
+            const protocolFunction = getProtocolFunction(notificationConfiguration.notificationType, notificationQueueType);
+            if (protocolFunction === undefined) {
+                debug(`No protocol function found for notification queue: ${notificationConfiguration.notificationQueue}`);
+            }
+            else {
+                // eslint-disable-next-line no-await-in-loop
+                const notificationResult = await protocolFunction(notificationConfiguration, recordId);
+                if (notificationResult !== undefined) {
+                    // eslint-disable-next-line no-await-in-loop
+                    await recordNotificationLog({
+                        notificationConfigurationId: notificationConfiguration.notificationConfigurationId,
+                        recordId,
+                        notificationDate: new Date(),
+                        isSuccess: notificationResult.success,
+                        errorMessage: notificationResult.success
+                            ? ''
+                            : (notificationResult.errorMessage ?? 'Unknown error')
+                    });
+                }
+            }
+        }
     }
 }
 /*

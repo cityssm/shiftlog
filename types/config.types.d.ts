@@ -2,6 +2,7 @@ import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorC
 import type { AvantiApiConfiguration, GetEmployeesRequest } from '@cityssm/avanti-api/types.js';
 import type { GetEmployeesFilters, GetEquipmentFilters } from '@cityssm/worktech-api';
 import type { config as MSSQLConfig } from 'mssql';
+import type { NotificationType } from '../tasks/notifications/types.js';
 export interface Config {
     application: ConfigApplication;
     session: ConfigSession;
@@ -40,7 +41,7 @@ export interface Config {
         avanti?: AvantiApiConfiguration;
         pearl?: MSSQLConfig;
         ntfy?: {
-            serverUrl: string;
+            serverUrl?: string;
             defaultTopic: string;
         };
     };
@@ -50,6 +51,9 @@ export interface Config {
     employees?: ConfigEmployees;
     equipment?: ConfigEquipment;
     locations?: ConfigLocations;
+    notifications?: {
+        protocols?: NotificationType[];
+    };
 }
 export type ConfigEmployees = {
     syncSource: '';

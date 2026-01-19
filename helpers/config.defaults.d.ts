@@ -1,6 +1,7 @@
 import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorConfiguration, FunctionAuthenticatorConfiguration, PlainTextAuthenticatorConfiguration } from '@cityssm/authentication-helper';
 import type { AvantiApiConfiguration } from '@cityssm/avanti-api';
 import type { config as MSSQLConfig } from 'mssql';
+import type { NotificationType } from '../tasks/notifications/types.js';
 import type { ConfigEmployees, ConfigEquipment, ConfigLocations } from '../types/config.types.js';
 export declare const configDefaultValues: {
     'application.applicationName': string;
@@ -37,6 +38,10 @@ export declare const configDefaultValues: {
     'session.secret': string;
     'connectors.shiftLog': MSSQLConfig;
     'connectors.avanti': AvantiApiConfiguration | undefined;
+    'connectors.ntfy': {
+        serverUrl?: string;
+        defaultTopic: string;
+    } | undefined;
     'connectors.pearl': MSSQLConfig | undefined;
     'shifts.isEnabled': boolean;
     'shifts.router': string;
@@ -59,5 +64,6 @@ export declare const configDefaultValues: {
     'equipment.syncSource': string;
     locations: ConfigLocations;
     'locations.syncSource': string;
+    'notifications.protocols': NotificationType[];
 };
 export default configDefaultValues;

@@ -9,6 +9,7 @@ import { hoursToMillis } from '@cityssm/to-millis'
 import type { config as MSSQLConfig } from 'mssql'
 //import type { TransportOptions } from 'nodemailer'
 
+import type { NotificationType } from '../tasks/notifications/types.js'
 import type {
   ConfigEmployees,
   ConfigEquipment,
@@ -66,6 +67,14 @@ export const configDefaultValues = {
   'connectors.avanti': undefined as unknown as
     | AvantiApiConfiguration
     | undefined,
+
+  'connectors.ntfy': undefined as unknown as
+    | {
+        serverUrl?: string
+        defaultTopic: string
+      }
+    | undefined,
+
   'connectors.pearl': undefined as unknown as MSSQLConfig | undefined,
 
   // 'connectors.email': undefined as unknown as TransportOptions & { from?: string } | undefined,
@@ -118,7 +127,11 @@ export const configDefaultValues = {
   locations: {
     syncSource: ''
   } as unknown as ConfigLocations,
-  'locations.syncSource': ''
+  'locations.syncSource': '',
+
+  // Notifications
+
+  'notifications.protocols': [] as NotificationType[]
 }
 
 export default configDefaultValues

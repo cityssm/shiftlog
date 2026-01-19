@@ -27,3 +27,7 @@ export function getApplicationUrl(request?: Request): string {
     `http://localhost:${getConfigProperty('application.httpPort')}${getConfigProperty('reverseProxy.urlPrefix')}`
   )
 }
+
+export function getWorkOrderUrl(workOrderId: number | string): string {
+  return `${getApplicationUrl()}/${getConfigProperty('workOrders.router')}/${workOrderId}`
+}

@@ -14,6 +14,8 @@ import type {
 } from '@cityssm/worktech-api'
 import type { config as MSSQLConfig } from 'mssql'
 
+import type { NotificationType } from '../tasks/notifications/types.js'
+
 export interface Config {
   application: ConfigApplication
 
@@ -67,7 +69,7 @@ export interface Config {
     pearl?: MSSQLConfig
 
     ntfy?: {
-      serverUrl: string
+      serverUrl?: string
       defaultTopic: string
     }
   }
@@ -80,6 +82,10 @@ export interface Config {
   employees?: ConfigEmployees
   equipment?: ConfigEquipment
   locations?: ConfigLocations
+
+  notifications?: {
+    protocols?: NotificationType[]
+  }
 }
 
 export type ConfigEmployees =

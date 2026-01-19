@@ -4,10 +4,17 @@ import Debug from 'debug'
 import exitHook from 'exit-hook'
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async/fixed'
 
+import getNotificationConfigurations from '../../database/notifications/getNotificationConfigurations.js'
+import recordNotificationLog from '../../database/notifications/recordNotificationLog.js'
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { SendNotificationWorkerMessage } from '../../types/application.types.js'
+import type { NotificationConfiguration } from '../../types/record.types.js'
 
+import {
+  type Protocol,
+  getProtocolFunction
+} from './protocols/protocol.helpers.js'
 import type { NotificationQueueType } from './types.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.notifications`)
@@ -32,6 +39,10 @@ if (getConfigProperty('workOrders.isEnabled')) {
 }
 
 async function sendNotifications(): Promise<void> {
+  const notificationConfigurationsByQueue: Partial<
+    Record<NotificationQueueType, NotificationConfiguration[]>
+  > = {}
+
   for (const [notificationQueueType, notificationQueue] of Object.entries(
     notificationQueues
   )) {
@@ -41,9 +52,57 @@ async function sendNotifications(): Promise<void> {
       continue
     }
 
-    debug(
-      `Sending notification: ${notificationQueueType} for record ID ${recordId}`
-    )
+    if (
+      notificationConfigurationsByQueue[
+        notificationQueueType as NotificationQueueType
+      ] === undefined
+    ) {
+      notificationConfigurationsByQueue[
+        notificationQueueType as NotificationQueueType
+        // eslint-disable-next-line no-await-in-loop
+      ] = await getNotificationConfigurations(
+        notificationQueueType as NotificationQueueType
+      )
+    }
+
+    for (const notificationConfiguration of notificationConfigurationsByQueue[
+      notificationQueueType as NotificationQueueType
+    ] ?? []) {
+      debug(
+        `Sending notification: ${notificationQueueType} for record ID ${recordId}`
+      )
+
+      const protocolFunction = getProtocolFunction(
+        notificationConfiguration.notificationType as Protocol,
+        notificationQueueType as NotificationQueueType
+      )
+
+      if (protocolFunction === undefined) {
+        debug(
+          `No protocol function found for notification queue: ${notificationConfiguration.notificationQueue}`
+        )
+      } else {
+        // eslint-disable-next-line no-await-in-loop
+        const notificationResult = await protocolFunction(
+          notificationConfiguration,
+          recordId
+        )
+
+        if (notificationResult !== undefined) {
+          // eslint-disable-next-line no-await-in-loop
+          await recordNotificationLog({
+            notificationConfigurationId:
+              notificationConfiguration.notificationConfigurationId,
+            recordId,
+            notificationDate: new Date(),
+            isSuccess: notificationResult.success,
+            errorMessage: notificationResult.success
+              ? ''
+              : (notificationResult.errorMessage ?? 'Unknown error')
+          })
+        }
+      }
+    }
   }
 }
 

@@ -22,6 +22,7 @@ export const configDefaultValues = {
     'session.secret': 'cityssm/shiftlog',
     'connectors.shiftLog': undefined,
     'connectors.avanti': undefined,
+    'connectors.ntfy': undefined,
     'connectors.pearl': undefined,
     // 'connectors.email': undefined as unknown as TransportOptions & { from?: string } | undefined,
     // Shifts
@@ -56,6 +57,8 @@ export const configDefaultValues = {
     locations: {
         syncSource: ''
     },
-    'locations.syncSource': ''
+    'locations.syncSource': '',
+    // Notifications
+    'notifications.protocols': []
 };
 export default configDefaultValues;

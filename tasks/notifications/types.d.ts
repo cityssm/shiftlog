@@ -11,3 +11,8 @@ export interface EmailNotificationConfig {
 export interface MsTeamsNotificationConfig {
     webhookUrl: string;
 }
+export interface NotificationFunctionResult {
+    success: boolean;
+    errorMessage?: string;
+}
+export type NotificationFunction = (notificationConfiguration: unknown, recordId: number | string) => Promise<NotificationFunctionResult | undefined>;

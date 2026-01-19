@@ -69,13 +69,31 @@ export async function authenticate(
   return isAuthenticated
 }
 
+const workOrderRouter = getConfigProperty('workOrders.router').toLowerCase()
+const shiftRouter = getConfigProperty('shifts.router').toLowerCase()
+const timesheetRouter = getConfigProperty('timesheets.router').toLowerCase()
+
 /* eslint-disable @cspell/spellchecker */
 
 const safeRedirects = new Set([
+  '/admin/apiauditlogs',
+  '/admin/assignedto',
+  '/admin/datalists',
+  '/admin/employeelists',
+  '/admin/employees',
+  '/admin/equipment',
+  '/admin/locations',
+  '/admin/notificationconfigurations',
   '/admin/settings',
+  '/admin/tags',
+  '/admin/usergroups',
   '/admin/users',
+  '/admin/workordertypes',
+
   '/dashboard',
-  '/dashboard/usersettings'
+  '/dashboard/usersettings',
+
+  '/reports'
 ])
 
 /* eslint-enable @cspell/spellchecker */
@@ -90,8 +108,13 @@ export function getSafeRedirectUrl(possibleRedirectUrl = ''): string {
 
     const urlToCheckLowerCase = urlToCheck.toLowerCase()
 
-    if (safeRedirects.has(urlToCheckLowerCase)) {
-      return urlPrefix + urlToCheck
+    if (
+      safeRedirects.has(urlToCheckLowerCase) ||
+      urlToCheckLowerCase.startsWith(`/${workOrderRouter}`) ||
+      urlToCheckLowerCase.startsWith(`/${shiftRouter}`) ||
+      urlToCheckLowerCase.startsWith(`/${timesheetRouter}`)
+    ) {
+      return possibleRedirectUrl
     }
   }
 

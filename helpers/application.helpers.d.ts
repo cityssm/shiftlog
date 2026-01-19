@@ -5,3 +5,4 @@ import type { Request } from 'express';
  * @returns The application URL
  */
 export declare function getApplicationUrl(request?: Request): string;
+export declare function getWorkOrderUrl(workOrderId: number | string): string;

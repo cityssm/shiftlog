@@ -17,6 +17,7 @@ export default async function handler(
   response.render('admin/notificationConfigurations', {
     headTitle: 'Notification Configuration',
     notificationConfigurations,
+    
     assignedToList,
     notificationQueueTypes,
     notificationTypes
