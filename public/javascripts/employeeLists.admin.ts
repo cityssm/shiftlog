@@ -260,10 +260,15 @@ declare const exports: {
 
         formElement.addEventListener('submit', doAdd)
       },
-      onshown(_modalElement, closeFunction) {
+      onshown(modalElement, closeFunction) {
         closeModalFunction = closeFunction
 
         bulmaJS.toggleHtmlClipped()
+        ;(
+          modalElement.querySelector(
+            'input[name="employeeListName"]'
+          ) as HTMLInputElement
+        ).focus()
       },
 
       onremoved() {

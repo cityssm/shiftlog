@@ -148,7 +148,7 @@ interface WorkOrderWithOverdue {
         ? '(No Address)'
         : workOrder.locationAddress1
     if (workOrder.locationAddress2 !== '') {
-      addressLine.textContent += ', ' + workOrder.locationAddress2
+      addressLine.textContent += `, ${workOrder.locationAddress2}`
     }
 
     const assignedLine = document.createElement('div')

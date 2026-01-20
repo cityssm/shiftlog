@@ -482,9 +482,7 @@
                 text: 'Complete',
                 callbackFunction: () => {
                     const currentDate = new Date();
-                    const currentDateString = cityssm.dateToString(currentDate) +
-                        ' ' +
-                        cityssm.dateToTimeString(currentDate);
+                    const currentDateString = `${cityssm.dateToString(currentDate)} ${cityssm.dateToTimeString(currentDate)}`;
                     cityssm.postJSON(`${workOrdersUrlPrefix}/doUpdateWorkOrderMilestone`, {
                         workOrderId: milestone.workOrderId,
                         workOrderMilestoneId: milestone.workOrderMilestoneId,

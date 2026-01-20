@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const locationsContainerElement = document.querySelector('#container--locations');
@@ -329,12 +331,7 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddLocation);
-                // Pre-populate City/Province with default value
-                const cityProvinceInput = modalElement.querySelector('#addLocation--cityProvince');
-                if (exports.defaultCityProvince) {
-                    cityProvinceInput.value = exports.defaultCityProvince;
-                }
-                // Focus the address1 field
+                modalElement.querySelector('#addLocation--cityProvince').value = exports.defaultCityProvince;
                 modalElement.querySelector('#addLocation--address1').focus();
                 // Initialize map picker
                 const mapPickerElement = modalElement.querySelector('#map--addLocationPicker');

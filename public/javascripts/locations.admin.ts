@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type Leaflet from 'leaflet'
@@ -481,15 +484,14 @@ declare const exports: {
           modalElement
             .querySelector('form')
             ?.addEventListener('submit', doAddLocation)
-          
+
           // Pre-populate City/Province with default value
-          const cityProvinceInput = modalElement.querySelector(
-            '#addLocation--cityProvince'
-          ) as HTMLInputElement
-          if (exports.defaultCityProvince) {
-            cityProvinceInput.value = exports.defaultCityProvince
-          }
-          
+          ;(
+            modalElement.querySelector(
+              '#addLocation--cityProvince'
+            ) as HTMLInputElement
+          ).value = exports.defaultCityProvince
+
           // Focus the address1 field
           ;(
             modalElement.querySelector(

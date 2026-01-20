@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
+
 // Timesheet Grid Management
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
@@ -27,7 +30,7 @@ interface TimesheetGridConfig {
 }
 
 class TimesheetGrid {
-  private cells: Map<string, TimesheetCell> = new Map()
+  private readonly cells = new Map<string, TimesheetCell>()
   private columns: TimesheetColumn[] = []
   private readonly config: TimesheetGridConfig
   private readonly containerElement: HTMLElement
@@ -38,6 +41,10 @@ class TimesheetGrid {
     this.containerElement = containerElement
     this.config = config
     this.shiftLog = exports.shiftLog
+  }
+
+  private static getCellKey(rowId: number, columnId: number): string {
+    return `${rowId}_${columnId}`
   }
 
   addColumn(): void {
@@ -63,18 +70,20 @@ class TimesheetGrid {
               .then(() => {
                 this.render()
               })
-              .catch((error) => {
+              .catch((error: unknown) => {
                 console.error('Error reloading data:', error)
               })
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Column Added',
+
               message: 'The column has been successfully added.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Column',
+
               message: 'Please try again.'
             })
           }
@@ -122,6 +131,7 @@ class TimesheetGrid {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -166,18 +176,20 @@ class TimesheetGrid {
               .then(() => {
                 this.render()
               })
-              .catch((error) => {
+              .catch((error: unknown) => {
                 console.error('Error reloading data:', error)
               })
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Row Added',
+
               message: 'The row has been successfully added.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Row',
+
               message: 'Please try again.'
             })
           }
@@ -192,6 +204,7 @@ class TimesheetGrid {
       (rawResponseJSON) => {
         const optionsData = rawResponseJSON as {
           success: boolean
+
           employees: Array<{
             employeeNumber: string
             firstName: string
@@ -209,6 +222,7 @@ class TimesheetGrid {
           bulmaJS.alert({
             contextualColorName: 'danger',
             title: 'Error',
+
             message: 'Failed to load row options.'
           })
           return
@@ -233,7 +247,9 @@ class TimesheetGrid {
             const employeeSelect = modalElement.querySelector(
               '#addTimesheetRow--employeeNumber'
             ) as HTMLSelectElement
+
             employeeSelect.innerHTML = '<option value="">(None)</option>'
+
             for (const employee of optionsData.employees) {
               employeeSelect.insertAdjacentHTML(
                 'beforeend',
@@ -245,7 +261,9 @@ class TimesheetGrid {
             const equipmentSelect = modalElement.querySelector(
               '#addTimesheetRow--equipmentNumber'
             ) as HTMLSelectElement
+
             equipmentSelect.innerHTML = '<option value="">(None)</option>'
+
             for (const equip of optionsData.equipment) {
               equipmentSelect.insertAdjacentHTML(
                 'beforeend',
@@ -261,15 +279,19 @@ class TimesheetGrid {
               // Equipment takes precedence
               if (selectedEquipment !== '') {
                 const equipOption = optionsData.equipment.find(
-                  (e) => e.equipmentNumber === selectedEquipment
+                  (possibleEquipment) =>
+                    possibleEquipment.equipmentNumber === selectedEquipment
                 )
+
                 if (equipOption !== undefined) {
                   rowTitleInput.value = equipOption.equipmentName
                 }
               } else if (selectedEmployee !== '') {
                 const empOption = optionsData.employees.find(
-                  (e) => e.employeeNumber === selectedEmployee
+                  (possibleEmployee) =>
+                    possibleEmployee.employeeNumber === selectedEmployee
                 )
+
                 if (empOption !== undefined) {
                   rowTitleInput.value = `${empOption.lastName}, ${empOption.firstName}`
                 }
@@ -283,11 +305,17 @@ class TimesheetGrid {
             const jobClassSelect = modalElement.querySelector(
               '#addTimesheetRow--jobClassificationDataListItemId'
             ) as HTMLSelectElement
+
             jobClassSelect.innerHTML = '<option value="">(None)</option>'
+
             for (const jobClass of optionsData.jobClassifications) {
               jobClassSelect.insertAdjacentHTML(
                 'beforeend',
-                `<option value="${jobClass.dataListItemId.toString()}">${cityssm.escapeHTML(jobClass.dataListItem)}</option>`
+                /* html */ `
+                  <option value="${cityssm.escapeHTML(jobClass.dataListItemId.toString())}">
+                    ${cityssm.escapeHTML(jobClass.dataListItem)}
+                  </option>
+                `
               )
             }
 
@@ -295,11 +323,17 @@ class TimesheetGrid {
             const timeCodeSelect = modalElement.querySelector(
               '#addTimesheetRow--timeCodeDataListItemId'
             ) as HTMLSelectElement
+
             timeCodeSelect.innerHTML = '<option value="">(None)</option>'
+
             for (const timeCode of optionsData.timeCodes) {
               timeCodeSelect.insertAdjacentHTML(
                 'beforeend',
-                `<option value="${timeCode.dataListItemId.toString()}">${cityssm.escapeHTML(timeCode.dataListItem)}</option>`
+                /* html */ `
+                  <option value="${cityssm.escapeHTML(timeCode.dataListItemId.toString())}">
+                    ${cityssm.escapeHTML(timeCode.dataListItem)}
+                  </option>
+                `
               )
             }
 
@@ -312,6 +346,7 @@ class TimesheetGrid {
             bulmaJS.toggleHtmlClipped()
             closeModalFunction = closeFunction
           },
+
           onremoved() {
             bulmaJS.toggleHtmlClipped()
           }
@@ -336,6 +371,7 @@ class TimesheetGrid {
       contextualColorName: 'danger',
       okButton: {
         text: 'Delete',
+
         callbackFunction: () => {
           const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
 
@@ -355,19 +391,21 @@ class TimesheetGrid {
                   .then(() => {
                     this.render()
                   })
-                  .catch((error) => {
+                  .catch((error: unknown) => {
                     console.error('Error reloading data:', error)
                   })
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Column Deleted',
+
                   message: 'The column has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
+                  contextualColorName: 'danger',
                   title: 'Error',
-                  message: 'Failed to delete column',
-                  contextualColorName: 'danger'
+
+                  message: 'Failed to delete column'
                 })
               }
             }
@@ -397,18 +435,20 @@ class TimesheetGrid {
               .then(() => {
                 this.render()
               })
-              .catch((error) => {
+              .catch((error: unknown) => {
                 console.error('Error reloading data:', error)
               })
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Column Updated',
+
               message: 'The column has been successfully updated.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Column',
+
               message: 'Please try again.'
             })
           }
@@ -454,6 +494,7 @@ class TimesheetGrid {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -465,10 +506,11 @@ class TimesheetGrid {
     this.render()
   }
 
-  loadData(): Promise<void> {
+  async loadData(): Promise<void> {
     const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
 
-    return new Promise((resolve, reject) => {
+    // eslint-disable-next-line promise/avoid-new
+    await new Promise<void>((resolve, _reject) => {
       // Load columns
       cityssm.postJSON(
         `${timesheetUrlPrefix}/doGetTimesheetColumns`,
@@ -496,7 +538,7 @@ class TimesheetGrid {
 
                   this.cells.clear()
                   for (const cell of cellsData.cells) {
-                    const key = this.getCellKey(
+                    const key = TimesheetGrid.getCellKey(
                       cell.timesheetRowId,
                       cell.timesheetColumnId
                     )
@@ -561,14 +603,15 @@ class TimesheetGrid {
             .then(() => {
               this.render()
             })
-            .catch((error) => {
+            .catch((error: unknown) => {
               console.error('Error reloading data:', error)
             })
         } else {
           bulmaJS.alert({
+            contextualColorName: 'danger',
             title: 'Error',
-            message: 'Failed to reorder columns',
-            contextualColorName: 'danger'
+
+            message: 'Failed to reorder columns'
           })
         }
       }
@@ -600,15 +643,19 @@ class TimesheetGrid {
 
     if (this.config.isEditable) {
       const addRowButton = document.createElement('button')
+
       addRowButton.className = 'button is-primary is-small mt-2'
+      addRowButton.title = 'Add Row'
+
       addRowButton.innerHTML =
         '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>'
-      addRowButton.title = 'Add Row'
+
       addRowButton.addEventListener('click', () => {
         // Trigger the add row button in the toolbar
         const addRowToolbarButton = document.querySelector(
           '#button--addRow'
         ) as HTMLAnchorElement | null
+
         if (addRowToolbarButton !== null) {
           addRowToolbarButton.click()
         }
@@ -619,8 +666,9 @@ class TimesheetGrid {
     headerRow.append(thCorner)
 
     // Column headers
-    for (let colIndex = 0; colIndex < visibleColumns.length; colIndex++) {
+    for (let colIndex = 0; colIndex < visibleColumns.length; colIndex += 1) {
       const column = visibleColumns[colIndex]
+
       const th = document.createElement('th')
       th.dataset.columnId = column.timesheetColumnId.toString()
       th.textContent = column.columnTitle
@@ -650,9 +698,9 @@ class TimesheetGrid {
           moveLeftButton.innerHTML =
             '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>'
           moveLeftButton.title = 'Move Left'
-          moveLeftButton.addEventListener('click', () =>
+          moveLeftButton.addEventListener('click', () => {
             this.moveColumn(column, 'left')
-          )
+          })
           columnActions.append(moveLeftButton)
         }
 
@@ -663,9 +711,9 @@ class TimesheetGrid {
           moveRightButton.innerHTML =
             '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>'
           moveRightButton.title = 'Move Right'
-          moveRightButton.addEventListener('click', () =>
+          moveRightButton.addEventListener('click', () => {
             this.moveColumn(column, 'right')
-          )
+          })
           columnActions.append(moveRightButton)
         }
 
@@ -674,14 +722,18 @@ class TimesheetGrid {
         editButton.innerHTML =
           '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
         editButton.title = 'Edit Column'
-        editButton.addEventListener('click', () => this.editColumn(column))
+        editButton.addEventListener('click', () => {
+          this.editColumn(column)
+        })
 
         const deleteButton = document.createElement('button')
         deleteButton.className = 'button is-danger is-small'
         deleteButton.innerHTML =
           '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
         deleteButton.title = 'Delete Column'
-        deleteButton.addEventListener('click', () => this.deleteColumn(column))
+        deleteButton.addEventListener('click', () => {
+          this.deleteColumn(column)
+        })
 
         columnActions.append(editButton, deleteButton)
         th.append(columnActions)
@@ -710,6 +762,7 @@ class TimesheetGrid {
           addColumnToolbarButton.click()
         }
       })
+
       thAddColumn.append(addColumnButton)
       headerRow.append(thAddColumn)
     }
@@ -761,14 +814,18 @@ class TimesheetGrid {
         editButton.innerHTML =
           '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>'
         editButton.title = 'Edit Row'
-        editButton.addEventListener('click', () => this.editRow(row))
+        editButton.addEventListener('click', () => {
+          this.editRow(row)
+        })
 
         const deleteButton = document.createElement('button')
         deleteButton.className = 'button is-danger is-small'
         deleteButton.innerHTML =
           '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>'
         deleteButton.title = 'Delete Row'
-        deleteButton.addEventListener('click', () => this.deleteRow(row))
+        deleteButton.addEventListener('click', () => {
+          this.deleteRow(row)
+        })
 
         rowActions.append(editButton, deleteButton)
         tdLabel.append(rowActions)
@@ -876,12 +933,14 @@ class TimesheetGrid {
     }
 
     bulmaJS.confirm({
+      contextualColorName: 'danger',
       title: 'Delete Row',
+
       message,
       messageIsHtml: true,
-      contextualColorName: 'danger',
       okButton: {
         text: 'Delete',
+
         callbackFunction: () => {
           const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`
 
@@ -898,19 +957,21 @@ class TimesheetGrid {
                   .then(() => {
                     this.render()
                   })
-                  .catch((error) => {
+                  .catch((error: unknown) => {
                     console.error('Error reloading data:', error)
                   })
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Row Deleted',
+
                   message: 'The row has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
+                  contextualColorName: 'danger',
                   title: 'Error',
-                  message: 'Failed to delete row',
-                  contextualColorName: 'danger'
+
+                  message: 'Failed to delete row'
                 })
               }
             }
@@ -933,6 +994,7 @@ class TimesheetGrid {
       const requestData: Record<string, string | null> = {}
       for (const [key, value] of formData.entries()) {
         const stringValue = value.toString()
+
         if (
           key === 'jobClassificationDataListItemId' ||
           key === 'timeCodeDataListItemId'
@@ -955,18 +1017,20 @@ class TimesheetGrid {
               .then(() => {
                 this.render()
               })
-              .catch((error) => {
+              .catch((error: unknown) => {
                 console.error('Error reloading data:', error)
               })
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Row Updated',
+
               message: 'The row has been successfully updated.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Row',
+
               message: 'Please try again.'
             })
           }
@@ -981,17 +1045,19 @@ class TimesheetGrid {
       (rawResponseJSON) => {
         const optionsData = rawResponseJSON as {
           success: boolean
+
           jobClassifications: Array<{
-            dataListItemId: number
             dataListItem: string
+            dataListItemId: number
           }>
-          timeCodes: Array<{ dataListItemId: number; dataListItem: string }>
+          timeCodes: Array<{ dataListItem: string; dataListItemId: number }>
         }
 
         if (!optionsData.success) {
           bulmaJS.alert({
             contextualColorName: 'danger',
             title: 'Error',
+
             message: 'Failed to load row options.'
           })
           return
@@ -1015,27 +1081,21 @@ class TimesheetGrid {
             const employeeDisplay = modalElement.querySelector(
               '#editTimesheetRow--employeeDisplay'
             ) as HTMLInputElement
-            if (
-              row.employeeNumber !== undefined &&
-              row.employeeNumber !== null
-            ) {
-              employeeDisplay.value = `${row.employeeLastName ?? ''}, ${row.employeeFirstName ?? ''} (${row.employeeNumber})`
-            } else {
-              employeeDisplay.value = '(None)'
-            }
+
+            employeeDisplay.value =
+              row.employeeNumber !== undefined && row.employeeNumber !== null
+                ? `${row.employeeLastName ?? ''}, ${row.employeeFirstName ?? ''} (${row.employeeNumber})`
+                : '(None)'
 
             // Display equipment (read-only)
             const equipmentDisplay = modalElement.querySelector(
               '#editTimesheetRow--equipmentDisplay'
             ) as HTMLInputElement
-            if (
-              row.equipmentNumber !== undefined &&
-              row.equipmentNumber !== null
-            ) {
-              equipmentDisplay.value = `${row.equipmentName ?? ''} (${row.equipmentNumber})`
-            } else {
-              equipmentDisplay.value = '(None)'
-            }
+
+            equipmentDisplay.value =
+              row.equipmentNumber !== undefined && row.equipmentNumber !== null
+                ? `${row.equipmentName ?? ''} (${row.equipmentNumber})`
+                : '(None)'
 
             // Populate job classifications
             const jobClassSelect = modalElement.querySelector(
@@ -1045,9 +1105,17 @@ class TimesheetGrid {
             for (const jobClass of optionsData.jobClassifications) {
               const selected =
                 row.jobClassificationDataListItemId === jobClass.dataListItemId
+
+              // eslint-disable-next-line no-unsanitized/method
               jobClassSelect.insertAdjacentHTML(
                 'beforeend',
-                `<option value="${jobClass.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(jobClass.dataListItem)}</option>`
+                /* html */ `
+                  <option value="${cityssm.escapeHTML(jobClass.dataListItemId.toString())}"
+                    ${selected ? ' selected' : ''}
+                  >
+                    ${cityssm.escapeHTML(jobClass.dataListItem)}
+                  </option>
+                `
               )
             }
 
@@ -1059,9 +1127,17 @@ class TimesheetGrid {
             for (const timeCode of optionsData.timeCodes) {
               const selected =
                 row.timeCodeDataListItemId === timeCode.dataListItemId
+
+              // eslint-disable-next-line no-unsanitized/method
               timeCodeSelect.insertAdjacentHTML(
                 'beforeend',
-                `<option value="${timeCode.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(timeCode.dataListItem)}</option>`
+                /* html */ `
+                  <option value="${cityssm.escapeHTML(timeCode.dataListItemId.toString())}"
+                    ${selected ? ' selected' : ''}
+                  >
+                    ${cityssm.escapeHTML(timeCode.dataListItem)}
+                  </option>
+                `
               )
             }
 
@@ -1074,6 +1150,7 @@ class TimesheetGrid {
             bulmaJS.toggleHtmlClipped()
             closeModalFunction = closeFunction
           },
+
           onremoved() {
             bulmaJS.toggleHtmlClipped()
           }
@@ -1083,12 +1160,8 @@ class TimesheetGrid {
   }
 
   private getCellHours(rowId: number, columnId: number): number {
-    const key = this.getCellKey(rowId, columnId)
+    const key = TimesheetGrid.getCellKey(rowId, columnId)
     return this.cells.get(key)?.recordHours ?? 0
-  }
-
-  private getCellKey(rowId: number, columnId: number): string {
-    return `${rowId}_${columnId}`
   }
 
   private getColumnTotal(columnId: number): number {
@@ -1108,7 +1181,7 @@ class TimesheetGrid {
   }
 
   private setCellHours(rowId: number, columnId: number, hours: number): void {
-    const key = this.getCellKey(rowId, columnId)
+    const key = TimesheetGrid.getCellKey(rowId, columnId)
     if (hours === 0) {
       this.cells.delete(key)
     } else {
@@ -1175,9 +1248,10 @@ class TimesheetGrid {
           this.updateTotals()
         } else {
           bulmaJS.alert({
+            contextualColorName: 'danger',
             title: 'Error',
-            message: 'Failed to update cell',
-            contextualColorName: 'danger'
+
+            message: 'Failed to update cell'
           })
         }
       }
@@ -1193,11 +1267,10 @@ class TimesheetGrid {
       ) as HTMLElement | null
 
       if (columnHeader !== null) {
-        if (columnTotal === 0) {
-          columnHeader.classList.add('has-background-warning-light')
-        } else {
-          columnHeader.classList.remove('has-background-warning-light')
-        }
+        columnHeader.classList.toggle(
+          'has-background-warning-light',
+          columnTotal === 0
+        )
       }
     }
 
@@ -1211,11 +1284,10 @@ class TimesheetGrid {
       if (totalCell !== null) {
         totalCell.textContent = rowTotal.toString()
 
-        if (rowTotal === 0) {
-          totalCell.classList.add('has-background-warning-light')
-        } else {
-          totalCell.classList.remove('has-background-warning-light')
-        }
+        totalCell.classList.toggle(
+          'has-background-warning-light',
+          rowTotal === 0
+        )
       }
     }
   }

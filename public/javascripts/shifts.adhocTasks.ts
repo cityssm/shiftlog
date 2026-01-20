@@ -231,14 +231,16 @@ declare const exports: {
 
       if (task.fromLocationAddress1 || task.toLocationAddress1) {
         locationString += '<br /><small>'
+
         if (task.fromLocationAddress1) {
-          locationString +=
-            'From: ' + cityssm.escapeHTML(task.fromLocationAddress1)
+          locationString += `From: ${cityssm.escapeHTML(task.fromLocationAddress1)}`
         }
+
         if (task.toLocationAddress1) {
           if (task.fromLocationAddress1) locationString += '<br />'
-          locationString += 'To: ' + cityssm.escapeHTML(task.toLocationAddress1)
+          locationString += `To: ${cityssm.escapeHTML(task.toLocationAddress1)}`
         }
+        
         locationString += '</small>'
       }
 
@@ -504,7 +506,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Updating Task',
-              
+
               message: responseJSON.errorMessage ?? 'An unknown error occurred.'
             })
           }

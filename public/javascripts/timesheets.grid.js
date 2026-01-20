@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 class TimesheetGrid {
     cells = new Map();
     columns = [];
@@ -9,6 +11,9 @@ class TimesheetGrid {
         this.containerElement = containerElement;
         this.config = config;
         this.shiftLog = exports.shiftLog;
+    }
+    static getCellKey(rowId, columnId) {
+        return `${rowId}_${columnId}`;
     }
     addColumn() {
         let closeModalFunction;
@@ -145,13 +150,13 @@ class TimesheetGrid {
                         const selectedEmployee = employeeSelect.value;
                         // Equipment takes precedence
                         if (selectedEquipment !== '') {
-                            const equipOption = optionsData.equipment.find((e) => e.equipmentNumber === selectedEquipment);
+                            const equipOption = optionsData.equipment.find((possibleEquipment) => possibleEquipment.equipmentNumber === selectedEquipment);
                             if (equipOption !== undefined) {
                                 rowTitleInput.value = equipOption.equipmentName;
                             }
                         }
                         else if (selectedEmployee !== '') {
-                            const empOption = optionsData.employees.find((e) => e.employeeNumber === selectedEmployee);
+                            const empOption = optionsData.employees.find((possibleEmployee) => possibleEmployee.employeeNumber === selectedEmployee);
                             if (empOption !== undefined) {
                                 rowTitleInput.value = `${empOption.lastName}, ${empOption.firstName}`;
                             }
@@ -163,13 +168,23 @@ class TimesheetGrid {
                     const jobClassSelect = modalElement.querySelector('#addTimesheetRow--jobClassificationDataListItemId');
                     jobClassSelect.innerHTML = '<option value="">(None)</option>';
                     for (const jobClass of optionsData.jobClassifications) {
-                        jobClassSelect.insertAdjacentHTML('beforeend', `<option value="${jobClass.dataListItemId.toString()}">${cityssm.escapeHTML(jobClass.dataListItem)}</option>`);
+                        jobClassSelect.insertAdjacentHTML('beforeend', 
+                        /* html */ `
+                  <option value="${cityssm.escapeHTML(jobClass.dataListItemId.toString())}">
+                    ${cityssm.escapeHTML(jobClass.dataListItem)}
+                  </option>
+                `);
                     }
                     // Populate time codes
                     const timeCodeSelect = modalElement.querySelector('#addTimesheetRow--timeCodeDataListItemId');
                     timeCodeSelect.innerHTML = '<option value="">(None)</option>';
                     for (const timeCode of optionsData.timeCodes) {
-                        timeCodeSelect.insertAdjacentHTML('beforeend', `<option value="${timeCode.dataListItemId.toString()}">${cityssm.escapeHTML(timeCode.dataListItem)}</option>`);
+                        timeCodeSelect.insertAdjacentHTML('beforeend', 
+                        /* html */ `
+                  <option value="${cityssm.escapeHTML(timeCode.dataListItemId.toString())}">
+                    ${cityssm.escapeHTML(timeCode.dataListItem)}
+                  </option>
+                `);
                     }
                     // Attach form submit handler with preprocessing
                     modalElement
@@ -221,9 +236,9 @@ class TimesheetGrid {
                         }
                         else {
                             bulmaJS.alert({
+                                contextualColorName: 'danger',
                                 title: 'Error',
-                                message: 'Failed to delete column',
-                                contextualColorName: 'danger'
+                                message: 'Failed to delete column'
                             });
                         }
                     });
@@ -289,9 +304,10 @@ class TimesheetGrid {
         await this.loadData();
         this.render();
     }
-    loadData() {
+    async loadData() {
         const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`;
-        return new Promise((resolve, reject) => {
+        // eslint-disable-next-line promise/avoid-new
+        await new Promise((resolve, _reject) => {
             // Load columns
             cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetColumns`, { timesheetId: this.config.timesheetId }, (rawResponseJSON) => {
                 const columnsData = rawResponseJSON;
@@ -305,7 +321,7 @@ class TimesheetGrid {
                         const cellsData = rawResponseJSON;
                         this.cells.clear();
                         for (const cell of cellsData.cells) {
-                            const key = this.getCellKey(cell.timesheetRowId, cell.timesheetColumnId);
+                            const key = TimesheetGrid.getCellKey(cell.timesheetRowId, cell.timesheetColumnId);
                             this.cells.set(key, cell);
                         }
                         resolve();
@@ -358,9 +374,9 @@ class TimesheetGrid {
             }
             else {
                 bulmaJS.alert({
+                    contextualColorName: 'danger',
                     title: 'Error',
-                    message: 'Failed to reorder columns',
-                    contextualColorName: 'danger'
+                    message: 'Failed to reorder columns'
                 });
             }
         });
@@ -384,9 +400,9 @@ class TimesheetGrid {
         if (this.config.isEditable) {
             const addRowButton = document.createElement('button');
             addRowButton.className = 'button is-primary is-small mt-2';
+            addRowButton.title = 'Add Row';
             addRowButton.innerHTML =
                 '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>';
-            addRowButton.title = 'Add Row';
             addRowButton.addEventListener('click', () => {
                 // Trigger the add row button in the toolbar
                 const addRowToolbarButton = document.querySelector('#button--addRow');
@@ -398,7 +414,7 @@ class TimesheetGrid {
         }
         headerRow.append(thCorner);
         // Column headers
-        for (let colIndex = 0; colIndex < visibleColumns.length; colIndex++) {
+        for (let colIndex = 0; colIndex < visibleColumns.length; colIndex += 1) {
             const column = visibleColumns[colIndex];
             const th = document.createElement('th');
             th.dataset.columnId = column.timesheetColumnId.toString();
@@ -425,7 +441,9 @@ class TimesheetGrid {
                     moveLeftButton.innerHTML =
                         '<span class="icon is-small"><i class="fa-solid fa-arrow-left"></i></span>';
                     moveLeftButton.title = 'Move Left';
-                    moveLeftButton.addEventListener('click', () => this.moveColumn(column, 'left'));
+                    moveLeftButton.addEventListener('click', () => {
+                        this.moveColumn(column, 'left');
+                    });
                     columnActions.append(moveLeftButton);
                 }
                 // Move right button (only if not last column)
@@ -435,7 +453,9 @@ class TimesheetGrid {
                     moveRightButton.innerHTML =
                         '<span class="icon is-small"><i class="fa-solid fa-arrow-right"></i></span>';
                     moveRightButton.title = 'Move Right';
-                    moveRightButton.addEventListener('click', () => this.moveColumn(column, 'right'));
+                    moveRightButton.addEventListener('click', () => {
+                        this.moveColumn(column, 'right');
+                    });
                     columnActions.append(moveRightButton);
                 }
                 const editButton = document.createElement('button');
@@ -443,13 +463,17 @@ class TimesheetGrid {
                 editButton.innerHTML =
                     '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
                 editButton.title = 'Edit Column';
-                editButton.addEventListener('click', () => this.editColumn(column));
+                editButton.addEventListener('click', () => {
+                    this.editColumn(column);
+                });
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'button is-danger is-small';
                 deleteButton.innerHTML =
                     '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>';
                 deleteButton.title = 'Delete Column';
-                deleteButton.addEventListener('click', () => this.deleteColumn(column));
+                deleteButton.addEventListener('click', () => {
+                    this.deleteColumn(column);
+                });
                 columnActions.append(editButton, deleteButton);
                 th.append(columnActions);
             }
@@ -513,13 +537,17 @@ class TimesheetGrid {
                 editButton.innerHTML =
                     '<span class="icon is-small"><i class="fa-solid fa-edit"></i></span>';
                 editButton.title = 'Edit Row';
-                editButton.addEventListener('click', () => this.editRow(row));
+                editButton.addEventListener('click', () => {
+                    this.editRow(row);
+                });
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'button is-danger is-small';
                 deleteButton.innerHTML =
                     '<span class="icon is-small"><i class="fa-solid fa-trash"></i></span>';
                 deleteButton.title = 'Delete Row';
-                deleteButton.addEventListener('click', () => this.deleteRow(row));
+                deleteButton.addEventListener('click', () => {
+                    this.deleteRow(row);
+                });
                 rowActions.append(editButton, deleteButton);
                 tdLabel.append(rowActions);
             }
@@ -598,10 +626,10 @@ class TimesheetGrid {
             message = `<strong>Warning:</strong> This row has <strong>${rowTotal} recorded hours</strong>. All associated hours will be permanently lost.<br><br>Are you sure you want to delete this row?`;
         }
         bulmaJS.confirm({
+            contextualColorName: 'danger',
             title: 'Delete Row',
             message,
             messageIsHtml: true,
-            contextualColorName: 'danger',
             okButton: {
                 text: 'Delete',
                 callbackFunction: () => {
@@ -626,9 +654,9 @@ class TimesheetGrid {
                         }
                         else {
                             bulmaJS.alert({
+                                contextualColorName: 'danger',
                                 title: 'Error',
-                                message: 'Failed to delete row',
-                                contextualColorName: 'danger'
+                                message: 'Failed to delete row'
                             });
                         }
                     });
@@ -699,35 +727,45 @@ class TimesheetGrid {
                     modalElement.querySelector('#editTimesheetRow--rowTitle').value = row.rowTitle;
                     // Display employee (read-only)
                     const employeeDisplay = modalElement.querySelector('#editTimesheetRow--employeeDisplay');
-                    if (row.employeeNumber !== undefined &&
-                        row.employeeNumber !== null) {
-                        employeeDisplay.value = `${row.employeeLastName ?? ''}, ${row.employeeFirstName ?? ''} (${row.employeeNumber})`;
-                    }
-                    else {
-                        employeeDisplay.value = '(None)';
-                    }
+                    employeeDisplay.value =
+                        row.employeeNumber !== undefined && row.employeeNumber !== null
+                            ? `${row.employeeLastName ?? ''}, ${row.employeeFirstName ?? ''} (${row.employeeNumber})`
+                            : '(None)';
                     // Display equipment (read-only)
                     const equipmentDisplay = modalElement.querySelector('#editTimesheetRow--equipmentDisplay');
-                    if (row.equipmentNumber !== undefined &&
-                        row.equipmentNumber !== null) {
-                        equipmentDisplay.value = `${row.equipmentName ?? ''} (${row.equipmentNumber})`;
-                    }
-                    else {
-                        equipmentDisplay.value = '(None)';
-                    }
+                    equipmentDisplay.value =
+                        row.equipmentNumber !== undefined && row.equipmentNumber !== null
+                            ? `${row.equipmentName ?? ''} (${row.equipmentNumber})`
+                            : '(None)';
                     // Populate job classifications
                     const jobClassSelect = modalElement.querySelector('#editTimesheetRow--jobClassificationDataListItemId');
                     jobClassSelect.innerHTML = '<option value="">(None)</option>';
                     for (const jobClass of optionsData.jobClassifications) {
                         const selected = row.jobClassificationDataListItemId === jobClass.dataListItemId;
-                        jobClassSelect.insertAdjacentHTML('beforeend', `<option value="${jobClass.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(jobClass.dataListItem)}</option>`);
+                        // eslint-disable-next-line no-unsanitized/method
+                        jobClassSelect.insertAdjacentHTML('beforeend', 
+                        /* html */ `
+                  <option value="${cityssm.escapeHTML(jobClass.dataListItemId.toString())}"
+                    ${selected ? ' selected' : ''}
+                  >
+                    ${cityssm.escapeHTML(jobClass.dataListItem)}
+                  </option>
+                `);
                     }
                     // Populate time codes
                     const timeCodeSelect = modalElement.querySelector('#editTimesheetRow--timeCodeDataListItemId');
                     timeCodeSelect.innerHTML = '<option value="">(None)</option>';
                     for (const timeCode of optionsData.timeCodes) {
                         const selected = row.timeCodeDataListItemId === timeCode.dataListItemId;
-                        timeCodeSelect.insertAdjacentHTML('beforeend', `<option value="${timeCode.dataListItemId.toString()}"${selected ? ' selected' : ''}>${cityssm.escapeHTML(timeCode.dataListItem)}</option>`);
+                        // eslint-disable-next-line no-unsanitized/method
+                        timeCodeSelect.insertAdjacentHTML('beforeend', 
+                        /* html */ `
+                  <option value="${cityssm.escapeHTML(timeCode.dataListItemId.toString())}"
+                    ${selected ? ' selected' : ''}
+                  >
+                    ${cityssm.escapeHTML(timeCode.dataListItem)}
+                  </option>
+                `);
                     }
                     // Attach form submit handler
                     modalElement
@@ -745,11 +783,8 @@ class TimesheetGrid {
         });
     }
     getCellHours(rowId, columnId) {
-        const key = this.getCellKey(rowId, columnId);
+        const key = TimesheetGrid.getCellKey(rowId, columnId);
         return this.cells.get(key)?.recordHours ?? 0;
-    }
-    getCellKey(rowId, columnId) {
-        return `${rowId}_${columnId}`;
     }
     getColumnTotal(columnId) {
         let total = 0;
@@ -766,7 +801,7 @@ class TimesheetGrid {
         return total;
     }
     setCellHours(rowId, columnId, hours) {
-        const key = this.getCellKey(rowId, columnId);
+        const key = TimesheetGrid.getCellKey(rowId, columnId);
         if (hours === 0) {
             this.cells.delete(key);
         }
@@ -822,9 +857,9 @@ class TimesheetGrid {
             }
             else {
                 bulmaJS.alert({
+                    contextualColorName: 'danger',
                     title: 'Error',
-                    message: 'Failed to update cell',
-                    contextualColorName: 'danger'
+                    message: 'Failed to update cell'
                 });
             }
         });
@@ -835,12 +870,7 @@ class TimesheetGrid {
             const columnTotal = this.getColumnTotal(column.timesheetColumnId);
             const columnHeader = document.querySelector(`th[data-column-id="${column.timesheetColumnId}"]`);
             if (columnHeader !== null) {
-                if (columnTotal === 0) {
-                    columnHeader.classList.add('has-background-warning-light');
-                }
-                else {
-                    columnHeader.classList.remove('has-background-warning-light');
-                }
+                columnHeader.classList.toggle('has-background-warning-light', columnTotal === 0);
             }
         }
         // Update row totals
@@ -849,12 +879,7 @@ class TimesheetGrid {
             const totalCell = document.querySelector(`td[data-row-total="${row.timesheetRowId}"]`);
             if (totalCell !== null) {
                 totalCell.textContent = rowTotal.toString();
-                if (rowTotal === 0) {
-                    totalCell.classList.add('has-background-warning-light');
-                }
-                else {
-                    totalCell.classList.remove('has-background-warning-light');
-                }
+                totalCell.classList.toggle('has-background-warning-light', rowTotal === 0);
             }
         }
     }

@@ -133,9 +133,10 @@
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doAdd);
             },
-            onshown(_modalElement, closeFunction) {
+            onshown(modalElement, closeFunction) {
                 closeModalFunction = closeFunction;
                 bulmaJS.toggleHtmlClipped();
+                modalElement.querySelector('input[name="employeeListName"]').focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();

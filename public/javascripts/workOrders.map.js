@@ -96,7 +96,7 @@ const shadowSize = [41, 41];
                 ? '(No Address)'
                 : workOrder.locationAddress1;
         if (workOrder.locationAddress2 !== '') {
-            addressLine.textContent += ', ' + workOrder.locationAddress2;
+            addressLine.textContent += `, ${workOrder.locationAddress2}`;
         }
         const assignedLine = document.createElement('div');
         assignedLine.style.marginTop = '0.5em';
