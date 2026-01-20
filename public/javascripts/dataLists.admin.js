@@ -105,8 +105,8 @@
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
             const formData = new FormData(addForm);
-            const dataListItem = formData.get('dataListItem')?.trim();
-            if (dataListItem === '') {
+            const dataListItemToAdd = formData.get('dataListItem')?.trim();
+            if (dataListItemToAdd === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
                     title: 'Item Name Required',

@@ -1915,7 +1915,6 @@ declare const exports: {
 
         break
       }
-      // No default
     }
   }
 

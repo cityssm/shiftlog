@@ -185,11 +185,12 @@ declare const exports: {
 
       const addForm = submitEvent.currentTarget as HTMLFormElement
       const formData = new FormData(addForm)
-      const dataListItem = (
+
+      const dataListItemToAdd = (
         formData.get('dataListItem') as string | null
       )?.trim()
 
-      if (dataListItem === '') {
+      if (dataListItemToAdd === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
           title: 'Item Name Required',

@@ -1384,7 +1384,6 @@
                 });
                 break;
             }
-            // No default
         }
     }
     function moveEmployee(employeeNumber, fromShiftId, toShiftId) {
