@@ -259,9 +259,12 @@
                 textColorInput.addEventListener('input', updatePreview);
                 modalElement.querySelector('form')?.addEventListener('submit', doAddTag);
             },
-            onshown(_modalElement, closeFunction) {
+            onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+                // Focus the tag name input
+                const tagNameInput = modalElement.querySelector('#addTag--tagName');
+                tagNameInput.focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();

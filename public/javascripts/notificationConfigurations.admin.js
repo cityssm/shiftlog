@@ -337,6 +337,9 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddNotificationConfiguration);
+                // Focus the notification queue field
+                const queueSelect = modalElement.querySelector('#addNotificationConfiguration--notificationQueue');
+                queueSelect.focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
