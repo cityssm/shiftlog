@@ -24,7 +24,7 @@ export const workOrderReports: Record<string, ReportDefinition> = {
           w.locationAddress2,
           w.locationCityProvince,
 
-          assignedTo.dataListItem as assignedTo,
+          assignedTo.assignedToName as assignedTo,
 
           milestones.milestonesCount,
           milestones.milestonesCompletedCount
@@ -37,8 +37,8 @@ export const workOrderReports: Record<string, ReportDefinition> = {
         left join ShiftLog.DataListItems wStatus
           on w.workOrderStatusDataListItemId = wStatus.dataListItemId
 
-        left join ShiftLog.DataListItems assignedTo
-          on w.assignedToDataListItemId = assignedTo.dataListItemId
+        left join ShiftLog.AssignedTo assignedTo
+          on w.assignedToId = assignedTo.assignedToId
 
         left join (
           select workOrderId,
