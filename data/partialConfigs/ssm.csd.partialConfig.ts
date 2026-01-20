@@ -15,6 +15,7 @@ config.locations = {
   syncSource: 'arcgis',
 
   layerURL:
+    // eslint-disable-next-line no-secrets/no-secrets
     'https://services1.arcgis.com/nlLTq2Zj0Jwv1qft/ArcGIS/rest/services/playground_analysis/FeatureServer/0',
 
   whereClause: "Municipality = 'Sault Ste. Marie' AND Owner = 'City'",
@@ -26,6 +27,5 @@ config.locations = {
     cityProvince: (): string => 'Sault Ste. Marie, ON'
   }
 }
-
 
 export default config
