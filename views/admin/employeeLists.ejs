@@ -55,6 +55,24 @@
       </div>
     </div>
 
+    <% if (employees.length === 0) { %>
+      <div class="message is-danger">
+        <div class="message-body">
+          <p>
+            <strong>No Employees available.</strong><br />
+            Please add employees before creating employee lists. Employees can be added manually or synchronized from an external system.
+          </p>
+          <% if (user.userProperties.isAdmin) { %>
+          <p class="has-text-right">
+            <a class="button is-link" href="<%= urlPrefix %>/admin/employees">
+              Employee Management
+            </a>
+          </p>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+
     <div id="container--employeeLists"></div>
   </div>
 </div>

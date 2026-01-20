@@ -275,9 +275,15 @@ declare const exports: {
           .querySelector('form')
           ?.addEventListener('submit', doAddDataListItem)
       },
-      onshown(_modalElement, closeFunction) {
+      onshown(modalElement, closeFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
+
+        // Focus the item name input
+        const itemInput = modalElement.querySelector(
+          '#addDataListItem--dataListItem'
+        ) as HTMLInputElement
+        itemInput.focus()
       },
 
       onremoved() {
