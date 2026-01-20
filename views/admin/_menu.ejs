@@ -55,6 +55,7 @@
         </div>
       </a>
     </li>
+    <% if (configFunctions.getConfigProperty('notifications.protocols').length > 0) { %>
     <li>
       <a
         class="<%= headTitle === 'Notification Configuration' ? 'is-active' : '' %>"
@@ -73,6 +74,7 @@
         </div>
       </a>
     </li>
+    <% } %>
     <li>
       <a
         class="<%= headTitle === 'API Audit Logs' ? 'is-active' : '' %>"

@@ -499,6 +499,12 @@ declare const exports: {
         modalElement
           .querySelector('form')
           ?.addEventListener('submit', doAddNotificationConfiguration)
+        
+        // Focus the notification queue field
+        const queueSelect = modalElement.querySelector(
+          '#addNotificationConfiguration--notificationQueue'
+        ) as HTMLSelectElement
+        queueSelect.focus()
       },
 
       onremoved() {

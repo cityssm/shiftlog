@@ -14,6 +14,7 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 
   locations: Location[]
+  defaultCityProvince: string
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -480,6 +481,16 @@ declare const exports: {
           modalElement
             .querySelector('form')
             ?.addEventListener('submit', doAddLocation)
+          
+          // Pre-populate City/Province with default value
+          const cityProvinceInput = modalElement.querySelector(
+            '#addLocation--cityProvince'
+          ) as HTMLInputElement
+          if (exports.defaultCityProvince) {
+            cityProvinceInput.value = exports.defaultCityProvince
+          }
+          
+          // Focus the address1 field
           ;(
             modalElement.querySelector(
               '#addLocation--address1'
