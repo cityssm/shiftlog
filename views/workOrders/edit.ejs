@@ -57,11 +57,20 @@
 <% if (isEdit) { %>
 <% if (workOrderTypes.length === 0) { %>
   <div class="message is-danger">
-    <p class="message-body">
-      <strong>No <%= configFunctions.getConfigProperty('workOrders.sectionName') %> Types available.</strong><br />
-      Please contact your system administrator to set up  <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> types before creating
-      <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
-    </p>
+    <div class="message-body">
+      <p>
+        <strong>No <%= configFunctions.getConfigProperty('workOrders.sectionName') %> Types available.</strong><br />
+        Please contact your system administrator to set up  <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> types before creating
+        <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
+      </p>
+      <% if (user.userProperties.isAdmin) { %>
+      <p class="has-text-right">
+        <a class="button is-link" href="<%= urlPrefix %>/admin/workOrderTypes">
+          <%= configFunctions.getConfigProperty('workOrders.sectionName') %> Type Maintenance
+        </a>
+      </p>
+      <% } %>
+    </div>
   </div>
 <% } %>
 <% } %>
