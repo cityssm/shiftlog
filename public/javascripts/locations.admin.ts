@@ -302,7 +302,7 @@ declare const exports: {
     rowElement.dataset.locationId = location.locationId.toString()
     // eslint-disable-next-line no-unsanitized/property
     rowElement.innerHTML = /* html */ `
-      <td>
+      <td class="has-text-centered has-width-1">
         ${
           location.recordSync_isSynced
             ? /* html */ `
