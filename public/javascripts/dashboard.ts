@@ -110,10 +110,7 @@ interface WorkOrderWithOverdue {
     const statusLine = document.createElement('div')
     statusLine.style.marginTop = '0.5em'
 
-    if (
-      workOrder.workOrderCloseDateTime !== null &&
-      workOrder.workOrderCloseDateTime !== undefined
-    ) {
+    if (workOrder.workOrderCloseDateTime !== null) {
       const closedSpan = document.createElement('span')
       closedSpan.textContent = 'Closed'
       closedSpan.style.color = '#7a7a7a'
