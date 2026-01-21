@@ -72,6 +72,8 @@ export interface Config {
       serverUrl?: string
       defaultTopic: string
     }
+
+    email?: ConfigEmail
   }
 
   shifts?: ConfigSection
@@ -168,4 +170,12 @@ interface ConfigSession {
   secret?: string
 
   doKeepAlive?: boolean
+}
+
+export interface ConfigEmail {
+  server: string
+  port?: number
+  userName?: string
+  password?: string
+  fromAddress?: string
 }

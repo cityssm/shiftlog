@@ -24,7 +24,7 @@ export const configDefaultValues = {
     'connectors.avanti': undefined,
     'connectors.ntfy': undefined,
     'connectors.pearl': undefined,
-    // 'connectors.email': undefined as unknown as TransportOptions & { from?: string } | undefined,
+    'connectors.email': undefined,
     // Shifts
     'shifts.isEnabled': false,
     'shifts.router': 'shifts',

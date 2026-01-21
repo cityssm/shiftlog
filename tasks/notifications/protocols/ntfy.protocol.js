@@ -1,30 +1,9 @@
 import publishToNtfy, { DEFAULT_NTFY_SERVER, ntfyMessagePriorityHigh } from '@cityssm/ntfy-publish';
-import getWorkOrder from '../../../database/workOrders/getWorkOrder.js';
-import getWorkOrderMilestones from '../../../database/workOrders/getWorkOrderMilestones.js';
 import { getWorkOrderUrl } from '../../../helpers/application.helpers.js';
 import { getConfigProperty } from '../../../helpers/config.helpers.js';
+import { getWorkOrderToSend } from '../helpers/workOrder.helpers.js';
 const ntfyConnectorConfig = getConfigProperty('connectors.ntfy');
 const ntfyServerUrl = ntfyConnectorConfig?.serverUrl ?? DEFAULT_NTFY_SERVER;
-async function getWorkOrderToSend(workOrderId, notificationConfiguration) {
-    const workOrder = await getWorkOrder(workOrderId);
-    if (workOrder === undefined) {
-        return {
-            success: false,
-            errorMessage: `Work order ID ${workOrderId} not found`
-        };
-    }
-    let sendMessage = notificationConfiguration.assignedToId === null ||
-        notificationConfiguration.assignedToId === undefined ||
-        notificationConfiguration.assignedToId === workOrder.assignedToId;
-    if (!sendMessage && notificationConfiguration.assignedToId !== null) {
-        const workOrderMilestones = await getWorkOrderMilestones(workOrderId);
-        sendMessage = workOrderMilestones.some((milestone) => milestone.assignedToId === notificationConfiguration.assignedToId);
-    }
-    if (!sendMessage) {
-        return undefined;
-    }
-    return { success: true, workOrder };
-}
 export const sendWorkOrderCreateNtfyNotification = async (notificationConfiguration, workOrderId) => {
     const workOrderToSend = await getWorkOrderToSend(workOrderId, notificationConfiguration);
     if (!workOrderToSend?.success) {

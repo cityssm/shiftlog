@@ -2,7 +2,7 @@ import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorC
 import type { AvantiApiConfiguration } from '@cityssm/avanti-api';
 import type { config as MSSQLConfig } from 'mssql';
 import type { NotificationType } from '../tasks/notifications/types.js';
-import type { ConfigEmployees, ConfigEquipment, ConfigLocations } from '../types/config.types.js';
+import type { ConfigEmail, ConfigEmployees, ConfigEquipment, ConfigLocations } from '../types/config.types.js';
 export declare const configDefaultValues: {
     'application.applicationName': string;
     'application.applicationUrl': string | undefined;
@@ -43,6 +43,7 @@ export declare const configDefaultValues: {
         defaultTopic: string;
     } | undefined;
     'connectors.pearl': MSSQLConfig | undefined;
+    'connectors.email': ConfigEmail | undefined;
     'shifts.isEnabled': boolean;
     'shifts.router': string;
     'shifts.sectionName': string;

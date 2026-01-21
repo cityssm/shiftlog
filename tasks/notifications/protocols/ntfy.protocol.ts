@@ -3,14 +3,10 @@ import publishToNtfy, {
   ntfyMessagePriorityHigh
 } from '@cityssm/ntfy-publish'
 
-import getWorkOrder from '../../../database/workOrders/getWorkOrder.js'
-import getWorkOrderMilestones from '../../../database/workOrders/getWorkOrderMilestones.js'
 import { getWorkOrderUrl } from '../../../helpers/application.helpers.js'
 import { getConfigProperty } from '../../../helpers/config.helpers.js'
-import type {
-  NotificationConfiguration,
-  WorkOrder
-} from '../../../types/record.types.js'
+import type { NotificationConfiguration } from '../../../types/record.types.js'
+import { getWorkOrderToSend } from '../helpers/workOrder.helpers.js'
 import type {
   NotificationFunction,
   NotificationFunctionResult,
@@ -20,44 +16,6 @@ import type {
 const ntfyConnectorConfig = getConfigProperty('connectors.ntfy')
 
 const ntfyServerUrl = ntfyConnectorConfig?.serverUrl ?? DEFAULT_NTFY_SERVER
-
-async function getWorkOrderToSend(
-  workOrderId: number | string,
-  notificationConfiguration: NotificationConfiguration
-): Promise<
-  | { success: false; errorMessage: string }
-  | { success: true; workOrder: WorkOrder }
-  | undefined
-> {
-  const workOrder = await getWorkOrder(workOrderId)
-
-  if (workOrder === undefined) {
-    return {
-      success: false,
-      errorMessage: `Work order ID ${workOrderId} not found`
-    }
-  }
-
-  let sendMessage =
-    notificationConfiguration.assignedToId === null ||
-    notificationConfiguration.assignedToId === undefined ||
-    notificationConfiguration.assignedToId === workOrder.assignedToId
-
-  if (!sendMessage && notificationConfiguration.assignedToId !== null) {
-    const workOrderMilestones = await getWorkOrderMilestones(workOrderId)
-
-    sendMessage = workOrderMilestones.some(
-      (milestone) =>
-        milestone.assignedToId === notificationConfiguration.assignedToId
-    )
-  }
-
-  if (!sendMessage) {
-    return undefined
-  }
-
-  return { success: true, workOrder }
-}
 
 export const sendWorkOrderCreateNtfyNotification: NotificationFunction = async (
   notificationConfiguration: NotificationConfiguration,
