@@ -91,7 +91,11 @@
                             if (responseJSON.locations !== undefined) {
                                 exports.locations = responseJSON.locations;
                                 currentFilteredLocations = responseJSON.locations;
-                                currentPage = 1;
+                                // Adjust current page if it becomes invalid after deletion
+                                const totalPages = Math.ceil(responseJSON.locations.length / ITEMS_PER_PAGE);
+                                if (currentPage > totalPages && totalPages > 0) {
+                                    currentPage = totalPages;
+                                }
                                 renderLocationsWithPagination(responseJSON.locations);
                             }
                             bulmaJS.alert({
@@ -133,7 +137,7 @@
                     if (responseJSON.locations !== undefined) {
                         exports.locations = responseJSON.locations;
                         currentFilteredLocations = responseJSON.locations;
-                        currentPage = 1;
+                        // Keep the current page after updating
                         renderLocationsWithPagination(responseJSON.locations);
                     }
                     bulmaJS.alert({
