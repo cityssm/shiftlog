@@ -116,6 +116,14 @@ interface WorkOrderWithOverdue {
       overdueSpan.style.color = '#cc0f35'
       overdueSpan.style.fontWeight = 'bold'
       statusLine.append(overdueSpan)
+    } else if (
+      workOrder.workOrderCloseDateTime !== null &&
+      workOrder.workOrderCloseDateTime !== undefined
+    ) {
+      const closedSpan = document.createElement('span')
+      closedSpan.textContent = 'Closed'
+      closedSpan.style.color = '#7a7a7a'
+      statusLine.append(closedSpan)
     } else {
       const openSpan = document.createElement('span')
       openSpan.textContent = 'Open'
