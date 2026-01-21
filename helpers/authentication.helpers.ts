@@ -91,9 +91,8 @@ const safeRedirects = new Set([
   '/admin/workordertypes',
 
   '/dashboard',
-  '/dashboard/usersettings',
-
-  '/reports'
+  '/dashboard/reports',
+  '/dashboard/usersettings'
 ])
 
 /* eslint-enable @cspell/spellchecker */

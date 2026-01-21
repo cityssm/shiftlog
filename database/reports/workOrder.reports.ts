@@ -63,6 +63,24 @@ export const workOrderReports: Record<string, ReportDefinition> = {
     `
   },
 
+  'workOrders-workOrderNotes-byWorkOrderId': {
+    parameterNames: ['workOrderId'],
+    sql: /* sql */ `
+      select
+        w.workOrderNumber,
+        n.noteSequence,
+        n.noteText,
+        n.recordCreate_userName, n.recordCreate_dateTime,
+        n.recordUpdate_userName, n.recordUpdate_dateTime
+      from ShiftLog.WorkOrderNotes n
+      left join ShiftLog.WorkOrders w on n.workOrderId = w.workOrderId
+      where w.instance = @instance
+        and n.recordDelete_dateTime is null
+        and n.workOrderId = @workOrderId
+      order by n.noteSequence asc
+    `
+  },
+
   'workOrders-workOrderTags-unmanaged': {
     parameterNames: [],
     sql: /* sql */ `

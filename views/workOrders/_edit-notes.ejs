@@ -2,14 +2,22 @@
   <div class="column">
     <h2 class="title is-4">Notes</h2>
   </div>
-  <% if (isEdit) { %>
   <div class="column is-narrow">
+    <% if (isEdit) { %>
     <button class="button is-small is-success" id="button--addNote" type="button">
       <span class="icon"><i class="fa-solid fa-plus"></i></span>
       <span>Add Note</span>
     </button>
+    <% } %>
+    <a
+      class="button is-small is-info"
+      href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/workOrders-workOrderNotes-byWorkOrderId/?workOrderId=<%= workOrder.workOrderId %>"
+      target="_blank"
+    >
+      <span class="icon"><i class="fa-solid fa-file-csv"></i></span>
+      <span>Export Notes</span>
+    </a>
   </div>
-  <% } %>
 </div>
 
 

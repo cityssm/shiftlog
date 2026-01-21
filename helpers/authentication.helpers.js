@@ -63,8 +63,8 @@ const safeRedirects = new Set([
     '/admin/users',
     '/admin/workordertypes',
     '/dashboard',
-    '/dashboard/usersettings',
-    '/reports'
+    '/dashboard/reports',
+    '/dashboard/usersettings'
 ]);
 /* eslint-enable @cspell/spellchecker */
 export function getSafeRedirectUrl(possibleRedirectUrl = '') {
