@@ -149,7 +149,12 @@ declare const exports: {
             ${cityssm.escapeHTML(workOrder.locationAddress2)}
           </span>
         </td>
-        <td>${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}</td>
+        <td>
+          ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}<br />
+          <span class="is-size-7 has-text-grey">
+            ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem ?? '(No Priority)')}
+          </span>
+        </td>
         <td>
           ${openDate}<br />
           <span class="is-size-7 has-text-grey">

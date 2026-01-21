@@ -12,16 +12,18 @@ export interface GetWorkOrdersForPlannerFilters {
   includeUnassigned?: boolean
 
   workOrderTypeId?: number | string
+
+  workOrderPriorityDataListItemId?: number | string
   workOrderStatusDataListItemId?: number | string
 
   dateFilter?:
     | ''
-    | 'overdue'
-    | 'openForDays'
     | 'dueInDays'
-    | 'noUpdatesForDays'
-    | 'milestonesOverdue'
     | 'milestonesDueInDays'
+    | 'milestonesOverdue'
+    | 'noUpdatesForDays'
+    | 'openForDays'
+    | 'overdue'
   daysThreshold?: number | string
 }
 
@@ -42,6 +44,14 @@ function buildWhereClause(
 
   if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
     whereClause += ' and w.workOrderTypeId = @workOrderTypeId'
+  }
+
+  if (
+    filters.workOrderPriorityDataListItemId !== undefined &&
+    filters.workOrderPriorityDataListItemId !== ''
+  ) {
+    whereClause +=
+      ' and w.workOrderPriorityDataListItemId = @workOrderPriorityDataListItemId'
   }
 
   if (
@@ -81,25 +91,21 @@ function buildWhereClause(
   // Handle date filters
   if (filters.dateFilter !== undefined && filters.dateFilter !== '') {
     switch (filters.dateFilter) {
-      case 'overdue': {
-        whereClause += ' and w.workOrderDueDateTime < getdate()'
-        break
-      }
-      case 'openForDays': {
-        whereClause +=
-          ' and datediff(day, w.workOrderOpenDateTime, getdate()) >= @daysThreshold'
-        break
-      }
       case 'dueInDays': {
         whereClause += ` and w.workOrderDueDateTime is not null
           and datediff(day, getdate(), w.workOrderDueDateTime) <= @daysThreshold
           and w.workOrderDueDateTime >= getdate()`
         break
       }
-      case 'noUpdatesForDays': {
-        whereClause += ` and (
-          w.recordUpdate_dateTime is null
-          or datediff(day, w.recordUpdate_dateTime, getdate()) >= @daysThreshold
+      case 'milestonesDueInDays': {
+        whereClause += ` and exists (
+          select 1 from ShiftLog.WorkOrderMilestones
+          where workOrderId = w.workOrderId
+            and milestoneCompleteDateTime is null
+            and milestoneDueDateTime is not null
+            and datediff(day, getdate(), milestoneDueDateTime) <= @daysThreshold
+            and milestoneDueDateTime >= getdate()
+            and recordDelete_dateTime is null
         )`
         break
       }
@@ -113,16 +119,20 @@ function buildWhereClause(
         )`
         break
       }
-      case 'milestonesDueInDays': {
-        whereClause += ` and exists (
-          select 1 from ShiftLog.WorkOrderMilestones
-          where workOrderId = w.workOrderId
-            and milestoneCompleteDateTime is null
-            and milestoneDueDateTime is not null
-            and datediff(day, getdate(), milestoneDueDateTime) <= @daysThreshold
-            and milestoneDueDateTime >= getdate()
-            and recordDelete_dateTime is null
+      case 'noUpdatesForDays': {
+        whereClause += ` and (
+          w.recordUpdate_dateTime is null
+          or datediff(day, w.recordUpdate_dateTime, getdate()) >= @daysThreshold
         )`
+        break
+      }
+      case 'openForDays': {
+        whereClause +=
+          ' and datediff(day, w.workOrderOpenDateTime, getdate()) >= @daysThreshold'
+        break
+      }
+      case 'overdue': {
+        whereClause += ' and w.workOrderDueDateTime < getdate()'
         break
       }
     }
@@ -151,6 +161,10 @@ function applyParameters(
   sqlRequest
     .input('instance', getConfigProperty('application.instance'))
     .input('workOrderTypeId', filters.workOrderTypeId ?? null)
+    .input(
+      'workOrderPriorityDataListItemId',
+      filters.workOrderPriorityDataListItemId ?? null
+    )
     .input(
       'workOrderStatusDataListItemId',
       filters.workOrderStatusDataListItemId ?? null
@@ -236,6 +250,9 @@ export default async function getWorkOrdersForPlanner(
           w.workOrderTypeId,
           wType.workOrderType,
 
+          w.workOrderPriorityDataListItemId,
+          wPriority.dataListItem as workOrderPriorityDataListItem,
+
           w.workOrderStatusDataListItemId,
           wStatus.dataListItem as workOrderStatusDataListItem,
 
@@ -265,6 +282,9 @@ export default async function getWorkOrdersForPlanner(
 
         left join ShiftLog.WorkOrderTypes wType
           on w.workOrderTypeId = wType.workOrderTypeId
+
+        left join ShiftLog.DataListItems wPriority
+          on w.workOrderPriorityDataListItemId = wPriority.dataListItemId
 
         left join ShiftLog.DataListItems wStatus
           on w.workOrderStatusDataListItemId = wStatus.dataListItemId
