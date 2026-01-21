@@ -36,8 +36,13 @@ function initializeCluster() {
     }
     cluster.on('message', (_worker, message) => {
         if (message.targetProcesses === 'task.notifications') {
-            debug(`Relaying message to task process: ${tasksChildProcesses.notifications.pid}`);
-            tasksChildProcesses.notifications.send(message);
+            if (tasksChildProcesses.notifications === undefined) {
+                debug('No notifications task process to relay message to');
+            }
+            else {
+                debug(`Relaying message to task process: ${tasksChildProcesses.notifications.pid}`);
+                tasksChildProcesses.notifications.send(message);
+            }
         }
         else {
             for (const [pid, activeWorker] of activeWorkers.entries()) {

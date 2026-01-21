@@ -2,11 +2,17 @@ import { type ChildProcess, fork } from 'node:child_process'
 
 import { getConfigProperty } from '../helpers/config.helpers.js'
 
-type OptionalTaskName = 'employeeSync' | 'equipmentSync' | 'locationSync'
+type OptionalTaskName =
+  | 'employeeSync'
+  | 'equipmentSync'
+  | 'locationSync'
+  | 'notifications'
 
-type RequiredTaskName = 'databaseCleanup' | 'notifications'
+type RequiredTaskName = 'databaseCleanup'
 
-export type InitializeTasksReturn = Partial<Record<OptionalTaskName, ChildProcess>> &
+export type InitializeTasksReturn = Partial<
+  Record<OptionalTaskName, ChildProcess>
+> &
   Record<RequiredTaskName, ChildProcess>
 
 export function initializeTasks(): InitializeTasksReturn {
@@ -58,13 +64,15 @@ export function initializeTasks(): InitializeTasksReturn {
    * Notification Task
    */
 
-  const notificationTask = fork('./tasks/notifications/task.js', {
-    cwd: process.cwd(),
-    env: process.env,
-    stdio: 'inherit'
-  })
+  if (getConfigProperty('notifications.protocols').length > 0) {
+    const notificationTask = fork('./tasks/notifications/task.js', {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: 'inherit'
+    })
 
-  childProcesses.notifications = notificationTask
+    childProcesses.notifications = notificationTask
+  }
 
   /*
    * Database Cleanup Task

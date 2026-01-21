@@ -405,6 +405,7 @@
           </div>
         </div>
       </a>
+      <% if (configFunctions.getConfigProperty('notifications.protocols').length > 0) { %>
       <a class="panel-block" href="<%= urlPrefix %>/admin/notificationConfigurations">
         <div class="media">
           <div class="media-left">
@@ -420,6 +421,7 @@
           </div>
         </div>
       </a>
+      <% } %>
       <a class="panel-block" href="<%= urlPrefix %>/admin/apiAuditLogs">
         <div class="media">
           <div class="media-left">

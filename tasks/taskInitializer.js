@@ -38,12 +38,14 @@ export function initializeTasks() {
     /*
      * Notification Task
      */
-    const notificationTask = fork('./tasks/notifications/task.js', {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
-    });
-    childProcesses.notifications = notificationTask;
+    if (getConfigProperty('notifications.protocols').length > 0) {
+        const notificationTask = fork('./tasks/notifications/task.js', {
+            cwd: process.cwd(),
+            env: process.env,
+            stdio: 'inherit'
+        });
+        childProcesses.notifications = notificationTask;
+    }
     /*
      * Database Cleanup Task
      */
