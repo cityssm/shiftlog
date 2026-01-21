@@ -40,6 +40,10 @@ declare const exports: {
 
   const isCreate = workOrderId === ''
 
+  function setUnsavedChanges(): void {
+    cityssm.enableNavBlocker()
+  }
+
   // Track original work order type for change detection
   const workOrderTypeSelect = workOrderFormElement.querySelector(
     '#workOrder--workOrderTypeId'
@@ -95,11 +99,13 @@ declare const exports: {
           success: boolean
 
           errorMessage?: string
-          
+
           workOrderId?: number
         }
 
         if (responseJSON.success) {
+          cityssm.disableNavBlocker()
+
           if (isCreate && responseJSON.workOrderId !== undefined) {
             globalThis.location.href = shiftLog.buildWorkOrderURL(
               responseJSON.workOrderId,
@@ -593,6 +599,8 @@ declare const exports: {
       }
 
       marker = new L.Marker([lat, lng]).addTo(map)
+
+      setUnsavedChanges()
     })
 
     // Update map when coordinates are manually entered
@@ -677,6 +685,7 @@ declare const exports: {
                   responseJSON.success &&
                   responseJSON.redirectUrl !== undefined
                 ) {
+                  cityssm.disableNavBlocker()
                   globalThis.location.href = responseJSON.redirectUrl
                 } else {
                   bulmaJS.alert({
@@ -693,5 +702,15 @@ declare const exports: {
         }
       })
     })
+  }
+
+  /*
+   * Block navigation if there are unsaved changes
+   */
+
+  for (const inputElement of workOrderFormElement.querySelectorAll(
+    'input, select, textarea'
+  )) {
+    inputElement.addEventListener('change', setUnsavedChanges)
   }
 })()

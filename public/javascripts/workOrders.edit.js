@@ -7,6 +7,9 @@
     const workOrderId = workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     const workOrderCloseDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderCloseDateTimeString');
     const isCreate = workOrderId === '';
+    function setUnsavedChanges() {
+        cityssm.enableNavBlocker();
+    }
     // Track original work order type for change detection
     const workOrderTypeSelect = workOrderFormElement.querySelector('#workOrder--workOrderTypeId');
     let originalWorkOrderTypeId = '';
@@ -44,6 +47,7 @@
         cityssm.postJSON(`${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
+                cityssm.disableNavBlocker();
                 if (isCreate && responseJSON.workOrderId !== undefined) {
                     globalThis.location.href = shiftLog.buildWorkOrderURL(responseJSON.workOrderId, true);
                 }
@@ -365,6 +369,7 @@
                 map.removeLayer(marker);
             }
             marker = new L.Marker([lat, lng]).addTo(map);
+            setUnsavedChanges();
         });
         // Update map when coordinates are manually entered
         function updateMapFromInputs() {
@@ -417,6 +422,7 @@
                             const responseJSON = rawResponseJSON;
                             if (responseJSON.success &&
                                 responseJSON.redirectUrl !== undefined) {
+                                cityssm.disableNavBlocker();
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }
                             else {
@@ -431,5 +437,11 @@
                 }
             });
         });
+    }
+    /*
+     * Block navigation if there are unsaved changes
+     */
+    for (const inputElement of workOrderFormElement.querySelectorAll('input, select, textarea')) {
+        inputElement.addEventListener('change', setUnsavedChanges);
     }
 })();
