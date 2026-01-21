@@ -52,7 +52,9 @@ declare const exports: {
     if (data.workOrders.length === 0) {
       resultsContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
-          <p class="message-body">No work orders found matching the selected criteria.</p>
+          <p class="message-body">
+            No ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found matching the selected criteria.
+          </p>
         </div>
       `
 
