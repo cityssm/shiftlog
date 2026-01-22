@@ -94,9 +94,16 @@ Once created, employee lists appear:
 ## Related Links
 
 - [Administrator Tools](./admin.md) - Main admin documentation
-- [Employee Management](./adminEmployees.md) - Managing individual employees
-- [User Management](./adminUsers.md)
-- [User Group Management](./adminUserGroups.md)
+- [API Audit Logs](./adminApiAuditLogs.md)
 - [Application Settings](./adminSettings.md)
-- [Shifts](./shifts.md) - Using employee lists in shifts
-- [Timesheets](./timesheets.md) - Using employee lists in timesheets
+- [Assigned To Management](./adminAssignedTo.md)
+- [Data Lists](./adminDataLists.md)
+- [Employee List Management](./adminEmployeeLists.md)
+- [Employee Management](./adminEmployees.md)
+- [Equipment Management](./adminEquipment.md)
+- [Location Management](./adminLocations.md)
+- [Notification Configuration](./adminNotificationConfigurations.md)
+- [Tag Management](./adminTags.md)
+- [User Group Management](./adminUserGroups.md)
+- [User Management](./adminUsers.md)
+- [Work Order Types](./adminWorkOrderTypes.md)

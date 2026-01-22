@@ -125,7 +125,16 @@ To verify that notifications are working correctly:
 ## Related Links
 
 - [Administrator Tools](./admin.md) - Main admin documentation
-- [Assigned To Management](./adminAssignedTo.md) - Managing notification recipients
-- [Application Settings](./adminSettings.md) - Configuring notification protocols
-- [Work Orders](./workOrders.md) - Work order documentation
-- [Shifts](./shifts.md) - Shift documentation
+- [API Audit Logs](./adminApiAuditLogs.md)
+- [Application Settings](./adminSettings.md)
+- [Assigned To Management](./adminAssignedTo.md)
+- [Data Lists](./adminDataLists.md)
+- [Employee List Management](./adminEmployeeLists.md)
+- [Employee Management](./adminEmployees.md)
+- [Equipment Management](./adminEquipment.md)
+- [Location Management](./adminLocations.md)
+- [Notification Configuration](./adminNotificationConfigurations.md)
+- [Tag Management](./adminTags.md)
+- [User Group Management](./adminUserGroups.md)
+- [User Management](./adminUsers.md)
+- [Work Order Types](./adminWorkOrderTypes.md)
