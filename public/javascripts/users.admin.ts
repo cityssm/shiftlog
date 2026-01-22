@@ -334,7 +334,7 @@ declare const exports: {
     )
   }
 
-  const activePermissionClass = 'is-success'
+  const activePermissionClass = 'is-primary'
   const inactivePermissionClass = 'is-light'
 
   function buildUserRowElement(user: DatabaseUser): HTMLTableRowElement {
@@ -627,6 +627,7 @@ declare const exports: {
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = _closeModalFunction
+        ;(modalElement.querySelector('#userName') as HTMLInputElement).focus()
 
         modalElement
           .querySelector('form')
