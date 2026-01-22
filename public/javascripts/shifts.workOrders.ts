@@ -229,7 +229,7 @@ declare const exports: {
             ? /* html */ `
               <td class="has-text-right">
                 <button
-                  class="button is-small is-success button--complete"
+                  class="button is-small is-primary button--complete"
                   data-work-order-milestone-id="${milestone.workOrderMilestoneId}"
                   type="button"
                 >
@@ -400,7 +400,7 @@ declare const exports: {
               <td>${cityssm.escapeHTML(workOrder.requestorName ?? '')}</td>
               <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 50))}${workOrder.workOrderDetails.length > 50 ? '...' : ''}</td>
               <td class="has-text-right">
-                <button class="button is-small is-success button--select" data-work-order-id="${workOrder.workOrderId}" type="button">
+                <button class="button is-small is-primary button--select" data-work-order-id="${workOrder.workOrderId}" type="button">
                   <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
                   <span>Select</span>
                 </button>

@@ -83,7 +83,7 @@
         </td>
         <td>
           <button
-            class="button is-small is-success is-light"
+            class="button is-small is-primary is-light"
             data-timesheet-id="${timesheet.timesheetId}"
             type="button"
           >
