@@ -197,10 +197,14 @@ declare const bulmaJS: BulmaJS
             .querySelector('form')
             ?.addEventListener('submit', doAddTag)
         },
-        onshown(_modalElement, closeFunction) {
+        onshown(modalElement, closeFunction) {
           closeModalFunction = closeFunction
-
           bulmaJS.toggleHtmlClipped()
+          ;(
+            modalElement.querySelector(
+              '#addWorkOrderTag--tagName'
+            ) as HTMLInputElement
+          ).focus()
         },
 
         onremoved() {
