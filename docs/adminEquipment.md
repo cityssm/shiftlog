@@ -55,5 +55,3 @@ The Equipment Management section maintains a list of equipment
 - [User Group Management](./adminUserGroups.md)
 - [User Management](./adminUsers.md)
 - [Work Order Types](./adminWorkOrderTypes.md)
-- [Employee Management](./adminEmployees.md)
-- [Location Management](./adminLocations.md)
