@@ -48,6 +48,15 @@ const shadowSize = [41, 41];
         shadowSize,
         shadowUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-shadow.png`
     });
+    // Custom icon for closed work orders (grey)
+    const closedIcon = new L.Icon({
+        iconAnchor,
+        iconSize,
+        iconUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-icon-grey.png`,
+        popupAnchor,
+        shadowSize,
+        shadowUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-shadow.png`
+    });
     function buildWorkOrderPopupContent(workOrder, isOverdue) {
         const workOrderDiv = document.createElement('div');
         const titleLink = document.createElement('a');
@@ -61,7 +70,13 @@ const shadowSize = [41, 41];
         typeSpan.style.color = '#666';
         const statusLine = document.createElement('div');
         statusLine.style.marginTop = '0.5em';
-        if (isOverdue) {
+        if (workOrder.workOrderCloseDateTime !== null) {
+            const closedSpan = document.createElement('span');
+            closedSpan.textContent = 'Closed';
+            closedSpan.style.color = '#7a7a7a';
+            statusLine.append(closedSpan);
+        }
+        else if (isOverdue) {
             const overdueSpan = document.createElement('span');
             overdueSpan.textContent = 'Overdue';
             overdueSpan.style.color = '#cc0f35';
@@ -103,10 +118,16 @@ const shadowSize = [41, 41];
             // Multiple work orders at this location - use orange icon
             icon = multipleIcon;
         }
+        else if (workOrders[0].workOrder.workOrderCloseDateTime !== null) {
+            // Closed work order - use grey icon
+            icon = closedIcon;
+        }
         else if (workOrders[0].isOverdue) {
+            // Overdue work order - use red icon
             icon = overdueIcon;
         }
         else {
+            // Open work order - use green icon
             icon = openIcon;
         }
         const marker = new L.Marker([lat, lng], { icon });
