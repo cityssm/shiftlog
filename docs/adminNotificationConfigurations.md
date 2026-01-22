@@ -27,19 +27,15 @@ Notification configurations determine:
 Different events in ShiftLog can trigger notifications:
 
 - **Work Order Created** - When a new work order is created
-- **Work Order Assigned** - When a work order is assigned to someone
-- **Work Order Completed** - When a work order is marked as complete
-- **Shift Activity Logged** - When a shift activity is recorded
-- (Other queue types may be available based on your configuration)
+- **Work Order Update** - When a work order is changed
 
 ## Notification Types (Protocols)
 
 ShiftLog supports multiple notification delivery methods:
 
-- **Email** - Send notifications via email
-- **SMS** - Send text message notifications
-- **Webhook** - POST notification data to a URL
-- (Available protocols depend on your system configuration)
+- **Email** - Send notifications via email.
+- **Ntfy** - Send phone and browser notifications through the ntfy notification service.
+- **MS Teams** - POST notification data to a webhook URL.
 
 ⚠️ **Note**: Notification protocols must be configured in the application
 settings before they can be used in notification configurations.
