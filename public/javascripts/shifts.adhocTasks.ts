@@ -964,7 +964,7 @@ declare const exports: {
                 <td>${cityssm.escapeHTML(task.locationAddress1)}</td>
                 <td>${dueDateString}</td>
                 <td class="has-text-right">
-                  <button class="button is-small is-success button--select" type="button">
+                  <button class="button is-small is-primary button--select" type="button">
                     <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
                     <span>Select</span>
                   </button>

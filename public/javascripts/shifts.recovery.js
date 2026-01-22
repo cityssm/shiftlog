@@ -79,7 +79,7 @@
         </td>
         <td>
           <button
-            class="button is-small is-success is-light"
+            class="button is-small is-primary is-light"
             data-shift-id="${shift.shiftId}"
             type="button"
           >

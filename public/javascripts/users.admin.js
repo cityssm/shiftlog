@@ -218,7 +218,7 @@
             }
         });
     }
-    const activePermissionClass = 'is-success';
+    const activePermissionClass = 'is-primary';
     const inactivePermissionClass = 'is-light';
     function buildUserRowElement(user) {
         const rowElement = document.createElement('tr');
@@ -468,6 +468,7 @@
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = _closeModalFunction;
+                modalElement.querySelector('#userName').focus();
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddUser);
