@@ -51,11 +51,16 @@ Users can have different levels of access for each section:
 ## Related Links
 
 - [Administrator Tools](./admin.md) - Main admin documentation
-- [User Group Management](./adminUserGroups.md)
+- [API Audit Logs](./adminApiAuditLogs.md)
 - [Application Settings](./adminSettings.md)
-- [Work Order Types](./adminWorkOrderTypes.md)
-- [Tag Management](./adminTags.md)
+- [Assigned To Management](./adminAssignedTo.md)
 - [Data Lists](./adminDataLists.md)
+- [Employee List Management](./adminEmployeeLists.md)
 - [Employee Management](./adminEmployees.md)
 - [Equipment Management](./adminEquipment.md)
 - [Location Management](./adminLocations.md)
+- [Notification Configuration](./adminNotificationConfigurations.md)
+- [Tag Management](./adminTags.md)
+- [User Group Management](./adminUserGroups.md)
+- [User Management](./adminUsers.md)
+- [Work Order Types](./adminWorkOrderTypes.md)

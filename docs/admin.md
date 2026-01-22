@@ -33,14 +33,23 @@ requires administrator permissions.
 - [**Data Lists**](./adminDataLists.md)<br />
   Manage customizable dropdown lists used throughout the application.
 
+- [**Assigned To Management**](./adminAssignedTo.md)<br />
+  Maintain standardized assignee names for work orders and records.
+
 - [**Employee Management**](./adminEmployees.md)<br />
   Maintain a list of employees for work orders, shifts, and timesheets.
+
+- [**Employee List Management**](./adminEmployeeLists.md)<br />
+  Create predefined employee groups for quick selection.
 
 - [**Equipment Management**](./adminEquipment.md)<br />
   Manage vehicles, tools, and other equipment.
 
 - [**Location Management**](./adminLocations.md)<br />
   Maintain predefined locations for quick selection.
+
+- [**Notification Configuration**](./adminNotificationConfigurations.md)<br />
+  Configure automated notifications for events in ShiftLog.
 
 ---
 

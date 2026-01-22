@@ -142,6 +142,17 @@ All API endpoints are automatically logged, including:
 
 ## Related Documentation
 
-- [API Documentation](https://cityssm.github.io/shiftlog/docs/api.md) (if available)
-- [User Management](./adminUsers.md) - Managing user API keys
-- [Application Settings](./adminSettings.md) - Configuring API features
+- [Administrator Tools](./admin.md) - Main admin documentation
+- [API Audit Logs](./adminApiAuditLogs.md)
+- [Application Settings](./adminSettings.md)
+- [Assigned To Management](./adminAssignedTo.md)
+- [Data Lists](./adminDataLists.md)
+- [Employee List Management](./adminEmployeeLists.md)
+- [Employee Management](./adminEmployees.md)
+- [Equipment Management](./adminEquipment.md)
+- [Location Management](./adminLocations.md)
+- [Notification Configuration](./adminNotificationConfigurations.md)
+- [Tag Management](./adminTags.md)
+- [User Group Management](./adminUserGroups.md)
+- [User Management](./adminUsers.md)
+- [Work Order Types](./adminWorkOrderTypes.md)
