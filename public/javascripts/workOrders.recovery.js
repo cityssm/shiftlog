@@ -85,7 +85,7 @@
         </td>
         <td>
           <button
-            class="button is-small is-success is-light"
+            class="button is-small is-primary is-light"
             data-work-order-id="${workOrder.workOrderId}"
             type="button"
           >
