@@ -90,6 +90,16 @@ interface WorkOrderWithOverdue {
     shadowUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-shadow.png`
   })
 
+  // Custom icon for closed work orders (grey)
+  const closedIcon = new L.Icon({
+    iconAnchor,
+    iconSize,
+    iconUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-icon-grey.png`,
+    popupAnchor,
+    shadowSize,
+    shadowUrl: `${shiftLog.urlPrefix}/images/leaflet-color-markers/marker-shadow.png`
+  })
+
   function buildWorkOrderPopupContent(
     workOrder: WorkOrder,
     isOverdue: boolean
@@ -166,9 +176,14 @@ interface WorkOrderWithOverdue {
     if (workOrders.length > 1) {
       // Multiple work orders at this location - use orange icon
       icon = multipleIcon
+    } else if (workOrders[0].workOrder.workOrderCloseDateTime !== null) {
+      // Closed work order - use grey icon
+      icon = closedIcon
     } else if (workOrders[0].isOverdue) {
+      // Overdue work order - use red icon
       icon = overdueIcon
     } else {
+      // Open work order - use green icon
       icon = openIcon
     }
 
