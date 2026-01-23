@@ -251,7 +251,7 @@ declare const exports: {
     )
 
     // eslint-disable-next-line no-unsanitized/property
-    rowElement.innerHTML = /*html*/ `
+    rowElement.innerHTML = /* html */ `
       <td>
         ${
           employee.recordSync_isSynced
@@ -305,7 +305,7 @@ declare const exports: {
 
   function renderEmployees(employees: Employee[]): void {
     if (employees.length === 0) {
-      employeesContainerElement.innerHTML = /*html*/ `
+      employeesContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
           <div class="message-body">
             No employees available.
@@ -319,7 +319,7 @@ declare const exports: {
     tableElement.className =
       'table is-fullwidth is-striped is-hoverable has-sticky-header'
 
-    tableElement.innerHTML = /*html*/ `
+    tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
           <th>

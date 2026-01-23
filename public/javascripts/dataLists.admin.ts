@@ -203,13 +203,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddDataListItem`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
+        (responseJSON: {
+          success: boolean
 
-            items?: DataListItemWithDetails[]
-          }
-
+          items?: DataListItemWithDetails[]
+        }) => {
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
 
@@ -340,13 +338,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateDataListItem`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
+        (responseJSON: {
+          success: boolean
 
-            items?: DataListItemWithDetails[]
-          }
-
+          items?: DataListItemWithDetails[]
+        }) => {
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
             renderDataListItems(dataListKey as string, responseJSON.items)
@@ -478,12 +474,11 @@ declare const exports: {
               dataListKey,
               dataListItemId: Number.parseInt(dataListItemId, 10)
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                success: boolean
-                items?: DataListItemWithDetails[]
-              }
+            (responseJSON: {
+              success: boolean
 
+              items?: DataListItemWithDetails[]
+            }) => {
               if (responseJSON.success && responseJSON.items !== undefined) {
                 renderDataListItems(dataListKey, responseJSON.items)
                 bulmaJS.alert({
@@ -586,13 +581,11 @@ declare const exports: {
             dataListKey,
             dataListItemIds
           },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as {
-              success: boolean
+          (responseJSON: {
+            success: boolean
 
-              items?: DataListItemWithDetails[]
-            }
-
+            items?: DataListItemWithDetails[]
+          }) => {
             if (!responseJSON.success) {
               bulmaJS.alert({
                 contextualColorName: 'danger',

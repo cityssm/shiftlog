@@ -386,17 +386,16 @@ declare const exports: {
         ) as HTMLSelectElement
 
         // eslint-disable-next-line no-unsanitized/property
-        userSelect.innerHTML =
-          '<option value="">Select a user...</option>' +
-          exports.users
+        userSelect.innerHTML = `<option value="">Select a user...</option>
+          ${exports.users
             .map(
-              (user) => /*html*/ `
+              (user) => /* html */ `
                 <option value="${cityssm.escapeHTML(user.userName)}">
                   ${cityssm.escapeHTML(user.userName)}
                 </option>
               `
             )
-            .join('')
+            .join('')}`
 
         // Get current members
         cityssm.postJSON(
@@ -434,7 +433,7 @@ declare const exports: {
     const rowElement = document.createElement('tr')
 
     // eslint-disable-next-line no-unsanitized/property
-    rowElement.innerHTML = /*html*/ `
+    rowElement.innerHTML = /* html */ `
       <td>${cityssm.escapeHTML(userGroup.userGroupName)}</td>
       <td class="has-text-centered">${userGroup.memberCount ?? 0}</td>
       <td class="has-text-right">

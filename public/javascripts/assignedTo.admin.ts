@@ -129,15 +129,13 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddAssignedToItem`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
+        (responseJSON: {
+          success: boolean
 
-            errorMessage?: string
+          errorMessage?: string
 
-            assignedToId?: number
-          }
-
+          assignedToId?: number
+        }) => {
           if (responseJSON.success && responseJSON.assignedToId) {
             assignedToList.push({
               assignedToId: responseJSON.assignedToId,
@@ -232,9 +230,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             const itemIndex = assignedToList.findIndex(
               (item) =>
@@ -348,9 +344,7 @@ declare const exports: {
         {
           assignedToId
         },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             assignedToList = assignedToList.filter(
               (item) => item.assignedToId !== assignedToId
@@ -402,9 +396,7 @@ declare const exports: {
         {
           assignedToIds
         },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (!responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'danger',

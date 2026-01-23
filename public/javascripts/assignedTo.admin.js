@@ -77,8 +77,7 @@
         function doAddAssignedTo(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddAssignedToItem`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddAssignedToItem`, addForm, (responseJSON) => {
                 if (responseJSON.success && responseJSON.assignedToId) {
                     assignedToList.push({
                         assignedToId: responseJSON.assignedToId,
@@ -136,8 +135,7 @@
         function doUpdateAssignedTo(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`, editForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`, editForm, (responseJSON) => {
                 if (responseJSON.success) {
                     const itemIndex = assignedToList.findIndex((item) => assignedToId !== undefined &&
                         item.assignedToId === Number.parseInt(assignedToId, 10));
@@ -200,8 +198,7 @@
         function doDelete() {
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteAssignedToItem`, {
                 assignedToId
-            }, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            }, (responseJSON) => {
                 if (responseJSON.success) {
                     assignedToList = assignedToList.filter((item) => item.assignedToId !== assignedToId);
                     renderAssignedToList();
@@ -239,8 +236,7 @@
             }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderAssignedToItems`, {
                 assignedToIds
-            }, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            }, (responseJSON) => {
                 if (!responseJSON.success) {
                     bulmaJS.alert({
                         contextualColorName: 'danger',

@@ -85,6 +85,7 @@ declare const bulmaJS: BulmaJS
       // Update attachments count
       const attachmentsCountElement =
         document.querySelector('#attachmentsCount')
+        
       if (attachmentsCountElement !== null) {
         attachmentsCountElement.textContent = attachments.length.toString()
       }

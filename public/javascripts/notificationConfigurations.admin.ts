@@ -53,7 +53,7 @@ declare const exports: {
         case 'msTeams': {
           const url = config.webhookUrl ?? ''
 
-          const displayUrl = url.length > 40 ? url.slice(0, 40) + '...' : url
+          const displayUrl = url.length > 40 ? `${url.slice(0, 40)}...` : url
 
           return `Webhook: ${cityssm.escapeHTML(displayUrl)}`
         }
@@ -113,7 +113,7 @@ declare const exports: {
           <span class="notification-type">
             ${cityssm.escapeHTML(config.notificationType)}
           </span>
-          ${notificationTypeDetail ? `<br><span class="is-size-7 has-text-grey">${notificationTypeDetail}</span>` : ''}
+          ${notificationTypeDetail ? `<br /><span class="is-size-7 has-text-grey">${notificationTypeDetail}</span>` : ''}
         </td>
         <td>
           ${assignedToDisplay}
@@ -212,6 +212,7 @@ declare const exports: {
           if (configIndex !== -1) {
             notificationConfigurations[configIndex].isActive =
               !notificationConfigurations[configIndex].isActive
+
             renderNotificationConfigurations()
           }
         } else {
@@ -266,7 +267,7 @@ declare const exports: {
                 id="notificationTypeForm--recipientEmails"
                 name="recipientEmails"
                 type="text"
-                value="${cityssm.escapeHTML(emailConfig?.recipientEmails?.join(', ') ?? '')}"
+                value="${cityssm.escapeHTML(emailConfig?.recipientEmails.join(', ') ?? '')}"
                 required
               />
             </div>
@@ -349,8 +350,8 @@ declare const exports: {
           notificationTypeFormJson = JSON.stringify({
             recipientEmails: recipientEmailsString
               .split(',')
-              .map((e) => e.trim())
-              .filter((e) => e !== '')
+              .map((recipientEmail) => recipientEmail.trim())
+              .filter((recipientEmail) => recipientEmail !== '')
           } satisfies EmailNotificationConfig)
 
           break
@@ -498,7 +499,7 @@ declare const exports: {
         modalElement
           .querySelector('form')
           ?.addEventListener('submit', doAddNotificationConfiguration)
-        
+
         // Focus the notification queue field
         const queueSelect = modalElement.querySelector(
           '#addNotificationConfiguration--notificationQueue'
@@ -560,8 +561,8 @@ declare const exports: {
           notificationTypeFormJson = JSON.stringify({
             recipientEmails: recipientEmailsString
               .split(',')
-              .map((e) => e.trim())
-              .filter((e) => e !== '')
+              .map((recipientEmail) => recipientEmail.trim())
+              .filter((recipientEmail) => recipientEmail !== '')
           } satisfies EmailNotificationConfig)
 
           break

@@ -358,7 +358,7 @@ declare const exports: {
 
   function renderLocations(locations: Location[]): void {
     if (locations.length === 0) {
-      locationsContainerElement.innerHTML = /*html*/ `
+      locationsContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
           <div class="message-body">
             No locations available.
@@ -372,7 +372,7 @@ declare const exports: {
     tableElement.className =
       'table is-fullwidth is-striped is-hoverable has-sticky-header'
 
-    tableElement.innerHTML = /*html*/ `
+    tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
           <th>

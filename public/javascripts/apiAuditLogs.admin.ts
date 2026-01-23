@@ -38,25 +38,23 @@ declare const exports: {
       okButton: {
         contextualColorName: 'warning',
         text: 'Reset API Key',
-        
+
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doResetUserApiKey`,
             {
               userName
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                message?: string
-                success: boolean
-                apiKey?: string
-              }
-
+            (responseJSON: {
+              message?: string
+              success: boolean
+              apiKey?: string
+            }) => {
               if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'API Key Reset',
-                  
+
                   message: `API key has been successfully reset for user "${userName}".`
                 })
 
@@ -66,7 +64,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Resetting API Key',
-                  
+
                   message: responseJSON.message ?? 'Please try again.'
                 })
               }
@@ -135,7 +133,7 @@ declare const exports: {
 
       let displayEndpoint = log.endpoint
       if (log.endpoint.length > maxEndpointLength) {
-        displayEndpoint = `...${  log.endpoint.slice(-maxEndpointLength)}`
+        displayEndpoint = `...${log.endpoint.slice(-maxEndpointLength)}`
       }
 
       const escapedContent = {
@@ -222,13 +220,11 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`,
       requestBody,
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          logs: ApiAuditLog[]
-          success: boolean
-          totalCount: number
-        }
-
+      (responseJSON: {
+        logs: ApiAuditLog[]
+        success: boolean
+        totalCount: number
+      }) => {
         if (responseJSON.success) {
           totalCount = responseJSON.totalCount
           renderAuditLogs(responseJSON.logs)

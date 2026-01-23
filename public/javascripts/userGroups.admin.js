@@ -252,15 +252,14 @@
                 // Populate user dropdown
                 const userSelect = modalElement.querySelector('[name="userName"]');
                 // eslint-disable-next-line no-unsanitized/property
-                userSelect.innerHTML =
-                    '<option value="">Select a user...</option>' +
-                        exports.users
-                            .map((user) => /*html*/ `
+                userSelect.innerHTML = `<option value="">Select a user...</option>
+          ${exports.users
+                    .map((user) => /* html */ `
                 <option value="${cityssm.escapeHTML(user.userName)}">
                   ${cityssm.escapeHTML(user.userName)}
                 </option>
               `)
-                            .join('');
+                    .join('')}`;
                 // Get current members
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetUserGroup`, { userGroupId }, (rawResponseJSON) => {
                     const responseJSON = rawResponseJSON;
@@ -285,7 +284,7 @@
     function buildUserGroupRowElement(userGroup) {
         const rowElement = document.createElement('tr');
         // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML = /*html*/ `
+        rowElement.innerHTML = /* html */ `
       <td>${cityssm.escapeHTML(userGroup.userGroupName)}</td>
       <td class="has-text-centered">${userGroup.memberCount ?? 0}</td>
       <td class="has-text-right">

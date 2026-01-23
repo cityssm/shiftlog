@@ -50,14 +50,12 @@ declare const exports: {
             {
               userName
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                message?: string
-                success: boolean
+            (responseJSON: {
+              message?: string
+              success: boolean
 
-                users?: DatabaseUser[]
-              }
-
+              users?: DatabaseUser[]
+            }) => {
               if (responseJSON.success) {
                 // Update the users list with the new data from the server
                 if (responseJSON.users !== undefined) {
@@ -473,7 +471,7 @@ declare const exports: {
     }
 
     // eslint-disable-next-line no-unsanitized/property
-    rowElement.innerHTML += /*html*/ `
+    rowElement.innerHTML += /* html */ `
       <td class="has-text-centered has-border-left">
         <button
           class="button is-small permission-toggle ${user.isAdmin ? activePermissionClass : inactivePermissionClass}"
@@ -526,24 +524,36 @@ declare const exports: {
     `
 
     // eslint-disable-next-line no-unsanitized/property
-    tableElement.innerHTML = /*html*/ `
+    tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
           <th rowspan="2">User Name</th>
           <th class="has-text-centered has-border-left" rowspan="2">Can Login</th>
           ${
             shiftLog.shiftsAreEnabled
-              ? `<th class="has-text-centered has-border-left" colspan="3">${cityssm.escapeHTML(shiftLog.shiftsSectionName)}</th>`
+              ? /* html */ `
+                <th class="has-text-centered has-border-left" colspan="3">
+                  ${cityssm.escapeHTML(shiftLog.shiftsSectionName)}
+                </th>
+              `
               : ''
           }
           ${
             shiftLog.workOrdersAreEnabled
-              ? `<th class="has-text-centered has-border-left" colspan="3">${cityssm.escapeHTML(shiftLog.workOrdersSectionName)}</th>`
+              ? /* html */ `
+                <th class="has-text-centered has-border-left" colspan="3">
+                  ${cityssm.escapeHTML(shiftLog.workOrdersSectionName)}
+                </th>
+              `
               : ''
           }
           ${
             shiftLog.timesheetsAreEnabled
-              ? `<th class="has-text-centered has-border-left" colspan="3">${cityssm.escapeHTML(shiftLog.timesheetsSectionName)}</th>`
+              ? /* html */ `
+                <th class="has-text-centered has-border-left" colspan="3">
+                  ${cityssm.escapeHTML(shiftLog.timesheetsSectionName)}
+                </th>
+              `
               : ''
           }
           <th class="has-text-centered has-border-left" rowspan="2">Is Admin</th>

@@ -136,7 +136,7 @@
         rowElement.dataset.employeeNumber = employee.employeeNumber;
         const userGroup = exports.userGroups.find((ug) => ug.userGroupId === employee.userGroupId);
         // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML = /*html*/ `
+        rowElement.innerHTML = /* html */ `
       <td>
         ${employee.recordSync_isSynced
             ? /* html */ `
@@ -186,7 +186,7 @@
     }
     function renderEmployees(employees) {
         if (employees.length === 0) {
-            employeesContainerElement.innerHTML = /*html*/ `
+            employeesContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
           <div class="message-body">
             No employees available.
@@ -198,7 +198,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable has-sticky-header';
-        tableElement.innerHTML = /*html*/ `
+        tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
           <th>

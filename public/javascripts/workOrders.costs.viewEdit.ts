@@ -5,6 +5,7 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+  
   isEdit: boolean
 }
 
@@ -175,7 +176,7 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderCost`,
           formElement,
-          (responseJSON) => {
+          (responseJSON: { success: boolean }) => {
             if (responseJSON.success) {
               closeModalFunction()
               loadCosts()
@@ -233,7 +234,7 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderCost`,
           formElement,
-          (responseJSON) => {
+          (responseJSON: { success: boolean }) => {
             if (responseJSON.success) {
               closeModalFunction()
               formElement.reset()
@@ -290,7 +291,7 @@ declare const bulmaJS: BulmaJS
               {
                 workOrderCostId
               },
-              (responseJSON) => {
+              (responseJSON: { success: boolean }) => {
                 if (responseJSON.success) {
                   loadCosts()
                 } else {
@@ -313,6 +314,7 @@ declare const bulmaJS: BulmaJS
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as {
             success: boolean
+
             costs: WorkOrderCost[]
           }
 

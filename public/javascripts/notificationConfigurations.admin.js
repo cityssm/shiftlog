@@ -13,7 +13,7 @@
                 }
                 case 'msTeams': {
                     const url = config.webhookUrl ?? '';
-                    const displayUrl = url.length > 40 ? url.slice(0, 40) + '...' : url;
+                    const displayUrl = url.length > 40 ? `${url.slice(0, 40)}...` : url;
                     return `Webhook: ${cityssm.escapeHTML(displayUrl)}`;
                 }
                 case 'ntfy': {
@@ -60,7 +60,7 @@
           <span class="notification-type">
             ${cityssm.escapeHTML(config.notificationType)}
           </span>
-          ${notificationTypeDetail ? `<br><span class="is-size-7 has-text-grey">${notificationTypeDetail}</span>` : ''}
+          ${notificationTypeDetail ? `<br /><span class="is-size-7 has-text-grey">${notificationTypeDetail}</span>` : ''}
         </td>
         <td>
           ${assignedToDisplay}
@@ -180,7 +180,7 @@
                 id="notificationTypeForm--recipientEmails"
                 name="recipientEmails"
                 type="text"
-                value="${cityssm.escapeHTML(emailConfig?.recipientEmails?.join(', ') ?? '')}"
+                value="${cityssm.escapeHTML(emailConfig?.recipientEmails.join(', ') ?? '')}"
                 required
               />
             </div>
@@ -246,8 +246,8 @@
                     notificationTypeFormJson = JSON.stringify({
                         recipientEmails: recipientEmailsString
                             .split(',')
-                            .map((e) => e.trim())
-                            .filter((e) => e !== '')
+                            .map((recipientEmail) => recipientEmail.trim())
+                            .filter((recipientEmail) => recipientEmail !== '')
                     });
                     break;
                 }
@@ -369,8 +369,8 @@
                     notificationTypeFormJson = JSON.stringify({
                         recipientEmails: recipientEmailsString
                             .split(',')
-                            .map((e) => e.trim())
-                            .filter((e) => e !== '')
+                            .map((recipientEmail) => recipientEmail.trim())
+                            .filter((recipientEmail) => recipientEmail !== '')
                     });
                     break;
                 }

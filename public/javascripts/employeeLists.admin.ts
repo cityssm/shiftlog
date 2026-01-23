@@ -555,7 +555,7 @@ declare const exports: {
   ): void {
     // Sanitize dateKey for use in CSS selector (remove special characters)
     const sanitizedDateKey = seniorityDate
-      ? seniorityDate.replaceAll(/[^a-z0-9-]/gi, '-')
+      ? seniorityDate.replaceAll(/[^a-z0-9\-]/giv, '-')
       : 'nodate'
 
     const containerId = `members--${employeeListId}--${sanitizedDateKey}`
@@ -683,7 +683,7 @@ declare const exports: {
       const sanitizedDateKey =
         dateKey === 'no-date'
           ? 'nodate'
-          : dateKey.replaceAll(/[^a-z0-9-]/gi, '-')
+          : dateKey.replaceAll(/[^a-z0-9\-]/giv, '-')
 
       const containerId = `members--${employeeList.employeeListId}--${sanitizedDateKey}`
 

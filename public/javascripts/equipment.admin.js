@@ -141,7 +141,7 @@
     }
     function renderEquipment(equipmentList) {
         if (equipmentList.length === 0) {
-            equipmentContainerElement.innerHTML = /*html*/ `
+            equipmentContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
           <div class="message-body">
             No equipment records available.
@@ -153,7 +153,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable has-sticky-header';
-        tableElement.innerHTML = /*html*/ `
+        tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
           <th>
