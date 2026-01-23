@@ -501,11 +501,10 @@ declare const Sortable: {
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`,
         {},
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            milestones: WorkOrderMilestone[]
-          }
+        (responseJSON: {
+          success: boolean
+          milestones: WorkOrderMilestone[]
+        }) => {
 
           if (responseJSON.success) {
             renderMilestones(responseJSON.milestones)

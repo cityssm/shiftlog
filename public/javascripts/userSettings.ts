@@ -27,11 +27,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-          }
-
+        (responseJSON: {
+          success: boolean
+        }) => {
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -100,12 +98,10 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/dashboard/doResetApiKey`,
       {},
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          apiKey?: string
-          success: boolean
-        }
-
+      (responseJSON: {
+        apiKey?: string
+        success: boolean
+      }) => {
         if (responseJSON.success) {
           bulmaJS.alert({
             contextualColorName: 'success',

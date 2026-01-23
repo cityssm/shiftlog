@@ -323,10 +323,7 @@ declare const exports: {
         showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
         showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
       },
-      (rawResponseJSON) => {
-        const responseJSON =
-          rawResponseJSON as unknown as DoGetCalendarEventsResponse
-
+      (responseJSON: DoGetCalendarEventsResponse) => {
         if (responseJSON.success) {
           renderCalendar(responseJSON.events)
         }

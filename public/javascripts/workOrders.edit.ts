@@ -93,14 +93,13 @@ declare const exports: {
     cityssm.postJSON(
       `${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`,
       workOrderFormElement,
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          success: boolean
+      (responseJSON: {
+        success: boolean
 
-          errorMessage?: string
+        errorMessage?: string
 
-          workOrderId?: number
-        }
+        workOrderId?: number
+      }) => {
 
         if (responseJSON.success) {
           cityssm.disableNavBlocker()
@@ -177,15 +176,14 @@ declare const exports: {
           {
             searchString: requestorSearchString
           },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as {
-              success: boolean
+          (responseJSON: {
+            success: boolean
 
-              requestors?: Array<{
-                requestorContactInfo?: string
-                requestorName: string
-              }>
-            }
+            requestors?: Array<{
+              requestorContactInfo?: string
+              requestorName: string
+            }>
+          }) => {
 
             if (responseJSON.success && responseJSON.requestors) {
               requestorsData = responseJSON.requestors
@@ -316,12 +314,11 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrderUrlPrefix}/doGetLocationSuggestions`,
         { searchString },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
+        (responseJSON: {
+          success: boolean
 
-            locations?: Location[]
-          }
+          locations?: Location[]
+        }) => {
 
           if (responseJSON.success && responseJSON.locations) {
             locationsData = responseJSON.locations
@@ -673,12 +670,11 @@ declare const exports: {
               {
                 workOrderId
               },
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as {
-                  success: boolean
-                  redirectUrl?: string
-                  errorMessage?: string
-                }
+              (responseJSON: {
+                success: boolean
+                redirectUrl?: string
+                errorMessage?: string
+              }) => {
 
                 if (
                   responseJSON.success &&
