@@ -1,5 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @cspell/spellchecker */
+/* eslint-disable @cspell/spellchecker -- Configuration for test globals */
 export const testUpdate = '~testuser';
 export const testInquiry = '~testinquiry';
 export const testAdmin = '~administrator';

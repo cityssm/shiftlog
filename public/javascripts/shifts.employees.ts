@@ -440,11 +440,10 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftCrews`,
       { shiftId },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          success: boolean
-          shiftCrews: ShiftCrew[]
-        }
+      (responseJSON: {
+        success: boolean
+        shiftCrews: ShiftCrew[]
+      }) => {
         shiftCrews = responseJSON.shiftCrews
         renderShiftCrews()
         updateCounts()
@@ -456,11 +455,10 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftEmployees`,
       { shiftId },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          success: boolean
-          shiftEmployees: ShiftEmployee[]
-        }
+      (responseJSON: {
+        success: boolean
+        shiftEmployees: ShiftEmployee[]
+      }) => {
         shiftEmployees = responseJSON.shiftEmployees
         renderShiftEmployees()
         updateCounts()
@@ -472,11 +470,10 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftEquipment`,
       { shiftId },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          success: boolean
-          shiftEquipment: ShiftEquipment[]
-        }
+      (responseJSON: {
+        success: boolean
+        shiftEquipment: ShiftEquipment[]
+      }) => {
         shiftEquipment = responseJSON.shiftEquipment
         renderShiftEquipment()
         updateCounts()
@@ -495,13 +492,12 @@ declare const exports: {
       // eslint-disable-next-line no-secrets/no-secrets
       `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`,
       {},
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          success: boolean
-          crews: Crew[]
-          employees: Employee[]
-          equipment: Equipment[]
-        }
+      (responseJSON: {
+        success: boolean
+        crews: Crew[]
+        employees: Employee[]
+        equipment: Equipment[]
+      }) => {
         availableCrews = responseJSON.crews
         availableEmployees = responseJSON.employees
         availableEquipment = responseJSON.equipment
@@ -520,9 +516,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftCrew`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             refreshData()
             switchToTab('tab-content--crews')
@@ -594,9 +588,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftEmployee`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             refreshData()
             switchToTab('tab-content--employees')
@@ -691,12 +683,10 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftEquipment`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            message?: string
-          }
-
+        (responseJSON: {
+          success: boolean
+          message?: string
+        }) => {
           if (responseJSON.success) {
             refreshData()
             switchToTab('tab-content--equipment')
@@ -799,9 +789,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftCrewNote`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -867,9 +855,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEmployee`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -952,9 +938,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEmployeeNote`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -1023,12 +1007,10 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEquipment`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            message?: string
-          }
-
+        (responseJSON: {
+          success: boolean
+          message?: string
+        }) => {
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -1113,9 +1095,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEquipmentNote`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -1185,9 +1165,7 @@ declare const exports: {
               shiftId,
               crewId
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
-
+            (responseJSON: { success: boolean }) => {
               if (responseJSON.success) {
                 refreshData()
                 bulmaJS.alert({
@@ -1233,9 +1211,7 @@ declare const exports: {
               shiftId,
               employeeNumber
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
-
+            (responseJSON: { success: boolean }) => {
               if (responseJSON.success) {
                 refreshData()
                 bulmaJS.alert({
@@ -1282,9 +1258,7 @@ declare const exports: {
               shiftId,
               equipmentNumber
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
-
+            (responseJSON: { success: boolean }) => {
               if (responseJSON.success) {
                 refreshData()
                 bulmaJS.alert({
@@ -1319,9 +1293,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doCopyFromPreviousShift`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
-
+        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
             refreshData()
             bulmaJS.alert({
@@ -1347,28 +1319,26 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doGetPreviousShifts`,
         searchFormElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
+        (responseJSON: {
+          success: boolean
 
-            shifts: Array<{
-              shiftId: number
+          shifts: Array<{
+            shiftId: number
 
-              shiftDate: string
-              shiftDescription: string
+            shiftDate: string
+            shiftDescription: string
 
-              shiftTimeDataListItem?: string
-              shiftTypeDataListItem?: string
+            shiftTimeDataListItem?: string
+            shiftTypeDataListItem?: string
 
-              supervisorFirstName?: string
-              supervisorLastName?: string
+            supervisorFirstName?: string
+            supervisorLastName?: string
 
-              crewsCount?: number
-              employeesCount?: number
-              equipmentCount?: number
-            }>
-          }
-
+            crewsCount?: number
+            employeesCount?: number
+            equipmentCount?: number
+          }>
+        }) => {
           const resultsContainer = document.querySelector(
             '#container--searchResults'
           ) as HTMLElement
