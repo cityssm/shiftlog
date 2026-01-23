@@ -25,6 +25,8 @@ declare const exports: {
   const WCAG_AA_NORMAL_RATIO = 4.5
   const WCAG_AAA_NORMAL_RATIO = 7
 
+  /* eslint-disable @typescript-eslint/no-magic-numbers */
+
   /**
    * Convert a hex color to RGB values
    */
@@ -55,11 +57,11 @@ declare const exports: {
     const bsRGB = rgb.b / 255
 
     const r =
-      rsRGB <= 0.03928 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4
+      rsRGB <= 0.039_28 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4
     const g =
-      gsRGB <= 0.03928 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4
+      gsRGB <= 0.039_28 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4
     const b =
-      bsRGB <= 0.03928 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4
+      bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b
   }
@@ -80,6 +82,8 @@ declare const exports: {
     return (lighter + 0.05) / (darker + 0.05)
   }
 
+  /* eslint-enable @typescript-eslint/no-magic-numbers */
+
   /**
    * Get WCAG compliance level for a contrast ratio
    */
@@ -97,39 +101,41 @@ declare const exports: {
    * Update the preview and contrast information for a tag
    */
   function updateTagPreview(
-    previewElement: HTMLElement,
-    contrastRatioElement: HTMLElement,
-    wcagAAElement: HTMLElement,
-    wcagAAAElement: HTMLElement,
+    elements: {
+      previewElement: HTMLElement
+      contrastRatioElement: HTMLElement
+      wcagAAElement: HTMLElement
+      wcagAAAElement: HTMLElement
+    },
     backgroundColor: string,
     textColor: string,
     tagName?: string
   ): void {
-    previewElement.style.backgroundColor = backgroundColor
-    previewElement.style.color = textColor
+    elements.previewElement.style.backgroundColor = backgroundColor
+    elements.previewElement.style.color = textColor
     if (tagName !== undefined) {
-      previewElement.textContent = tagName
+      elements.previewElement.textContent = tagName
     }
 
     const contrastRatio = getContrastRatio(backgroundColor, textColor)
     const compliance = getWCAGCompliance(contrastRatio)
 
-    contrastRatioElement.textContent = contrastRatio.toFixed(2)
+    elements.contrastRatioElement.textContent = contrastRatio.toFixed(2)
 
     // Clear existing content
-    wcagAAElement.textContent = ''
-    wcagAAAElement.textContent = ''
+    elements.wcagAAElement.textContent = ''
+    elements.wcagAAAElement.textContent = ''
 
     // Create and append status badges
     const aaSpan = document.createElement('span')
     aaSpan.className = compliance.aa ? 'tag is-success' : 'tag is-danger'
     aaSpan.textContent = compliance.aa ? 'Pass' : 'Fail'
-    wcagAAElement.append(aaSpan)
+    elements.wcagAAElement.append(aaSpan)
 
     const aaaSpan = document.createElement('span')
     aaaSpan.className = compliance.aaa ? 'tag is-success' : 'tag is-danger'
     aaaSpan.textContent = compliance.aaa ? 'Pass' : 'Fail'
-    wcagAAAElement.append(aaaSpan)
+    elements.wcagAAAElement.append(aaaSpan)
   }
 
   // Pagination settings
@@ -184,7 +190,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Tag Deleted',
-                  
+
                   message: 'Tag has been successfully deleted.'
                 })
               } else {
@@ -265,24 +271,31 @@ declare const exports: {
         const tagNameInput = modalElement.querySelector(
           '#editTag--tagName'
         ) as HTMLInputElement
+
         const tagNameDisplayInput = modalElement.querySelector(
           '#editTag--tagNameDisplay'
         ) as HTMLInputElement
+
         const backgroundColorInput = modalElement.querySelector(
           '#editTag--tagBackgroundColor'
         ) as HTMLInputElement
+
         const textColorInput = modalElement.querySelector(
           '#editTag--tagTextColor'
         ) as HTMLInputElement
+
         const previewElement = modalElement.querySelector(
           '#editTag--preview'
         ) as HTMLElement
+
         const contrastRatioElement = modalElement.querySelector(
           '#editTag--contrastRatio'
         ) as HTMLElement
+
         const wcagAAElement = modalElement.querySelector(
           '#editTag--wcagAA'
         ) as HTMLElement
+
         const wcagAAAElement = modalElement.querySelector(
           '#editTag--wcagAAA'
         ) as HTMLElement
@@ -295,13 +308,15 @@ declare const exports: {
         // Update preview when colors change
         function updatePreview(): void {
           updateTagPreview(
-            previewElement,
-            contrastRatioElement,
-            wcagAAElement,
-            wcagAAAElement,
+            {
+              previewElement,
+              contrastRatioElement,
+              wcagAAElement,
+              wcagAAAElement
+            },
             backgroundColorInput.value,
             textColorInput.value,
-            tag.tagName
+            tag?.tagName
           )
         }
 
@@ -402,10 +417,12 @@ declare const exports: {
         // Update preview when colors or name change
         function updatePreview(): void {
           updateTagPreview(
-            previewElement,
-            contrastRatioElement,
-            wcagAAElement,
-            wcagAAAElement,
+            {
+              previewElement,
+              contrastRatioElement,
+              wcagAAElement,
+              wcagAAAElement
+            },
             backgroundColorInput.value,
             textColorInput.value,
             tagNameInput.value || 'Sample Tag'
@@ -549,6 +566,8 @@ declare const exports: {
       }
 
       paginationHTML += '</ul>'
+
+      // eslint-disable-next-line no-unsanitized/property
       paginationElement.innerHTML = paginationHTML
 
       for (const link of paginationElement.querySelectorAll(

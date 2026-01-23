@@ -1,6 +1,6 @@
 # ShiftLog
 
-![ShiftLog Login](./docs/images/login.png)
+![ShiftLog Login](./docs/images/dashboard.png)
 
 [![DeepSource](https://app.deepsource.com/gh/cityssm/shiftlog.svg/?label=active+issues&show_trend=true&token=xMKU6Aw2j3MlO48Om255Tnt8)](https://app.deepsource.com/gh/cityssm/shiftlog/)
 [![codecov](https://codecov.io/gh/cityssm/shiftlog/graph/badge.svg?token=PT7SROIHN0)](https://codecov.io/gh/cityssm/shiftlog)
@@ -17,10 +17,9 @@ A lightweight and flexible work management system with:
 
 Built with the following use cases in mind:
 
-- Graffiti cleanup work order tracking
+- Community Services and Public Works work order management
 - Accessibility complaint management
 - Freedom of information request tracking
-- Public works work order management
 
 ## Features
 
@@ -32,12 +31,24 @@ Thanks to the powerful [Leaflet](https://leafletjs.com/) plugin
 and the community at [OpenStreetMap](https://www.openstreetmap.org/about),
 mapping does not need to come with a huge cost.
 
+### Notifications
+
+![Notifications via ntfy](./docs/images/notification-ntfy.png)
+
+Includes basic notification functionality for:
+
+- E-mail.
+- Microsoft Teams.
+- [ntfy](https://ntfy.sh/)
+  (notifications for web browsers, and Android and iPhone devices).
+
 ### Integration Friendly
 
-Currently has data sync integrations with
-[Avanti](https://www.avanti.ca/),
-[CentralSquare](https://www.centralsquare.com/)'s Pearl,
-and [ArcGIS](https://www.esri.com/en-us/arcgis/products/arcgis-online/overview).
+Currently has data sync integrations with applications like:
+
+- [Avanti](https://www.avanti.ca/)
+- [CentralSquare](https://www.centralsquare.com/)'s Pearl
+- [ArcGIS](https://www.esri.com/en-us/arcgis/products/arcgis-online/overview).
 
 ## Usage
 

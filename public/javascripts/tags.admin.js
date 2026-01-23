@@ -6,6 +6,7 @@
     // WCAG Contrast Calculation Functions
     const WCAG_AA_NORMAL_RATIO = 4.5;
     const WCAG_AAA_NORMAL_RATIO = 7;
+    /* eslint-disable @typescript-eslint/no-magic-numbers */
     /**
      * Convert a hex color to RGB values
      */
@@ -29,9 +30,9 @@
         const rsRGB = rgb.r / 255;
         const gsRGB = rgb.g / 255;
         const bsRGB = rgb.b / 255;
-        const r = rsRGB <= 0.03928 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
-        const g = gsRGB <= 0.03928 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
-        const b = bsRGB <= 0.03928 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
+        const r = rsRGB <= 0.039_28 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
+        const g = gsRGB <= 0.039_28 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
+        const b = bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
         return 0.2126 * r + 0.7152 * g + 0.0722 * b;
     }
     /**
@@ -46,6 +47,7 @@
         const darker = Math.min(lum1, lum2);
         return (lighter + 0.05) / (darker + 0.05);
     }
+    /* eslint-enable @typescript-eslint/no-magic-numbers */
     /**
      * Get WCAG compliance level for a contrast ratio
      */
@@ -58,27 +60,27 @@
     /**
      * Update the preview and contrast information for a tag
      */
-    function updateTagPreview(previewElement, contrastRatioElement, wcagAAElement, wcagAAAElement, backgroundColor, textColor, tagName) {
-        previewElement.style.backgroundColor = backgroundColor;
-        previewElement.style.color = textColor;
+    function updateTagPreview(elements, backgroundColor, textColor, tagName) {
+        elements.previewElement.style.backgroundColor = backgroundColor;
+        elements.previewElement.style.color = textColor;
         if (tagName !== undefined) {
-            previewElement.textContent = tagName;
+            elements.previewElement.textContent = tagName;
         }
         const contrastRatio = getContrastRatio(backgroundColor, textColor);
         const compliance = getWCAGCompliance(contrastRatio);
-        contrastRatioElement.textContent = contrastRatio.toFixed(2);
+        elements.contrastRatioElement.textContent = contrastRatio.toFixed(2);
         // Clear existing content
-        wcagAAElement.textContent = '';
-        wcagAAAElement.textContent = '';
+        elements.wcagAAElement.textContent = '';
+        elements.wcagAAAElement.textContent = '';
         // Create and append status badges
         const aaSpan = document.createElement('span');
         aaSpan.className = compliance.aa ? 'tag is-success' : 'tag is-danger';
         aaSpan.textContent = compliance.aa ? 'Pass' : 'Fail';
-        wcagAAElement.append(aaSpan);
+        elements.wcagAAElement.append(aaSpan);
         const aaaSpan = document.createElement('span');
         aaaSpan.className = compliance.aaa ? 'tag is-success' : 'tag is-danger';
         aaaSpan.textContent = compliance.aaa ? 'Pass' : 'Fail';
-        wcagAAAElement.append(aaaSpan);
+        elements.wcagAAAElement.append(aaaSpan);
     }
     // Pagination settings
     const ITEMS_PER_PAGE = 20;
@@ -185,7 +187,12 @@
                 textColorInput.value = `#${tag.tagTextColor}`;
                 // Update preview when colors change
                 function updatePreview() {
-                    updateTagPreview(previewElement, contrastRatioElement, wcagAAElement, wcagAAAElement, backgroundColorInput.value, textColorInput.value, tag.tagName);
+                    updateTagPreview({
+                        previewElement,
+                        contrastRatioElement,
+                        wcagAAElement,
+                        wcagAAAElement
+                    }, backgroundColorInput.value, textColorInput.value, tag?.tagName);
                 }
                 // Initialize preview with current values
                 updatePreview();
@@ -249,7 +256,12 @@
                 const wcagAAAElement = modalElement.querySelector('#addTag--wcagAAA');
                 // Update preview when colors or name change
                 function updatePreview() {
-                    updateTagPreview(previewElement, contrastRatioElement, wcagAAElement, wcagAAAElement, backgroundColorInput.value, textColorInput.value, tagNameInput.value || 'Sample Tag');
+                    updateTagPreview({
+                        previewElement,
+                        contrastRatioElement,
+                        wcagAAElement,
+                        wcagAAAElement
+                    }, backgroundColorInput.value, textColorInput.value, tagNameInput.value || 'Sample Tag');
                 }
                 // Initialize preview with default values
                 updatePreview();
@@ -362,6 +374,7 @@
         `;
             }
             paginationHTML += '</ul>';
+            // eslint-disable-next-line no-unsanitized/property
             paginationElement.innerHTML = paginationHTML;
             for (const link of paginationElement.querySelectorAll('.pagination-link')) {
                 link.addEventListener('click', (clickEvent) => {
