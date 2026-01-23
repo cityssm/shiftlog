@@ -50,13 +50,11 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`,
       shiftFormElement,
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          success: boolean
-          shiftId?: number
-          errorMessage?: string
-        }
-
+      (responseJSON: {
+        success: boolean
+        shiftId?: number
+        errorMessage?: string
+      }) => {
         if (responseJSON.success) {
           if (isCreate && responseJSON.shiftId !== undefined) {
             globalThis.location.href = shiftLog.buildShiftURL(responseJSON.shiftId, true)
@@ -106,13 +104,11 @@ declare const exports: {
               {
                 shiftId
               },
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as {
-                  success: boolean
-                  redirectUrl?: string
-                  errorMessage?: string
-                }
-
+              (responseJSON: {
+                success: boolean
+                redirectUrl?: string
+                errorMessage?: string
+              }) => {
                 if (
                   responseJSON.success &&
                   responseJSON.redirectUrl !== undefined
