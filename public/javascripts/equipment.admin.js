@@ -175,7 +175,7 @@
         for (const equipment of equipmentList) {
             const rowElement = document.createElement('tr');
             // eslint-disable-next-line no-unsanitized/property
-            rowElement.innerHTML = /*html*/ `
+            rowElement.innerHTML = /* html */ `
         <td>
           ${equipment.recordSync_isSynced
                 ? /* html */ `
