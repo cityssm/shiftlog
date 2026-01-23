@@ -32,37 +32,41 @@
           </div>
           <p class="help">The name of the tag (e.g., "Priority", "In Progress", "Urgent")</p>
         </div>
-        <div class="field">
-          <label class="label" for="addTag--tagBackgroundColor">
-            Background Color
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="addTag--tagBackgroundColor"
-              name="tagBackgroundColor"
-              type="color"
-              value="#000000"
-              required
-            />
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="addTag--tagBackgroundColor">
+                Background Color
+              </label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="addTag--tagBackgroundColor"
+                  name="tagBackgroundColor"
+                  type="color"
+                  value="#000000"
+                  required
+                />
+              </div>
+            </div>
           </div>
-          <p class="help">Choose the background color for the tag</p>
-        </div>
-        <div class="field">
-          <label class="label" for="addTag--tagTextColor">
-            Text Color
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="addTag--tagTextColor"
-              name="tagTextColor"
-              type="color"
-              value="#FFFFFF"
-              required
-            />
+          <div class="column">
+            <div class="field">
+              <label class="label" for="addTag--tagTextColor">
+                Text Color
+              </label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="addTag--tagTextColor"
+                  name="tagTextColor"
+                  type="color"
+                  value="#FFFFFF"
+                  required
+                />
+              </div>
+            </div>
           </div>
-          <p class="help">Choose the text color for the tag</p>
         </div>
         <div class="field">
           <label class="label">Preview</label>
@@ -83,12 +87,12 @@
     </section>
     <footer class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-close-modal-button" type="button">
-          Cancel
-        </button>
         <button class="button is-success" type="submit" form="form--addTag">
           <span class="icon"><i class="fa-solid fa-plus"></i></span>
           <span>Add Tag</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
         </button>
       </div>
     </footer>

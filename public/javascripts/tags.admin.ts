@@ -713,7 +713,7 @@ declare const exports: {
                       ${cityssm.escapeHTML(orphanedTag.usageCount.toString())}
                     </td>
                     <td class="has-text-right">
-                      <button class="button is-primary is-small" data-tag-name="${cityssm.escapeHTML(orphanedTag.tagName)}" type="button">
+                      <button class="button is-success is-small" data-tag-name="${cityssm.escapeHTML(orphanedTag.tagName)}" type="button">
                         <span class="icon"><i class="fa-solid fa-plus"></i></span>
                         <span>Add</span>
                       </button>

@@ -89,48 +89,29 @@ router
     .post('/doAddUserGroupMember', handler_doAddUserGroupMember)
     .post('/doDeleteUserGroupMember', handler_doDeleteUserGroupMember);
 /*
- * Employees
- */
-router
-    .get('/employees', handler_employees)
-    .post('/doAddEmployee', handler_doAddEmployee)
-    .post('/doUpdateEmployee', handler_doUpdateEmployee)
-    .post('/doDeleteEmployee', handler_doDeleteEmployee);
-/*
- * Employee Lists
- */
-router
-    .get('/employeeLists', handler_employeeLists)
-    .post('/doGetEmployeeList', handler_doGetEmployeeList)
-    .post('/doAddEmployeeList', handler_doAddEmployeeList)
-    .post('/doUpdateEmployeeList', handler_doUpdateEmployeeList)
-    .post('/doDeleteEmployeeList', handler_doDeleteEmployeeList)
-    .post('/doAddEmployeeListMember', handler_doAddEmployeeListMember)
-    .post('/doUpdateEmployeeListMember', handler_doUpdateEmployeeListMember)
-    .post('/doDeleteEmployeeListMember', handler_doDeleteEmployeeListMember)
-    .post('/doReorderEmployeeListMembers', handler_doReorderEmployeeListMembers);
-/*
  * Settings Management
  */
 router
     .get('/settings', handler_settings)
     .post('/doUpdateSetting', handler_doUpdateSetting);
 /*
- * Equipment Management
+ * Notification Configurations
  */
-router
-    .get('/equipment', handler_equipment)
-    .post('/doAddEquipment', handler_doAddEquipment)
-    .post('/doUpdateEquipment', handler_doUpdateEquipment)
-    .post('/doDeleteEquipment', handler_doDeleteEquipment);
+if (getConfigProperty('notifications.protocols').length > 0) {
+    router
+        .get('/notificationConfigurations', handler_notificationConfigurations)
+        .post('/doGetNotificationConfigurations', handler_doGetNotificationConfigurations)
+        .post('/doAddNotificationConfiguration', handler_doAddNotificationConfiguration)
+        .post('/doUpdateNotificationConfiguration', handler_doUpdateNotificationConfiguration)
+        .post('/doDeleteNotificationConfiguration', handler_doDeleteNotificationConfiguration)
+        .post('/doToggleNotificationConfigurationIsActive', handler_doToggleNotificationConfigurationIsActive);
+}
 /*
- * Location Maintenance
+ * API Audit Logs
  */
 router
-    .get('/locations', handler_locations)
-    .post('/doAddLocation', handler_doAddLocation)
-    .post('/doUpdateLocation', handler_doUpdateLocation)
-    .post('/doDeleteLocation', handler_doDeleteLocation);
+    .get('/apiAuditLogs', handler_apiAuditLogs)
+    .post('/doGetApiAuditLogs', handler_doGetApiAuditLogs);
 /*
  * Work Order Type Management
  */
@@ -142,15 +123,6 @@ if (getConfigProperty('workOrders.isEnabled')) {
         .post('/doDeleteWorkOrderType', handler_doDeleteWorkOrderType)
         .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes);
 }
-/*
- * Data List Management
- */
-router
-    .get('/dataLists', handler_dataLists)
-    .post('/doAddDataListItem', handler_doAddDataListItem)
-    .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
-    .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
-    .post('/doReorderDataListItems', handler_doReorderDataListItems);
 /*
  * Assigned To Management
  */
@@ -170,21 +142,52 @@ router
     .post('/doDeleteTag', handler_doDeleteTag)
     .post('/doGetOrphanedTags', handler_doGetOrphanedTags);
 /*
- * API Audit Logs
+ * Data List Management
  */
 router
-    .get('/apiAuditLogs', handler_apiAuditLogs)
-    .post('/doGetApiAuditLogs', handler_doGetApiAuditLogs);
+    .get('/dataLists', handler_dataLists)
+    .post('/doAddDataListItem', handler_doAddDataListItem)
+    .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
+    .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
+    .post('/doReorderDataListItems', handler_doReorderDataListItems);
 /*
- * Notification Configurations
+ * Location Maintenance
  */
-if (getConfigProperty('notifications.protocols').length > 0) {
+router
+    .get('/locations', handler_locations)
+    .post('/doAddLocation', handler_doAddLocation)
+    .post('/doUpdateLocation', handler_doUpdateLocation)
+    .post('/doDeleteLocation', handler_doDeleteLocation);
+if (getConfigProperty('shifts.isEnabled') ||
+    getConfigProperty('timesheets.isEnabled')) {
+    /*
+     * Employees
+     */
     router
-        .get('/notificationConfigurations', handler_notificationConfigurations)
-        .post('/doGetNotificationConfigurations', handler_doGetNotificationConfigurations)
-        .post('/doAddNotificationConfiguration', handler_doAddNotificationConfiguration)
-        .post('/doUpdateNotificationConfiguration', handler_doUpdateNotificationConfiguration)
-        .post('/doDeleteNotificationConfiguration', handler_doDeleteNotificationConfiguration)
-        .post('/doToggleNotificationConfigurationIsActive', handler_doToggleNotificationConfigurationIsActive);
+        .get('/employees', handler_employees)
+        .post('/doAddEmployee', handler_doAddEmployee)
+        .post('/doUpdateEmployee', handler_doUpdateEmployee)
+        .post('/doDeleteEmployee', handler_doDeleteEmployee);
+    /*
+     * Employee Lists
+     */
+    router
+        .get('/employeeLists', handler_employeeLists)
+        .post('/doGetEmployeeList', handler_doGetEmployeeList)
+        .post('/doAddEmployeeList', handler_doAddEmployeeList)
+        .post('/doUpdateEmployeeList', handler_doUpdateEmployeeList)
+        .post('/doDeleteEmployeeList', handler_doDeleteEmployeeList)
+        .post('/doAddEmployeeListMember', handler_doAddEmployeeListMember)
+        .post('/doUpdateEmployeeListMember', handler_doUpdateEmployeeListMember)
+        .post('/doDeleteEmployeeListMember', handler_doDeleteEmployeeListMember)
+        .post('/doReorderEmployeeListMembers', handler_doReorderEmployeeListMembers);
+    /*
+     * Equipment Management
+     */
+    router
+        .get('/equipment', handler_equipment)
+        .post('/doAddEquipment', handler_doAddEquipment)
+        .post('/doUpdateEquipment', handler_doUpdateEquipment)
+        .post('/doDeleteEquipment', handler_doDeleteEquipment);
 }
 export default router;

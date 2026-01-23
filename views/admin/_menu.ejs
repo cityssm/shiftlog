@@ -189,6 +189,7 @@
       </a>
     </li>
   </ul>
+  <% if (configFunctions.getConfigProperty('shifts.isEnabled') || configFunctions.getConfigProperty('timesheets.isEnabled')) { %>
   <p class="menu-label is-hidden-touch">Resources</p>
   <ul class="menu-list">
     <li>
@@ -246,4 +247,5 @@
       </a>
     </li>
   </ul>
+  <% } %>
 </aside>

@@ -530,6 +530,7 @@
       </a>
     </details>
   </div>
+  <% if (configFunctions.getConfigProperty('shifts.isEnabled') || configFunctions.getConfigProperty('timesheets.isEnabled')) { %>
   <div class="column">
     <details class="panel mb-5 collapsable-panel">
       <summary class="panel-heading is-clickable">
@@ -587,6 +588,7 @@
       </a>
     </details>
   </div>
+  <% } %>
 </div>
 
 

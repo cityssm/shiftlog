@@ -96,111 +96,12 @@ router
   .post('/doDeleteUserGroupMember', handler_doDeleteUserGroupMember)
 
 /*
- * Employees
- */
-
-router
-  .get('/employees', handler_employees)
-  .post('/doAddEmployee', handler_doAddEmployee)
-  .post('/doUpdateEmployee', handler_doUpdateEmployee)
-  .post('/doDeleteEmployee', handler_doDeleteEmployee)
-
-/*
- * Employee Lists
- */
-
-router
-  .get('/employeeLists', handler_employeeLists)
-  .post('/doGetEmployeeList', handler_doGetEmployeeList)
-  .post('/doAddEmployeeList', handler_doAddEmployeeList)
-  .post('/doUpdateEmployeeList', handler_doUpdateEmployeeList)
-  .post('/doDeleteEmployeeList', handler_doDeleteEmployeeList)
-  .post('/doAddEmployeeListMember', handler_doAddEmployeeListMember)
-  .post('/doUpdateEmployeeListMember', handler_doUpdateEmployeeListMember)
-  .post('/doDeleteEmployeeListMember', handler_doDeleteEmployeeListMember)
-  .post('/doReorderEmployeeListMembers', handler_doReorderEmployeeListMembers)
-
-/*
  * Settings Management
  */
 
 router
   .get('/settings', handler_settings)
   .post('/doUpdateSetting', handler_doUpdateSetting)
-
-/*
- * Equipment Management
- */
-
-router
-  .get('/equipment', handler_equipment)
-  .post('/doAddEquipment', handler_doAddEquipment)
-  .post('/doUpdateEquipment', handler_doUpdateEquipment)
-  .post('/doDeleteEquipment', handler_doDeleteEquipment)
-
-/*
- * Location Maintenance
- */
-
-router
-  .get('/locations', handler_locations)
-  .post('/doAddLocation', handler_doAddLocation)
-  .post('/doUpdateLocation', handler_doUpdateLocation)
-  .post('/doDeleteLocation', handler_doDeleteLocation)
-
-/*
- * Work Order Type Management
- */
-
-if (getConfigProperty('workOrders.isEnabled')) {
-  router
-    .get('/workOrderTypes', handler_workOrderTypes)
-    .post('/doAddWorkOrderType', handler_doAddWorkOrderType)
-    .post('/doUpdateWorkOrderType', handler_doUpdateWorkOrderType)
-    .post('/doDeleteWorkOrderType', handler_doDeleteWorkOrderType)
-    .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes)
-}
-
-/*
- * Data List Management
- */
-
-router
-  .get('/dataLists', handler_dataLists)
-  .post('/doAddDataListItem', handler_doAddDataListItem)
-  .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
-  .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
-  .post('/doReorderDataListItems', handler_doReorderDataListItems)
-
-/*
- * Assigned To Management
- */
-
-router
-  .get('/assignedTo', handler_assignedTo)
-  .post('/doAddAssignedToItem', handler_doAddAssignedToItem)
-  .post('/doUpdateAssignedToItem', handler_doUpdateAssignedToItem)
-  .post('/doDeleteAssignedToItem', handler_doDeleteAssignedToItem)
-  .post('/doReorderAssignedToItems', handler_doReorderAssignedToItems)
-
-/*
- * Tag Management
- */
-
-router
-  .get('/tags', handler_tags)
-  .post('/doAddTag', handler_doAddTag)
-  .post('/doUpdateTag', handler_doUpdateTag)
-  .post('/doDeleteTag', handler_doDeleteTag)
-  .post('/doGetOrphanedTags', handler_doGetOrphanedTags)
-
-/*
- * API Audit Logs
- */
-
-router
-  .get('/apiAuditLogs', handler_apiAuditLogs)
-  .post('/doGetApiAuditLogs', handler_doGetApiAuditLogs)
 
 /*
  * Notification Configurations
@@ -229,6 +130,110 @@ if (getConfigProperty('notifications.protocols').length > 0) {
       '/doToggleNotificationConfigurationIsActive',
       handler_doToggleNotificationConfigurationIsActive
     )
+}
+
+/*
+ * API Audit Logs
+ */
+
+router
+  .get('/apiAuditLogs', handler_apiAuditLogs)
+  .post('/doGetApiAuditLogs', handler_doGetApiAuditLogs)
+
+/*
+ * Work Order Type Management
+ */
+
+if (getConfigProperty('workOrders.isEnabled')) {
+  router
+    .get('/workOrderTypes', handler_workOrderTypes)
+    .post('/doAddWorkOrderType', handler_doAddWorkOrderType)
+    .post('/doUpdateWorkOrderType', handler_doUpdateWorkOrderType)
+    .post('/doDeleteWorkOrderType', handler_doDeleteWorkOrderType)
+    .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes)
+}
+
+/*
+ * Assigned To Management
+ */
+
+router
+  .get('/assignedTo', handler_assignedTo)
+  .post('/doAddAssignedToItem', handler_doAddAssignedToItem)
+  .post('/doUpdateAssignedToItem', handler_doUpdateAssignedToItem)
+  .post('/doDeleteAssignedToItem', handler_doDeleteAssignedToItem)
+  .post('/doReorderAssignedToItems', handler_doReorderAssignedToItems)
+
+/*
+ * Tag Management
+ */
+
+router
+  .get('/tags', handler_tags)
+  .post('/doAddTag', handler_doAddTag)
+  .post('/doUpdateTag', handler_doUpdateTag)
+  .post('/doDeleteTag', handler_doDeleteTag)
+  .post('/doGetOrphanedTags', handler_doGetOrphanedTags)
+
+/*
+ * Data List Management
+ */
+
+router
+  .get('/dataLists', handler_dataLists)
+  .post('/doAddDataListItem', handler_doAddDataListItem)
+  .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
+  .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
+  .post('/doReorderDataListItems', handler_doReorderDataListItems)
+
+/*
+ * Location Maintenance
+ */
+
+router
+  .get('/locations', handler_locations)
+  .post('/doAddLocation', handler_doAddLocation)
+  .post('/doUpdateLocation', handler_doUpdateLocation)
+  .post('/doDeleteLocation', handler_doDeleteLocation)
+
+if (
+  getConfigProperty('shifts.isEnabled') ||
+  getConfigProperty('timesheets.isEnabled')
+) {
+  /*
+   * Employees
+   */
+
+  router
+    .get('/employees', handler_employees)
+    .post('/doAddEmployee', handler_doAddEmployee)
+    .post('/doUpdateEmployee', handler_doUpdateEmployee)
+    .post('/doDeleteEmployee', handler_doDeleteEmployee)
+
+  /*
+   * Employee Lists
+   */
+
+  router
+    .get('/employeeLists', handler_employeeLists)
+    .post('/doGetEmployeeList', handler_doGetEmployeeList)
+    .post('/doAddEmployeeList', handler_doAddEmployeeList)
+    .post('/doUpdateEmployeeList', handler_doUpdateEmployeeList)
+    .post('/doDeleteEmployeeList', handler_doDeleteEmployeeList)
+    .post('/doAddEmployeeListMember', handler_doAddEmployeeListMember)
+    .post('/doUpdateEmployeeListMember', handler_doUpdateEmployeeListMember)
+    .post('/doDeleteEmployeeListMember', handler_doDeleteEmployeeListMember)
+    .post('/doReorderEmployeeListMembers', handler_doReorderEmployeeListMembers)
+
+  /*
+   * Equipment Management
+   */
+
+  router
+    .get('/equipment', handler_equipment)
+    .post('/doAddEquipment', handler_doAddEquipment)
+    .post('/doUpdateEquipment', handler_doUpdateEquipment)
+    .post('/doDeleteEquipment', handler_doDeleteEquipment)
 }
 
 export default router

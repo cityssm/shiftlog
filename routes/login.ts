@@ -117,6 +117,26 @@ async function postHandler(
   if (isAuthenticated && userObject !== undefined) {
     clearAbuse(request as unknown as Express.Request)
 
+    // Override user permissions based on config file
+
+    if (!getConfigProperty('workOrders.isEnabled')) {
+      userObject.userProperties.workOrders.canView = false
+      userObject.userProperties.workOrders.canUpdate = false
+      userObject.userProperties.workOrders.canManage = false
+    }
+
+    if (!getConfigProperty('shifts.isEnabled')) {
+      userObject.userProperties.shifts.canView = false
+      userObject.userProperties.shifts.canUpdate = false
+      userObject.userProperties.shifts.canManage = false
+    }
+
+    if (!getConfigProperty('timesheets.isEnabled')) {
+      userObject.userProperties.timesheets.canView = false
+      userObject.userProperties.timesheets.canUpdate = false
+      userObject.userProperties.timesheets.canManage = false
+    }
+
     request.session.user = userObject
 
     response.redirect(redirectUrl)
