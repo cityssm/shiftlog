@@ -6,6 +6,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
   <ul class="menu-list">
     <li>
       <a
+        class="has-text-weight-semibold"
         href="<%= urlPrefix %>/<%= workOrdersRouter %>/new" 
         title="Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>"
       >
@@ -27,7 +28,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
   <ul class="menu-list">
     <li>
       <a
-        class="<%= headTitle.endsWith(' - Search') ? 'is-active' : '' %>"
+        class="has-text-weight-semibold <%= headTitle.endsWith(' - Search') ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/<%= workOrdersRouter %>"
         title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search"
       >

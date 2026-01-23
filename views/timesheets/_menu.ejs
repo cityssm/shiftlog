@@ -3,13 +3,14 @@
   <ul class="menu-list">
     <li>
       <a
+        class="has-text-weight-semibold"
         href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new"
         title="Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>"
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
             <span class="icon is-small">
-              <i class="fa-solid fa-plus"></i>
+              <i class="fa-solid fa-plus-circle has-text-success"></i>
             </span>
           </div>
           <div class="column is-hidden-touch">
@@ -25,7 +26,11 @@
   </p>
   <ul class="menu-list">
     <li>
-      <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
+      <a
+        class="has-text-weight-semibold <%= headTitle.endsWith(' - Search') ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>"
+        title="<%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> Search"
+      >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
             <span class="icon is-small">

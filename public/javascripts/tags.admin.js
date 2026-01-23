@@ -295,10 +295,10 @@
         thead.innerHTML = /* html */ `
       <tr>
         <th>Tag Name</th>
-        <th style="width: 200px;">Preview</th>
         <th style="width: 150px;">Background</th>
         <th style="width: 150px;">Text Color</th>
-        <th style="width: 150px;"><span class="is-sr-only">Actions</span></th>
+        <th style="width: 200px;">Preview</th>
+        <th><span class="is-sr-only">Actions</span></th>
       </tr>
     `;
         tableElement.append(thead);
@@ -309,11 +309,6 @@
             tr.innerHTML = /* html */ `
         <td>${cityssm.escapeHTML(tag.tagName)}</td>
         <td>
-          <span class="tag" style="background-color: #${cityssm.escapeHTML(tag.tagBackgroundColor)}; color: #${cityssm.escapeHTML(tag.tagTextColor)};">
-            ${cityssm.escapeHTML(tag.tagName)}
-          </span>
-        </td>
-        <td>
           <span style="color: #${cityssm.escapeHTML(tag.tagBackgroundColor)};">
             #${cityssm.escapeHTML(tag.tagBackgroundColor)}
           </span>
@@ -321,6 +316,11 @@
         <td>
           <span style="color: #${cityssm.escapeHTML(tag.tagTextColor)};">
             #${cityssm.escapeHTML(tag.tagTextColor)}
+          </span>
+        </td>
+        <td>
+          <span class="tag" style="background-color: #${cityssm.escapeHTML(tag.tagBackgroundColor)}; color: #${cityssm.escapeHTML(tag.tagTextColor)};">
+            ${cityssm.escapeHTML(tag.tagName)}
           </span>
         </td>
         <td class="has-text-right">
