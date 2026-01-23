@@ -104,8 +104,7 @@
                 contextualColorName: 'warning',
                 text: 'Delete Tag',
                 callbackFunction() {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteTag`, { tagName }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteTag`, { tagName }, (responseJSON) => {
                         if (responseJSON.success) {
                             if (responseJSON.tags !== undefined) {
                                 exports.tags = responseJSON.tags;
@@ -145,8 +144,7 @@
         function doUpdateTag(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateTag`, editForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateTag`, editForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     if (responseJSON.tags !== undefined) {
@@ -219,8 +217,7 @@
         function doAddTag(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTag`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTag`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     if (responseJSON.tags !== undefined) {
@@ -409,8 +406,7 @@
                         ?.addEventListener('submit', (submitEvent) => {
                         submitEvent.preventDefault();
                         const addForm = submitEvent.currentTarget;
-                        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTag`, addForm, (rawResponseJSON) => {
-                            const responseJSON = rawResponseJSON;
+                        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTag`, addForm, (responseJSON) => {
                             if (responseJSON.success) {
                                 closeAddModalFunction();
                                 if (responseJSON.tags !== undefined) {
@@ -455,8 +451,7 @@
             </p>
           </div>
         `;
-                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetOrphanedTags`, {}, (rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetOrphanedTags`, {}, (responseJSON) => {
                     if (responseJSON.success &&
                         responseJSON.orphanedTags !== undefined) {
                         if (responseJSON.orphanedTags.length === 0) {
@@ -547,3 +542,4 @@
     // Initial render
     renderTagsWithPagination(exports.tags);
 })();
+export {};

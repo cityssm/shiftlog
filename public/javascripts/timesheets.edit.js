@@ -24,8 +24,7 @@
         cityssm.postJSON(`${urlPrefix}/doGetAvailableShifts`, {
             supervisorEmployeeNumber,
             shiftDateString
-        }, (rawResponseJSON) => {
-            const response = rawResponseJSON;
+        }, (response) => {
             if (response.success && response.shifts !== undefined) {
                 // Check if we have a temporarily stored shift ID (from initial page load)
                 const tempShiftId = shiftIdElement.dataset.tempShiftId;
@@ -68,8 +67,7 @@
     function doSaveTimesheet(formEvent) {
         formEvent.preventDefault();
         const endpoint = isCreate ? 'doCreateTimesheet' : 'doUpdateTimesheet';
-        cityssm.postJSON(`${urlPrefix}/${endpoint}`, formElement, (rawResponseJSON) => {
-            const result = rawResponseJSON;
+        cityssm.postJSON(`${urlPrefix}/${endpoint}`, formElement, (result) => {
             if (result.success) {
                 if (isCreate) {
                     globalThis.location.href = `${urlPrefix}/${result.timesheetId ?? ''}/edit`;
@@ -199,8 +197,7 @@
                         cityssm.postJSON(`${urlPrefix}/doGetAvailableShifts`, {
                             supervisorEmployeeNumber,
                             shiftDateString
-                        }, (rawResponseJSON) => {
-                            const response = rawResponseJSON;
+                        }, (response) => {
                             loadingNotice.classList.add('is-hidden');
                             if (response.success && response.shifts !== undefined && response.shifts.length > 0) {
                                 listContainer.classList.remove('is-hidden');
@@ -254,8 +251,7 @@
                             cityssm.postJSON(`${urlPrefix}/doCopyFromShift`, {
                                 shiftId: selectedShiftId,
                                 timesheetId
-                            }, (rawResponseJSON) => {
-                                const response = rawResponseJSON;
+                            }, (response) => {
                                 if (response.success) {
                                     closeModalFunction();
                                     bulmaJS.alert({
@@ -345,8 +341,7 @@
                                 supervisorEmployeeNumber: searchData.get('supervisorEmployeeNumber') ?? '',
                                 limit: 20,
                                 offset: 0
-                            }, (rawResponseJSON) => {
-                                const response = rawResponseJSON;
+                            }, (response) => {
                                 searchResultsContainer.classList.remove('is-hidden');
                                 if (response.success && response.timesheets !== undefined && response.timesheets.length > 0) {
                                     // Filter out the current timesheet
@@ -415,8 +410,7 @@
                             cityssm.postJSON(`${urlPrefix}/doCopyFromPreviousTimesheet`, {
                                 sourceTimesheetId: selectedTimesheetId,
                                 targetTimesheetId: timesheetId
-                            }, (rawResponseJSON) => {
-                                const response = rawResponseJSON;
+                            }, (response) => {
                                 if (response.success) {
                                     closeModalFunction();
                                     bulmaJS.alert({
@@ -446,3 +440,4 @@
         }
     }
 })();
+export {};

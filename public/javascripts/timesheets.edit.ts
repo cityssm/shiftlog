@@ -74,12 +74,10 @@ declare const exports: {
         supervisorEmployeeNumber,
         shiftDateString
       },
-      (rawResponseJSON) => {
-        const response = rawResponseJSON as {
-          success: boolean
-          shifts?: Shift[]
-        }
-
+      (response: {
+        success: boolean
+        shifts?: Shift[]
+      }) => {
         if (response.success && response.shifts !== undefined) {
           // Check if we have a temporarily stored shift ID (from initial page load)
           const tempShiftId = shiftIdElement.dataset.tempShiftId
@@ -141,12 +139,10 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/${endpoint}`,
       formElement,
-      (rawResponseJSON) => {
-        const result = rawResponseJSON as {
-          success: boolean
-          timesheetId?: number
-        }
-
+      (result: {
+        success: boolean
+        timesheetId?: number
+      }) => {
         if (result.success) {
           if (isCreate) {
             globalThis.location.href = `${urlPrefix}/${result.timesheetId ?? ''}/edit`
@@ -300,12 +296,10 @@ declare const exports: {
                 supervisorEmployeeNumber,
                 shiftDateString
               },
-              (rawResponseJSON) => {
-                const response = rawResponseJSON as {
-                  success: boolean
-                  shifts?: Shift[]
-                }
-
+              (response: {
+                success: boolean
+                shifts?: Shift[]
+              }) => {
                 loadingNotice.classList.add('is-hidden')
 
                 if (response.success && response.shifts !== undefined && response.shifts.length > 0) {
@@ -372,11 +366,9 @@ declare const exports: {
                   shiftId: selectedShiftId,
                   timesheetId
                 },
-                (rawResponseJSON) => {
-                  const response = rawResponseJSON as {
-                    success: boolean
-                  }
-
+                (response: {
+                  success: boolean
+                }) => {
                   if (response.success) {
                     closeModalFunction()
                     bulmaJS.alert({
@@ -480,19 +472,17 @@ declare const exports: {
                   limit: 20,
                   offset: 0
                 },
-                (rawResponseJSON) => {
-                  const response = rawResponseJSON as {
-                    success: boolean
-                    timesheets?: Array<{
-                      timesheetId: number
-                      timesheetDate: string
-                      timesheetTypeDataListItem?: string
-                      supervisorFirstName?: string
-                      supervisorLastName?: string
-                      timesheetTitle?: string
-                    }>
-                  }
-
+                (response: {
+                  success: boolean
+                  timesheets?: Array<{
+                    timesheetId: number
+                    timesheetDate: string
+                    timesheetTypeDataListItem?: string
+                    supervisorFirstName?: string
+                    supervisorLastName?: string
+                    timesheetTitle?: string
+                  }>
+                }) => {
                   searchResultsContainer.classList.remove('is-hidden')
 
                   if (response.success && response.timesheets !== undefined && response.timesheets.length > 0) {
@@ -579,11 +569,9 @@ declare const exports: {
                   sourceTimesheetId: selectedTimesheetId,
                   targetTimesheetId: timesheetId
                 },
-                (rawResponseJSON) => {
-                  const response = rawResponseJSON as {
-                    success: boolean
-                  }
-
+                (response: {
+                  success: boolean
+                }) => {
                   if (response.success) {
                     closeModalFunction()
                     bulmaJS.alert({
