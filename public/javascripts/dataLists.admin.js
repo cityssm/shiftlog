@@ -1,5 +1,5 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable max-lines, unicorn/no-null */
+/* eslint-disable max-lines -- Large file */
+/* eslint-disable unicorn/no-null -- Need null */
 (() => {
     const shiftLog = exports.shiftLog;
     // Track Sortable instances to prevent duplicates

@@ -92,7 +92,7 @@
             }
             let displayEndpoint = log.endpoint;
             if (log.endpoint.length > maxEndpointLength) {
-                displayEndpoint = '...' + log.endpoint.slice(-maxEndpointLength);
+                displayEndpoint = `...${log.endpoint.slice(-maxEndpointLength)}`;
             }
             const escapedContent = {
                 displayEndpoint: cityssm.escapeHTML(displayEndpoint),
@@ -103,7 +103,7 @@
                 userName: cityssm.escapeHTML(log.userName ?? '-'),
                 rawUserName: log.userName ?? ''
             };
-            // eslint-disable-next-line no-unsanitized/method
+            // eslint-disable-next-line no-unsanitized/method -- Escaped content
             tableElement.querySelector('tbody')?.insertAdjacentHTML('beforeend', 
             /* html */ `
           <tr>

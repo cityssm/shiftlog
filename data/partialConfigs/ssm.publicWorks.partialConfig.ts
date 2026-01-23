@@ -1,5 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @cspell/spellchecker */
+/* eslint-disable @cspell/spellchecker -- GIS column names */
 
 import type { Config } from '../../types/config.types.js'
 

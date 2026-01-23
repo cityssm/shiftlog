@@ -1,5 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable max-lines */
 (() => {
     const workOrderFormElement = document.querySelector('#form--workOrder');
     const workOrderId = workOrderFormElement === null

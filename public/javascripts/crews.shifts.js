@@ -1,5 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable max-lines */
+/* eslint-disable max-lines -- Large file */
 (() => {
     const shiftLog = exports.shiftLog;
     const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;

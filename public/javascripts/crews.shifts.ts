@@ -1,5 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable max-lines */
+/* eslint-disable max-lines -- Large file */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
@@ -25,7 +24,7 @@ interface CrewWithDetails extends Crew {
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
-  
+
   crews: Crew[]
   employees: Employee[]
   equipment: Equipment[]
@@ -70,6 +69,7 @@ declare const exports: {
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
                 success: boolean
+
                 crews?: Crew[]
               }
 
@@ -137,6 +137,7 @@ declare const exports: {
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
                   success: boolean
+
                   crews?: Crew[]
                 }
 
@@ -202,6 +203,7 @@ declare const exports: {
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
                 success: boolean
+
                 crew?: CrewWithDetails
               }
 
@@ -247,6 +249,7 @@ declare const exports: {
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
               success: boolean
+
               crew?: CrewWithDetails
             }
 
@@ -278,6 +281,7 @@ declare const exports: {
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
                   success: boolean
+
                   crew?: CrewWithDetails
                 }
 
@@ -337,6 +341,7 @@ declare const exports: {
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
                 success: boolean
+
                 crew?: CrewWithDetails
               }
 
@@ -395,6 +400,7 @@ declare const exports: {
           bulmaJS.alert({
             contextualColorName: 'danger',
             title: 'Error Updating Equipment',
+
             message:
               responseJSON.message ??
               'An error occurred while updating the equipment assignment.'
@@ -435,6 +441,7 @@ declare const exports: {
           (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as {
               success: boolean
+
               crew?: CrewWithDetails
             }
 
@@ -531,6 +538,7 @@ declare const exports: {
                           bulmaJS.alert({
                             contextualColorName: 'warning',
                             title: 'Unable to Filter Employees',
+
                             message: eligibleResponse.message
                           })
                         }
@@ -966,6 +974,7 @@ declare const exports: {
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as {
                 success: boolean
+
                 crew?: CrewWithDetails
               }
 
@@ -995,6 +1004,7 @@ declare const exports: {
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as {
                   success: boolean
+
                   crews?: Crew[]
                 }
 
@@ -1014,6 +1024,7 @@ declare const exports: {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Adding Crew',
+
                     message: 'An error occurred while adding the crew.'
                   })
                 }

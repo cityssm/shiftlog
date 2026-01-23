@@ -1,4 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable unicorn/no-null */
 
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'

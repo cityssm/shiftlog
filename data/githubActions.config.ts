@@ -1,5 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @cspell/spellchecker, sonarjs/no-hardcoded-passwords */
+/* eslint-disable @cspell/spellchecker, sonarjs/no-hardcoded-passwords -- Config file */
 
 import type { Config } from '../types/config.types.js'
 

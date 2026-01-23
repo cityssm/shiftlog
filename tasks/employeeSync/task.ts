@@ -1,4 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
 import { ScheduledTask } from '@cityssm/scheduled-task'
@@ -68,6 +67,7 @@ async function runSync(): Promise<void> {
       continue
     }
 
+    // eslint-disable-next-line no-await-in-loop
     await addOrUpdateSyncedEmployee(employeeToSync, systemUserName)
   }
 }

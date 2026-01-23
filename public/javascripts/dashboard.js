@@ -1,4 +1,5 @@
 const defaultZoom = 13;
+/* eslint-disable @typescript-eslint/no-magic-numbers -- Leaflet icon dimensions */
 // Leaflet icon dimensions
 const iconSize = [25, 41];
 const iconAnchor = [12, 41];

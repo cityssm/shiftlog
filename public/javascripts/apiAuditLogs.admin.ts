@@ -33,6 +33,7 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Reset API Key',
+
       message: `Are you sure you want to reset the API key for user "${userName}"? The old key will no longer work.`,
       okButton: {
         contextualColorName: 'warning',
@@ -65,6 +66,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Resetting API Key',
+                  
                   message: responseJSON.message ?? 'Please try again.'
                 })
               }
@@ -133,7 +135,7 @@ declare const exports: {
 
       let displayEndpoint = log.endpoint
       if (log.endpoint.length > maxEndpointLength) {
-        displayEndpoint = '...' + log.endpoint.slice(-maxEndpointLength)
+        displayEndpoint = `...${  log.endpoint.slice(-maxEndpointLength)}`
       }
 
       const escapedContent = {
@@ -146,7 +148,7 @@ declare const exports: {
         rawUserName: log.userName ?? ''
       }
 
-      // eslint-disable-next-line no-unsanitized/method
+      // eslint-disable-next-line no-unsanitized/method -- Escaped content
       tableElement.querySelector('tbody')?.insertAdjacentHTML(
         'beforeend',
         /* html */ `

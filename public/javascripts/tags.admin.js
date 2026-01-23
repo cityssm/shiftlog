@@ -1,19 +1,18 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable max-lines */
+/* eslint-disable max-lines -- Large file */
 (() => {
     const shiftLog = exports.shiftLog;
     const tagsContainerElement = document.querySelector('#container--tags');
     // WCAG Contrast Calculation Functions
     const WCAG_AA_NORMAL_RATIO = 4.5;
     const WCAG_AAA_NORMAL_RATIO = 7;
-    /* eslint-disable @typescript-eslint/no-magic-numbers */
+    /* eslint-disable @typescript-eslint/no-magic-numbers -- WCAG contrast ratios */
     /**
      * Convert a hex color to RGB values
      */
     function hexToRgb(hex) {
-        const cleanHex = hex.replace(/^#/, '');
+        const cleanHex = hex.replace(/^#/v, '');
         // Validate hex string
-        if (!/^[\dA-F]{6}$/i.test(cleanHex)) {
+        if (!/^[\dA-F]{6}$/iv.test(cleanHex)) {
             // Default to black if invalid
             return { r: 0, g: 0, b: 0 };
         }

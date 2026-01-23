@@ -1,5 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable max-lines */
+/* eslint-disable max-lines -- Large file */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
@@ -25,15 +24,15 @@ declare const exports: {
   const WCAG_AA_NORMAL_RATIO = 4.5
   const WCAG_AAA_NORMAL_RATIO = 7
 
-  /* eslint-disable @typescript-eslint/no-magic-numbers */
+  /* eslint-disable @typescript-eslint/no-magic-numbers -- WCAG contrast ratios */
 
   /**
    * Convert a hex color to RGB values
    */
   function hexToRgb(hex: string): { r: number; g: number; b: number } {
-    const cleanHex = hex.replace(/^#/, '')
+    const cleanHex = hex.replace(/^#/v, '')
     // Validate hex string
-    if (!/^[\dA-F]{6}$/i.test(cleanHex)) {
+    if (!/^[\dA-F]{6}$/iv.test(cleanHex)) {
       // Default to black if invalid
       return { r: 0, g: 0, b: 0 }
     }
@@ -395,21 +394,27 @@ declare const exports: {
         const tagNameInput = modalElement.querySelector(
           '#addTag--tagName'
         ) as HTMLInputElement
+
         const backgroundColorInput = modalElement.querySelector(
           '#addTag--tagBackgroundColor'
         ) as HTMLInputElement
+
         const textColorInput = modalElement.querySelector(
           '#addTag--tagTextColor'
         ) as HTMLInputElement
+
         const previewElement = modalElement.querySelector(
           '#addTag--preview'
         ) as HTMLElement
+
         const contrastRatioElement = modalElement.querySelector(
           '#addTag--contrastRatio'
         ) as HTMLElement
+
         const wcagAAElement = modalElement.querySelector(
           '#addTag--wcagAA'
         ) as HTMLElement
+
         const wcagAAAElement = modalElement.querySelector(
           '#addTag--wcagAAA'
         ) as HTMLElement

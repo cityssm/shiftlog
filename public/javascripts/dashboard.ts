@@ -10,16 +10,21 @@ declare const L: typeof Leaflet
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+  
   recentWorkOrders: WorkOrder[]
 }
 
 const defaultZoom = 13
+
+/* eslint-disable @typescript-eslint/no-magic-numbers -- Leaflet icon dimensions */
 
 // Leaflet icon dimensions
 const iconSize: [number, number] = [25, 41]
 const iconAnchor: [number, number] = [12, 41]
 const popupAnchor: [number, number] = [1, -34]
 const shadowSize: [number, number] = [41, 41]
+
+/* eslint-enable @typescript-eslint/no-magic-numbers */
 
 interface WorkOrderWithOverdue {
   workOrder: WorkOrder
