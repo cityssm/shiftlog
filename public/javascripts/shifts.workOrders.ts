@@ -272,12 +272,10 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`,
         {},
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            milestones: WorkOrderMilestone[]
-          }
-
+        (responseJSON: {
+          success: boolean
+          milestones: WorkOrderMilestone[]
+        }) => {
           if (responseJSON.success && responseJSON.milestones) {
             allMilestones.push(...responseJSON.milestones)
           }
@@ -352,13 +350,11 @@ declare const exports: {
           limit: 20,
           offset: 0
         },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            workOrders: ShiftWorkOrder[]
-            totalCount: number
-          }
-
+        (responseJSON: {
+          success: boolean
+          workOrders: ShiftWorkOrder[]
+          totalCount: number
+        }) => {
           if (!responseJSON.success || responseJSON.workOrders.length === 0) {
             resultsContainer.innerHTML = /* html */ `
               <div class="message is-warning">
@@ -507,13 +503,11 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftWorkOrder`,
         formEvent.currentTarget,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            shiftWorkOrders?: ShiftWorkOrder[]
-            errorMessage?: string
-          }
-
+        (responseJSON: {
+          success: boolean
+          shiftWorkOrders?: ShiftWorkOrder[]
+          errorMessage?: string
+        }) => {
           if (responseJSON.success && responseJSON.shiftWorkOrders) {
             shiftWorkOrders = responseJSON.shiftWorkOrders
             renderShiftWorkOrders()
@@ -598,12 +592,10 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftWorkOrderNote`,
         formEvent.currentTarget,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            errorMessage?: string
-          }
-
+        (responseJSON: {
+          success: boolean
+          errorMessage?: string
+        }) => {
           if (responseJSON.success) {
             ;(workOrder as ShiftWorkOrder).shiftWorkOrderNote = note
 
@@ -686,13 +678,11 @@ declare const exports: {
           cityssm.postJSON(
             `${urlPrefix}/doDeleteShiftWorkOrder`,
             { shiftId, workOrderId },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                success: boolean
-                shiftWorkOrders?: ShiftWorkOrder[]
-                errorMessage?: string
-              }
-
+            (responseJSON: {
+              success: boolean
+              shiftWorkOrders?: ShiftWorkOrder[]
+              errorMessage?: string
+            }) => {
               if (responseJSON.success && responseJSON.shiftWorkOrders) {
                 shiftWorkOrders = responseJSON.shiftWorkOrders
                 renderShiftWorkOrders()
@@ -755,12 +745,10 @@ declare const exports: {
 
               milestoneCompleteDateTimeString: currentDateString
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                success: boolean
-                errorMessage?: string
-              }
-
+            (responseJSON: {
+              success: boolean
+              errorMessage?: string
+            }) => {
               if (responseJSON.success) {
                 loadMilestones()
               } else {
