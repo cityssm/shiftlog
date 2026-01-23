@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import addWorkOrderTag from '../../database/workOrderTags/addWorkOrderTag.js'
-import getWorkOrderTags from '../../database/workOrderTags/getWorkOrderTags.js'
+import addWorkOrderTag from '../../database/workOrders/addWorkOrderTag.js'
+import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js'
 
 interface AddWorkOrderTagForm {
   workOrderId: number

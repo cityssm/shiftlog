@@ -1,5 +1,5 @@
-import addWorkOrderTag from '../../database/workOrderTags/addWorkOrderTag.js';
-import getWorkOrderTags from '../../database/workOrderTags/getWorkOrderTags.js';
+import addWorkOrderTag from '../../database/workOrders/addWorkOrderTag.js';
+import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js';
 export default async function handler(request, response) {
     const success = await addWorkOrderTag(request.body.workOrderId, request.body.tagName);
     if (success) {

@@ -53,12 +53,14 @@ export default async function handler(
   response.render('print/workOrder', {
     headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
 
+    workOrder,
+
     costs,
     milestones,
     notes,
-    workOrder,
-    workOrderNumberBarcodeSvg,
+
     thumbnailAttachment,
+    workOrderNumberBarcodeSvg,
 
     availableWorkOrderMoreInfoForms
   })

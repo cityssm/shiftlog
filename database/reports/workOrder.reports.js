@@ -60,6 +60,24 @@ export const workOrderReports = {
         ) or wType.userGroupId is null)
     `
     },
+    'workOrders-workOrderCosts-byWorkOrderId': {
+        parameterNames: ['workOrderId'],
+        sql: /* sql */ `
+      select
+        w.workOrderNumber,
+        c.workOrderCostId,
+        c.costDescription,
+		    c.costAmount,
+        c.recordCreate_userName, c.recordCreate_dateTime,
+        c.recordUpdate_userName, c.recordUpdate_dateTime
+      from ShiftLog.WorkOrderCosts c
+      left join ShiftLog.WorkOrders w on c.workOrderId = w.workOrderId
+      where w.instance = @instance
+        and c.recordDelete_dateTime is null
+        and c.workOrderId = @workOrderId
+      order by c.workOrderCostId asc
+    `
+    },
     'workOrders-workOrderNotes-byWorkOrderId': {
         parameterNames: ['workOrderId'],
         sql: /* sql */ `

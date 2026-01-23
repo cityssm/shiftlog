@@ -26,12 +26,12 @@ export default async function handler(request, response) {
     const thumbnailAttachment = await getWorkOrderThumbnailAttachment(request.params.workOrderId);
     response.render('print/workOrder', {
         headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
+        workOrder,
         costs,
         milestones,
         notes,
-        workOrder,
-        workOrderNumberBarcodeSvg,
         thumbnailAttachment,
+        workOrderNumberBarcodeSvg,
         availableWorkOrderMoreInfoForms
     });
 }

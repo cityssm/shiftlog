@@ -38,6 +38,12 @@
         <label class="label">Details</label>
         <p style="white-space: pre-wrap;"><%= workOrder.workOrderDetails || '(No details)' %></p>
       </div>
+      <% if (workOrder.tags && workOrder.tags.length > 0) { %>
+      <div class="field">
+        <label class="label">Tags</label>
+        <p><%= workOrder.tags.map(tag => tag.tagName).join(', ') %></p>
+      </div>
+      <% } %>
     </div>
     <div class="box avoid-page-break">
       <div class="field">

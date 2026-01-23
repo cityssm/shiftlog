@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 
-import getWorkOrderTags from '../../database/workOrderTags/getWorkOrderTags.js'
+import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js'
 
 export default async function handler(
   request: Request<{ workOrderId: string }>,

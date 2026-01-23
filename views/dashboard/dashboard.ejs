@@ -151,10 +151,13 @@
           <span class="icon is-small"><i class="fa-solid fa-clock"></i></span>
           <span>Recently Created</span>
         </a>
+        <% if (overdueWorkOrders.length > 0) { %>
         <a data-work-order-type="overdue" href="#">
           <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
           <span>Overdue</span>
+          <span class="tag is-danger ml-2" id="badge--overdueWorkOrderCount"><%= overdueWorkOrders.length %></span>
         </a>
+        <% } %>
       </div>
       <div class="panel-block is-block" data-work-order-type="recent">
         <div class="columns is-vcentered is-mobile is-size-7 mb-0">
@@ -201,14 +204,6 @@
         </div>
       </a>
       <% } %>
-      <% } else { %>
-      <div class="panel-block is-hidden" data-work-order-type="overdue">
-        <div class="message is-success has-text-centered" style="width: 100%;">
-          <div class="message-body">
-            No overdue work orders.
-          </div>
-        </div>
-      </div>
       <% } %>
     </div>
   </div>

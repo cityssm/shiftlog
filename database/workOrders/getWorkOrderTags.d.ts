@@ -4,5 +4,5 @@ interface WorkOrderTagWithColor {
     tagBackgroundColor?: string;
     tagTextColor?: string;
 }
-export default function getWorkOrderTags(workOrderId: number): Promise<WorkOrderTagWithColor[]>;
+export default function getWorkOrderTags(workOrderId: number | string): Promise<WorkOrderTagWithColor[]>;
 export {};
