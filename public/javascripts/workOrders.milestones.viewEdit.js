@@ -328,8 +328,7 @@
             });
         }
         function loadMilestones() {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (responseJSON) => {
                 if (responseJSON.success) {
                     renderMilestones(responseJSON.milestones);
                 }
@@ -346,3 +345,4 @@
         loadMilestones();
     }
 })();
+export {};

@@ -37,4 +37,3 @@ export interface ShiftLogGlobal {
         clickHandler: (pageNumber: number) => void;
     }) => HTMLElement;
 }
-//# sourceMappingURL=types.d.ts.map

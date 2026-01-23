@@ -66,8 +66,7 @@
                         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderTag`, {
                             workOrderId: Number.parseInt(workOrderId, 10),
                             tagName
-                        }, (rawResponseJSON) => {
-                            const responseJSON = rawResponseJSON;
+                        }, (responseJSON) => {
                             if (responseJSON.success && responseJSON.tags !== undefined) {
                                 renderTags(responseJSON.tags);
                                 bulmaJS.alert({
@@ -98,8 +97,7 @@
                 cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`, {
                     workOrderId: Number.parseInt(workOrderId, 10),
                     tagName: tagNameInput.value
-                }, (rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
+                }, (responseJSON) => {
                     if (responseJSON.success && responseJSON.tags !== undefined) {
                         closeModalFunction();
                         renderTags(responseJSON.tags);
@@ -136,8 +134,7 @@
             });
         }
         function getTags() {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`, {}, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`, {}, (responseJSON) => {
                 if (responseJSON.success && responseJSON.tags !== undefined) {
                     renderTags(responseJSON.tags);
                 }
@@ -152,3 +149,4 @@
         getTags();
     }
 })();
+export {};

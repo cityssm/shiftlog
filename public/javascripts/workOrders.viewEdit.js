@@ -18,8 +18,7 @@
                         const workOrderIdElement = document.querySelector('#workOrder--workOrderId');
                         cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doReopenWorkOrder`, {
                             workOrderId: workOrderIdElement.value
-                        }, (rawResponseJSON) => {
-                            const responseJSON = rawResponseJSON;
+                        }, (responseJSON) => {
                             if (responseJSON.success &&
                                 responseJSON.redirectUrl !== undefined) {
                                 globalThis.location.href = responseJSON.redirectUrl;
@@ -40,3 +39,4 @@
         });
     }
 })();
+export {};

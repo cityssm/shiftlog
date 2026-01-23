@@ -8,8 +8,7 @@
             okButton: {
                 text: 'Yes, Recover',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doRecoverShift`, { shiftId }, (rawResponseJSON) => {
-                        const response = rawResponseJSON;
+                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doRecoverShift`, { shiftId }, (response) => {
                         if (response.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -112,3 +111,4 @@
     }
     getDeletedRecords();
 })();
+export {};

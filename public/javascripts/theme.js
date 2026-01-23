@@ -46,3 +46,4 @@
         keepAliveInterval = globalThis.setInterval(doKeepAlive, keepAliveMillis);
     }
 })();
+export {};

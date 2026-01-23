@@ -11,3 +11,4 @@
     initialTabElement ??= reportsContainerElement?.querySelector('.menu-list a');
     initialTabElement?.click();
 })();
+export {};

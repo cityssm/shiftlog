@@ -205,8 +205,7 @@
             });
         }
         function loadCosts() {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderCosts`, {}, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderCosts`, {}, (responseJSON) => {
                 if (responseJSON.success) {
                     renderCosts(responseJSON.costs);
                 }
@@ -220,3 +219,4 @@
         loadCosts();
     }
 })();
+export {};

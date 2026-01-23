@@ -244,8 +244,7 @@
             showCloseDates: showCloseDatesCheckbox.checked,
             showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
             showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.success) {
                 renderCalendar(responseJSON.events);
             }
@@ -293,3 +292,4 @@
     // Initial load
     loadCalendar();
 })();
+export {};

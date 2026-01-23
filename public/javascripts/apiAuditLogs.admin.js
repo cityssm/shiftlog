@@ -191,3 +191,4 @@
     // Initial load
     loadAuditLogs();
 })();
+export {};

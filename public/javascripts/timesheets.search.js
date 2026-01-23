@@ -1,29 +1,52 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
-    var shiftLog = exports.shiftLog;
-    var urlPrefix = "".concat(shiftLog.urlPrefix, "/").concat(shiftLog.timesheetsRouter);
-    var formElement = document.querySelector('#form--timesheetSearch');
-    var searchResultsContainerElement = document.querySelector('#container--timesheetSearchResults');
-    var offsetElement = formElement.querySelector('#timesheetSearch--offset');
-    var currentTimesheetDateString = cityssm.dateToString(new Date());
+(() => {
+    const shiftLog = exports.shiftLog;
+    const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.timesheetsRouter}`;
+    const formElement = document.querySelector('#form--timesheetSearch');
+    const searchResultsContainerElement = document.querySelector('#container--timesheetSearchResults');
+    const offsetElement = formElement.querySelector('#timesheetSearch--offset');
+    const currentTimesheetDateString = cityssm.dateToString(new Date());
     function renderTimesheetResults(data) {
-        var _a, _b, _c;
         if (data.timesheets.length === 0) {
-            searchResultsContainerElement.innerHTML = /* html */ "\n        <div class=\"message is-info\">\n          <p class=\"message-body\">No records found.</p>\n        </div>\n      ";
+            searchResultsContainerElement.innerHTML = /* html */ `
+        <div class="message is-info">
+          <p class="message-body">No records found.</p>
+        </div>
+      `;
             return;
         }
-        var tableElement = document.createElement('table');
+        const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        tableElement.innerHTML = /* html */ "\n      <thead>\n        <tr>\n          <th>ID</th>\n          <th>Type</th>\n          <th>Date</th>\n          <th>Title</th>\n          <th>Supervisor</th>\n        </tr>\n      </thead>\n      <tbody></tbody>\n    ";
-        var tableBodyElement = tableElement.querySelector('tbody');
-        for (var _i = 0, _d = data.timesheets; _i < _d.length; _i++) {
-            var timesheet = _d[_i];
-            var timesheetDate = typeof timesheet.timesheetDate === 'string'
+        tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Title</th>
+          <th>Supervisor</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+        const tableBodyElement = tableElement.querySelector('tbody');
+        for (const timesheet of data.timesheets) {
+            const timesheetDate = typeof timesheet.timesheetDate === 'string'
                 ? new Date(timesheet.timesheetDate)
                 : timesheet.timesheetDate;
-            var tableRowElement = document.createElement('tr');
-            tableRowElement.innerHTML = /* html */ "\n        <td>\n          <a href=\"".concat(exports.shiftLog.buildTimesheetURL(timesheet.timesheetId), "\">\n            ").concat(cityssm.escapeHTML(timesheet.timesheetId.toString()), "\n          </a>\n        </td>\n        <td>").concat(cityssm.escapeHTML((_a = timesheet.timesheetTypeDataListItem) !== null && _a !== void 0 ? _a : '(Unknown Timesheet Type)'), "</td>\n        <td>").concat(cityssm.dateToString(timesheetDate), "</td>\n        <td>").concat(cityssm.escapeHTML(timesheet.timesheetTitle === '' ? '(No Title)' : timesheet.timesheetTitle), "</td>\n        <td>\n          ").concat(cityssm.escapeHTML((_b = timesheet.supervisorLastName) !== null && _b !== void 0 ? _b : ''), ", ").concat(cityssm.escapeHTML((_c = timesheet.supervisorFirstName) !== null && _c !== void 0 ? _c : ''), "\n        </td>\n      ");
+            const tableRowElement = document.createElement('tr');
+            tableRowElement.innerHTML = /* html */ `
+        <td>
+          <a href="${exports.shiftLog.buildTimesheetURL(timesheet.timesheetId)}">
+            ${cityssm.escapeHTML(timesheet.timesheetId.toString())}
+          </a>
+        </td>
+        <td>${cityssm.escapeHTML(timesheet.timesheetTypeDataListItem ?? '(Unknown Timesheet Type)')}</td>
+        <td>${cityssm.dateToString(timesheetDate)}</td>
+        <td>${cityssm.escapeHTML(timesheet.timesheetTitle === '' ? '(No Title)' : timesheet.timesheetTitle)}</td>
+        <td>
+          ${cityssm.escapeHTML(timesheet.supervisorLastName ?? '')}, ${cityssm.escapeHTML(timesheet.supervisorFirstName ?? '')}
+        </td>
+      `;
             tableBodyElement.append(tableRowElement);
         }
         searchResultsContainerElement.replaceChildren(tableElement);
@@ -32,28 +55,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
             totalCount: data.totalCount,
             currentPageOrOffset: data.offset,
             itemsPerPageOrLimit: data.limit,
-            clickHandler: function (pageNumber) {
+            clickHandler: (pageNumber) => {
                 offsetElement.value = ((pageNumber - 1) * data.limit).toString();
                 doSearch();
             }
         }));
     }
     function doSearch() {
-        cityssm.postJSON("".concat(urlPrefix, "/doSearchTimesheets"), formElement, function (responseJSON) {
+        cityssm.postJSON(`${urlPrefix}/doSearchTimesheets`, formElement, (responseJSON) => {
             renderTimesheetResults(responseJSON);
         });
     }
     // Set up search on change
-    formElement.addEventListener('change', function () {
+    formElement.addEventListener('change', () => {
         offsetElement.value = '0';
         doSearch();
     });
     // Initial search with current date
-    var timesheetDateStringElement = document.createElement('input');
+    const timesheetDateStringElement = document.createElement('input');
     timesheetDateStringElement.name = 'timesheetDateString';
     timesheetDateStringElement.type = 'hidden';
     timesheetDateStringElement.value = currentTimesheetDateString;
     formElement.prepend(timesheetDateStringElement);
     doSearch();
 })();
-//# sourceMappingURL=timesheets.search.js.map
+export {};

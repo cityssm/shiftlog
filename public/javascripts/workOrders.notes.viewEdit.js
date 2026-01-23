@@ -246,3 +246,4 @@
         loadNotes();
     }
 })();
+export {};

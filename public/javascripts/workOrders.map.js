@@ -171,8 +171,7 @@ const shadowSize = [41, 41];
         if (assignedToId !== '') {
             filters.assignedToId = assignedToId;
         }
-        cityssm.postJSON(`${urlPrefix}/doSearchWorkOrders`, filters, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON(`${urlPrefix}/doSearchWorkOrders`, filters, (responseJSON) => {
             // Clear existing markers
             markersLayer.clearLayers();
             const bounds = [];
@@ -236,3 +235,4 @@ const shadowSize = [41, 41];
     // Initial load
     loadWorkOrders();
 })();
+export {};
