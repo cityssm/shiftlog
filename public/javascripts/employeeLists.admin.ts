@@ -299,13 +299,11 @@ declare const exports: {
         employeeListId,
         employeeNumber
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          success: boolean
+      (responseJSON: {
+        success: boolean
 
-          employeeList?: EmployeeListWithMembers
-        }
-
+        employeeList?: EmployeeListWithMembers
+      }) => {
         if (responseJSON.success && responseJSON.employeeList !== undefined) {
           renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -354,13 +352,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
+        (responseJSON: {
+          success: boolean
 
-            employeeList?: EmployeeListWithMembers
-          }
-
+          employeeList?: EmployeeListWithMembers
+        }) => {
           if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -453,13 +449,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
+        (responseJSON: {
+          success: boolean
 
-            employeeList?: EmployeeListWithMembers
-          }
-
+          employeeList?: EmployeeListWithMembers
+        }) => {
           if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -606,13 +600,11 @@ declare const exports: {
             employeeNumbers,
             seniorityDate: seniorityDate ?? undefined
           },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as {
-              success: boolean
+          (responseJSON: {
+            success: boolean
 
-              employeeList?: EmployeeListWithMembers
-            }
-
+            employeeList?: EmployeeListWithMembers
+          }) => {
             if (
               responseJSON.success &&
               responseJSON.employeeList !== undefined

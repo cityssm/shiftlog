@@ -143,12 +143,11 @@ declare const exports: {
             {
               locationId
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
+            (responseJSON: {
                 success: boolean
                 message?: string
                 locations?: Location[]
-              }
+              }) => {
 
               if (responseJSON.success) {
                 if (responseJSON.locations !== undefined) {
@@ -209,12 +208,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateLocation`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
+        (responseJSON: {
             success: boolean
             message?: string
             locations?: Location[]
-          }
+          }) => {
 
           if (responseJSON.success) {
             closeModalFunction()
@@ -446,12 +444,11 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doAddLocation`,
           addForm,
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as {
+          (responseJSON: {
               success: boolean
               message?: string
               locations?: Location[]
-            }
+            }) => {
 
             if (responseJSON.success) {
               closeModalFunction()

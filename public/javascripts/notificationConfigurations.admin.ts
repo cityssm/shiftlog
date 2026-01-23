@@ -199,8 +199,7 @@ declare const exports: {
       {
         notificationConfigurationId
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as { success: boolean }
+      (responseJSON: { success: boolean }) => {
 
         if (responseJSON.success) {
           const configIndex = notificationConfigurations.findIndex(
@@ -403,12 +402,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddNotificationConfiguration`,
         formData,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
+        (responseJSON: {
             success: boolean
             errorMessage?: string
             notificationConfigurationId?: number
-          }
+          }) => {
 
           if (
             responseJSON.success &&
@@ -615,8 +613,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateNotificationConfiguration`,
         formData,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as { success: boolean }
+        (responseJSON: { success: boolean }) => {
 
           if (responseJSON.success) {
             const configIndex = notificationConfigurations.findIndex(
@@ -770,8 +767,7 @@ declare const exports: {
             {
               notificationConfigurationId
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean }
+            (responseJSON: { success: boolean }) => {
 
               if (responseJSON.success) {
                 notificationConfigurations = notificationConfigurations.filter(

@@ -118,3 +118,4 @@ export interface ConfigEmail {
     fromAddress?: string;
 }
 export {};
+//# sourceMappingURL=config.types.d.ts.map

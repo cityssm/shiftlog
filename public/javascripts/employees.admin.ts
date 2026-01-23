@@ -60,13 +60,12 @@ declare const exports: {
             {
               employeeNumber
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
+            (responseJSON: {
                 message?: string
                 success: boolean
 
                 employees?: Employee[]
-              }
+              }) => {
 
               if (responseJSON.success) {
                 // Update the employees list with the new data from the server
@@ -123,12 +122,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployee`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
+        (responseJSON: {
             message?: string
             success: boolean
             employees?: Employee[]
-          }
+          }) => {
 
           if (responseJSON.success) {
             closeModalFunction()
@@ -398,13 +396,12 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doAddEmployee`,
           addForm,
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as {
+          (responseJSON: {
               message?: string
               success: boolean
 
               employees?: Employee[]
-            }
+            }) => {
 
             if (responseJSON.success) {
               closeModalFunction()

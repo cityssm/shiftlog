@@ -1,143 +1,84 @@
+"use strict";
 /* eslint-disable max-lines */
-(() => {
-    const shiftLog = exports.shiftLog;
-    let notificationConfigurations = exports.notificationConfigurations;
-    const tbodyElement = document.querySelector('#tbody--notificationConfigurations');
+Object.defineProperty(exports, "__esModule", { value: true });
+(function () {
+    var _a;
+    var shiftLog = exports.shiftLog;
+    var notificationConfigurations = exports.notificationConfigurations;
+    var tbodyElement = document.querySelector('#tbody--notificationConfigurations');
     function getNotificationTypeDetail(notificationType, notificationTypeFormJson) {
+        var _a, _b, _c;
         try {
-            const config = JSON.parse(notificationTypeFormJson);
+            var config = JSON.parse(notificationTypeFormJson);
             switch (notificationType) {
                 case 'email': {
-                    const emails = config.recipientEmails ?? [];
-                    return `Recipients: ${cityssm.escapeHTML(emails.length > 0 ? emails[0] : '')}${emails.length > 1 ? `, +${emails.length - 1} more` : ''}`;
+                    var emails = (_a = config.recipientEmails) !== null && _a !== void 0 ? _a : [];
+                    return "Recipients: ".concat(cityssm.escapeHTML(emails.length > 0 ? emails[0] : '')).concat(emails.length > 1 ? ", +".concat(emails.length - 1, " more") : '');
                 }
                 case 'msTeams': {
-                    const url = config.webhookUrl ?? '';
-                    const displayUrl = url.length > 40 ? `${url.slice(0, 40)}...` : url;
-                    return `Webhook: ${cityssm.escapeHTML(displayUrl)}`;
+                    var url = (_b = config.webhookUrl) !== null && _b !== void 0 ? _b : '';
+                    var displayUrl = url.length > 40 ? "".concat(url.slice(0, 40), "...") : url;
+                    return "Webhook: ".concat(cityssm.escapeHTML(displayUrl));
                 }
                 case 'ntfy': {
-                    return `Topic: ${cityssm.escapeHTML(config.topic ?? '')}`;
+                    return "Topic: ".concat(cityssm.escapeHTML((_c = config.topic) !== null && _c !== void 0 ? _c : ''));
                 }
                 // No default
             }
         }
-        catch {
+        catch (_d) {
             // ignore parse errors
         }
         return '';
     }
     function renderNotificationConfigurations() {
+        var _a, _b, _c, _d;
         if (notificationConfigurations.length === 0) {
-            tbodyElement.innerHTML = /* html */ `
-        <tr id="tr--noNotificationConfigurations">
-          <td class="has-text-centered has-text-grey" colspan="5">
-            No notification configurations found. Click "Add Notification Configuration" to create one.
-          </td>
-        </tr>
-      `;
+            tbodyElement.innerHTML = /* html */ "\n        <tr id=\"tr--noNotificationConfigurations\">\n          <td class=\"has-text-centered has-text-grey\" colspan=\"5\">\n            No notification configurations found. Click \"Add Notification Configuration\" to create one.\n          </td>\n        </tr>\n      ";
             return;
         }
         // Clear existing
         tbodyElement.innerHTML = '';
-        for (const config of notificationConfigurations) {
-            const assignedTo = exports.assignedToList.find((at) => at.assignedToId === config.assignedToId);
-            const assignedToDisplay = assignedTo === undefined
+        var _loop_1 = function (config) {
+            var assignedTo = exports.assignedToList.find(function (at) { return at.assignedToId === config.assignedToId; });
+            var assignedToDisplay = assignedTo === undefined
                 ? '<span class="has-text-grey-light">All</span>'
-                : `<span class="assigned-to-name">${cityssm.escapeHTML(assignedTo.assignedToName)}</span>`;
-            const notificationTypeDetail = getNotificationTypeDetail(config.notificationType, config.notificationTypeFormJson);
-            const rowElement = document.createElement('tr');
+                : "<span class=\"assigned-to-name\">".concat(cityssm.escapeHTML(assignedTo.assignedToName), "</span>");
+            var notificationTypeDetail = getNotificationTypeDetail(config.notificationType, config.notificationTypeFormJson);
+            var rowElement = document.createElement('tr');
             rowElement.dataset.notificationConfigurationId =
                 config.notificationConfigurationId.toString();
             // eslint-disable-next-line no-unsanitized/property
-            rowElement.innerHTML = /* html */ `
-        <td>
-          <span class="notification-queue">
-            ${cityssm.escapeHTML(config.notificationQueue)}
-          </span>
-        </td>
-        <td>
-          <span class="notification-type">
-            ${cityssm.escapeHTML(config.notificationType)}
-          </span>
-          ${notificationTypeDetail ? `<br /><span class="is-size-7 has-text-grey">${notificationTypeDetail}</span>` : ''}
-        </td>
-        <td>
-          ${assignedToDisplay}
-        </td>
-        <td class="has-text-centered">
-          ${config.isActive
+            rowElement.innerHTML = /* html */ "\n        <td>\n          <span class=\"notification-queue\">\n            ".concat(cityssm.escapeHTML(config.notificationQueue), "\n          </span>\n        </td>\n        <td>\n          <span class=\"notification-type\">\n            ").concat(cityssm.escapeHTML(config.notificationType), "\n          </span>\n          ").concat(notificationTypeDetail ? "<br /><span class=\"is-size-7 has-text-grey\">".concat(notificationTypeDetail, "</span>") : '', "\n        </td>\n        <td>\n          ").concat(assignedToDisplay, "\n        </td>\n        <td class=\"has-text-centered\">\n          ").concat(config.isActive
                 ? '<span class="tag is-success">Active</span>'
-                : '<span class="tag">Inactive</span>'}
-        </td>
-        <td class="has-text-right">
-          <div class="buttons are-small is-right">
-            <button
-              class="button is-light button--toggleIsActive"
-              data-notification-configuration-id="${config.notificationConfigurationId}"
-              data-is-active="${config.isActive ? '1' : '0'}"
-              type="button"
-              title="${config.isActive ? 'Deactivate' : 'Activate'}"
-            >
-              <span class="icon">
-                <i class="fa-solid fa-toggle-${config.isActive ? 'on' : 'off'}"></i>
-              </span>
-              <span>Toggle Active</span>
-            </button>
-            <button
-              class="button is-info button--editNotificationConfiguration"
-              data-notification-configuration-id="${config.notificationConfigurationId}"
-              data-notification-queue="${cityssm.escapeHTML(config.notificationQueue)}"
-              data-notification-type="${cityssm.escapeHTML(config.notificationType)}"
-              data-notification-type-form-json="${cityssm.escapeHTML(config.notificationTypeFormJson)}"
-              data-assigned-to-id="${config.assignedToId ?? ''}"
-              data-is-active="${config.isActive ? '1' : '0'}"
-              type="button"
-            >
-              <span class="icon">
-                <i class="fa-solid fa-pencil"></i>
-              </span>
-              <span>Edit</span>
-            </button>
-            <button
-              class="button is-danger button--deleteNotificationConfiguration"
-              data-notification-configuration-id="${config.notificationConfigurationId}"
-              data-notification-queue="${cityssm.escapeHTML(config.notificationQueue)}"
-              type="button"
-            >
-              <span class="icon">
-                <i class="fa-solid fa-trash"></i>
-              </span>
-              <span>Delete</span>
-            </button>
-          </div>
-        </td>
-      `;
-            rowElement
-                .querySelector('.button--toggleIsActive')
-                ?.addEventListener('click', toggleIsActive);
-            rowElement
-                .querySelector('.button--editNotificationConfiguration')
-                ?.addEventListener('click', editNotificationConfiguration);
-            rowElement
-                .querySelector('.button--deleteNotificationConfiguration')
-                ?.addEventListener('click', deleteNotificationConfiguration);
+                : '<span class="tag">Inactive</span>', "\n        </td>\n        <td class=\"has-text-right\">\n          <div class=\"buttons are-small is-right\">\n            <button\n              class=\"button is-light button--toggleIsActive\"\n              data-notification-configuration-id=\"").concat(config.notificationConfigurationId, "\"\n              data-is-active=\"").concat(config.isActive ? '1' : '0', "\"\n              type=\"button\"\n              title=\"").concat(config.isActive ? 'Deactivate' : 'Activate', "\"\n            >\n              <span class=\"icon\">\n                <i class=\"fa-solid fa-toggle-").concat(config.isActive ? 'on' : 'off', "\"></i>\n              </span>\n              <span>Toggle Active</span>\n            </button>\n            <button\n              class=\"button is-info button--editNotificationConfiguration\"\n              data-notification-configuration-id=\"").concat(config.notificationConfigurationId, "\"\n              data-notification-queue=\"").concat(cityssm.escapeHTML(config.notificationQueue), "\"\n              data-notification-type=\"").concat(cityssm.escapeHTML(config.notificationType), "\"\n              data-notification-type-form-json=\"").concat(cityssm.escapeHTML(config.notificationTypeFormJson), "\"\n              data-assigned-to-id=\"").concat((_a = config.assignedToId) !== null && _a !== void 0 ? _a : '', "\"\n              data-is-active=\"").concat(config.isActive ? '1' : '0', "\"\n              type=\"button\"\n            >\n              <span class=\"icon\">\n                <i class=\"fa-solid fa-pencil\"></i>\n              </span>\n              <span>Edit</span>\n            </button>\n            <button\n              class=\"button is-danger button--deleteNotificationConfiguration\"\n              data-notification-configuration-id=\"").concat(config.notificationConfigurationId, "\"\n              data-notification-queue=\"").concat(cityssm.escapeHTML(config.notificationQueue), "\"\n              type=\"button\"\n            >\n              <span class=\"icon\">\n                <i class=\"fa-solid fa-trash\"></i>\n              </span>\n              <span>Delete</span>\n            </button>\n          </div>\n        </td>\n      ");
+            (_b = rowElement
+                .querySelector('.button--toggleIsActive')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', toggleIsActive);
+            (_c = rowElement
+                .querySelector('.button--editNotificationConfiguration')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', editNotificationConfiguration);
+            (_d = rowElement
+                .querySelector('.button--deleteNotificationConfiguration')) === null || _d === void 0 ? void 0 : _d.addEventListener('click', deleteNotificationConfiguration);
             tbodyElement.append(rowElement);
+        };
+        for (var _i = 0, notificationConfigurations_1 = notificationConfigurations; _i < notificationConfigurations_1.length; _i++) {
+            var config = notificationConfigurations_1[_i];
+            _loop_1(config);
         }
     }
     function toggleIsActive(clickEvent) {
-        const buttonElement = clickEvent.currentTarget;
-        const notificationConfigurationId = buttonElement.dataset.notificationConfigurationId;
+        var buttonElement = clickEvent.currentTarget;
+        var notificationConfigurationId = buttonElement.dataset.notificationConfigurationId;
         if (notificationConfigurationId === undefined) {
             return;
         }
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doToggleNotificationConfigurationIsActive`, {
-            notificationConfigurationId
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doToggleNotificationConfigurationIsActive"), {
+            notificationConfigurationId: notificationConfigurationId
+        }, function (responseJSON) {
             if (responseJSON.success) {
-                const configIndex = notificationConfigurations.findIndex((c) => c.notificationConfigurationId ===
-                    Number.parseInt(notificationConfigurationId, 10));
+                var configIndex = notificationConfigurations.findIndex(function (c) {
+                    return c.notificationConfigurationId ===
+                        Number.parseInt(notificationConfigurationId, 10);
+                });
                 if (configIndex !== -1) {
                     notificationConfigurations[configIndex].isActive =
                         !notificationConfigurations[configIndex].isActive;
@@ -154,100 +95,52 @@
         });
     }
     function renderNotificationTypeForm(modalElement, notificationType, existingConfig) {
-        const formContainer = modalElement.querySelector('#notificationTypeFormContainer');
+        var _a, _b, _c;
+        var formContainer = modalElement.querySelector('#notificationTypeFormContainer');
         formContainer.innerHTML = '';
-        let config;
+        var config;
         if (existingConfig) {
             try {
                 config = JSON.parse(existingConfig);
             }
-            catch {
+            catch (_d) {
                 // ignore parse errors
             }
         }
         switch (notificationType) {
             case 'email': {
-                const emailConfig = config;
-                formContainer.innerHTML = /* html */ `
-          <div class="field">
-            <label class="label" for="notificationTypeForm--recipientEmails">
-              Recipient Email Addresses
-              <span class="has-text-weight-normal is-size-7">(comma-separated)</span>
-            </label>
-            <div class="control">
-              <input
-                class="input"
-                id="notificationTypeForm--recipientEmails"
-                name="recipientEmails"
-                type="text"
-                value="${cityssm.escapeHTML(emailConfig?.recipientEmails.join(', ') ?? '')}"
-                required
-              />
-            </div>
-          </div>
-        `;
+                var emailConfig = config;
+                formContainer.innerHTML = /* html */ "\n          <div class=\"field\">\n            <label class=\"label\" for=\"notificationTypeForm--recipientEmails\">\n              Recipient Email Addresses\n              <span class=\"has-text-weight-normal is-size-7\">(comma-separated)</span>\n            </label>\n            <div class=\"control\">\n              <input\n                class=\"input\"\n                id=\"notificationTypeForm--recipientEmails\"\n                name=\"recipientEmails\"\n                type=\"text\"\n                value=\"".concat(cityssm.escapeHTML((_a = emailConfig === null || emailConfig === void 0 ? void 0 : emailConfig.recipientEmails.join(', ')) !== null && _a !== void 0 ? _a : ''), "\"\n                required\n              />\n            </div>\n          </div>\n        ");
                 break;
             }
             case 'msTeams': {
-                const msTeamsConfig = config;
-                formContainer.innerHTML = /* html */ `
-          <div class="field">
-            <label class="label" for="notificationTypeForm--webhookUrl">
-              Microsoft Teams Webhook URL
-            </label>
-            <div class="control">
-              <input
-                class="input"
-                id="notificationTypeForm--webhookUrl"
-                name="webhookUrl"
-                type="url"
-                value="${cityssm.escapeHTML(msTeamsConfig?.webhookUrl ?? '')}"
-                required
-              />
-            </div>
-          </div>
-        `;
+                var msTeamsConfig = config;
+                formContainer.innerHTML = /* html */ "\n          <div class=\"field\">\n            <label class=\"label\" for=\"notificationTypeForm--webhookUrl\">\n              Microsoft Teams Webhook URL\n            </label>\n            <div class=\"control\">\n              <input\n                class=\"input\"\n                id=\"notificationTypeForm--webhookUrl\"\n                name=\"webhookUrl\"\n                type=\"url\"\n                value=\"".concat(cityssm.escapeHTML((_b = msTeamsConfig === null || msTeamsConfig === void 0 ? void 0 : msTeamsConfig.webhookUrl) !== null && _b !== void 0 ? _b : ''), "\"\n                required\n              />\n            </div>\n          </div>\n        ");
                 break;
             }
             case 'ntfy': {
-                const ntfyConfig = config;
-                formContainer.innerHTML = /* html */ `
-          <div class="field">
-            <label class="label" for="notificationTypeForm--topic">
-              Ntfy Topic
-            </label>
-            <div class="control">
-              <input
-                class="input"
-                id="notificationTypeForm--topic"
-                name="topic"
-                type="text"
-                value="${cityssm.escapeHTML(ntfyConfig?.topic ?? '')}"
-                required
-              />
-            </div>
-          </div>
-        `;
+                var ntfyConfig = config;
+                formContainer.innerHTML = /* html */ "\n          <div class=\"field\">\n            <label class=\"label\" for=\"notificationTypeForm--topic\">\n              Ntfy Topic\n            </label>\n            <div class=\"control\">\n              <input\n                class=\"input\"\n                id=\"notificationTypeForm--topic\"\n                name=\"topic\"\n                type=\"text\"\n                value=\"".concat(cityssm.escapeHTML((_c = ntfyConfig === null || ntfyConfig === void 0 ? void 0 : ntfyConfig.topic) !== null && _c !== void 0 ? _c : ''), "\"\n                required\n              />\n            </div>\n          </div>\n        ");
                 break;
             }
         }
     }
     function addNotificationConfiguration() {
-        let closeModalFunction;
+        var closeModalFunction;
         function doAddNotificationConfiguration(submitEvent) {
             submitEvent.preventDefault();
-            const addForm = submitEvent.currentTarget;
+            var addForm = submitEvent.currentTarget;
             // Build notification type form JSON
-            const notificationType = addForm.querySelector('#addNotificationConfiguration--notificationType').value;
-            let notificationTypeFormJson = '{}';
+            var notificationType = addForm.querySelector('#addNotificationConfiguration--notificationType').value;
+            var notificationTypeFormJson = '{}';
             switch (notificationType) {
                 case 'email': {
-                    const recipientEmailsString = addForm.querySelector('#notificationTypeForm--recipientEmails').value;
+                    var recipientEmailsString = addForm.querySelector('#notificationTypeForm--recipientEmails').value;
                     notificationTypeFormJson = JSON.stringify({
                         recipientEmails: recipientEmailsString
                             .split(',')
-                            .map((recipientEmail) => recipientEmail.trim())
-                            .filter((recipientEmail) => recipientEmail !== '')
+                            .map(function (recipientEmail) { return recipientEmail.trim(); })
+                            .filter(function (recipientEmail) { return recipientEmail !== ''; })
                     });
                     break;
                 }
@@ -264,15 +157,15 @@
                     break;
                 }
             }
-            const formData = {
+            var formData = {
                 notificationQueue: addForm.querySelector('#addNotificationConfiguration--notificationQueue').value,
-                notificationType,
-                notificationTypeFormJson,
+                notificationType: notificationType,
+                notificationTypeFormJson: notificationTypeFormJson,
                 assignedToId: addForm.querySelector('#addNotificationConfiguration--assignedToId').value,
                 isActive: addForm.querySelector('#addNotificationConfiguration--isActive').checked
             };
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNotificationConfiguration`, formData, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doAddNotificationConfiguration"), formData, function (responseJSON) {
+                var _a;
                 if (responseJSON.success &&
                     responseJSON.notificationConfigurationId) {
                     notificationConfigurations.push({
@@ -292,85 +185,89 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Configuration',
-                        message: responseJSON.errorMessage ?? 'An error occurred.'
+                        message: (_a = responseJSON.errorMessage) !== null && _a !== void 0 ? _a : 'An error occurred.'
                     });
                 }
             });
         }
         cityssm.openHtmlModal('adminNotificationConfiguration-add', {
-            onshow(modalElement) {
+            onshow: function (modalElement) {
                 // Populate notification queue options
-                const queueSelect = modalElement.querySelector('#addNotificationConfiguration--notificationQueue');
-                for (const queueType of exports.notificationQueueTypes) {
-                    const option = document.createElement('option');
+                var queueSelect = modalElement.querySelector('#addNotificationConfiguration--notificationQueue');
+                for (var _i = 0, _a = exports.notificationQueueTypes; _i < _a.length; _i++) {
+                    var queueType = _a[_i];
+                    var option = document.createElement('option');
                     option.value = queueType;
                     option.textContent = queueType;
                     queueSelect.append(option);
                 }
                 // Populate notification type options
-                const typeSelect = modalElement.querySelector('#addNotificationConfiguration--notificationType');
-                for (const type of exports.notificationTypes) {
-                    const option = document.createElement('option');
+                var typeSelect = modalElement.querySelector('#addNotificationConfiguration--notificationType');
+                for (var _b = 0, _c = exports.notificationTypes; _b < _c.length; _b++) {
+                    var type = _c[_b];
+                    var option = document.createElement('option');
                     option.value = type;
                     option.textContent = type;
                     typeSelect.append(option);
                 }
                 // Populate assigned to options
-                const assignedToSelect = modalElement.querySelector('#addNotificationConfiguration--assignedToId');
-                for (const assignedTo of exports.assignedToList) {
-                    const option = document.createElement('option');
+                var assignedToSelect = modalElement.querySelector('#addNotificationConfiguration--assignedToId');
+                for (var _d = 0, _e = exports.assignedToList; _d < _e.length; _d++) {
+                    var assignedTo = _e[_d];
+                    var option = document.createElement('option');
                     option.value = assignedTo.assignedToId.toString();
                     option.textContent = assignedTo.assignedToName;
                     assignedToSelect.append(option);
                 }
                 // Handle notification type change
-                typeSelect.addEventListener('change', () => {
+                typeSelect.addEventListener('change', function () {
                     renderNotificationTypeForm(modalElement, typeSelect.value);
                 });
                 // Render initial form
                 renderNotificationTypeForm(modalElement, typeSelect.value);
             },
-            onshown(modalElement, _closeModalFunction) {
+            onshown: function (modalElement, _closeModalFunction) {
+                var _a;
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = _closeModalFunction;
-                modalElement
-                    .querySelector('form')
-                    ?.addEventListener('submit', doAddNotificationConfiguration);
+                (_a = modalElement
+                    .querySelector('form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', doAddNotificationConfiguration);
                 // Focus the notification queue field
-                const queueSelect = modalElement.querySelector('#addNotificationConfiguration--notificationQueue');
+                var queueSelect = modalElement.querySelector('#addNotificationConfiguration--notificationQueue');
                 queueSelect.focus();
             },
-            onremoved() {
+            onremoved: function () {
                 bulmaJS.toggleHtmlClipped();
             }
         });
     }
     function editNotificationConfiguration(clickEvent) {
-        const buttonElement = clickEvent.currentTarget;
-        const notificationConfigurationId = buttonElement.dataset.notificationConfigurationId;
-        const currentNotificationQueue = buttonElement.dataset.notificationQueue ?? '';
-        const currentNotificationType = buttonElement.dataset.notificationType ?? '';
-        const currentNotificationTypeFormJson = buttonElement.dataset.notificationTypeFormJson ?? '{}';
-        const currentAssignedToId = buttonElement.dataset.assignedToId;
-        const currentIsActive = buttonElement.dataset.isActive === '1';
+        var _a, _b, _c;
+        var buttonElement = clickEvent.currentTarget;
+        var notificationConfigurationId = buttonElement.dataset.notificationConfigurationId;
+        var currentNotificationQueue = (_a = buttonElement.dataset.notificationQueue) !== null && _a !== void 0 ? _a : '';
+        var currentNotificationType = (_b = buttonElement.dataset.notificationType) !== null && _b !== void 0 ? _b : '';
+        var currentNotificationTypeFormJson = (_c = buttonElement.dataset.notificationTypeFormJson) !== null && _c !== void 0 ? _c : '{}';
+        var currentAssignedToId = buttonElement.dataset.assignedToId;
+        var currentIsActive = buttonElement.dataset.isActive === '1';
         if (notificationConfigurationId === undefined) {
             return;
         }
-        let closeModalFunction;
+        var closeModalFunction;
         function doUpdateNotificationConfiguration(submitEvent) {
             submitEvent.preventDefault();
-            const editForm = submitEvent.currentTarget;
+            var editForm = submitEvent.currentTarget;
             // Build notification type form JSON
-            const notificationType = editForm.querySelector('#editNotificationConfiguration--notificationType').value;
-            let notificationTypeFormJson = '{}';
+            var notificationType = editForm.querySelector('#editNotificationConfiguration--notificationType').value;
+            var notificationTypeFormJson = '{}';
             switch (notificationType) {
                 case 'email': {
-                    const recipientEmailsString = editForm.querySelector('#notificationTypeForm--recipientEmails').value;
+                    var recipientEmailsString = editForm.querySelector('#notificationTypeForm--recipientEmails').value;
                     notificationTypeFormJson = JSON.stringify({
                         recipientEmails: recipientEmailsString
                             .split(',')
-                            .map((recipientEmail) => recipientEmail.trim())
-                            .filter((recipientEmail) => recipientEmail !== '')
+                            .map(function (recipientEmail) { return recipientEmail.trim(); })
+                            .filter(function (recipientEmail) { return recipientEmail !== ''; })
                     });
                     break;
                 }
@@ -387,20 +284,21 @@
                     break;
                 }
             }
-            const formData = {
-                notificationConfigurationId,
+            var formData = {
+                notificationConfigurationId: notificationConfigurationId,
                 notificationQueue: editForm.querySelector('#editNotificationConfiguration--notificationQueue').value,
-                notificationType,
-                notificationTypeFormJson,
+                notificationType: notificationType,
+                notificationTypeFormJson: notificationTypeFormJson,
                 assignedToId: editForm.querySelector('#editNotificationConfiguration--assignedToId').value,
                 isActive: editForm.querySelector('#editNotificationConfiguration--isActive').checked
             };
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNotificationConfiguration`, formData, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doUpdateNotificationConfiguration"), formData, function (responseJSON) {
                 if (responseJSON.success) {
-                    const configIndex = notificationConfigurations.findIndex((c) => notificationConfigurationId !== undefined &&
-                        c.notificationConfigurationId ===
-                            Number.parseInt(notificationConfigurationId, 10));
+                    var configIndex = notificationConfigurations.findIndex(function (c) {
+                        return notificationConfigurationId !== undefined &&
+                            c.notificationConfigurationId ===
+                                Number.parseInt(notificationConfigurationId, 10);
+                    });
                     if (configIndex !== -1) {
                         notificationConfigurations[configIndex].notificationQueue =
                             formData.notificationQueue;
@@ -428,11 +326,12 @@
             });
         }
         cityssm.openHtmlModal('adminNotificationConfiguration-edit', {
-            onshow(modalElement) {
+            onshow: function (modalElement) {
                 // Populate notification queue options
-                const queueSelect = modalElement.querySelector('#editNotificationConfiguration--notificationQueue');
-                for (const queueType of exports.notificationQueueTypes) {
-                    const option = document.createElement('option');
+                var queueSelect = modalElement.querySelector('#editNotificationConfiguration--notificationQueue');
+                for (var _i = 0, _a = exports.notificationQueueTypes; _i < _a.length; _i++) {
+                    var queueType = _a[_i];
+                    var option = document.createElement('option');
                     option.value = queueType;
                     option.textContent = queueType;
                     if (queueType === currentNotificationQueue) {
@@ -441,9 +340,10 @@
                     queueSelect.append(option);
                 }
                 // Populate notification type options
-                const typeSelect = modalElement.querySelector('#editNotificationConfiguration--notificationType');
-                for (const type of exports.notificationTypes) {
-                    const option = document.createElement('option');
+                var typeSelect = modalElement.querySelector('#editNotificationConfiguration--notificationType');
+                for (var _b = 0, _c = exports.notificationTypes; _b < _c.length; _b++) {
+                    var type = _c[_b];
+                    var option = document.createElement('option');
                     option.value = type;
                     option.textContent = type;
                     if (type === currentNotificationType) {
@@ -452,9 +352,10 @@
                     typeSelect.append(option);
                 }
                 // Populate assigned to options
-                const assignedToSelect = modalElement.querySelector('#editNotificationConfiguration--assignedToId');
-                for (const assignedTo of exports.assignedToList) {
-                    const option = document.createElement('option');
+                var assignedToSelect = modalElement.querySelector('#editNotificationConfiguration--assignedToId');
+                for (var _d = 0, _e = exports.assignedToList; _d < _e.length; _d++) {
+                    var assignedTo = _e[_d];
+                    var option = document.createElement('option');
                     option.value = assignedTo.assignedToId.toString();
                     option.textContent = assignedTo.assignedToName;
                     if (currentAssignedToId &&
@@ -467,45 +368,47 @@
                 ;
                 modalElement.querySelector('#editNotificationConfiguration--isActive').checked = currentIsActive;
                 // Handle notification type change
-                typeSelect.addEventListener('change', () => {
+                typeSelect.addEventListener('change', function () {
                     renderNotificationTypeForm(modalElement, typeSelect.value);
                 });
                 // Render initial form with existing data
                 renderNotificationTypeForm(modalElement, currentNotificationType, currentNotificationTypeFormJson);
             },
-            onshown(modalElement, _closeModalFunction) {
+            onshown: function (modalElement, _closeModalFunction) {
+                var _a;
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = _closeModalFunction;
-                modalElement
-                    .querySelector('form')
-                    ?.addEventListener('submit', doUpdateNotificationConfiguration);
+                (_a = modalElement
+                    .querySelector('form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', doUpdateNotificationConfiguration);
             },
-            onremoved() {
+            onremoved: function () {
                 bulmaJS.toggleHtmlClipped();
             }
         });
     }
     function deleteNotificationConfiguration(clickEvent) {
-        const buttonElement = clickEvent.currentTarget;
-        const notificationConfigurationId = buttonElement.dataset.notificationConfigurationId;
-        const notificationQueue = buttonElement.dataset.notificationQueue ?? '';
+        var _a;
+        var buttonElement = clickEvent.currentTarget;
+        var notificationConfigurationId = buttonElement.dataset.notificationConfigurationId;
+        var notificationQueue = (_a = buttonElement.dataset.notificationQueue) !== null && _a !== void 0 ? _a : '';
         if (notificationConfigurationId === undefined) {
             return;
         }
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Notification Configuration',
-            message: `Are you sure you want to delete the notification configuration for "${cityssm.escapeHTML(notificationQueue)}"?`,
+            message: "Are you sure you want to delete the notification configuration for \"".concat(cityssm.escapeHTML(notificationQueue), "\"?"),
             okButton: {
                 text: 'Yes, Delete Configuration',
-                callbackFunction() {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNotificationConfiguration`, {
-                        notificationConfigurationId
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                callbackFunction: function () {
+                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doDeleteNotificationConfiguration"), {
+                        notificationConfigurationId: notificationConfigurationId
+                    }, function (responseJSON) {
                         if (responseJSON.success) {
-                            notificationConfigurations = notificationConfigurations.filter((c) => c.notificationConfigurationId !==
-                                Number.parseInt(notificationConfigurationId, 10));
+                            notificationConfigurations = notificationConfigurations.filter(function (c) {
+                                return c.notificationConfigurationId !==
+                                    Number.parseInt(notificationConfigurationId, 10);
+                            });
                             renderNotificationConfigurations();
                         }
                         else {
@@ -520,8 +423,8 @@
             }
         });
     }
-    document
-        .querySelector('#button--addNotificationConfiguration')
-        ?.addEventListener('click', addNotificationConfiguration);
+    (_a = document
+        .querySelector('#button--addNotificationConfiguration')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', addNotificationConfiguration);
     renderNotificationConfigurations();
 })();
+//# sourceMappingURL=notificationConfigurations.admin.js.map

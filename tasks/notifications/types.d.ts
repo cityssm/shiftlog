@@ -16,3 +16,4 @@ export interface NotificationFunctionResult {
     errorMessage?: string;
 }
 export type NotificationFunction = (notificationConfiguration: unknown, recordId: number | string) => Promise<NotificationFunctionResult | undefined>;
+//# sourceMappingURL=types.d.ts.map

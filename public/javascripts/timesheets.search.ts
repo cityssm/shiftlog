@@ -104,10 +104,7 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doSearchTimesheets`,
       formElement,
-      (rawResponseJSON) => {
-        const responseJSON =
-          rawResponseJSON as unknown as DoSearchTimesheetsResponse
-
+      (responseJSON: DoSearchTimesheetsResponse) => {
         renderTimesheetResults(responseJSON)
       }
     )

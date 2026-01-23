@@ -65,13 +65,11 @@ declare const bulmaJS: {
               {
                 workOrderId: workOrderIdElement.value
               },
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as {
-                  errorMessage?: string
-                  redirectUrl?: string
-                  success: boolean
-                }
-
+              (responseJSON: {
+                errorMessage?: string
+                redirectUrl?: string
+                success: boolean
+              }) => {
                 if (
                   responseJSON.success &&
                   responseJSON.redirectUrl !== undefined

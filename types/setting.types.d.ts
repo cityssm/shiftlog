@@ -8,3 +8,4 @@ export interface SettingProperties {
     isUserConfigurable: boolean;
 }
 export declare const settingProperties: SettingProperties[];
+//# sourceMappingURL=setting.types.d.ts.map

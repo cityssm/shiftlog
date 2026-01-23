@@ -1,5 +1,7 @@
-(() => {
-    const resultsContainerElement = document.querySelector('#container--deletedRecordResults');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(function () {
+    var resultsContainerElement = document.querySelector('#container--deletedRecordResults');
     function recoverTimesheet(timesheetId) {
         bulmaJS.confirm({
             contextualColorName: 'warning',
@@ -7,16 +9,16 @@
             message: 'Are you sure you want to recover this timesheet?',
             okButton: {
                 text: 'Yes, Recover',
-                callbackFunction: () => {
-                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doRecoverTimesheet`, { timesheetId }, (rawResponseJSON) => {
-                        const response = rawResponseJSON;
+                callbackFunction: function () {
+                    cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.timesheetsRouter, "/doRecoverTimesheet"), { timesheetId: timesheetId }, function (response) {
+                        var _a;
                         if (response.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Timesheet Recovered',
                                 message: 'The timesheet has been recovered successfully.',
                                 okButton: {
-                                    callbackFunction: () => {
+                                    callbackFunction: function () {
                                         globalThis.location.href = response.redirectUrl;
                                     }
                                 }
@@ -26,7 +28,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error',
-                                message: response.errorMessage ?? 'Failed to recover timesheet.'
+                                message: (_a = response.errorMessage) !== null && _a !== void 0 ? _a : 'Failed to recover timesheet.'
                             });
                         }
                     });
@@ -35,84 +37,41 @@
         });
     }
     function renderDeletedRecordsTable(data) {
+        var _a, _b, _c, _d, _e, _f, _g;
         if (data.timesheets.length === 0) {
-            resultsContainerElement.innerHTML = /* html */ `
-        <div class="message is-info">
-          <p class="message-body">No deleted records found.</p>
-        </div>
-      `;
+            resultsContainerElement.innerHTML = /* html */ "\n        <div class=\"message is-info\">\n          <p class=\"message-body\">No deleted records found.</p>\n        </div>\n      ";
             return;
         }
-        const tableElement = document.createElement('table');
+        var tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable is-narrow';
-        tableElement.innerHTML = /* html */ `
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Supervisor</th>
-          <th>Details</th>
-          <th>Deleted By</th>
-          <th>Deleted Date</th>
-          <th class="has-width-1">
-            <span class="is-sr-only">Actions</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    `;
-        const tableBodyElement = tableElement.querySelector('tbody');
-        for (const timesheet of data.timesheets) {
-            const tableRowElement = document.createElement('tr');
-            const supervisorName = timesheet.supervisorEmployeeSurname ||
+        tableElement.innerHTML = /* html */ "\n      <thead>\n        <tr>\n          <th>Date</th>\n          <th>Type</th>\n          <th>Supervisor</th>\n          <th>Details</th>\n          <th>Deleted By</th>\n          <th>Deleted Date</th>\n          <th class=\"has-width-1\">\n            <span class=\"is-sr-only\">Actions</span>\n          </th>\n        </tr>\n      </thead>\n      <tbody></tbody>\n    ";
+        var tableBodyElement = tableElement.querySelector('tbody');
+        var _loop_1 = function (timesheet) {
+            var tableRowElement = document.createElement('tr');
+            var supervisorName = timesheet.supervisorEmployeeSurname ||
                 timesheet.supervisorEmployeeGivenName
-                ? `${timesheet.supervisorEmployeeSurname ?? ''}, ${timesheet.supervisorEmployeeGivenName ?? ''}`
-                : timesheet.supervisorEmployeeNumber ?? '-';
+                ? "".concat((_a = timesheet.supervisorEmployeeSurname) !== null && _a !== void 0 ? _a : '', ", ").concat((_b = timesheet.supervisorEmployeeGivenName) !== null && _b !== void 0 ? _b : '')
+                : (_c = timesheet.supervisorEmployeeNumber) !== null && _c !== void 0 ? _c : '-';
             // eslint-disable-next-line no-unsanitized/property
-            tableRowElement.innerHTML = /* html */ `
-        <td>
-          ${cityssm.dateToString(new Date(timesheet.timesheetDate))}
-        </td>
-        <td>${cityssm.escapeHTML(timesheet.timesheetTypeDataListItem ?? '-')}</td>
-        <td>${cityssm.escapeHTML(supervisorName)}</td>
-        <td>${cityssm.escapeHTML((timesheet.timesheetDetails ?? '').slice(0, 100))}${(timesheet.timesheetDetails ?? '').length > 100 ? '...' : ''}</td>
-        <td>${cityssm.escapeHTML(timesheet.recordDelete_userName ?? '')}</td>
-        <td>
-          ${timesheet.recordDelete_dateTime ? cityssm.dateToString(new Date(timesheet.recordDelete_dateTime)) : ''}
-        </td>
-        <td>
-          <button
-            class="button is-small is-primary is-light"
-            data-timesheet-id="${timesheet.timesheetId}"
-            type="button"
-          >
-            <span class="icon is-small">
-              <i class="fa-solid fa-undo"></i>
-            </span>
-            <span>Recover</span>
-          </button>
-        </td>
-      `;
-            const recoverButton = tableRowElement.querySelector('button');
-            recoverButton.addEventListener('click', () => {
+            tableRowElement.innerHTML = /* html */ "\n        <td>\n          ".concat(cityssm.dateToString(new Date(timesheet.timesheetDate)), "\n        </td>\n        <td>").concat(cityssm.escapeHTML((_d = timesheet.timesheetTypeDataListItem) !== null && _d !== void 0 ? _d : '-'), "</td>\n        <td>").concat(cityssm.escapeHTML(supervisorName), "</td>\n        <td>").concat(cityssm.escapeHTML(((_e = timesheet.timesheetDetails) !== null && _e !== void 0 ? _e : '').slice(0, 100))).concat(((_f = timesheet.timesheetDetails) !== null && _f !== void 0 ? _f : '').length > 100 ? '...' : '', "</td>\n        <td>").concat(cityssm.escapeHTML((_g = timesheet.recordDelete_userName) !== null && _g !== void 0 ? _g : ''), "</td>\n        <td>\n          ").concat(timesheet.recordDelete_dateTime ? cityssm.dateToString(new Date(timesheet.recordDelete_dateTime)) : '', "\n        </td>\n        <td>\n          <button\n            class=\"button is-small is-primary is-light\"\n            data-timesheet-id=\"").concat(timesheet.timesheetId, "\"\n            type=\"button\"\n          >\n            <span class=\"icon is-small\">\n              <i class=\"fa-solid fa-undo\"></i>\n            </span>\n            <span>Recover</span>\n          </button>\n        </td>\n      ");
+            var recoverButton = tableRowElement.querySelector('button');
+            recoverButton.addEventListener('click', function () {
                 recoverTimesheet(timesheet.timesheetId);
             });
             tableBodyElement.append(tableRowElement);
+        };
+        for (var _i = 0, _h = data.timesheets; _i < _h.length; _i++) {
+            var timesheet = _h[_i];
+            _loop_1(timesheet);
         }
         resultsContainerElement.innerHTML = '';
         resultsContainerElement.append(tableElement);
     }
     function getDeletedRecords() {
-        resultsContainerElement.innerHTML = /* html */ `
-      <div class="message">
-        <p class="message-body has-text-centered">
-          <span class="icon"><i class="fa-solid fa-spinner fa-spin"></i></span>
-          <span>Loading...</span>
-        </p>
-      </div>
-    `;
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doGetDeletedTimesheets`, {}, renderDeletedRecordsTable);
+        resultsContainerElement.innerHTML = /* html */ "\n      <div class=\"message\">\n        <p class=\"message-body has-text-centered\">\n          <span class=\"icon\"><i class=\"fa-solid fa-spinner fa-spin\"></i></span>\n          <span>Loading...</span>\n        </p>\n      </div>\n    ";
+        cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.timesheetsRouter, "/doGetDeletedTimesheets"), {}, renderDeletedRecordsTable);
     }
     getDeletedRecords();
 })();
+//# sourceMappingURL=timesheets.recovery.js.map

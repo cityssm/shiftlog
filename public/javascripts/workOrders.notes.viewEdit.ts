@@ -343,12 +343,10 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`,
         {},
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            notes: WorkOrderNote[]
-          }
-
+        (responseJSON: {
+          success: boolean
+          notes: WorkOrderNote[]
+        }) => {
           if (responseJSON.success) {
             renderNotes(responseJSON.notes)
           }

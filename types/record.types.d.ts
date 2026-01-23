@@ -369,3 +369,4 @@ export interface NotificationConfiguration extends BaseRecord {
     assignedToName?: string;
     isActive: boolean;
 }
+//# sourceMappingURL=record.types.d.ts.map
