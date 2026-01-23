@@ -77,9 +77,9 @@
         <hr />
         
         <!-- Search results -->
-        <div id="container--searchResults" class="is-hidden mt-4">
+        <div class="is-hidden mt-4" id="container--searchResults">
           <h4 class="title is-6">Recent Timesheets</h4>
-          <div id="notice--noTimesheets" class="notification is-warning is-light is-hidden">
+          <div class="notification is-warning is-light is-hidden" id="notice--noTimesheets">
             <p>No timesheets found matching the search criteria.</p>
           </div>
           <div id="list--timesheets"></div>
@@ -102,18 +102,18 @@
     </section>
     <footer class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-close-modal-button" type="button">
-          Cancel
-        </button>
         <button
           class="button is-primary"
-          type="submit"
-          form="form--copyFromPreviousTimesheet"
           id="button--copyFromPreviousTimesheet"
+          type="submit"
           disabled
+          form="form--copyFromPreviousTimesheet"
         >
           <span class="icon"><i class="fa-solid fa-copy"></i></span>
           <span>Copy from Timesheet</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
         </button>
       </div>
     </footer>

@@ -29,7 +29,7 @@
           </p>
         </div>
 
-        <div id="container--availableShifts" class="mt-4">
+        <div class="mt-4" id="container--availableShifts">
           <div class="notification is-warning is-light" id="notice--loading">
             <p class="has-text-centered">
               <span class="icon">
@@ -39,28 +39,28 @@
             </p>
           </div>
           
-          <div id="notice--noShifts" class="notification is-warning is-light is-hidden">
+          <div class="notification is-warning is-light is-hidden" id="notice--noShifts">
             <p>No shifts found for the timesheet date and supervisor.</p>
           </div>
 
-          <div id="list--shifts" class="is-hidden"></div>
+          <div class="is-hidden" id="list--shifts"></div>
         </div>
       </form>
     </section>
     <footer class="modal-card-foot is-justify-content-right">
       <div class="buttons">
-        <button class="button is-close-modal-button" type="button">
-          Cancel
-        </button>
         <button
           class="button is-primary"
-          type="submit"
-          form="form--copyFromShift"
           id="button--copyFromShift"
+          type="submit"
           disabled
+          form="form--copyFromShift"
         >
           <span class="icon"><i class="fa-solid fa-copy"></i></span>
           <span>Copy from Shift</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
         </button>
       </div>
     </footer>
