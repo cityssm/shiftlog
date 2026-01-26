@@ -1,5 +1,4 @@
 /* eslint-disable max-lines -- Large file */
-/* eslint-disable unicorn/no-null -- Need null */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'

@@ -30,7 +30,6 @@
         new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        // eslint-disable-next-line unicorn/no-null
         let marker = null;
         // Add existing marker if coordinates are set
         if (latitudeInput.value !== '' && longitudeInput.value !== '') {
@@ -349,7 +348,6 @@
      * Filter locations with debouncing
      */
     const filterInput = document.querySelector('#filter--locations');
-    // eslint-disable-next-line unicorn/no-null
     let filterTimeout = null;
     if (filterInput !== null) {
         filterInput.addEventListener('input', () => {

@@ -1,5 +1,3 @@
-/* eslint-disable max-lines, unicorn/no-null */
-
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'

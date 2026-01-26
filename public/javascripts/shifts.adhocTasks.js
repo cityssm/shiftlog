@@ -46,7 +46,6 @@
         new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        // eslint-disable-next-line unicorn/no-null
         let marker = null;
         if (existingLat !== null &&
             existingLat !== undefined &&
