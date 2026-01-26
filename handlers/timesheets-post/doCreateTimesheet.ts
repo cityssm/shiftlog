@@ -5,9 +5,16 @@ import copyFromShift from '../../database/timesheets/copyFromShift.js'
 import createTimesheet from '../../database/timesheets/createTimesheet.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoCreateTimesheetResponse = {
+  success: boolean
+  timesheetId: number
+  redirectURL: string
+}
+
 export default async function handler(
   request: Request<unknown, unknown, CreateTimesheetForm>,
-  response: Response
+  response: Response<DoCreateTimesheetResponse>
 ): Promise<void> {
   const timesheetId = await createTimesheet(
     request.body,
@@ -26,5 +33,5 @@ export default async function handler(
     success: true,
     timesheetId,
     redirectURL: `${urlPrefix}/${router}/${timesheetId}/edit`
-  })
+  } satisfies DoCreateTimesheetResponse)
 }
