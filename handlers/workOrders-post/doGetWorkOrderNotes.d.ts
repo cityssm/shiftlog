@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import type { WorkOrderNote } from '../../database/workOrders/getWorkOrderNotes.js';
 export type DoGetWorkOrderNotesResponse = {
-    success: boolean;
+    success: MediaTrackSupportedConstraints;
     notes: WorkOrderNote[];
 };
 export default function handler(request: Request<{

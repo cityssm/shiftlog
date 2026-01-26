@@ -5,9 +5,11 @@ interface DeleteWorkOrderTagForm {
     tagName: string;
 }
 export type DoDeleteWorkOrderTagResponse = {
-    success: boolean;
+    success: false;
+    message: string;
+} | {
+    success: true;
     tags?: WorkOrderTag[];
-    message?: string;
 };
 export default function handler(request: Request<unknown, unknown, DeleteWorkOrderTagForm>, response: Response<DoDeleteWorkOrderTagResponse>): Promise<void>;
 export {};

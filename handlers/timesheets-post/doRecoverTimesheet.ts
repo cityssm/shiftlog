@@ -5,16 +5,15 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('timesheets.router')}`
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoRecoverTimesheetResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
   | {
       success: true
       message: string
       redirectUrl: string
-    }
-  | {
-      success: false
-      errorMessage: string
     }
 
 export default async function handler(
@@ -31,11 +30,11 @@ export default async function handler(
       success: true,
       message: 'Timesheet recovered successfully.',
       redirectUrl: `${redirectRoot}/${request.body.timesheetId}`
-    } satisfies DoRecoverTimesheetResponse)
+    })
   } else {
     response.json({
       success: false,
       errorMessage: 'Failed to recover timesheet.'
-    } satisfies DoRecoverTimesheetResponse)
+    })
   }
 }

@@ -5,7 +5,7 @@ import type { WorkOrder } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetDeletedWorkOrdersResponse = {
-  success: boolean
+  success: true
   workOrders: WorkOrder[]
 }
 
@@ -18,5 +18,5 @@ export default async function handler(
   response.json({
     success: true,
     workOrders
-  } satisfies DoGetDeletedWorkOrdersResponse)
+  })
 }

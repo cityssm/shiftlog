@@ -22,5 +22,5 @@ export default async function handler(
   response.json({
     success: true,
     workOrderMilestoneId
-  } satisfies DoCreateWorkOrderMilestoneResponse)
+  })
 }

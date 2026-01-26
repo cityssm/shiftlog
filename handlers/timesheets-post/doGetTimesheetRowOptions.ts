@@ -39,6 +39,7 @@ export default async function handler(
 
   response.json({
     success: true,
+    
     employees: employees.map((e) => ({
       employeeNumber: e.employeeNumber,
       firstName: e.firstName,
@@ -56,5 +57,5 @@ export default async function handler(
       dataListItemId: t.dataListItemId,
       dataListItem: t.dataListItem
     }))
-  } satisfies DoGetTimesheetRowOptionsResponse)
+  })
 }

@@ -5,7 +5,7 @@ import type { WorkOrderNote } from '../../database/workOrders/getWorkOrderNotes.
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetWorkOrderNotesResponse = {
-  success: boolean
+  success: MediaTrackSupportedConstraints
   notes: WorkOrderNote[]
 }
 
@@ -18,5 +18,5 @@ export default async function handler(
   response.json({
     success: true,
     notes
-  } satisfies DoGetWorkOrderNotesResponse)
+  })
 }

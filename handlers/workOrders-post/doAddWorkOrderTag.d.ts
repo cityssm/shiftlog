@@ -5,9 +5,11 @@ interface AddWorkOrderTagForm {
     tagName: string;
 }
 export type DoAddWorkOrderTagResponse = {
-    success: boolean;
-    tags?: WorkOrderTag[];
-    message?: string;
+    success: false;
+    message: string;
+} | {
+    success: true;
+    tags: WorkOrderTag[];
 };
 export default function handler(request: Request<unknown, unknown, AddWorkOrderTagForm>, response: Response<DoAddWorkOrderTagResponse>): Promise<void>;
 export {};

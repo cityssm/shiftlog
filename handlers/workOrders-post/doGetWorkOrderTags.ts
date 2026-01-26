@@ -5,7 +5,7 @@ import type { WorkOrderTag } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetWorkOrderTagsResponse = {
-  success: boolean
+  success: true
   tags: WorkOrderTag[]
 }
 
@@ -18,5 +18,5 @@ export default async function handler(
   response.json({
     success: true,
     tags
-  } satisfies DoGetWorkOrderTagsResponse)
+  })
 }

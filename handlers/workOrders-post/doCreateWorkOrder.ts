@@ -23,5 +23,5 @@ export default async function handler(
     success: true,
 
     workOrderId
-  } satisfies DoCreateWorkOrderResponse)
+  })
 }

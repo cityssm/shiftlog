@@ -4,7 +4,7 @@ import doGetRequestorSuggestions from '../../database/workOrders/getRequestorSug
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetRequestorSuggestionsResponse = {
-  success: boolean
+  success: true
   requestors: Array<{ requestorContactInfo: string; requestorName: string }>
 }
 
@@ -19,7 +19,7 @@ export default async function handler(
 
   response.json({
     success: true,
-    
+
     requestors
-  } satisfies DoGetRequestorSuggestionsResponse)
+  })
 }

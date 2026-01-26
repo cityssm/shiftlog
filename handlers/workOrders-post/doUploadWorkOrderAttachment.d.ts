@@ -3,9 +3,11 @@ interface MulterRequest extends Request {
     file?: Express.Multer.File;
 }
 export type DoUploadWorkOrderAttachmentResponse = {
-    success: boolean;
+    success: false;
+    message: string;
+} | {
+    success: true;
     workOrderAttachmentId?: number;
-    message?: string;
 };
 export default function handler(request: MulterRequest, response: Response<DoUploadWorkOrderAttachmentResponse>): Promise<void>;
 export {};

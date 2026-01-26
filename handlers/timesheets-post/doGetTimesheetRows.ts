@@ -10,7 +10,11 @@ export type DoGetTimesheetRowsResponse = {
 }
 
 export default async function handler(
-  request: Request<unknown, unknown, { timesheetId: number | string } & GetTimesheetRowsFilters>,
+  request: Request<
+    unknown,
+    unknown,
+    GetTimesheetRowsFilters & { timesheetId: number | string }
+  >,
   response: Response<DoGetTimesheetRowsResponse>
 ): Promise<void> {
   const { timesheetId, ...filters } = request.body
@@ -19,5 +23,5 @@ export default async function handler(
 
   response.json({
     rows
-  } satisfies DoGetTimesheetRowsResponse)
+  })
 }

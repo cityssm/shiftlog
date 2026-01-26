@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import type { WorkOrderMilestone } from '../../types/record.types.js';
 export type DoGetWorkOrderMilestonesResponse = {
-    success: boolean;
+    success: true;
     milestones: WorkOrderMilestone[];
 };
 export default function handler(request: Request<{

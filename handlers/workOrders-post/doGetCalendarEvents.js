@@ -6,8 +6,7 @@ export default async function handler(request, response) {
     const month = typeof request.body.month === 'number'
         ? request.body.month
         : Number.parseInt(request.body.month, 10);
-    const assignedToId = request.body.assignedToId === undefined ||
-        request.body.assignedToId === ''
+    const assignedToId = request.body.assignedToId === undefined || request.body.assignedToId === ''
         ? undefined
         : typeof request.body.assignedToId === 'number'
             ? request.body.assignedToId

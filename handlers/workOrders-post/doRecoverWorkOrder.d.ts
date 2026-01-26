@@ -1,9 +1,11 @@
 import type { Request, Response } from 'express';
 export type DoRecoverWorkOrderResponse = {
-    success: boolean;
-    message?: string;
-    redirectUrl?: string;
-    errorMessage?: string;
+    success: false;
+    errorMessage: string;
+} | {
+    success: true;
+    message: string;
+    redirectUrl: string;
 };
 export default function handler(request: Request<unknown, unknown, {
     workOrderId: number | string;

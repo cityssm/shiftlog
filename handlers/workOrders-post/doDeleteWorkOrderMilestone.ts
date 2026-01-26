@@ -8,11 +8,7 @@ export type DoDeleteWorkOrderMilestoneResponse = {
 }
 
 export default async function handler(
-  request: Request<
-    unknown,
-    unknown,
-    { workOrderMilestoneId: number | string }
-  >,
+  request: Request<unknown, unknown, { workOrderMilestoneId: number | string }>,
   response: Response<DoDeleteWorkOrderMilestoneResponse>
 ): Promise<void> {
   const success = await deleteWorkOrderMilestone(
@@ -22,5 +18,5 @@ export default async function handler(
 
   response.json({
     success
-  } satisfies DoDeleteWorkOrderMilestoneResponse)
+  })
 }

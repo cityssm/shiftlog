@@ -35,7 +35,8 @@ export default async function handler(request, response) {
         return;
     }
     const workOrderId = request.body.workOrderId;
-    const attachmentDescription = (request.body.attachmentDescription ?? '');
+    const attachmentDescription = (request.body.attachmentDescription ??
+        '');
     // Create year/month subdirectory structure
     const now = new Date();
     const year = now.getFullYear().toString();

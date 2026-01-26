@@ -8,7 +8,7 @@ import type { WorkOrder } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetWorkOrdersForPlannerResponse = {
-  success: boolean
+  success: true
 
   workOrders: WorkOrder[]
 
@@ -47,5 +47,5 @@ export default async function handler(
       typeof request.body.offset === 'number'
         ? request.body.offset
         : Number.parseInt(request.body.offset, 10)
-  } satisfies DoGetWorkOrdersForPlannerResponse)
+  })
 }

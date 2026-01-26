@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 export type DoGetRequestorSuggestionsResponse = {
-    success: boolean;
+    success: true;
     requestors: Array<{
         requestorContactInfo: string;
         requestorName: string;
