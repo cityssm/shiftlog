@@ -460,4 +460,3 @@
     attachEventListeners();
     initializeSortable();
 })();
-export {};

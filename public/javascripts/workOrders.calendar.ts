@@ -1,3 +1,5 @@
+/* eslint-disable max-depth -- AI generated, needs refactoring */
+
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { WorkOrderCalendarEvent } from '../../database/workOrders/getCalendarEvents.js'
@@ -210,22 +212,20 @@ declare const exports: {
               const currentDate = new Date()
               currentDate.setHours(0, 0, 0, 0) // Reset to midnight for date comparison
 
-              // eslint-disable-next-line max-depth
               if (event.eventType.startsWith('workOrder')) {
                 // Work order logic
-                // eslint-disable-next-line max-depth
                 if (event.workOrderCloseDateTime === null) {
                   // Work order is open
                   statusText = 'Open'
+
                   // Check if overdue: open and has due date and due date is in the past
-                  // eslint-disable-next-line max-depth
                   if (
                     event.workOrderDueDateTime !== null &&
                     event.workOrderDueDateTime !== undefined
                   ) {
                     const dueDate = new Date(event.workOrderDueDateTime as string)
                     dueDate.setHours(0, 0, 0, 0)
-                    // eslint-disable-next-line max-depth
+
                     if (dueDate < currentDate) {
                       statusText = 'Overdue'
                       rightTagClass = 'is-light is-danger'
@@ -241,19 +241,17 @@ declare const exports: {
                 }
               } else {
                 // Milestone logic
-                // eslint-disable-next-line max-depth
                 if (event.milestoneCompleteDateTime === null) {
                   // Milestone is open
                   statusText = 'Open'
                   // Check if overdue: open and has due date and due date is in the past
-                  // eslint-disable-next-line max-depth
                   if (
                     event.milestoneDueDateTime !== null &&
                     event.milestoneDueDateTime !== undefined
                   ) {
                     const dueDate = new Date(event.milestoneDueDateTime as string)
                     dueDate.setHours(0, 0, 0, 0)
-                    // eslint-disable-next-line max-depth
+
                     if (dueDate < currentDate) {
                       statusText = 'Overdue'
                       rightTagClass = 'is-light is-danger'

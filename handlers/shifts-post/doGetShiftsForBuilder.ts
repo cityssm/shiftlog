@@ -1,12 +1,14 @@
-import type { Request, Response } from 'express'
 import type { DateString } from '@cityssm/utils-datetime'
+import type { Request, Response } from 'express'
 
 import getShiftsForBuilder, {
   type ShiftForBuilder
 } from '../../database/shifts/getShiftsForBuilder.js'
 
-export interface DoGetShiftsForBuilderResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetShiftsForBuilderResponse = {
   success: boolean
+
   shifts: ShiftForBuilder[]
 }
 
@@ -26,6 +28,7 @@ export default async function handler(
 
   response.json({
     success: true,
+    
     shifts
   })
 }

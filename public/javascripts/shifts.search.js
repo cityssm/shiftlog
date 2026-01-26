@@ -154,4 +154,3 @@
         ?.addEventListener('change', resetOffsetAndGetResults);
     getSearchResults();
 })();
-export {};

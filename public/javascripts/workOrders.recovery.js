@@ -117,4 +117,3 @@
     }
     getDeletedRecords();
 })();
-export {};

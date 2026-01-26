@@ -286,7 +286,7 @@
                     // Set the selected option if there is one
                     if (milestone.assignedToId !== null) {
                         assignedToSelect.value =
-                            milestone.assignedToId.toString();
+                            milestone.assignedToId?.toString() ?? '';
                     }
                     // If no assignedTo is set, leave it as "(Not Assigned)" - don't default to work order's value
                 },
@@ -345,4 +345,3 @@
         loadMilestones();
     }
 })();
-export {};

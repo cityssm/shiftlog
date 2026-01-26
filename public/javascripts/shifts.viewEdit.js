@@ -4,4 +4,3 @@
         exports.shiftLog.initializeRecordTabs(shiftTabsContainerElement);
     }
 })();
-export {};

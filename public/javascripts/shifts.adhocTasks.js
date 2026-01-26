@@ -619,4 +619,3 @@
     renderShiftAdhocTasks();
     updateCount();
 })();
-export {};

@@ -10,4 +10,3 @@
         buttonElement.addEventListener('click', removeReportBlock);
     }
 })();
-export {};

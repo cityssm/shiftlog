@@ -11,4 +11,3 @@
         new L.Marker([lat, lng]).addTo(map);
     }
 })();
-export {};

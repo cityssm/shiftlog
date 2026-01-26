@@ -238,7 +238,7 @@ declare const Sortable: {
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestoneOrder`,
         { milestoneOrders },
-        (responseJSON) => {
+        (responseJSON: { success: boolean }) => {
           if (!responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'danger',
@@ -281,7 +281,7 @@ declare const Sortable: {
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderMilestone`,
           formElement,
-          (responseJSON) => {
+          (responseJSON: { success: boolean }) => {
             if (responseJSON.success) {
               closeModalFunction()
               loadMilestones()
@@ -371,7 +371,7 @@ declare const Sortable: {
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestone`,
           formElement,
-          (responseJSON) => {
+          (responseJSON: { success: boolean }) => {
             if (responseJSON.success) {
               closeModalFunction()
               loadMilestones()
@@ -448,7 +448,7 @@ declare const Sortable: {
           // Set the selected option if there is one
           if (milestone.assignedToId !== null) {
             assignedToSelect.value =
-              milestone.assignedToId.toString()
+              milestone.assignedToId?.toString() ?? ''
           }
           // If no assignedTo is set, leave it as "(Not Assigned)" - don't default to work order's value
         },
@@ -481,7 +481,7 @@ declare const Sortable: {
               {
                 workOrderMilestoneId
               },
-              (responseJSON) => {
+              (responseJSON: { success: boolean }) => {
                 if (responseJSON.success) {
                   loadMilestones()
                 } else {

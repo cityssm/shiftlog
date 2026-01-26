@@ -1657,7 +1657,7 @@
                                                                     equipmentNumber: equipment.equipmentNumber,
                                                                     shiftEquipmentNote: '',
                                                                     shiftId: toShiftId
-                                                                }, () => {
+                                                                }, (addEqResponse) => {
                                                                     equipmentProcessed += 1;
                                                                     if (equipmentProcessed ===
                                                                         totalEquipment) {
@@ -2309,8 +2309,8 @@
         cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableResources`, { shiftDateString }, (responseJSON) => {
             if (responseJSON.success) {
                 // Filter out equipment already on the shift
-                const shiftEquipmentNumbers = new Set(shift.equipment.map((e) => e.equipmentNumber));
-                const availableEquipment = responseJSON.equipment.filter((e) => !shiftEquipmentNumbers.has(e.equipmentNumber));
+                const shiftEquipmentNumbers = new Set(shift.equipment.map((equipmentEntry) => equipmentEntry.equipmentNumber));
+                const availableEquipment = responseJSON.equipment.filter((equipmentEntry) => !shiftEquipmentNumbers.has(equipmentEntry.equipmentNumber));
                 const equipmentList = modalElement.querySelector('#builderAddResource--equipmentList');
                 equipmentList.innerHTML = '';
                 if (availableEquipment.length === 0) {
@@ -2505,7 +2505,7 @@
                         shiftWorkOrderNote: '',
                         workOrderId: resourceId
                     }, (response) => {
-                        processedCount++;
+                        processedCount += 1;
                         if (!response.success) {
                             // Show error for this specific work order
                             bulmaJS.alert({
@@ -2515,7 +2515,7 @@
                             });
                         }
                         else {
-                            successCount++;
+                            successCount += 1;
                             checkbox.checked = false;
                         }
                         if (processedCount === totalToAdd) {
@@ -3004,4 +3004,3 @@
     // Load shifts for today on page load
     loadShifts();
 })();
-export {};

@@ -542,4 +542,3 @@
     // Initial render
     renderTagsWithPagination(exports.tags);
 })();
-export {};

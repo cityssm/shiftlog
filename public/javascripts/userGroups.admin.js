@@ -403,4 +403,3 @@
     });
     renderUserGroups(exports.userGroups);
 })();
-export {};

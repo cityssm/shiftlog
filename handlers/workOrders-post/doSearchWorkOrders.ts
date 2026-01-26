@@ -6,7 +6,8 @@ import getWorkOrders, {
 } from '../../database/workOrders/getWorkOrders.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
-export interface DoSearchWorkOrdersResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoSearchWorkOrdersResponse = {
   success: boolean
 
   workOrders: WorkOrder[]
@@ -15,7 +16,7 @@ export interface DoSearchWorkOrdersResponse {
 
   limit: number
   offset: number
-}
+} 
 
 export default async function handler(
   request: Request<unknown, unknown, GetWorkOrdersFilters & GetWorkOrdersOptions>,

@@ -440,4 +440,3 @@
         inputElement.addEventListener('change', setUnsavedChanges);
     }
 })();
-export {};

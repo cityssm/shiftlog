@@ -13,4 +13,3 @@ export default function getTimesheets(filters: GetTimesheetsFilters, options: Ge
     timesheets: Timesheet[];
     totalCount: number;
 }>;
-//# sourceMappingURL=getTimesheets.d.ts.map

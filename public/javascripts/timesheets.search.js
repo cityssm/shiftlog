@@ -79,4 +79,3 @@
     formElement.prepend(timesheetDateStringElement);
     doSearch();
 })();
-export {};

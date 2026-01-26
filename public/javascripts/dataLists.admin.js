@@ -393,4 +393,3 @@
         button.addEventListener('click', addDataListItem);
     }
 })();
-export {};

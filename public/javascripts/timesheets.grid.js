@@ -872,4 +872,3 @@ class TimesheetGrid {
 }
 // Add to exports for use in other scripts
 exports.TimesheetGrid = TimesheetGrid;
-export {};

@@ -14,7 +14,8 @@ export interface DoGetCalendarEventsRequest {
   showMilestoneCompleteDates: boolean | string
 }
 
-export interface DoGetCalendarEventsResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetCalendarEventsResponse = {
   success: boolean
   events: WorkOrderCalendarEvent[]
 }

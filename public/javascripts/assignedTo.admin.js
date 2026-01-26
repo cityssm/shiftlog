@@ -252,4 +252,3 @@
         .querySelector('#button--addAssignedTo')
         ?.addEventListener('click', addAssignedTo);
 })();
-export {};

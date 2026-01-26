@@ -9,4 +9,3 @@ export interface DoSearchTimesheetsResponse {
     offset: number;
 }
 export default function handler(request: Request<unknown, unknown, GetTimesheetsFilters & GetTimesheetsOptions>, response: Response): Promise<void>;
-//# sourceMappingURL=doSearchTimesheets.d.ts.map

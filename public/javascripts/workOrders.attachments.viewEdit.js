@@ -296,4 +296,3 @@
         loadAttachments();
     }
 })();
-export {};

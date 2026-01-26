@@ -149,4 +149,3 @@
         getTags();
     }
 })();
-export {};

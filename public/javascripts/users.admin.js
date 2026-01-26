@@ -486,4 +486,3 @@
     });
     renderUsers(exports.users);
 })();
-export {};

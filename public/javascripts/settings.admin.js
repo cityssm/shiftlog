@@ -53,4 +53,3 @@
             ?.addEventListener('change', highlightChangedSettings);
     }
 })();
-export {};

@@ -590,4 +590,3 @@
         .querySelector('#button--addEmployeeList')
         .addEventListener('click', addEmployeeList);
 })();
-export {};

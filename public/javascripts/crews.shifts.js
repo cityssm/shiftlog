@@ -676,4 +676,3 @@
         ?.addEventListener('click', openAddCrewModal);
     renderCrews();
 })();
-export {};

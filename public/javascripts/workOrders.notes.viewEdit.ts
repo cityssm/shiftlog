@@ -209,7 +209,7 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`,
           formElement,
-          (responseJSON) => {
+          (responseJSON: { success: boolean }) => {
             if (responseJSON.success) {
               closeModalFunction()
               loadNotes()
@@ -265,7 +265,7 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`,
           formElement,
-          (responseJSON) => {
+          (responseJSON: { success: boolean }) => {
             if (responseJSON.success) {
               closeModalFunction()
               formElement.reset()
@@ -323,7 +323,7 @@ declare const bulmaJS: BulmaJS
                 workOrderId,
                 noteSequence
               },
-              (responseJSON) => {
+              (responseJSON: { success: boolean }) => {
                 if (responseJSON.success) {
                   loadNotes()
                 } else {

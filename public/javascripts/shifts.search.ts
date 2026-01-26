@@ -188,8 +188,8 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doSearchShifts`,
       filtersFormElement,
-      (responseJSON: DoSearchShiftsResponse) => {
-        renderShiftsTable(responseJSON)
+      (responseJSON) => {
+        renderShiftsTable(responseJSON as unknown as DoSearchShiftsResponse)
       }
     )
   }
