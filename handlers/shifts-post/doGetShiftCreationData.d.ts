@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-export interface DoGetShiftCreationDataResponse {
+export type DoGetShiftCreationDataResponse = {
     success: boolean;
     shiftTypes: Array<{
         dataListItemId: number;
@@ -14,5 +14,5 @@ export interface DoGetShiftCreationDataResponse {
         firstName: string;
         lastName: string;
     }>;
-}
+};
 export default function handler(request: Request, response: Response<DoGetShiftCreationDataResponse>): Promise<void>;

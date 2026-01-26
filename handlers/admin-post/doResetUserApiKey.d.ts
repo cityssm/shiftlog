@@ -1,4 +1,14 @@
 import type { Request, Response } from 'express';
+import getUsers from '../../database/users/getUsers.js';
+export type DoResetUserApiKeyResponse = {
+    message: string;
+    success: true;
+    users: Awaited<ReturnType<typeof getUsers>>;
+    apiKey: string;
+} | {
+    message: string;
+    success: false;
+};
 export default function handler(request: Request<unknown, unknown, {
     userName: string;
-}>, response: Response): Promise<void>;
+}>, response: Response<DoResetUserApiKeyResponse>): Promise<void>;

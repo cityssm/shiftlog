@@ -1,2 +1,6 @@
 import type { Request, Response } from 'express';
-export default function handler(request: Request, response: Response): Promise<void>;
+export type DoResetApiKeyResponse = {
+    success: boolean;
+    apiKey: string;
+};
+export default function handler(request: Request, response: Response<DoResetApiKeyResponse>): Promise<void>;

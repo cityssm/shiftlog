@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-export interface DoGetTimesheetRowOptionsResponse {
+export type DoGetTimesheetRowOptionsResponse = {
     success: boolean;
     employees: Array<{
         employeeNumber: string;
@@ -18,5 +18,5 @@ export interface DoGetTimesheetRowOptionsResponse {
         dataListItemId: number;
         dataListItem: string;
     }>;
-}
+};
 export default function handler(request: Request, response: Response<DoGetTimesheetRowOptionsResponse>): Promise<void>;

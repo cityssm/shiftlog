@@ -1,4 +1,9 @@
 import type { Request, Response } from 'express';
+import getEquipmentList from '../../database/equipment/getEquipmentList.js';
+export type DoAddEquipmentResponse = {
+    equipment: Awaited<ReturnType<typeof getEquipmentList>>;
+    success: boolean;
+};
 export default function handler(request: Request<unknown, unknown, {
     equipmentDescription: string;
     equipmentName: string;
@@ -6,4 +11,4 @@ export default function handler(request: Request<unknown, unknown, {
     equipmentTypeDataListItemId: string;
     employeeListId: string;
     userGroupId: string;
-}>, response: Response): Promise<void>;
+}>, response: Response<DoAddEquipmentResponse>): Promise<void>;

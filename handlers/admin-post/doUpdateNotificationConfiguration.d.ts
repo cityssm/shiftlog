@@ -1,2 +1,8 @@
 import type { Request, Response } from 'express';
-export default function handler(request: Request, response: Response): Promise<void>;
+export type DoUpdateNotificationConfigurationResponse = {
+    success: boolean;
+} | {
+    success: false;
+    errorMessage: string;
+};
+export default function handler(request: Request, response: Response<DoUpdateNotificationConfigurationResponse>): Promise<void>;
