@@ -10,8 +10,8 @@ export interface DoGetCalendarEventsRequest {
     showMilestoneDueDates: boolean | string;
     showMilestoneCompleteDates: boolean | string;
 }
-export interface DoGetCalendarEventsResponse {
+export type DoGetCalendarEventsResponse = {
     success: boolean;
     events: WorkOrderCalendarEvent[];
-}
+};
 export default function handler(request: Request<unknown, unknown, DoGetCalendarEventsRequest>, response: Response<DoGetCalendarEventsResponse>): Promise<void>;

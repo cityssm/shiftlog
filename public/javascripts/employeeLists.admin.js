@@ -152,8 +152,7 @@
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEmployeeListMember`, {
             employeeListId,
             employeeNumber
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.success && responseJSON.employeeList !== undefined) {
                 renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                 bulmaJS.alert({
@@ -186,8 +185,7 @@
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`, formElement, (responseJSON) => {
                 if (responseJSON.success && responseJSON.employeeList !== undefined) {
                     renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                     bulmaJS.alert({
@@ -244,8 +242,7 @@
         let closeModalFunction;
         function doUpdate(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`, formElement, (responseJSON) => {
                 if (responseJSON.success && responseJSON.employeeList !== undefined) {
                     renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                     bulmaJS.alert({
@@ -338,8 +335,7 @@
                     employeeListId,
                     employeeNumbers,
                     seniorityDate: seniorityDate ?? undefined
-                }, (rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
+                }, (responseJSON) => {
                     if (responseJSON.success &&
                         responseJSON.employeeList !== undefined) {
                         renderEmployeeListMembers(responseJSON.employeeList, panelElement);

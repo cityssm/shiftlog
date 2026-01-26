@@ -8,8 +8,7 @@
         employeeContactForm.addEventListener('submit', (formEvent) => {
             formEvent.preventDefault();
             const formElement = formEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -63,8 +62,7 @@
      * API Key
      */
     function doResetApiKey() {
-        cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doResetApiKey`, {}, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doResetApiKey`, {}, (responseJSON) => {
             if (responseJSON.success) {
                 bulmaJS.alert({
                     contextualColorName: 'success',

@@ -19,8 +19,7 @@ class TimesheetGrid {
         const doAddColumn = (submitEvent) => {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetColumn`, addForm, (rawResponseJSON) => {
-                const result = rawResponseJSON;
+            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetColumn`, addForm, (result) => {
                 if (result.success) {
                     closeModalFunction();
                     this.loadData()
@@ -86,8 +85,7 @@ class TimesheetGrid {
                     requestData[key] = stringValue === '' ? null : stringValue;
                 }
             }
-            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`, requestData, (rawResponseJSON) => {
-                const result = rawResponseJSON;
+            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`, requestData, (result) => {
                 if (result.success) {
                     closeModalFunction();
                     this.loadData()
@@ -113,8 +111,7 @@ class TimesheetGrid {
             });
         };
         // Load options for the modal
-        cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`, {}, (rawResponseJSON) => {
-            const optionsData = rawResponseJSON;
+        cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`, {}, (optionsData) => {
             if (!optionsData.success) {
                 bulmaJS.alert({
                     contextualColorName: 'danger',
@@ -217,8 +214,7 @@ class TimesheetGrid {
                     const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`;
                     cityssm.postJSON(`${timesheetUrlPrefix}/doDeleteTimesheetColumn`, {
                         timesheetColumnId: column.timesheetColumnId
-                    }, (rawResponseJSON) => {
-                        const result = rawResponseJSON;
+                    }, (result) => {
                         if (result.success) {
                             this.loadData()
                                 .then(() => {
@@ -250,8 +246,7 @@ class TimesheetGrid {
         const doUpdateColumn = (submitEvent) => {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetColumn`, editForm, (rawResponseJSON) => {
-                const result = rawResponseJSON;
+            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetColumn`, editForm, (result) => {
                 if (result.success) {
                     closeModalFunction();
                     this.loadData()
@@ -308,16 +303,13 @@ class TimesheetGrid {
         // eslint-disable-next-line promise/avoid-new
         await new Promise((resolve, _reject) => {
             // Load columns
-            cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetColumns`, { timesheetId: this.config.timesheetId }, (rawResponseJSON) => {
-                const columnsData = rawResponseJSON;
+            cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetColumns`, { timesheetId: this.config.timesheetId }, (columnsData) => {
                 this.columns = columnsData.columns;
                 // Load rows
-                cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetRows`, { timesheetId: this.config.timesheetId }, (rawResponseJSON) => {
-                    const rowsData = rawResponseJSON;
+                cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetRows`, { timesheetId: this.config.timesheetId }, (rowsData) => {
                     this.rows = rowsData.rows;
                     // Load cells
-                    cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetCells`, { timesheetId: this.config.timesheetId }, (rawResponseJSON) => {
-                        const cellsData = rawResponseJSON;
+                    cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetCells`, { timesheetId: this.config.timesheetId }, (cellsData) => {
                         this.cells.clear();
                         for (const cell of cellsData.cells) {
                             const key = TimesheetGrid.getCellKey(cell.timesheetRowId, cell.timesheetColumnId);
@@ -360,8 +352,7 @@ class TimesheetGrid {
         cityssm.postJSON(`${timesheetUrlPrefix}/doReorderTimesheetColumns`, {
             timesheetId: this.config.timesheetId,
             timesheetColumnIds
-        }, (rawResponseJSON) => {
-            const result = rawResponseJSON;
+        }, (result) => {
             if (result.success) {
                 this.loadData()
                     .then(() => {
@@ -635,8 +626,7 @@ class TimesheetGrid {
                     const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`;
                     cityssm.postJSON(`${timesheetUrlPrefix}/doDeleteTimesheetRow`, {
                         timesheetRowId: row.timesheetRowId
-                    }, (rawResponseJSON) => {
-                        const result = rawResponseJSON;
+                    }, (result) => {
                         if (result.success) {
                             this.loadData()
                                 .then(() => {
@@ -681,8 +671,7 @@ class TimesheetGrid {
                     requestData[key] = stringValue === '' ? null : stringValue;
                 }
             }
-            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetRow`, requestData, (rawResponseJSON) => {
-                const result = rawResponseJSON;
+            cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetRow`, requestData, (result) => {
                 if (result.success) {
                     closeModalFunction();
                     this.loadData()
@@ -708,8 +697,7 @@ class TimesheetGrid {
             });
         };
         // Load options for the modal
-        cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`, {}, (rawResponseJSON) => {
-            const optionsData = rawResponseJSON;
+        cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`, {}, (optionsData) => {
             if (!optionsData.success) {
                 bulmaJS.alert({
                     contextualColorName: 'danger',
@@ -848,8 +836,7 @@ class TimesheetGrid {
             timesheetRowId: rowId,
             timesheetColumnId: columnId,
             recordHours: hours
-        }, (rawResponseJSON) => {
-            const result = rawResponseJSON;
+        }, (result) => {
             if (result.success) {
                 this.setCellHours(rowId, columnId, hours);
                 this.updateTotals();

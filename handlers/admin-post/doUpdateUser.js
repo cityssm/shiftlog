@@ -1,4 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable @typescript-eslint/naming-convention */
 import updateUser from '../../database/users/updateUser.js';
 export default async function handler(request, response) {

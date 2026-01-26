@@ -172,13 +172,11 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteTag`,
             { tagName },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                success: boolean
-                message?: string
-                tags?: Tag[]
-              }
-
+            (responseJSON: {
+              success: boolean
+              message?: string
+              tags?: Tag[]
+            }) => {
               if (responseJSON.success) {
                 if (responseJSON.tags !== undefined) {
                   exports.tags = responseJSON.tags
@@ -232,13 +230,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateTag`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            message?: string
-            tags?: Tag[]
-          }
-
+        (responseJSON: {
+          success: boolean
+          message?: string
+          tags?: Tag[]
+        }) => {
           if (responseJSON.success) {
             closeModalFunction()
             if (responseJSON.tags !== undefined) {
@@ -356,13 +352,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddTag`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            message?: string
-            tags?: Tag[]
-          }
-
+        (responseJSON: {
+          success: boolean
+          message?: string
+          tags?: Tag[]
+        }) => {
           if (responseJSON.success) {
             closeModalFunction()
             if (responseJSON.tags !== undefined) {
@@ -628,13 +622,11 @@ declare const exports: {
               cityssm.postJSON(
                 `${shiftLog.urlPrefix}/admin/doAddTag`,
                 addForm,
-                (rawResponseJSON) => {
-                  const responseJSON = rawResponseJSON as {
-                    success: boolean
-                    message?: string
-                    tags?: Tag[]
-                  }
-
+                (responseJSON: {
+                  success: boolean
+                  message?: string
+                  tags?: Tag[]
+                }) => {
                   if (responseJSON.success) {
                     closeAddModalFunction()
                     if (responseJSON.tags !== undefined) {
@@ -688,12 +680,10 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doGetOrphanedTags`,
           {},
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as {
-              success: boolean
-              orphanedTags?: Array<{ tagName: string; usageCount: number }>
-            }
-
+          (responseJSON: {
+            success: boolean
+            orphanedTags?: Array<{ tagName: string; usageCount: number }>
+          }) => {
             if (
               responseJSON.success &&
               responseJSON.orphanedTags !== undefined

@@ -205,8 +205,7 @@
         </span>
       </div>
     `;
-        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`, filtersFormElement, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`, filtersFormElement, (responseJSON) => {
             renderWorkOrdersTable(responseJSON);
         });
     }

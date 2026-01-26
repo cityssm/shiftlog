@@ -25,8 +25,7 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEquipment`, {
                         equipmentNumber
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success) {
                             if (responseJSON.equipment !== undefined) {
                                 exports.equipment = responseJSON.equipment;
@@ -66,8 +65,7 @@
         function doUpdateEquipment(submitEvent) {
             submitEvent.preventDefault();
             const updateForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEquipment`, updateForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEquipment`, updateForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     if (responseJSON.equipment !== undefined) {
@@ -253,8 +251,7 @@
         function doAddEquipment(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEquipment`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEquipment`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     if (responseJSON.equipment !== undefined) {

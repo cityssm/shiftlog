@@ -52,8 +52,7 @@
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doToggleUserPermission`, {
             permissionField: permission,
             userName
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.success) {
                 renderUsers(responseJSON.users);
             }
@@ -81,8 +80,7 @@
         function doUpdateUserSettings(submitEvent) {
             submitEvent.preventDefault();
             const settingsForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserSettings`, settingsForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserSettings`, settingsForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     // Update the users list with the new data from the server
@@ -189,8 +187,7 @@
     function resetUserApiKey(userName) {
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doResetUserApiKey`, {
             userName
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.success) {
                 // Update the users list with the new data from the server
                 if (responseJSON.users !== undefined) {
@@ -454,8 +451,7 @@
         function doAddUser(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUser`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUser`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     exports.users = responseJSON.users;

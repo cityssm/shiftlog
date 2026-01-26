@@ -61,11 +61,10 @@ declare const exports: {
             {
               equipmentNumber
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
+            (responseJSON: {
                 success: boolean
                 equipment?: Equipment[]
-              }
+              }) => {
 
               if (responseJSON.success) {
                 if (responseJSON.equipment !== undefined) {
@@ -122,11 +121,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEquipment`,
         updateForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
+        (responseJSON: {
             success: boolean
             equipment?: Equipment[]
-          }
+          }) => {
 
           if (responseJSON.success) {
             closeModalFunction()
@@ -376,11 +374,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEquipment`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
+        (responseJSON: {
             success: boolean
             equipment?: Equipment[]
-          }
+          }) => {
 
           if (responseJSON.success) {
             closeModalFunction()

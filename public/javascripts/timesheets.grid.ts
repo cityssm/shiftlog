@@ -57,12 +57,10 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetColumn`,
         addForm,
-        (rawResponseJSON) => {
-          const result = rawResponseJSON as {
-            success: boolean
-            timesheetColumnId?: number
-          }
-
+        (result: {
+          success: boolean
+          timesheetColumnId?: number
+        }) => {
           if (result.success) {
             closeModalFunction()
             this.loadData()
@@ -163,12 +161,10 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`,
         requestData,
-        (rawResponseJSON) => {
-          const result = rawResponseJSON as {
-            success: boolean
-            timesheetRowId?: number
-          }
-
+        (result: {
+          success: boolean
+          timesheetRowId?: number
+        }) => {
           if (result.success) {
             closeModalFunction()
             this.loadData()
@@ -200,23 +196,21 @@ class TimesheetGrid {
     cityssm.postJSON(
       `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`,
       {},
-      (rawResponseJSON) => {
-        const optionsData = rawResponseJSON as {
-          success: boolean
+      (optionsData: {
+        success: boolean
 
-          employees: Array<{
-            employeeNumber: string
-            firstName: string
-            lastName: string
-          }>
-          equipment: Array<{ equipmentNumber: string; equipmentName: string }>
-          jobClassifications: Array<{
-            dataListItemId: number
-            dataListItem: string
-          }>
-          timeCodes: Array<{ dataListItemId: number; dataListItem: string }>
-        }
-
+        employees: Array<{
+          employeeNumber: string
+          firstName: string
+          lastName: string
+        }>
+        equipment: Array<{ equipmentNumber: string; equipmentName: string }>
+        jobClassifications: Array<{
+          dataListItemId: number
+          dataListItem: string
+        }>
+        timeCodes: Array<{ dataListItemId: number; dataListItem: string }>
+      }) => {
         if (!optionsData.success) {
           bulmaJS.alert({
             contextualColorName: 'danger',
@@ -379,12 +373,10 @@ class TimesheetGrid {
             {
               timesheetColumnId: column.timesheetColumnId
             },
-            (rawResponseJSON) => {
-              const result = rawResponseJSON as {
-                success: boolean
-                totalHours?: number
-              }
-
+            (result: {
+              success: boolean
+              totalHours?: number
+            }) => {
               if (result.success) {
                 this.loadData()
                   .then(() => {
@@ -425,9 +417,7 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetColumn`,
         editForm,
-        (rawResponseJSON) => {
-          const result = rawResponseJSON as { success: boolean }
-
+        (result: { success: boolean }) => {
           if (result.success) {
             closeModalFunction()
             this.loadData()
@@ -514,27 +504,23 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${timesheetUrlPrefix}/doGetTimesheetColumns`,
         { timesheetId: this.config.timesheetId },
-        (rawResponseJSON) => {
-          const columnsData = rawResponseJSON as { columns: TimesheetColumn[] }
+        (columnsData: { columns: TimesheetColumn[] }) => {
           this.columns = columnsData.columns
 
           // Load rows
           cityssm.postJSON(
             `${timesheetUrlPrefix}/doGetTimesheetRows`,
             { timesheetId: this.config.timesheetId },
-            (rawResponseJSON) => {
-              const rowsData = rawResponseJSON as { rows: TimesheetRow[] }
+            (rowsData: { rows: TimesheetRow[] }) => {
               this.rows = rowsData.rows
 
               // Load cells
               cityssm.postJSON(
                 `${timesheetUrlPrefix}/doGetTimesheetCells`,
                 { timesheetId: this.config.timesheetId },
-                (rawResponseJSON) => {
-                  const cellsData = rawResponseJSON as {
-                    cells: TimesheetCell[]
-                  }
-
+                (cellsData: {
+                  cells: TimesheetCell[]
+                }) => {
                   this.cells.clear()
                   for (const cell of cellsData.cells) {
                     const key = TimesheetGrid.getCellKey(
@@ -594,9 +580,7 @@ class TimesheetGrid {
         timesheetId: this.config.timesheetId,
         timesheetColumnIds
       },
-      (rawResponseJSON) => {
-        const result = rawResponseJSON as { success: boolean }
-
+      (result: { success: boolean }) => {
         if (result.success) {
           this.loadData()
             .then(() => {
@@ -948,9 +932,7 @@ class TimesheetGrid {
             {
               timesheetRowId: row.timesheetRowId
             },
-            (rawResponseJSON) => {
-              const result = rawResponseJSON as { success: boolean }
-
+            (result: { success: boolean }) => {
               if (result.success) {
                 this.loadData()
                   .then(() => {
@@ -1007,9 +989,7 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doUpdateTimesheetRow`,
         requestData,
-        (rawResponseJSON) => {
-          const result = rawResponseJSON as { success: boolean }
-
+        (result: { success: boolean }) => {
           if (result.success) {
             closeModalFunction()
             this.loadData()
@@ -1041,17 +1021,15 @@ class TimesheetGrid {
     cityssm.postJSON(
       `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`,
       {},
-      (rawResponseJSON) => {
-        const optionsData = rawResponseJSON as {
-          success: boolean
+      (optionsData: {
+        success: boolean
 
-          jobClassifications: Array<{
-            dataListItem: string
-            dataListItemId: number
-          }>
-          timeCodes: Array<{ dataListItem: string; dataListItemId: number }>
-        }
-
+        jobClassifications: Array<{
+          dataListItem: string
+          dataListItemId: number
+        }>
+        timeCodes: Array<{ dataListItem: string; dataListItemId: number }>
+      }) => {
         if (!optionsData.success) {
           bulmaJS.alert({
             contextualColorName: 'danger',
@@ -1239,9 +1217,7 @@ class TimesheetGrid {
         timesheetColumnId: columnId,
         recordHours: hours
       },
-      (rawResponseJSON) => {
-        const result = rawResponseJSON as { success: boolean }
-
+      (result: { success: boolean }) => {
         if (result.success) {
           this.setCellHours(rowId, columnId, hours)
           this.updateTotals()

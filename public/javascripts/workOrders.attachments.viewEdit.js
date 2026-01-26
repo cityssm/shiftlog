@@ -279,8 +279,7 @@
             });
         }
         function loadAttachments() {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`, {}, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`, {}, (responseJSON) => {
                 if (responseJSON.success) {
                     renderAttachments(responseJSON.attachments);
                 }

@@ -62,8 +62,7 @@
         }));
     }
     function doSearch() {
-        cityssm.postJSON(`${urlPrefix}/doSearchTimesheets`, formElement, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON(`${urlPrefix}/doSearchTimesheets`, formElement, (responseJSON) => {
             renderTimesheetResults(responseJSON);
         });
     }

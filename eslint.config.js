@@ -1,4 +1,3 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable no-secrets/no-secrets */
 import eslintCspell from '@cspell/eslint-plugin';
 import configWebApp, { defineConfig } from 'eslint-config-cityssm';

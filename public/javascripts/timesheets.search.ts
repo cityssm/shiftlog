@@ -92,6 +92,7 @@ declare const exports: {
         totalCount: data.totalCount,
         currentPageOrOffset: data.offset,
         itemsPerPageOrLimit: data.limit,
+        
         clickHandler: (pageNumber) => {
           offsetElement.value = ((pageNumber - 1) * data.limit).toString()
           doSearch()
@@ -104,11 +105,10 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doSearchTimesheets`,
       formElement,
-      (rawResponseJSON) => {
-        const responseJSON =
-          rawResponseJSON as unknown as DoSearchTimesheetsResponse
-
-        renderTimesheetResults(responseJSON)
+      (responseJSON) => {
+        renderTimesheetResults(
+          responseJSON as unknown as DoSearchTimesheetsResponse
+        )
       }
     )
   }

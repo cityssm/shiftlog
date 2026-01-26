@@ -1,3 +1,4 @@
+/* eslint-disable max-depth -- AI generated, needs refactoring */
 (() => {
     const shiftLog = exports.shiftLog;
     const calendarContainerElement = document.querySelector('#container--calendar');
@@ -142,20 +143,16 @@
                             let rightTagClass = 'is-light';
                             const currentDate = new Date();
                             currentDate.setHours(0, 0, 0, 0); // Reset to midnight for date comparison
-                            // eslint-disable-next-line max-depth
                             if (event.eventType.startsWith('workOrder')) {
                                 // Work order logic
-                                // eslint-disable-next-line max-depth
                                 if (event.workOrderCloseDateTime === null) {
                                     // Work order is open
                                     statusText = 'Open';
                                     // Check if overdue: open and has due date and due date is in the past
-                                    // eslint-disable-next-line max-depth
                                     if (event.workOrderDueDateTime !== null &&
                                         event.workOrderDueDateTime !== undefined) {
                                         const dueDate = new Date(event.workOrderDueDateTime);
                                         dueDate.setHours(0, 0, 0, 0);
-                                        // eslint-disable-next-line max-depth
                                         if (dueDate < currentDate) {
                                             statusText = 'Overdue';
                                             rightTagClass = 'is-light is-danger';
@@ -175,17 +172,14 @@
                             }
                             else {
                                 // Milestone logic
-                                // eslint-disable-next-line max-depth
                                 if (event.milestoneCompleteDateTime === null) {
                                     // Milestone is open
                                     statusText = 'Open';
                                     // Check if overdue: open and has due date and due date is in the past
-                                    // eslint-disable-next-line max-depth
                                     if (event.milestoneDueDateTime !== null &&
                                         event.milestoneDueDateTime !== undefined) {
                                         const dueDate = new Date(event.milestoneDueDateTime);
                                         dueDate.setHours(0, 0, 0, 0);
-                                        // eslint-disable-next-line max-depth
                                         if (dueDate < currentDate) {
                                             statusText = 'Overdue';
                                             rightTagClass = 'is-light is-danger';
@@ -244,8 +238,7 @@
             showCloseDates: showCloseDatesCheckbox.checked,
             showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
             showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.success) {
                 renderCalendar(responseJSON.events);
             }

@@ -81,8 +81,7 @@
         function doAddWorkOrderType(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddWorkOrderType`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddWorkOrderType`, addForm, (responseJSON) => {
                 if (responseJSON.success &&
                     responseJSON.workOrderTypes !== undefined) {
                     closeModalFunction();
@@ -175,8 +174,7 @@
             milestonesInput.name = 'defaultMilestones';
             milestonesInput.value = JSON.stringify(milestones);
             editForm.append(milestonesInput);
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, editForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, editForm, (responseJSON) => {
                 if (responseJSON.success &&
                     responseJSON.workOrderTypes !== undefined) {
                     closeModalFunction();
@@ -384,8 +382,7 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteWorkOrderType`, {
                         workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success &&
                             responseJSON.workOrderTypes !== undefined) {
                             workOrderTypes = responseJSON.workOrderTypes;
@@ -441,8 +438,7 @@
                     // Send to server
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderWorkOrderTypes`, {
                         workOrderTypeIds
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (!responseJSON.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',

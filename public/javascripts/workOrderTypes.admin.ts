@@ -152,12 +152,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddWorkOrderType`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            workOrderTypes?: WorkOrderType[]
-          }
-
+        (responseJSON: {
+          success: boolean
+          workOrderTypes?: WorkOrderType[]
+        }) => {
           if (
             responseJSON.success &&
             responseJSON.workOrderTypes !== undefined
@@ -295,12 +293,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            workOrderTypes?: WorkOrderType[]
-          }
-
+        (responseJSON: {
+          success: boolean
+          workOrderTypes?: WorkOrderType[]
+        }) => {
           if (
             responseJSON.success &&
             responseJSON.workOrderTypes !== undefined
@@ -575,12 +571,10 @@ declare const exports: {
             {
               workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                success: boolean
-                workOrderTypes?: WorkOrderType[]
-              }
-
+            (responseJSON: {
+              success: boolean
+              workOrderTypes?: WorkOrderType[]
+            }) => {
               if (
                 responseJSON.success &&
                 responseJSON.workOrderTypes !== undefined
@@ -650,12 +644,10 @@ declare const exports: {
             {
               workOrderTypeIds
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as {
-                success: boolean
-                workOrderTypes?: WorkOrderType[]
-              }
-
+            (responseJSON: {
+              success: boolean
+              workOrderTypes?: WorkOrderType[]
+            }) => {
               if (!responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'danger',

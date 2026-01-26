@@ -1,5 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-/* eslint-disable @cspell/spellchecker, sonarjs/no-hardcoded-passwords */
+/* eslint-disable @cspell/spellchecker, sonarjs/no-hardcoded-passwords -- Config file */
 import { config as baseConfig } from './partialConfigs/all.partialConfig.js';
 export const config = { ...baseConfig };
 config.application.instance = '';

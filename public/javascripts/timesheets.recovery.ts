@@ -29,14 +29,12 @@ declare const exports: {
           cityssm.postJSON(
             `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doRecoverTimesheet`,
             { timesheetId },
-            (rawResponseJSON) => {
-              const response = rawResponseJSON as {
-                success: boolean
-                message?: string
-                redirectUrl?: string
-                errorMessage?: string
-              }
-
+            (response: {
+              success: boolean
+              message?: string
+              redirectUrl?: string
+              errorMessage?: string
+            }) => {
               if (response.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',

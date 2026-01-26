@@ -6,7 +6,8 @@ import getWorkOrdersForPlanner, {
 } from '../../database/workOrders/getWorkOrdersForPlanner.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
-export interface DoGetWorkOrdersForPlannerResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetWorkOrdersForPlannerResponse = {
   success: boolean
 
   workOrders: WorkOrder[]

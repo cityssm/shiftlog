@@ -111,13 +111,11 @@ declare const bulmaJS: BulmaJS
                 workOrderId: Number.parseInt(workOrderId, 10),
                 tagName
               },
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as {
-                  success: boolean
-                  message?: string
-                  tags?: WorkOrderTag[]
-                }
-
+              (responseJSON: {
+                success: boolean
+                message?: string
+                tags?: WorkOrderTag[]
+              }) => {
                 if (responseJSON.success && responseJSON.tags !== undefined) {
                   renderTags(responseJSON.tags)
                   bulmaJS.alert({
@@ -161,13 +159,11 @@ declare const bulmaJS: BulmaJS
             workOrderId: Number.parseInt(workOrderId, 10),
             tagName: tagNameInput.value
           },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as {
-              success: boolean
-              message?: string
-              tags?: WorkOrderTag[]
-            }
-
+          (responseJSON: {
+            success: boolean
+            message?: string
+            tags?: WorkOrderTag[]
+          }) => {
             if (responseJSON.success && responseJSON.tags !== undefined) {
               closeModalFunction()
               renderTags(responseJSON.tags)
@@ -217,12 +213,10 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`,
         {},
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
-            tags?: WorkOrderTag[]
-          }
-
+        (responseJSON: {
+          success: boolean
+          tags?: WorkOrderTag[]
+        }) => {
           if (responseJSON.success && responseJSON.tags !== undefined) {
             renderTags(responseJSON.tags)
           }

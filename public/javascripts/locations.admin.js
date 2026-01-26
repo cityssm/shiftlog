@@ -84,8 +84,7 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteLocation`, {
                         locationId
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success) {
                             if (responseJSON.locations !== undefined) {
                                 exports.locations = responseJSON.locations;
@@ -129,8 +128,7 @@
         function doUpdateLocation(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateLocation`, editForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateLocation`, editForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     if (responseJSON.locations !== undefined) {
@@ -301,8 +299,7 @@
         function doAddLocation(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddLocation`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddLocation`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     addForm.reset();

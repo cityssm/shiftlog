@@ -134,8 +134,7 @@
         </span>
       </div>
     `;
-        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doSearchShifts`, filtersFormElement, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}/doSearchShifts`, filtersFormElement, (responseJSON) => {
             renderShiftsTable(responseJSON);
         });
     }

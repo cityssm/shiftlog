@@ -98,14 +98,12 @@ declare const exports: {
         permissionField: permission,
         userName
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          message?: string
-          success: boolean
+      (responseJSON: {
+        message?: string
+        success: boolean
 
-          users: DatabaseUser[]
-        }
-
+        users: DatabaseUser[]
+      }) => {
         if (responseJSON.success) {
           renderUsers(responseJSON.users)
         } else {
@@ -145,13 +143,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateUserSettings`,
         settingsForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            message?: string
-            success: boolean
-            users?: DatabaseUser[]
-          }
-
+        (responseJSON: {
+          message?: string
+          success: boolean
+          users?: DatabaseUser[]
+        }) => {
           if (responseJSON.success) {
             closeModalFunction()
 
@@ -290,14 +286,12 @@ declare const exports: {
       {
         userName
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as {
-          message?: string
-          success: boolean
-          users?: DatabaseUser[]
-          apiKey?: string
-        }
-
+      (responseJSON: {
+        message?: string
+        success: boolean
+        users?: DatabaseUser[]
+        apiKey?: string
+      }) => {
         if (responseJSON.success) {
           // Update the users list with the new data from the server
           if (responseJSON.users !== undefined) {
@@ -604,13 +598,11 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddUser`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as {
-            success: boolean
+        (responseJSON: {
+          success: boolean
 
-            users: DatabaseUser[]
-          }
-
+          users: DatabaseUser[]
+        }) => {
           if (responseJSON.success) {
             closeModalFunction()
             exports.users = responseJSON.users

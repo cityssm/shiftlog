@@ -43,8 +43,7 @@
     }
     function updateWorkOrder(formEvent) {
         formEvent.preventDefault();
-        cityssm.postJSON(`${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        cityssm.postJSON(`${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (responseJSON) => {
             if (responseJSON.success) {
                 cityssm.disableNavBlocker();
                 if (isCreate && responseJSON.workOrderId !== undefined) {
@@ -93,8 +92,7 @@
                 // Load requestor suggestions
                 cityssm.postJSON(`${workOrderUrlPrefix}/doGetRequestorSuggestions`, {
                     searchString: requestorSearchString
-                }, (rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
+                }, (responseJSON) => {
                     if (responseJSON.success && responseJSON.requestors) {
                         requestorsData = responseJSON.requestors;
                         for (const requestor of responseJSON.requestors) {
@@ -180,8 +178,7 @@
          * Fetch location suggestions from the server
          */
         function fetchLocationSuggestions(searchString, callback) {
-            cityssm.postJSON(`${workOrderUrlPrefix}/doGetLocationSuggestions`, { searchString }, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${workOrderUrlPrefix}/doGetLocationSuggestions`, { searchString }, (responseJSON) => {
                 if (responseJSON.success && responseJSON.locations) {
                     locationsData = responseJSON.locations;
                     populateLocationDatalist(responseJSON.locations);
@@ -417,8 +414,7 @@
                     callbackFunction: () => {
                         cityssm.postJSON(`${workOrderUrlPrefix}/doDeleteWorkOrder`, {
                             workOrderId
-                        }, (rawResponseJSON) => {
-                            const responseJSON = rawResponseJSON;
+                        }, (responseJSON) => {
                             if (responseJSON.success &&
                                 responseJSON.redirectUrl !== undefined) {
                                 cityssm.disableNavBlocker();

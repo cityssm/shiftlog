@@ -257,9 +257,7 @@ interface WorkOrderWithOverdue {
     cityssm.postJSON(
       `${urlPrefix}/doSearchWorkOrders`,
       filters,
-      (rawResponseJSON) => {
-        const responseJSON =
-          rawResponseJSON as unknown as DoSearchWorkOrdersResponse
+      (responseJSON: DoSearchWorkOrdersResponse) => {
 
         // Clear existing markers
         markersLayer.clearLayers()

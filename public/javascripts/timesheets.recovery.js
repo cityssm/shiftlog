@@ -8,8 +8,7 @@
             okButton: {
                 text: 'Yes, Recover',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doRecoverTimesheet`, { timesheetId }, (rawResponseJSON) => {
-                        const response = rawResponseJSON;
+                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doRecoverTimesheet`, { timesheetId }, (response) => {
                         if (response.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
