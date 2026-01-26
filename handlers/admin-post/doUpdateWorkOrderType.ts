@@ -4,10 +4,21 @@ import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTy
 import updateWorkOrderType, {
   type UpdateWorkOrderTypeForm
 } from '../../database/workOrderTypes/updateWorkOrderType.js'
+import type { WorkOrderType } from '../../types/record.types.js'
+
+export type DoUpdateWorkOrderTypeResponse =
+  | {
+      message: string
+      success: false
+    }
+  | {
+      success: true
+      workOrderTypes: WorkOrderType[]
+    }
 
 export default async function handler(
   request: Request<unknown, unknown, UpdateWorkOrderTypeForm>,
-  response: Response
+  response: Response<DoUpdateWorkOrderTypeResponse>
 ): Promise<void> {
   const success = await updateWorkOrderType(
     request.body,

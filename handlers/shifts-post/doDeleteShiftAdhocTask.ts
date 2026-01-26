@@ -4,6 +4,17 @@ import deleteAdhocTask from '../../database/adhocTasks/deleteAdhocTask.js'
 import deleteShiftAdhocTask from '../../database/adhocTasks/deleteShiftAdhocTask.js'
 import getAdhocTaskShiftCount from '../../database/adhocTasks/getAdhocTaskShiftCount.js'
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
+import type { AdhocTask } from '../../types/record.types.js'
+
+export type DoDeleteShiftAdhocTaskResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      shiftAdhocTasks: AdhocTask[]
+    }
 
 export default async function handler(
   request: Request<
@@ -15,7 +26,7 @@ export default async function handler(
       deleteTask: boolean
     }
   >,
-  response: Response
+  response: Response<DoDeleteShiftAdhocTaskResponse>
 ): Promise<void> {
   // Remove task from shift
   const removeSuccess = await deleteShiftAdhocTask(
@@ -28,6 +39,7 @@ export default async function handler(
       success: false,
       errorMessage: 'Failed to remove task from shift.'
     })
+
     return
   }
 
@@ -42,6 +54,7 @@ export default async function handler(
         errorMessage:
           'Cannot delete task as it is still assigned to other shifts.'
       })
+
       return
     }
 
@@ -56,6 +69,7 @@ export default async function handler(
         success: false,
         errorMessage: 'Failed to delete task.'
       })
+
       return
     }
   }

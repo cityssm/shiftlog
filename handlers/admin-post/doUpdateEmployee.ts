@@ -4,10 +4,22 @@ import type { Request, Response } from 'express'
 
 import getEmployees from '../../database/employees/getEmployees.js'
 import updateEmployee from '../../database/employees/updateEmployee.js'
+import type { Employee } from '../../types/record.types.js'
+
+export type DoUpdateEmployeeResponse =
+  | {
+      message: string
+      success: false
+    }
+  | {
+      message: string
+      success: true
+      employees: Employee[]
+    }
 
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateEmployeeResponse>
 ): Promise<void> {
   const {
     emailAddress,

@@ -2,15 +2,26 @@ import type { Request, Response } from 'express'
 
 import deleteWorkOrderTag from '../../database/workOrders/deleteWorkOrderTag.js'
 import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js'
+import type { WorkOrderTag } from '../../types/record.types.js'
 
 interface DeleteWorkOrderTagForm {
   workOrderId: number
   tagName: string
 }
 
+export type DoDeleteWorkOrderTagResponse =
+  | {
+      success: false
+      message: string
+    }
+  | {
+      success: true
+      tags?: WorkOrderTag[]
+    }
+
 export default async function handler(
   request: Request<unknown, unknown, DeleteWorkOrderTagForm>,
-  response: Response
+  response: Response<DoDeleteWorkOrderTagResponse>
 ): Promise<void> {
   const success = await deleteWorkOrderTag(
     request.body.workOrderId,

@@ -3,11 +3,23 @@ import type { Request, Response } from 'express'
 import deleteDataListItem, {
   type DeleteDataListItemForm
 } from '../../database/app/deleteDataListItem.js'
-import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
+import getDataListItemsAdmin, {
+  type DataListItemWithDetails
+} from '../../database/app/getDataListItemsAdmin.js'
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoDeleteDataListItemResponse = {
+  success: boolean
+  items?: DataListItemWithDetails[]
+}
 
 export default async function handler(
-  request: Request<unknown, unknown, DeleteDataListItemForm & { dataListKey: string }>,
-  response: Response
+  request: Request<
+    unknown,
+    unknown,
+    DeleteDataListItemForm & { dataListKey: string }
+  >,
+  response: Response<DoDeleteDataListItemResponse>
 ): Promise<void> {
   const form = {
     dataListItemId: request.body.dataListItemId,
@@ -16,7 +28,7 @@ export default async function handler(
 
   const success = await deleteDataListItem(form)
 
-  let items: Awaited<ReturnType<typeof getDataListItemsAdmin>> | undefined
+  let items: DataListItemWithDetails[] | undefined
 
   if (success) {
     items = await getDataListItemsAdmin(request.body.dataListKey)

@@ -1,6 +1,11 @@
 import type { Request, Response } from 'express';
+import type { Employee } from '../../types/record.types.js';
+export type DoAddEmployeeResponse = {
+    employees: Employee[];
+    success: boolean;
+};
 export default function handler(request: Request<unknown, unknown, {
     employeeNumber: string;
     firstName: string;
     lastName: string;
-}>, response: Response): Promise<void>;
+}>, response: Response<DoAddEmployeeResponse>): Promise<void>;

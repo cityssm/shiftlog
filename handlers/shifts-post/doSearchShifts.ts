@@ -6,8 +6,9 @@ import getShifts, {
 } from '../../database/shifts/getShifts.js'
 import type { Shift } from '../../types/record.types.js'
 
-export interface DoSearchShiftsResponse {
-  success: boolean
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoSearchShiftsResponse = {
+  success: true
 
   shifts: Shift[]
 
@@ -42,5 +43,5 @@ export default async function handler(
       typeof request.body.offset === 'number'
         ? request.body.offset
         : Number.parseInt(request.body.offset, 10)
-  } satisfies DoSearchShiftsResponse)
+  })
 }

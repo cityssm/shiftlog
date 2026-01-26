@@ -2,8 +2,19 @@ import type { Request, Response } from 'express'
 
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 import updateAdhocTask from '../../database/adhocTasks/updateAdhocTask.js'
+import type { AdhocTask } from '../../types/record.types.js'
 
 type LatitudeLongitude = number | string | null | undefined
+
+export type DoUpdateAdhocTaskResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      shiftAdhocTasks: AdhocTask[]
+    }
 
 export default async function handler(
   request: Request<
@@ -13,7 +24,7 @@ export default async function handler(
       adhocTaskId: number | string
       adhocTaskTypeDataListItemId: number | string
       taskDescription: string
-      
+
       shiftId: number | string
 
       locationAddress1: string
@@ -38,7 +49,7 @@ export default async function handler(
       taskDueDateTimeString: string | null | undefined
     }
   >,
-  response: Response
+  response: Response<DoUpdateAdhocTaskResponse>
 ): Promise<void> {
   const success = await updateAdhocTask(
     {

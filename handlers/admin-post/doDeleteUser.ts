@@ -2,10 +2,22 @@ import type { Request, Response } from 'express'
 
 import deleteUser from '../../database/users/deleteUser.js'
 import getUsers from '../../database/users/getUsers.js'
+import type { DatabaseUser } from '../../types/record.types.js'
+
+export type DoDeleteUserResponse =
+  | {
+      message: string
+      success: false
+    }
+  | {
+      message: string
+      success: true
+      users: DatabaseUser[]
+    }
 
 export default async function handler(
   request: Request<unknown, unknown, { userName?: string }>,
-  response: Response
+  response: Response<DoDeleteUserResponse>
 ): Promise<void> {
   let userName = request.body.userName ?? ''
 
@@ -18,6 +30,7 @@ export default async function handler(
       message: 'User name is required',
       success: false
     })
+
     return
   }
 

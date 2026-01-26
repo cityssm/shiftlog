@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { type GetWorkOrdersForPlannerFilters, type GetWorkOrdersForPlannerOptions } from '../../database/workOrders/getWorkOrdersForPlanner.js';
 import type { WorkOrder } from '../../types/record.types.js';
 export type DoGetWorkOrdersForPlannerResponse = {
-    success: boolean;
+    success: true;
     workOrders: WorkOrder[];
     totalCount: number;
     limit: number;

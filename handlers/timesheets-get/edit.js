@@ -14,8 +14,10 @@ export default async function handler(request, response) {
         response.redirect(`${redirectRoot}/${timesheet.timesheetId}/?error=forbidden`);
         return;
     }
-    else if ((timesheet.employeesEntered_dateTime !== null && timesheet.employeesEntered_dateTime !== undefined) ||
-        (timesheet.equipmentEntered_dateTime !== null && timesheet.equipmentEntered_dateTime !== undefined)) {
+    else if ((timesheet.employeesEntered_dateTime !== null &&
+        timesheet.employeesEntered_dateTime !== undefined) ||
+        (timesheet.equipmentEntered_dateTime !== null &&
+            timesheet.equipmentEntered_dateTime !== undefined)) {
         response.redirect(`${redirectRoot}/${timesheet.timesheetId}/?error=locked`);
         return;
     }

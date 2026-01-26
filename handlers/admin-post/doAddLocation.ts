@@ -2,10 +2,21 @@ import type { Request, Response } from 'express'
 
 import addLocation from '../../database/locations/addLocation.js'
 import getLocations from '../../database/locations/getLocations.js'
+import type { Location } from '../../types/record.types.js'
+
+export type DoAddLocationResponse =
+  | {
+      success: false
+      message: string
+    }
+  | {
+      success: true
+      locations: Location[]
+    }
 
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoAddLocationResponse>
 ): Promise<void> {
   const address1 = (request.body.address1 as string) || ''
   const address2 = (request.body.address2 as string) || ''

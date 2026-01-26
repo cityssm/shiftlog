@@ -13,12 +13,12 @@ export default async function handler(request, response) {
     // Update each user setting
     for (const settingKey of userSettingKeys) {
         // Skip apiKey as it cannot be updated directly by admins
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (settingKey === 'apiKey') {
             continue;
         }
         const settingValue = request.body[settingKey];
         if (settingValue !== undefined) {
+            // eslint-disable-next-line no-await-in-loop
             await updateUserSetting(request.body.userName, settingKey, settingValue);
         }
     }

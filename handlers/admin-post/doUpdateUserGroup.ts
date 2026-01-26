@@ -2,6 +2,13 @@ import type { Request, Response } from 'express'
 
 import getUserGroups from '../../database/users/getUserGroups.js'
 import updateUserGroup from '../../database/users/updateUserGroup.js'
+import type { UserGroup } from '../../types/record.types.js'
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateUserGroupResponse = {
+  success: boolean
+  userGroups: UserGroup[]
+}
 
 export default async function handler(
   request: Request<
@@ -9,7 +16,7 @@ export default async function handler(
     unknown,
     { userGroupId: string; userGroupName: string }
   >,
-  response: Response
+  response: Response<DoUpdateUserGroupResponse>
 ): Promise<void> {
   const success = await updateUserGroup(
     Number.parseInt(request.body.userGroupId, 10),

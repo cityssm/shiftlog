@@ -14,7 +14,7 @@ const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfig
 
 export default async function handler(
   request: Request<{ shiftId: string }, unknown, unknown, { error?: string }>,
-  response: Response
+  response: Response<ShiftEditResponse>
 ): Promise<void> {
   const shift = await getShift(request.params.shiftId, request.session.user)
 
@@ -38,14 +38,14 @@ export default async function handler(
     isEdit: false,
 
     shift,
+    shiftAdhocTasks,
     shiftCrews,
     shiftEmployees,
     shiftEquipment,
     shiftWorkOrders,
-    shiftAdhocTasks,
 
     shiftTimes: [],
     shiftTypes: [],
     supervisors: []
-  } satisfies ShiftEditResponse)
+  })
 }

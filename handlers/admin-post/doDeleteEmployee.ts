@@ -2,10 +2,22 @@ import type { Request, Response } from 'express'
 
 import deleteEmployee from '../../database/employees/deleteEmployee.js'
 import getEmployees from '../../database/employees/getEmployees.js'
+import type { Employee } from '../../types/record.types.js'
+
+export type DoDeleteEmployeeResponse =
+  | {
+      employees: Employee[]
+      message: string
+      success: true
+    }
+  | {
+      message: string
+      success: false
+    }
 
 export default async function handler(
   request: Request<unknown, unknown, { employeeNumber: string }>,
-  response: Response
+  response: Response<DoDeleteEmployeeResponse>
 ): Promise<void> {
   try {
     const success = await deleteEmployee(

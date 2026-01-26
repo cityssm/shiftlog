@@ -11,7 +11,7 @@ export interface DoGetCalendarEventsRequest {
     showMilestoneCompleteDates: boolean | string;
 }
 export type DoGetCalendarEventsResponse = {
-    success: boolean;
+    success: true;
     events: WorkOrderCalendarEvent[];
 };
 export default function handler(request: Request<unknown, unknown, DoGetCalendarEventsRequest>, response: Response<DoGetCalendarEventsResponse>): Promise<void>;

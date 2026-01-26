@@ -2,6 +2,14 @@ import type { Request, Response } from 'express'
 
 import addEmployeeList from '../../database/employeeLists/addEmployeeList.js'
 import getEmployeeLists from '../../database/employeeLists/getEmployeeLists.js'
+import type { EmployeeList } from '../../types/record.types.js'
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoAddEmployeeListResponse = {
+  employeeListId: number | undefined
+  employeeLists: EmployeeList[]
+  success: boolean
+}
 
 export default async function handler(
   request: Request<
@@ -12,7 +20,7 @@ export default async function handler(
       userGroupId: string
     }
   >,
-  response: Response
+  response: Response<DoAddEmployeeListResponse>
 ): Promise<void> {
   const employeeListId = await addEmployeeList(
     {

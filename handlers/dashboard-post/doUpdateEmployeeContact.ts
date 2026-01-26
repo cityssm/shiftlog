@@ -4,9 +4,14 @@ import updateEmployeeContactByUserName, {
   type EmployeeContactFields
 } from '../../database/employees/updateEmployeeContactByUserName.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateEmployeeContactResponse = {
+  success: boolean
+}
+
 export default async function handler(
   request: Request<unknown, unknown, EmployeeContactFields>,
-  response: Response
+  response: Response<DoUpdateEmployeeContactResponse>
 ): Promise<void> {
   const userName = request.session.user?.userName ?? ''
 

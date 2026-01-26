@@ -1,7 +1,19 @@
 import type { Request, Response } from 'express'
 
 import deleteShiftWorkOrder from '../../database/shifts/deleteShiftWorkOrder.js'
-import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js'
+import getShiftWorkOrders, {
+  type ShiftWorkOrder
+} from '../../database/shifts/getShiftWorkOrders.js'
+
+export type DoDeleteShiftWorkOrderResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      shiftWorkOrders: ShiftWorkOrder[]
+    }
 
 export default async function handler(
   request: Request<
@@ -12,7 +24,7 @@ export default async function handler(
       workOrderId: number | string
     }
   >,
-  response: Response
+  response: Response<DoDeleteShiftWorkOrderResponse>
 ): Promise<void> {
   const success = await deleteShiftWorkOrder(
     request.body.shiftId,

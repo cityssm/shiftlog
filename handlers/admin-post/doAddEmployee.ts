@@ -2,6 +2,13 @@ import type { Request, Response } from 'express'
 
 import addEmployee from '../../database/employees/addEmployee.js'
 import getEmployees from '../../database/employees/getEmployees.js'
+import type { Employee } from '../../types/record.types.js'
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoAddEmployeeResponse = {
+  employees: Employee[]
+  success: boolean
+}
 
 export default async function handler(
   request: Request<
@@ -9,7 +16,7 @@ export default async function handler(
     unknown,
     { employeeNumber: string; firstName: string; lastName: string }
   >,
-  response: Response
+  response: Response<DoAddEmployeeResponse>
 ): Promise<void> {
   const success = await addEmployee(
     request.body.employeeNumber,

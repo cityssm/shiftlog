@@ -7,7 +7,8 @@ import type {
 import getTimesheets from '../../database/timesheets/getTimesheets.js'
 import type { Timesheet } from '../../types/record.types.js'
 
-export interface DoSearchTimesheetsResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoSearchTimesheetsResponse = {
   success: boolean
 
   timesheets: Timesheet[]
@@ -24,7 +25,7 @@ export default async function handler(
     unknown,
     GetTimesheetsFilters & GetTimesheetsOptions
   >,
-  response: Response
+  response: Response<DoSearchTimesheetsResponse>
 ): Promise<void> {
   const result = await getTimesheets(
     request.body,
@@ -47,5 +48,5 @@ export default async function handler(
       typeof request.body.offset === 'number'
         ? request.body.offset
         : Number.parseInt(request.body.offset, 10)
-  } satisfies DoSearchTimesheetsResponse)
+  })
 }

@@ -1,12 +1,18 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/naming-convention -- Underscores */
 
 import type { Request, Response } from 'express'
 
 import updateUser from '../../database/users/updateUser.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateUserResponse = {
+  message: string
+  success: boolean
+}
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateUserResponse>
 ): Promise<void> {
   const {
     userName,

@@ -2,6 +2,12 @@ import type { Request, Response } from 'express'
 
 import updateShiftWorkOrderNote from '../../database/shifts/updateShiftWorkOrderNote.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateShiftWorkOrderNoteResponse = {
+  success: boolean
+  errorMessage?: string
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -12,7 +18,7 @@ export default async function handler(
       shiftWorkOrderNote: string
     }
   >,
-  response: Response
+  response: Response<DoUpdateShiftWorkOrderNoteResponse>
 ): Promise<void> {
   const success = await updateShiftWorkOrderNote(
     request.body.shiftId,

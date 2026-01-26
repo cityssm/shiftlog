@@ -1,5 +1,9 @@
 import type { Request, Response } from 'express';
 import type { GetTimesheetRowsFilters } from '../../database/timesheets/getTimesheetRows.js';
-export default function handler(request: Request<unknown, unknown, {
+import type { TimesheetRow } from '../../types/record.types.js';
+export type DoGetTimesheetRowsResponse = {
+    rows: TimesheetRow[];
+};
+export default function handler(request: Request<unknown, unknown, GetTimesheetRowsFilters & {
     timesheetId: number | string;
-} & GetTimesheetRowsFilters>, response: Response): Promise<void>;
+}>, response: Response<DoGetTimesheetRowsResponse>): Promise<void>;

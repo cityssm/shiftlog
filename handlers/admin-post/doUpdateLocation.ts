@@ -2,10 +2,21 @@ import type { Request, Response } from 'express'
 
 import getLocations from '../../database/locations/getLocations.js'
 import updateLocation from '../../database/locations/updateLocation.js'
+import type { Location } from '../../types/record.types.js'
+
+export type DoUpdateLocationResponse =
+  | {
+      success: false
+      message: string
+    }
+  | {
+      success: true
+      locations: Location[]
+    }
 
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateLocationResponse>
 ): Promise<void> {
   const locationId = Number(request.body.locationId)
   const address1 = (request.body.address1 as string) || ''

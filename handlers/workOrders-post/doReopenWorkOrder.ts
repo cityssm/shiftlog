@@ -5,9 +5,20 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`
 
+export type DoReopenWorkOrderResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      message: string
+      redirectUrl: string
+    }
+
 export default async function handler(
   request: Request<unknown, unknown, { workOrderId: number | string }>,
-  response: Response
+  response: Response<DoReopenWorkOrderResponse>
 ): Promise<void> {
   const workOrderId = request.body.workOrderId
 
@@ -17,6 +28,7 @@ export default async function handler(
       errorMessage: 'Invalid work order ID.',
       success: false
     })
+
     return
   }
 

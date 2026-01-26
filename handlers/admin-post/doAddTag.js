@@ -6,10 +6,10 @@ export default async function handler(request, response) {
     let tagTextColor = request.body.tagTextColor || 'FFFFFF';
     // Remove # prefix if present
     if (tagBackgroundColor.startsWith('#')) {
-        tagBackgroundColor = tagBackgroundColor.substring(1);
+        tagBackgroundColor = tagBackgroundColor.slice(1);
     }
     if (tagTextColor.startsWith('#')) {
-        tagTextColor = tagTextColor.substring(1);
+        tagTextColor = tagTextColor.slice(1);
     }
     const success = await addTag({ tagName, tagBackgroundColor, tagTextColor }, request.session.user);
     if (success) {

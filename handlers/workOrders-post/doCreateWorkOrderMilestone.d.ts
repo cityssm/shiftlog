@@ -1,3 +1,7 @@
 import type { Request, Response } from 'express';
 import { type CreateWorkOrderMilestoneForm } from '../../database/workOrders/createWorkOrderMilestone.js';
-export default function handler(request: Request<unknown, unknown, CreateWorkOrderMilestoneForm>, response: Response): Promise<void>;
+export type DoCreateWorkOrderMilestoneResponse = {
+    success: true;
+    workOrderMilestoneId: number;
+};
+export default function handler(request: Request<unknown, unknown, CreateWorkOrderMilestoneForm>, response: Response<DoCreateWorkOrderMilestoneResponse>): Promise<void>;

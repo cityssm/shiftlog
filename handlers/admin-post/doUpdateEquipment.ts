@@ -2,6 +2,13 @@ import type { Request, Response } from 'express'
 
 import getEquipmentList from '../../database/equipment/getEquipmentList.js'
 import updateEquipment from '../../database/equipment/updateEquipment.js'
+import type { Equipment } from '../../types/record.types.js'
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateEquipmentResponse = {
+  equipment: Equipment[]
+  success: boolean
+}
 
 export default async function handler(
   request: Request<
@@ -17,7 +24,7 @@ export default async function handler(
       recordSync_isSynced?: string
     }
   >,
-  response: Response
+  response: Response<DoUpdateEquipmentResponse>
 ): Promise<void> {
   const success = await updateEquipment(
     {

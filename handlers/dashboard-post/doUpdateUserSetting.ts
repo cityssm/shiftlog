@@ -10,13 +10,18 @@ const updatableUserSettingKeys = new Set<UserSettingKey>([
   'workOrders.defaultAssignedToId'
 ])
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateUserSettingResponse = {
+  success: boolean
+}
+
 export default async function handler(
   request: Request<
     unknown,
     unknown,
     { settingKey: string; settingValue: string }
   >,
-  response: Response
+  response: Response<DoUpdateUserSettingResponse>
 ): Promise<void> {
   const success = updatableUserSettingKeys.has(
     request.body.settingKey as UserSettingKey

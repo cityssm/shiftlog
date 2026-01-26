@@ -22,11 +22,11 @@ export default async function handler(request, response) {
         isCreate: false,
         isEdit: false,
         shift,
+        shiftAdhocTasks,
         shiftCrews,
         shiftEmployees,
         shiftEquipment,
         shiftWorkOrders,
-        shiftAdhocTasks,
         shiftTimes: [],
         shiftTypes: [],
         supervisors: []

@@ -2,14 +2,25 @@ import type { Request, Response } from 'express'
 
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
 import reorderWorkOrderTypes from '../../database/workOrderTypes/reorderWorkOrderTypes.js'
+import type { WorkOrderType } from '../../types/record.types.js'
 
 interface ReorderWorkOrderTypesForm {
   workOrderTypeIds: Array<number | string>
 }
 
+export type DoReorderWorkOrderTypesResponse =
+  | {
+      message: string
+      success: false
+    }
+  | {
+      success: true
+      workOrderTypes: WorkOrderType[]
+    }
+
 export default async function handler(
   request: Request<unknown, unknown, ReorderWorkOrderTypesForm>,
-  response: Response
+  response: Response<DoReorderWorkOrderTypesResponse>
 ): Promise<void> {
   const success = await reorderWorkOrderTypes(
     request.body.workOrderTypeIds,
@@ -18,6 +29,7 @@ export default async function handler(
 
   if (success) {
     const workOrderTypes = await getWorkOrderTypesAdmin()
+
     response.json({
       success: true,
       workOrderTypes

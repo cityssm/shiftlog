@@ -3,9 +3,15 @@ import type { Request, Response } from 'express'
 import getUserSettings from '../../database/users/getUserSettings.js'
 import { updateApiKeyUserSetting } from '../../database/users/updateUserSetting.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoResetApiKeyResponse = {
+  success: true
+  apiKey: string
+}
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoResetApiKeyResponse>
 ): Promise<void> {
   const apiKey = await updateApiKeyUserSetting(
     request.session.user?.userName ?? ''

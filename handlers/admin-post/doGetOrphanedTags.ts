@@ -1,10 +1,22 @@
 import type { Request, Response } from 'express'
 
-import getOrphanedTags from '../../database/tags/getOrphanedTags.js'
+import getOrphanedTags, {
+  type OrphanedTag
+} from '../../database/tags/getOrphanedTags.js'
+
+export type DoGetOrphanedTagsResponse =
+  | {
+      success: false
+      message: string
+    }
+  | {
+      success: true
+      orphanedTags: OrphanedTag[]
+    }
 
 export default async function handler(
   _request: Request,
-  response: Response
+  response: Response<DoGetOrphanedTagsResponse>
 ): Promise<void> {
   try {
     const orphanedTags = await getOrphanedTags()

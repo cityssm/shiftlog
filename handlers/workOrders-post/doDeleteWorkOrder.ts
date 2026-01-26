@@ -5,9 +5,19 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`
 
+export type DoDeleteWorkOrderResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      redirectUrl: string
+    }
+
 export default async function handler(
   request: Request<unknown, unknown, { workOrderId: number | string }>,
-  response: Response
+  response: Response<DoDeleteWorkOrderResponse>
 ): Promise<void> {
   const success = await deleteWorkOrder(
     request.body.workOrderId,

@@ -2,10 +2,17 @@ import type { Request, Response } from 'express'
 
 import deleteUserGroup from '../../database/users/deleteUserGroup.js'
 import getUserGroups from '../../database/users/getUserGroups.js'
+import type { UserGroup } from '../../types/record.types.js'
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoDeleteUserGroupResponse = {
+  success: boolean
+  userGroups: UserGroup[]
+}
 
 export default async function handler(
   request: Request<unknown, unknown, { userGroupId: string }>,
-  response: Response
+  response: Response<DoDeleteUserGroupResponse>
 ): Promise<void> {
   const success = await deleteUserGroup(
     Number.parseInt(request.body.userGroupId, 10),

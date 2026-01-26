@@ -16,7 +16,7 @@ export interface DoGetCalendarEventsRequest {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetCalendarEventsResponse = {
-  success: boolean
+  success: true
   events: WorkOrderCalendarEvent[]
 }
 
@@ -35,15 +35,11 @@ export default async function handler(
       : Number.parseInt(request.body.month, 10)
 
   const assignedToId =
-    request.body.assignedToId === undefined ||
-    request.body.assignedToId === ''
+    request.body.assignedToId === undefined || request.body.assignedToId === ''
       ? undefined
       : typeof request.body.assignedToId === 'number'
         ? request.body.assignedToId
-        : Number.parseInt(
-            request.body.assignedToId as string,
-            10
-          )
+        : Number.parseInt(request.body.assignedToId as string, 10)
 
   const showOpenDates =
     typeof request.body.showOpenDates === 'boolean'
@@ -87,5 +83,5 @@ export default async function handler(
   response.json({
     success: true,
     events
-  } satisfies DoGetCalendarEventsResponse)
+  })
 }

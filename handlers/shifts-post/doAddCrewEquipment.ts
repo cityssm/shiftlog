@@ -1,8 +1,15 @@
 import type { Request, Response } from 'express'
 
 import addCrewEquipment from '../../database/crews/addCrewEquipment.js'
-import getCrew from '../../database/crews/getCrew.js'
+import getCrew, { type CrewWithDetails } from '../../database/crews/getCrew.js'
 import { validateEmployeeForEquipment } from '../../helpers/equipment.helpers.js'
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoAddCrewEquipmentResponse = {
+  success: boolean
+  message?: string
+  crew?: CrewWithDetails
+}
 
 export default async function handler(
   request: Request<
@@ -14,18 +21,20 @@ export default async function handler(
       employeeNumber: string
     }
   >,
-  response: Response
+  response: Response<DoAddCrewEquipmentResponse>
 ): Promise<void> {
   const user = request.session.user as User
   const crewId = Number.parseInt(request.body.crewId, 10)
 
   // Check permissions
   const crew = await getCrew(crewId)
+
   if (crew === undefined) {
     response.status(404).json({
       success: false,
       message: 'Crew not found.'
     })
+
     return
   }
 
@@ -37,6 +46,7 @@ export default async function handler(
       success: false,
       message: 'You do not have permission to modify this crew.'
     })
+
     return
   }
 
@@ -54,6 +64,7 @@ export default async function handler(
       success: false,
       message: validation.errorMessage
     })
+
     return
   }
 

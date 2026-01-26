@@ -4,10 +4,21 @@ import addWorkOrderType, {
   type AddWorkOrderTypeForm
 } from '../../database/workOrderTypes/addWorkOrderType.js'
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
+import type { WorkOrderType } from '../../types/record.types.js'
+
+export type DoAddWorkOrderTypeResponse =
+  | {
+      message: string
+      success: false
+    }
+  | {
+      success: true
+      workOrderTypes: WorkOrderType[]
+    }
 
 export default async function handler(
   request: Request<unknown, unknown, AddWorkOrderTypeForm>,
-  response: Response
+  response: Response<DoAddWorkOrderTypeResponse>
 ): Promise<void> {
   const workOrderTypeId = await addWorkOrderType(
     request.body,

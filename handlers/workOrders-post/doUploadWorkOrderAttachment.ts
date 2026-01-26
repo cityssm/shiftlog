@@ -8,41 +8,50 @@ import createWorkOrderAttachment from '../../database/workOrders/createWorkOrder
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
-const debug = Debug(`${DEBUG_NAMESPACE}:workOrders-post:doUploadWorkOrderAttachment`)
+const debug = Debug(
+  `${DEBUG_NAMESPACE}:workOrders-post:doUploadWorkOrderAttachment`
+)
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File
 }
 
+export type DoUploadWorkOrderAttachmentResponse =
+  | {
+      success: false
+      message: string
+    }
+  | { success: true; workOrderAttachmentId?: number }
+
 function sanitizeFileName(originalName: string): string {
   // Remove control characters, newlines, and null bytes
   // eslint-disable-next-line no-control-regex, sonarjs/no-control-regex
   let sanitized = originalName.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, '')
-  
+
   // Remove characters that are problematic in file systems
   sanitized = sanitized.replaceAll(/[<>:"/\\|?*]/g, '_')
-  
+
   // Remove leading dots to prevent hidden files on Unix
   sanitized = sanitized.replace(/^\.+/, '')
-  
+
   // Limit length to prevent issues with long filenames
   if (sanitized.length > 200) {
     const extension = path.extname(sanitized)
     const basename = path.basename(sanitized, extension)
     sanitized = basename.slice(0, 200 - extension.length) + extension
   }
-  
+
   // Fallback to a default name if sanitization removed everything
   if (sanitized.length === 0) {
     sanitized = 'attachment'
   }
-  
+
   return sanitized
 }
 
 export default async function handler(
   request: MulterRequest,
-  response: Response
+  response: Response<DoUploadWorkOrderAttachmentResponse>
 ): Promise<void> {
   const file = request.file
 
@@ -51,11 +60,13 @@ export default async function handler(
       success: false,
       message: 'No file uploaded.'
     })
+
     return
   }
 
   const workOrderId = request.body.workOrderId as string
-  const attachmentDescription = (request.body.attachmentDescription ?? '') as string
+  const attachmentDescription = (request.body.attachmentDescription ??
+    '') as string
 
   // Create year/month subdirectory structure
   const now = new Date()
@@ -101,7 +112,11 @@ export default async function handler(
       workOrderAttachmentId
     })
   } catch (error) {
-    debug('Error uploading attachment for work order %s: %O', workOrderId, error)
+    debug(
+      'Error uploading attachment for work order %s: %O',
+      workOrderId,
+      error
+    )
 
     // Clean up uploaded file on error
     try {
@@ -117,7 +132,7 @@ export default async function handler(
 
     response.json({
       success: false,
-      
+
       message: 'Failed to save attachment.'
     })
   }

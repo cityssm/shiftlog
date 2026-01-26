@@ -2,9 +2,14 @@ import type { Request, Response } from 'express'
 
 import reorderAssignedToItems from '../../database/assignedTo/reorderAssignedToItems.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoReorderAssignedToItemsResponse = {
+  success: boolean
+}
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoReorderAssignedToItemsResponse>
 ): Promise<void> {
   const success = await reorderAssignedToItems(
     request.body.assignedToIds as Array<number | string>,

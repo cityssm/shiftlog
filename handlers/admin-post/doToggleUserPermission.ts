@@ -2,6 +2,18 @@ import type { Request, Response } from 'express'
 
 import getUsers from '../../database/users/getUsers.js'
 import updateUser from '../../database/users/updateUser.js'
+import type { DatabaseUser } from '../../types/record.types.js'
+
+export type DoToggleUserPermissionResponse =
+  | {
+      success: false
+      message: string
+    }
+  | {
+      success: true
+      message: string
+      users: DatabaseUser[]
+    }
 
 export default async function handler(
   request: Request<
@@ -9,14 +21,14 @@ export default async function handler(
     unknown,
     { userName?: string; permissionField?: string }
   >,
-  response: Response
+  response: Response<DoToggleUserPermissionResponse>
 ): Promise<void> {
   const { userName, permissionField } = request.body
 
   if (!userName || !permissionField) {
     response.status(400).json({
       success: false,
-      
+
       message: 'User name and permission field are required'
     })
     return

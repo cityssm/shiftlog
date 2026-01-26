@@ -2,9 +2,19 @@ import type { Request, Response } from 'express'
 
 import createAssignedToItem from '../../database/assignedTo/createAssignedToItem.js'
 
+export type DoAddAssignedToItemResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      assignedToId: number
+    }
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoAddAssignedToItemResponse>
 ): Promise<void> {
   try {
     const assignedToId = await createAssignedToItem(

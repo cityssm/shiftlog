@@ -9,9 +9,9 @@ export default async function handler(request, response) {
         getAvailableCrews(shiftDateString)
     ]);
     response.json({
+        success: true,
         crews,
         employees,
-        equipment,
-        success: true
+        equipment
     });
 }

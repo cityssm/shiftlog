@@ -1,5 +1,13 @@
 import type { Request, Response } from 'express';
+import type { AdhocTask } from '../../types/record.types.js';
 type LatitudeLongitude = number | string | null | undefined;
+export type DoCreateAdhocTaskResponse = {
+    success: false;
+    errorMessage: string;
+} | {
+    success: true;
+    shiftAdhocTasks?: AdhocTask[];
+};
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;
     adhocTaskTypeDataListItemId: number | string;
@@ -21,5 +29,5 @@ export default function handler(request: Request<unknown, unknown, {
     toLocationLongitude: LatitudeLongitude;
     taskDueDateTimeString: string | null | undefined;
     shiftAdhocTaskNote: string;
-}>, response: Response): Promise<void>;
+}>, response: Response<DoCreateAdhocTaskResponse>): Promise<void>;
 export {};

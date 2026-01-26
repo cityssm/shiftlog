@@ -2,9 +2,15 @@ import type { Request, Response } from 'express'
 
 import updateNotificationConfiguration from '../../database/notifications/updateNotificationConfiguration.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateNotificationConfigurationResponse = {
+  success: boolean
+  errorMessage?: string
+}
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateNotificationConfigurationResponse>
 ): Promise<void> {
   try {
     const success = await updateNotificationConfiguration(

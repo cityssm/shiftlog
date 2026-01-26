@@ -1,4 +1,4 @@
-interface OrphanedTag {
+export interface OrphanedTag {
     tagName: string;
     usageCount: number;
 }
@@ -8,4 +8,3 @@ interface OrphanedTag {
  * system-defined colors.
  */
 export default function getOrphanedTags(): Promise<OrphanedTag[]>;
-export {};

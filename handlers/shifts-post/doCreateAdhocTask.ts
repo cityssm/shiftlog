@@ -3,8 +3,19 @@ import type { Request, Response } from 'express'
 import addShiftAdhocTask from '../../database/adhocTasks/addShiftAdhocTask.js'
 import createAdhocTask from '../../database/adhocTasks/createAdhocTask.js'
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
+import type { AdhocTask } from '../../types/record.types.js'
 
 type LatitudeLongitude = number | string | null | undefined
+
+export type DoCreateAdhocTaskResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      shiftAdhocTasks?: AdhocTask[]
+    }
 
 export default async function handler(
   request: Request<
@@ -32,12 +43,12 @@ export default async function handler(
       toLocationCityProvince: string
       toLocationLatitude: LatitudeLongitude
       toLocationLongitude: LatitudeLongitude
-      
+
       taskDueDateTimeString: string | null | undefined
       shiftAdhocTaskNote: string
     }
   >,
-  response: Response
+  response: Response<DoCreateAdhocTaskResponse>
 ): Promise<void> {
   // Create the ad hoc task
   const adhocTaskId = await createAdhocTask(
@@ -73,6 +84,7 @@ export default async function handler(
       success: false,
       errorMessage: 'Failed to create ad hoc task.'
     })
+
     return
   }
 

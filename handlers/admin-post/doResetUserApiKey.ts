@@ -3,16 +3,30 @@ import type { Request, Response } from 'express'
 import getUsers from '../../database/users/getUsers.js'
 import getUserSettings from '../../database/users/getUserSettings.js'
 import { updateApiKeyUserSetting } from '../../database/users/updateUserSetting.js'
+import type { DatabaseUser } from '../../types/record.types.js'
+
+export type DoResetUserApiKeyResponse =
+  | {
+      message: string
+      success: false
+    }
+  | {
+      message: string
+      success: true
+      users: DatabaseUser[]
+      apiKey: string
+    }
 
 export default async function handler(
   request: Request<unknown, unknown, { userName: string }>,
-  response: Response
+  response: Response<DoResetUserApiKeyResponse>
 ): Promise<void> {
   if (!request.body.userName?.trim()) {
     response.status(400).json({
       message: 'User name is required',
       success: false
     })
+    
     return
   }
 
@@ -36,7 +50,7 @@ export default async function handler(
       users,
       apiKey: newApiKey
     })
-  } catch (error) {
+  } catch {
     response.status(500).json({
       message: 'Failed to reset API key',
       success: false

@@ -5,9 +5,19 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('shifts.router')}`
 
+export type DoDeleteShiftResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      redirectUrl: string
+    }
+
 export default async function handler(
   request: Request<unknown, unknown, { shiftId: number | string }>,
-  response: Response
+  response: Response<DoDeleteShiftResponse>
 ): Promise<void> {
   const success = await deleteShift(
     request.body.shiftId,

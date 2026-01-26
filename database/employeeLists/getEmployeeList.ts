@@ -5,7 +5,7 @@ import type {
   EmployeeListMember
 } from '../../types/record.types.js'
 
-interface EmployeeListWithMembers extends EmployeeList {
+export interface EmployeeListWithMembers extends EmployeeList {
   members: EmployeeListMember[]
 }
 
