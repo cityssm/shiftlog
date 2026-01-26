@@ -7,7 +7,7 @@ import { getEligibleEmployeesForEquipment } from '../../helpers/equipment.helper
 export type DoGetEligibleEmployeesForEquipmentResponse = {
   success: boolean
   message?: string
-  employees?: Employee[]
+  employees?: Awaited<ReturnType<typeof getEmployees>>
 }
 
 export default async function handler(

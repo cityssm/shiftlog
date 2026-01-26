@@ -5,7 +5,7 @@ import getCrew from '../../database/crews/getCrew.js'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetCrewResponse = {
   success: boolean
-  crew?: Crew
+  crew?: Awaited<ReturnType<typeof getCrew>>
 }
 
 export default async function handler(

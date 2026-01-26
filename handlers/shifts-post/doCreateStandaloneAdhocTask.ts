@@ -10,7 +10,7 @@ export type DoCreateStandaloneAdhocTaskResponse = {
   success: boolean
   errorMessage?: string
   adhocTaskId?: number
-  adhocTasks?: AdhocTask[]
+  adhocTasks?: Awaited<ReturnType<typeof getAvailableAdhocTasks>>
 }
 
 export default async function handler(

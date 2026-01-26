@@ -8,7 +8,7 @@ import isWorkOrderOnShift from '../../database/shifts/isWorkOrderOnShift.js'
 export type DoAddShiftWorkOrderResponse = {
   success: boolean
   errorMessage?: string
-  shiftWorkOrders?: ShiftWorkOrder[]
+  shiftWorkOrders?: Awaited<ReturnType<typeof getShiftWorkOrders>>
 }
 
 export default async function handler(

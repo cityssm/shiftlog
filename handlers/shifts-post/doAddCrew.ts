@@ -7,7 +7,7 @@ import getCrews from '../../database/crews/getCrews.js'
 export type DoAddCrewResponse = {
   success: boolean
   crewId?: number
-  crews: Crew[]
+  crews: Awaited<ReturnType<typeof getCrews>>
 }
 
 export default async function handler(

@@ -1,10 +1,11 @@
 import type { Request, Response } from 'express';
+import getAvailableAdhocTasks from '../../database/adhocTasks/getAvailableAdhocTasks.js';
 type LatitudeLongitude = number | string | null | undefined;
 export type DoCreateStandaloneAdhocTaskResponse = {
     success: boolean;
     errorMessage?: string;
     adhocTaskId?: number;
-    adhocTasks?: AdhocTask[];
+    adhocTasks?: Awaited<ReturnType<typeof getAvailableAdhocTasks>>;
 };
 export default function handler(request: Request<unknown, unknown, {
     adhocTaskTypeDataListItemId: number | string;

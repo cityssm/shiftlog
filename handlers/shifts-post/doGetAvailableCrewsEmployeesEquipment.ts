@@ -7,9 +7,9 @@ import getEquipmentList from '../../database/equipment/getEquipmentList.js'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetAvailableCrewsEmployeesEquipmentResponse = {
   success: boolean
-  crews: Crew[]
-  employees: Employee[]
-  equipment: Equipment[]
+  crews: Awaited<ReturnType<typeof getCrews>>
+  employees: Awaited<ReturnType<typeof getEmployees>>
+  equipment: Awaited<ReturnType<typeof getEquipmentList>>
 }
 
 export default async function handler(

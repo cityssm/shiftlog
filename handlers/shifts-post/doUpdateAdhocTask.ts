@@ -9,7 +9,7 @@ type LatitudeLongitude = number | string | null | undefined
 export type DoUpdateAdhocTaskResponse = {
   success: boolean
   errorMessage?: string
-  shiftAdhocTasks?: ShiftAdhocTask[]
+  shiftAdhocTasks?: Awaited<ReturnType<typeof getShiftAdhocTasks>>
 }
 
 export default async function handler(

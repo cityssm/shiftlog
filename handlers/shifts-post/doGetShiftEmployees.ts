@@ -5,7 +5,7 @@ import getShiftEmployees from '../../database/shifts/getShiftEmployees.js'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftEmployeesResponse = {
   success: boolean
-  shiftEmployees: ShiftEmployee[]
+  shiftEmployees: Awaited<ReturnType<typeof getShiftEmployees>>
 }
 
 export default async function handler(

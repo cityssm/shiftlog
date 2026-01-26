@@ -1,9 +1,10 @@
 import type { Request, Response } from 'express';
+import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js';
 type LatitudeLongitude = number | string | null | undefined;
 export type DoUpdateAdhocTaskResponse = {
     success: boolean;
     errorMessage?: string;
-    shiftAdhocTasks?: ShiftAdhocTask[];
+    shiftAdhocTasks?: Awaited<ReturnType<typeof getShiftAdhocTasks>>;
 };
 export default function handler(request: Request<unknown, unknown, {
     adhocTaskId: number | string;

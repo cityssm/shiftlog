@@ -8,7 +8,7 @@ import getCrews from '../../database/crews/getCrews.js'
 export type DoDeleteCrewResponse = {
   success: boolean
   message?: string
-  crews?: Crew[]
+  crews?: Awaited<ReturnType<typeof getCrews>>
 }
 
 export default async function handler(

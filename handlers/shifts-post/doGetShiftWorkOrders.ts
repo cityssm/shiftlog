@@ -5,7 +5,7 @@ import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftWorkOrdersResponse = {
   success: boolean
-  shiftWorkOrders: ShiftWorkOrder[]
+  shiftWorkOrders: Awaited<ReturnType<typeof getShiftWorkOrders>>
 }
 
 export default async function handler(

@@ -5,7 +5,7 @@ import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftAdhocTasksResponse = {
   success: boolean
-  shiftAdhocTasks: ShiftAdhocTask[]
+  shiftAdhocTasks: Awaited<ReturnType<typeof getShiftAdhocTasks>>
 }
 
 export default async function handler(

@@ -7,7 +7,7 @@ import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js'
 export type DoDeleteShiftWorkOrderResponse = {
   success: boolean
   errorMessage?: string
-  shiftWorkOrders?: ShiftWorkOrder[]
+  shiftWorkOrders?: Awaited<ReturnType<typeof getShiftWorkOrders>>
 }
 
 export default async function handler(

@@ -9,7 +9,7 @@ import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 export type DoDeleteShiftAdhocTaskResponse = {
   success: boolean
   errorMessage?: string
-  shiftAdhocTasks?: ShiftAdhocTask[]
+  shiftAdhocTasks?: Awaited<ReturnType<typeof getShiftAdhocTasks>>
 }
 
 export default async function handler(

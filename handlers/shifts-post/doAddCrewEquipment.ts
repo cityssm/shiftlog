@@ -8,7 +8,7 @@ import { validateEmployeeForEquipment } from '../../helpers/equipment.helpers.js
 export type DoAddCrewEquipmentResponse = {
   success: boolean
   message?: string
-  crew?: Crew
+  crew?: Awaited<ReturnType<typeof getCrew>>
 }
 
 export default async function handler(

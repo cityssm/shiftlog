@@ -5,7 +5,7 @@ import getShiftEquipment from '../../database/shifts/getShiftEquipment.js'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftEquipmentResponse = {
   success: boolean
-  shiftEquipment: ShiftEquipment[]
+  shiftEquipment: Awaited<ReturnType<typeof getShiftEquipment>>
 }
 
 export default async function handler(

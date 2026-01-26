@@ -6,11 +6,16 @@ import updateUserSetting from '../../database/users/updateUserSetting.js'
 import { userSettingKeys } from '../../types/user.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoUpdateUserSettingsResponse = {
-  message: string
-  success: true
-  users: Awaited<ReturnType<typeof getUsers>>
-}
+export type DoUpdateUserSettingsResponse =
+  | {
+      message: string
+      success: true
+      users: Awaited<ReturnType<typeof getUsers>>
+    }
+  | {
+      message: string
+      success: false
+    }
 
 export default async function handler(
   request: Request<unknown, unknown, { userName: string }>,
@@ -20,7 +25,7 @@ export default async function handler(
     response.status(400).json({
       message: 'User name is required',
       success: false
-    })
+    } satisfies DoUpdateUserSettingsResponse)
     return
   }
 

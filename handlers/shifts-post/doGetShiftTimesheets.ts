@@ -5,7 +5,7 @@ import getTimesheetsByShift from '../../database/timesheets/getTimesheetsByShift
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftTimesheetsResponse = {
   success: boolean
-  timesheets: Timesheet[]
+  timesheets: Awaited<ReturnType<typeof getTimesheetsByShift>>
 }
 
 export default async function handler(

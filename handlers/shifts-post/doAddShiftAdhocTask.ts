@@ -8,7 +8,7 @@ import isAdhocTaskOnShift from '../../database/adhocTasks/isAdhocTaskOnShift.js'
 export type DoAddShiftAdhocTaskResponse = {
   success: boolean
   errorMessage?: string
-  shiftAdhocTasks?: ShiftAdhocTask[]
+  shiftAdhocTasks?: Awaited<ReturnType<typeof getShiftAdhocTasks>>
 }
 
 export default async function handler(

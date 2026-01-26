@@ -6,7 +6,7 @@ import type { GetPreviousShiftsFilters } from '../../database/shifts/getPrevious
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetPreviousShiftsResponse = {
   success: boolean
-  shifts: Shift[]
+  shifts: Awaited<ReturnType<typeof getPreviousShifts>>
 }
 
 export default async function handler(

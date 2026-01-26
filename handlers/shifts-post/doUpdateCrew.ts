@@ -8,7 +8,7 @@ import updateCrew from '../../database/crews/updateCrew.js'
 export type DoUpdateCrewResponse = {
   success: boolean
   message?: string
-  crews?: Crew[]
+  crews?: Awaited<ReturnType<typeof getCrews>>
 }
 
 export default async function handler(

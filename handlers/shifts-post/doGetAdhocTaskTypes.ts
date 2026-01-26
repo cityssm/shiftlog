@@ -5,7 +5,7 @@ import getAdhocTaskTypeDataListItems from '../../database/adhocTasks/getAdhocTas
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetAdhocTaskTypesResponse = {
   success: boolean
-  adhocTaskTypes: AdhocTaskTypeDataListItem[]
+  adhocTaskTypes: Awaited<ReturnType<typeof getAdhocTaskTypeDataListItems>>
 }
 
 export default async function handler(
