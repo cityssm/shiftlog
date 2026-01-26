@@ -1,11 +1,9 @@
 import type { Request, Response } from 'express';
-import getCrews from '../../database/crews/getCrews.js';
-import getEmployees from '../../database/employees/getEmployees.js';
-import getEquipmentList from '../../database/equipment/getEquipmentList.js';
+import type { Crew, Employee, Equipment } from '../../types/record.types.js';
 export type DoGetAvailableCrewsEmployeesEquipmentResponse = {
-    success: boolean;
-    crews: Awaited<ReturnType<typeof getCrews>>;
-    employees: Awaited<ReturnType<typeof getEmployees>>;
-    equipment: Awaited<ReturnType<typeof getEquipmentList>>;
+    success: true;
+    crews: Crew[];
+    employees: Employee[];
+    equipment: Equipment[];
 };
 export default function handler(request: Request, response: Response<DoGetAvailableCrewsEmployeesEquipmentResponse>): Promise<void>;

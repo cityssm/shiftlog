@@ -1,13 +1,13 @@
 import type { Request, Response } from 'express'
 
 import deleteCrewEquipment from '../../database/crews/deleteCrewEquipment.js'
-import getCrew from '../../database/crews/getCrew.js'
+import getCrew, { type CrewWithDetails } from '../../database/crews/getCrew.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoDeleteCrewEquipmentResponse = {
   success: boolean
   message?: string
-  crew?: Awaited<ReturnType<typeof getCrew>>
+  crew?: CrewWithDetails
 }
 
 export default async function handler(

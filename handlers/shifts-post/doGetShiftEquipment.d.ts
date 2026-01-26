@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
-import getShiftEquipment from '../../database/shifts/getShiftEquipment.js';
+import type { ShiftEquipment } from '../../types/record.types.js';
 export type DoGetShiftEquipmentResponse = {
-    success: boolean;
-    shiftEquipment: Awaited<ReturnType<typeof getShiftEquipment>>;
+    success: true;
+    shiftEquipment: ShiftEquipment[];
 };
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;

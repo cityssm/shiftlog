@@ -1,14 +1,19 @@
 import type { Request, Response } from 'express'
 
 import deleteShiftWorkOrder from '../../database/shifts/deleteShiftWorkOrder.js'
-import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js'
+import getShiftWorkOrders, {
+  type ShiftWorkOrder
+} from '../../database/shifts/getShiftWorkOrders.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoDeleteShiftWorkOrderResponse = {
-  success: boolean
-  errorMessage?: string
-  shiftWorkOrders?: Awaited<ReturnType<typeof getShiftWorkOrders>>
-}
+export type DoDeleteShiftWorkOrderResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      shiftWorkOrders: ShiftWorkOrder[]
+    }
 
 export default async function handler(
   request: Request<
@@ -32,11 +37,11 @@ export default async function handler(
     response.json({
       success: true,
       shiftWorkOrders
-    } satisfies DoDeleteShiftWorkOrderResponse)
+    })
   } else {
     response.json({
       success: false,
       errorMessage: 'Failed to remove work order from shift.'
-    } satisfies DoDeleteShiftWorkOrderResponse)
+    })
   }
 }

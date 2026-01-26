@@ -1,13 +1,13 @@
 import type { Request, Response } from 'express'
 
 import deleteCrewMember from '../../database/crews/deleteCrewMember.js'
-import getCrew from '../../database/crews/getCrew.js'
+import getCrew, { type CrewWithDetails } from '../../database/crews/getCrew.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoDeleteCrewMemberResponse = {
   success: boolean
   message?: string
-  crew?: Awaited<ReturnType<typeof getCrew>>
+  crew?: CrewWithDetails
 }
 
 export default async function handler(
@@ -30,7 +30,8 @@ export default async function handler(
     response.status(404).json({
       success: false,
       message: 'Crew not found.'
-    } satisfies DoDeleteCrewMemberResponse)
+    })
+
     return
   }
 
@@ -41,7 +42,8 @@ export default async function handler(
     response.status(403).json({
       success: false,
       message: 'You do not have permission to modify this crew.'
-    } satisfies DoDeleteCrewMemberResponse)
+    })
+
     return
   }
 
@@ -52,5 +54,5 @@ export default async function handler(
   response.json({
     success,
     crew: updatedCrew
-  } satisfies DoDeleteCrewMemberResponse)
+  })
 }

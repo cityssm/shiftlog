@@ -1,9 +1,11 @@
 import type { Request, Response } from 'express';
-import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js';
+import { type ShiftWorkOrder } from '../../database/shifts/getShiftWorkOrders.js';
 export type DoDeleteShiftWorkOrderResponse = {
-    success: boolean;
-    errorMessage?: string;
-    shiftWorkOrders?: Awaited<ReturnType<typeof getShiftWorkOrders>>;
+    success: false;
+    errorMessage: string;
+} | {
+    success: true;
+    shiftWorkOrders: ShiftWorkOrder[];
 };
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;

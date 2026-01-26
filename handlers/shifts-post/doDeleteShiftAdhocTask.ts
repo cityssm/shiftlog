@@ -4,13 +4,17 @@ import deleteAdhocTask from '../../database/adhocTasks/deleteAdhocTask.js'
 import deleteShiftAdhocTask from '../../database/adhocTasks/deleteShiftAdhocTask.js'
 import getAdhocTaskShiftCount from '../../database/adhocTasks/getAdhocTaskShiftCount.js'
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
+import type { AdhocTask } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoDeleteShiftAdhocTaskResponse = {
-  success: boolean
-  errorMessage?: string
-  shiftAdhocTasks?: Awaited<ReturnType<typeof getShiftAdhocTasks>>
-}
+export type DoDeleteShiftAdhocTaskResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      shiftAdhocTasks: AdhocTask[]
+    }
 
 export default async function handler(
   request: Request<
@@ -34,7 +38,8 @@ export default async function handler(
     response.json({
       success: false,
       errorMessage: 'Failed to remove task from shift.'
-    } satisfies DoDeleteShiftAdhocTaskResponse)
+    })
+
     return
   }
 
@@ -48,7 +53,8 @@ export default async function handler(
         success: false,
         errorMessage:
           'Cannot delete task as it is still assigned to other shifts.'
-      } satisfies DoDeleteShiftAdhocTaskResponse)
+      })
+
       return
     }
 
@@ -62,7 +68,8 @@ export default async function handler(
       response.json({
         success: false,
         errorMessage: 'Failed to delete task.'
-      } satisfies DoDeleteShiftAdhocTaskResponse)
+      })
+
       return
     }
   }
@@ -72,5 +79,5 @@ export default async function handler(
   response.json({
     success: true,
     shiftAdhocTasks
-  } satisfies DoDeleteShiftAdhocTaskResponse)
+  })
 }

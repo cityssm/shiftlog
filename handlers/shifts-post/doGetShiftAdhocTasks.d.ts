@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
-import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js';
+import type { AdhocTask } from '../../types/record.types.js';
 export type DoGetShiftAdhocTasksResponse = {
-    success: boolean;
-    shiftAdhocTasks: Awaited<ReturnType<typeof getShiftAdhocTasks>>;
+    success: true;
+    shiftAdhocTasks: AdhocTask[];
 };
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;

@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import getDeletedShifts from '../../database/shifts/getDeletedShifts.js';
+import type { Shift } from '../../types/record.types.js';
 export type DoGetDeletedShiftsResponse = {
-    success: boolean;
-    shifts: Awaited<ReturnType<typeof getDeletedShifts>>;
+    success: true;
+    shifts: Shift[];
 };
 export default function handler(request: Request, response: Response<DoGetDeletedShiftsResponse>): Promise<void>;

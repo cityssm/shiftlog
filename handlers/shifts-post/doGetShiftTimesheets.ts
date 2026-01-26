@@ -1,11 +1,12 @@
 import type { Request, Response } from 'express'
 
 import getTimesheetsByShift from '../../database/timesheets/getTimesheetsByShift.js'
+import type { Timesheet } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftTimesheetsResponse = {
-  success: boolean
-  timesheets: Awaited<ReturnType<typeof getTimesheetsByShift>>
+  success: true
+  timesheets: Timesheet[]
 }
 
 export default async function handler(
@@ -20,5 +21,5 @@ export default async function handler(
   response.json({
     success: true,
     timesheets
-  } satisfies DoGetShiftTimesheetsResponse)
+  })
 }

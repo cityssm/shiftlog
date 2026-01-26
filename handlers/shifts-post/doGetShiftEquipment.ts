@@ -1,11 +1,12 @@
 import type { Request, Response } from 'express'
 
 import getShiftEquipment from '../../database/shifts/getShiftEquipment.js'
+import type { ShiftEquipment } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftEquipmentResponse = {
-  success: boolean
-  shiftEquipment: Awaited<ReturnType<typeof getShiftEquipment>>
+  success: true
+  shiftEquipment: ShiftEquipment[]
 }
 
 export default async function handler(
@@ -20,5 +21,5 @@ export default async function handler(
   response.json({
     success: true,
     shiftEquipment
-  } satisfies DoGetShiftEquipmentResponse)
+  })
 }

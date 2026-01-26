@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import getAdhocTaskTypeDataListItems from '../../database/adhocTasks/getAdhocTaskTypeDataListItems.js';
+import type { DataListItem } from '../../types/record.types.js';
 export type DoGetAdhocTaskTypesResponse = {
-    success: boolean;
-    adhocTaskTypes: Awaited<ReturnType<typeof getAdhocTaskTypeDataListItems>>;
+    success: true;
+    adhocTaskTypes: DataListItem[];
 };
 export default function handler(request: Request, response: Response<DoGetAdhocTaskTypesResponse>): Promise<void>;

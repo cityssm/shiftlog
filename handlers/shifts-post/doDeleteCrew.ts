@@ -3,12 +3,13 @@ import type { Request, Response } from 'express'
 import deleteCrew from '../../database/crews/deleteCrew.js'
 import getCrew from '../../database/crews/getCrew.js'
 import getCrews from '../../database/crews/getCrews.js'
+import type { Crew } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoDeleteCrewResponse = {
   success: boolean
   message?: string
-  crews?: Awaited<ReturnType<typeof getCrews>>
+  crews?: Crew[]
 }
 
 export default async function handler(
@@ -21,11 +22,13 @@ export default async function handler(
   // Check permissions
   if (!user.userProperties.shifts.canManage) {
     const crew = await getCrew(crewId)
+
     if (crew === undefined || crew.recordCreate_userName !== user.userName) {
       response.status(403).json({
         success: false,
         message: 'You do not have permission to delete this crew.'
-      } satisfies DoDeleteCrewResponse)
+      })
+
       return
     }
   }

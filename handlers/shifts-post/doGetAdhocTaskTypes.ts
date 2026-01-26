@@ -1,11 +1,12 @@
 import type { Request, Response } from 'express'
 
 import getAdhocTaskTypeDataListItems from '../../database/adhocTasks/getAdhocTaskTypeDataListItems.js'
+import type { DataListItem } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetAdhocTaskTypesResponse = {
-  success: boolean
-  adhocTaskTypes: Awaited<ReturnType<typeof getAdhocTaskTypeDataListItems>>
+  success: true
+  adhocTaskTypes: DataListItem[]
 }
 
 export default async function handler(
@@ -19,5 +20,5 @@ export default async function handler(
   response.json({
     success: true,
     adhocTaskTypes
-  } satisfies DoGetAdhocTaskTypesResponse)
+  })
 }

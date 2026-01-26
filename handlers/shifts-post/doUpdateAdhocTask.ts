@@ -2,15 +2,19 @@ import type { Request, Response } from 'express'
 
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 import updateAdhocTask from '../../database/adhocTasks/updateAdhocTask.js'
+import type { AdhocTask } from '../../types/record.types.js'
 
 type LatitudeLongitude = number | string | null | undefined
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoUpdateAdhocTaskResponse = {
-  success: boolean
-  errorMessage?: string
-  shiftAdhocTasks?: Awaited<ReturnType<typeof getShiftAdhocTasks>>
-}
+export type DoUpdateAdhocTaskResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      shiftAdhocTasks: AdhocTask[]
+    }
 
 export default async function handler(
   request: Request<
@@ -20,7 +24,7 @@ export default async function handler(
       adhocTaskId: number | string
       adhocTaskTypeDataListItemId: number | string
       taskDescription: string
-      
+
       shiftId: number | string
 
       locationAddress1: string
@@ -84,12 +88,12 @@ export default async function handler(
       success: true,
 
       shiftAdhocTasks
-    } satisfies DoUpdateAdhocTaskResponse)
+    })
   } else {
     response.json({
       success: false,
 
       errorMessage: 'Failed to update ad hoc task.'
-    } satisfies DoUpdateAdhocTaskResponse)
+    })
   }
 }

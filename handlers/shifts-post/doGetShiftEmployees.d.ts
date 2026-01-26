@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
-import getShiftEmployees from '../../database/shifts/getShiftEmployees.js';
+import type { ShiftEmployee } from '../../types/record.types.js';
 export type DoGetShiftEmployeesResponse = {
-    success: boolean;
-    shiftEmployees: Awaited<ReturnType<typeof getShiftEmployees>>;
+    success: true;
+    shiftEmployees: ShiftEmployee[];
 };
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;

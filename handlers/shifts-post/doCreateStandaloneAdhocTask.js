@@ -27,13 +27,14 @@ export default async function handler(request, response) {
             success: false,
             errorMessage: 'Failed to create ad hoc task.'
         });
-        return;
     }
-    // Get all available adhoc tasks to return
-    const adhocTasks = await getAvailableAdhocTasks();
-    response.json({
-        success: true,
-        adhocTaskId,
-        adhocTasks
-    });
+    else {
+        // Get all available adhoc tasks to return
+        const adhocTasks = await getAvailableAdhocTasks();
+        response.json({
+            success: true,
+            adhocTaskId,
+            adhocTasks
+        });
+    }
 }

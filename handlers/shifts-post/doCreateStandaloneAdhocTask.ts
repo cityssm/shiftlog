@@ -2,16 +2,20 @@ import type { Request, Response } from 'express'
 
 import createAdhocTask from '../../database/adhocTasks/createAdhocTask.js'
 import getAvailableAdhocTasks from '../../database/adhocTasks/getAvailableAdhocTasks.js'
+import type { AdhocTask } from '../../types/record.types.js'
 
 type LatitudeLongitude = number | string | null | undefined
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoCreateStandaloneAdhocTaskResponse = {
-  success: boolean
-  errorMessage?: string
-  adhocTaskId?: number
-  adhocTasks?: Awaited<ReturnType<typeof getAvailableAdhocTasks>>
-}
+export type DoCreateStandaloneAdhocTaskResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      adhocTaskId: number
+      adhocTasks: AdhocTask[]
+    }
 
 export default async function handler(
   request: Request<
@@ -49,21 +53,25 @@ export default async function handler(
     {
       adhocTaskTypeDataListItemId: request.body.adhocTaskTypeDataListItemId,
       taskDescription: request.body.taskDescription,
+
       locationAddress1: request.body.locationAddress1,
       locationAddress2: request.body.locationAddress2,
       locationCityProvince: request.body.locationCityProvince,
       locationLatitude: request.body.locationLatitude,
       locationLongitude: request.body.locationLongitude,
+
       fromLocationAddress1: request.body.fromLocationAddress1,
       fromLocationAddress2: request.body.fromLocationAddress2,
       fromLocationCityProvince: request.body.fromLocationCityProvince,
       fromLocationLatitude: request.body.fromLocationLatitude,
       fromLocationLongitude: request.body.fromLocationLongitude,
+
       toLocationAddress1: request.body.toLocationAddress1,
       toLocationAddress2: request.body.toLocationAddress2,
       toLocationCityProvince: request.body.toLocationCityProvince,
       toLocationLatitude: request.body.toLocationLatitude,
       toLocationLongitude: request.body.toLocationLongitude,
+
       taskDueDateTimeString: request.body.taskDueDateTimeString
     },
     request.session.user as { userName: string }
@@ -73,16 +81,15 @@ export default async function handler(
     response.json({
       success: false,
       errorMessage: 'Failed to create ad hoc task.'
-    } satisfies DoCreateStandaloneAdhocTaskResponse)
-    return
+    })
+  } else {
+    // Get all available adhoc tasks to return
+    const adhocTasks = await getAvailableAdhocTasks()
+
+    response.json({
+      success: true,
+      adhocTaskId,
+      adhocTasks
+    })
   }
-
-  // Get all available adhoc tasks to return
-  const adhocTasks = await getAvailableAdhocTasks()
-
-  response.json({
-    success: true,
-    adhocTaskId,
-    adhocTasks
-  } satisfies DoCreateStandaloneAdhocTaskResponse)
 }

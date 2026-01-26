@@ -1,12 +1,15 @@
 import type { Request, Response } from 'express'
 
-import getCrew from '../../database/crews/getCrew.js'
+import getCrew, { type CrewWithDetails } from '../../database/crews/getCrew.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoGetCrewResponse = {
-  success: boolean
-  crew?: Awaited<ReturnType<typeof getCrew>>
-}
+export type DoGetCrewResponse =
+  | {
+      success: false
+    }
+  | {
+      success: true
+      crew: CrewWithDetails
+    }
 
 export default async function handler(
   request: Request<unknown, unknown, { crewId: string }>,
@@ -14,8 +17,16 @@ export default async function handler(
 ): Promise<void> {
   const crew = await getCrew(Number.parseInt(request.body.crewId, 10))
 
+  if (crew === undefined) {
+    response.json({
+      success: false
+    })
+
+    return
+  }
   response.json({
-    success: crew !== undefined,
-    crew
-  } satisfies DoGetCrewResponse)
+    success: true,
+
+    crew: crew
+  })
 }
