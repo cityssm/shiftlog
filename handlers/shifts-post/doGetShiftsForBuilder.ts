@@ -30,5 +30,5 @@ export default async function handler(
     success: true,
     
     shifts
-  })
+  } satisfies DoGetShiftsForBuilderResponse)
 }

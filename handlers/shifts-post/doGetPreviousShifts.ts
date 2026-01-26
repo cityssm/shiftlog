@@ -3,9 +3,15 @@ import type { Request, Response } from 'express'
 import getPreviousShifts from '../../database/shifts/getPreviousShifts.js'
 import type { GetPreviousShiftsFilters } from '../../database/shifts/getPreviousShifts.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetPreviousShiftsResponse = {
+  success: boolean
+  shifts: Shift[]
+}
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoGetPreviousShiftsResponse>
 ): Promise<void> {
   const shifts = await getPreviousShifts(
     request.body as GetPreviousShiftsFilters,
@@ -15,5 +21,5 @@ export default async function handler(
   response.json({
     shifts,
     success: true
-  })
+  } satisfies DoGetPreviousShiftsResponse)
 }

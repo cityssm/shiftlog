@@ -3,6 +3,13 @@ import type { Request, Response } from 'express'
 import addCrew from '../../database/crews/addCrew.js'
 import getCrews from '../../database/crews/getCrews.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoAddCrewResponse = {
+  success: boolean
+  crewId?: number
+  crews: Crew[]
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -12,7 +19,7 @@ export default async function handler(
       userGroupId: string
     }
   >,
-  response: Response
+  response: Response<DoAddCrewResponse>
 ): Promise<void> {
   const crewId = await addCrew(
     {
@@ -31,5 +38,5 @@ export default async function handler(
     crewId,
     crews,
     success: crewId !== undefined
-  })
+  } satisfies DoAddCrewResponse)
 }

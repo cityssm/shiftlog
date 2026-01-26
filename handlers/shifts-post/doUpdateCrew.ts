@@ -4,6 +4,13 @@ import getCrew from '../../database/crews/getCrew.js'
 import getCrews from '../../database/crews/getCrews.js'
 import updateCrew from '../../database/crews/updateCrew.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateCrewResponse = {
+  success: boolean
+  message?: string
+  crews?: Crew[]
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -14,7 +21,7 @@ export default async function handler(
       userGroupId: string
     }
   >,
-  response: Response
+  response: Response<DoUpdateCrewResponse>
 ): Promise<void> {
   const user = request.session.user as User
   const crewId = Number.parseInt(request.body.crewId, 10)
@@ -26,7 +33,7 @@ export default async function handler(
       response.status(403).json({
         success: false,
         message: 'You do not have permission to update this crew.'
-      })
+      } satisfies DoUpdateCrewResponse)
       return
     }
   }
@@ -48,5 +55,5 @@ export default async function handler(
   response.json({
     success,
     crews
-  })
+  } satisfies DoUpdateCrewResponse)
 }

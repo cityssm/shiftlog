@@ -3,6 +3,13 @@ import type { Request, Response } from 'express'
 import deleteCrewEquipment from '../../database/crews/deleteCrewEquipment.js'
 import getCrew from '../../database/crews/getCrew.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoDeleteCrewEquipmentResponse = {
+  success: boolean
+  message?: string
+  crew?: Crew
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -12,7 +19,7 @@ export default async function handler(
       equipmentNumber: string
     }
   >,
-  response: Response
+  response: Response<DoDeleteCrewEquipmentResponse>
 ): Promise<void> {
   const user = request.session.user as User
   const crewId = Number.parseInt(request.body.crewId, 10)
@@ -23,7 +30,7 @@ export default async function handler(
     response.status(404).json({
       success: false,
       message: 'Crew not found.'
-    })
+    } satisfies DoDeleteCrewEquipmentResponse)
     return
   }
 
@@ -34,7 +41,7 @@ export default async function handler(
     response.status(403).json({
       success: false,
       message: 'You do not have permission to modify this crew.'
-    })
+    } satisfies DoDeleteCrewEquipmentResponse)
     return
   }
 
@@ -48,5 +55,5 @@ export default async function handler(
   response.json({
     success,
     crew: updatedCrew
-  })
+  } satisfies DoDeleteCrewEquipmentResponse)
 }

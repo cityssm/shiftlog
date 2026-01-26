@@ -1,4 +1,8 @@
 import type { Request, Response } from 'express';
+export type DoGetShiftEquipmentResponse = {
+    success: boolean;
+    shiftEquipment: ShiftEquipment[];
+};
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;
-}>, response: Response): Promise<void>;
+}>, response: Response<DoGetShiftEquipmentResponse>): Promise<void>;

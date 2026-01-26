@@ -6,6 +6,13 @@ import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 
 type LatitudeLongitude = number | string | null | undefined
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoCreateAdhocTaskResponse = {
+  success: boolean
+  errorMessage?: string
+  shiftAdhocTasks?: ShiftAdhocTask[]
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -37,7 +44,7 @@ export default async function handler(
       shiftAdhocTaskNote: string
     }
   >,
-  response: Response
+  response: Response<DoCreateAdhocTaskResponse>
 ): Promise<void> {
   // Create the ad hoc task
   const adhocTaskId = await createAdhocTask(
@@ -72,7 +79,7 @@ export default async function handler(
     response.json({
       success: false,
       errorMessage: 'Failed to create ad hoc task.'
-    })
+    } satisfies DoCreateAdhocTaskResponse)
     return
   }
 
@@ -89,11 +96,11 @@ export default async function handler(
     response.json({
       success: true,
       shiftAdhocTasks
-    })
+    } satisfies DoCreateAdhocTaskResponse)
   } else {
     response.json({
       success: false,
       errorMessage: 'Failed to add task to shift.'
-    })
+    } satisfies DoCreateAdhocTaskResponse)
   }
 }

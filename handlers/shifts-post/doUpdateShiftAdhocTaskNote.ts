@@ -2,6 +2,12 @@ import type { Request, Response } from 'express'
 
 import updateShiftAdhocTaskNote from '../../database/adhocTasks/updateShiftAdhocTaskNote.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateShiftAdhocTaskNoteResponse = {
+  success: boolean
+  errorMessage?: string
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -12,7 +18,7 @@ export default async function handler(
       shiftAdhocTaskNote: string
     }
   >,
-  response: Response
+  response: Response<DoUpdateShiftAdhocTaskNoteResponse>
 ): Promise<void> {
   const success = await updateShiftAdhocTaskNote(
     request.body.shiftId,
@@ -23,5 +29,5 @@ export default async function handler(
   response.json({
     success,
     errorMessage: success ? undefined : 'Failed to update task note.'
-  })
+  } satisfies DoUpdateShiftAdhocTaskNoteResponse)
 }

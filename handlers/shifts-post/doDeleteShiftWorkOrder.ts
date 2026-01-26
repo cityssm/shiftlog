@@ -3,6 +3,13 @@ import type { Request, Response } from 'express'
 import deleteShiftWorkOrder from '../../database/shifts/deleteShiftWorkOrder.js'
 import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoDeleteShiftWorkOrderResponse = {
+  success: boolean
+  errorMessage?: string
+  shiftWorkOrders?: ShiftWorkOrder[]
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -12,7 +19,7 @@ export default async function handler(
       workOrderId: number | string
     }
   >,
-  response: Response
+  response: Response<DoDeleteShiftWorkOrderResponse>
 ): Promise<void> {
   const success = await deleteShiftWorkOrder(
     request.body.shiftId,
@@ -25,11 +32,11 @@ export default async function handler(
     response.json({
       success: true,
       shiftWorkOrders
-    })
+    } satisfies DoDeleteShiftWorkOrderResponse)
   } else {
     response.json({
       success: false,
       errorMessage: 'Failed to remove work order from shift.'
-    })
+    } satisfies DoDeleteShiftWorkOrderResponse)
   }
 }

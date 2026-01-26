@@ -1,2 +1,5 @@
 import type { Request, Response } from 'express';
-export default function handler(request: Request, response: Response): Promise<void>;
+export type DoDeleteShiftCrewResponse = {
+    success: boolean;
+};
+export default function handler(request: Request, response: Response<DoDeleteShiftCrewResponse>): Promise<void>;

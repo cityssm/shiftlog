@@ -3,9 +3,15 @@ import type { Request, Response } from 'express'
 import updateShiftEquipment from '../../database/shifts/updateShiftEquipment.js'
 import { validateEmployeeForEquipment } from '../../helpers/equipment.helpers.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateShiftEquipmentResponse = {
+  success: boolean
+  message?: string
+}
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateShiftEquipmentResponse>
 ): Promise<void> {
   // Validate employee is allowed for this equipment
   const validation = await validateEmployeeForEquipment(
@@ -17,7 +23,7 @@ export default async function handler(
     response.status(400).json({
       success: false,
       message: validation.errorMessage
-    })
+    } satisfies DoUpdateShiftEquipmentResponse)
     return
   }
 
@@ -25,5 +31,5 @@ export default async function handler(
 
   response.json({
     success
-  })
+  } satisfies DoUpdateShiftEquipmentResponse)
 }

@@ -2,9 +2,15 @@ import type { Request, Response } from 'express'
 
 import getTimesheetsByShift from '../../database/timesheets/getTimesheetsByShift.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetShiftTimesheetsResponse = {
+  success: boolean
+  timesheets: Timesheet[]
+}
+
 export default async function handler(
   request: Request<unknown, unknown, { shiftId: number | string }>,
-  response: Response
+  response: Response<DoGetShiftTimesheetsResponse>
 ): Promise<void> {
   const timesheets = await getTimesheetsByShift(
     request.body.shiftId,
@@ -14,5 +20,5 @@ export default async function handler(
   response.json({
     success: true,
     timesheets
-  })
+  } satisfies DoGetShiftTimesheetsResponse)
 }

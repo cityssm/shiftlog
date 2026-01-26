@@ -2,9 +2,15 @@ import type { Request, Response } from 'express'
 
 import getShiftEmployees from '../../database/shifts/getShiftEmployees.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetShiftEmployeesResponse = {
+  success: boolean
+  shiftEmployees: ShiftEmployee[]
+}
+
 export default async function handler(
   request: Request<unknown, unknown, { shiftId: number | string }>,
-  response: Response
+  response: Response<DoGetShiftEmployeesResponse>
 ): Promise<void> {
   const shiftEmployees = await getShiftEmployees(
     request.body.shiftId,
@@ -14,5 +20,5 @@ export default async function handler(
   response.json({
     success: true,
     shiftEmployees
-  })
+  } satisfies DoGetShiftEmployeesResponse)
 }

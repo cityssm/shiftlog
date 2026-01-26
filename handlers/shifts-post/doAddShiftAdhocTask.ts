@@ -4,6 +4,13 @@ import addShiftAdhocTask from '../../database/adhocTasks/addShiftAdhocTask.js'
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 import isAdhocTaskOnShift from '../../database/adhocTasks/isAdhocTaskOnShift.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoAddShiftAdhocTaskResponse = {
+  success: boolean
+  errorMessage?: string
+  shiftAdhocTasks?: ShiftAdhocTask[]
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -14,7 +21,7 @@ export default async function handler(
       shiftAdhocTaskNote: string
     }
   >,
-  response: Response
+  response: Response<DoAddShiftAdhocTaskResponse>
 ): Promise<void> {
   // Check if task is already on this shift
   const alreadyExists = await isAdhocTaskOnShift(
@@ -26,7 +33,7 @@ export default async function handler(
     response.json({
       success: false,
       errorMessage: 'This task is already assigned to the shift.'
-    })
+    } satisfies DoAddShiftAdhocTaskResponse)
     return
   }
 
@@ -42,11 +49,11 @@ export default async function handler(
     response.json({
       success: true,
       shiftAdhocTasks
-    })
+    } satisfies DoAddShiftAdhocTaskResponse)
   } else {
     response.json({
       success: false,
       errorMessage: 'Failed to add task to shift.'
-    })
+    } satisfies DoAddShiftAdhocTaskResponse)
   }
 }

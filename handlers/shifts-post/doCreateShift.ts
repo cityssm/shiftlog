@@ -4,9 +4,15 @@ import createShift, {
   type CreateShiftForm
 } from '../../database/shifts/createShift.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoCreateShiftResponse = {
+  success: boolean
+  shiftId: number
+}
+
 export default async function handler(
   request: Request<unknown, unknown, CreateShiftForm>,
-  response: Response
+  response: Response<DoCreateShiftResponse>
 ): Promise<void> {
   const shiftId = await createShift(
     request.body,
@@ -17,5 +23,5 @@ export default async function handler(
     success: true,
 
     shiftId
-  })
+  } satisfies DoCreateShiftResponse)
 }

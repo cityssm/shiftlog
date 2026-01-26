@@ -5,6 +5,14 @@ import getAvailableAdhocTasks from '../../database/adhocTasks/getAvailableAdhocT
 
 type LatitudeLongitude = number | string | null | undefined
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoCreateStandaloneAdhocTaskResponse = {
+  success: boolean
+  errorMessage?: string
+  adhocTaskId?: number
+  adhocTasks?: AdhocTask[]
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -34,7 +42,7 @@ export default async function handler(
       taskDueDateTimeString: string | null | undefined
     }
   >,
-  response: Response
+  response: Response<DoCreateStandaloneAdhocTaskResponse>
 ): Promise<void> {
   // Create the ad hoc task without assigning to a shift
   const adhocTaskId = await createAdhocTask(
@@ -65,7 +73,7 @@ export default async function handler(
     response.json({
       success: false,
       errorMessage: 'Failed to create ad hoc task.'
-    })
+    } satisfies DoCreateStandaloneAdhocTaskResponse)
     return
   }
 
@@ -76,5 +84,5 @@ export default async function handler(
     success: true,
     adhocTaskId,
     adhocTasks
-  })
+  } satisfies DoCreateStandaloneAdhocTaskResponse)
 }

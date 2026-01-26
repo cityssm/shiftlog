@@ -4,6 +4,13 @@ import addCrewEquipment from '../../database/crews/addCrewEquipment.js'
 import getCrew from '../../database/crews/getCrew.js'
 import { validateEmployeeForEquipment } from '../../helpers/equipment.helpers.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoAddCrewEquipmentResponse = {
+  success: boolean
+  message?: string
+  crew?: Crew
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -14,7 +21,7 @@ export default async function handler(
       employeeNumber: string
     }
   >,
-  response: Response
+  response: Response<DoAddCrewEquipmentResponse>
 ): Promise<void> {
   const user = request.session.user as User
   const crewId = Number.parseInt(request.body.crewId, 10)
@@ -25,7 +32,7 @@ export default async function handler(
     response.status(404).json({
       success: false,
       message: 'Crew not found.'
-    })
+    } satisfies DoAddCrewEquipmentResponse)
     return
   }
 
@@ -36,7 +43,7 @@ export default async function handler(
     response.status(403).json({
       success: false,
       message: 'You do not have permission to modify this crew.'
-    })
+    } satisfies DoAddCrewEquipmentResponse)
     return
   }
 
@@ -53,7 +60,7 @@ export default async function handler(
     response.status(400).json({
       success: false,
       message: validation.errorMessage
-    })
+    } satisfies DoAddCrewEquipmentResponse)
     return
   }
 
@@ -68,5 +75,5 @@ export default async function handler(
   response.json({
     success,
     crew: updatedCrew
-  })
+  } satisfies DoAddCrewEquipmentResponse)
 }

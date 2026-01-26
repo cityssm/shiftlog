@@ -1,5 +1,10 @@
 import type { Request, Response } from 'express';
 type LatitudeLongitude = number | string | null | undefined;
+export type DoUpdateAdhocTaskResponse = {
+    success: boolean;
+    errorMessage?: string;
+    shiftAdhocTasks?: ShiftAdhocTask[];
+};
 export default function handler(request: Request<unknown, unknown, {
     adhocTaskId: number | string;
     adhocTaskTypeDataListItemId: number | string;
@@ -22,5 +27,5 @@ export default function handler(request: Request<unknown, unknown, {
     toLocationLongitude: LatitudeLongitude;
     taskCompleteDateTimeString: string | null | undefined;
     taskDueDateTimeString: string | null | undefined;
-}>, response: Response): Promise<void>;
+}>, response: Response<DoUpdateAdhocTaskResponse>): Promise<void>;
 export {};

@@ -4,9 +4,16 @@ import deleteCrew from '../../database/crews/deleteCrew.js'
 import getCrew from '../../database/crews/getCrew.js'
 import getCrews from '../../database/crews/getCrews.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoDeleteCrewResponse = {
+  success: boolean
+  message?: string
+  crews?: Crew[]
+}
+
 export default async function handler(
   request: Request<unknown, unknown, { crewId: string }>,
-  response: Response
+  response: Response<DoDeleteCrewResponse>
 ): Promise<void> {
   const user = request.session.user as User
   const crewId = Number.parseInt(request.body.crewId, 10)
@@ -18,7 +25,7 @@ export default async function handler(
       response.status(403).json({
         success: false,
         message: 'You do not have permission to delete this crew.'
-      })
+      } satisfies DoDeleteCrewResponse)
       return
     }
   }
@@ -30,5 +37,5 @@ export default async function handler(
   response.json({
     success,
     crews
-  })
+  } satisfies DoDeleteCrewResponse)
 }

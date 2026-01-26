@@ -5,6 +5,13 @@ import updateAdhocTask from '../../database/adhocTasks/updateAdhocTask.js'
 
 type LatitudeLongitude = number | string | null | undefined
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateAdhocTaskResponse = {
+  success: boolean
+  errorMessage?: string
+  shiftAdhocTasks?: ShiftAdhocTask[]
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -38,7 +45,7 @@ export default async function handler(
       taskDueDateTimeString: string | null | undefined
     }
   >,
-  response: Response
+  response: Response<DoUpdateAdhocTaskResponse>
 ): Promise<void> {
   const success = await updateAdhocTask(
     {
@@ -77,12 +84,12 @@ export default async function handler(
       success: true,
 
       shiftAdhocTasks
-    })
+    } satisfies DoUpdateAdhocTaskResponse)
   } else {
     response.json({
       success: false,
 
       errorMessage: 'Failed to update ad hoc task.'
-    })
+    } satisfies DoUpdateAdhocTaskResponse)
   }
 }

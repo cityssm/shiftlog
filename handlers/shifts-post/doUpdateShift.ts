@@ -4,9 +4,14 @@ import updateShift, {
   type UpdateShiftForm
 } from '../../database/shifts/updateShift.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateShiftResponse = {
+  success: boolean
+}
+
 export default async function handler(
   request: Request<unknown, unknown, UpdateShiftForm>,
-  response: Response
+  response: Response<DoUpdateShiftResponse>
 ): Promise<void> {
   const success = await updateShift(
     request.body,
@@ -15,5 +20,5 @@ export default async function handler(
 
   response.json({
     success
-  })
+  } satisfies DoUpdateShiftResponse)
 }

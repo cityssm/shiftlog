@@ -4,9 +4,17 @@ import getCrews from '../../database/crews/getCrews.js'
 import getEmployees from '../../database/employees/getEmployees.js'
 import getEquipmentList from '../../database/equipment/getEquipmentList.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetAvailableCrewsEmployeesEquipmentResponse = {
+  success: boolean
+  crews: Crew[]
+  employees: Employee[]
+  equipment: Equipment[]
+}
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoGetAvailableCrewsEmployeesEquipmentResponse>
 ): Promise<void> {
   const crews = await getCrews(request.session.user)
   const employees = await getEmployees()
@@ -17,5 +25,5 @@ export default async function handler(
     crews,
     employees,
     equipment
-  })
+  } satisfies DoGetAvailableCrewsEmployeesEquipmentResponse)
 }
