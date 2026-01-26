@@ -4,17 +4,17 @@ import type { Request, Response } from 'express'
 
 import getEmployees from '../../database/employees/getEmployees.js'
 import updateEmployee from '../../database/employees/updateEmployee.js'
+import type { Employee } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoUpdateEmployeeResponse =
   | {
       message: string
-      success: true
-      employees: Awaited<ReturnType<typeof getEmployees>>
+      success: false
     }
   | {
       message: string
-      success: false
+      success: true
+      employees: Employee[]
     }
 
 export default async function handler(
@@ -73,18 +73,18 @@ export default async function handler(
         message: 'Employee updated successfully',
         success: true,
         employees
-      } satisfies DoUpdateEmployeeResponse)
+      })
     } else {
       response.status(404).json({
         message: 'Employee not found',
         success: false
-      } satisfies DoUpdateEmployeeResponse)
+      })
     }
   } catch (error) {
     response.status(500).json({
       message:
         error instanceof Error ? error.message : 'Failed to update employee',
       success: false
-    } satisfies DoUpdateEmployeeResponse)
+    })
   }
 }

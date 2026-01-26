@@ -2,17 +2,17 @@ import type { Request, Response } from 'express'
 
 import getUsers from '../../database/users/getUsers.js'
 import updateUser from '../../database/users/updateUser.js'
+import type { DatabaseUser } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoToggleUserPermissionResponse =
-  | {
-      success: true
-      message: string
-      users: Awaited<ReturnType<typeof getUsers>>
-    }
   | {
       success: false
       message: string
+    }
+  | {
+      success: true
+      message: string
+      users: DatabaseUser[]
     }
 
 export default async function handler(
@@ -28,7 +28,7 @@ export default async function handler(
   if (!userName || !permissionField) {
     response.status(400).json({
       success: false,
-      
+
       message: 'User name and permission field are required'
     } satisfies DoToggleUserPermissionResponse)
     return
@@ -52,7 +52,7 @@ export default async function handler(
     response.status(400).json({
       success: false,
       message: 'Invalid permission field'
-    } satisfies DoToggleUserPermissionResponse)
+    })
     return
   }
 
@@ -65,7 +65,7 @@ export default async function handler(
       response.status(404).json({
         success: false,
         message: 'User not found'
-      } satisfies DoToggleUserPermissionResponse)
+      })
       return
     }
 
@@ -138,13 +138,13 @@ export default async function handler(
 
         message: 'Permission updated successfully',
         users: updatedUsers
-      } satisfies DoToggleUserPermissionResponse)
+      })
     } else {
       response.status(404).json({
         success: false,
 
         message: 'User not found'
-      } satisfies DoToggleUserPermissionResponse)
+      })
     }
   } catch (error) {
     response.status(500).json({

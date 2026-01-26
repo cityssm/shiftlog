@@ -1,16 +1,17 @@
 import type { Request, Response } from 'express'
 
-import getOrphanedTags from '../../database/tags/getOrphanedTags.js'
+import getOrphanedTags, {
+  type OrphanedTag
+} from '../../database/tags/getOrphanedTags.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetOrphanedTagsResponse =
-  | {
-      success: true
-      orphanedTags: Awaited<ReturnType<typeof getOrphanedTags>>
-    }
   | {
       success: false
       message: string
+    }
+  | {
+      success: true
+      orphanedTags: OrphanedTag[]
     }
 
 export default async function handler(
@@ -23,11 +24,11 @@ export default async function handler(
     response.json({
       success: true,
       orphanedTags
-    } satisfies DoGetOrphanedTagsResponse)
+    })
   } catch {
     response.json({
       success: false,
       message: 'Error retrieving orphaned tags.'
-    } satisfies DoGetOrphanedTagsResponse)
+    })
   }
 }

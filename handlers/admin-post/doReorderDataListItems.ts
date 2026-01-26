@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 
-import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
+import getDataListItemsAdmin, { type DataListItemWithDetails } from '../../database/app/getDataListItemsAdmin.js'
 import reorderDataListItems, {
   type ReorderDataListItemsForm
 } from '../../database/app/reorderDataListItems.js'
@@ -8,7 +8,7 @@ import reorderDataListItems, {
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoReorderDataListItemsResponse = {
   success: boolean
-  items?: Awaited<ReturnType<typeof getDataListItemsAdmin>>
+  items?: DataListItemWithDetails[]
 }
 
 export default async function handler(
@@ -22,7 +22,7 @@ export default async function handler(
 
   const success = await reorderDataListItems(form)
 
-  let items: Awaited<ReturnType<typeof getDataListItemsAdmin>> | undefined
+  let items: DataListItemWithDetails[] | undefined
 
   if (success) {
     items = await getDataListItemsAdmin(form.dataListKey)

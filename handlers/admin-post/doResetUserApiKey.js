@@ -26,7 +26,7 @@ export default async function handler(request, response) {
             apiKey: newApiKey
         });
     }
-    catch (error) {
+    catch {
         response.status(500).json({
             message: 'Failed to reset API key',
             success: false

@@ -3,18 +3,18 @@ import type { Request, Response } from 'express'
 import getUsers from '../../database/users/getUsers.js'
 import getUserSettings from '../../database/users/getUserSettings.js'
 import { updateApiKeyUserSetting } from '../../database/users/updateUserSetting.js'
+import type { DatabaseUser } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoResetUserApiKeyResponse =
   | {
       message: string
-      success: true
-      users: Awaited<ReturnType<typeof getUsers>>
-      apiKey: string
+      success: false
     }
   | {
       message: string
-      success: false
+      success: true
+      users: DatabaseUser[]
+      apiKey: string
     }
 
 export default async function handler(
@@ -48,11 +48,11 @@ export default async function handler(
       success: true,
       users,
       apiKey: newApiKey
-    } satisfies DoResetUserApiKeyResponse)
-  } catch (error) {
+    })
+  } catch {
     response.status(500).json({
       message: 'Failed to reset API key',
       success: false
-    } satisfies DoResetUserApiKeyResponse)
+    })
   }
 }

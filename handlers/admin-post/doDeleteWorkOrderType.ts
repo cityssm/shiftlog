@@ -2,20 +2,20 @@ import type { Request, Response } from 'express'
 
 import deleteWorkOrderType from '../../database/workOrderTypes/deleteWorkOrderType.js'
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
+import type { WorkOrderType } from '../../types/record.types.js'
 
 interface DeleteWorkOrderTypeForm {
   workOrderTypeId: number | string
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoDeleteWorkOrderTypeResponse =
-  | {
-      success: true
-      workOrderTypes: Awaited<ReturnType<typeof getWorkOrderTypesAdmin>>
-    }
   | {
       message: string
       success: false
+    }
+  | {
+      success: true
+      workOrderTypes: WorkOrderType[]
     }
 
 export default async function handler(
@@ -32,11 +32,11 @@ export default async function handler(
     response.json({
       success: true,
       workOrderTypes
-    } satisfies DoDeleteWorkOrderTypeResponse)
+    })
   } else {
     response.json({
       message: 'Work order type could not be deleted.',
       success: false
-    } satisfies DoDeleteWorkOrderTypeResponse)
+    })
   }
 }
