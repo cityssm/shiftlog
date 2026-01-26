@@ -16,10 +16,14 @@ export type DoSearchWorkOrdersResponse = {
 
   limit: number
   offset: number
-} 
+}
 
 export default async function handler(
-  request: Request<unknown, unknown, GetWorkOrdersFilters & GetWorkOrdersOptions>,
+  request: Request<
+    unknown,
+    unknown,
+    GetWorkOrdersFilters & GetWorkOrdersOptions
+  >,
   response: Response<DoSearchWorkOrdersResponse>
 ): Promise<void> {
   const workOrdersResults = await getWorkOrders(
@@ -43,5 +47,5 @@ export default async function handler(
       typeof request.body.offset === 'number'
         ? request.body.offset
         : Number.parseInt(request.body.offset, 10)
-  } satisfies DoSearchWorkOrdersResponse)
+  })
 }
