@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/no-null */
-
 import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString, TimeString } from '@cityssm/utils-datetime'
 

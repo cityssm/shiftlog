@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/no-null */
-
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 type LatitudeLongitude = number | string | null | undefined

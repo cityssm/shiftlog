@@ -1,5 +1,3 @@
-/* eslint-disable no-secrets/no-secrets, unicorn/no-null */
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 

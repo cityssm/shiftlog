@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/no-null */
-
 import type { DateString, TimeString } from '@cityssm/utils-datetime'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'

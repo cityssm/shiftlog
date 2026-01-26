@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/no-null */
-
 import mssqlPool from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -28,9 +26,9 @@ export default async function updateDataListItem(
       .input('userName', form.userName).query(/* sql */ `
         update ShiftLog.DataListItems
         set dataListItem = @dataListItem,
-            userGroupId = @userGroupId,
-            recordUpdate_userName = @userName,
-            recordUpdate_dateTime = getdate()
+          userGroupId = @userGroupId,
+          recordUpdate_userName = @userName,
+          recordUpdate_dateTime = getdate()
         where dataListItemId = @dataListItemId
           and recordDelete_dateTime is null
       `)
