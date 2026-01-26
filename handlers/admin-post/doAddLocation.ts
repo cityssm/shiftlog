@@ -2,16 +2,16 @@ import type { Request, Response } from 'express'
 
 import addLocation from '../../database/locations/addLocation.js'
 import getLocations from '../../database/locations/getLocations.js'
+import type { Location } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddLocationResponse =
-  | {
-      success: true
-      locations: Awaited<ReturnType<typeof getLocations>>
-    }
   | {
       success: false
       message: string
+    }
+  | {
+      success: true
+      locations: Location[]
     }
 
 export default async function handler(
@@ -39,12 +39,12 @@ export default async function handler(
       success: true,
 
       locations
-    } satisfies DoAddLocationResponse)
+    })
   } else {
     response.json({
       success: false,
 
       message: 'Location could not be added.'
-    } satisfies DoAddLocationResponse)
+    })
   }
 }

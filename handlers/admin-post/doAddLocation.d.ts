@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
-import getLocations from '../../database/locations/getLocations.js';
+import type { Location } from '../../types/record.types.js';
 export type DoAddLocationResponse = {
-    success: true;
-    locations: Awaited<ReturnType<typeof getLocations>>;
-} | {
     success: false;
     message: string;
+} | {
+    success: true;
+    locations: Location[];
 };
 export default function handler(request: Request, response: Response<DoAddLocationResponse>): Promise<void>;

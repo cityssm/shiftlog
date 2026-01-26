@@ -2,10 +2,11 @@ import type { Request, Response } from 'express'
 
 import addEmployee from '../../database/employees/addEmployee.js'
 import getEmployees from '../../database/employees/getEmployees.js'
+import type { Employee } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddEmployeeResponse = {
-  employees: Awaited<ReturnType<typeof getEmployees>>
+  employees: Employee[]
   success: boolean
 }
 
@@ -29,5 +30,5 @@ export default async function handler(
   response.json({
     employees,
     success
-  } satisfies DoAddEmployeeResponse)
+  })
 }

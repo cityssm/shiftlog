@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
-import getEmployeeLists from '../../database/employeeLists/getEmployeeLists.js';
+import type { EmployeeList } from '../../types/record.types.js';
 export type DoAddEmployeeListResponse = {
     employeeListId: number | undefined;
-    employeeLists: Awaited<ReturnType<typeof getEmployeeLists>>;
+    employeeLists: EmployeeList[];
     success: boolean;
 };
 export default function handler(request: Request<unknown, unknown, {
