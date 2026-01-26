@@ -84,7 +84,9 @@ export const config = defineConfig(configWebApp, {
           methods: escapedMethods
         }
       }
-    ]
+    ],
+
+    "unicorn/no-null": "off"
   }
 })
 

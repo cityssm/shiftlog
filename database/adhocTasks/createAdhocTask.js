@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-null */
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createAdhocTask(task, sessionUser) {
     const pool = await getShiftLogConnectionPool();

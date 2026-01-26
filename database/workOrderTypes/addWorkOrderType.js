@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-null */
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function addWorkOrderType(form, userName) {

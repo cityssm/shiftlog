@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/no-null */
-
 import Debug from 'debug'
 
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
