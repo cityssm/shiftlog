@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
-import getTags from '../../database/tags/getTags.js';
+import type { Tag } from '../../types/record.types.js';
 export type DoUpdateTagResponse = {
-    success: true;
-    tags: Awaited<ReturnType<typeof getTags>>;
-} | {
     success: false;
     message: string;
+} | {
+    success: true;
+    tags: Tag[];
 };
 export default function handler(request: Request, response: Response<DoUpdateTagResponse>): Promise<void>;

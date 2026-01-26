@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
-import getCrew from '../../database/crews/getCrew.js';
+import { type CrewWithDetails } from '../../database/crews/getCrew.js';
 export type DoAddCrewMemberResponse = {
     success: boolean;
     message?: string;
-    crew?: Awaited<ReturnType<typeof getCrew>>;
+    crew?: CrewWithDetails;
 };
 export default function handler(request: Request<unknown, unknown, {
     crewId: string;

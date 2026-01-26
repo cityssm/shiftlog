@@ -2,16 +2,16 @@ import type { Request, Response } from 'express'
 
 import getTags from '../../database/tags/getTags.js'
 import updateTag from '../../database/tags/updateTag.js'
+import type { Tag } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoUpdateTagResponse =
-  | {
-      success: true
-      tags: Awaited<ReturnType<typeof getTags>>
-    }
   | {
       success: false
       message: string
+    }
+  | {
+      success: true
+      tags: Tag[]
     }
 
 export default async function handler(
@@ -19,15 +19,16 @@ export default async function handler(
   response: Response<DoUpdateTagResponse>
 ): Promise<void> {
   const tagName = (request.body.tagName as string) || ''
-  let tagBackgroundColor = (request.body.tagBackgroundColor as string) || '000000'
+  let tagBackgroundColor =
+    (request.body.tagBackgroundColor as string) || '000000'
   let tagTextColor = (request.body.tagTextColor as string) || 'FFFFFF'
 
   // Remove # prefix if present
   if (tagBackgroundColor.startsWith('#')) {
-    tagBackgroundColor = tagBackgroundColor.substring(1)
+    tagBackgroundColor = tagBackgroundColor.slice(1)
   }
   if (tagTextColor.startsWith('#')) {
-    tagTextColor = tagTextColor.substring(1)
+    tagTextColor = tagTextColor.slice(1)
   }
 
   const success = await updateTag(
@@ -40,11 +41,11 @@ export default async function handler(
     response.json({
       success: true,
       tags
-    } satisfies DoUpdateTagResponse)
+    })
   } else {
     response.json({
       success: false,
       message: 'Tag could not be updated.'
-    } satisfies DoUpdateTagResponse)
+    })
   }
 }

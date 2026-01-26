@@ -3,18 +3,18 @@ import type { Request, Response } from 'express'
 import getUsers from '../../database/users/getUsers.js'
 import getUserSettings from '../../database/users/getUserSettings.js'
 import updateUserSetting from '../../database/users/updateUserSetting.js'
+import type { DatabaseUser } from '../../types/record.types.js'
 import { userSettingKeys } from '../../types/user.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoUpdateUserSettingsResponse =
   | {
       message: string
-      success: true
-      users: Awaited<ReturnType<typeof getUsers>>
+      success: false
     }
   | {
       message: string
-      success: false
+      success: true
+      users: DatabaseUser[]
     }
 
 export default async function handler(
@@ -25,14 +25,14 @@ export default async function handler(
     response.status(400).json({
       message: 'User name is required',
       success: false
-    } satisfies DoUpdateUserSettingsResponse)
+    })
+
     return
   }
 
   // Update each user setting
   for (const settingKey of userSettingKeys) {
     // Skip apiKey as it cannot be updated directly by admins
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (settingKey === 'apiKey') {
       continue
     }
@@ -40,6 +40,7 @@ export default async function handler(
     const settingValue = request.body[settingKey] as string | undefined
 
     if (settingValue !== undefined) {
+      // eslint-disable-next-line no-await-in-loop
       await updateUserSetting(request.body.userName, settingKey, settingValue)
     }
   }
@@ -58,5 +59,5 @@ export default async function handler(
     message: 'User settings updated successfully',
     success: true,
     users
-  } satisfies DoUpdateUserSettingsResponse)
+  })
 }

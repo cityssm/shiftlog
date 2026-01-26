@@ -6,7 +6,7 @@ import type {
   CrewMember
 } from '../../types/record.types.js'
 
-interface CrewWithDetails extends Crew {
+export interface CrewWithDetails extends Crew {
   members: CrewMember[]
   equipment: CrewEquipment[]
 }

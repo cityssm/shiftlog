@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
-import getUserGroups from '../../database/users/getUserGroups.js';
+import type { UserGroup } from '../../types/record.types.js';
 export type DoUpdateUserGroupResponse = {
     success: boolean;
-    userGroups: Awaited<ReturnType<typeof getUserGroups>>;
+    userGroups: UserGroup[];
 };
 export default function handler(request: Request<unknown, unknown, {
     userGroupId: string;

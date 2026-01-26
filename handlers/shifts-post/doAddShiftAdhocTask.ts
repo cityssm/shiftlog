@@ -3,13 +3,17 @@ import type { Request, Response } from 'express'
 import addShiftAdhocTask from '../../database/adhocTasks/addShiftAdhocTask.js'
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
 import isAdhocTaskOnShift from '../../database/adhocTasks/isAdhocTaskOnShift.js'
+import type { AdhocTask } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoAddShiftAdhocTaskResponse = {
-  success: boolean
-  errorMessage?: string
-  shiftAdhocTasks?: Awaited<ReturnType<typeof getShiftAdhocTasks>>
-}
+export type DoAddShiftAdhocTaskResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      shiftAdhocTasks?: AdhocTask[]
+    }
 
 export default async function handler(
   request: Request<
@@ -33,7 +37,7 @@ export default async function handler(
     response.json({
       success: false,
       errorMessage: 'This task is already assigned to the shift.'
-    } satisfies DoAddShiftAdhocTaskResponse)
+    })
     return
   }
 
@@ -49,11 +53,11 @@ export default async function handler(
     response.json({
       success: true,
       shiftAdhocTasks
-    } satisfies DoAddShiftAdhocTaskResponse)
+    })
   } else {
     response.json({
       success: false,
       errorMessage: 'Failed to add task to shift.'
-    } satisfies DoAddShiftAdhocTaskResponse)
+    })
   }
 }

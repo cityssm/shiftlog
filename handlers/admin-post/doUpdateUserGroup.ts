@@ -2,11 +2,12 @@ import type { Request, Response } from 'express'
 
 import getUserGroups from '../../database/users/getUserGroups.js'
 import updateUserGroup from '../../database/users/updateUserGroup.js'
+import type { UserGroup } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoUpdateUserGroupResponse = {
   success: boolean
-  userGroups: Awaited<ReturnType<typeof getUserGroups>>
+  userGroups: UserGroup[]
 }
 
 export default async function handler(
@@ -28,5 +29,5 @@ export default async function handler(
   response.json({
     success,
     userGroups
-  } satisfies DoUpdateUserGroupResponse)
+  })
 }
