@@ -2,10 +2,11 @@ import type { Request, Response } from 'express'
 
 import deleteEquipment from '../../database/equipment/deleteEquipment.js'
 import getEquipmentList from '../../database/equipment/getEquipmentList.js'
+import type { Equipment } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoDeleteEquipmentResponse = {
-  equipment: Awaited<ReturnType<typeof getEquipmentList>>
+  equipment: Equipment[]
   success: boolean
 }
 
@@ -23,5 +24,5 @@ export default async function handler(
   response.json({
     equipment,
     success
-  } satisfies DoDeleteEquipmentResponse)
+  })
 }

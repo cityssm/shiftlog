@@ -1,11 +1,11 @@
 import type { Request, Response } from 'express';
 import { type AddWorkOrderTypeForm } from '../../database/workOrderTypes/addWorkOrderType.js';
-import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js';
+import type { WorkOrderType } from '../../types/record.types.js';
 export type DoAddWorkOrderTypeResponse = {
-    success: true;
-    workOrderTypes: Awaited<ReturnType<typeof getWorkOrderTypesAdmin>>;
-} | {
     message: string;
     success: false;
+} | {
+    success: true;
+    workOrderTypes: WorkOrderType[];
 };
 export default function handler(request: Request<unknown, unknown, AddWorkOrderTypeForm>, response: Response<DoAddWorkOrderTypeResponse>): Promise<void>;

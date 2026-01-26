@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import getEmployees from '../../database/employees/getEmployees.js';
+import type { Employee } from '../../types/record.types.js';
 export type DoDeleteEmployeeResponse = {
-    employees: Awaited<ReturnType<typeof getEmployees>>;
+    employees: Employee[];
     message: string;
     success: true;
 } | {

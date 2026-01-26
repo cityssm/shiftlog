@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
-import getUserGroup from '../../database/users/getUserGroup.js';
+import type { UserGroup } from '../../types/record.types.js';
 export type DoAddUserGroupMemberResponse = {
     success: boolean;
-    userGroup: Awaited<ReturnType<typeof getUserGroup>>;
+    userGroup: UserGroup | undefined;
 };
 export default function handler(request: Request<unknown, unknown, {
     userGroupId: string;

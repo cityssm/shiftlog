@@ -4,16 +4,16 @@ import addWorkOrderType, {
   type AddWorkOrderTypeForm
 } from '../../database/workOrderTypes/addWorkOrderType.js'
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
+import type { WorkOrderType } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddWorkOrderTypeResponse =
-  | {
-      success: true
-      workOrderTypes: Awaited<ReturnType<typeof getWorkOrderTypesAdmin>>
-    }
   | {
       message: string
       success: false
+    }
+  | {
+      success: true
+      workOrderTypes: WorkOrderType[]
     }
 
 export default async function handler(
@@ -30,11 +30,11 @@ export default async function handler(
     response.json({
       success: true,
       workOrderTypes
-    } satisfies DoAddWorkOrderTypeResponse)
+    })
   } else {
     response.json({
       message: 'Work order type could not be added.',
       success: false
-    } satisfies DoAddWorkOrderTypeResponse)
+    })
   }
 }

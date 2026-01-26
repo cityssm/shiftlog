@@ -2,17 +2,17 @@ import type { Request, Response } from 'express'
 
 import deleteUser from '../../database/users/deleteUser.js'
 import getUsers from '../../database/users/getUsers.js'
+import type { DatabaseUser } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoDeleteUserResponse =
   | {
       message: string
-      success: true
-      users: Awaited<ReturnType<typeof getUsers>>
+      success: false
     }
   | {
       message: string
-      success: false
+      success: true
+      users: DatabaseUser[]
     }
 
 export default async function handler(
@@ -42,11 +42,11 @@ export default async function handler(
       message: 'User deleted successfully',
       success: true,
       users
-    } satisfies DoDeleteUserResponse)
+    })
   } else {
     response.status(404).json({
       message: 'User not found',
       success: false
-    } satisfies DoDeleteUserResponse)
+    })
   }
 }

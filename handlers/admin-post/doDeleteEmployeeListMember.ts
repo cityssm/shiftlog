@@ -1,11 +1,13 @@
 import type { Request, Response } from 'express'
 
 import deleteEmployeeListMember from '../../database/employeeLists/deleteEmployeeListMember.js'
-import getEmployeeList from '../../database/employeeLists/getEmployeeList.js'
+import getEmployeeList, {
+  type EmployeeListWithMembers
+} from '../../database/employeeLists/getEmployeeList.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoDeleteEmployeeListMemberResponse = {
-  employeeList: Awaited<ReturnType<typeof getEmployeeList>>
+  employeeList: EmployeeListWithMembers | undefined
   success: boolean
 }
 
@@ -32,5 +34,5 @@ export default async function handler(
   response.json({
     employeeList,
     success
-  } satisfies DoDeleteEmployeeListMemberResponse)
+  })
 }
