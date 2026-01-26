@@ -67,7 +67,6 @@ declare const exports: {
         '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map)
 
-    // eslint-disable-next-line unicorn/no-null
     let marker: L.Marker | null = null
 
     // Add existing marker if coordinates are set
@@ -531,7 +530,6 @@ declare const exports: {
   const filterInput = document.querySelector(
     '#filter--locations'
   ) as HTMLInputElement | null
-  // eslint-disable-next-line unicorn/no-null
   let filterTimeout: ReturnType<typeof setTimeout> | null = null
 
   if (filterInput !== null) {

@@ -16,7 +16,6 @@ declare const exports: {
     )
   }
 
-  // eslint-disable-next-line unicorn/no-null
   let initialTabElement: HTMLElement | null = null
 
   if (exports.activeTab !== '') {
