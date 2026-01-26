@@ -4,9 +4,14 @@ import updateWorkOrderMilestone, {
   type UpdateWorkOrderMilestoneForm
 } from '../../database/workOrders/updateWorkOrderMilestone.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateWorkOrderMilestoneResponse = {
+  success: boolean
+}
+
 export default async function handler(
   request: Request<unknown, unknown, UpdateWorkOrderMilestoneForm>,
-  response: Response
+  response: Response<DoUpdateWorkOrderMilestoneResponse>
 ): Promise<void> {
   const success = await updateWorkOrderMilestone(
     request.body,
@@ -15,5 +20,5 @@ export default async function handler(
 
   response.json({
     success
-  })
+  } satisfies DoUpdateWorkOrderMilestoneResponse)
 }

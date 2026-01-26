@@ -5,9 +5,17 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoReopenWorkOrderResponse = {
+  success: boolean
+  message?: string
+  redirectUrl?: string
+  errorMessage?: string
+}
+
 export default async function handler(
   request: Request<unknown, unknown, { workOrderId: number | string }>,
-  response: Response
+  response: Response<DoReopenWorkOrderResponse>
 ): Promise<void> {
   const workOrderId = request.body.workOrderId
 
@@ -16,7 +24,7 @@ export default async function handler(
     response.json({
       errorMessage: 'Invalid work order ID.',
       success: false
-    })
+    } satisfies DoReopenWorkOrderResponse)
     return
   }
 
@@ -30,11 +38,11 @@ export default async function handler(
       message: 'Work order reopened successfully.',
       redirectUrl: `${redirectRoot}/${workOrderId}/edit`,
       success: true
-    })
+    } satisfies DoReopenWorkOrderResponse)
   } else {
     response.json({
       errorMessage: 'Failed to reopen work order.',
       success: false
-    })
+    } satisfies DoReopenWorkOrderResponse)
   }
 }

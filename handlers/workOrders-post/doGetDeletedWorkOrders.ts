@@ -1,15 +1,22 @@
 import type { Request, Response } from 'express'
 
 import getDeletedWorkOrders from '../../database/workOrders/getDeletedWorkOrders.js'
+import type { WorkOrder } from '../../types/record.types.js'
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetDeletedWorkOrdersResponse = {
+  success: boolean
+  workOrders: WorkOrder[]
+}
 
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoGetDeletedWorkOrdersResponse>
 ): Promise<void> {
   const workOrders = await getDeletedWorkOrders(request.session.user)
 
   response.json({
     success: true,
     workOrders
-  })
+  } satisfies DoGetDeletedWorkOrdersResponse)
 }

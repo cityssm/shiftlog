@@ -2,4 +2,7 @@ import type { Request, Response } from 'express';
 export interface DeleteWorkOrderCostForm {
     workOrderCostId: number | string;
 }
-export default function handler(request: Request<unknown, unknown, DeleteWorkOrderCostForm>, response: Response): Promise<void>;
+export type DoDeleteWorkOrderCostResponse = {
+    success: boolean;
+};
+export default function handler(request: Request<unknown, unknown, DeleteWorkOrderCostForm>, response: Response<DoDeleteWorkOrderCostResponse>): Promise<void>;

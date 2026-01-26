@@ -14,6 +14,13 @@ interface MulterRequest extends Request {
   file?: Express.Multer.File
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUploadWorkOrderAttachmentResponse = {
+  success: boolean
+  workOrderAttachmentId?: number
+  message?: string
+}
+
 function sanitizeFileName(originalName: string): string {
   // Remove control characters, newlines, and null bytes
   // eslint-disable-next-line no-control-regex, sonarjs/no-control-regex
@@ -42,7 +49,7 @@ function sanitizeFileName(originalName: string): string {
 
 export default async function handler(
   request: MulterRequest,
-  response: Response
+  response: Response<DoUploadWorkOrderAttachmentResponse>
 ): Promise<void> {
   const file = request.file
 
@@ -50,7 +57,7 @@ export default async function handler(
     response.json({
       success: false,
       message: 'No file uploaded.'
-    })
+    } satisfies DoUploadWorkOrderAttachmentResponse)
     return
   }
 
@@ -99,7 +106,7 @@ export default async function handler(
     response.json({
       success: true,
       workOrderAttachmentId
-    })
+    } satisfies DoUploadWorkOrderAttachmentResponse)
   } catch (error) {
     debug('Error uploading attachment for work order %s: %O', workOrderId, error)
 
@@ -119,6 +126,6 @@ export default async function handler(
       success: false,
       
       message: 'Failed to save attachment.'
-    })
+    } satisfies DoUploadWorkOrderAttachmentResponse)
   }
 }
