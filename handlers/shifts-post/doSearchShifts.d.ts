@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { type GetShiftsFilters, type GetShiftsOptions } from '../../database/shifts/getShifts.js';
 import type { Shift } from '../../types/record.types.js';
 export type DoSearchShiftsResponse = {
-    success: boolean;
+    success: true;
     shifts: Shift[];
     totalCount: number;
     limit: number;

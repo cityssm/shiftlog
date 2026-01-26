@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import type { CreateTimesheetForm } from '../../database/timesheets/createTimesheet.js';
 export type DoCreateTimesheetResponse = {
-    success: boolean;
+    success: true;
     timesheetId: number;
     redirectURL: string;
 };

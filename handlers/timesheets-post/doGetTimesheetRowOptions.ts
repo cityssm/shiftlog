@@ -6,7 +6,8 @@ import getEquipmentList from '../../database/equipment/getEquipmentList.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetTimesheetRowOptionsResponse = {
-  success: boolean
+  success: true
+
   employees: Array<{
     employeeNumber: string
     firstName: string
@@ -39,7 +40,7 @@ export default async function handler(
 
   response.json({
     success: true,
-    
+
     employees: employees.map((e) => ({
       employeeNumber: e.employeeNumber,
       firstName: e.firstName,

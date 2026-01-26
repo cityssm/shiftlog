@@ -6,7 +6,7 @@ import createWorkOrderCost, {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoCreateWorkOrderCostResponse = {
-  success: boolean
+  success: true
   workOrderCostId: number
 }
 

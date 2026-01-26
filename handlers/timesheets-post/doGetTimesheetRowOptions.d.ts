@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 export type DoGetTimesheetRowOptionsResponse = {
-    success: boolean;
+    success: true;
     employees: Array<{
         employeeNumber: string;
         firstName: string;

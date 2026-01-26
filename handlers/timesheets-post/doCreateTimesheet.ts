@@ -7,7 +7,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoCreateTimesheetResponse = {
-  success: boolean
+  success: true
   timesheetId: number
   redirectURL: string
 }

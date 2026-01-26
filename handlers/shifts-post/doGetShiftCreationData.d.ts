@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 export type DoGetShiftCreationDataResponse = {
-    success: boolean;
+    success: true;
     shiftTimes: Array<{
         dataListItem: string;
         dataListItemId: number;

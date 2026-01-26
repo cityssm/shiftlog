@@ -6,7 +6,7 @@ import createWorkOrderNote, {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoCreateWorkOrderNoteResponse = {
-  success: boolean
+  success: true
   noteSequence: number
 }
 
