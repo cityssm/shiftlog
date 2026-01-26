@@ -3,12 +3,14 @@ import type { Request, Response } from 'express'
 import addDataListItem, {
   type AddDataListItemForm
 } from '../../database/app/addDataListItem.js'
-import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
+import getDataListItemsAdmin, {
+  type DataListItemWithDetails
+} from '../../database/app/getDataListItemsAdmin.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddDataListItemResponse = {
   success: boolean
-  items?: Awaited<ReturnType<typeof getDataListItemsAdmin>>
+  items?: DataListItemWithDetails[]
 }
 
 export default async function handler(
@@ -22,7 +24,7 @@ export default async function handler(
 
   const success = await addDataListItem(form)
 
-  let items: Awaited<ReturnType<typeof getDataListItemsAdmin>> | undefined
+  let items: DataListItemWithDetails[] | undefined
 
   if (success) {
     items = await getDataListItemsAdmin(form.dataListKey)
@@ -30,7 +32,7 @@ export default async function handler(
 
   response.json({
     success,
-    
+
     items
   } satisfies DoAddDataListItemResponse)
 }
