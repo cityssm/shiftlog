@@ -1,5 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import type { Location } from '../../types/record.types.js'
 
 export default async function getLocations(): Promise<Location[]> {
   const pool = await getShiftLogConnectionPool()
