@@ -8,7 +8,11 @@ export type DoCopyFromPreviousTimesheetResponse = {
 }
 
 export default async function handler(
-  request: Request<unknown, unknown, { sourceTimesheetId: number | string, targetTimesheetId: number | string }>,
+  request: Request<
+    unknown,
+    unknown,
+    { sourceTimesheetId: number | string; targetTimesheetId: number | string }
+  >,
   response: Response<DoCopyFromPreviousTimesheetResponse>
 ): Promise<void> {
   const success = await copyFromPreviousTimesheet(
@@ -18,5 +22,5 @@ export default async function handler(
 
   response.json({
     success
-  } satisfies DoCopyFromPreviousTimesheetResponse)
+  })
 }

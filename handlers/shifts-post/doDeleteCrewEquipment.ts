@@ -30,7 +30,8 @@ export default async function handler(
     response.status(404).json({
       success: false,
       message: 'Crew not found.'
-    } satisfies DoDeleteCrewEquipmentResponse)
+    })
+
     return
   }
 
@@ -41,7 +42,8 @@ export default async function handler(
     response.status(403).json({
       success: false,
       message: 'You do not have permission to modify this crew.'
-    } satisfies DoDeleteCrewEquipmentResponse)
+    })
+
     return
   }
 
@@ -55,5 +57,5 @@ export default async function handler(
   response.json({
     success,
     crew: updatedCrew
-  } satisfies DoDeleteCrewEquipmentResponse)
+  })
 }

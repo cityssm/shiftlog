@@ -9,7 +9,12 @@ import type { Shift } from '../../types/record.types.js'
 import type { ShiftEditResponse } from './types.js'
 
 export default async function handler(
-  request: Request<unknown, unknown, unknown, { error?: string; date?: string }>,
+  request: Request<
+    unknown,
+    unknown,
+    unknown,
+    { error?: string; date?: string }
+  >,
   response: Response
 ): Promise<void> {
   let supervisors = await getEmployees({ isSupervisor: true })
@@ -39,8 +44,10 @@ export default async function handler(
 
   const shift = {
     shiftDate,
-    shiftTimeDataListItemId: shiftTimes.length === 1 ? shiftTimes[0].dataListItemId : -1,
-    shiftTypeDataListItemId: shiftTypes.length === 1 ? shiftTypes[0].dataListItemId : -1,
+    shiftTimeDataListItemId:
+      shiftTimes.length === 1 ? shiftTimes[0].dataListItemId : -1,
+    shiftTypeDataListItemId:
+      shiftTypes.length === 1 ? shiftTypes[0].dataListItemId : -1,
     supervisorEmployeeNumber: '',
     shiftDescription: ''
   } satisfies Partial<Shift>
@@ -52,11 +59,11 @@ export default async function handler(
     isEdit: true,
 
     shift,
+    shiftAdhocTasks: [],
     shiftCrews: [],
     shiftEmployees: [],
     shiftEquipment: [],
     shiftWorkOrders: [],
-    shiftAdhocTasks: [],
 
     shiftTimes,
     shiftTypes,

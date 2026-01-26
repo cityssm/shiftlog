@@ -31,5 +31,5 @@ export default async function handler(
   response.json({
     success,
     items
-  } satisfies DoReorderDataListItemsResponse)
+  })
 }

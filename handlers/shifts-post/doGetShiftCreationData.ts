@@ -7,8 +7,10 @@ import getShiftTypeDataListItems from '../../database/shifts/getShiftTypeDataLis
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftCreationDataResponse = {
   success: boolean
-  shiftTypes: Array<{ dataListItemId: number; dataListItem: string }>
-  shiftTimes: Array<{ dataListItemId: number; dataListItem: string }>
+
+  shiftTimes: Array<{ dataListItem: string; dataListItemId: number }>
+  shiftTypes: Array<{ dataListItem: string; dataListItemId: number }>
+
   supervisors: Array<{
     employeeNumber: string
     firstName: string
@@ -36,5 +38,5 @@ export default async function handler(
     shiftTypes,
     shiftTimes,
     supervisors
-  } satisfies DoGetShiftCreationDataResponse)
+  })
 }

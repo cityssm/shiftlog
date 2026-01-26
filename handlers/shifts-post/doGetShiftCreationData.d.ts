@@ -1,13 +1,13 @@
 import type { Request, Response } from 'express';
 export type DoGetShiftCreationDataResponse = {
     success: boolean;
-    shiftTypes: Array<{
-        dataListItemId: number;
-        dataListItem: string;
-    }>;
     shiftTimes: Array<{
-        dataListItemId: number;
         dataListItem: string;
+        dataListItemId: number;
+    }>;
+    shiftTypes: Array<{
+        dataListItem: string;
+        dataListItemId: number;
     }>;
     supervisors: Array<{
         employeeNumber: string;

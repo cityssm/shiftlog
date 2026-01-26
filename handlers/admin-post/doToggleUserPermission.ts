@@ -30,7 +30,7 @@ export default async function handler(
       success: false,
 
       message: 'User name and permission field are required'
-    } satisfies DoToggleUserPermissionResponse)
+    })
     return
   }
 
@@ -152,6 +152,6 @@ export default async function handler(
 
       message:
         error instanceof Error ? error.message : 'Failed to update permission'
-    } satisfies DoToggleUserPermissionResponse)
+    })
   }
 }

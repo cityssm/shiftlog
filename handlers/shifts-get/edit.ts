@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import getEmployees from '../../database/employees/getEmployees.js'
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js'
+import getEmployees from '../../database/employees/getEmployees.js'
 import getShift from '../../database/shifts/getShift.js'
 import getShiftCrews from '../../database/shifts/getShiftCrews.js'
 import getShiftEmployees from '../../database/shifts/getShiftEmployees.js'
@@ -17,7 +17,7 @@ const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfig
 
 export default async function handler(
   request: Request<{ shiftId: string }, unknown, unknown, { error?: string }>,
-  response: Response
+  response: Response<ShiftEditResponse>
 ): Promise<void> {
   const shift = await getShift(request.params.shiftId, request.session.user)
 
@@ -79,5 +79,5 @@ export default async function handler(
     shiftTimes,
     shiftTypes,
     supervisors
-  } satisfies ShiftEditResponse)
+  })
 }

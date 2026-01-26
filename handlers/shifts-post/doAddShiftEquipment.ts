@@ -23,7 +23,8 @@ export default async function handler(
     response.status(400).json({
       success: false,
       message: validation.errorMessage
-    } satisfies DoAddShiftEquipmentResponse)
+    })
+
     return
   }
 
@@ -31,5 +32,5 @@ export default async function handler(
 
   response.json({
     success
-  } satisfies DoAddShiftEquipmentResponse)
+  })
 }

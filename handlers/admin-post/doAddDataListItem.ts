@@ -34,5 +34,5 @@ export default async function handler(
     success,
 
     items
-  } satisfies DoAddDataListItemResponse)
+  })
 }

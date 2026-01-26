@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import getNotificationConfigurations from '../../database/notifications/getNotificationConfigurations.js';
+import type { NotificationConfiguration } from '../../types/record.types.js';
 export type DoGetNotificationConfigurationsResponse = {
     success: true;
-    notificationConfigurations: Awaited<ReturnType<typeof getNotificationConfigurations>>;
+    notificationConfigurations: NotificationConfiguration[];
 };
 export default function handler(_request: Request, response: Response<DoGetNotificationConfigurationsResponse>): Promise<void>;

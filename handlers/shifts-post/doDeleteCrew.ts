@@ -40,5 +40,5 @@ export default async function handler(
   response.json({
     success,
     crews
-  } satisfies DoDeleteCrewResponse)
+  })
 }

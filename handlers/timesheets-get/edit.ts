@@ -10,10 +10,18 @@ import type { TimesheetEditResponse } from './types.js'
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('timesheets.router')}`
 
 export default async function handler(
-  request: Request<{ timesheetId: string }, unknown, unknown, { error?: string }>,
+  request: Request<
+    { timesheetId: string },
+    unknown,
+    unknown,
+    { error?: string }
+  >,
   response: Response
 ): Promise<void> {
-  const timesheet = await getTimesheet(request.params.timesheetId, request.session.user)
+  const timesheet = await getTimesheet(
+    request.params.timesheetId,
+    request.session.user
+  )
 
   if (timesheet === undefined) {
     response.redirect(`${redirectRoot}/?error=notFound`)
@@ -22,11 +30,15 @@ export default async function handler(
     !(request.session.user?.userProperties.timesheets.canManage ?? false) &&
     timesheet.supervisorUserName !== request.session.user?.userName
   ) {
-    response.redirect(`${redirectRoot}/${timesheet.timesheetId}/?error=forbidden`)
+    response.redirect(
+      `${redirectRoot}/${timesheet.timesheetId}/?error=forbidden`
+    )
     return
   } else if (
-    (timesheet.employeesEntered_dateTime !== null && timesheet.employeesEntered_dateTime !== undefined) ||
-    (timesheet.equipmentEntered_dateTime !== null && timesheet.equipmentEntered_dateTime !== undefined)
+    (timesheet.employeesEntered_dateTime !== null &&
+      timesheet.employeesEntered_dateTime !== undefined) ||
+    (timesheet.equipmentEntered_dateTime !== null &&
+      timesheet.equipmentEntered_dateTime !== undefined)
   ) {
     response.redirect(`${redirectRoot}/${timesheet.timesheetId}/?error=locked`)
     return
@@ -40,7 +52,9 @@ export default async function handler(
     )
   }
 
-  const timesheetTypes = await getTimesheetTypeDataListItems(request.session.user)
+  const timesheetTypes = await getTimesheetTypeDataListItems(
+    request.session.user
+  )
 
   response.render('timesheets/edit', {
     headTitle: `${getConfigProperty('timesheets.sectionNameSingular')} #${

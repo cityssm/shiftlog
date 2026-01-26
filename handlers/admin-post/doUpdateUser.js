@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/naming-convention -- Underscores */
 import updateUser from '../../database/users/updateUser.js';
 export default async function handler(request, response) {
     const { userName, isActive = '0', shifts_canView = '0', shifts_canUpdate = '0', shifts_canManage = '0', workOrders_canView = '0', workOrders_canUpdate = '0', workOrders_canManage = '0', timesheets_canView = '0', timesheets_canUpdate = '0', timesheets_canManage = '0', isAdmin = '0' } = request.body;

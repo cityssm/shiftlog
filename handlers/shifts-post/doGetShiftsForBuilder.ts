@@ -7,18 +7,13 @@ import getShiftsForBuilder, {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftsForBuilderResponse = {
-  success: boolean
+  success: true
 
   shifts: ShiftForBuilder[]
 }
 
 export default async function handler(
-  request: Request<
-    unknown,
-    unknown,
-    { shiftDateString: DateString },
-    unknown
-  >,
+  request: Request<unknown, unknown, { shiftDateString: DateString }, unknown>,
   response: Response<DoGetShiftsForBuilderResponse>
 ): Promise<void> {
   const shifts = await getShiftsForBuilder(
@@ -28,7 +23,7 @@ export default async function handler(
 
   response.json({
     success: true,
-    
+
     shifts
-  } satisfies DoGetShiftsForBuilderResponse)
+  })
 }

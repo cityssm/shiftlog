@@ -5,7 +5,7 @@ import type { Timesheet } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetDeletedTimesheetsResponse = {
-  success: boolean
+  success: true
   timesheets: Timesheet[]
 }
 
@@ -18,5 +18,5 @@ export default async function handler(
   response.json({
     success: true,
     timesheets
-  } satisfies DoGetDeletedTimesheetsResponse)
+  })
 }

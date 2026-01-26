@@ -8,7 +8,11 @@ export type DoCopyFromShiftResponse = {
 }
 
 export default async function handler(
-  request: Request<unknown, unknown, { shiftId: number | string, timesheetId: number | string }>,
+  request: Request<
+    unknown,
+    unknown,
+    { shiftId: number | string; timesheetId: number | string }
+  >,
   response: Response<DoCopyFromShiftResponse>
 ): Promise<void> {
   const success = await copyFromShift(
@@ -18,5 +22,5 @@ export default async function handler(
 
   response.json({
     success
-  } satisfies DoCopyFromShiftResponse)
+  })
 }

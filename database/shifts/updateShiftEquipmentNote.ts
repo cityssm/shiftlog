@@ -2,7 +2,7 @@ import mssqlPool from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
-interface UpdateShiftEquipmentNoteForm {
+export interface UpdateShiftEquipmentNoteForm {
   shiftId: number | string
   equipmentNumber: string
   shiftEquipmentNote: string

@@ -29,5 +29,5 @@ export default async function handler(
   response.json({
     success,
     errorMessage: success ? undefined : 'Failed to update note.'
-  } satisfies DoUpdateShiftWorkOrderNoteResponse)
+  })
 }

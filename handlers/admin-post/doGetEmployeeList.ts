@@ -6,7 +6,7 @@ import getEmployeeList, {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetEmployeeListResponse = {
-  employeeList: EmployeeListWithMembers | undefined
+  employeeList?: EmployeeListWithMembers
 }
 
 export default async function handler(
@@ -19,5 +19,5 @@ export default async function handler(
 
   response.json({
     employeeList
-  } satisfies DoGetEmployeeListResponse)
+  })
 }

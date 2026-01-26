@@ -6,7 +6,7 @@ import createShift, {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoCreateShiftResponse = {
-  success: boolean
+  success: true
   shiftId: number
 }
 
@@ -23,5 +23,5 @@ export default async function handler(
     success: true,
 
     shiftId
-  } satisfies DoCreateShiftResponse)
+  })
 }

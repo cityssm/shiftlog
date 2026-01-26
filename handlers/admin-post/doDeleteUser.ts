@@ -29,7 +29,8 @@ export default async function handler(
     response.status(400).json({
       message: 'User name is required',
       success: false
-    } satisfies DoDeleteUserResponse)
+    })
+
     return
   }
 

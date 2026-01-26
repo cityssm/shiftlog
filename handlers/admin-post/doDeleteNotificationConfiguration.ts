@@ -3,14 +3,10 @@ import type { Request, Response } from 'express'
 import deleteNotificationConfiguration from '../../database/notifications/deleteNotificationConfiguration.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoDeleteNotificationConfigurationResponse =
-  | {
-      success: boolean
-    }
-  | {
-      success: false
-      errorMessage: string
-    }
+export type DoDeleteNotificationConfigurationResponse = {
+  success: boolean
+  errorMessage?: string
+}
 
 export default async function handler(
   request: Request,
@@ -24,11 +20,11 @@ export default async function handler(
 
     response.json({
       success
-    } satisfies DoDeleteNotificationConfigurationResponse)
+    })
   } catch (error) {
     response.json({
       success: false,
       errorMessage: (error as Error).message
-    } satisfies DoDeleteNotificationConfigurationResponse)
+    })
   }
 }

@@ -16,5 +16,5 @@ export default async function handler(
 
   response.json({
     columns
-  } satisfies DoGetTimesheetColumnsResponse)
+  })
 }

@@ -5,7 +5,7 @@ import addTimesheetRow from '../../database/timesheets/addTimesheetRow.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddTimesheetRowResponse = {
-  success: boolean
+  success: true
   timesheetRowId: number
 }
 
@@ -18,5 +18,5 @@ export default async function handler(
   response.json({
     success: true,
     timesheetRowId
-  } satisfies DoAddTimesheetRowResponse)
+  })
 }

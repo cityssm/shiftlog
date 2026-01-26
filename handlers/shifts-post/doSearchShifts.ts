@@ -43,5 +43,5 @@ export default async function handler(
       typeof request.body.offset === 'number'
         ? request.body.offset
         : Number.parseInt(request.body.offset, 10)
-  } satisfies DoSearchShiftsResponse)
+  })
 }
