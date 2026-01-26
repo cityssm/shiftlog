@@ -3,9 +3,20 @@ import type { Request, Response } from 'express'
 import getLocations from '../../database/locations/getLocations.js'
 import updateLocation from '../../database/locations/updateLocation.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateLocationResponse =
+  | {
+      success: true
+      locations: Awaited<ReturnType<typeof getLocations>>
+    }
+  | {
+      success: false
+      message: string
+    }
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateLocationResponse>
 ): Promise<void> {
   const locationId = Number(request.body.locationId)
   const address1 = (request.body.address1 as string) || ''
@@ -35,11 +46,11 @@ export default async function handler(
     response.json({
       success: true,
       locations
-    })
+    } satisfies DoUpdateLocationResponse)
   } else {
     response.json({
       success: false,
       message: 'Location could not be updated.'
-    })
+    } satisfies DoUpdateLocationResponse)
   }
 }

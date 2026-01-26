@@ -4,15 +4,28 @@ import getUsers from '../../database/users/getUsers.js'
 import getUserSettings from '../../database/users/getUserSettings.js'
 import { updateApiKeyUserSetting } from '../../database/users/updateUserSetting.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoResetUserApiKeyResponse =
+  | {
+      message: string
+      success: true
+      users: Awaited<ReturnType<typeof getUsers>>
+      apiKey: string
+    }
+  | {
+      message: string
+      success: false
+    }
+
 export default async function handler(
   request: Request<unknown, unknown, { userName: string }>,
-  response: Response
+  response: Response<DoResetUserApiKeyResponse>
 ): Promise<void> {
   if (!request.body.userName?.trim()) {
     response.status(400).json({
       message: 'User name is required',
       success: false
-    })
+    } satisfies DoResetUserApiKeyResponse)
     return
   }
 
@@ -35,11 +48,11 @@ export default async function handler(
       success: true,
       users,
       apiKey: newApiKey
-    })
+    } satisfies DoResetUserApiKeyResponse)
   } catch (error) {
     response.status(500).json({
       message: 'Failed to reset API key',
       success: false
-    })
+    } satisfies DoResetUserApiKeyResponse)
   }
 }

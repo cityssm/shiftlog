@@ -5,9 +5,15 @@ import deleteDataListItem, {
 } from '../../database/app/deleteDataListItem.js'
 import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoDeleteDataListItemResponse = {
+  success: boolean
+  items?: Awaited<ReturnType<typeof getDataListItemsAdmin>>
+}
+
 export default async function handler(
   request: Request<unknown, unknown, DeleteDataListItemForm & { dataListKey: string }>,
-  response: Response
+  response: Response<DoDeleteDataListItemResponse>
 ): Promise<void> {
   const form = {
     dataListItemId: request.body.dataListItemId,
@@ -25,5 +31,5 @@ export default async function handler(
   response.json({
     success,
     items
-  })
+  } satisfies DoDeleteDataListItemResponse)
 }

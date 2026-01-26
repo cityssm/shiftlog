@@ -3,6 +3,12 @@ import type { Request, Response } from 'express'
 import getEmployeeList from '../../database/employeeLists/getEmployeeList.js'
 import updateEmployeeListMember from '../../database/employeeLists/updateEmployeeListMember.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateEmployeeListMemberResponse = {
+  employeeList: Awaited<ReturnType<typeof getEmployeeList>>
+  success: boolean
+}
+
 export default async function handler(
   request: Request<
     unknown,
@@ -14,7 +20,7 @@ export default async function handler(
       seniorityOrderNumber: string
     }
   >,
-  response: Response
+  response: Response<DoUpdateEmployeeListMemberResponse>
 ): Promise<void> {
   const employeeListId = Number.parseInt(request.body.employeeListId, 10)
 
@@ -30,5 +36,5 @@ export default async function handler(
   response.json({
     employeeList,
     success
-  })
+  } satisfies DoUpdateEmployeeListMemberResponse)
 }

@@ -4,9 +4,20 @@ import type { Request, Response } from 'express'
 
 import updateUser from '../../database/users/updateUser.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateUserResponse =
+  | {
+      message: string
+      success: true
+    }
+  | {
+      message: string
+      success: false
+    }
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateUserResponse>
 ): Promise<void> {
   const {
     userName,
@@ -74,17 +85,17 @@ export default async function handler(
       response.json({
         message: 'User updated successfully',
         success: true
-      })
+      } satisfies DoUpdateUserResponse)
     } else {
       response.status(404).json({
         message: 'User not found',
         success: false
-      })
+      } satisfies DoUpdateUserResponse)
     }
   } catch (error) {
     response.status(500).json({
       message: error instanceof Error ? error.message : 'Failed to update user',
       success: false
-    })
+    } satisfies DoUpdateUserResponse)
   }
 }

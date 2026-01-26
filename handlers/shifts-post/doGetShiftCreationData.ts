@@ -4,7 +4,8 @@ import getEmployees from '../../database/employees/getEmployees.js'
 import getShiftTimeDataListItems from '../../database/shifts/getShiftTimeDataListItems.js'
 import getShiftTypeDataListItems from '../../database/shifts/getShiftTypeDataListItems.js'
 
-export interface DoGetShiftCreationDataResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetShiftCreationDataResponse = {
   success: boolean
   shiftTypes: Array<{ dataListItemId: number; dataListItem: string }>
   shiftTimes: Array<{ dataListItemId: number; dataListItem: string }>
@@ -35,5 +36,5 @@ export default async function handler(
     shiftTypes,
     shiftTimes,
     supervisors
-  })
+  } satisfies DoGetShiftCreationDataResponse)
 }

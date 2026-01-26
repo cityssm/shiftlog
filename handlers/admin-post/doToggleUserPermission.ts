@@ -3,13 +3,25 @@ import type { Request, Response } from 'express'
 import getUsers from '../../database/users/getUsers.js'
 import updateUser from '../../database/users/updateUser.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoToggleUserPermissionResponse =
+  | {
+      success: true
+      message: string
+      users: Awaited<ReturnType<typeof getUsers>>
+    }
+  | {
+      success: false
+      message: string
+    }
+
 export default async function handler(
   request: Request<
     unknown,
     unknown,
     { userName?: string; permissionField?: string }
   >,
-  response: Response
+  response: Response<DoToggleUserPermissionResponse>
 ): Promise<void> {
   const { userName, permissionField } = request.body
 
@@ -18,7 +30,7 @@ export default async function handler(
       success: false,
       
       message: 'User name and permission field are required'
-    })
+    } satisfies DoToggleUserPermissionResponse)
     return
   }
 
@@ -40,7 +52,7 @@ export default async function handler(
     response.status(400).json({
       success: false,
       message: 'Invalid permission field'
-    })
+    } satisfies DoToggleUserPermissionResponse)
     return
   }
 
@@ -53,7 +65,7 @@ export default async function handler(
       response.status(404).json({
         success: false,
         message: 'User not found'
-      })
+      } satisfies DoToggleUserPermissionResponse)
       return
     }
 
@@ -126,13 +138,13 @@ export default async function handler(
 
         message: 'Permission updated successfully',
         users: updatedUsers
-      })
+      } satisfies DoToggleUserPermissionResponse)
     } else {
       response.status(404).json({
         success: false,
 
         message: 'User not found'
-      })
+      } satisfies DoToggleUserPermissionResponse)
     }
   } catch (error) {
     response.status(500).json({
@@ -140,6 +152,6 @@ export default async function handler(
 
       message:
         error instanceof Error ? error.message : 'Failed to update permission'
-    })
+    } satisfies DoToggleUserPermissionResponse)
   }
 }

@@ -5,9 +5,15 @@ import addDataListItem, {
 } from '../../database/app/addDataListItem.js'
 import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoAddDataListItemResponse = {
+  success: boolean
+  items?: Awaited<ReturnType<typeof getDataListItemsAdmin>>
+}
+
 export default async function handler(
   request: Request<unknown, unknown, AddDataListItemForm>,
-  response: Response
+  response: Response<DoAddDataListItemResponse>
 ): Promise<void> {
   const form = {
     ...request.body,
@@ -26,5 +32,5 @@ export default async function handler(
     success,
     
     items
-  })
+  } satisfies DoAddDataListItemResponse)
 }

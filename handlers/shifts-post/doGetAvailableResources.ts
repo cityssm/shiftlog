@@ -11,7 +11,8 @@ import getAvailableEquipment, {
   type AvailableEquipment
 } from '../../database/shifts/getAvailableEquipment.js'
 
-export interface DoGetAvailableResourcesResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetAvailableResourcesResponse = {
   crews: AvailableCrew[]
   employees: AvailableEmployee[]
   equipment: AvailableEquipment[]
@@ -35,5 +36,5 @@ export default async function handler(
     employees,
     equipment,
     success: true
-  })
+  } satisfies DoGetAvailableResourcesResponse)
 }

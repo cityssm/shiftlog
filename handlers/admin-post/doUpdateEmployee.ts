@@ -5,9 +5,21 @@ import type { Request, Response } from 'express'
 import getEmployees from '../../database/employees/getEmployees.js'
 import updateEmployee from '../../database/employees/updateEmployee.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateEmployeeResponse =
+  | {
+      message: string
+      success: true
+      employees: Awaited<ReturnType<typeof getEmployees>>
+    }
+  | {
+      message: string
+      success: false
+    }
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateEmployeeResponse>
 ): Promise<void> {
   const {
     emailAddress,
@@ -61,18 +73,18 @@ export default async function handler(
         message: 'Employee updated successfully',
         success: true,
         employees
-      })
+      } satisfies DoUpdateEmployeeResponse)
     } else {
       response.status(404).json({
         message: 'Employee not found',
         success: false
-      })
+      } satisfies DoUpdateEmployeeResponse)
     }
   } catch (error) {
     response.status(500).json({
       message:
         error instanceof Error ? error.message : 'Failed to update employee',
       success: false
-    })
+    } satisfies DoUpdateEmployeeResponse)
   }
 }

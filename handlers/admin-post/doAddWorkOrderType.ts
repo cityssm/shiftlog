@@ -5,9 +5,20 @@ import addWorkOrderType, {
 } from '../../database/workOrderTypes/addWorkOrderType.js'
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoAddWorkOrderTypeResponse =
+  | {
+      success: true
+      workOrderTypes: Awaited<ReturnType<typeof getWorkOrderTypesAdmin>>
+    }
+  | {
+      message: string
+      success: false
+    }
+
 export default async function handler(
   request: Request<unknown, unknown, AddWorkOrderTypeForm>,
-  response: Response
+  response: Response<DoAddWorkOrderTypeResponse>
 ): Promise<void> {
   const workOrderTypeId = await addWorkOrderType(
     request.body,
@@ -19,11 +30,11 @@ export default async function handler(
     response.json({
       success: true,
       workOrderTypes
-    })
+    } satisfies DoAddWorkOrderTypeResponse)
   } else {
     response.json({
       message: 'Work order type could not be added.',
       success: false
-    })
+    } satisfies DoAddWorkOrderTypeResponse)
   }
 }

@@ -2,9 +2,14 @@ import type { Request, Response } from 'express'
 
 import updateAssignedToItem from '../../database/assignedTo/updateAssignedToItem.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateAssignedToItemResponse = {
+  success: boolean
+}
+
 export default async function handler(
   request: Request,
-  response: Response
+  response: Response<DoUpdateAssignedToItemResponse>
 ): Promise<void> {
   const success = await updateAssignedToItem(
     request.body,
@@ -13,5 +18,5 @@ export default async function handler(
 
   response.json({
     success
-  })
+  } satisfies DoUpdateAssignedToItemResponse)
 }

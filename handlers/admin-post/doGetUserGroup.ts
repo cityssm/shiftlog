@@ -2,9 +2,14 @@ import type { Request, Response } from 'express'
 
 import getUserGroup from '../../database/users/getUserGroup.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetUserGroupResponse = {
+  userGroup: Awaited<ReturnType<typeof getUserGroup>>
+}
+
 export default async function handler(
   request: Request<unknown, unknown, { userGroupId: string }>,
-  response: Response
+  response: Response<DoGetUserGroupResponse>
 ): Promise<void> {
   const userGroupId = Number.parseInt(request.body.userGroupId, 10)
 
@@ -12,5 +17,5 @@ export default async function handler(
 
   response.json({
     userGroup
-  })
+  } satisfies DoGetUserGroupResponse)
 }

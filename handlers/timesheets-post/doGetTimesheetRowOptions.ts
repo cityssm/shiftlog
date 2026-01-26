@@ -4,7 +4,8 @@ import getDataListItems from '../../database/app/getDataListItems.js'
 import getEmployees from '../../database/employees/getEmployees.js'
 import getEquipmentList from '../../database/equipment/getEquipmentList.js'
 
-export interface DoGetTimesheetRowOptionsResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetTimesheetRowOptionsResponse = {
   success: boolean
   employees: Array<{
     employeeNumber: string
@@ -55,5 +56,5 @@ export default async function handler(
       dataListItemId: t.dataListItemId,
       dataListItem: t.dataListItem
     }))
-  })
+  } satisfies DoGetTimesheetRowOptionsResponse)
 }

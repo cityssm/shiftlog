@@ -6,7 +6,8 @@ import getShifts, {
 } from '../../database/shifts/getShifts.js'
 import type { Shift } from '../../types/record.types.js'
 
-export interface DoSearchShiftsResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoSearchShiftsResponse = {
   success: boolean
 
   shifts: Shift[]

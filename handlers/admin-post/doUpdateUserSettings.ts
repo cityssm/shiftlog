@@ -5,9 +5,16 @@ import getUserSettings from '../../database/users/getUserSettings.js'
 import updateUserSetting from '../../database/users/updateUserSetting.js'
 import { userSettingKeys } from '../../types/user.types.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoUpdateUserSettingsResponse = {
+  message: string
+  success: true
+  users: Awaited<ReturnType<typeof getUsers>>
+}
+
 export default async function handler(
   request: Request<unknown, unknown, { userName: string }>,
-  response: Response
+  response: Response<DoUpdateUserSettingsResponse>
 ): Promise<void> {
   if (request.body.userName === '') {
     response.status(400).json({
@@ -46,5 +53,5 @@ export default async function handler(
     message: 'User settings updated successfully',
     success: true,
     users
-  })
+  } satisfies DoUpdateUserSettingsResponse)
 }

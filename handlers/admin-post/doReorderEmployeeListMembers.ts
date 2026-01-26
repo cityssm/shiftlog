@@ -5,9 +5,15 @@ import reorderEmployeeListMembers, {
   type ReorderEmployeeListMembersForm
 } from '../../database/employeeLists/reorderEmployeeListMembers.js'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoReorderEmployeeListMembersResponse = {
+  employeeList: Awaited<ReturnType<typeof getEmployeeList>> | undefined
+  success: boolean
+}
+
 export default async function handler(
   request: Request<unknown, unknown, ReorderEmployeeListMembersForm>,
-  response: Response
+  response: Response<DoReorderEmployeeListMembersResponse>
 ): Promise<void> {
   const success = await reorderEmployeeListMembers(request.body)
 
@@ -22,5 +28,5 @@ export default async function handler(
   response.json({
     employeeList,
     success
-  })
+  } satisfies DoReorderEmployeeListMembersResponse)
 }
