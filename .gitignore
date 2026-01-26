@@ -29,3 +29,4 @@ megalinter-reports/
 temp_build/
 
 tsconfig.tsbuildinfo
+*.js.map
