@@ -4,7 +4,6 @@ import addTag from '../../database/tags/addTag.js'
 import getTags from '../../database/tags/getTags.js'
 import type { Tag } from '../../types/record.types.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddTagResponse =
   | {
       success: false
@@ -16,13 +15,18 @@ export type DoAddTagResponse =
     }
 
 export default async function handler(
-  request: Request,
+  request: Request<
+    unknown,
+    unknown,
+    { tagName?: string; tagBackgroundColor?: string; tagTextColor?: string }
+  >,
   response: Response<DoAddTagResponse>
 ): Promise<void> {
-  const tagName = (request.body.tagName as string) || ''
-  let tagBackgroundColor =
-    (request.body.tagBackgroundColor as string) || '000000'
-  let tagTextColor = (request.body.tagTextColor as string) || 'FFFFFF'
+  const tagName = request.body.tagName ?? ''
+
+  let tagBackgroundColor = request.body.tagBackgroundColor ?? '000000'
+
+  let tagTextColor = request.body.tagTextColor ?? 'FFFFFF'
 
   // Remove # prefix if present
   if (tagBackgroundColor.startsWith('#')) {

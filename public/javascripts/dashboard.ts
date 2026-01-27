@@ -295,9 +295,10 @@ interface WorkOrderWithOverdue {
     // Update count display
     if (displayedCount === 0) {
       workOrderCountElement.textContent =
-        'No recent work orders with location data found.'
+        'No recently updated work orders with location data found.'
     } else {
-      workOrderCountElement.textContent = `Showing ${displayedCount} recent work order${displayedCount === 1 ? '' : 's'} with location data`
+      workOrderCountElement.textContent = `Showing ${displayedCount} recently updated work order${displayedCount === 1 ? '' : 's'} with location data`
+      
       if (overdueCount > 0) {
         workOrderCountElement.textContent += ` (${overdueCount} overdue)`
       }

@@ -6,8 +6,9 @@ import type { Employee } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddEmployeeResponse = {
-  employees: Employee[]
   success: boolean
+  
+  employees: Employee[]
 }
 
 export default async function handler(

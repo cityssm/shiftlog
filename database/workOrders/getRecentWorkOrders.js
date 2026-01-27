@@ -62,7 +62,7 @@ export default async function getRecentWorkOrders(limit, user) {
 
       ${whereClause}
 
-      order by w.workOrderOpenDateTime desc, w.workOrderNumberYear desc, w.workOrderNumberSequence desc
+      order by w.recordUpdate_dateTime desc
     `));
     return result.recordset;
 }

@@ -72,7 +72,7 @@ export default async function getRecentWorkOrders(
 
       ${whereClause}
 
-      order by w.workOrderOpenDateTime desc, w.workOrderNumberYear desc, w.workOrderNumberSequence desc
+      order by w.recordUpdate_dateTime desc
     `)) as mssql.IResult<WorkOrder>
 
   return result.recordset

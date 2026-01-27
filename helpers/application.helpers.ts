@@ -15,7 +15,7 @@ export function getApplicationUrl(request?: Request): string {
     request !== undefined
   ) {
     applicationUrl = `http://${request.hostname}${
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- Port number.
       getConfigProperty('application.httpPort') === 80
         ? ''
         : `:${getConfigProperty('application.httpPort')}`

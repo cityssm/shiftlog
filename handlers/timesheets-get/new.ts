@@ -32,7 +32,7 @@ export default async function handler(
   if (request.query.shiftId !== undefined && request.query.shiftId !== '') {
     shift = await getShift(request.query.shiftId, request.session.user)
     if (shift !== undefined) {
-      timesheetDate = shift.shiftDate
+      timesheetDate = shift.shiftDate as Date
       supervisorEmployeeNumber = shift.supervisorEmployeeNumber
     }
   }

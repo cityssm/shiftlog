@@ -85,7 +85,7 @@
     "ical-generator": "^10.0.0",
     "leaflet": "^2.0.0-alpha.1",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.12",
+    "nodemailer": "^7.0.13",
     "p-limit": "^7.2.0",
     "papaparse": "^5.5.3",
     "parse-full-name": "^1.2.6",
@@ -106,7 +106,7 @@
     "@types/node": "^25.0.10",
     "@types/node-schedule": "^2.1.8",
     "@types/node-windows": "^0.1.6",
-    "@types/nodemailer": "^7.0.5",
+    "@types/nodemailer": "^7.0.9",
     "@types/papaparse": "^5.5.2",
     "@types/parse-full-name": "^1.2.5",
     "@types/session-file-store": "^1.2.6",
@@ -115,7 +115,7 @@
     "cypress-axe": "^1.7.0",
     "eslint-config-cityssm": "^37.0.0",
     "nodemon": "^3.1.11",
-    "prettier-config-cityssm": "^1.0.0"
+    "prettier-config-cityssm": "^1.0.1"
   },
   "optionalDependencies": {
     "node-windows": "^1.0.0-beta.8"

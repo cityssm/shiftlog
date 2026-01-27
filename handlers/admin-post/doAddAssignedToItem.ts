@@ -1,19 +1,23 @@
 import type { Request, Response } from 'express'
 
-import createAssignedToItem from '../../database/assignedTo/createAssignedToItem.js'
+import createAssignedToItem, {
+  type CreateAssignedToForm
+} from '../../database/assignedTo/createAssignedToItem.js'
 
 export type DoAddAssignedToItemResponse =
   | {
       success: false
+
       errorMessage: string
     }
   | {
       success: true
+
       assignedToId: number
     }
 
 export default async function handler(
-  request: Request,
+  request: Request<unknown, unknown, CreateAssignedToForm>,
   response: Response<DoAddAssignedToItemResponse>
 ): Promise<void> {
   try {
@@ -24,11 +28,13 @@ export default async function handler(
 
     response.json({
       success: true,
+
       assignedToId
     })
   } catch (error) {
     response.json({
       success: false,
+
       errorMessage: (error as Error).message
     })
   }

@@ -7,4 +7,8 @@ export type DoAddTagResponse = {
     success: true;
     tags: Tag[];
 };
-export default function handler(request: Request, response: Response<DoAddTagResponse>): Promise<void>;
+export default function handler(request: Request<unknown, unknown, {
+    tagName?: string;
+    tagBackgroundColor?: string;
+    tagTextColor?: string;
+}>, response: Response<DoAddTagResponse>): Promise<void>;
