@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -16,7 +14,7 @@ export default async function addWorkOrderType(
 ): Promise<number> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('workOrderType', form.workOrderType)
@@ -31,7 +29,7 @@ export default async function addWorkOrderType(
       'userGroupId',
       form.userGroupId === '' ? null : (form.userGroupId ?? null)
     )
-    .input('userName', userName).query(/* sql */ `
+    .input('userName', userName).query<{ workOrderTypeId: number }>(/* sql */ `
       insert into ShiftLog.WorkOrderTypes (
         instance,
         workOrderType,
@@ -57,7 +55,7 @@ export default async function addWorkOrderType(
         @userName,
         @userName
       )
-    `)) as mssql.IResult<{ workOrderTypeId: number }>
+    `)
 
   return result.recordset[0].workOrderTypeId
 }

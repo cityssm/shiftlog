@@ -55,12 +55,12 @@ export default async function getWorkOrder(workOrderId, userName) {
           `}
   `;
     try {
-        const workOrdersResult = (await pool
+        const workOrdersResult = await pool
             .request()
             .input('workOrderId', workOrderId)
             .input('instance', getConfigProperty('application.instance'))
             .input('userName', userName)
-            .query(sql));
+            .query(sql);
         if (workOrdersResult.recordset.length === 0) {
             return undefined;
         }

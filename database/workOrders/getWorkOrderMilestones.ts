@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrderMilestone } from '../../types/record.types.js'
@@ -13,11 +11,11 @@ export default async function getWorkOrderMilestones(
 ): Promise<WorkOrderMilestoneWithAssignedTo[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `
+    .query<WorkOrderMilestoneWithAssignedTo>(/* sql */ `
       SELECT
         m.workOrderMilestoneId,
         m.workOrderId,
@@ -60,7 +58,7 @@ export default async function getWorkOrderMilestones(
         m.milestoneDueDateTime,
         m.orderNumber,
         m.workOrderMilestoneId
-    `)) as mssql.IResult<WorkOrderMilestoneWithAssignedTo>
+    `)
 
   return result.recordset
 }

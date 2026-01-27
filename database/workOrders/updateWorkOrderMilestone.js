@@ -1,33 +1,25 @@
-import { getConfigProperty } from '../../helpers/config.helpers.js'
-import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateWorkOrderMilestone(form, userName) {
-  const pool = await getShiftLogConnectionPool()
-  const result = await pool
-    .request()
-    .input('instance', getConfigProperty('application.instance'))
-    .input('workOrderMilestoneId', form.workOrderMilestoneId)
-    .input('milestoneTitle', form.milestoneTitle)
-    .input('milestoneDescription', form.milestoneDescription ?? '')
-    .input(
-      'milestoneDueDateTime',
-      form.milestoneDueDateTimeString
+    const pool = await getShiftLogConnectionPool();
+    const result = await pool
+        .request()
+        .input('instance', getConfigProperty('application.instance'))
+        .input('workOrderMilestoneId', form.workOrderMilestoneId)
+        .input('milestoneTitle', form.milestoneTitle)
+        .input('milestoneDescription', form.milestoneDescription ?? '')
+        .input('milestoneDueDateTime', form.milestoneDueDateTimeString
         ? new Date(form.milestoneDueDateTimeString)
-        : null
-    )
-    .input(
-      'milestoneCompleteDateTime',
-      form.milestoneCompleteDateTimeString
+        : null)
+        .input('milestoneCompleteDateTime', form.milestoneCompleteDateTimeString
         ? new Date(form.milestoneCompleteDateTimeString)
-        : null
-    )
-    .input(
-      'assignedToId',
-      form.assignedToId && form.assignedToId !== '' ? form.assignedToId : null
-    )
-    .input('userName', userName)
-    .query(/* sql */ `
-      UPDATE ShiftLog.WorkOrderMilestones
-      SET
+        : null)
+        .input('assignedToId', form.assignedToId && form.assignedToId !== ''
+        ? form.assignedToId
+        : null)
+        .input('userName', userName).query(/* sql */ `
+      update ShiftLog.WorkOrderMilestones
+      set
         milestoneTitle = @milestoneTitle,
         milestoneDescription = @milestoneDescription,
         milestoneDueDateTime = @milestoneDueDateTime,
@@ -35,18 +27,14 @@ export default async function updateWorkOrderMilestone(form, userName) {
         assignedToId = @assignedToId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      WHERE
-        workOrderMilestoneId = @workOrderMilestoneId
-        AND recordDelete_dateTime IS NULL
-        AND workOrderId IN (
-          SELECT
-            workOrderId
-          FROM
-            ShiftLog.WorkOrders
-          WHERE
-            recordDelete_dateTime IS NULL
-            AND instance = @instance
+      where workOrderMilestoneId = @workOrderMilestoneId
+        and recordDelete_dateTime is null
+        and workOrderId in (
+          select workOrderId
+          from ShiftLog.WorkOrders
+          where recordDelete_dateTime is null
+            and instance = @instance
         )
-    `)
-  return result.rowsAffected[0] > 0
+    `);
+    return result.rowsAffected[0] > 0;
 }

@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function recoverWorkOrder(workOrderId, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('workOrderId', workOrderId)
         .input('instance', getConfigProperty('application.instance'))
@@ -18,6 +18,6 @@ export default async function recoverWorkOrder(workOrderId, userName) {
         workOrderId = @workOrderId
         AND instance = @instance
         AND recordDelete_dateTime IS NOT NULL
-    `));
+    `);
     return result.rowsAffected[0] > 0;
 }
