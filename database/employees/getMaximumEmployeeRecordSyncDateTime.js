@@ -5,10 +5,15 @@ export default async function getMaximumEmployeeRecordSyncDateTime() {
     const result = (await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `select max(recordSync_dateTime) as maxRecordSyncDateTime
-      from ShiftLog.Employees
-      where instance = @instance
-        and recordSync_isSynced = 1`));
+        .query(/* sql */ `
+      SELECT
+        max(recordSync_dateTime) AS maxRecordSyncDateTime
+      FROM
+        ShiftLog.Employees
+      WHERE
+        instance = @instance
+        AND recordSync_isSynced = 1
+    `));
     if (result.recordset.length === 0 ||
         result.recordset[0].maxRecordSyncDateTime === null) {
         return undefined;

@@ -17,9 +17,11 @@ export default async function updateEmployee(employeeFields, user) {
         .input('userGroupId', employeeFields.userGroupId ?? undefined)
         .input('recordSync_isSynced', employeeFields.recordSync_isSynced ?? false)
         .input('recordUpdate_userName', user.userName)
-        .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-      update ShiftLog.Employees
-        set firstName = @firstName,
+        .input('recordUpdate_dateTime', currentDate)
+        .query(/* sql */ `
+      UPDATE ShiftLog.Employees
+      SET
+        firstName = @firstName,
         lastName = @lastName,
         userName = @userName,
         isSupervisor = @isSupervisor,
@@ -30,9 +32,10 @@ export default async function updateEmployee(employeeFields, user) {
         recordSync_isSynced = @recordSync_isSynced,
         recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime
-      where instance = @instance
-        and employeeNumber = @employeeNumber
-        and recordDelete_dateTime is null
+      WHERE
+        instance = @instance
+        AND employeeNumber = @employeeNumber
+        AND recordDelete_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }

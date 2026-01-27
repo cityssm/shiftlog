@@ -11,9 +11,15 @@ export default async function getMaximumLocationRecordSyncDateTime(): Promise<
   const result = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `select max(recordSync_dateTime) as maxRecordSyncDateTime
-      from ShiftLog.Locations
-      where instance = @instance and recordSync_isSynced = 1`)) as mssql.IResult<{
+    .query(/* sql */ `
+      SELECT
+        max(recordSync_dateTime) AS maxRecordSyncDateTime
+      FROM
+        ShiftLog.Locations
+      WHERE
+        instance = @instance
+        AND recordSync_isSynced = 1
+    `)) as mssql.IResult<{
     maxRecordSyncDateTime: Date | null
   }>
 

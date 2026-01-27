@@ -7,7 +7,7 @@ interface UpdateLocationForm {
   address1: string
   address2: string
   cityProvince: string
-  
+
   latitude?: number | null
   longitude?: number | null
 }
@@ -31,17 +31,20 @@ export default async function updateLocation(
       .input('latitude', updateLocationForm.latitude)
       .input('longitude', updateLocationForm.longitude)
       .input('recordUpdate_userName', user.userName)
-      .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
+      .input('recordUpdate_dateTime', currentDate)
+      .query(/* sql */ `
         UPDATE ShiftLog.Locations
-        SET address1 = @address1,
-            address2 = @address2,
-            cityProvince = @cityProvince,
-            latitude = @latitude,
-            longitude = @longitude,
-            recordUpdate_userName = @recordUpdate_userName,
-            recordUpdate_dateTime = @recordUpdate_dateTime
-        WHERE locationId = @locationId
-          and instance = @instance
+        SET
+          address1 = @address1,
+          address2 = @address2,
+          cityProvince = @cityProvince,
+          latitude = @latitude,
+          longitude = @longitude,
+          recordUpdate_userName = @recordUpdate_userName,
+          recordUpdate_dateTime = @recordUpdate_dateTime
+        WHERE
+          locationId = @locationId
+          AND instance = @instance
           AND recordDelete_dateTime IS NULL
       `)
 

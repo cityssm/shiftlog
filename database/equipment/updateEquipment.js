@@ -15,9 +15,11 @@ export default async function updateEquipment(equipmentFields, user) {
             .input('userGroupId', equipmentFields.userGroupId ?? undefined)
             .input('recordSync_isSynced', equipmentFields.recordSync_isSynced ?? false)
             .input('recordUpdate_userName', user.userName)
-            .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        update ShiftLog.Equipment
-        set equipmentName = @equipmentName,
+            .input('recordUpdate_dateTime', currentDate)
+            .query(/* sql */ `
+        UPDATE ShiftLog.Equipment
+        SET
+          equipmentName = @equipmentName,
           equipmentDescription = @equipmentDescription,
           equipmentTypeDataListItemId = @equipmentTypeDataListItemId,
           employeeListId = @employeeListId,
@@ -25,9 +27,10 @@ export default async function updateEquipment(equipmentFields, user) {
           recordSync_isSynced = @recordSync_isSynced,
           recordUpdate_userName = @recordUpdate_userName,
           recordUpdate_dateTime = @recordUpdate_dateTime
-        where instance = @instance
-          and equipmentNumber = @equipmentNumber
-          and recordDelete_dateTime is null
+        WHERE
+          instance = @instance
+          AND equipmentNumber = @equipmentNumber
+          AND recordDelete_dateTime IS NULL
       `);
         return result.rowsAffected[0] > 0;
     }

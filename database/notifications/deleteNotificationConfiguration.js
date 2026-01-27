@@ -6,14 +6,16 @@ export default async function deleteNotificationConfiguration(notificationConfig
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('notificationConfigurationId', notificationConfigurationId)
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.NotificationConfigurations
-      set
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.NotificationConfigurations
+      SET
         recordDelete_userName = @userName,
         recordDelete_dateTime = getdate()
-      where notificationConfigurationId = @notificationConfigurationId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      WHERE
+        notificationConfigurationId = @notificationConfigurationId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `));
     return result.rowsAffected[0] > 0;
 }

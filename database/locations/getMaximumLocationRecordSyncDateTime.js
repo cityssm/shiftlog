@@ -5,9 +5,15 @@ export default async function getMaximumLocationRecordSyncDateTime() {
     const result = (await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `select max(recordSync_dateTime) as maxRecordSyncDateTime
-      from ShiftLog.Locations
-      where instance = @instance and recordSync_isSynced = 1`));
+        .query(/* sql */ `
+      SELECT
+        max(recordSync_dateTime) AS maxRecordSyncDateTime
+      FROM
+        ShiftLog.Locations
+      WHERE
+        instance = @instance
+        AND recordSync_isSynced = 1
+    `));
     if (result.recordset.length === 0 ||
         result.recordset[0].maxRecordSyncDateTime === null) {
         return undefined;

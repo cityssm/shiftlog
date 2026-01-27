@@ -11,10 +11,15 @@ export default async function getMaximumEquipmentRecordSyncDateTime(): Promise<
   const result = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `select max(recordSync_dateTime) as maxRecordSyncDateTime
-      from ShiftLog.Equipment
-      where instance = @instance
-        and recordSync_isSynced = 1`)) as mssql.IResult<{
+    .query(/* sql */ `
+      SELECT
+        max(recordSync_dateTime) AS maxRecordSyncDateTime
+      FROM
+        ShiftLog.Equipment
+      WHERE
+        instance = @instance
+        AND recordSync_isSynced = 1
+    `)) as mssql.IResult<{
     maxRecordSyncDateTime: Date | null
   }>
 

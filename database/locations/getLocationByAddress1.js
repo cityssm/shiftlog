@@ -5,8 +5,10 @@ export default async function getLocationByAddress1(address1) {
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('address1', address1).query(/* sql */ `
-      select locationId,
+        .input('address1', address1)
+        .query(/* sql */ `
+      SELECT
+        locationId,
         address1,
         address2,
         cityProvince,
@@ -20,8 +22,11 @@ export default async function getLocationByAddress1(address1) {
         recordCreate_dateTime,
         recordUpdate_userName,
         recordUpdate_dateTime
-      from ShiftLog.Locations
-      where instance = @instance and address1 = @address1
+      FROM
+        ShiftLog.Locations
+      WHERE
+        instance = @instance
+        AND address1 = @address1
     `);
     return result.recordset[0];
 }

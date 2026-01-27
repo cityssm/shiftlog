@@ -13,15 +13,20 @@ export default async function toggleNotificationConfigurationIsActive(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('notificationConfigurationId', notificationConfigurationId)
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.NotificationConfigurations
-      set
-        isActive = case when isActive = 1 then 0 else 1 end,
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.NotificationConfigurations
+      SET
+        isActive = CASE
+          WHEN isActive = 1 THEN 0
+          ELSE 1
+        END,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where notificationConfigurationId = @notificationConfigurationId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      WHERE
+        notificationConfigurationId = @notificationConfigurationId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `)) as mssql.IResult<Record<string, never>>
 
   return result.rowsAffected[0] > 0

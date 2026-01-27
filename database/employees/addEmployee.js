@@ -13,16 +13,30 @@ async function insertNewEmployee(employeeNumber, firstName, lastName, user) {
             .input('recordCreate_userName', user.userName)
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
-            .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        insert into ShiftLog.Employees (
-          instance, employeeNumber, firstName, lastName,
-          recordCreate_userName, recordCreate_dateTime,
-          recordUpdate_userName, recordUpdate_dateTime
-        ) values (
-          @instance, @employeeNumber, @firstName, @lastName,
-          @recordCreate_userName, @recordCreate_dateTime,
-          @recordUpdate_userName, @recordUpdate_dateTime
-        )
+            .input('recordUpdate_dateTime', currentDate)
+            .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.Employees (
+            instance,
+            employeeNumber,
+            firstName,
+            lastName,
+            recordCreate_userName,
+            recordCreate_dateTime,
+            recordUpdate_userName,
+            recordUpdate_dateTime
+          )
+        VALUES
+          (
+            @instance,
+            @employeeNumber,
+            @firstName,
+            @lastName,
+            @recordCreate_userName,
+            @recordCreate_dateTime,
+            @recordUpdate_userName,
+            @recordUpdate_dateTime
+          )
       `);
         return true;
     }
@@ -40,17 +54,20 @@ async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user)
         .input('firstName', firstName)
         .input('lastName', lastName)
         .input('recordUpdate_userName', user.userName)
-        .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-      update ShiftLog.Employees
-        set firstName = @firstName,
+        .input('recordUpdate_dateTime', currentDate)
+        .query(/* sql */ `
+      UPDATE ShiftLog.Employees
+      SET
+        firstName = @firstName,
         lastName = @lastName,
         recordSync_isSynced = 0,
         recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime,
-        recordDelete_userName = null,
-        recordDelete_dateTime = null
-      where instance = @instance
-        and employeeNumber = @employeeNumber
+        recordDelete_userName = NULL,
+        recordDelete_dateTime = NULL
+      WHERE
+        instance = @instance
+        AND employeeNumber = @employeeNumber
     `);
     return result.rowsAffected.length > 0;
 }
@@ -60,11 +77,15 @@ export default async function addEmployee(employeeNumber, firstName, lastName, u
     const recordDeleteResult = (await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('employeeNumber', employeeNumber).query(/* sql */ `
-      select recordDelete_dateTime
-      from ShiftLog.Employees
-      where instance = @instance
-        and employeeNumber = @employeeNumber
+        .input('employeeNumber', employeeNumber)
+        .query(/* sql */ `
+      SELECT
+        recordDelete_dateTime
+      FROM
+        ShiftLog.Employees
+      WHERE
+        instance = @instance
+        AND employeeNumber = @employeeNumber
     `));
     let success = false;
     if (recordDeleteResult.recordset.length === 0) {

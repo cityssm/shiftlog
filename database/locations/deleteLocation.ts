@@ -13,11 +13,14 @@ export default async function deleteLocation(
       .request()
       .input('locationId', locationId)
       .input('recordDelete_userName', user.userName)
-      .input('recordDelete_dateTime', currentDate).query(/* sql */ `
+      .input('recordDelete_dateTime', currentDate)
+      .query(/* sql */ `
         UPDATE ShiftLog.Locations
-        SET recordDelete_userName = @recordDelete_userName,
-            recordDelete_dateTime = @recordDelete_dateTime
-        WHERE locationId = @locationId
+        SET
+          recordDelete_userName = @recordDelete_userName,
+          recordDelete_dateTime = @recordDelete_dateTime
+        WHERE
+          locationId = @locationId
           AND recordDelete_dateTime IS NULL
       `)
 

@@ -4,129 +4,139 @@ export const workOrderReports: Record<string, ReportDefinition> = {
   'workOrders-open': {
     parameterNames: [],
     sql: /* sql */ `
-       select
-          w.workOrderId,
-          w.workOrderNumber,
-          wType.workOrderType,
-          wStatus.dataListItem as workOrderStatus,
-          w.workOrderDetails,
-
-          w.workOrderOpenDateTime,
-          w.workOrderDueDateTime,
-          w.workOrderCloseDateTime,
-
-          w.requestorName,
-          w.requestorContactInfo,
-
-          w.locationLatitude,
-          w.locationLongitude,
-          w.locationAddress1,
-          w.locationAddress2,
-          w.locationCityProvince,
-
-          assignedTo.assignedToName as assignedTo,
-
-          milestones.milestonesCount,
-          milestones.milestonesCompletedCount
-          
-        from ShiftLog.WorkOrders w
-
-        left join ShiftLog.WorkOrderTypes wType
-          on w.workOrderTypeId = wType.workOrderTypeId
-
-        left join ShiftLog.DataListItems wStatus
-          on w.workOrderStatusDataListItemId = wStatus.dataListItemId
-
-        left join ShiftLog.AssignedTo assignedTo
-          on w.assignedToId = assignedTo.assignedToId
-
-        left join (
-          select workOrderId,
-            count(*) as milestonesCount,
+      SELECT
+        w.workOrderId,
+        w.workOrderNumber,
+        wType.workOrderType,
+        wStatus.dataListItem AS workOrderStatus,
+        w.workOrderDetails,
+        w.workOrderOpenDateTime,
+        w.workOrderDueDateTime,
+        w.workOrderCloseDateTime,
+        w.requestorName,
+        w.requestorContactInfo,
+        w.locationLatitude,
+        w.locationLongitude,
+        w.locationAddress1,
+        w.locationAddress2,
+        w.locationCityProvince,
+        assignedTo.assignedToName AS assignedTo,
+        milestones.milestonesCount,
+        milestones.milestonesCompletedCount
+      FROM
+        ShiftLog.WorkOrders w
+        LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+        LEFT JOIN ShiftLog.DataListItems wStatus ON w.workOrderStatusDataListItemId = wStatus.dataListItemId
+        LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
+        LEFT JOIN (
+          SELECT
+            workOrderId,
+            count(*) AS milestonesCount,
             sum(
-              case when milestoneCompleteDateTime is null then 0 else 1 end
-            ) as milestonesCompletedCount
-          from ShiftLog.WorkOrderMilestones
-          where recordDelete_dateTime is null
-          group by workOrderId
-        ) as milestones on milestones.workOrderId = w.workOrderId
-
-        where w.recordDelete_dateTime is null
-          and w.workOrderCloseDateTime is null
-          and w.instance = @instance
-
-        and (wType.userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
-        ) or wType.userGroupId is null)
+              CASE
+                WHEN milestoneCompleteDateTime IS NULL THEN 0
+                ELSE 1
+              END
+            ) AS milestonesCompletedCount
+          FROM
+            ShiftLog.WorkOrderMilestones
+          WHERE
+            recordDelete_dateTime IS NULL
+          GROUP BY
+            workOrderId
+        ) AS milestones ON milestones.workOrderId = w.workOrderId
+      WHERE
+        w.recordDelete_dateTime IS NULL
+        AND w.workOrderCloseDateTime IS NULL
+        AND w.instance = @instance
+        AND (
+          wType.userGroupId IN (
+            SELECT
+              userGroupId
+            FROM
+              ShiftLog.UserGroupMembers
+            WHERE
+              userName = @userName
+          )
+          OR wType.userGroupId IS NULL
+        )
     `
   },
 
   'workOrders-workOrderCosts-byWorkOrderId': {
     parameterNames: ['workOrderId'],
     sql: /* sql */ `
-      select
+      SELECT
         w.workOrderNumber,
         c.workOrderCostId,
         c.costDescription,
-		    c.costAmount,
-        c.recordCreate_userName, c.recordCreate_dateTime,
-        c.recordUpdate_userName, c.recordUpdate_dateTime
-      from ShiftLog.WorkOrderCosts c
-      left join ShiftLog.WorkOrders w on c.workOrderId = w.workOrderId
-      where w.instance = @instance
-        and c.recordDelete_dateTime is null
-        and c.workOrderId = @workOrderId
-      order by c.workOrderCostId asc
+        c.costAmount,
+        c.recordCreate_userName,
+        c.recordCreate_dateTime,
+        c.recordUpdate_userName,
+        c.recordUpdate_dateTime
+      FROM
+        ShiftLog.WorkOrderCosts c
+        LEFT JOIN ShiftLog.WorkOrders w ON c.workOrderId = w.workOrderId
+      WHERE
+        w.instance = @instance
+        AND c.recordDelete_dateTime IS NULL
+        AND c.workOrderId = @workOrderId
+      ORDER BY
+        c.workOrderCostId ASC
     `
   },
 
   'workOrders-workOrderNotes-byWorkOrderId': {
     parameterNames: ['workOrderId'],
     sql: /* sql */ `
-      select
+      SELECT
         w.workOrderNumber,
         n.noteSequence,
         n.noteText,
-        n.recordCreate_userName, n.recordCreate_dateTime,
-        n.recordUpdate_userName, n.recordUpdate_dateTime
-      from ShiftLog.WorkOrderNotes n
-      left join ShiftLog.WorkOrders w on n.workOrderId = w.workOrderId
-      where w.instance = @instance
-        and n.recordDelete_dateTime is null
-        and n.workOrderId = @workOrderId
-      order by n.noteSequence asc
+        n.recordCreate_userName,
+        n.recordCreate_dateTime,
+        n.recordUpdate_userName,
+        n.recordUpdate_dateTime
+      FROM
+        ShiftLog.WorkOrderNotes n
+        LEFT JOIN ShiftLog.WorkOrders w ON n.workOrderId = w.workOrderId
+      WHERE
+        w.instance = @instance
+        AND n.recordDelete_dateTime IS NULL
+        AND n.workOrderId = @workOrderId
+      ORDER BY
+        n.noteSequence ASC
     `
   },
 
   'workOrders-workOrderTags-unmanaged': {
     parameterNames: [],
     sql: /* sql */ `
-      select wo.workOrderNumber, wot.tagName
-      
-      from ShiftLog.WorkOrderTags wot
-
-      left join ShiftLog.WorkOrders wo
-        on wot.workOrderId = wo.workOrderId
-
-      left join ShiftLog.WorkOrderTypes woType
-        on wo.workOrderTypeId = woType.workOrderTypeId
-
-      left join ShiftLog.Tags t
-        on wot.tagName = t.tagName and wo.instance = t.instance
-        and t.recordDelete_dateTime is null
-
-      where wo.recordDelete_dateTime is null
-        and t.tagName is null
-        and wo.instance = @instance
-
-        and (
-          woType.userGroupId in (
-            select userGroupId
-            from ShiftLog.UserGroupMembers
-            where userName = @userName
-          ) or woType.userGroupId is null
+      SELECT
+        wo.workOrderNumber,
+        wot.tagName
+      FROM
+        ShiftLog.WorkOrderTags wot
+        LEFT JOIN ShiftLog.WorkOrders wo ON wot.workOrderId = wo.workOrderId
+        LEFT JOIN ShiftLog.WorkOrderTypes woType ON wo.workOrderTypeId = woType.workOrderTypeId
+        LEFT JOIN ShiftLog.Tags t ON wot.tagName = t.tagName
+        AND wo.instance = t.instance
+        AND t.recordDelete_dateTime IS NULL
+      WHERE
+        wo.recordDelete_dateTime IS NULL
+        AND t.tagName IS NULL
+        AND wo.instance = @instance
+        AND (
+          woType.userGroupId IN (
+            SELECT
+              userGroupId
+            FROM
+              ShiftLog.UserGroupMembers
+            WHERE
+              userName = @userName
+          )
+          OR woType.userGroupId IS NULL
         )
     `
   }

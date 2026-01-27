@@ -7,7 +7,7 @@ export default async function getNotificationConfigurations(notificationQueue) {
         .input('instance', getConfigProperty('application.instance'))
         .input('notificationQueue', notificationQueue)
         .query(/* sql */ `
-      select
+      SELECT
         nc.notificationConfigurationId,
         nc.notificationQueue,
         nc.notificationType,
@@ -19,12 +19,17 @@ export default async function getNotificationConfigurations(notificationQueue) {
         nc.recordCreate_dateTime,
         nc.recordUpdate_userName,
         nc.recordUpdate_dateTime
-      from ShiftLog.NotificationConfigurations nc
-      left join ShiftLog.AssignedTo at on nc.assignedToId = at.assignedToId
-      where nc.instance = @instance
-        and nc.recordDelete_dateTime is null
-        ${notificationQueue === undefined ? '' : 'and nc.notificationQueue = @notificationQueue'}
-      order by nc.notificationQueue, nc.notificationType
+      FROM
+        ShiftLog.NotificationConfigurations nc
+        LEFT JOIN ShiftLog.AssignedTo at ON nc.assignedToId = at.assignedToId
+      WHERE
+        nc.instance = @instance
+        AND nc.recordDelete_dateTime IS NULL ${notificationQueue === undefined
+        ? ''
+        : 'AND nc.notificationQueue = @notificationQueue'}
+      ORDER BY
+        nc.notificationQueue,
+        nc.notificationType
     `);
     return result.recordset;
 }

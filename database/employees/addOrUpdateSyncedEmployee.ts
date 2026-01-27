@@ -39,24 +39,48 @@ async function addSyncedEmployee(
     .input('recordCreate_userName', syncUserName)
     .input('recordCreate_dateTime', new Date())
     .input('recordUpdate_userName', syncUserName)
-    .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      insert into ShiftLog.Employees (
-        instance, employeeNumber, firstName, lastName,
-        userName, isSupervisor,
-        phoneNumber, phoneNumberAlternate, emailAddress,
-        userGroupId,
-        recordSync_isSynced, recordSync_source, recordSync_dateTime,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime
-      ) values (
-        @instance, @employeeNumber, @firstName, @lastName,
-        @userName, @isSupervisor,
-        @phoneNumber, @phoneNumberAlternate, @emailAddress,
-        @userGroupId,
-        @recordSync_isSynced, @recordSync_source, @recordSync_dateTime,
-        @recordCreate_userName, @recordCreate_dateTime,
-        @recordUpdate_userName, @recordUpdate_dateTime
-      )
+    .input('recordUpdate_dateTime', new Date())
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.Employees (
+          instance,
+          employeeNumber,
+          firstName,
+          lastName,
+          userName,
+          isSupervisor,
+          phoneNumber,
+          phoneNumberAlternate,
+          emailAddress,
+          userGroupId,
+          recordSync_isSynced,
+          recordSync_source,
+          recordSync_dateTime,
+          recordCreate_userName,
+          recordCreate_dateTime,
+          recordUpdate_userName,
+          recordUpdate_dateTime
+        )
+      VALUES
+        (
+          @instance,
+          @employeeNumber,
+          @firstName,
+          @lastName,
+          @userName,
+          @isSupervisor,
+          @phoneNumber,
+          @phoneNumberAlternate,
+          @emailAddress,
+          @userGroupId,
+          @recordSync_isSynced,
+          @recordSync_source,
+          @recordSync_dateTime,
+          @recordCreate_userName,
+          @recordCreate_dateTime,
+          @recordUpdate_userName,
+          @recordUpdate_dateTime
+        )
     `)
 }
 
@@ -142,9 +166,11 @@ async function updateSyncedEmployee(
     .input('recordSync_source', updateEmployee.recordSync_source)
     .input('recordSync_dateTime', updateEmployee.recordSync_dateTime)
     .input('recordUpdate_userName', syncUserName)
-    .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      update ShiftLog.Employees
-      set firstName = @firstName,
+    .input('recordUpdate_dateTime', new Date())
+    .query(/* sql */ `
+      UPDATE ShiftLog.Employees
+      SET
+        firstName = @firstName,
         lastName = @lastName,
         userName = @userName,
         isSupervisor = @isSupervisor,
@@ -157,10 +183,11 @@ async function updateSyncedEmployee(
         recordSync_dateTime = @recordSync_dateTime,
         recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime,
-        recordDelete_userName = null,
-        recordDelete_dateTime = null
-      where instance = @instance
-        and employeeNumber = @employeeNumber
+        recordDelete_userName = NULL,
+        recordDelete_dateTime = NULL
+      WHERE
+        instance = @instance
+        AND employeeNumber = @employeeNumber
     `)
 }
 

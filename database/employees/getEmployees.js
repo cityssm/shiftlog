@@ -11,21 +11,39 @@ export default async function getEmployees(filters = {}, orderBy = 'name') {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('employeeNumber', filters.employeeNumber)
-        .input('isSupervisor', filters.isSupervisor).query(/* sql */ `
-      select employeeNumber, firstName, lastName,
-        userName, isSupervisor,
-        phoneNumber, phoneNumberAlternate, emailAddress,
+        .input('isSupervisor', filters.isSupervisor)
+        .query(/* sql */ `
+      SELECT
+        employeeNumber,
+        firstName,
+        lastName,
+        userName,
+        isSupervisor,
+        phoneNumber,
+        phoneNumberAlternate,
+        emailAddress,
         userGroupId,
-        recordSync_isSynced, recordSync_source, recordSync_dateTime,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime
-      from ShiftLog.Employees
-      where
-        instance = @instance
-        ${(filters.includeDeleted ?? false) ? '' : 'and recordDelete_dateTime is null'}
-        ${filters.employeeNumber === undefined ? '' : 'and employeeNumber = @employeeNumber'}
-        ${filters.isSupervisor === undefined ? '' : 'and isSupervisor = @isSupervisor'}
-      order by ${orderByOptions[orderBy] ?? orderByOptions.name}
-  `);
+        recordSync_isSynced,
+        recordSync_source,
+        recordSync_dateTime,
+        recordCreate_userName,
+        recordCreate_dateTime,
+        recordUpdate_userName,
+        recordUpdate_dateTime
+      FROM
+        ShiftLog.Employees
+      WHERE
+        instance = @instance ${(filters.includeDeleted ?? false)
+        ? ''
+        : 'and recordDelete_dateTime is null'} ${filters.employeeNumber ===
+        undefined
+        ? ''
+        : 'and employeeNumber = @employeeNumber'} ${filters.isSupervisor ===
+        undefined
+        ? ''
+        : 'and isSupervisor = @isSupervisor'}
+      ORDER BY
+        ${orderByOptions[orderBy] ?? orderByOptions.name}
+    `);
     return result.recordset;
 }

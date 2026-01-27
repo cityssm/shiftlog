@@ -36,20 +36,42 @@ async function addSyncedLocation(
     .input('recordCreate_userName', syncUserName)
     .input('recordCreate_dateTime', new Date())
     .input('recordUpdate_userName', syncUserName)
-    .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      insert into ShiftLog.Locations (
-        instance, address1, address2,
-        cityProvince, latitude, longitude, userGroupId,
-        recordSync_isSynced, recordSync_source, recordSync_dateTime,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime
-      ) values (
-        @instance, @address1, @address2,
-        @cityProvince, @latitude, @longitude, @userGroupId,
-        @recordSync_isSynced, @recordSync_source, @recordSync_dateTime,
-        @recordCreate_userName, @recordCreate_dateTime,
-        @recordUpdate_userName, @recordUpdate_dateTime
-      )
+    .input('recordUpdate_dateTime', new Date())
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.Locations (
+          instance,
+          address1,
+          address2,
+          cityProvince,
+          latitude,
+          longitude,
+          userGroupId,
+          recordSync_isSynced,
+          recordSync_source,
+          recordSync_dateTime,
+          recordCreate_userName,
+          recordCreate_dateTime,
+          recordUpdate_userName,
+          recordUpdate_dateTime
+        )
+      VALUES
+        (
+          @instance,
+          @address1,
+          @address2,
+          @cityProvince,
+          @latitude,
+          @longitude,
+          @userGroupId,
+          @recordSync_isSynced,
+          @recordSync_source,
+          @recordSync_dateTime,
+          @recordCreate_userName,
+          @recordCreate_dateTime,
+          @recordUpdate_userName,
+          @recordUpdate_dateTime
+        )
     `)
 }
 
@@ -116,9 +138,11 @@ async function updateSyncedLocation(
     .input('recordSync_source', updateLocation.recordSync_source)
     .input('recordSync_dateTime', updateLocation.recordSync_dateTime)
     .input('recordUpdate_userName', syncUserName)
-    .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      update ShiftLog.Locations
-      set address1 = @address1,
+    .input('recordUpdate_dateTime', new Date())
+    .query(/* sql */ `
+      UPDATE ShiftLog.Locations
+      SET
+        address1 = @address1,
         address2 = @address2,
         cityProvince = @cityProvince,
         latitude = @latitude,
@@ -129,9 +153,10 @@ async function updateSyncedLocation(
         recordSync_dateTime = @recordSync_dateTime,
         recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime,
-        recordDelete_userName = null,
-        recordDelete_dateTime = null
-      where locationId = @locationId
+        recordDelete_userName = NULL,
+        recordDelete_dateTime = NULL
+      WHERE
+        locationId = @locationId
     `)
 }
 

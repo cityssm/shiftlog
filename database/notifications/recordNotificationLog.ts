@@ -19,10 +19,23 @@ export default async function recordNotificationLog(
     .input('recordId', form.recordId)
     .input('notificationDateTime', form.notificationDate ?? new Date())
     .input('isSuccess', form.isSuccess)
-    .input('errorMessage', form.errorMessage).query(/* sql */ `
-      insert into ShiftLog.NotificationLogs
-        (notificationConfigurationId, recordId, notificationDateTime, isSuccess, errorMessage)
-      values
-        (@notificationConfigurationId, @recordId, @notificationDateTime, @isSuccess, @errorMessage)
+    .input('errorMessage', form.errorMessage)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.NotificationLogs (
+          notificationConfigurationId,
+          recordId,
+          notificationDateTime,
+          isSuccess,
+          errorMessage
+        )
+      VALUES
+        (
+          @notificationConfigurationId,
+          @recordId,
+          @notificationDateTime,
+          @isSuccess,
+          @errorMessage
+        )
     `)
 }

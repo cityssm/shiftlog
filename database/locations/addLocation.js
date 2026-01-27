@@ -15,18 +15,34 @@ export default async function addLocation(locationFields, user) {
             .input('recordCreate_userName', user.userName)
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
-            .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        INSERT INTO ShiftLog.Locations (
-          instance, address1, address2, cityProvince,
-          latitude, longitude,
-          recordCreate_userName, recordCreate_dateTime,
-          recordUpdate_userName, recordUpdate_dateTime
-        ) VALUES (
-          @instance, @address1, @address2, @cityProvince,
-          @latitude, @longitude,
-          @recordCreate_userName, @recordCreate_dateTime,
-          @recordUpdate_userName, @recordUpdate_dateTime
-        )
+            .input('recordUpdate_dateTime', currentDate)
+            .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.Locations (
+            instance,
+            address1,
+            address2,
+            cityProvince,
+            latitude,
+            longitude,
+            recordCreate_userName,
+            recordCreate_dateTime,
+            recordUpdate_userName,
+            recordUpdate_dateTime
+          )
+        VALUES
+          (
+            @instance,
+            @address1,
+            @address2,
+            @cityProvince,
+            @latitude,
+            @longitude,
+            @recordCreate_userName,
+            @recordCreate_dateTime,
+            @recordUpdate_userName,
+            @recordUpdate_dateTime
+          )
       `);
         return true;
     }

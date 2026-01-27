@@ -4,12 +4,12 @@ export const adminReports: Record<string, ReportDefinition> = {
   'admin-apiAuditLogs': {
     parameterNames: [],
     sql: /* sql */ `
-      select
+      SELECT
         auditLogId,
         instance,
         userName,
         apiKey,
-        endpoint,
+        [endpoint],
         requestMethod,
         isValidApiKey,
         requestTime,
@@ -17,34 +17,36 @@ export const adminReports: Record<string, ReportDefinition> = {
         userAgent,
         responseStatus,
         errorMessage
-      from ShiftLog.ApiAuditLog
-      where instance = @instance
-      order by requestTime desc
+      FROM
+        ShiftLog.ApiAuditLog
+      WHERE
+        instance = @instance
+      ORDER BY
+        requestTime DESC
     `
   },
 
   'admin-notificationLogs': {
     parameterNames: [],
     sql: /* sql */ `
-      select
+      SELECT
         l.notificationLogId,
         l.notificationConfigurationId,
-
         n.notificationQueue,
         a.assignedToName,
         n.notificationType,
         n.notificationTypeFormJson,
-
         l.notificationDateTime,
         l.isSuccess,
         l.errorMessage
-
-      from ShiftLog.NotificationLogs l
-      left join ShiftLog.NotificationConfigurations n on l.notificationConfigurationId = n.notificationConfigurationId
-      left join ShiftLog.AssignedTo a on n.assignedToId = a.assignedToId
-              
-      where n.instance = @instance
-      order by l.notificationDateTime desc
+      FROM
+        ShiftLog.NotificationLogs l
+        LEFT JOIN ShiftLog.NotificationConfigurations n ON l.notificationConfigurationId = n.notificationConfigurationId
+        LEFT JOIN ShiftLog.AssignedTo a ON n.assignedToId = a.assignedToId
+      WHERE
+        n.instance = @instance
+      ORDER BY
+        l.notificationDateTime DESC
     `
   }
 }

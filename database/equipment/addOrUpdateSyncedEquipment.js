@@ -22,20 +22,40 @@ async function addSyncedEquipment(partialEquipment, syncUserName) {
         .input('recordCreate_userName', syncUserName)
         .input('recordCreate_dateTime', new Date())
         .input('recordUpdate_userName', syncUserName)
-        .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      insert into ShiftLog.Equipment (
-        instance, equipmentNumber, equipmentName, equipmentDescription,
-        equipmentTypeDataListItemId, userGroupId,
-        recordSync_isSynced, recordSync_source, recordSync_dateTime,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime
-      ) values (
-        @instance, @equipmentNumber, @equipmentName, @equipmentDescription,
-        @equipmentTypeDataListItemId, @userGroupId,
-        @recordSync_isSynced, @recordSync_source, @recordSync_dateTime,
-        @recordCreate_userName, @recordCreate_dateTime,
-        @recordUpdate_userName, @recordUpdate_dateTime
-      )
+        .input('recordUpdate_dateTime', new Date())
+        .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.Equipment (
+          instance,
+          equipmentNumber,
+          equipmentName,
+          equipmentDescription,
+          equipmentTypeDataListItemId,
+          userGroupId,
+          recordSync_isSynced,
+          recordSync_source,
+          recordSync_dateTime,
+          recordCreate_userName,
+          recordCreate_dateTime,
+          recordUpdate_userName,
+          recordUpdate_dateTime
+        )
+      VALUES
+        (
+          @instance,
+          @equipmentNumber,
+          @equipmentName,
+          @equipmentDescription,
+          @equipmentTypeDataListItemId,
+          @userGroupId,
+          @recordSync_isSynced,
+          @recordSync_source,
+          @recordSync_dateTime,
+          @recordCreate_userName,
+          @recordCreate_dateTime,
+          @recordUpdate_userName,
+          @recordUpdate_dateTime
+        )
     `);
 }
 async function updateSyncedEquipment(currentEquipment, partialEquipment, syncUserName) {
@@ -63,9 +83,11 @@ async function updateSyncedEquipment(currentEquipment, partialEquipment, syncUse
         .input('recordSync_source', updateEquipment.recordSync_source)
         .input('recordSync_dateTime', updateEquipment.recordSync_dateTime)
         .input('recordUpdate_userName', syncUserName)
-        .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      update ShiftLog.Equipment
-      set equipmentName = @equipmentName,
+        .input('recordUpdate_dateTime', new Date())
+        .query(/* sql */ `
+      UPDATE ShiftLog.Equipment
+      SET
+        equipmentName = @equipmentName,
         equipmentDescription = @equipmentDescription,
         equipmentTypeDataListItemId = @equipmentTypeDataListItemId,
         userGroupId = @userGroupId,
@@ -74,10 +96,11 @@ async function updateSyncedEquipment(currentEquipment, partialEquipment, syncUse
         recordSync_dateTime = @recordSync_dateTime,
         recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime,
-        recordDelete_userName = null,
-        recordDelete_dateTime = null
-      where instance = @instance
-        and equipmentNumber = @equipmentNumber
+        recordDelete_userName = NULL,
+        recordDelete_dateTime = NULL
+      WHERE
+        instance = @instance
+        AND equipmentNumber = @equipmentNumber
     `);
 }
 export default async function addOrUpdateSyncedEquipment(partialEquipment, syncUserName) {

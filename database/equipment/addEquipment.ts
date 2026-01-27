@@ -28,19 +28,36 @@ export default async function addEquipment(
       .input('recordCreate_userName', user.userName)
       .input('recordCreate_dateTime', currentDate)
       .input('recordUpdate_userName', user.userName)
-      .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        insert into ShiftLog.Equipment (
-          instance, equipmentNumber, equipmentName, equipmentDescription,
-          equipmentTypeDataListItemId, employeeListId, userGroupId,
-          recordCreate_userName, recordCreate_dateTime,
-          recordUpdate_userName, recordUpdate_dateTime
-        )
-        values (
-          @instance, @equipmentNumber, @equipmentName, @equipmentDescription,
-          @equipmentTypeDataListItemId, @employeeListId, @userGroupId,
-          @recordCreate_userName, @recordCreate_dateTime,
-          @recordUpdate_userName, @recordUpdate_dateTime
-        )
+      .input('recordUpdate_dateTime', currentDate)
+      .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.Equipment (
+            instance,
+            equipmentNumber,
+            equipmentName,
+            equipmentDescription,
+            equipmentTypeDataListItemId,
+            employeeListId,
+            userGroupId,
+            recordCreate_userName,
+            recordCreate_dateTime,
+            recordUpdate_userName,
+            recordUpdate_dateTime
+          )
+        VALUES
+          (
+            @instance,
+            @equipmentNumber,
+            @equipmentName,
+            @equipmentDescription,
+            @equipmentTypeDataListItemId,
+            @employeeListId,
+            @userGroupId,
+            @recordCreate_userName,
+            @recordCreate_dateTime,
+            @recordUpdate_userName,
+            @recordUpdate_dateTime
+          )
       `)
 
     return result.rowsAffected[0] > 0

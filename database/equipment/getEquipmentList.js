@@ -7,24 +7,39 @@ export default async function getEquipmentList(filters = {}) {
         .input('instance', getConfigProperty('application.instance'))
         .input('equipmentNumber', filters.equipmentNumber)
         .query(/* sql */ `
-      select e.equipmentNumber, e.equipmentName, e.equipmentDescription,
-        e.equipmentTypeDataListItemId, dli.dataListItem as equipmentTypeDataListItem,
-        e.employeeListId, el.employeeListName,
+      SELECT
+        e.equipmentNumber,
+        e.equipmentName,
+        e.equipmentDescription,
+        e.equipmentTypeDataListItemId,
+        dli.dataListItem AS equipmentTypeDataListItem,
+        e.employeeListId,
+        el.employeeListName,
         e.userGroupId,
         ug.userGroupName,
-        recordSync_isSynced, recordSync_source, recordSync_dateTime,
-        e.recordCreate_userName, e.recordCreate_dateTime,
-        e.recordUpdate_userName, e.recordUpdate_dateTime
-      from ShiftLog.Equipment e
-      left join ShiftLog.DataListItems dli on
-        e.equipmentTypeDataListItemId = dli.dataListItemId
-      left join ShiftLog.EmployeeLists el on e.employeeListId = el.employeeListId and el.recordDelete_dateTime is null
-      left join ShiftLog.UserGroups ug on e.userGroupId = ug.userGroupId
-      where
-        e.instance = @instance
-        ${(filters.includeDeleted ?? false) ? '' : 'and e.recordDelete_dateTime is null'}
-        ${filters.equipmentNumber === undefined ? '' : 'and e.equipmentNumber = @equipmentNumber'}
-      order by e.equipmentNumber, e.equipmentName
+        recordSync_isSynced,
+        recordSync_source,
+        recordSync_dateTime,
+        e.recordCreate_userName,
+        e.recordCreate_dateTime,
+        e.recordUpdate_userName,
+        e.recordUpdate_dateTime
+      FROM
+        ShiftLog.Equipment e
+        LEFT JOIN ShiftLog.DataListItems dli ON e.equipmentTypeDataListItemId = dli.dataListItemId
+        LEFT JOIN ShiftLog.EmployeeLists el ON e.employeeListId = el.employeeListId
+        AND el.recordDelete_dateTime IS NULL
+        LEFT JOIN ShiftLog.UserGroups ug ON e.userGroupId = ug.userGroupId
+      WHERE
+        e.instance = @instance ${(filters.includeDeleted ?? false)
+        ? ''
+        : 'and e.recordDelete_dateTime is null'} ${filters.equipmentNumber ===
+        undefined
+        ? ''
+        : 'and e.equipmentNumber = @equipmentNumber'}
+      ORDER BY
+        e.equipmentNumber,
+        e.equipmentName
     `);
     return result.recordset;
 }
