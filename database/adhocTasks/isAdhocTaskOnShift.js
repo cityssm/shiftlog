@@ -4,11 +4,15 @@ export default async function isAdhocTaskOnShift(shiftId, adhocTaskId) {
     const result = (await pool
         .request()
         .input('shiftId', shiftId)
-        .input('adhocTaskId', adhocTaskId).query(/* sql */ `
-        select count(*) as recordCount
-        from ShiftLog.ShiftAdhocTasks
-        where shiftId = @shiftId
-          and adhocTaskId = @adhocTaskId
-      `));
+        .input('adhocTaskId', adhocTaskId)
+        .query(/* sql */ `
+      SELECT
+        count(*) AS recordCount
+      FROM
+        ShiftLog.ShiftAdhocTasks
+      WHERE
+        shiftId = @shiftId
+        AND adhocTaskId = @adhocTaskId
+    `));
     return result.recordset[0].recordCount > 0;
 }

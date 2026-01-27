@@ -10,12 +10,17 @@ export default async function addDataListItem(form) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('dataListKey', form.dataListKey)
-        .input('dataListItem', form.dataListItem).query(/* sql */ `
-      select dataListItemId, recordDelete_dateTime
-      from ShiftLog.DataListItems
-      where instance = @instance
-        and dataListKey = @dataListKey
-        and dataListItem = @dataListItem
+        .input('dataListItem', form.dataListItem)
+        .query(/* sql */ `
+      SELECT
+        dataListItemId,
+        recordDelete_dateTime
+      FROM
+        ShiftLog.DataListItems
+      WHERE
+        instance = @instance
+        AND dataListKey = @dataListKey
+        AND dataListItem = @dataListItem
     `);
     if (existingDataListItemResult.recordset.length > 0) {
         // Check if deleted
@@ -26,14 +31,16 @@ export default async function addDataListItem(form) {
                 await pool
                     .request()
                     .input('dataListItemId', existingDataListItem.dataListItemId)
-                    .input('userName', form.userName).query(/* sql */ `
-            update ShiftLog.DataListItems
-            set
-              recordDelete_userName = null,
-              recordDelete_dateTime = null,
+                    .input('userName', form.userName)
+                    .query(/* sql */ `
+            UPDATE ShiftLog.DataListItems
+            SET
+              recordDelete_userName = NULL,
+              recordDelete_dateTime = NULL,
               recordUpdate_userName = @userName,
               recordUpdate_dateTime = getdate()
-            where dataListItemId = @dataListItemId
+            WHERE
+              dataListItemId = @dataListItemId
           `);
                 return true;
             }
@@ -52,19 +59,32 @@ export default async function addDataListItem(form) {
             .input('dataListKey', form.dataListKey)
             .input('dataListItem', form.dataListItem)
             .input('userGroupId', (form.userGroupId ?? '') === '' ? null : form.userGroupId)
-            .input('userName', form.userName).query(/* sql */ `
-        insert into ShiftLog.DataListItems (
-          instance, dataListKey, dataListItem, userGroupId, orderNumber,
-          recordCreate_userName, recordUpdate_userName
-        )
-        select 
-          @instance, @dataListKey, @dataListItem, @userGroupId,
+            .input('userName', form.userName)
+            .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.DataListItems (
+            instance,
+            dataListKey,
+            dataListItem,
+            userGroupId,
+            orderNumber,
+            recordCreate_userName,
+            recordUpdate_userName
+          )
+        SELECT
+          @instance,
+          @dataListKey,
+          @dataListItem,
+          @userGroupId,
           coalesce(max(orderNumber) + 1, 0),
-          @userName, @userName
-        from ShiftLog.DataListItems
-        where dataListKey = @dataListKey
-          and instance = @instance
-          and recordDelete_dateTime is null
+          @userName,
+          @userName
+        FROM
+          ShiftLog.DataListItems
+        WHERE
+          dataListKey = @dataListKey
+          AND instance = @instance
+          AND recordDelete_dateTime IS NULL
       `);
         return true;
     }

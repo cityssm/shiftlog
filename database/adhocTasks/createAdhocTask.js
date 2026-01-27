@@ -28,8 +28,10 @@ export default async function createAdhocTask(task, sessionUser) {
         ? null
         : task.taskDueDateTimeString)
         .input('recordCreate_userName', sessionUser.userName)
-        .input('recordUpdate_userName', sessionUser.userName).query(/* sql */ `
-        insert into ShiftLog.AdhocTasks (
+        .input('recordUpdate_userName', sessionUser.userName)
+        .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.AdhocTasks (
           adhocTaskTypeDataListItemId,
           taskDescription,
           locationAddress1,
@@ -50,7 +52,9 @@ export default async function createAdhocTask(task, sessionUser) {
           taskDueDateTime,
           recordCreate_userName,
           recordUpdate_userName
-        ) values (
+        )
+      VALUES
+        (
           @adhocTaskTypeDataListItemId,
           @taskDescription,
           @locationAddress1,
@@ -72,8 +76,8 @@ export default async function createAdhocTask(task, sessionUser) {
           @recordCreate_userName,
           @recordUpdate_userName
         )
-
-        select SCOPE_IDENTITY() as adhocTaskId
-      `);
+      SELECT
+        SCOPE_IDENTITY() AS adhocTaskId
+    `);
     return result.recordset[0].adhocTaskId;
 }

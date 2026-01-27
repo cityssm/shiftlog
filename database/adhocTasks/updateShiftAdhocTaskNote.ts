@@ -11,11 +11,14 @@ export default async function updateShiftAdhocTaskNote(
     .request()
     .input('shiftId', shiftId)
     .input('adhocTaskId', adhocTaskId)
-    .input('shiftAdhocTaskNote', shiftAdhocTaskNote).query(/* sql */ `
-      update ShiftLog.ShiftAdhocTasks
-      set shiftAdhocTaskNote = @shiftAdhocTaskNote
-      where shiftId = @shiftId
-        and adhocTaskId = @adhocTaskId
+    .input('shiftAdhocTaskNote', shiftAdhocTaskNote)
+    .query(/* sql */ `
+      UPDATE ShiftLog.ShiftAdhocTasks
+      SET
+        shiftAdhocTaskNote = @shiftAdhocTaskNote
+      WHERE
+        shiftId = @shiftId
+        AND adhocTaskId = @adhocTaskId
     `)
 
   return result.rowsAffected[0] > 0

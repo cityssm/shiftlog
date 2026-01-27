@@ -6,11 +6,17 @@ export default async function getDataLists() {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
-      select dataListKey, dataListName, isSystemList
-      from ShiftLog.DataLists
-      where recordDelete_dateTime is null
-        and instance = @instance
-      order by dataListName
+      SELECT
+        dataListKey,
+        dataListName,
+        isSystemList
+      FROM
+        ShiftLog.DataLists
+      WHERE
+        recordDelete_dateTime IS NULL
+        AND instance = @instance
+      ORDER BY
+        dataListName
     `);
     return dataListsResult.recordset;
 }

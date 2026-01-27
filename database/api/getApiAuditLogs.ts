@@ -45,9 +45,10 @@ export default async function getApiAuditLogs(
 
   // Get total count
   const countSql = /* sql */ `
-    select count(*) as totalCount
-    from ShiftLog.ApiAuditLog
-    ${whereClause}
+    SELECT
+      count(*) AS totalCount
+    FROM
+      ShiftLog.ApiAuditLog ${whereClause}
   `
 
   const countRequest = pool
@@ -75,14 +76,26 @@ export default async function getApiAuditLogs(
 
   // Get paginated data
   const sql = /* sql */ `
-    select
-      auditLogId, userName, apiKey, endpoint, requestMethod, isValidApiKey,
-      requestTime, ipAddress, userAgent, responseStatus, errorMessage
-    from ShiftLog.ApiAuditLog
-    ${whereClause}
-    order by requestTime desc
-    offset @offset rows
-    fetch next @limit rows only
+    SELECT
+      auditLogId,
+      userName,
+      apiKey,
+      [endpoint],
+      requestMethod,
+      isValidApiKey,
+      requestTime,
+      ipAddress,
+      userAgent,
+      responseStatus,
+      errorMessage
+    FROM
+      ShiftLog.ApiAuditLog ${whereClause}
+    ORDER BY
+      requestTime DESC
+    OFFSET
+      @offset rows
+    FETCH NEXT
+      @limit rows only
   `
 
   const request = pool

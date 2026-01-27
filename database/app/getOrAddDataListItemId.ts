@@ -13,17 +13,26 @@ export default async function getOrAddDataListItemId(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('dataListKey', dataListKey)
-    .input('dataListItem', dataListItem).query<DataListItem>(/* sql */ `
-      select top 1
-        dataListItemId, dataListKey, dataListItem, userGroupId, orderNumber,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime,
-        recordDelete_userName, recordDelete_dateTime
-      from ShiftLog.DataListItems
-      where
+    .input('dataListItem', dataListItem)
+    .query<DataListItem>(/* sql */ `
+      SELECT
+        TOP 1 dataListItemId,
+        dataListKey,
+        dataListItem,
+        userGroupId,
+        orderNumber,
+        recordCreate_userName,
+        recordCreate_dateTime,
+        recordUpdate_userName,
+        recordUpdate_dateTime,
+        recordDelete_userName,
+        recordDelete_dateTime
+      FROM
+        ShiftLog.DataListItems
+      WHERE
         instance = @instance
-        and dataListKey = @dataListKey
-        and dataListItem = @dataListItem
+        AND dataListKey = @dataListKey
+        AND dataListItem = @dataListItem
     `)
 
   if (dataListItems.recordset.length > 0) {
@@ -33,14 +42,16 @@ export default async function getOrAddDataListItemId(
       await pool
         .request()
         .input('dataListItemId', existingDataListItem.dataListItemId)
-        .input('userName', userName).query(/* sql */ `
-          update ShiftLog.DataListItems
-          set
+        .input('userName', userName)
+        .query(/* sql */ `
+          UPDATE ShiftLog.DataListItems
+          SET
             recordUpdate_userName = @userName,
             recordUpdate_dateTime = getutcdate(),
-            recordDelete_userName = null,
-            recordDelete_dateTime = null
-          where dataListItemId = @dataListItemId
+            recordDelete_userName = NULL,
+            recordDelete_dateTime = NULL
+          WHERE
+            dataListItemId = @dataListItemId
         `)
     }
 
@@ -52,20 +63,32 @@ export default async function getOrAddDataListItemId(
     .input('instance', getConfigProperty('application.instance'))
     .input('dataListKey', dataListKey)
     .input('dataListItem', dataListItem)
-    .input('userName', userName).query<{ dataListItemId: number }>(/* sql */ `
-      insert into ShiftLog.DataListItems (
-        instance, dataListKey, dataListItem, orderNumber,
-        recordCreate_userName, recordUpdate_userName
-      )
-      select 
-        @instance, @dataListKey, @dataListItem,
+    .input('userName', userName)
+    .query<{ dataListItemId: number }>(/* sql */ `
+      INSERT INTO
+        ShiftLog.DataListItems (
+          instance,
+          dataListKey,
+          dataListItem,
+          orderNumber,
+          recordCreate_userName,
+          recordUpdate_userName
+        )
+      SELECT
+        @instance,
+        @dataListKey,
+        @dataListItem,
         coalesce(max(orderNumber) + 1, 0),
-        @userName, @userName
-      from ShiftLog.DataListItems
-      where dataListKey = @dataListKey
-        and recordDelete_dateTime is null;
+        @userName,
+        @userName
+      FROM
+        ShiftLog.DataListItems
+      WHERE
+        dataListKey = @dataListKey
+        AND recordDelete_dateTime IS NULL;
 
-      select SCOPE_IDENTITY() as dataListItemId;
+      SELECT
+        SCOPE_IDENTITY() AS dataListItemId;
     `)
 
   return insertResult.recordset[0].dataListItemId

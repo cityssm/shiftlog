@@ -115,7 +115,7 @@
     "cypress-axe": "^1.7.0",
     "eslint-config-cityssm": "^37.0.0",
     "nodemon": "^3.1.11",
-    "prettier-config-cityssm": "^1.0.1"
+    "prettier-config-cityssm": "^2.0.0"
   },
   "optionalDependencies": {
     "node-windows": "^1.0.0-beta.8"

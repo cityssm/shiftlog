@@ -5,16 +5,12 @@ export default async function addShiftAdhocTask(shiftId, adhocTaskId, shiftAdhoc
         .request()
         .input('shiftId', shiftId)
         .input('adhocTaskId', adhocTaskId)
-        .input('shiftAdhocTaskNote', shiftAdhocTaskNote).query(/* sql */ `
-      insert into ShiftLog.ShiftAdhocTasks (
-        shiftId,
-        adhocTaskId,
-        shiftAdhocTaskNote
-      ) values (
-        @shiftId,
-        @adhocTaskId,
-        @shiftAdhocTaskNote
-      )
+        .input('shiftAdhocTaskNote', shiftAdhocTaskNote)
+        .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.ShiftAdhocTasks (shiftId, adhocTaskId, shiftAdhocTaskNote)
+      VALUES
+        (@shiftId, @adhocTaskId, @shiftAdhocTaskNote)
     `);
     return result.rowsAffected[0] > 0;
 }

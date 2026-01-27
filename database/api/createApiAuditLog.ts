@@ -30,15 +30,34 @@ export default async function createApiAuditLog(
       .input('ipAddress', form.ipAddress)
       .input('userAgent', form.userAgent)
       .input('responseStatus', form.responseStatus)
-      .input('errorMessage', form.errorMessage).query(/* sql */ `
-        insert into ShiftLog.ApiAuditLog (
-          instance, userName, apiKey, endpoint, requestMethod, isValidApiKey,
-          ipAddress, userAgent, responseStatus, errorMessage
-        )
-        values (
-          @instance, @userName, @apiKey, @endpoint, @requestMethod, @isValidApiKey,
-          @ipAddress, @userAgent, @responseStatus, @errorMessage
-        )
+      .input('errorMessage', form.errorMessage)
+      .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.ApiAuditLog (
+            instance,
+            userName,
+            apiKey,
+            [endpoint],
+            requestMethod,
+            isValidApiKey,
+            ipAddress,
+            userAgent,
+            responseStatus,
+            errorMessage
+          )
+        VALUES
+          (
+            @instance,
+            @userName,
+            @apiKey,
+            @endpoint,
+            @requestMethod,
+            @isValidApiKey,
+            @ipAddress,
+            @userAgent,
+            @responseStatus,
+            @errorMessage
+          )
       `)
 
     return true

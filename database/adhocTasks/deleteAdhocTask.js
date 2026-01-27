@@ -4,13 +4,15 @@ export default async function deleteAdhocTask(adhocTaskId, sessionUser) {
     const result = await pool
         .request()
         .input('adhocTaskId', adhocTaskId)
-        .input('recordDelete_userName', sessionUser.userName).query(/* sql */ `
-      update ShiftLog.AdhocTasks
-      set
+        .input('recordDelete_userName', sessionUser.userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.AdhocTasks
+      SET
         recordDelete_userName = @recordDelete_userName,
         recordDelete_dateTime = getdate()
-      where adhocTaskId = @adhocTaskId
-        and recordDelete_dateTime is null
+      WHERE
+        adhocTaskId = @adhocTaskId
+        AND recordDelete_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }

@@ -7,10 +7,15 @@ export default async function getSettings() {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
-      select s.settingKey, s.settingValue, s.previousSettingValue,
+      SELECT
+        s.settingKey,
+        s.settingValue,
+        s.previousSettingValue,
         s.recordUpdate_dateTime
-      from ShiftLog.ApplicationSettings s
-      where instance = @instance
+      FROM
+        ShiftLog.ApplicationSettings s
+      WHERE
+        instance = @instance
     `));
     const databaseSettings = result.recordset;
     const settings = [

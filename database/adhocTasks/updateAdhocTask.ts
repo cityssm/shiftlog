@@ -91,33 +91,35 @@ export default async function updateAdhocTask(
         : task.taskCompleteDateTimeString
     )
 
-    .input('recordUpdate_userName', sessionUser.userName).query(/* sql */ `
-        update ShiftLog.AdhocTasks
-        set
-          adhocTaskTypeDataListItemId = @adhocTaskTypeDataListItemId,
-          taskDescription = @taskDescription,
-          locationAddress1 = @locationAddress1,
-          locationAddress2 = @locationAddress2,
-          locationCityProvince = @locationCityProvince,
-          locationLatitude = @locationLatitude,
-          locationLongitude = @locationLongitude,
-          fromLocationAddress1 = @fromLocationAddress1,
-          fromLocationAddress2 = @fromLocationAddress2,
-          fromLocationCityProvince = @fromLocationCityProvince,
-          fromLocationLatitude = @fromLocationLatitude,
-          fromLocationLongitude = @fromLocationLongitude,
-          toLocationAddress1 = @toLocationAddress1,
-          toLocationAddress2 = @toLocationAddress2,
-          toLocationCityProvince = @toLocationCityProvince,
-          toLocationLatitude = @toLocationLatitude,
-          toLocationLongitude = @toLocationLongitude,
-          taskDueDateTime = @taskDueDateTimeString,
-          taskCompleteDateTime = @taskCompleteDateTimeString,
-          recordUpdate_userName = @recordUpdate_userName,
-          recordUpdate_dateTime = getdate()
-        where adhocTaskId = @adhocTaskId
-          and recordDelete_dateTime is null
-      `)
+    .input('recordUpdate_userName', sessionUser.userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.AdhocTasks
+      SET
+        adhocTaskTypeDataListItemId = @adhocTaskTypeDataListItemId,
+        taskDescription = @taskDescription,
+        locationAddress1 = @locationAddress1,
+        locationAddress2 = @locationAddress2,
+        locationCityProvince = @locationCityProvince,
+        locationLatitude = @locationLatitude,
+        locationLongitude = @locationLongitude,
+        fromLocationAddress1 = @fromLocationAddress1,
+        fromLocationAddress2 = @fromLocationAddress2,
+        fromLocationCityProvince = @fromLocationCityProvince,
+        fromLocationLatitude = @fromLocationLatitude,
+        fromLocationLongitude = @fromLocationLongitude,
+        toLocationAddress1 = @toLocationAddress1,
+        toLocationAddress2 = @toLocationAddress2,
+        toLocationCityProvince = @toLocationCityProvince,
+        toLocationLatitude = @toLocationLatitude,
+        toLocationLongitude = @toLocationLongitude,
+        taskDueDateTime = @taskDueDateTimeString,
+        taskCompleteDateTime = @taskCompleteDateTimeString,
+        recordUpdate_userName = @recordUpdate_userName,
+        recordUpdate_dateTime = getdate()
+      WHERE
+        adhocTaskId = @adhocTaskId
+        AND recordDelete_dateTime IS NULL
+    `)
 
   return result.rowsAffected[0] > 0
 }

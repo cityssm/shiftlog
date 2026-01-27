@@ -9,10 +9,10 @@ export default async function getAvailableAdhocTasks(
   const request = pool.request()
 
   let query = /* sql */ `
-    select
+    SELECT
       t.adhocTaskId,
       t.adhocTaskTypeDataListItemId,
-      td.dataListItem as adhocTaskTypeDataListItem,
+      td.dataListItem AS adhocTaskTypeDataListItem,
       t.taskDescription,
       t.locationAddress1,
       t.locationAddress2,
@@ -31,28 +31,44 @@ export default async function getAvailableAdhocTasks(
       t.toLocationLongitude,
       t.taskDueDateTime,
       t.taskCompleteDateTime,
-      (select count(*) from ShiftLog.ShiftAdhocTasks st where st.adhocTaskId = t.adhocTaskId) as shiftsCount,
+      (
+        SELECT
+          count(*)
+        FROM
+          ShiftLog.ShiftAdhocTasks st
+        WHERE
+          st.adhocTaskId = t.adhocTaskId
+      ) AS shiftsCount,
       t.recordCreate_userName,
       t.recordCreate_dateTime,
       t.recordUpdate_userName,
       t.recordUpdate_dateTime
-    from ShiftLog.AdhocTasks t
-    left join ShiftLog.DataListItems td on t.adhocTaskTypeDataListItemId = td.dataListItemId
-    where t.recordDelete_dateTime is null
-      and t.taskCompleteDateTime is null
+    FROM
+      ShiftLog.AdhocTasks t
+      LEFT JOIN ShiftLog.DataListItems td ON t.adhocTaskTypeDataListItemId = td.dataListItemId
+    WHERE
+      t.recordDelete_dateTime IS NULL
+      AND t.taskCompleteDateTime IS NULL
   `
 
   if (shiftId !== undefined && shiftId !== '') {
     request.input('shiftId', shiftId)
     query += /* sql */ `
-      and t.adhocTaskId not in (
-        select adhocTaskId from ShiftLog.ShiftAdhocTasks where shiftId = @shiftId
+      AND t.adhocTaskId NOT IN (
+        SELECT
+          adhocTaskId
+        FROM
+          ShiftLog.ShiftAdhocTasks
+        WHERE
+          shiftId = @shiftId
       )
     `
   }
 
   query += /* sql */ `
-    order by t.taskDueDateTime, t.recordCreate_dateTime desc
+    ORDER BY
+      t.taskDueDateTime,
+      t.recordCreate_dateTime DESC
   `
 
   const result = await request.query<AdhocTask>(query)

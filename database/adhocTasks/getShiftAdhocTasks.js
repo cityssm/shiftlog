@@ -1,12 +1,14 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShiftAdhocTasks(shiftId) {
     const pool = await getShiftLogConnectionPool();
-    const result = await pool.request().input('shiftId', shiftId)
+    const result = await pool
+        .request()
+        .input('shiftId', shiftId)
         .query(/* sql */ `
-      select
+      SELECT
         t.adhocTaskId,
         t.adhocTaskTypeDataListItemId,
-        td.dataListItem as adhocTaskTypeDataListItem,
+        td.dataListItem AS adhocTaskTypeDataListItem,
         t.taskDescription,
         t.locationAddress1,
         t.locationAddress2,
@@ -30,12 +32,16 @@ export default async function getShiftAdhocTasks(shiftId) {
         t.recordCreate_dateTime,
         t.recordUpdate_userName,
         t.recordUpdate_dateTime
-      from ShiftLog.ShiftAdhocTasks st
-      inner join ShiftLog.AdhocTasks t on st.adhocTaskId = t.adhocTaskId
-      left join ShiftLog.DataListItems td on t.adhocTaskTypeDataListItemId = td.dataListItemId
-      where st.shiftId = @shiftId
-        and t.recordDelete_dateTime is null
-      order by t.taskDueDateTime, t.recordCreate_dateTime desc
+      FROM
+        ShiftLog.ShiftAdhocTasks st
+        INNER JOIN ShiftLog.AdhocTasks t ON st.adhocTaskId = t.adhocTaskId
+        LEFT JOIN ShiftLog.DataListItems td ON t.adhocTaskTypeDataListItemId = td.dataListItemId
+      WHERE
+        st.shiftId = @shiftId
+        AND t.recordDelete_dateTime IS NULL
+      ORDER BY
+        t.taskDueDateTime,
+        t.recordCreate_dateTime DESC
     `);
     return result.recordset;
 }

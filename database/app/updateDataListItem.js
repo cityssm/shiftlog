@@ -8,14 +8,17 @@ export default async function updateDataListItem(form) {
             .input('dataListItemId', form.dataListItemId)
             .input('dataListItem', form.dataListItem)
             .input('userGroupId', (form.userGroupId ?? '') === '' ? null : form.userGroupId)
-            .input('userName', form.userName).query(/* sql */ `
-        update ShiftLog.DataListItems
-        set dataListItem = @dataListItem,
+            .input('userName', form.userName)
+            .query(/* sql */ `
+        UPDATE ShiftLog.DataListItems
+        SET
+          dataListItem = @dataListItem,
           userGroupId = @userGroupId,
           recordUpdate_userName = @userName,
           recordUpdate_dateTime = getdate()
-        where dataListItemId = @dataListItemId
-          and recordDelete_dateTime is null
+        WHERE
+          dataListItemId = @dataListItemId
+          AND recordDelete_dateTime IS NULL
       `);
         return result.rowsAffected[0] > 0;
     }

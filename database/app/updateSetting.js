@@ -10,13 +10,16 @@ export default async function updateSetting(updateForm) {
         .input('instance', getConfigProperty('application.instance'))
         .input('settingKey', updateForm.settingKey)
         .input('settingValue', updateForm.settingValue)
-        .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-      update ShiftLog.ApplicationSettings
-      set settingValue = @settingValue,
+        .input('recordUpdate_dateTime', currentDate)
+        .query(/* sql */ `
+      UPDATE ShiftLog.ApplicationSettings
+      SET
+        settingValue = @settingValue,
         previousSettingValue = settingValue,
         recordUpdate_dateTime = @recordUpdate_dateTime
-      where instance = @instance
-        and settingKey = @settingKey
+      WHERE
+        instance = @instance
+        AND settingKey = @settingKey
     `);
     if (updateResult.rowsAffected[0] > 0) {
         clearCacheByTableName('ApplicationSettings');
@@ -29,16 +32,25 @@ export default async function updateSetting(updateForm) {
         .input('settingKey', updateForm.settingKey)
         .input('settingValue', updateForm.settingValue)
         .input('previousSettingValue', '')
-        .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-      insert into ShiftLog.ApplicationSettings (
-        instance, settingKey, settingValue, previousSettingValue,
-        recordUpdate_dateTime
-      )
-      values (
-        @instance, @settingKey, @settingValue, @previousSettingValue,
-        @recordUpdate_dateTime
-      )
-      `);
+        .input('recordUpdate_dateTime', currentDate)
+        .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.ApplicationSettings (
+          instance,
+          settingKey,
+          settingValue,
+          previousSettingValue,
+          recordUpdate_dateTime
+        )
+      VALUES
+        (
+          @instance,
+          @settingKey,
+          @settingValue,
+          @previousSettingValue,
+          @recordUpdate_dateTime
+        )
+    `);
     if (insertResult.rowsAffected[0] > 0) {
         clearCacheByTableName('ApplicationSettings');
         return true;

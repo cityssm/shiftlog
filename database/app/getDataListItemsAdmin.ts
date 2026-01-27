@@ -20,14 +20,21 @@ export default async function getDataListItemsAdmin(
     .input('instance', getConfigProperty('application.instance'))
     .input('dataListKey', dataListKey)
     .query<DataListItemWithDetails>(/* sql */ `
-      select
-        dataListItemId, dataListKey, dataListItem, orderNumber, userGroupId
-      from ShiftLog.DataListItems
-      where 
+      SELECT
+        dataListItemId,
+        dataListKey,
+        dataListItem,
+        orderNumber,
+        userGroupId
+      FROM
+        ShiftLog.DataListItems
+      WHERE
         instance = @instance
-        and dataListKey = @dataListKey
-        and recordDelete_dateTime is null
-      order by orderNumber, dataListItem
+        AND dataListKey = @dataListKey
+        AND recordDelete_dateTime IS NULL
+      ORDER BY
+        orderNumber,
+        dataListItem
     `)
 
   return dataListItemsResult.recordset

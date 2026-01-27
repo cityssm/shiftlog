@@ -20,15 +20,26 @@ export default async function createDataList(
       .input('dataListKey', form.dataListKey)
       .input('dataListName', form.dataListName)
       .input('isSystemList', form.isSystemList)
-      .input('userName', userName).query(/* sql */ `
-        insert into ShiftLog.DataLists (
-          instance, dataListKey, dataListName, isSystemList,
-          recordCreate_userName, recordUpdate_userName
-        )
-        values (
-          @instance, @dataListKey, @dataListName, @isSystemList,
-          @userName, @userName
-        )
+      .input('userName', userName)
+      .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.DataLists (
+            instance,
+            dataListKey,
+            dataListName,
+            isSystemList,
+            recordCreate_userName,
+            recordUpdate_userName
+          )
+        VALUES
+          (
+            @instance,
+            @dataListKey,
+            @dataListName,
+            @isSystemList,
+            @userName,
+            @userName
+          )
       `)
 
     return true
