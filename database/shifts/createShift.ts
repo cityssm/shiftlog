@@ -21,11 +21,11 @@ export default async function createShift(
   const pool = await getShiftLogConnectionPool()
 
   let recordLockDate = new Date(createShiftForm.shiftDateString)
-  
+
   if (recordLockDate < new Date()) {
     recordLockDate = new Date()
   }
-  
+
   recordLockDate.setDate(recordLockDate.getDate() + 7)
 
   const result = (await pool
@@ -37,28 +37,32 @@ export default async function createShift(
     .input('supervisorEmployeeNumber', createShiftForm.supervisorEmployeeNumber)
     .input('shiftDescription', createShiftForm.shiftDescription)
     .input('userName', userName)
-    .input('recordLockDate', recordLockDate).query(/* sql */ `
-      insert into ShiftLog.Shifts (
-        instance,
-        shiftTypeDataListItemId,
-        supervisorEmployeeNumber,
-        shiftDate,
-        shiftTimeDataListItemId,
-        shiftDescription,
-        recordCreate_userName, recordUpdate_userName,
-        recordLock_dateTime
-      )
-      output inserted.shiftId
-      values (
-        @instance,
-        @shiftTypeDataListItemId,
-        @supervisorEmployeeNumber,
-        @shiftDate,
-        @shiftTimeDataListItemId,
-        @shiftDescription,
-        @userName, @userName,
-        @recordLockDate
-      )
+    .input('recordLockDate', recordLockDate)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.Shifts (
+          instance,
+          shiftTypeDataListItemId,
+          supervisorEmployeeNumber,
+          shiftDate,
+          shiftTimeDataListItemId,
+          shiftDescription,
+          recordCreate_userName,
+          recordUpdate_userName,
+          recordLock_dateTime
+        ) output inserted.shiftId
+      VALUES
+        (
+          @instance,
+          @shiftTypeDataListItemId,
+          @supervisorEmployeeNumber,
+          @shiftDate,
+          @shiftTimeDataListItemId,
+          @shiftDescription,
+          @userName,
+          @userName,
+          @recordLockDate
+        )
     `)) as mssql.IResult<{ shiftId: number }>
 
   return result.recordset[0].shiftId

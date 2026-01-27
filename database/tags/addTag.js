@@ -13,16 +13,30 @@ export default async function addTag(tagFields, user) {
             .input('recordCreate_userName', user.userName)
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
-            .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        INSERT INTO ShiftLog.Tags (
-          instance, tagName, tagBackgroundColor, tagTextColor,
-          recordCreate_userName, recordCreate_dateTime,
-          recordUpdate_userName, recordUpdate_dateTime
-        ) VALUES (
-          @instance, @tagName, @tagBackgroundColor, @tagTextColor,
-          @recordCreate_userName, @recordCreate_dateTime,
-          @recordUpdate_userName, @recordUpdate_dateTime
-        )
+            .input('recordUpdate_dateTime', currentDate)
+            .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.Tags (
+            instance,
+            tagName,
+            tagBackgroundColor,
+            tagTextColor,
+            recordCreate_userName,
+            recordCreate_dateTime,
+            recordUpdate_userName,
+            recordUpdate_dateTime
+          )
+        VALUES
+          (
+            @instance,
+            @tagName,
+            @tagBackgroundColor,
+            @tagTextColor,
+            @recordCreate_userName,
+            @recordCreate_dateTime,
+            @recordUpdate_userName,
+            @recordUpdate_dateTime
+          )
       `);
         return true;
     }

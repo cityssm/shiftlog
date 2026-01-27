@@ -23,14 +23,17 @@ export default async function updateTag(
       .input('tagBackgroundColor', updateTagForm.tagBackgroundColor)
       .input('tagTextColor', updateTagForm.tagTextColor)
       .input('recordUpdate_userName', user.userName)
-      .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
+      .input('recordUpdate_dateTime', currentDate)
+      .query(/* sql */ `
         UPDATE ShiftLog.Tags
-        SET tagBackgroundColor = @tagBackgroundColor,
-            tagTextColor = @tagTextColor,
-            recordUpdate_userName = @recordUpdate_userName,
-            recordUpdate_dateTime = @recordUpdate_dateTime
-        WHERE tagName = @tagName
-          and instance = @instance
+        SET
+          tagBackgroundColor = @tagBackgroundColor,
+          tagTextColor = @tagTextColor,
+          recordUpdate_userName = @recordUpdate_userName,
+          recordUpdate_dateTime = @recordUpdate_dateTime
+        WHERE
+          tagName = @tagName
+          AND instance = @instance
           AND recordDelete_dateTime IS NULL
       `)
 

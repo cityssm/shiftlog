@@ -5,11 +5,14 @@ export default async function updateShiftWorkOrderNote(shiftId, workOrderId, shi
         .request()
         .input('shiftId', shiftId)
         .input('workOrderId', workOrderId)
-        .input('shiftWorkOrderNote', shiftWorkOrderNote).query(/* sql */ `
-      update ShiftLog.ShiftWorkOrders
-      set shiftWorkOrderNote = @shiftWorkOrderNote
-      where shiftId = @shiftId
-        and workOrderId = @workOrderId
+        .input('shiftWorkOrderNote', shiftWorkOrderNote)
+        .query(/* sql */ `
+      UPDATE ShiftLog.ShiftWorkOrders
+      SET
+        shiftWorkOrderNote = @shiftWorkOrderNote
+      WHERE
+        shiftId = @shiftId
+        AND workOrderId = @workOrderId
     `);
     return result.rowsAffected[0] > 0;
 }

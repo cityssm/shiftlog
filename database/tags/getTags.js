@@ -6,12 +6,21 @@ export default async function getTags() {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
-    SELECT tagName, tagBackgroundColor, tagTextColor,
-           recordCreate_userName, recordCreate_dateTime,
-           recordUpdate_userName, recordUpdate_dateTime
-    FROM ShiftLog.Tags
-    WHERE instance = @instance and recordDelete_dateTime IS NULL
-    ORDER BY tagName
-  `);
+      SELECT
+        tagName,
+        tagBackgroundColor,
+        tagTextColor,
+        recordCreate_userName,
+        recordCreate_dateTime,
+        recordUpdate_userName,
+        recordUpdate_dateTime
+      FROM
+        ShiftLog.Tags
+      WHERE
+        instance = @instance
+        AND recordDelete_dateTime IS NULL
+      ORDER BY
+        tagName
+    `);
     return result.recordset;
 }

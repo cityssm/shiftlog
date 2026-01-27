@@ -10,28 +10,40 @@ export default async function getShiftEmployees(
   const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
 
   const sql = /* sql */ `
-    select se.shiftId, se.employeeNumber, se.crewId, se.shiftEmployeeNote,
-      e.firstName, e.lastName, e.userGroupId,
+    SELECT
+      se.shiftId,
+      se.employeeNumber,
+      se.crewId,
+      se.shiftEmployeeNote,
+      e.firstName,
+      e.lastName,
+      e.userGroupId,
       c.crewName
-    from ShiftLog.ShiftEmployees se
-    inner join ShiftLog.Employees e on se.instance = e.instance and se.employeeNumber = e.employeeNumber
-    left join ShiftLog.Crews c on se.crewId = c.crewId
-    where se.shiftId = @shiftId
-      and e.recordDelete_dateTime is null
-      ${
-        user === undefined
-          ? ''
-          : `
-            and (
-              e.userGroupId is null or e.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+    FROM
+      ShiftLog.ShiftEmployees se
+      INNER JOIN ShiftLog.Employees e ON se.instance = e.instance
+      AND se.employeeNumber = e.employeeNumber
+      LEFT JOIN ShiftLog.Crews c ON se.crewId = c.crewId
+    WHERE
+      se.shiftId = @shiftId
+      AND e.recordDelete_dateTime IS NULL ${user === undefined
+        ? ''
+        : /* sql */ `
+            AND (
+              e.userGroupId IS NULL
+              OR e.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
-          `
-      }
-    order by e.lastName, e.firstName
+          `}
+    ORDER BY
+      e.lastName,
+      e.firstName
   `
 
   const result = (await pool

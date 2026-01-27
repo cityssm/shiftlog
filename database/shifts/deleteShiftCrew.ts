@@ -16,9 +16,12 @@ export default async function deleteShiftCrew(
     await pool
       .request()
       .input('shiftId', form.shiftId)
-      .input('crewId', form.crewId).query(/* sql */ `
-        delete from ShiftLog.ShiftCrews
-        where shiftId = @shiftId and crewId = @crewId
+      .input('crewId', form.crewId)
+      .query(/* sql */ `
+        DELETE FROM ShiftLog.ShiftCrews
+        WHERE
+          shiftId = @shiftId
+          AND crewId = @crewId
       `)
 
     return true

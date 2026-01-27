@@ -16,51 +16,53 @@ export default async function getShiftWorkOrders(
   const result = (await pool
     .request()
     .input('shiftId', shiftId)
-    .input('instance', getConfigProperty('application.instance')).query(
-      /* sql */ `
-        select
-          w.workOrderId,
-          w.workOrderNumberPrefix,
-          w.workOrderNumberYear,
-          w.workOrderNumberSequence,
-          w.workOrderNumberOverride,
-          w.workOrderNumber,
-          w.workOrderTypeId,
-          wt.workOrderType,
-          w.workOrderStatusDataListItemId,
-          wsd.dataListItem as workOrderStatusDataListItem,
-          w.workOrderPriorityDataListItemId,
-          wpd.dataListItem as workOrderPriorityDataListItem,
-          w.workOrderDetails,
-          w.workOrderOpenDateTime,
-          w.workOrderDueDateTime,
-          w.workOrderCloseDateTime,
-          w.requestorName,
-          w.requestorContactInfo,
-          w.assignedToDataListItemId,
-          atd.dataListItem as assignedToDataListItem,
-          w.locationAddress1,
-          w.locationAddress2,
-          w.locationCityProvince,
-          w.locationLatitude,
-          w.locationLongitude,
-          sw.shiftWorkOrderNote,
-          w.recordCreate_userName,
-          w.recordCreate_dateTime,
-          w.recordUpdate_userName,
-          w.recordUpdate_dateTime
-        from ShiftLog.ShiftWorkOrders sw
-        inner join ShiftLog.WorkOrders w on sw.workOrderId = w.workOrderId
-        inner join ShiftLog.WorkOrderTypes wt on w.workOrderTypeId = wt.workOrderTypeId
-        left join ShiftLog.DataListItems wsd on w.workOrderStatusDataListItemId = wsd.dataListItemId
-        left join ShiftLog.DataListItems wpd on w.workOrderPriorityDataListItemId = wpd.dataListItemId
-        left join ShiftLog.DataListItems atd on w.assignedToDataListItemId = atd.dataListItemId
-        where sw.shiftId = @shiftId
-          and w.instance = @instance
-          and w.recordDelete_dateTime is null
-        order by w.workOrderNumber desc
-      `
-    )) as mssql.IResult<ShiftWorkOrder>
+    .input('instance', getConfigProperty('application.instance'))
+    .query(/* sql */ `
+      SELECT
+        w.workOrderId,
+        w.workOrderNumberPrefix,
+        w.workOrderNumberYear,
+        w.workOrderNumberSequence,
+        w.workOrderNumberOverride,
+        w.workOrderNumber,
+        w.workOrderTypeId,
+        wt.workOrderType,
+        w.workOrderStatusDataListItemId,
+        wsd.dataListItem AS workOrderStatusDataListItem,
+        w.workOrderPriorityDataListItemId,
+        wpd.dataListItem AS workOrderPriorityDataListItem,
+        w.workOrderDetails,
+        w.workOrderOpenDateTime,
+        w.workOrderDueDateTime,
+        w.workOrderCloseDateTime,
+        w.requestorName,
+        w.requestorContactInfo,
+        w.assignedToDataListItemId,
+        atd.dataListItem AS assignedToDataListItem,
+        w.locationAddress1,
+        w.locationAddress2,
+        w.locationCityProvince,
+        w.locationLatitude,
+        w.locationLongitude,
+        sw.shiftWorkOrderNote,
+        w.recordCreate_userName,
+        w.recordCreate_dateTime,
+        w.recordUpdate_userName,
+        w.recordUpdate_dateTime
+      FROM
+        ShiftLog.ShiftWorkOrders sw
+        INNER JOIN ShiftLog.WorkOrders w ON sw.workOrderId = w.workOrderId
+        INNER JOIN ShiftLog.WorkOrderTypes wt ON w.workOrderTypeId = wt.workOrderTypeId
+        LEFT JOIN ShiftLog.DataListItems wsd ON w.workOrderStatusDataListItemId = wsd.dataListItemId
+        LEFT JOIN ShiftLog.DataListItems wpd ON w.workOrderPriorityDataListItemId = wpd.dataListItemId
+        LEFT JOIN ShiftLog.DataListItems atd ON w.assignedToDataListItemId = atd.dataListItemId
+      WHERE
+        sw.shiftId = @shiftId
+        AND w.instance = @instance
+        AND w.recordDelete_dateTime IS NULL
+      ORDER BY
+        w.workOrderNumber DESC
+    `)) as mssql.IResult<ShiftWorkOrder>
 
   return result.recordset
 }

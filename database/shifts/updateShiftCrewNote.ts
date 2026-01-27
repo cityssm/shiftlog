@@ -18,11 +18,14 @@ export default async function updateShiftCrewNote(
       .request()
       .input('shiftId', form.shiftId)
       .input('crewId', form.crewId)
-      .input('shiftCrewNote', form.shiftCrewNote).query(/* sql */ `
-        update ShiftLog.ShiftCrews
-        set shiftCrewNote = @shiftCrewNote
-        where shiftId = @shiftId
-          and crewId = @crewId
+      .input('shiftCrewNote', form.shiftCrewNote)
+      .query(/* sql */ `
+        UPDATE ShiftLog.ShiftCrews
+        SET
+          shiftCrewNote = @shiftCrewNote
+        WHERE
+          shiftId = @shiftId
+          AND crewId = @crewId
       `)
 
     return true

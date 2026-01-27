@@ -23,23 +23,39 @@ export default async function copyFromPreviousShift(
         .request()
         .input('currentShiftId', form.currentShiftId)
         .input('previousShiftId', form.previousShiftId)
-        .input('userName', user.userName).query(/* sql */ `
-          insert into ShiftLog.ShiftCrews (shiftId, crewId, shiftCrewNote)
-          select @currentShiftId, sc.crewId, sc.shiftCrewNote
-          from ShiftLog.ShiftCrews sc
-          inner join ShiftLog.Crews c on sc.crewId = c.crewId
-          where sc.shiftId = @previousShiftId
-            and c.recordDelete_dateTime is null
-            and (
-              c.userGroupId is null or c.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+        .input('userName', user.userName)
+        .query(/* sql */ `
+          INSERT INTO
+            ShiftLog.ShiftCrews (shiftId, crewId, shiftCrewNote)
+          SELECT
+            @currentShiftId,
+            sc.crewId,
+            sc.shiftCrewNote
+          FROM
+            ShiftLog.ShiftCrews sc
+            INNER JOIN ShiftLog.Crews c ON sc.crewId = c.crewId
+          WHERE
+            sc.shiftId = @previousShiftId
+            AND c.recordDelete_dateTime IS NULL
+            AND (
+              c.userGroupId IS NULL
+              OR c.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
-            and not exists (
-              select 1 from ShiftLog.ShiftCrews sc2
-              where sc2.shiftId = @currentShiftId and sc2.crewId = sc.crewId
+            AND NOT EXISTS (
+              SELECT
+                1
+              FROM
+                ShiftLog.ShiftCrews sc2
+              WHERE
+                sc2.shiftId = @currentShiftId
+                AND sc2.crewId = sc.crewId
             )
         `)
     }
@@ -50,23 +66,48 @@ export default async function copyFromPreviousShift(
         .request()
         .input('currentShiftId', form.currentShiftId)
         .input('previousShiftId', form.previousShiftId)
-        .input('userName', user.userName).query(/* sql */ `
-          insert into ShiftLog.ShiftEmployees (shiftId, instance, employeeNumber, crewId, shiftEmployeeNote)
-          select @currentShiftId, se.instance, se.employeeNumber, se.crewId, se.shiftEmployeeNote
-          from ShiftLog.ShiftEmployees se
-          inner join ShiftLog.Employees e on se.instance = e.instance and se.employeeNumber = e.employeeNumber
-          where se.shiftId = @previousShiftId
-            and e.recordDelete_dateTime is null
-            and (
-              e.userGroupId is null or e.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+        .input('userName', user.userName)
+        .query(/* sql */ `
+          INSERT INTO
+            ShiftLog.ShiftEmployees (
+              shiftId,
+              instance,
+              employeeNumber,
+              crewId,
+              shiftEmployeeNote
+            )
+          SELECT
+            @currentShiftId,
+            se.instance,
+            se.employeeNumber,
+            se.crewId,
+            se.shiftEmployeeNote
+          FROM
+            ShiftLog.ShiftEmployees se
+            INNER JOIN ShiftLog.Employees e ON se.instance = e.instance
+            AND se.employeeNumber = e.employeeNumber
+          WHERE
+            se.shiftId = @previousShiftId
+            AND e.recordDelete_dateTime IS NULL
+            AND (
+              e.userGroupId IS NULL
+              OR e.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
-            and not exists (
-              select 1 from ShiftLog.ShiftEmployees se2
-              where se2.shiftId = @currentShiftId and se2.employeeNumber = se.employeeNumber
+            AND NOT EXISTS (
+              SELECT
+                1
+              FROM
+                ShiftLog.ShiftEmployees se2
+              WHERE
+                se2.shiftId = @currentShiftId
+                AND se2.employeeNumber = se.employeeNumber
             )
         `)
     }
@@ -77,32 +118,61 @@ export default async function copyFromPreviousShift(
         .request()
         .input('currentShiftId', form.currentShiftId)
         .input('previousShiftId', form.previousShiftId)
-        .input('userName', user.userName).query(/* sql */ `
-          insert into ShiftLog.ShiftEquipment (shiftId, instance, equipmentNumber, employeeNumber, shiftEquipmentNote)
-          select @currentShiftId, se.instance, se.equipmentNumber, se.employeeNumber, se.shiftEquipmentNote
-          from ShiftLog.ShiftEquipment se
-          inner join ShiftLog.Equipment eq on se.instance = eq.instance and se.equipmentNumber = eq.equipmentNumber
-          where se.shiftId = @previousShiftId
-            and eq.recordDelete_dateTime is null
-            and (
-              eq.userGroupId is null or eq.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+        .input('userName', user.userName)
+        .query(/* sql */ `
+          INSERT INTO
+            ShiftLog.ShiftEquipment (
+              shiftId,
+              instance,
+              equipmentNumber,
+              employeeNumber,
+              shiftEquipmentNote
+            )
+          SELECT
+            @currentShiftId,
+            se.instance,
+            se.equipmentNumber,
+            se.employeeNumber,
+            se.shiftEquipmentNote
+          FROM
+            ShiftLog.ShiftEquipment se
+            INNER JOIN ShiftLog.Equipment eq ON se.instance = eq.instance
+            AND se.equipmentNumber = eq.equipmentNumber
+          WHERE
+            se.shiftId = @previousShiftId
+            AND eq.recordDelete_dateTime IS NULL
+            AND (
+              eq.userGroupId IS NULL
+              OR eq.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
-            and not exists (
-              select 1 from ShiftLog.ShiftEquipment se2
-              where se2.shiftId = @currentShiftId and se2.equipmentNumber = se.equipmentNumber
+            AND NOT EXISTS (
+              SELECT
+                1
+              FROM
+                ShiftLog.ShiftEquipment se2
+              WHERE
+                se2.shiftId = @currentShiftId
+                AND se2.equipmentNumber = se.equipmentNumber
             )
-            and (
+            AND (
               -- Validate employee is allowed for equipment with employee list
-              se.employeeNumber is null
-              or eq.employeeListId is null
-              or exists (
-                select 1 from ShiftLog.EmployeeListMembers elm
-                where elm.employeeListId = eq.employeeListId
-                  and elm.employeeNumber = se.employeeNumber
+              se.employeeNumber IS NULL
+              OR eq.employeeListId IS NULL
+              OR EXISTS (
+                SELECT
+                  1
+                FROM
+                  ShiftLog.EmployeeListMembers elm
+                WHERE
+                  elm.employeeListId = eq.employeeListId
+                  AND elm.employeeNumber = se.employeeNumber
               )
             )
         `)

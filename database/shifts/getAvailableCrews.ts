@@ -17,20 +17,29 @@ export default async function getAvailableCrews(
   const result = await pool
     .request()
     .input('instance', instance)
-    .input('shiftDateString', shiftDateString).query(`
-      select c.crewId, c.crewName
-      from ShiftLog.Crews c
-      where c.instance = @instance
-        and c.recordDelete_dateTime is null
-        and c.crewId not in (
-          select sc.crewId
-          from ShiftLog.ShiftCrews sc
-          inner join ShiftLog.Shifts s on sc.shiftId = s.shiftId
-          where s.instance = @instance
-            and s.recordDelete_dateTime is null
-            and s.shiftDate = @shiftDateString
+    .input('shiftDateString', shiftDateString)
+    .query(/* sql */ `
+      SELECT
+        c.crewId,
+        c.crewName
+      FROM
+        ShiftLog.Crews c
+      WHERE
+        c.instance = @instance
+        AND c.recordDelete_dateTime IS NULL
+        AND c.crewId NOT IN (
+          SELECT
+            sc.crewId
+          FROM
+            ShiftLog.ShiftCrews sc
+            INNER JOIN ShiftLog.Shifts s ON sc.shiftId = s.shiftId
+          WHERE
+            s.instance = @instance
+            AND s.recordDelete_dateTime IS NULL
+            AND s.shiftDate = @shiftDateString
         )
-      order by c.crewName
+      ORDER BY
+        c.crewName
     `)
 
   return result.recordset

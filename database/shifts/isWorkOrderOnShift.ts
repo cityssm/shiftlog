@@ -11,11 +11,15 @@ export default async function isWorkOrderOnShift(
   const result = (await pool
     .request()
     .input('shiftId', shiftId)
-    .input('workOrderId', workOrderId).query(/* sql */ `
-      select count(*) as recordCount
-      from ShiftLog.ShiftWorkOrders
-      where shiftId = @shiftId
-        and workOrderId = @workOrderId
+    .input('workOrderId', workOrderId)
+    .query(/* sql */ `
+      SELECT
+        count(*) AS recordCount
+      FROM
+        ShiftLog.ShiftWorkOrders
+      WHERE
+        shiftId = @shiftId
+        AND workOrderId = @workOrderId
     `)) as mssql.IResult<{ recordCount: number }>
 
   return result.recordset[0].recordCount > 0

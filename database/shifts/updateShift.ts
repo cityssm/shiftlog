@@ -40,9 +40,10 @@ export default async function updateShift(
     .input('shiftDescription', updateShiftForm.shiftDescription)
     .input('userName', userName)
     .input('recordLockDate', recordLockDate)
-    .input('shiftId', updateShiftForm.shiftId).query(/* sql */ `
-      update ShiftLog.Shifts
-      set
+    .input('shiftId', updateShiftForm.shiftId)
+    .query(/* sql */ `
+      UPDATE ShiftLog.Shifts
+      SET
         shiftTypeDataListItemId = @shiftTypeDataListItemId,
         supervisorEmployeeNumber = @supervisorEmployeeNumber,
         shiftDate = @shiftDate,
@@ -51,9 +52,10 @@ export default async function updateShift(
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getutcdate(),
         recordLock_dateTime = @recordLockDate
-      where shiftId = @shiftId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      WHERE
+        shiftId = @shiftId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `)) as mssql.IResult<{ shiftId: number }>
 
   return result.rowsAffected[0] > 0

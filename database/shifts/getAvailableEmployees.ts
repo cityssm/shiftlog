@@ -19,20 +19,32 @@ export default async function getAvailableEmployees(
   const result = await pool
     .request()
     .input('instance', instance)
-    .input('shiftDateString', shiftDateString).query(`
-      select e.employeeNumber, e.firstName, e.lastName, e.isSupervisor
-      from ShiftLog.Employees e
-      where e.instance = @instance
-        and e.recordDelete_dateTime is null
-        and e.employeeNumber not in (
-          select se.employeeNumber
-          from ShiftLog.ShiftEmployees se
-          inner join ShiftLog.Shifts s on se.shiftId = s.shiftId
-          where s.instance = @instance
-            and s.recordDelete_dateTime is null
-            and s.shiftDate = @shiftDateString
+    .input('shiftDateString', shiftDateString)
+    .query(/* sql */ `
+      SELECT
+        e.employeeNumber,
+        e.firstName,
+        e.lastName,
+        e.isSupervisor
+      FROM
+        ShiftLog.Employees e
+      WHERE
+        e.instance = @instance
+        AND e.recordDelete_dateTime IS NULL
+        AND e.employeeNumber NOT IN (
+          SELECT
+            se.employeeNumber
+          FROM
+            ShiftLog.ShiftEmployees se
+            INNER JOIN ShiftLog.Shifts s ON se.shiftId = s.shiftId
+          WHERE
+            s.instance = @instance
+            AND s.recordDelete_dateTime IS NULL
+            AND s.shiftDate = @shiftDateString
         )
-      order by e.lastName, e.firstName
+      ORDER BY
+        e.lastName,
+        e.firstName
     `)
 
   return result.recordset

@@ -4,10 +4,12 @@ export default async function deleteShiftWorkOrder(shiftId, workOrderId) {
     const result = await pool
         .request()
         .input('shiftId', shiftId)
-        .input('workOrderId', workOrderId).query(/* sql */ `
-      delete from ShiftLog.ShiftWorkOrders
-      where shiftId = @shiftId
-        and workOrderId = @workOrderId
+        .input('workOrderId', workOrderId)
+        .query(/* sql */ `
+      DELETE FROM ShiftLog.ShiftWorkOrders
+      WHERE
+        shiftId = @shiftId
+        AND workOrderId = @workOrderId
     `);
     return result.rowsAffected[0] > 0;
 }

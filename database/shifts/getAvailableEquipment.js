@@ -6,20 +6,29 @@ export default async function getAvailableEquipment(shiftDateString) {
     const result = await pool
         .request()
         .input('instance', instance)
-        .input('shiftDateString', shiftDateString).query(`
-      select eq.equipmentNumber, eq.equipmentName
-      from ShiftLog.Equipment eq
-      where eq.instance = @instance
-        and eq.recordDelete_dateTime is null
-        and eq.equipmentNumber not in (
-          select seq.equipmentNumber
-          from ShiftLog.ShiftEquipment seq
-          inner join ShiftLog.Shifts s on seq.shiftId = s.shiftId
-          where s.instance = @instance
-            and s.recordDelete_dateTime is null
-            and s.shiftDate = @shiftDateString
+        .input('shiftDateString', shiftDateString)
+        .query(/* sql */ `
+      SELECT
+        eq.equipmentNumber,
+        eq.equipmentName
+      FROM
+        ShiftLog.Equipment eq
+      WHERE
+        eq.instance = @instance
+        AND eq.recordDelete_dateTime IS NULL
+        AND eq.equipmentNumber NOT IN (
+          SELECT
+            seq.equipmentNumber
+          FROM
+            ShiftLog.ShiftEquipment seq
+            INNER JOIN ShiftLog.Shifts s ON seq.shiftId = s.shiftId
+          WHERE
+            s.instance = @instance
+            AND s.recordDelete_dateTime IS NULL
+            AND s.shiftDate = @shiftDateString
         )
-      order by eq.equipmentName
+      ORDER BY
+        eq.equipmentName
     `);
     return result.recordset;
 }

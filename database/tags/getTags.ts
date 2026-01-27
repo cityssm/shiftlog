@@ -9,13 +9,22 @@ export default async function getTags(): Promise<Tag[]> {
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .query<Tag>(/* sql */ `
-    SELECT tagName, tagBackgroundColor, tagTextColor,
-           recordCreate_userName, recordCreate_dateTime,
-           recordUpdate_userName, recordUpdate_dateTime
-    FROM ShiftLog.Tags
-    WHERE instance = @instance and recordDelete_dateTime IS NULL
-    ORDER BY tagName
-  `)
+      SELECT
+        tagName,
+        tagBackgroundColor,
+        tagTextColor,
+        recordCreate_userName,
+        recordCreate_dateTime,
+        recordUpdate_userName,
+        recordUpdate_dateTime
+      FROM
+        ShiftLog.Tags
+      WHERE
+        instance = @instance
+        AND recordDelete_dateTime IS NULL
+      ORDER BY
+        tagName
+    `)
 
   return result.recordset as Tag[]
 }

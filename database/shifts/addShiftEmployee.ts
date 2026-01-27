@@ -22,8 +22,22 @@ export default async function addShiftEmployee(
       .input('crewId', (form.crewId ?? '') === '' ? undefined : form.crewId)
       .input('shiftEmployeeNote', form.shiftEmployeeNote ?? '')
       .query(/* sql */ `
-        insert into ShiftLog.ShiftEmployees (shiftId, instance, employeeNumber, crewId, shiftEmployeeNote)
-        values (@shiftId, @instance, @employeeNumber, @crewId, @shiftEmployeeNote)
+        INSERT INTO
+          ShiftLog.ShiftEmployees (
+            shiftId,
+            instance,
+            employeeNumber,
+            crewId,
+            shiftEmployeeNote
+          )
+        VALUES
+          (
+            @shiftId,
+            @instance,
+            @employeeNumber,
+            @crewId,
+            @shiftEmployeeNote
+          )
       `)
 
     return true

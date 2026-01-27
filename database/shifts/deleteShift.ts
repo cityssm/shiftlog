@@ -13,14 +13,16 @@ export default async function deleteShift(
     .request()
     .input('shiftId', shiftId)
     .input('instance', getConfigProperty('application.instance'))
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.Shifts
-      set
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.Shifts
+      SET
         recordDelete_userName = @userName,
         recordDelete_dateTime = getdate()
-      where shiftId = @shiftId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      WHERE
+        shiftId = @shiftId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `)) as mssql.IResult<Record<string, never>>
 
   return result.rowsAffected[0] > 0

@@ -3,26 +3,40 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function getShiftEquipment(shiftId, user) {
     const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
     const sql = /* sql */ `
-    select se.shiftId, se.equipmentNumber, se.employeeNumber, se.shiftEquipmentNote,
-      eq.equipmentName, eq.userGroupId,
-      e.firstName as employeeFirstName, e.lastName as employeeLastName
-    from ShiftLog.ShiftEquipment se
-    inner join ShiftLog.Equipment eq on se.instance = eq.instance and se.equipmentNumber = eq.equipmentNumber
-    left join ShiftLog.Employees e on se.instance = e.instance and se.employeeNumber = e.employeeNumber
-    where se.shiftId = @shiftId
-      and eq.recordDelete_dateTime is null
-      ${user === undefined
+    SELECT
+      se.shiftId,
+      se.equipmentNumber,
+      se.employeeNumber,
+      se.shiftEquipmentNote,
+      eq.equipmentName,
+      eq.userGroupId,
+      e.firstName AS employeeFirstName,
+      e.lastName AS employeeLastName
+    FROM
+      ShiftLog.ShiftEquipment se
+      INNER JOIN ShiftLog.Equipment eq ON se.instance = eq.instance
+      AND se.equipmentNumber = eq.equipmentNumber
+      LEFT JOIN ShiftLog.Employees e ON se.instance = e.instance
+      AND se.employeeNumber = e.employeeNumber
+    WHERE
+      se.shiftId = @shiftId
+      AND eq.recordDelete_dateTime IS NULL ${user === undefined
         ? ''
-        : `
-            and (
-              eq.userGroupId is null or eq.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+        : /* sql */ `
+            AND (
+              eq.userGroupId IS NULL
+              OR eq.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
           `}
-    order by eq.equipmentName
+    ORDER BY
+      eq.equipmentName
   `;
     const result = (await pool
         .request()

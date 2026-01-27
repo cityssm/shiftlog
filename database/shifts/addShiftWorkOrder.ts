@@ -11,9 +11,12 @@ export default async function addShiftWorkOrder(
     .request()
     .input('shiftId', shiftId)
     .input('workOrderId', workOrderId)
-    .input('shiftWorkOrderNote', shiftWorkOrderNote).query(/* sql */ `
-      insert into ShiftLog.ShiftWorkOrders (shiftId, workOrderId, shiftWorkOrderNote)
-      values (@shiftId, @workOrderId, @shiftWorkOrderNote)
+    .input('shiftWorkOrderNote', shiftWorkOrderNote)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.ShiftWorkOrders (shiftId, workOrderId, shiftWorkOrderNote)
+      VALUES
+        (@shiftId, @workOrderId, @shiftWorkOrderNote)
     `)
 
   return result.rowsAffected[0] > 0

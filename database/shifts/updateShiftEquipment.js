@@ -7,11 +7,14 @@ export default async function updateShiftEquipment(form) {
             .request()
             .input('shiftId', form.shiftId)
             .input('equipmentNumber', form.equipmentNumber)
-            .input('employeeNumber', (form.employeeNumber ?? '') === '' ? undefined : form.employeeNumber).query(/* sql */ `
-        update ShiftLog.ShiftEquipment
-        set employeeNumber = @employeeNumber
-        where shiftId = @shiftId
-          and equipmentNumber = @equipmentNumber
+            .input('employeeNumber', (form.employeeNumber ?? '') === '' ? undefined : form.employeeNumber)
+            .query(/* sql */ `
+        UPDATE ShiftLog.ShiftEquipment
+        SET
+          employeeNumber = @employeeNumber
+        WHERE
+          shiftId = @shiftId
+          AND equipmentNumber = @equipmentNumber
       `);
         return true;
     }

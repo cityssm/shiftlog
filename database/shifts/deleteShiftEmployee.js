@@ -6,9 +6,12 @@ export default async function deleteShiftEmployee(form) {
         await pool
             .request()
             .input('shiftId', form.shiftId)
-            .input('employeeNumber', form.employeeNumber).query(/* sql */ `
-        delete from ShiftLog.ShiftEmployees
-        where shiftId = @shiftId and employeeNumber = @employeeNumber
+            .input('employeeNumber', form.employeeNumber)
+            .query(/* sql */ `
+        DELETE FROM ShiftLog.ShiftEmployees
+        WHERE
+          shiftId = @shiftId
+          AND employeeNumber = @employeeNumber
       `);
         return true;
     }

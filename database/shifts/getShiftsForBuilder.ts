@@ -63,52 +63,56 @@ export default async function getShiftsForBuilder(
 ): Promise<ShiftForBuilder[]> {
   const pool = await getShiftLogConnectionPool()
 
-  let whereClause = `
-    where s.instance = @instance
-    and s.recordDelete_dateTime is null
-    and s.shiftDate = @shiftDateString
+  let whereClause = /* sql */ `
+    WHERE
+      s.instance = @instance
+      AND s.recordDelete_dateTime IS NULL
+      AND s.shiftDate = @shiftDateString
   `
 
   if (user !== undefined) {
-    whereClause += `
-      and (
-        sType.userGroupId is null or sType.userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
+    whereClause += /* sql */ `
+      AND (
+        sType.userGroupId IS NULL
+        OR sType.userGroupId IN (
+          SELECT
+            userGroupId
+          FROM
+            ShiftLog.UserGroupMembers
+          WHERE
+            userName = @userName
         )
       )
     `
   }
 
   const sql = /* sql */ `
-    select
+    SELECT
       s.shiftId,
       s.shiftDate,
       s.shiftTimeDataListItemId,
-      sTime.dataListItem as shiftTimeDataListItem,
+      sTime.dataListItem AS shiftTimeDataListItem,
       s.shiftTypeDataListItemId,
-      sType.dataListItem as shiftTypeDataListItem,
+      sType.dataListItem AS shiftTypeDataListItem,
       s.supervisorEmployeeNumber,
-      sup.firstName as supervisorFirstName,
-      sup.lastName as supervisorLastName,
-      sup.userName as supervisorUserName,
+      sup.firstName AS supervisorFirstName,
+      sup.lastName AS supervisorLastName,
+      sup.userName AS supervisorUserName,
       s.shiftDescription,
       s.recordCreate_userName,
       s.recordCreate_dateTime,
       s.recordUpdate_userName,
       s.recordUpdate_dateTime,
       s.recordLock_dateTime
-    from ShiftLog.Shifts s
-    left join ShiftLog.DataListItems sTime
-      on s.shiftTimeDataListItemId = sTime.dataListItemId
-    left join ShiftLog.DataListItems sType
-      on s.shiftTypeDataListItemId = sType.dataListItemId
-    left join ShiftLog.Employees sup
-      on s.supervisorEmployeeNumber = sup.employeeNumber
-      and s.instance = sup.instance
-    ${whereClause}
-    order by s.shiftTimeDataListItemId, s.shiftTypeDataListItemId
+    FROM
+      ShiftLog.Shifts s
+      LEFT JOIN ShiftLog.DataListItems sTime ON s.shiftTimeDataListItemId = sTime.dataListItemId
+      LEFT JOIN ShiftLog.DataListItems sType ON s.shiftTypeDataListItemId = sType.dataListItemId
+      LEFT JOIN ShiftLog.Employees sup ON s.supervisorEmployeeNumber = sup.employeeNumber
+      AND s.instance = sup.instance ${whereClause}
+    ORDER BY
+      s.shiftTimeDataListItemId,
+      s.shiftTypeDataListItemId
   `
 
   const shiftsResult = await pool
@@ -129,17 +133,19 @@ export default async function getShiftsForBuilder(
 
   // Get crews
   const crewsSql = /* sql */ `
-    select
+    SELECT
       sc.shiftId,
       sc.crewId,
       c.crewName,
       sc.shiftCrewNote
-    from ShiftLog.ShiftCrews sc
-    inner join ShiftLog.Crews c
-      on sc.crewId = c.crewId
-    where sc.shiftId in (${shiftIds.join(',')})
-    and c.recordDelete_dateTime is null
-    order by c.crewName
+    FROM
+      ShiftLog.ShiftCrews sc
+      INNER JOIN ShiftLog.Crews c ON sc.crewId = c.crewId
+    WHERE
+      sc.shiftId IN (${shiftIds.join(',')})
+      AND c.recordDelete_dateTime IS NULL
+    ORDER BY
+      c.crewName
   `
 
   const crewsResult = await pool.request().query<{
@@ -151,7 +157,7 @@ export default async function getShiftsForBuilder(
 
   // Get employees
   const employeesSql = /* sql */ `
-    select
+    SELECT
       se.shiftId,
       se.employeeNumber,
       e.firstName,
@@ -160,15 +166,17 @@ export default async function getShiftsForBuilder(
       c.crewName,
       se.shiftEmployeeNote,
       e.isSupervisor
-    from ShiftLog.ShiftEmployees se
-    inner join ShiftLog.Employees e
-      on se.employeeNumber = e.employeeNumber
-      and se.instance = e.instance
-    left join ShiftLog.Crews c
-      on se.crewId = c.crewId
-    where se.shiftId in (${shiftIds.join(',')})
-    and e.recordDelete_dateTime is null
-    order by e.lastName, e.firstName
+    FROM
+      ShiftLog.ShiftEmployees se
+      INNER JOIN ShiftLog.Employees e ON se.employeeNumber = e.employeeNumber
+      AND se.instance = e.instance
+      LEFT JOIN ShiftLog.Crews c ON se.crewId = c.crewId
+    WHERE
+      se.shiftId IN (${shiftIds.join(',')})
+      AND e.recordDelete_dateTime IS NULL
+    ORDER BY
+      e.lastName,
+      e.firstName
   `
 
   const employeesResult = await pool.request().query<{
@@ -185,24 +193,25 @@ export default async function getShiftsForBuilder(
 
   // Get equipment
   const equipmentSql = /* sql */ `
-    select
+    SELECT
       seq.shiftId,
       seq.equipmentNumber,
       eq.equipmentName,
       seq.employeeNumber,
-      e.firstName as employeeFirstName,
-      e.lastName as employeeLastName,
+      e.firstName AS employeeFirstName,
+      e.lastName AS employeeLastName,
       seq.shiftEquipmentNote
-    from ShiftLog.ShiftEquipment seq
-    inner join ShiftLog.Equipment eq
-      on seq.equipmentNumber = eq.equipmentNumber
-      and seq.instance = eq.instance
-    left join ShiftLog.Employees e
-      on seq.employeeNumber = e.employeeNumber
-      and seq.instance = e.instance
-    where seq.shiftId in (${shiftIds.join(',')})
-    and eq.recordDelete_dateTime is null
-    order by eq.equipmentName
+    FROM
+      ShiftLog.ShiftEquipment seq
+      INNER JOIN ShiftLog.Equipment eq ON seq.equipmentNumber = eq.equipmentNumber
+      AND seq.instance = eq.instance
+      LEFT JOIN ShiftLog.Employees e ON seq.employeeNumber = e.employeeNumber
+      AND seq.instance = e.instance
+    WHERE
+      seq.shiftId IN (${shiftIds.join(',')})
+      AND eq.recordDelete_dateTime IS NULL
+    ORDER BY
+      eq.equipmentName
   `
 
   const equipmentResult = await pool.request().query<{
@@ -217,18 +226,20 @@ export default async function getShiftsForBuilder(
 
   // Get work orders
   const workOrdersSql = /* sql */ `
-    select
+    SELECT
       sw.shiftId,
       sw.workOrderId,
       wo.workOrderNumber,
       wo.workOrderDetails,
       sw.shiftWorkOrderNote
-    from ShiftLog.ShiftWorkOrders sw
-    inner join ShiftLog.WorkOrders wo
-      on sw.workOrderId = wo.workOrderId
-    where sw.shiftId in (${shiftIds.join(',')})
-    and wo.recordDelete_dateTime is null
-    order by wo.workOrderNumber
+    FROM
+      ShiftLog.ShiftWorkOrders sw
+      INNER JOIN ShiftLog.WorkOrders wo ON sw.workOrderId = wo.workOrderId
+    WHERE
+      sw.shiftId IN (${shiftIds.join(',')})
+      AND wo.recordDelete_dateTime IS NULL
+    ORDER BY
+      wo.workOrderNumber
   `
 
   const workOrdersResult = await pool.request().query<{
@@ -241,25 +252,27 @@ export default async function getShiftsForBuilder(
 
   // Get adhoc tasks
   const adhocTasksSql = /* sql */ `
-    select
+    SELECT
       st.shiftId,
       st.adhocTaskId,
       t.adhocTaskTypeDataListItemId,
-      td.dataListItem as adhocTaskTypeDataListItem,
+      td.dataListItem AS adhocTaskTypeDataListItem,
       t.taskDescription,
       t.locationAddress1,
       t.locationAddress2,
       t.locationCityProvince,
       t.taskDueDateTime,
       st.shiftAdhocTaskNote
-    from ShiftLog.ShiftAdhocTasks st
-    inner join ShiftLog.AdhocTasks t
-      on st.adhocTaskId = t.adhocTaskId
-    left join ShiftLog.DataListItems td
-      on t.adhocTaskTypeDataListItemId = td.dataListItemId
-    where st.shiftId in (${shiftIds.join(',')})
-    and t.recordDelete_dateTime is null
-    order by t.taskDueDateTime, t.recordCreate_dateTime desc
+    FROM
+      ShiftLog.ShiftAdhocTasks st
+      INNER JOIN ShiftLog.AdhocTasks t ON st.adhocTaskId = t.adhocTaskId
+      LEFT JOIN ShiftLog.DataListItems td ON t.adhocTaskTypeDataListItemId = td.dataListItemId
+    WHERE
+      st.shiftId IN (${shiftIds.join(',')})
+      AND t.recordDelete_dateTime IS NULL
+    ORDER BY
+      t.taskDueDateTime,
+      t.recordCreate_dateTime DESC
   `
 
   const adhocTasksResult = await pool.request().query<{

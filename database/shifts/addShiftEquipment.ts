@@ -25,8 +25,22 @@ export default async function addShiftEquipment(
       )
       .input('shiftEquipmentNote', form.shiftEquipmentNote ?? '')
       .query(/* sql */ `
-        insert into ShiftLog.ShiftEquipment (shiftId, instance, equipmentNumber, employeeNumber, shiftEquipmentNote)
-        values (@shiftId, @instance, @equipmentNumber, @employeeNumber, @shiftEquipmentNote)
+        INSERT INTO
+          ShiftLog.ShiftEquipment (
+            shiftId,
+            instance,
+            equipmentNumber,
+            employeeNumber,
+            shiftEquipmentNote
+          )
+        VALUES
+          (
+            @shiftId,
+            @instance,
+            @equipmentNumber,
+            @employeeNumber,
+            @shiftEquipmentNote
+          )
       `)
 
     return true

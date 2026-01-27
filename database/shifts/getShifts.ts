@@ -24,11 +24,17 @@ function buildWhereClause(filters: GetShiftsFilters, user?: User): string {
     whereClause += ' and s.shiftDate = @shiftDateString'
   }
 
-  if (filters.shiftTypeDataListItemId !== undefined && filters.shiftTypeDataListItemId !== '') {
+  if (
+    filters.shiftTypeDataListItemId !== undefined &&
+    filters.shiftTypeDataListItemId !== ''
+  ) {
     whereClause += ' and s.shiftTypeDataListItemId = @shiftTypeDataListItemId'
   }
 
-  if (filters.supervisorEmployeeNumber !== undefined && filters.supervisorEmployeeNumber !== '') {
+  if (
+    filters.supervisorEmployeeNumber !== undefined &&
+    filters.supervisorEmployeeNumber !== ''
+  ) {
     whereClause += ' and s.supervisorEmployeeNumber = @supervisorEmployeeNumber'
   }
 
@@ -75,11 +81,11 @@ export default async function getShifts(
 
   if (limit !== -1) {
     const countSql = /* sql */ `
-      select count(*) as totalCount
-      from ShiftLog.Shifts s
-      left join ShiftLog.DataListItems sType
-        on s.shiftTypeDataListItemId = sType.dataListItemId
-      ${whereClause}
+      SELECT
+        count(*) AS totalCount
+      FROM
+        ShiftLog.Shifts s
+        LEFT JOIN ShiftLog.DataListItems sType ON s.shiftTypeDataListItemId = sType.dataListItemId ${whereClause}
     `
 
     const countResult = await pool
@@ -87,7 +93,10 @@ export default async function getShifts(
       .input('instance', getConfigProperty('application.instance'))
       .input('shiftDateString', filters.shiftDateString ?? null)
       .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
-      .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
+      .input(
+        'supervisorEmployeeNumber',
+        filters.supervisorEmployeeNumber ?? null
+      )
       .input('userName', user?.userName)
       .query(countSql)
 
@@ -104,49 +113,80 @@ export default async function getShifts(
       .input('instance', getConfigProperty('application.instance'))
       .input('shiftDateString', filters.shiftDateString ?? null)
       .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
-      .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
-      .input('userName', user?.userName).query<Shift>(/* sql */ `
-        select
-          s.shiftId, s.shiftDate,
-
+      .input(
+        'supervisorEmployeeNumber',
+        filters.supervisorEmployeeNumber ?? null
+      )
+      .input('userName', user?.userName)
+      .query<Shift>(/* sql */ `
+        SELECT
+          s.shiftId,
+          s.shiftDate,
           s.shiftTimeDataListItemId,
-          sTime.dataListItem as shiftTimeDataListItem,
-
+          sTime.dataListItem AS shiftTimeDataListItem,
           s.shiftTypeDataListItemId,
-          sType.dataListItem as shiftTypeDataListItem,
-          
+          sType.dataListItem AS shiftTypeDataListItem,
           s.supervisorEmployeeNumber,
-          e.firstName as supervisorFirstName,
-          e.lastName as supervisorLastName,
-          e.userName as supervisorUserName,
-
+          e.firstName AS supervisorFirstName,
+          e.lastName AS supervisorLastName,
+          e.userName AS supervisorUserName,
           s.shiftDescription,
-
           -- Counts
-          (select count(*) from ShiftLog.ShiftWorkOrders wo where wo.shiftId = s.shiftId) as workOrdersCount,
-          (select count(*) from ShiftLog.ShiftEmployees se where se.shiftId = s.shiftId) as employeesCount,
-          (select count(*) from ShiftLog.ShiftCrews sc where sc.shiftId = s.shiftId) as crewsCount,
-          (select count(*) from ShiftLog.ShiftEquipment seq where seq.shiftId = s.shiftId) as equipmentCount,
-          (select count(*) from ShiftLog.Timesheets t where t.shiftId = s.shiftId and t.recordDelete_dateTime is null) as timesheetsCount
-
-        from ShiftLog.Shifts s
-
-        left join ShiftLog.DataListItems sTime
-          on s.shiftTimeDataListItemId = sTime.dataListItemId
-
-        left join ShiftLog.DataListItems sType
-          on s.shiftTypeDataListItemId = sType.dataListItemId
-          
-        left join ShiftLog.Employees e
-          on s.instance = e.instance
-          and s.supervisorEmployeeNumber = e.employeeNumber
-
-        ${whereClause}    
-
-        order by s.shiftDate desc, sType.dataListItem, sTime.dataListItem
-
-        ${limit === -1 ? '' : ` offset ${offset} rows`}
-        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
+          (
+            SELECT
+              count(*)
+            FROM
+              ShiftLog.ShiftWorkOrders wo
+            WHERE
+              wo.shiftId = s.shiftId
+          ) AS workOrdersCount,
+          (
+            SELECT
+              count(*)
+            FROM
+              ShiftLog.ShiftEmployees se
+            WHERE
+              se.shiftId = s.shiftId
+          ) AS employeesCount,
+          (
+            SELECT
+              count(*)
+            FROM
+              ShiftLog.ShiftCrews sc
+            WHERE
+              sc.shiftId = s.shiftId
+          ) AS crewsCount,
+          (
+            SELECT
+              count(*)
+            FROM
+              ShiftLog.ShiftEquipment seq
+            WHERE
+              seq.shiftId = s.shiftId
+          ) AS equipmentCount,
+          (
+            SELECT
+              count(*)
+            FROM
+              ShiftLog.Timesheets t
+            WHERE
+              t.shiftId = s.shiftId
+              AND t.recordDelete_dateTime IS NULL
+          ) AS timesheetsCount
+        FROM
+          ShiftLog.Shifts s
+          LEFT JOIN ShiftLog.DataListItems sTime ON s.shiftTimeDataListItemId = sTime.dataListItemId
+          LEFT JOIN ShiftLog.DataListItems sType ON s.shiftTypeDataListItemId = sType.dataListItemId
+          LEFT JOIN ShiftLog.Employees e ON s.instance = e.instance
+          AND s.supervisorEmployeeNumber = e.employeeNumber ${whereClause}
+        ORDER BY
+          s.shiftDate DESC,
+          sType.dataListItem,
+          sTime.dataListItem ${limit === -1
+            ? ''
+            : ` offset ${offset} rows`} ${limit === -1
+            ? ''
+            : ` fetch next ${limit} rows only`}
       `)
 
     shifts = shiftsResult.recordset

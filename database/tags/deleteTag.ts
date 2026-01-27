@@ -13,11 +13,14 @@ export default async function deleteTag(
       .request()
       .input('tagName', tagName)
       .input('recordDelete_userName', user.userName)
-      .input('recordDelete_dateTime', currentDate).query(/* sql */ `
+      .input('recordDelete_dateTime', currentDate)
+      .query(/* sql */ `
         UPDATE ShiftLog.Tags
-        SET recordDelete_userName = @recordDelete_userName,
-            recordDelete_dateTime = @recordDelete_dateTime
-        WHERE tagName = @tagName
+        SET
+          recordDelete_userName = @recordDelete_userName,
+          recordDelete_dateTime = @recordDelete_dateTime
+        WHERE
+          tagName = @tagName
           AND recordDelete_dateTime IS NULL
       `)
 

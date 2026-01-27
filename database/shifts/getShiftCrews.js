@@ -3,13 +3,18 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function getShiftCrews(shiftId, user) {
     const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
     const sql = /* sql */ `
-    select sc.shiftId, sc.crewId, sc.shiftCrewNote,
-      c.crewName, c.userGroupId
-    from ShiftLog.ShiftCrews sc
-    inner join ShiftLog.Crews c on sc.crewId = c.crewId
-    where sc.shiftId = @shiftId
-      and c.recordDelete_dateTime is null
-      ${user === undefined
+    SELECT
+      sc.shiftId,
+      sc.crewId,
+      sc.shiftCrewNote,
+      c.crewName,
+      c.userGroupId
+    FROM
+      ShiftLog.ShiftCrews sc
+      INNER JOIN ShiftLog.Crews c ON sc.crewId = c.crewId
+    WHERE
+      sc.shiftId = @shiftId
+      AND c.recordDelete_dateTime IS NULL ${user === undefined
         ? ''
         : `
             and (
@@ -20,7 +25,8 @@ export default async function getShiftCrews(shiftId, user) {
               )
             )
           `}
-    order by c.crewName
+    ORDER BY
+      c.crewName
   `;
     const result = (await pool
         .request()
