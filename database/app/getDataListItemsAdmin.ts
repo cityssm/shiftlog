@@ -1,6 +1,5 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface DataListItemWithDetails {
   dataListItemId: number
@@ -13,7 +12,7 @@ export interface DataListItemWithDetails {
 export default async function getDataListItemsAdmin(
   dataListKey: string
 ): Promise<DataListItemWithDetails[]> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   const dataListItemsResult = await pool
     .request()

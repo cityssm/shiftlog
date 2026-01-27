@@ -1,7 +1,6 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { clearCacheByTableName } from '../../helpers/cache.helpers.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface UpdateSettingForm {
   settingKey: string
@@ -11,7 +10,7 @@ export interface UpdateSettingForm {
 export default async function updateSetting(
   updateForm: UpdateSettingForm
 ): Promise<boolean> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
   const currentDate = new Date()
 
   // Try to update first
