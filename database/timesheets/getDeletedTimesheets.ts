@@ -11,12 +11,16 @@ export default async function getDeletedTimesheets(
     'where t.instance = @instance and t.recordDelete_dateTime is not null'
 
   if (user !== undefined) {
-    whereClause += `
-      and (
-        tType.userGroupId is null or tType.userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
+    whereClause += /* sql */ `
+      AND (
+        tType.userGroupId IS NULL
+        OR tType.userGroupId IN (
+          SELECT
+            userGroupId
+          FROM
+            ShiftLog.UserGroupMembers
+          WHERE
+            userName = @userName
         )
       )
     `
@@ -25,35 +29,26 @@ export default async function getDeletedTimesheets(
   const timesheetsResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('userName', user?.userName).query<Timesheet>(/* sql */ `
-      select
+    .input('userName', user?.userName)
+    .query<Timesheet>(/* sql */ `
+      SELECT
         t.timesheetId,
         t.timesheetDate,
-
         t.timesheetTypeDataListItemId,
-        tType.dataListItem as timesheetTypeDataListItem,
-
+        tType.dataListItem AS timesheetTypeDataListItem,
         t.supervisorEmployeeNumber,
-        supervisor.employeeSurname as supervisorEmployeeSurname,
-        supervisor.employeeGivenName as supervisorEmployeeGivenName,
-
+        supervisor.employeeSurname AS supervisorEmployeeSurname,
+        supervisor.employeeGivenName AS supervisorEmployeeGivenName,
         t.timesheetDetails,
-
         t.recordDelete_userName,
         t.recordDelete_dateTime
-
-      from ShiftLog.Timesheets t
-
-      left join ShiftLog.DataListItems tType
-        on t.timesheetTypeDataListItemId = tType.dataListItemId
-
-      left join ShiftLog.Employees supervisor
-        on t.supervisorEmployeeNumber = supervisor.employeeNumber
-          and t.instance = supervisor.instance
-
-      ${whereClause}
-
-      order by t.recordDelete_dateTime desc
+      FROM
+        ShiftLog.Timesheets t
+        LEFT JOIN ShiftLog.DataListItems tType ON t.timesheetTypeDataListItemId = tType.dataListItemId
+        LEFT JOIN ShiftLog.Employees supervisor ON t.supervisorEmployeeNumber = supervisor.employeeNumber
+        AND t.instance = supervisor.instance ${whereClause}
+      ORDER BY
+        t.recordDelete_dateTime DESC
     `)
 
   const timesheets = timesheetsResult.recordset

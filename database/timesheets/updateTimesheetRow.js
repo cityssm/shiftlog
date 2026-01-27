@@ -8,14 +8,16 @@ export default async function updateTimesheetRow(updateRowForm) {
         .input('instance', getConfigProperty('application.instance'))
         .input('rowTitle', updateRowForm.rowTitle)
         .input('jobClassificationDataListItemId', updateRowForm.jobClassificationDataListItemId ?? undefined)
-        .input('timeCodeDataListItemId', updateRowForm.timeCodeDataListItemId ?? undefined).query(/* sql */ `
-      update ShiftLog.TimesheetRows
-      set
+        .input('timeCodeDataListItemId', updateRowForm.timeCodeDataListItemId ?? undefined)
+        .query(/* sql */ `
+      UPDATE ShiftLog.TimesheetRows
+      SET
         rowTitle = @rowTitle,
         jobClassificationDataListItemId = @jobClassificationDataListItemId,
         timeCodeDataListItemId = @timeCodeDataListItemId
-      where timesheetRowId = @timesheetRowId
-        and instance = @instance
+      WHERE
+        timesheetRowId = @timesheetRowId
+        AND instance = @instance
     `);
     return result.rowsAffected[0] > 0;
 }

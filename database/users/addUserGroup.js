@@ -11,18 +11,26 @@ export default async function addUserGroup(userGroupName, user) {
             .input('recordCreate_userName', user.userName)
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
-            .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        insert into ShiftLog.UserGroups (
-          instance, userGroupName,
-          recordCreate_userName, recordCreate_dateTime,
-          recordUpdate_userName, recordUpdate_dateTime
-        )
-        output inserted.userGroupId
-        values (
-          @instance, @userGroupName,
-          @recordCreate_userName, @recordCreate_dateTime,
-          @recordUpdate_userName, @recordUpdate_dateTime
-        )
+            .input('recordUpdate_dateTime', currentDate)
+            .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.UserGroups (
+            instance,
+            userGroupName,
+            recordCreate_userName,
+            recordCreate_dateTime,
+            recordUpdate_userName,
+            recordUpdate_dateTime
+          ) output inserted.userGroupId
+        VALUES
+          (
+            @instance,
+            @userGroupName,
+            @recordCreate_userName,
+            @recordCreate_dateTime,
+            @recordUpdate_userName,
+            @recordUpdate_dateTime
+          )
       `));
         return result.recordset[0].userGroupId;
     }

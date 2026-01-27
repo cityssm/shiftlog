@@ -7,9 +7,12 @@ export default async function addUserGroupMember(userGroupId, userName) {
             .request()
             .input('userGroupId', userGroupId)
             .input('instance', getConfigProperty('application.instance'))
-            .input('userName', userName).query(/* sql */ `
-        insert into ShiftLog.UserGroupMembers (userGroupId, instance, userName)
-        values (@userGroupId, @instance, @userName)
+            .input('userName', userName)
+            .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.UserGroupMembers (userGroupId, instance, userName)
+        VALUES
+          (@userGroupId, @instance, @userName)
       `);
         return true;
     }

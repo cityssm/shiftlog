@@ -12,9 +12,10 @@ export default async function updateTimesheet(updateTimesheetForm, userName) {
         .input('timesheetTitle', updateTimesheetForm.timesheetTitle)
         .input('timesheetNote', updateTimesheetForm.timesheetNote)
         .input('shiftId', updateTimesheetForm.shiftId ?? undefined)
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.Timesheets
-      set
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.Timesheets
+      SET
         supervisorEmployeeNumber = @supervisorEmployeeNumber,
         timesheetTypeDataListItemId = @timesheetTypeDataListItemId,
         timesheetTitle = @timesheetTitle,
@@ -23,11 +24,12 @@ export default async function updateTimesheet(updateTimesheetForm, userName) {
         shiftId = @shiftId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where timesheetId = @timesheetId
-        and instance = @instance
-        and recordDelete_dateTime is null
-        and employeesEntered_dateTime is null
-        and equipmentEntered_dateTime is null
+      WHERE
+        timesheetId = @timesheetId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
+        AND employeesEntered_dateTime IS NULL
+        AND equipmentEntered_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }

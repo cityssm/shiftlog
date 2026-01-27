@@ -15,13 +15,16 @@ export default async function deleteUserGroup(
       .input('userGroupId', userGroupId)
       .input('instance', getConfigProperty('application.instance'))
       .input('recordDelete_userName', user.userName)
-      .input('recordDelete_dateTime', currentDate).query(/* sql */ `
-        update ShiftLog.UserGroups
-        set recordDelete_userName = @recordDelete_userName,
+      .input('recordDelete_dateTime', currentDate)
+      .query(/* sql */ `
+        UPDATE ShiftLog.UserGroups
+        SET
+          recordDelete_userName = @recordDelete_userName,
           recordDelete_dateTime = @recordDelete_dateTime
-        where userGroupId = @userGroupId
-          and instance = @instance
-          and recordDelete_dateTime is null
+        WHERE
+          userGroupId = @userGroupId
+          AND instance = @instance
+          AND recordDelete_dateTime IS NULL
       `)
 
     return result.rowsAffected[0] > 0

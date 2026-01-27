@@ -12,22 +12,27 @@ export default async function copyFromShift(
     .input('shiftId', shiftId)
     .input('timesheetId', timesheetId)
     .query(/* sql */ `
-      insert into ShiftLog.TimesheetColumns (
-        timesheetId,
-        columnTitle,
-        workOrderNumber,
-        orderNumber
-      )
-      select
+      INSERT INTO
+        ShiftLog.TimesheetColumns (
+          timesheetId,
+          columnTitle,
+          workOrderNumber,
+          orderNumber
+        )
+      SELECT
         @timesheetId,
         w.workOrderNumber,
         w.workOrderNumber,
-        row_number() over (order by w.workOrderNumber) - 1
-      from ShiftLog.ShiftWorkOrders sw
-      inner join ShiftLog.WorkOrders w
-        on sw.workOrderId = w.workOrderId
-      where sw.shiftId = @shiftId
-        and w.recordDelete_dateTime is null
+        row_number() OVER (
+          ORDER BY
+            w.workOrderNumber
+        ) - 1
+      FROM
+        ShiftLog.ShiftWorkOrders sw
+        INNER JOIN ShiftLog.WorkOrders w ON sw.workOrderId = w.workOrderId
+      WHERE
+        sw.shiftId = @shiftId
+        AND w.recordDelete_dateTime IS NULL
     `)
 
   // Copy employees as rows
@@ -36,22 +41,20 @@ export default async function copyFromShift(
     .input('shiftId', shiftId)
     .input('timesheetId', timesheetId)
     .query(/* sql */ `
-      insert into ShiftLog.TimesheetRows (
-        instance,
-        timesheetId,
-        rowTitle,
-        employeeNumber
-      )
-      select
+      INSERT INTO
+        ShiftLog.TimesheetRows (instance, timesheetId, rowTitle, employeeNumber)
+      SELECT
         se.instance,
         @timesheetId,
         e.lastName + ', ' + e.firstName,
         se.employeeNumber
-      from ShiftLog.ShiftEmployees se
-      inner join ShiftLog.Employees e
-        on se.instance = e.instance and se.employeeNumber = e.employeeNumber
-      where se.shiftId = @shiftId
-        and e.recordDelete_dateTime is null
+      FROM
+        ShiftLog.ShiftEmployees se
+        INNER JOIN ShiftLog.Employees e ON se.instance = e.instance
+        AND se.employeeNumber = e.employeeNumber
+      WHERE
+        se.shiftId = @shiftId
+        AND e.recordDelete_dateTime IS NULL
     `)
 
   // Copy equipment as rows (with employee assignments maintained)
@@ -60,24 +63,27 @@ export default async function copyFromShift(
     .input('shiftId', shiftId)
     .input('timesheetId', timesheetId)
     .query(/* sql */ `
-      insert into ShiftLog.TimesheetRows (
-        instance,
-        timesheetId,
-        rowTitle,
-        equipmentNumber,
-        employeeNumber
-      )
-      select
+      INSERT INTO
+        ShiftLog.TimesheetRows (
+          instance,
+          timesheetId,
+          rowTitle,
+          equipmentNumber,
+          employeeNumber
+        )
+      SELECT
         se.instance,
         @timesheetId,
         eq.equipmentName,
         se.equipmentNumber,
         se.employeeNumber
-      from ShiftLog.ShiftEquipment se
-      inner join ShiftLog.Equipment eq
-        on  se.instance = eq.instance and se.equipmentNumber = eq.equipmentNumber
-      where se.shiftId = @shiftId
-        and eq.recordDelete_dateTime is null
+      FROM
+        ShiftLog.ShiftEquipment se
+        INNER JOIN ShiftLog.Equipment eq ON se.instance = eq.instance
+        AND se.equipmentNumber = eq.equipmentNumber
+      WHERE
+        se.shiftId = @shiftId
+        AND eq.recordDelete_dateTime IS NULL
     `)
 
   return true

@@ -14,10 +14,11 @@ export default async function deleteUserGroupMember(
       .input('userName', userName)
       .input('instance', getConfigProperty('application.instance'))
       .query(/* sql */ `
-        delete from ShiftLog.UserGroupMembers
-        where userGroupId = @userGroupId
-          and userName = @userName
-          and instance = @instance
+        DELETE FROM ShiftLog.UserGroupMembers
+        WHERE
+          userGroupId = @userGroupId
+          AND userName = @userName
+          AND instance = @instance
       `)
 
     return result.rowsAffected[0] > 0

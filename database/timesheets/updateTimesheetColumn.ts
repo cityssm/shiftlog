@@ -23,17 +23,21 @@ export default async function updateTimesheetColumn(
     .input('costCenterB', updateColumnForm.costCenterB ?? undefined)
     .input('instance', getConfigProperty('application.instance'))
     .query(/* sql */ `
-      update ShiftLog.TimesheetColumns
-      set
+      UPDATE ShiftLog.TimesheetColumns
+      SET
         columnTitle = @columnTitle,
         workOrderNumber = @workOrderNumber,
         costCenterA = @costCenterA,
         costCenterB = @costCenterB
-      where timesheetColumnId = @timesheetColumnId
-        and timesheetId in (
-          select timesheetId
-          from ShiftLog.Timesheets
-          where instance = @instance
+      WHERE
+        timesheetColumnId = @timesheetColumnId
+        AND timesheetId IN (
+          SELECT
+            timesheetId
+          FROM
+            ShiftLog.Timesheets
+          WHERE
+            instance = @instance
         )
     `)
 

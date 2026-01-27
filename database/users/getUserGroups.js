@@ -6,18 +6,29 @@ export default async function getUserGroups() {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
-      select ug.userGroupId, ug.userGroupName,
-        ug.recordCreate_userName, ug.recordCreate_dateTime,
-        ug.recordUpdate_userName, ug.recordUpdate_dateTime,
-        count(ugm.userName) as memberCount
-      from ShiftLog.UserGroups ug
-      left join ShiftLog.UserGroupMembers ugm on ug.userGroupId = ugm.userGroupId
-      where ug.instance = @instance
-        and ug.recordDelete_dateTime is null
-      group by ug.userGroupId, ug.userGroupName,
-        ug.recordCreate_userName, ug.recordCreate_dateTime,
-        ug.recordUpdate_userName, ug.recordUpdate_dateTime
-      order by ug.userGroupName
+      SELECT
+        ug.userGroupId,
+        ug.userGroupName,
+        ug.recordCreate_userName,
+        ug.recordCreate_dateTime,
+        ug.recordUpdate_userName,
+        ug.recordUpdate_dateTime,
+        count(ugm.userName) AS memberCount
+      FROM
+        ShiftLog.UserGroups ug
+        LEFT JOIN ShiftLog.UserGroupMembers ugm ON ug.userGroupId = ugm.userGroupId
+      WHERE
+        ug.instance = @instance
+        AND ug.recordDelete_dateTime IS NULL
+      GROUP BY
+        ug.userGroupId,
+        ug.userGroupName,
+        ug.recordCreate_userName,
+        ug.recordCreate_dateTime,
+        ug.recordUpdate_userName,
+        ug.recordUpdate_dateTime
+      ORDER BY
+        ug.userGroupName
     `);
     return result.recordset;
 }

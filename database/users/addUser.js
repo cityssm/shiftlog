@@ -11,16 +11,27 @@ async function insertNewUser(newUserName, user) {
             .input('recordCreate_userName', user.userName)
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
-            .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        insert into ShiftLog.Users (
-          instance, userName,
-          recordCreate_userName, recordCreate_dateTime,
-          recordUpdate_userName, recordUpdate_dateTime
-        ) values (@instance, @userName,
-          @recordCreate_userName, @recordCreate_dateTime,
-          @recordUpdate_userName, @recordUpdate_dateTime
-        )
-        `);
+            .input('recordUpdate_dateTime', currentDate)
+            .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.Users (
+            instance,
+            userName,
+            recordCreate_userName,
+            recordCreate_dateTime,
+            recordUpdate_userName,
+            recordUpdate_dateTime
+          )
+        VALUES
+          (
+            @instance,
+            @userName,
+            @recordCreate_userName,
+            @recordCreate_dateTime,
+            @recordUpdate_userName,
+            @recordUpdate_dateTime
+          )
+      `);
         return true;
     }
     catch {
@@ -35,14 +46,18 @@ async function restoreDeletedUser(newUserName, user) {
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', newUserName)
         .input('recordUpdate_userName', user.userName)
-        .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-      update ShiftLog.Users
-        set recordUpdate_userName = @recordUpdate_userName,
+        .input('recordUpdate_dateTime', currentDate)
+        .query(/* sql */ `
+      UPDATE ShiftLog.Users
+      SET
+        recordUpdate_userName = @recordUpdate_userName,
         recordUpdate_dateTime = @recordUpdate_dateTime,
-        recordDelete_userName = null,
-        recordDelete_timeMillis = null
-      where instance = @instance and userName = @userName
-      `);
+        recordDelete_userName = NULL,
+        recordDelete_timeMillis = NULL
+      WHERE
+        instance = @instance
+        AND userName = @userName
+    `);
     return result.rowsAffected.length > 0;
 }
 export default async function addUser(newUserName, user) {
@@ -51,10 +66,15 @@ export default async function addUser(newUserName, user) {
     const recordDeleteResult = (await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('userName', newUserName).query(/* sql */ `
-      select recordDelete_dateTime
-      from ShiftLog.Users
-      where instance = @instance and userName = @userName
+        .input('userName', newUserName)
+        .query(/* sql */ `
+      SELECT
+        recordDelete_dateTime
+      FROM
+        ShiftLog.Users
+      WHERE
+        instance = @instance
+        AND userName = @userName
     `));
     let success = false;
     if (recordDeleteResult.recordset.length === 0) {

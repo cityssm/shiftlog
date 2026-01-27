@@ -10,7 +10,7 @@ export default async function getTimesheetColumns(
   const pool = await getShiftLogConnectionPool()
 
   const sql = /* sql */ `
-    select
+    SELECT
       timesheetColumnId,
       timesheetId,
       columnTitle,
@@ -18,14 +18,21 @@ export default async function getTimesheetColumns(
       costCenterA,
       costCenterB,
       orderNumber
-    from ShiftLog.TimesheetColumns
-    where timesheetId = @timesheetId
-      and timesheetId in (
-        select timesheetId
-        from ShiftLog.Timesheets
-        where instance = @instance
+    FROM
+      ShiftLog.TimesheetColumns
+    WHERE
+      timesheetId = @timesheetId
+      AND timesheetId IN (
+        SELECT
+          timesheetId
+        FROM
+          ShiftLog.Timesheets
+        WHERE
+          instance = @instance
       )
-    order by orderNumber, timesheetColumnId
+    ORDER BY
+      orderNumber,
+      timesheetColumnId
   `
 
   const result = (await pool

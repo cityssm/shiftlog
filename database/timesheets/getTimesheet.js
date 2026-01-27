@@ -3,58 +3,48 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getTimesheet(timesheetId, user) {
     const pool = await getShiftLogConnectionPool();
     const sql = /* sql */ `
-    select
-      t.timesheetId, t.timesheetDate,
-      
+    SELECT
+      t.timesheetId,
+      t.timesheetDate,
       t.timesheetTypeDataListItemId,
-      tType.dataListItem as timesheetTypeDataListItem,
-      
+      tType.dataListItem AS timesheetTypeDataListItem,
       t.supervisorEmployeeNumber,
-      e.firstName as supervisorFirstName,
-      e.lastName as supervisorLastName,
-      e.userName as supervisorUserName,
-
+      e.firstName AS supervisorFirstName,
+      e.lastName AS supervisorLastName,
+      e.userName AS supervisorUserName,
       t.timesheetTitle,
       t.timesheetNote,
-      
       t.shiftId,
       s.shiftDescription,
-
       t.recordSubmitted_dateTime,
       t.recordSubmitted_userName,
-
       t.employeesEntered_dateTime,
       t.employeesEntered_userName,
-
       t.equipmentEntered_dateTime,
       t.equipmentEntered_userName
-
-    from ShiftLog.Timesheets t
-
-    left join ShiftLog.DataListItems tType
-      on t.timesheetTypeDataListItemId = tType.dataListItemId
-      
-    left join ShiftLog.Employees e
-      on t.supervisorEmployeeNumber = e.employeeNumber
-
-    left join ShiftLog.Shifts s
-      on t.shiftId = s.shiftId
-
-    where t.instance = @instance
-      and t.recordDelete_dateTime is null
-      and t.timesheetId = @timesheetId
-
-    ${user === undefined
+    FROM
+      ShiftLog.Timesheets t
+      LEFT JOIN ShiftLog.DataListItems tType ON t.timesheetTypeDataListItemId = tType.dataListItemId
+      LEFT JOIN ShiftLog.Employees e ON t.supervisorEmployeeNumber = e.employeeNumber
+      LEFT JOIN ShiftLog.Shifts s ON t.shiftId = s.shiftId
+    WHERE
+      t.instance = @instance
+      AND t.recordDelete_dateTime IS NULL
+      AND t.timesheetId = @timesheetId ${user === undefined
         ? ''
-        : `
-            and (
-              tType.userGroupId is null or tType.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+        : /* sql */ `
+            AND (
+              tType.userGroupId IS NULL
+              OR tType.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
-          `}    
+          `}
   `;
     const timesheetsResult = (await pool
         .request()

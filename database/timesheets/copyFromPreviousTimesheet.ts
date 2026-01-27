@@ -10,41 +10,47 @@ export default async function copyFromPreviousTimesheet(
   await pool
     .request()
     .input('sourceTimesheetId', sourceTimesheetId)
-    .input('targetTimesheetId', targetTimesheetId).query(/* sql */ `
-      insert into ShiftLog.TimesheetColumns (
-        timesheetId,
-        columnTitle,
-        workOrderNumber,
-        costCenterA,
-        costCenterB,
-        orderNumber
-      )
-      select
+    .input('targetTimesheetId', targetTimesheetId)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.TimesheetColumns (
+          timesheetId,
+          columnTitle,
+          workOrderNumber,
+          costCenterA,
+          costCenterB,
+          orderNumber
+        )
+      SELECT
         @targetTimesheetId,
         columnTitle,
         workOrderNumber,
         costCenterA,
         costCenterB,
         orderNumber
-      from ShiftLog.TimesheetColumns
-      where timesheetId = @sourceTimesheetId
+      FROM
+        ShiftLog.TimesheetColumns
+      WHERE
+        timesheetId = @sourceTimesheetId
     `)
 
   // Copy rows
   await pool
     .request()
     .input('sourceTimesheetId', sourceTimesheetId)
-    .input('targetTimesheetId', targetTimesheetId).query(/* sql */ `
-      insert into ShiftLog.TimesheetRows (
-        instance,
-        timesheetId,
-        rowTitle,
-        employeeNumber,
-        equipmentNumber,
-        jobClassificationDataListItemId,
-        timeCodeDataListItemId
-      )
-      select
+    .input('targetTimesheetId', targetTimesheetId)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.TimesheetRows (
+          instance,
+          timesheetId,
+          rowTitle,
+          employeeNumber,
+          equipmentNumber,
+          jobClassificationDataListItemId,
+          timeCodeDataListItemId
+        )
+      SELECT
         instance,
         @targetTimesheetId,
         rowTitle,
@@ -52,40 +58,44 @@ export default async function copyFromPreviousTimesheet(
         equipmentNumber,
         jobClassificationDataListItemId,
         timeCodeDataListItemId
-      from ShiftLog.TimesheetRows
-      where timesheetId = @sourceTimesheetId
+      FROM
+        ShiftLog.TimesheetRows
+      WHERE
+        timesheetId = @sourceTimesheetId
     `)
 
   // Copy cells with remapped IDs
   await pool
     .request()
     .input('sourceTimesheetId', sourceTimesheetId)
-    .input('targetTimesheetId', targetTimesheetId).query(/* sql */ `
-      insert into ShiftLog.TimesheetCells (
-        timesheetRowId,
-        timesheetColumnId,
-        recordHours
-      )
-      select
+    .input('targetTimesheetId', targetTimesheetId)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.TimesheetCells (timesheetRowId, timesheetColumnId, recordHours)
+      SELECT
         newRow.timesheetRowId,
         newCol.timesheetColumnId,
         oldCell.recordHours
-      from ShiftLog.TimesheetCells oldCell
-      inner join ShiftLog.TimesheetRows oldRow
-        on oldCell.timesheetRowId = oldRow.timesheetRowId
-      inner join ShiftLog.TimesheetColumns oldCol
-        on oldCell.timesheetColumnId = oldCol.timesheetColumnId
-      inner join ShiftLog.TimesheetRows newRow
-        on newRow.timesheetId = @targetTimesheetId
-        and (
-          (oldRow.employeeNumber is not null and newRow.employeeNumber = oldRow.employeeNumber)
-          or (oldRow.equipmentNumber is not null and newRow.equipmentNumber = oldRow.equipmentNumber)
+      FROM
+        ShiftLog.TimesheetCells oldCell
+        INNER JOIN ShiftLog.TimesheetRows oldRow ON oldCell.timesheetRowId = oldRow.timesheetRowId
+        INNER JOIN ShiftLog.TimesheetColumns oldCol ON oldCell.timesheetColumnId = oldCol.timesheetColumnId
+        INNER JOIN ShiftLog.TimesheetRows newRow ON newRow.timesheetId = @targetTimesheetId
+        AND (
+          (
+            oldRow.employeeNumber IS NOT NULL
+            AND newRow.employeeNumber = oldRow.employeeNumber
+          )
+          OR (
+            oldRow.equipmentNumber IS NOT NULL
+            AND newRow.equipmentNumber = oldRow.equipmentNumber
+          )
         )
-      inner join ShiftLog.TimesheetColumns newCol
-        on newCol.timesheetId = @targetTimesheetId
-        and newCol.orderNumber = oldCol.orderNumber
-      where oldRow.timesheetId = @sourceTimesheetId
-        and oldCell.recordHours > 0
+        INNER JOIN ShiftLog.TimesheetColumns newCol ON newCol.timesheetId = @targetTimesheetId
+        AND newCol.orderNumber = oldCol.orderNumber
+      WHERE
+        oldRow.timesheetId = @sourceTimesheetId
+        AND oldCell.recordHours > 0
     `)
 
   return true

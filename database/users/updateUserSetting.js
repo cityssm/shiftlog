@@ -11,14 +11,17 @@ export default async function updateUserSetting(userName, settingKey, settingVal
         .input('userName', userName)
         .input('settingKey', settingKey)
         .input('settingValue', settingValue)
-        .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      update ShiftLog.UserSettings
-      set settingValue = @settingValue,
+        .input('recordUpdate_dateTime', new Date())
+        .query(/* sql */ `
+      UPDATE ShiftLog.UserSettings
+      SET
+        settingValue = @settingValue,
         previousSettingValue = settingValue,
         recordUpdate_dateTime = @recordUpdate_dateTime
-      where instance = @instance
-        and userName = @userName
-        and settingKey = @settingKey
+      WHERE
+        instance = @instance
+        AND userName = @userName
+        AND settingKey = @settingKey
     `);
     if (updateResult.rowsAffected[0] > 0) {
         return true;
@@ -30,9 +33,24 @@ export default async function updateUserSetting(userName, settingKey, settingVal
         .input('userName', userName)
         .input('settingKey', settingKey)
         .input('settingValue', settingValue)
-        .input('recordUpdate_dateTime', new Date()).query(/* sql */ `
-      insert into ShiftLog.UserSettings (instance, userName, settingKey, settingValue, recordUpdate_dateTime)
-      values (@instance, @userName, @settingKey, @settingValue, @recordUpdate_dateTime)
+        .input('recordUpdate_dateTime', new Date())
+        .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.UserSettings (
+          instance,
+          userName,
+          settingKey,
+          settingValue,
+          recordUpdate_dateTime
+        )
+      VALUES
+        (
+          @instance,
+          @userName,
+          @settingKey,
+          @settingValue,
+          @recordUpdate_dateTime
+        )
     `);
     return insertResult.rowsAffected[0] > 0;
 }

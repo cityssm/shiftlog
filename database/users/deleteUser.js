@@ -9,12 +9,16 @@ export default async function deleteUser(userName, user) {
             .input('instance', getConfigProperty('application.instance'))
             .input('userName', userName)
             .input('recordDelete_userName', user.userName)
-            .input('recordDelete_dateTime', currentDate).query(/* sql */ `
-        update ShiftLog.Users
-        set recordDelete_userName = @recordDelete_userName,
-            recordDelete_dateTime = @recordDelete_dateTime
-        where instance = @instance and userName = @userName
-          and recordDelete_dateTime is null
+            .input('recordDelete_dateTime', currentDate)
+            .query(/* sql */ `
+        UPDATE ShiftLog.Users
+        SET
+          recordDelete_userName = @recordDelete_userName,
+          recordDelete_dateTime = @recordDelete_dateTime
+        WHERE
+          instance = @instance
+          AND userName = @userName
+          AND recordDelete_dateTime IS NULL
       `);
         return result.rowsAffected[0] > 0;
     }

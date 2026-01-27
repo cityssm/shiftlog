@@ -6,15 +6,17 @@ export default async function markTimesheetAsSubmitted(timesheetId, userName) {
         .request()
         .input('timesheetId', timesheetId)
         .input('instance', getConfigProperty('application.instance'))
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.Timesheets
-      set
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.Timesheets
+      SET
         recordSubmitted_dateTime = getdate(),
         recordSubmitted_userName = @userName
-      where timesheetId = @timesheetId
-        and instance = @instance
-        and recordDelete_dateTime is null
-        and recordSubmitted_dateTime is null
+      WHERE
+        timesheetId = @timesheetId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
+        AND recordSubmitted_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }

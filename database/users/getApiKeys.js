@@ -7,15 +7,23 @@ export default async function getApiKeys() {
         .input('settingKey', 'apiKey')
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
-      select s.userName, s.settingValue
-      from ShiftLog.UserSettings s
-      where s.settingKey = @settingKey
-        and s.instance = @instance
-        and s.userName in (
-          select userName from ShiftLog.Users
-          where instance = @instance
-            and isActive = 1
-            and recordDelete_dateTime is null
+      SELECT
+        s.userName,
+        s.settingValue
+      FROM
+        ShiftLog.UserSettings s
+      WHERE
+        s.settingKey = @settingKey
+        AND s.instance = @instance
+        AND s.userName IN (
+          SELECT
+            userName
+          FROM
+            ShiftLog.Users
+          WHERE
+            instance = @instance
+            AND isActive = 1
+            AND recordDelete_dateTime IS NULL
         )
     `));
     const apiKeys = {};

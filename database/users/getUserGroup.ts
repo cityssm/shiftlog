@@ -14,13 +14,19 @@ export default async function getUserGroup(
     .input('userGroupId', userGroupId)
     .input('instance', getConfigProperty('application.instance'))
     .query(/* sql */ `
-      select userGroupId, userGroupName,
-        recordCreate_userName, recordCreate_dateTime,
-        recordUpdate_userName, recordUpdate_dateTime
-      from ShiftLog.UserGroups
-      where userGroupId = @userGroupId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      SELECT
+        userGroupId,
+        userGroupName,
+        recordCreate_userName,
+        recordCreate_dateTime,
+        recordUpdate_userName,
+        recordUpdate_dateTime
+      FROM
+        ShiftLog.UserGroups
+      WHERE
+        userGroupId = @userGroupId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `)) as mssql.IResult<UserGroup>
 
   if (groupResult.recordset.length === 0) {
@@ -35,11 +41,15 @@ export default async function getUserGroup(
     .input('userGroupId', userGroupId)
     .input('instance', getConfigProperty('application.instance'))
     .query(/* sql */ `
-      select userName
-      from ShiftLog.UserGroupMembers
-      where userGroupId = @userGroupId
-        and instance = @instance
-      order by userName
+      SELECT
+        userName
+      FROM
+        ShiftLog.UserGroupMembers
+      WHERE
+        userGroupId = @userGroupId
+        AND instance = @instance
+      ORDER BY
+        userName
     `)
 
   userGroup.members = membersResult.recordset.map(

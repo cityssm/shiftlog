@@ -25,33 +25,43 @@ export default async function createTimesheet(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('timesheetDate', createTimesheetForm.timesheetDateString)
-    .input('timesheetTypeDataListItemId', createTimesheetForm.timesheetTypeDataListItemId)
-    .input('supervisorEmployeeNumber', createTimesheetForm.supervisorEmployeeNumber)
+    .input(
+      'timesheetTypeDataListItemId',
+      createTimesheetForm.timesheetTypeDataListItemId
+    )
+    .input(
+      'supervisorEmployeeNumber',
+      createTimesheetForm.supervisorEmployeeNumber
+    )
     .input('timesheetTitle', createTimesheetForm.timesheetTitle)
     .input('timesheetNote', createTimesheetForm.timesheetNote)
     .input('shiftId', createTimesheetForm.shiftId ?? undefined)
-    .input('userName', userName).query(/* sql */ `
-      insert into ShiftLog.Timesheets (
-        instance,
-        supervisorEmployeeNumber,
-        timesheetTypeDataListItemId,
-        timesheetTitle,
-        timesheetNote,
-        timesheetDate,
-        shiftId,
-        recordCreate_userName, recordUpdate_userName
-      )
-      output inserted.timesheetId
-      values (
-        @instance,
-        @supervisorEmployeeNumber,
-        @timesheetTypeDataListItemId,
-        @timesheetTitle,
-        @timesheetNote,
-        @timesheetDate,
-        @shiftId,
-        @userName, @userName
-      )
+    .input('userName', userName)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.Timesheets (
+          instance,
+          supervisorEmployeeNumber,
+          timesheetTypeDataListItemId,
+          timesheetTitle,
+          timesheetNote,
+          timesheetDate,
+          shiftId,
+          recordCreate_userName,
+          recordUpdate_userName
+        ) output inserted.timesheetId
+      VALUES
+        (
+          @instance,
+          @supervisorEmployeeNumber,
+          @timesheetTypeDataListItemId,
+          @timesheetTitle,
+          @timesheetNote,
+          @timesheetDate,
+          @shiftId,
+          @userName,
+          @userName
+        )
     `)) as mssql.IResult<{ timesheetId: number }>
 
   return result.recordset[0].timesheetId

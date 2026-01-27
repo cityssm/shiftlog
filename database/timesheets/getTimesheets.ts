@@ -39,12 +39,16 @@ function buildWhereClause(filters: GetTimesheetsFilters, user?: User): string {
   }
 
   if (user !== undefined) {
-    whereClause += `
-      and (
-        tType.userGroupId is null or tType.userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
+    whereClause += /* sql */ `
+      AND (
+        tType.userGroupId IS NULL
+        OR tType.userGroupId IN (
+          SELECT
+            userGroupId
+          FROM
+            ShiftLog.UserGroupMembers
+          WHERE
+            userName = @userName
         )
       )
     `
@@ -81,11 +85,11 @@ export default async function getTimesheets(
 
   if (limit !== -1) {
     const countSql = /* sql */ `
-      select count(*) as totalCount
-      from ShiftLog.Timesheets t
-      left join ShiftLog.DataListItems tType
-        on t.timesheetTypeDataListItemId = tType.dataListItemId
-      ${whereClause}
+      SELECT
+        count(*) AS totalCount
+      FROM
+        ShiftLog.Timesheets t
+        LEFT JOIN ShiftLog.DataListItems tType ON t.timesheetTypeDataListItemId = tType.dataListItemId ${whereClause}
     `
 
     const countResult = await pool
@@ -123,46 +127,39 @@ export default async function getTimesheets(
         'timesheetTypeDataListItemId',
         filters.timesheetTypeDataListItemId ?? null
       )
-      .input('userName', user?.userName).query<Timesheet>(/* sql */ `
-        select
-          t.timesheetId, t.timesheetDate,
-          
+      .input('userName', user?.userName)
+      .query<Timesheet>(/* sql */ `
+        SELECT
+          t.timesheetId,
+          t.timesheetDate,
           t.timesheetTypeDataListItemId,
-          tType.dataListItem as timesheetTypeDataListItem,
-          
+          tType.dataListItem AS timesheetTypeDataListItem,
           t.supervisorEmployeeNumber,
-          e.firstName as supervisorFirstName,
-          e.lastName as supervisorLastName,
-          e.userName as supervisorUserName,
-
+          e.firstName AS supervisorFirstName,
+          e.lastName AS supervisorLastName,
+          e.userName AS supervisorUserName,
           t.timesheetTitle,
           t.timesheetNote,
-          
           t.shiftId,
-
           t.recordSubmitted_dateTime,
           t.recordSubmitted_userName,
-
           t.employeesEntered_dateTime,
           t.employeesEntered_userName,
-
           t.equipmentEntered_dateTime,
           t.equipmentEntered_userName
-
-        from ShiftLog.Timesheets t
-
-        left join ShiftLog.DataListItems tType
-          on t.timesheetTypeDataListItemId = tType.dataListItemId
-          
-        left join ShiftLog.Employees e
-          on t.instance = e.instance and t.supervisorEmployeeNumber = e.employeeNumber
-
-        ${whereClause}    
-
-        order by t.timesheetDate desc, tType.dataListItem, t.timesheetTitle
-
-        ${limit === -1 ? '' : ` offset ${offset} rows`}
-        ${limit === -1 ? '' : ` fetch next ${limit} rows only`}
+        FROM
+          ShiftLog.Timesheets t
+          LEFT JOIN ShiftLog.DataListItems tType ON t.timesheetTypeDataListItemId = tType.dataListItemId
+          LEFT JOIN ShiftLog.Employees e ON t.instance = e.instance
+          AND t.supervisorEmployeeNumber = e.employeeNumber ${whereClause}
+        ORDER BY
+          t.timesheetDate DESC,
+          tType.dataListItem,
+          t.timesheetTitle ${limit === -1
+          ? ''
+          : ` offset ${offset} rows`} ${limit === -1
+          ? ''
+          : ` fetch next ${limit} rows only`}
       `)
 
     timesheets = timesheetsResult.recordset

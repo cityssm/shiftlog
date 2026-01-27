@@ -10,7 +10,7 @@ export default async function getTimesheetCells(
   const pool = await getShiftLogConnectionPool()
 
   const sql = /* sql */ `
-    select
+    SELECT
       tc.timesheetRowId,
       tc.timesheetColumnId,
       tc.recordHours,
@@ -18,11 +18,12 @@ export default async function getTimesheetCells(
       tc.mappedPayCode,
       tc.mappedTimeCode,
       tc.mappingConfidence
-    from ShiftLog.TimesheetCells tc
-    inner join ShiftLog.TimesheetRows tr
-      on tc.timesheetRowId = tr.timesheetRowId
-    where tr.timesheetId = @timesheetId
-      and tr.instance = @instance
+    FROM
+      ShiftLog.TimesheetCells tc
+      INNER JOIN ShiftLog.TimesheetRows tr ON tc.timesheetRowId = tr.timesheetRowId
+    WHERE
+      tr.timesheetId = @timesheetId
+      AND tr.instance = @instance
   `
 
   const result = (await pool

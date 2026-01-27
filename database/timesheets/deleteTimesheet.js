@@ -8,15 +8,16 @@ export default async function deleteTimesheet(timesheetId, userName) {
         .input('userName', userName)
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
-      update ShiftLog.Timesheets
-      set
+      UPDATE ShiftLog.Timesheets
+      SET
         recordDelete_userName = @userName,
         recordDelete_dateTime = getdate()
-      where timesheetId = @timesheetId
-        and instance = @instance
-        and recordDelete_dateTime is null
-        and employeesEntered_dateTime is null
-        and equipmentEntered_dateTime is null
+      WHERE
+        timesheetId = @timesheetId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
+        AND employeesEntered_dateTime IS NULL
+        AND equipmentEntered_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }

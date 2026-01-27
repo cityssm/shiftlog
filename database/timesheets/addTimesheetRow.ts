@@ -24,27 +24,35 @@ export default async function addTimesheetRow(
     .input('rowTitle', addRowForm.rowTitle)
     .input('employeeNumber', addRowForm.employeeNumber ?? undefined)
     .input('equipmentNumber', addRowForm.equipmentNumber ?? undefined)
-    .input('jobClassificationDataListItemId', addRowForm.jobClassificationDataListItemId ?? undefined)
-    .input('timeCodeDataListItemId', addRowForm.timeCodeDataListItemId ?? undefined).query(/* sql */ `
-      insert into ShiftLog.TimesheetRows (
-        instance,
-        timesheetId,
-        rowTitle,
-        employeeNumber,
-        equipmentNumber,
-        jobClassificationDataListItemId,
-        timeCodeDataListItemId
-      )
-      output inserted.timesheetRowId
-      values (
-        @instance,
-        @timesheetId,
-        @rowTitle,
-        @employeeNumber,
-        @equipmentNumber,
-        @jobClassificationDataListItemId,
-        @timeCodeDataListItemId
-      )
+    .input(
+      'jobClassificationDataListItemId',
+      addRowForm.jobClassificationDataListItemId ?? undefined
+    )
+    .input(
+      'timeCodeDataListItemId',
+      addRowForm.timeCodeDataListItemId ?? undefined
+    )
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.TimesheetRows (
+          instance,
+          timesheetId,
+          rowTitle,
+          employeeNumber,
+          equipmentNumber,
+          jobClassificationDataListItemId,
+          timeCodeDataListItemId
+        ) output inserted.timesheetRowId
+      VALUES
+        (
+          @instance,
+          @timesheetId,
+          @rowTitle,
+          @employeeNumber,
+          @equipmentNumber,
+          @jobClassificationDataListItemId,
+          @timeCodeDataListItemId
+        )
     `)) as mssql.IResult<{ timesheetRowId: number }>
 
   return result.recordset[0].timesheetRowId

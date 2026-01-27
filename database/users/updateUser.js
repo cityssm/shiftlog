@@ -19,25 +19,27 @@ export default async function updateUser(updateForm, user) {
         .input('timesheets_canManage', updateForm.timesheets_canManage ? 1 : 0)
         .input('isAdmin', updateForm.isAdmin ? 1 : 0)
         .input('recordUpdate_userName', user.userName)
-        .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-      update ShiftLog.Users
-      set isActive = @isActive,
-          shifts_canView = @shifts_canView,
-          shifts_canUpdate = @shifts_canUpdate,
-          shifts_canManage = @shifts_canManage,
-          workOrders_canView = @workOrders_canView,
-          workOrders_canUpdate = @workOrders_canUpdate,
-          workOrders_canManage = @workOrders_canManage,
-          timesheets_canView = @timesheets_canView,
-          timesheets_canUpdate = @timesheets_canUpdate,
-          timesheets_canManage = @timesheets_canManage,
-          isAdmin = @isAdmin,
-          recordUpdate_userName = @recordUpdate_userName,
-          recordUpdate_dateTime = @recordUpdate_dateTime
-      where
+        .input('recordUpdate_dateTime', currentDate)
+        .query(/* sql */ `
+      UPDATE ShiftLog.Users
+      SET
+        isActive = @isActive,
+        shifts_canView = @shifts_canView,
+        shifts_canUpdate = @shifts_canUpdate,
+        shifts_canManage = @shifts_canManage,
+        workOrders_canView = @workOrders_canView,
+        workOrders_canUpdate = @workOrders_canUpdate,
+        workOrders_canManage = @workOrders_canManage,
+        timesheets_canView = @timesheets_canView,
+        timesheets_canUpdate = @timesheets_canUpdate,
+        timesheets_canManage = @timesheets_canManage,
+        isAdmin = @isAdmin,
+        recordUpdate_userName = @recordUpdate_userName,
+        recordUpdate_dateTime = @recordUpdate_dateTime
+      WHERE
         instance = @instance
-        and userName = @userName
-        and recordDelete_dateTime is null
+        AND userName = @userName
+        AND recordDelete_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }

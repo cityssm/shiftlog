@@ -10,13 +10,18 @@ export default async function deleteTimesheetRow(
   await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('timesheetRowId', timesheetRowId).query(/* sql */ `
-      delete from ShiftLog.TimesheetCells
-      where timesheetRowId = @timesheetRowId
-        and timesheetRowId in (
-          select timesheetRowId
-          from ShiftLog.TimesheetRows
-          where instance = @instance
+    .input('timesheetRowId', timesheetRowId)
+    .query(/* sql */ `
+      DELETE FROM ShiftLog.TimesheetCells
+      WHERE
+        timesheetRowId = @timesheetRowId
+        AND timesheetRowId IN (
+          SELECT
+            timesheetRowId
+          FROM
+            ShiftLog.TimesheetRows
+          WHERE
+            instance = @instance
         )
     `)
 
@@ -24,10 +29,12 @@ export default async function deleteTimesheetRow(
   const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('timesheetRowId', timesheetRowId).query(/* sql */ `
-      delete from ShiftLog.TimesheetRows
-      where timesheetRowId = @timesheetRowId
-        and instance = @instance
+    .input('timesheetRowId', timesheetRowId)
+    .query(/* sql */ `
+      DELETE FROM ShiftLog.TimesheetRows
+      WHERE
+        timesheetRowId = @timesheetRowId
+        AND instance = @instance
     `)
 
   return result.rowsAffected[0] > 0

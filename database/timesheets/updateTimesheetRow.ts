@@ -25,14 +25,16 @@ export default async function updateTimesheetRow(
     .input(
       'timeCodeDataListItemId',
       updateRowForm.timeCodeDataListItemId ?? undefined
-    ).query(/* sql */ `
-      update ShiftLog.TimesheetRows
-      set
+    )
+    .query(/* sql */ `
+      UPDATE ShiftLog.TimesheetRows
+      SET
         rowTitle = @rowTitle,
         jobClassificationDataListItemId = @jobClassificationDataListItemId,
         timeCodeDataListItemId = @timeCodeDataListItemId
-      where timesheetRowId = @timesheetRowId
-        and instance = @instance
+      WHERE
+        timesheetRowId = @timesheetRowId
+        AND instance = @instance
     `)
 
   return result.rowsAffected[0] > 0

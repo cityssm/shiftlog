@@ -13,11 +13,16 @@ export default async function getUserSettings(
   const result = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('userName', userName).query(/* sql */ `
-      select settingKey, settingValue
-      from ShiftLog.UserSettings
-      where instance = @instance
-        and userName = @userName
+    .input('userName', userName)
+    .query(/* sql */ `
+      SELECT
+        settingKey,
+        settingValue
+      FROM
+        ShiftLog.UserSettings
+      WHERE
+        instance = @instance
+        AND userName = @userName
     `)) as mssql.IResult<{ settingKey: UserSettingKey; settingValue: string }>
 
   const settings: Partial<Record<UserSettingKey, string>> = {}

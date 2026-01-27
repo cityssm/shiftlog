@@ -11,28 +11,32 @@ export default async function createTimesheet(createTimesheetForm, userName) {
         .input('timesheetTitle', createTimesheetForm.timesheetTitle)
         .input('timesheetNote', createTimesheetForm.timesheetNote)
         .input('shiftId', createTimesheetForm.shiftId ?? undefined)
-        .input('userName', userName).query(/* sql */ `
-      insert into ShiftLog.Timesheets (
-        instance,
-        supervisorEmployeeNumber,
-        timesheetTypeDataListItemId,
-        timesheetTitle,
-        timesheetNote,
-        timesheetDate,
-        shiftId,
-        recordCreate_userName, recordUpdate_userName
-      )
-      output inserted.timesheetId
-      values (
-        @instance,
-        @supervisorEmployeeNumber,
-        @timesheetTypeDataListItemId,
-        @timesheetTitle,
-        @timesheetNote,
-        @timesheetDate,
-        @shiftId,
-        @userName, @userName
-      )
+        .input('userName', userName)
+        .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.Timesheets (
+          instance,
+          supervisorEmployeeNumber,
+          timesheetTypeDataListItemId,
+          timesheetTitle,
+          timesheetNote,
+          timesheetDate,
+          shiftId,
+          recordCreate_userName,
+          recordUpdate_userName
+        ) output inserted.timesheetId
+      VALUES
+        (
+          @instance,
+          @supervisorEmployeeNumber,
+          @timesheetTypeDataListItemId,
+          @timesheetTitle,
+          @timesheetNote,
+          @timesheetDate,
+          @shiftId,
+          @userName,
+          @userName
+        )
     `));
     return result.recordset[0].timesheetId;
 }

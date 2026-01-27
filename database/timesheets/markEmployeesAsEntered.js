@@ -6,16 +6,18 @@ export default async function markEmployeesAsEntered(timesheetId, userName) {
         .request()
         .input('timesheetId', timesheetId)
         .input('instance', getConfigProperty('application.instance'))
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.Timesheets
-      set
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.Timesheets
+      SET
         employeesEntered_dateTime = getdate(),
         employeesEntered_userName = @userName
-      where timesheetId = @timesheetId
-        and instance = @instance
-        and recordDelete_dateTime is null
-        and recordSubmitted_dateTime is not null
-        and employeesEntered_dateTime is null
+      WHERE
+        timesheetId = @timesheetId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
+        AND recordSubmitted_dateTime IS NOT NULL
+        AND employeesEntered_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }

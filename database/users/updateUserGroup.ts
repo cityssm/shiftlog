@@ -17,14 +17,17 @@ export default async function updateUserGroup(
       .input('instance', getConfigProperty('application.instance'))
       .input('userGroupName', userGroupName)
       .input('recordUpdate_userName', user.userName)
-      .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        update ShiftLog.UserGroups
-        set userGroupName = @userGroupName,
+      .input('recordUpdate_dateTime', currentDate)
+      .query(/* sql */ `
+        UPDATE ShiftLog.UserGroups
+        SET
+          userGroupName = @userGroupName,
           recordUpdate_userName = @recordUpdate_userName,
           recordUpdate_dateTime = @recordUpdate_dateTime
-        where userGroupId = @userGroupId
-          and instance = @instance
-          and recordDelete_dateTime is null
+        WHERE
+          userGroupId = @userGroupId
+          AND instance = @instance
+          AND recordDelete_dateTime IS NULL
       `)
 
     return result.rowsAffected[0] > 0
