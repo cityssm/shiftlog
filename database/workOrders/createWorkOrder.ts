@@ -82,12 +82,14 @@ export default async function createWorkOrder(
     .input('year', currentYear)
     .input('workOrderNumberPrefix', workOrderType.workOrderNumberPrefix)
     .query(/* sql */ `
-      select isnull(max(workOrderNumberSequence), 0) + 1 as nextSequence
-      from ShiftLog.WorkOrders
-      where
+      SELECT
+        isnull(max(workOrderNumberSequence), 0) + 1 AS nextSequence
+      FROM
+        ShiftLog.WorkOrders
+      WHERE
         instance = @instance
-        and workOrderNumberPrefix = @workOrderNumberPrefix
-        and workOrderNumberYear = @year
+        AND workOrderNumberPrefix = @workOrderNumberPrefix
+        AND workOrderNumberYear = @year
     `)) as mssql.IResult<{ nextSequence: number }>
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
@@ -157,54 +159,56 @@ export default async function createWorkOrder(
         ? null
         : createWorkOrderForm.assignedToId
     )
-    .input('userName', user.userName).query(/* sql */ `
-      insert into ShiftLog.WorkOrders (
-        instance,
-        workOrderNumberPrefix,
-        workOrderNumberYear,
-        workOrderNumberSequence,
-        workOrderTypeId,
-        workOrderStatusDataListItemId,
-        workOrderPriorityDataListItemId,
-        workOrderDetails,
-        workOrderOpenDateTime,
-        workOrderDueDateTime,
-        workOrderCloseDateTime,
-        requestorName,
-        requestorContactInfo,
-        locationLatitude,
-        locationLongitude,
-        locationAddress1,
-        locationAddress2,
-        locationCityProvince,
-        assignedToId,
-        recordCreate_userName,
-        recordUpdate_userName
-      )
-      output inserted.workOrderId
-      values (
-        @instance,
-        @workOrderNumberPrefix,
-        @workOrderNumberYear,
-        @workOrderNumberSequence,
-        @workOrderTypeId,
-        @workOrderStatusDataListItemId,
-        @workOrderPriorityDataListItemId,
-        @workOrderDetails,
-        @workOrderOpenDateTime,
-        @workOrderDueDateTime,
-        @workOrderCloseDateTime,
-        @requestorName,
-        @requestorContactInfo,
-        @locationLatitude,
-        @locationLongitude,
-        @locationAddress1,
-        @locationAddress2,
-        @locationCityProvince,
-        @assignedToId,
-        @userName,
-        @userName
-      )
+    .input('userName', user.userName)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.WorkOrders (
+          instance,
+          workOrderNumberPrefix,
+          workOrderNumberYear,
+          workOrderNumberSequence,
+          workOrderTypeId,
+          workOrderStatusDataListItemId,
+          workOrderPriorityDataListItemId,
+          workOrderDetails,
+          workOrderOpenDateTime,
+          workOrderDueDateTime,
+          workOrderCloseDateTime,
+          requestorName,
+          requestorContactInfo,
+          locationLatitude,
+          locationLongitude,
+          locationAddress1,
+          locationAddress2,
+          locationCityProvince,
+          assignedToId,
+          recordCreate_userName,
+          recordUpdate_userName
+        ) output inserted.workOrderId
+      VALUES
+        (
+          @instance,
+          @workOrderNumberPrefix,
+          @workOrderNumberYear,
+          @workOrderNumberSequence,
+          @workOrderTypeId,
+          @workOrderStatusDataListItemId,
+          @workOrderPriorityDataListItemId,
+          @workOrderDetails,
+          @workOrderOpenDateTime,
+          @workOrderDueDateTime,
+          @workOrderCloseDateTime,
+          @requestorName,
+          @requestorContactInfo,
+          @locationLatitude,
+          @locationLongitude,
+          @locationAddress1,
+          @locationAddress2,
+          @locationCityProvince,
+          @assignedToId,
+          @userName,
+          @userName
+        )
     `)) as mssql.IResult<{ workOrderId: number }>
 
   const workOrderId = result.recordset[0].workOrderId
@@ -235,25 +239,28 @@ export default async function createWorkOrder(
       .input('milestoneDescription', defaultMilestone.milestoneDescription)
       .input('milestoneDueDateTime', milestoneDueDateTime)
       .input('orderNumber', defaultMilestone.orderNumber)
-      .input('userName', user.userName).query(/* sql */ `
-        insert into ShiftLog.WorkOrderMilestones (
-          workOrderId,
-          milestoneTitle,
-          milestoneDescription,
-          milestoneDueDateTime,
-          orderNumber,
-          recordCreate_userName,
-          recordUpdate_userName
-        )
-        values (
-          @workOrderId,
-          @milestoneTitle,
-          @milestoneDescription,
-          @milestoneDueDateTime,
-          @orderNumber,
-          @userName,
-          @userName
-        )
+      .input('userName', user.userName)
+      .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.WorkOrderMilestones (
+            workOrderId,
+            milestoneTitle,
+            milestoneDescription,
+            milestoneDueDateTime,
+            orderNumber,
+            recordCreate_userName,
+            recordUpdate_userName
+          )
+        VALUES
+          (
+            @workOrderId,
+            @milestoneTitle,
+            @milestoneDescription,
+            @milestoneDueDateTime,
+            @orderNumber,
+            @userName,
+            @userName
+          )
       `)
   }
 

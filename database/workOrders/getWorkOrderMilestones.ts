@@ -18,7 +18,7 @@ export default async function getWorkOrderMilestones(
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
     .query(/* sql */ `
-      select
+      SELECT
         m.workOrderMilestoneId,
         m.workOrderId,
         m.milestoneTitle,
@@ -32,19 +32,31 @@ export default async function getWorkOrderMilestones(
         m.recordCreate_dateTime,
         m.recordUpdate_userName,
         m.recordUpdate_dateTime
-      from ShiftLog.WorkOrderMilestones m
-      left join ShiftLog.AssignedTo a on m.assignedToId = a.assignedToId
-      where m.workOrderId = @workOrderId
-        and m.recordDelete_dateTime is null
-        and m.workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      FROM
+        ShiftLog.WorkOrderMilestones m
+        LEFT JOIN ShiftLog.AssignedTo a ON m.assignedToId = a.assignedToId
+      WHERE
+        m.workOrderId = @workOrderId
+        AND m.recordDelete_dateTime IS NULL
+        AND m.workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
-      order by
-        case when m.milestoneCompleteDateTime is null then 0 else 1 end,
-        case when m.milestoneCompleteDateTime is null and m.milestoneDueDateTime is not null then 0 else 1 end,
+      ORDER BY
+        CASE
+          WHEN m.milestoneCompleteDateTime IS NULL THEN 0
+          ELSE 1
+        END,
+        CASE
+          WHEN m.milestoneCompleteDateTime IS NULL
+          AND m.milestoneDueDateTime IS NOT NULL THEN 0
+          ELSE 1
+        END,
         m.milestoneDueDateTime,
         m.orderNumber,
         m.workOrderMilestoneId

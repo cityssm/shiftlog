@@ -13,16 +13,18 @@ export default async function recoverWorkOrder(
     .request()
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrders
-      set
-        recordDelete_userName = null,
-        recordDelete_dateTime = null,
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrders
+      SET
+        recordDelete_userName = NULL,
+        recordDelete_dateTime = NULL,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where workOrderId = @workOrderId
-        and instance = @instance
-        and recordDelete_dateTime is not null
+      WHERE
+        workOrderId = @workOrderId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NOT NULL
     `)) as mssql.IResult<Record<string, never>>
 
   return result.rowsAffected[0] > 0

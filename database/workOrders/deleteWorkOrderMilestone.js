@@ -6,18 +6,23 @@ export default async function deleteWorkOrderMilestone(workOrderMilestoneId, use
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderMilestoneId', workOrderMilestoneId)
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrderMilestones
-      set
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrderMilestones
+      SET
         recordDelete_userName = @userName,
         recordDelete_dateTime = getdate()
-      where workOrderMilestoneId = @workOrderMilestoneId
-        and recordDelete_dateTime is null
-        and workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      WHERE
+        workOrderMilestoneId = @workOrderMilestoneId
+        AND recordDelete_dateTime IS NULL
+        AND workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
     `);
     return result.rowsAffected[0] > 0;

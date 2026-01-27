@@ -12,72 +12,55 @@ export default async function getWorkOrder(
   const pool = await getShiftLogConnectionPool()
 
   const sql = /* sql */ `
-    select
+    SELECT
       w.workOrderId,
       w.workOrderNumberYear,
       w.workOrderNumberSequence,
       w.workOrderNumber,
-
       w.workOrderTypeId,
       wType.workOrderType,
-
       w.workOrderStatusDataListItemId,
-      wStatus.dataListItem as workOrderStatusDataListItem,
-
+      wStatus.dataListItem AS workOrderStatusDataListItem,
       w.workOrderPriorityDataListItemId,
-      wPriority.dataListItem as workOrderPriorityDataListItem,
-
+      wPriority.dataListItem AS workOrderPriorityDataListItem,
       w.workOrderDetails,
-
       w.workOrderOpenDateTime,
       w.workOrderDueDateTime,
       w.workOrderCloseDateTime,
-
       w.requestorName,
       w.requestorContactInfo,
-
       w.locationLatitude,
       w.locationLongitude,
       w.locationAddress1,
       w.locationAddress2,
       w.locationCityProvince,
-
       w.assignedToId,
       assignedTo.assignedToName,
-
       moreInfoFormDataJson
-
-    from ShiftLog.WorkOrders w
-
-    left join ShiftLog.WorkOrderTypes wType
-      on w.workOrderTypeId = wType.workOrderTypeId
-
-    left join ShiftLog.DataListItems wStatus
-      on w.workOrderStatusDataListItemId = wStatus.dataListItemId
-
-    left join ShiftLog.DataListItems wPriority
-      on w.workOrderPriorityDataListItemId = wPriority.dataListItemId
-
-    left join ShiftLog.AssignedTo assignedTo
-      on w.assignedToId = assignedTo.assignedToId
-
-    where w.recordDelete_dateTime is null
-      and w.workOrderId = @workOrderId
-      and w.instance = @instance
-
-    ${
-      userName === undefined
+    FROM
+      ShiftLog.WorkOrders w
+      LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+      LEFT JOIN ShiftLog.DataListItems wStatus ON w.workOrderStatusDataListItemId = wStatus.dataListItemId
+      LEFT JOIN ShiftLog.DataListItems wPriority ON w.workOrderPriorityDataListItemId = wPriority.dataListItemId
+      LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
+    WHERE
+      w.recordDelete_dateTime IS NULL
+      AND w.workOrderId = @workOrderId
+      AND w.instance = @instance ${userName === undefined
         ? ''
-        : `
-            and (
-              wType.userGroupId is null or wType.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+        : /* sql */ `
+            AND (
+              wType.userGroupId IS NULL
+              OR wType.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
-          `
-    }    
+          `}
   `
 
   try {

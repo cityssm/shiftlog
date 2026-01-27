@@ -3,24 +3,30 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateWorkOrderMilestoneOrder(milestoneOrders, userName) {
     const pool = await getShiftLogConnectionPool();
     for (const milestoneOrder of milestoneOrders) {
+        // eslint-disable-next-line no-await-in-loop
         await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('workOrderMilestoneId', milestoneOrder.workOrderMilestoneId)
             .input('orderNumber', milestoneOrder.orderNumber)
-            .input('userName', userName).query(/* sql */ `
-        update ShiftLog.WorkOrderMilestones
-        set
+            .input('userName', userName)
+            .query(/* sql */ `
+        UPDATE ShiftLog.WorkOrderMilestones
+        SET
           orderNumber = @orderNumber,
           recordUpdate_userName = @userName,
           recordUpdate_dateTime = getdate()
-        where workOrderMilestoneId = @workOrderMilestoneId
-          and recordDelete_dateTime is null
-          and workOrderId in (
-            select workOrderId
-            from ShiftLog.WorkOrders
-            where recordDelete_dateTime is null
-              and instance = @instance
+        WHERE
+          workOrderMilestoneId = @workOrderMilestoneId
+          AND recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NULL
+              AND instance = @instance
           )
       `);
     }

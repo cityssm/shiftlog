@@ -14,7 +14,7 @@ export default async function getWorkOrderAttachment(
     .input('workOrderAttachmentId', workOrderAttachmentId)
     .input('instance', getConfigProperty('application.instance'))
     .query(/* sql */ `
-      select
+      SELECT
         workOrderAttachmentId,
         workOrderId,
         attachmentFileName,
@@ -29,14 +29,19 @@ export default async function getWorkOrderAttachment(
         recordUpdate_dateTime,
         recordDelete_userName,
         recordDelete_dateTime
-      from ShiftLog.WorkOrderAttachments
-      where workOrderAttachmentId = @workOrderAttachmentId
-        and recordDelete_dateTime is null
-        and workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      FROM
+        ShiftLog.WorkOrderAttachments
+      WHERE
+        workOrderAttachmentId = @workOrderAttachmentId
+        AND recordDelete_dateTime IS NULL
+        AND workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
     `)) as mssql.IResult<WorkOrderAttachment>
 

@@ -6,15 +6,20 @@ export default async function doGetRequestorSuggestions(searchString, user) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('searchString', searchString)
-        .input('userName', user?.userName).query(/* sql */ `
-      SELECT DISTINCT requestorName, requestorContactInfo
-      FROM ShiftLog.WorkOrders
+        .input('userName', user?.userName)
+        .query(/* sql */ `
+      SELECT DISTINCT
+        requestorName,
+        requestorContactInfo
+      FROM
+        ShiftLog.WorkOrders
       WHERE
         instance = @instance
-        and recordDelete_dateTime IS NULL
+        AND recordDelete_dateTime IS NULL
         AND requestorName LIKE '%' + @searchString + '%'
-        and requestorContactInfo <> ''
-      ORDER BY requestorName
+        AND requestorContactInfo <> ''
+      ORDER BY
+        requestorName
     `);
     return result.recordset;
 }

@@ -20,11 +20,15 @@ export default async function createWorkOrderMilestone(
   // Get the next order number
   const orderResult = (await pool
     .request()
-    .input('workOrderId', form.workOrderId).query(/* sql */ `
-      select isnull(max(orderNumber), 0) + 1 as nextOrderNumber
-      from ShiftLog.WorkOrderMilestones
-      where workOrderId = @workOrderId
-        and recordDelete_dateTime is null
+    .input('workOrderId', form.workOrderId)
+    .query(/* sql */ `
+      SELECT
+        isnull(max(orderNumber), 0) + 1 AS nextOrderNumber
+      FROM
+        ShiftLog.WorkOrderMilestones
+      WHERE
+        workOrderId = @workOrderId
+        AND recordDelete_dateTime IS NULL
     `)) as mssql.IResult<{ nextOrderNumber: number }>
 
   const nextOrderNumber = orderResult.recordset[0].nextOrderNumber
@@ -48,35 +52,35 @@ export default async function createWorkOrderMilestone(
     )
     .input(
       'assignedToId',
-      form.assignedToId && form.assignedToId !== ''
-        ? form.assignedToId
-        : null
+      form.assignedToId && form.assignedToId !== '' ? form.assignedToId : null
     )
     .input('orderNumber', nextOrderNumber)
-    .input('userName', userName).query(/* sql */ `
-      insert into ShiftLog.WorkOrderMilestones (
-        workOrderId,
-        milestoneTitle,
-        milestoneDescription,
-        milestoneDueDateTime,
-        milestoneCompleteDateTime,
-        assignedToId,
-        orderNumber,
-        recordCreate_userName,
-        recordUpdate_userName
-      )
-      output inserted.workOrderMilestoneId
-      values (
-        @workOrderId,
-        @milestoneTitle,
-        @milestoneDescription,
-        @milestoneDueDateTime,
-        @milestoneCompleteDateTime,
-        @assignedToId,
-        @orderNumber,
-        @userName,
-        @userName
-      )
+    .input('userName', userName)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.WorkOrderMilestones (
+          workOrderId,
+          milestoneTitle,
+          milestoneDescription,
+          milestoneDueDateTime,
+          milestoneCompleteDateTime,
+          assignedToId,
+          orderNumber,
+          recordCreate_userName,
+          recordUpdate_userName
+        ) output inserted.workOrderMilestoneId
+      VALUES
+        (
+          @workOrderId,
+          @milestoneTitle,
+          @milestoneDescription,
+          @milestoneDueDateTime,
+          @milestoneCompleteDateTime,
+          @assignedToId,
+          @orderNumber,
+          @userName,
+          @userName
+        )
     `)) as mssql.IResult<{ workOrderMilestoneId: number }>
 
   return result.recordset[0].workOrderMilestoneId

@@ -7,7 +7,7 @@ export default async function getWorkOrderNotes(workOrderId) {
         .input('workOrderId', workOrderId)
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
-      select
+      SELECT
         workOrderId,
         noteSequence,
         noteText,
@@ -17,16 +17,22 @@ export default async function getWorkOrderNotes(workOrderId) {
         recordUpdate_dateTime,
         recordDelete_userName,
         recordDelete_dateTime
-      from ShiftLog.WorkOrderNotes
-      where workOrderId = @workOrderId
-        and recordDelete_dateTime is null
-        and workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      FROM
+        ShiftLog.WorkOrderNotes
+      WHERE
+        workOrderId = @workOrderId
+        AND recordDelete_dateTime IS NULL
+        AND workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
-      order by noteSequence desc
+      ORDER BY
+        noteSequence DESC
     `));
     return result.recordset;
 }

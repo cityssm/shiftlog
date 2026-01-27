@@ -19,20 +19,25 @@ export default async function updateWorkOrderNote(
     .input('workOrderId', updateWorkOrderNoteForm.workOrderId)
     .input('noteSequence', updateWorkOrderNoteForm.noteSequence)
     .input('noteText', updateWorkOrderNoteForm.noteText)
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrderNotes
-      set
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrderNotes
+      SET
         noteText = @noteText,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where workOrderId = @workOrderId
-        and noteSequence = @noteSequence
-        and recordDelete_dateTime is null
-        and workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      WHERE
+        workOrderId = @workOrderId
+        AND noteSequence = @noteSequence
+        AND recordDelete_dateTime IS NULL
+        AND workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
     `)
 

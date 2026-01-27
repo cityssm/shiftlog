@@ -25,58 +25,42 @@ export default async function getDeletedWorkOrders(
   const workOrdersResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('userName', user?.userName).query<WorkOrder>(/* sql */ `
-        select
-          w.workOrderId,
-
-          w.workOrderNumberPrefix,
-          w.workOrderNumberYear,
-          w.workOrderNumberSequence,
-          w.workOrderNumberOverride,
-          w.workOrderNumber,
-
-          w.workOrderTypeId,
-          wType.workOrderType,
-
-          w.workOrderStatusDataListItemId,
-          wStatus.dataListItem as workOrderStatusDataListItem,
-
-          w.workOrderDetails,
-
-          w.workOrderOpenDateTime,
-          w.workOrderDueDateTime,
-          w.workOrderCloseDateTime,
-
-          w.requestorName,
-          w.requestorContactInfo,
-
-          w.locationLatitude,
-          w.locationLongitude,
-          w.locationAddress1,
-          w.locationAddress2,
-          w.locationCityProvince,
-
-          w.assignedToId,
-          assignedTo.assignedToName,
-
-          w.recordDelete_userName,
-          w.recordDelete_dateTime
-          
-        from ShiftLog.WorkOrders w
-
-        left join ShiftLog.WorkOrderTypes wType
-          on w.workOrderTypeId = wType.workOrderTypeId
-
-        left join ShiftLog.DataListItems wStatus
-          on w.workOrderStatusDataListItemId = wStatus.dataListItemId
-
-        left join ShiftLog.AssignedTo assignedTo
-          on w.assignedToId = assignedTo.assignedToId
-
-        ${whereClause}    
-
-        order by w.recordDelete_dateTime desc
-      `)
+    .input('userName', user?.userName)
+    .query<WorkOrder>(/* sql */ `
+      SELECT
+        w.workOrderId,
+        w.workOrderNumberPrefix,
+        w.workOrderNumberYear,
+        w.workOrderNumberSequence,
+        w.workOrderNumberOverride,
+        w.workOrderNumber,
+        w.workOrderTypeId,
+        wType.workOrderType,
+        w.workOrderStatusDataListItemId,
+        wStatus.dataListItem AS workOrderStatusDataListItem,
+        w.workOrderDetails,
+        w.workOrderOpenDateTime,
+        w.workOrderDueDateTime,
+        w.workOrderCloseDateTime,
+        w.requestorName,
+        w.requestorContactInfo,
+        w.locationLatitude,
+        w.locationLongitude,
+        w.locationAddress1,
+        w.locationAddress2,
+        w.locationCityProvince,
+        w.assignedToId,
+        assignedTo.assignedToName,
+        w.recordDelete_userName,
+        w.recordDelete_dateTime
+      FROM
+        ShiftLog.WorkOrders w
+        LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+        LEFT JOIN ShiftLog.DataListItems wStatus ON w.workOrderStatusDataListItemId = wStatus.dataListItemId
+        LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId ${whereClause}
+      ORDER BY
+        w.recordDelete_dateTime DESC
+    `)
 
   const workOrders = workOrdersResult.recordset
 

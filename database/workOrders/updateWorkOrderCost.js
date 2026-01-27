@@ -8,20 +8,25 @@ export default async function updateWorkOrderCost(updateWorkOrderCostForm, userN
         .input('workOrderCostId', updateWorkOrderCostForm.workOrderCostId)
         .input('costAmount', updateWorkOrderCostForm.costAmount)
         .input('costDescription', updateWorkOrderCostForm.costDescription)
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrderCosts
-      set
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrderCosts
+      SET
         costAmount = @costAmount,
         costDescription = @costDescription,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where workOrderCostId = @workOrderCostId
-        and recordDelete_dateTime is null
-        and workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      WHERE
+        workOrderCostId = @workOrderCostId
+        AND recordDelete_dateTime IS NULL
+        AND workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
     `);
     return result.rowsAffected[0] > 0;

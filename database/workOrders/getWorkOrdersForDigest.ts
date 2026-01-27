@@ -28,8 +28,9 @@ export async function getWorkOrdersForDigest(
     .request()
     .input('assignedToId', assignedToId)
     .input('instance', getConfigProperty('application.instance'))
-    .input('newItemHours', newItemHours).query<WorkOrderDigestItem>(/* sql */ `
-      select
+    .input('newItemHours', newItemHours)
+    .query<WorkOrderDigestItem>(/* sql */ `
+      SELECT
         w.workOrderId,
         w.workOrderNumberPrefix,
         w.workOrderNumberYear,
@@ -39,7 +40,7 @@ export async function getWorkOrdersForDigest(
         w.workOrderTypeId,
         wType.workOrderType,
         w.workOrderStatusDataListItemId,
-        wStatus.dataListItem as workOrderStatusDataListItem,
+        wStatus.dataListItem AS workOrderStatusDataListItem,
         w.workOrderDetails,
         w.workOrderOpenDateTime,
         w.workOrderDueDateTime,
@@ -53,29 +54,33 @@ export async function getWorkOrdersForDigest(
         w.locationCityProvince,
         w.assignedToId,
         assignedTo.assignedToName,
-        case
-          when w.workOrderDueDateTime is not null and w.workOrderDueDateTime < getdate() then 1
-          else 0
-        end as isOverdue,
-        case
-          when datediff(hour, w.workOrderOpenDateTime, getdate()) <= @newItemHours then 1
-          else 0
-        end as isNew
-      from ShiftLog.WorkOrders w
-      left join ShiftLog.WorkOrderTypes wType
-        on w.workOrderTypeId = wType.workOrderTypeId
-      left join ShiftLog.DataListItems wStatus
-        on w.workOrderStatusDataListItemId = wStatus.dataListItemId
-      left join ShiftLog.AssignedTo assignedTo
-        on w.assignedToId = assignedTo.assignedToId
-      where w.instance = @instance
-        and w.recordDelete_dateTime is null
-        and w.workOrderCloseDateTime is null
-        and w.assignedToId = @assignedToId
-      order by
-        case when w.workOrderDueDateTime is not null and w.workOrderDueDateTime < getdate() then 0 else 1 end,
+        CASE
+          WHEN w.workOrderDueDateTime IS NOT NULL
+          AND w.workOrderDueDateTime < getdate() THEN 1
+          ELSE 0
+        END AS isOverdue,
+        CASE
+          WHEN datediff(hour, w.workOrderOpenDateTime, getdate()) <= @newItemHours THEN 1
+          ELSE 0
+        END AS isNew
+      FROM
+        ShiftLog.WorkOrders w
+        LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+        LEFT JOIN ShiftLog.DataListItems wStatus ON w.workOrderStatusDataListItemId = wStatus.dataListItemId
+        LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
+      WHERE
+        w.instance = @instance
+        AND w.recordDelete_dateTime IS NULL
+        AND w.workOrderCloseDateTime IS NULL
+        AND w.assignedToId = @assignedToId
+      ORDER BY
+        CASE
+          WHEN w.workOrderDueDateTime IS NOT NULL
+          AND w.workOrderDueDateTime < getdate() THEN 0
+          ELSE 1
+        END,
         w.workOrderDueDateTime,
-        w.workOrderOpenDateTime desc
+        w.workOrderOpenDateTime DESC
     `)
 
   // Fetch open milestones assigned to the selected value
@@ -85,7 +90,7 @@ export async function getWorkOrdersForDigest(
     .input('instance', getConfigProperty('application.instance'))
     .input('newItemHours', newItemHours)
     .query<WorkOrderMilestoneDigestItem>(/* sql */ `
-      select
+      SELECT
         m.workOrderMilestoneId,
         m.workOrderId,
         m.milestoneTitle,
@@ -96,29 +101,34 @@ export async function getWorkOrdersForDigest(
         assignedTo.assignedToName,
         m.orderNumber,
         w.workOrderNumber,
-        case
-          when m.milestoneDueDateTime is not null and m.milestoneDueDateTime < getdate() then 1
-          else 0
-        end as isOverdue,
-        case
-          when datediff(hour, m.recordCreate_dateTime, getdate()) <= @newItemHours then 1
-          else 0
-        end as isNew
-      from ShiftLog.WorkOrderMilestones m
-      inner join ShiftLog.WorkOrders w
-        on m.workOrderId = w.workOrderId
-      left join ShiftLog.AssignedTo assignedTo
-        on m.assignedToId = assignedTo.assignedToId
-      where w.instance = @instance
-        and w.recordDelete_dateTime is null
-        and m.recordDelete_dateTime is null
-        and w.workOrderCloseDateTime is null
-        and m.milestoneCompleteDateTime is null
-        and m.assignedToId = @assignedToId
-      order by
-        case when m.milestoneDueDateTime is not null and m.milestoneDueDateTime < getdate() then 0 else 1 end,
+        CASE
+          WHEN m.milestoneDueDateTime IS NOT NULL
+          AND m.milestoneDueDateTime < getdate() THEN 1
+          ELSE 0
+        END AS isOverdue,
+        CASE
+          WHEN datediff(hour, m.recordCreate_dateTime, getdate()) <= @newItemHours THEN 1
+          ELSE 0
+        END AS isNew
+      FROM
+        ShiftLog.WorkOrderMilestones m
+        INNER JOIN ShiftLog.WorkOrders w ON m.workOrderId = w.workOrderId
+        LEFT JOIN ShiftLog.AssignedTo assignedTo ON m.assignedToId = assignedTo.assignedToId
+      WHERE
+        w.instance = @instance
+        AND w.recordDelete_dateTime IS NULL
+        AND m.recordDelete_dateTime IS NULL
+        AND w.workOrderCloseDateTime IS NULL
+        AND m.milestoneCompleteDateTime IS NULL
+        AND m.assignedToId = @assignedToId
+      ORDER BY
+        CASE
+          WHEN m.milestoneDueDateTime IS NOT NULL
+          AND m.milestoneDueDateTime < getdate() THEN 0
+          ELSE 1
+        END,
         m.milestoneDueDateTime,
-        m.recordCreate_dateTime desc
+        m.recordCreate_dateTime DESC
     `)
 
   return {

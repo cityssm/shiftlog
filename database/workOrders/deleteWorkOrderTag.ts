@@ -10,9 +10,12 @@ export default async function deleteWorkOrderTag(
     const result = await pool
       .request()
       .input('workOrderId', workOrderId)
-      .input('tagName', tagName).query(/* sql */ `
+      .input('tagName', tagName)
+      .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderTags
-        WHERE workOrderId = @workOrderId AND tagName = @tagName
+        WHERE
+          workOrderId = @workOrderId
+          AND tagName = @tagName
       `)
 
     return result.rowsAffected[0] > 0

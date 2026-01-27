@@ -4,12 +4,15 @@ export default async function deleteWorkOrderAttachment(workOrderAttachmentId, u
     const result = await pool
         .request()
         .input('workOrderAttachmentId', workOrderAttachmentId)
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrderAttachments
-      set recordDelete_userName = @userName,
-          recordDelete_dateTime = getdate()
-      where workOrderAttachmentId = @workOrderAttachmentId
-        and recordDelete_dateTime is null
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrderAttachments
+      SET
+        recordDelete_userName = @userName,
+        recordDelete_dateTime = getdate()
+      WHERE
+        workOrderAttachmentId = @workOrderAttachmentId
+        AND recordDelete_dateTime IS NULL
     `);
     return result.rowsAffected[0] === 1;
 }

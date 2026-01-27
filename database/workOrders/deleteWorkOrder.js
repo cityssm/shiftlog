@@ -6,14 +6,16 @@ export default async function deleteWorkOrder(workOrderId, userName) {
         .request()
         .input('workOrderId', workOrderId)
         .input('instance', getConfigProperty('application.instance'))
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrders
-      set
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrders
+      SET
         recordDelete_userName = @userName,
         recordDelete_dateTime = getdate()
-      where workOrderId = @workOrderId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      WHERE
+        workOrderId = @workOrderId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `));
     return result.rowsAffected[0] > 0;
 }

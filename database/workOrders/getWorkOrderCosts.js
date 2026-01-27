@@ -7,7 +7,7 @@ export default async function getWorkOrderCosts(workOrderId) {
         .input('workOrderId', workOrderId)
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
-      select
+      SELECT
         c.workOrderCostId,
         c.workOrderId,
         c.costAmount,
@@ -16,16 +16,22 @@ export default async function getWorkOrderCosts(workOrderId) {
         c.recordCreate_dateTime,
         c.recordUpdate_userName,
         c.recordUpdate_dateTime
-      from ShiftLog.WorkOrderCosts c
-      where c.workOrderId = @workOrderId
-        and c.recordDelete_dateTime is null
-        and c.workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      FROM
+        ShiftLog.WorkOrderCosts c
+      WHERE
+        c.workOrderId = @workOrderId
+        AND c.recordDelete_dateTime IS NULL
+        AND c.workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
-      order by c.workOrderCostId
+      ORDER BY
+        c.workOrderCostId
     `));
     return result.recordset;
 }

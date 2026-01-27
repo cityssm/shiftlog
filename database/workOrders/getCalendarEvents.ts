@@ -75,84 +75,93 @@ export default async function getCalendarEvents(
 
     if (filters.showOpenDates) {
       workOrderDateQueries.push(/* sql */ `
-        select
-          w.workOrderOpenDateTime as eventDate,
-          'workOrderOpen' as eventType,
+        SELECT
+          w.workOrderOpenDateTime AS eventDate,
+          'workOrderOpen' AS eventType,
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
           w.assignedToId,
           a.assignedToName,
-          null as milestoneId,
-          null as milestoneTitle,
+          NULL AS milestoneId,
+          NULL AS milestoneTitle,
           w.workOrderCloseDateTime,
           w.workOrderDueDateTime,
-          null as milestoneCompleteDateTime,
-          null as milestoneDueDateTime
-        from ShiftLog.WorkOrders w
-        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.AssignedTo a on w.assignedToId = a.assignedToId
-        where w.instance = @instance
-          and w.recordDelete_dateTime is null
-          and w.workOrderOpenDateTime between @startDate and @endDate
-          ${filters.assignedToId === undefined ? '' : 'and w.assignedToId = @assignedToId'}
-          ${userGroupWhereClause}
+          NULL AS milestoneCompleteDateTime,
+          NULL AS milestoneDueDateTime
+        FROM
+          ShiftLog.WorkOrders w
+          INNER JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+          LEFT JOIN ShiftLog.AssignedTo a ON w.assignedToId = a.assignedToId
+        WHERE
+          w.instance = @instance
+          AND w.recordDelete_dateTime IS NULL
+          AND w.workOrderOpenDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
+          undefined
+            ? ''
+            : 'and w.assignedToId = @assignedToId'} ${userGroupWhereClause}
       `)
     }
 
     if (filters.showDueDates) {
       workOrderDateQueries.push(/* sql */ `
-        select
-          w.workOrderDueDateTime as eventDate,
-          'workOrderDue' as eventType,
+        SELECT
+          w.workOrderDueDateTime AS eventDate,
+          'workOrderDue' AS eventType,
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
           w.assignedToId,
           a.assignedToName,
-          null as milestoneId,
-          null as milestoneTitle,
+          NULL AS milestoneId,
+          NULL AS milestoneTitle,
           w.workOrderCloseDateTime,
           w.workOrderDueDateTime,
-          null as milestoneCompleteDateTime,
-          null as milestoneDueDateTime
-        from ShiftLog.WorkOrders w
-        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.AssignedTo a on w.assignedToId = a.assignedToId
-        where w.instance = @instance
-          and w.recordDelete_dateTime is null
-          and w.workOrderDueDateTime is not null
-          and w.workOrderDueDateTime between @startDate and @endDate
-          ${filters.assignedToId === undefined ? '' : 'and w.assignedToId = @assignedToId'}
-          ${userGroupWhereClause}
+          NULL AS milestoneCompleteDateTime,
+          NULL AS milestoneDueDateTime
+        FROM
+          ShiftLog.WorkOrders w
+          INNER JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+          LEFT JOIN ShiftLog.AssignedTo a ON w.assignedToId = a.assignedToId
+        WHERE
+          w.instance = @instance
+          AND w.recordDelete_dateTime IS NULL
+          AND w.workOrderDueDateTime IS NOT NULL
+          AND w.workOrderDueDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
+          undefined
+            ? ''
+            : 'and w.assignedToId = @assignedToId'} ${userGroupWhereClause}
       `)
     }
 
     if (filters.showCloseDates) {
       workOrderDateQueries.push(/* sql */ `
-        select
-          w.workOrderCloseDateTime as eventDate,
-          'workOrderClose' as eventType,
+        SELECT
+          w.workOrderCloseDateTime AS eventDate,
+          'workOrderClose' AS eventType,
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
           w.assignedToId,
           a.assignedToName,
-          null as milestoneId,
-          null as milestoneTitle,
+          NULL AS milestoneId,
+          NULL AS milestoneTitle,
           w.workOrderCloseDateTime,
           w.workOrderDueDateTime,
-          null as milestoneCompleteDateTime,
-          null as milestoneDueDateTime
-        from ShiftLog.WorkOrders w
-        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.AssignedTo a on w.assignedToId = a.assignedToId
-        where w.instance = @instance
-          and w.recordDelete_dateTime is null
-          and w.workOrderCloseDateTime is not null
-          and w.workOrderCloseDateTime between @startDate and @endDate
-          ${filters.assignedToId === undefined ? '' : 'and w.assignedToId = @assignedToId'}
-          ${userGroupWhereClause}
+          NULL AS milestoneCompleteDateTime,
+          NULL AS milestoneDueDateTime
+        FROM
+          ShiftLog.WorkOrders w
+          INNER JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+          LEFT JOIN ShiftLog.AssignedTo a ON w.assignedToId = a.assignedToId
+        WHERE
+          w.instance = @instance
+          AND w.recordDelete_dateTime IS NULL
+          AND w.workOrderCloseDateTime IS NOT NULL
+          AND w.workOrderCloseDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
+          undefined
+            ? ''
+            : 'and w.assignedToId = @assignedToId'} ${userGroupWhereClause}
       `)
     }
 
@@ -166,10 +175,7 @@ export default async function getCalendarEvents(
       request.input('endDate', endDate)
 
       if (filters.assignedToId !== undefined) {
-        request.input(
-          'assignedToId',
-          filters.assignedToId
-        )
+        request.input('assignedToId', filters.assignedToId)
       }
 
       if (user !== undefined) {
@@ -188,73 +194,71 @@ export default async function getCalendarEvents(
 
     if (filters.showMilestoneDueDates) {
       milestoneQueries.push(/* sql */ `
-        select
-          m.milestoneDueDateTime as eventDate,
-          'milestoneDue' as eventType,
+        SELECT
+          m.milestoneDueDateTime AS eventDate,
+          'milestoneDue' AS eventType,
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
-          coalesce(m.assignedToId, w.assignedToId) as assignedToId,
-          coalesce(ma.assignedToName, wa.assignedToName) as assignedToName,
-          m.workOrderMilestoneId as milestoneId,
+          coalesce(m.assignedToId, w.assignedToId) AS assignedToId,
+          coalesce(ma.assignedToName, wa.assignedToName) AS assignedToName,
+          m.workOrderMilestoneId AS milestoneId,
           m.milestoneTitle,
           w.workOrderCloseDateTime,
           w.workOrderDueDateTime,
           m.milestoneCompleteDateTime,
           m.milestoneDueDateTime
-        from ShiftLog.WorkOrderMilestones m
-        inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
-        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.AssignedTo ma on m.assignedToId = ma.assignedToId
-        left join ShiftLog.AssignedTo wa on w.assignedToId = wa.assignedToId
-        where w.instance = @instance
-          and w.recordDelete_dateTime is null
-          and m.recordDelete_dateTime is null
-          and m.milestoneDueDateTime is not null
-          and m.milestoneDueDateTime between @startDate and @endDate
-          ${
-            filters.assignedToId === undefined
-              ? ''
-              : `and (m.assignedToId = @assignedToId
-                   or (m.assignedToId is null and w.assignedToId = @assignedToId))`
-          }
-          ${userGroupWhereClause}
+        FROM
+          ShiftLog.WorkOrderMilestones m
+          INNER JOIN ShiftLog.WorkOrders w ON m.workOrderId = w.workOrderId
+          INNER JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+          LEFT JOIN ShiftLog.AssignedTo ma ON m.assignedToId = ma.assignedToId
+          LEFT JOIN ShiftLog.AssignedTo wa ON w.assignedToId = wa.assignedToId
+        WHERE
+          w.instance = @instance
+          AND w.recordDelete_dateTime IS NULL
+          AND m.recordDelete_dateTime IS NULL
+          AND m.milestoneDueDateTime IS NOT NULL
+          AND m.milestoneDueDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
+          undefined
+            ? ''
+            : `and (m.assignedToId = @assignedToId
+                   or (m.assignedToId is null and w.assignedToId = @assignedToId))`} ${userGroupWhereClause}
       `)
     }
 
     if (filters.showMilestoneCompleteDates) {
       milestoneQueries.push(/* sql */ `
-        select
-          m.milestoneCompleteDateTime as eventDate,
-          'milestoneComplete' as eventType,
+        SELECT
+          m.milestoneCompleteDateTime AS eventDate,
+          'milestoneComplete' AS eventType,
           w.workOrderId,
           w.workOrderNumber,
           w.workOrderDetails,
-          coalesce(m.assignedToId, w.assignedToId) as assignedToId,
-          coalesce(ma.assignedToName, wa.assignedToName) as assignedToName,
-          m.workOrderMilestoneId as milestoneId,
+          coalesce(m.assignedToId, w.assignedToId) AS assignedToId,
+          coalesce(ma.assignedToName, wa.assignedToName) AS assignedToName,
+          m.workOrderMilestoneId AS milestoneId,
           m.milestoneTitle,
           w.workOrderCloseDateTime,
           w.workOrderDueDateTime,
           m.milestoneCompleteDateTime,
           m.milestoneDueDateTime
-        from ShiftLog.WorkOrderMilestones m
-        inner join ShiftLog.WorkOrders w on m.workOrderId = w.workOrderId
-        inner join ShiftLog.WorkOrderTypes wType on w.workOrderTypeId = wType.workOrderTypeId
-        left join ShiftLog.AssignedTo ma on m.assignedToId = ma.assignedToId
-        left join ShiftLog.AssignedTo wa on w.assignedToId = wa.assignedToId
-        where w.instance = @instance
-          and w.recordDelete_dateTime is null
-          and m.recordDelete_dateTime is null
-          and m.milestoneCompleteDateTime is not null
-          and m.milestoneCompleteDateTime between @startDate and @endDate
-          ${
-            filters.assignedToId === undefined
-              ? ''
-              : `and (m.assignedToId = @assignedToId
-                   or (m.assignedToId is null and w.assignedToId = @assignedToId))`
-          }
-          ${userGroupWhereClause}
+        FROM
+          ShiftLog.WorkOrderMilestones m
+          INNER JOIN ShiftLog.WorkOrders w ON m.workOrderId = w.workOrderId
+          INNER JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+          LEFT JOIN ShiftLog.AssignedTo ma ON m.assignedToId = ma.assignedToId
+          LEFT JOIN ShiftLog.AssignedTo wa ON w.assignedToId = wa.assignedToId
+        WHERE
+          w.instance = @instance
+          AND w.recordDelete_dateTime IS NULL
+          AND m.recordDelete_dateTime IS NULL
+          AND m.milestoneCompleteDateTime IS NOT NULL
+          AND m.milestoneCompleteDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
+          undefined
+            ? ''
+            : `and (m.assignedToId = @assignedToId
+                   or (m.assignedToId is null and w.assignedToId = @assignedToId))`} ${userGroupWhereClause}
       `)
     }
 
@@ -268,10 +272,7 @@ export default async function getCalendarEvents(
       request.input('endDate', endDate)
 
       if (filters.assignedToId !== undefined) {
-        request.input(
-          'assignedToId',
-          filters.assignedToId
-        )
+        request.input('assignedToId', filters.assignedToId)
       }
 
       if (user !== undefined) {

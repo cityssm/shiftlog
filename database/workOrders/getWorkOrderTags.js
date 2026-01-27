@@ -5,22 +5,25 @@ export default async function getWorkOrderTags(workOrderId) {
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('workOrderId', workOrderId).query(/* sql */ `
+        .input('workOrderId', workOrderId)
+        .query(/* sql */ `
       SELECT
-        wot.workOrderId, wot.tagName,
-        t.tagBackgroundColor, t.tagTextColor
-      FROM ShiftLog.WorkOrderTags wot
-      left join ShiftLog.WorkOrders wo
-        ON wot.workOrderId = wo.workOrderId
-      LEFT JOIN ShiftLog.Tags t
-        ON wot.tagName = t.tagName
+        wot.workOrderId,
+        wot.tagName,
+        t.tagBackgroundColor,
+        t.tagTextColor
+      FROM
+        ShiftLog.WorkOrderTags wot
+        LEFT JOIN ShiftLog.WorkOrders wo ON wot.workOrderId = wo.workOrderId
+        LEFT JOIN ShiftLog.Tags t ON wot.tagName = t.tagName
         AND t.instance = @instance
         AND t.recordDelete_dateTime IS NULL
       WHERE
         wo.recordDelete_dateTime IS NULL
         AND wo.instance = @instance
         AND wot.workOrderId = @workOrderId
-      ORDER BY wot.tagName
-  `);
+      ORDER BY
+        wot.tagName
+    `);
     return result.recordset;
 }

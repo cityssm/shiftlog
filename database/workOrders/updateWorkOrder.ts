@@ -130,9 +130,10 @@ export default async function updateWorkOrder(
         : updateWorkOrderForm.assignedToId
     )
     .input('moreInfoFormDataJson', moreInfoFormDataJson)
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrders
-      set
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrders
+      SET
         workOrderTypeId = @workOrderTypeId,
         workOrderStatusDataListItemId = @workOrderStatusDataListItemId,
         workOrderPriorityDataListItemId = @workOrderPriorityDataListItemId,
@@ -151,9 +152,10 @@ export default async function updateWorkOrder(
         moreInfoFormDataJson = @moreInfoFormDataJson,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where workOrderId = @workOrderId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      WHERE
+        workOrderId = @workOrderId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `)
 
   if (result.rowsAffected[0] > 0) {

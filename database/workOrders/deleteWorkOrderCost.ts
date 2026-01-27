@@ -13,18 +13,23 @@ export default async function deleteWorkOrderCost(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('workOrderCostId', workOrderCostId)
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrderCosts
-      set
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrderCosts
+      SET
         recordDelete_userName = @userName,
         recordDelete_dateTime = getdate()
-      where workOrderCostId = @workOrderCostId
-        and recordDelete_dateTime is null
-        and workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      WHERE
+        workOrderCostId = @workOrderCostId
+        AND recordDelete_dateTime IS NULL
+        AND workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
     `)) as mssql.IResult<Record<string, never>>
 

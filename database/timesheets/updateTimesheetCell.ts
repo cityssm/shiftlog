@@ -21,10 +21,12 @@ export default async function updateTimesheetCell(
     await pool
       .request()
       .input('timesheetRowId', updateCellForm.timesheetRowId)
-      .input('timesheetColumnId', updateCellForm.timesheetColumnId).query(/* sql */ `
-        delete from ShiftLog.TimesheetCells
-        where timesheetRowId = @timesheetRowId
-          and timesheetColumnId = @timesheetColumnId
+      .input('timesheetColumnId', updateCellForm.timesheetColumnId)
+      .query(/* sql */ `
+        DELETE FROM ShiftLog.TimesheetCells
+        WHERE
+          timesheetRowId = @timesheetRowId
+          AND timesheetColumnId = @timesheetColumnId
       `)
     return true
   }
@@ -34,20 +36,23 @@ export default async function updateTimesheetCell(
     .request()
     .input('timesheetRowId', updateCellForm.timesheetRowId)
     .input('timesheetColumnId', updateCellForm.timesheetColumnId)
-    .input('recordHours', hours).query(/* sql */ `
-      merge ShiftLog.TimesheetCells as target
-      using (
-        select
-          @timesheetRowId as timesheetRowId,
-          @timesheetColumnId as timesheetColumnId
-      ) as source
-      on target.timesheetRowId = source.timesheetRowId
-        and target.timesheetColumnId = source.timesheetColumnId
-      when matched then
-        update set recordHours = @recordHours
-      when not matched then
-        insert (timesheetRowId, timesheetColumnId, recordHours)
-        values (@timesheetRowId, @timesheetColumnId, @recordHours);
+    .input('recordHours', hours)
+    .query(/* sql */ `
+      MERGE
+        ShiftLog.TimesheetCells AS target using (
+          SELECT
+            @timesheetRowId AS timesheetRowId,
+            @timesheetColumnId AS timesheetColumnId
+        ) AS source ON target.timesheetRowId = source.timesheetRowId
+        AND target.timesheetColumnId = source.timesheetColumnId
+      WHEN MATCHED THEN
+      UPDATE SET
+        recordHours = @recordHours
+      WHEN NOT MATCHED THEN
+      INSERT
+        (timesheetRowId, timesheetColumnId, recordHours)
+      VALUES
+        (@timesheetRowId, @timesheetColumnId, @recordHours);
     `)
 
   return result.rowsAffected[0] > 0

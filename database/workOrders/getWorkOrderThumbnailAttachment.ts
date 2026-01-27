@@ -19,8 +19,8 @@ export default async function getWorkOrderThumbnailAttachment(
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
     .query(/* sql */ `
-      select top 1
-        workOrderAttachmentId,
+      SELECT
+        TOP 1 workOrderAttachmentId,
         workOrderId,
         attachmentFileName,
         attachmentFileType,
@@ -34,15 +34,20 @@ export default async function getWorkOrderThumbnailAttachment(
         recordUpdate_dateTime,
         recordDelete_userName,
         recordDelete_dateTime
-      from ShiftLog.WorkOrderAttachments
-      where workOrderId = @workOrderId
-        and isWorkOrderThumbnail = 1
-        and recordDelete_dateTime is null
-        and workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      FROM
+        ShiftLog.WorkOrderAttachments
+      WHERE
+        workOrderId = @workOrderId
+        AND isWorkOrderThumbnail = 1
+        AND recordDelete_dateTime IS NULL
+        AND workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
     `)) as mssql.IResult<WorkOrderAttachment>
 

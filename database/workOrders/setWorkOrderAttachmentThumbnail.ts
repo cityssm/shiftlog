@@ -18,24 +18,32 @@ export default async function setWorkOrderAttachmentThumbnail(
   await pool
     .request()
     .input('workOrderAttachmentId', workOrderAttachmentId)
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrderAttachments
-      set isWorkOrderThumbnail = 0,
-          recordUpdate_userName = @userName,
-          recordUpdate_dateTime = getdate()
-      where workOrderId = (
-        select workOrderId
-        from ShiftLog.WorkOrderAttachments
-        where workOrderAttachmentId = @workOrderAttachmentId
-      )
-        and recordDelete_dateTime is null;
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrderAttachments
+      SET
+        isWorkOrderThumbnail = 0,
+        recordUpdate_userName = @userName,
+        recordUpdate_dateTime = getdate()
+      WHERE
+        workOrderId = (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrderAttachments
+          WHERE
+            workOrderAttachmentId = @workOrderAttachmentId
+        )
+        AND recordDelete_dateTime IS NULL;
 
-      update ShiftLog.WorkOrderAttachments
-      set isWorkOrderThumbnail = 1,
-          recordUpdate_userName = @userName,
-          recordUpdate_dateTime = getdate()
-      where workOrderAttachmentId = @workOrderAttachmentId
-        and recordDelete_dateTime is null;
+      UPDATE ShiftLog.WorkOrderAttachments
+      SET
+        isWorkOrderThumbnail = 1,
+        recordUpdate_userName = @userName,
+        recordUpdate_dateTime = getdate()
+      WHERE
+        workOrderAttachmentId = @workOrderAttachmentId
+        AND recordDelete_dateTime IS NULL;
     `)
 
   return true

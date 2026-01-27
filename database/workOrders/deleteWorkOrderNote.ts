@@ -15,19 +15,24 @@ export default async function deleteWorkOrderNote(
     .input('instance', getConfigProperty('application.instance'))
     .input('workOrderId', workOrderId)
     .input('noteSequence', noteSequence)
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrderNotes
-      set
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrderNotes
+      SET
         recordDelete_userName = @userName,
         recordDelete_dateTime = getdate()
-      where workOrderId = @workOrderId
-        and noteSequence = @noteSequence
-        and recordDelete_dateTime is null
-        and workOrderId in (
-          select workOrderId
-          from ShiftLog.WorkOrders
-          where recordDelete_dateTime is null
-            and instance = @instance
+      WHERE
+        workOrderId = @workOrderId
+        AND noteSequence = @noteSequence
+        AND recordDelete_dateTime IS NULL
+        AND workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND instance = @instance
         )
     `)) as mssql.IResult<Record<string, never>>
 

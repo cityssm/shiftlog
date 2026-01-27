@@ -25,28 +25,31 @@ export default async function createWorkOrderAttachment(
     .input('attachmentFileSizeInBytes', form.attachmentFileSizeInBytes)
     .input('attachmentDescription', form.attachmentDescription ?? '')
     .input('fileSystemPath', form.fileSystemPath)
-    .input('userName', userName).query(/* sql */ `
-      insert into ShiftLog.WorkOrderAttachments (
-        workOrderId,
-        attachmentFileName,
-        attachmentFileType,
-        attachmentFileSizeInBytes,
-        attachmentDescription,
-        fileSystemPath,
-        recordCreate_userName,
-        recordUpdate_userName
-      )
-      output inserted.workOrderAttachmentId
-      values (
-        @workOrderId,
-        @attachmentFileName,
-        @attachmentFileType,
-        @attachmentFileSizeInBytes,
-        @attachmentDescription,
-        @fileSystemPath,
-        @userName,
-        @userName
-      )
+    .input('userName', userName)
+    // eslint-disable-next-line no-secrets/no-secrets
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.WorkOrderAttachments (
+          workOrderId,
+          attachmentFileName,
+          attachmentFileType,
+          attachmentFileSizeInBytes,
+          attachmentDescription,
+          fileSystemPath,
+          recordCreate_userName,
+          recordUpdate_userName
+        ) output inserted.workOrderAttachmentId
+      VALUES
+        (
+          @workOrderId,
+          @attachmentFileName,
+          @attachmentFileType,
+          @attachmentFileSizeInBytes,
+          @attachmentDescription,
+          @fileSystemPath,
+          @userName,
+          @userName
+        )
     `)) as mssql.IResult<{ workOrderAttachmentId: number }>
 
   return result.recordset[0].workOrderAttachmentId
