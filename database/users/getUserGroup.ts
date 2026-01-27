@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { UserGroup } from '../../types/record.types.js'
@@ -9,11 +7,11 @@ export default async function getUserGroup(
 ): Promise<UserGroup | undefined> {
   const pool = await getShiftLogConnectionPool()
 
-  const groupResult = (await pool
+  const groupResult = await pool
     .request()
     .input('userGroupId', userGroupId)
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `
+    .query<UserGroup>(/* sql */ `
       SELECT
         userGroupId,
         userGroupName,
@@ -27,7 +25,7 @@ export default async function getUserGroup(
         userGroupId = @userGroupId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
-    `)) as mssql.IResult<UserGroup>
+    `)
 
   if (groupResult.recordset.length === 0) {
     return undefined

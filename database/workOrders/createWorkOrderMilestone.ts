@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface CreateWorkOrderMilestoneForm {
@@ -18,10 +16,10 @@ export default async function createWorkOrderMilestone(
   const pool = await getShiftLogConnectionPool()
 
   // Get the next order number
-  const orderResult = (await pool
+  const orderResult = await pool
     .request()
     .input('workOrderId', form.workOrderId)
-    .query(/* sql */ `
+    .query<{ nextOrderNumber: number }>(/* sql */ `
       SELECT
         isnull(max(orderNumber), 0) + 1 AS nextOrderNumber
       FROM
@@ -29,11 +27,11 @@ export default async function createWorkOrderMilestone(
       WHERE
         workOrderId = @workOrderId
         AND recordDelete_dateTime IS NULL
-    `)) as mssql.IResult<{ nextOrderNumber: number }>
+    `)
 
   const nextOrderNumber = orderResult.recordset[0].nextOrderNumber
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('workOrderId', form.workOrderId)
     .input('milestoneTitle', form.milestoneTitle)
@@ -56,7 +54,7 @@ export default async function createWorkOrderMilestone(
     )
     .input('orderNumber', nextOrderNumber)
     .input('userName', userName)
-    .query(/* sql */ `
+    .query<{ workOrderMilestoneId: number }>(/* sql */ `
       INSERT INTO
         ShiftLog.WorkOrderMilestones (
           workOrderId,
@@ -81,7 +79,7 @@ export default async function createWorkOrderMilestone(
           @userName,
           @userName
         )
-    `)) as mssql.IResult<{ workOrderMilestoneId: number }>
+    `)
 
   return result.recordset[0].workOrderMilestoneId
 }

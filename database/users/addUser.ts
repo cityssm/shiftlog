@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -84,11 +82,11 @@ export default async function addUser(
 
   // Check if an user with the same name already exists
 
-  const recordDeleteResult = (await pool
+  const recordDeleteResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('userName', newUserName)
-    .query(/* sql */ `
+    .query<{ recordDelete_dateTime: Date | null }>(/* sql */ `
       SELECT
         recordDelete_dateTime
       FROM
@@ -96,7 +94,7 @@ export default async function addUser(
       WHERE
         instance = @instance
         AND userName = @userName
-    `)) as mssql.IResult<{ recordDelete_dateTime: Date | null }>
+    `)
 
   let success = false
 

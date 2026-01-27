@@ -63,12 +63,12 @@ export default async function getTimesheetRows(timesheetId, filters) {
       eq.equipmentName,
       tr.timesheetRowId
   `;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('timesheetId', timesheetId)
         .input('employeeNumberFilter', filters?.employeeNumberFilter ?? undefined)
         .input('equipmentNumberFilter', filters?.equipmentNumberFilter ?? undefined)
-        .query(sql));
+        .query(sql);
     return result.recordset;
 }

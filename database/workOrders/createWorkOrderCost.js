@@ -1,7 +1,7 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createWorkOrderCost(createWorkOrderCostForm, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('workOrderId', createWorkOrderCostForm.workOrderId)
         .input('costAmount', createWorkOrderCostForm.costAmount)
@@ -24,6 +24,6 @@ export default async function createWorkOrderCost(createWorkOrderCostForm, userN
           @userName,
           @userName
         )
-    `));
+    `);
     return result.recordset[0].workOrderCostId;
 }

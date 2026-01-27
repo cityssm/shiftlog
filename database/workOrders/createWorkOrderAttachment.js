@@ -1,7 +1,7 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createWorkOrderAttachment(form, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('workOrderId', form.workOrderId)
         .input('attachmentFileName', form.attachmentFileName)
@@ -34,6 +34,6 @@ export default async function createWorkOrderAttachment(form, userName) {
           @userName,
           @userName
         )
-    `));
+    `);
     return result.recordset[0].workOrderAttachmentId;
 }

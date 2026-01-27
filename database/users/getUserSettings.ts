@@ -1,6 +1,5 @@
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { UserSettingKey } from '../../types/user.types.js'
 
 import { updateApiKeyUserSetting } from './updateUserSetting.js'
@@ -8,13 +7,13 @@ import { updateApiKeyUserSetting } from './updateUserSetting.js'
 export default async function getUserSettings(
   userName: string
 ): Promise<Partial<Record<UserSettingKey, string>>> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('userName', userName)
-    .query(/* sql */ `
+    .query<{ settingKey: UserSettingKey; settingValue: string }>(/* sql */ `
       SELECT
         settingKey,
         settingValue
@@ -23,7 +22,7 @@ export default async function getUserSettings(
       WHERE
         instance = @instance
         AND userName = @userName
-    `)) as mssql.IResult<{ settingKey: UserSettingKey; settingValue: string }>
+    `)
 
   const settings: Partial<Record<UserSettingKey, string>> = {}
 

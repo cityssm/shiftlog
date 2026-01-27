@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -9,7 +7,7 @@ export default async function deleteWorkOrderCost(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('workOrderCostId', workOrderCostId)
@@ -31,7 +29,7 @@ export default async function deleteWorkOrderCost(
             recordDelete_dateTime IS NULL
             AND instance = @instance
         )
-    `)) as mssql.IResult<Record<string, never>>
+    `)
 
   return result.rowsAffected[0] > 0
 }

@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createTimesheet(createTimesheetForm, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('timesheetDate', createTimesheetForm.timesheetDateString)
@@ -37,6 +37,6 @@ export default async function createTimesheet(createTimesheetForm, userName) {
           @userName,
           @userName
         )
-    `));
+    `);
     return result.recordset[0].timesheetId;
 }

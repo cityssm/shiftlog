@@ -63,7 +63,7 @@ async function restoreDeletedUser(newUserName, user) {
 export default async function addUser(newUserName, user) {
     const pool = await getShiftLogConnectionPool();
     // Check if an user with the same name already exists
-    const recordDeleteResult = (await pool
+    const recordDeleteResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', newUserName)
@@ -75,7 +75,7 @@ export default async function addUser(newUserName, user) {
       WHERE
         instance = @instance
         AND userName = @userName
-    `));
+    `);
     let success = false;
     if (recordDeleteResult.recordset.length === 0) {
         success = await insertNewUser(newUserName, user);

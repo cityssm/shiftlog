@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -17,7 +15,7 @@ export default async function addTimesheetRow(
 ): Promise<number> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('timesheetId', addRowForm.timesheetId)
@@ -32,7 +30,7 @@ export default async function addTimesheetRow(
       'timeCodeDataListItemId',
       addRowForm.timeCodeDataListItemId ?? undefined
     )
-    .query(/* sql */ `
+    .query<{ timesheetRowId: number }>(/* sql */ `
       INSERT INTO
         ShiftLog.TimesheetRows (
           instance,
@@ -53,7 +51,7 @@ export default async function addTimesheetRow(
           @jobClassificationDataListItemId,
           @timeCodeDataListItemId
         )
-    `)) as mssql.IResult<{ timesheetRowId: number }>
+    `)
 
   return result.recordset[0].timesheetRowId
 }

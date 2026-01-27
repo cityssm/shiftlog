@@ -18,10 +18,10 @@ export default async function getTimesheetCells(timesheetId) {
       tr.timesheetId = @timesheetId
       AND tr.instance = @instance
   `;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('timesheetId', timesheetId)
-        .query(sql));
+        .query(sql);
     return result.recordset;
 }

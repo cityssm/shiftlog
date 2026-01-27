@@ -25,7 +25,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         calculatedDueDateTime.setDate(calculatedDueDateTime.getDate() + workOrderType.dueDays);
     }
     // Get the next sequence number for the current year and work order type
-    const sequenceResult = (await pool
+    const sequenceResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('year', currentYear)
@@ -39,9 +39,9 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         instance = @instance
         AND workOrderNumberPrefix = @workOrderNumberPrefix
         AND workOrderNumberYear = @year
-    `));
+    `);
     const nextSequence = sequenceResult.recordset[0].nextSequence;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderNumberPrefix', workOrderType.workOrderNumberPrefix)
@@ -126,7 +126,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           @userName,
           @userName
         )
-    `));
+    `);
     const workOrderId = result.recordset[0].workOrderId;
     // Create default milestones for this work order
     const defaultMilestones = await getWorkOrderTypeDefaultMilestones(workOrderTypeId);

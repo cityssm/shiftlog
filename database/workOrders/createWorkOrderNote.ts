@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface CreateWorkOrderNoteForm {
@@ -14,17 +12,17 @@ export default async function createWorkOrderNote(
   const pool = await getShiftLogConnectionPool()
 
   // Get the next sequence number
-  const sequenceResult = (await pool
+  const sequenceResult = await pool
     .request()
     .input('workOrderId', createWorkOrderNoteForm.workOrderId)
-    .query(/* sql */ `
+    .query<{ nextSequence: number }>(/* sql */ `
       SELECT
         isnull(max(noteSequence), 0) + 1 AS nextSequence
       FROM
         ShiftLog.WorkOrderNotes
       WHERE
         workOrderId = @workOrderId
-    `)) as mssql.IResult<{ nextSequence: number }>
+    `)
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
 

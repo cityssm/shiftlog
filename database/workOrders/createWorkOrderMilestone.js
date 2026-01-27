@@ -2,7 +2,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createWorkOrderMilestone(form, userName) {
     const pool = await getShiftLogConnectionPool();
     // Get the next order number
-    const orderResult = (await pool
+    const orderResult = await pool
         .request()
         .input('workOrderId', form.workOrderId)
         .query(/* sql */ `
@@ -13,9 +13,9 @@ export default async function createWorkOrderMilestone(form, userName) {
       WHERE
         workOrderId = @workOrderId
         AND recordDelete_dateTime IS NULL
-    `));
+    `);
     const nextOrderNumber = orderResult.recordset[0].nextOrderNumber;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('workOrderId', form.workOrderId)
         .input('milestoneTitle', form.milestoneTitle)
@@ -54,6 +54,6 @@ export default async function createWorkOrderMilestone(form, userName) {
           @userName,
           @userName
         )
-    `));
+    `);
     return result.recordset[0].workOrderMilestoneId;
 }

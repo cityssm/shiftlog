@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface CreateWorkOrderAttachmentForm {
@@ -17,7 +15,7 @@ export default async function createWorkOrderAttachment(
 ): Promise<number> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('workOrderId', form.workOrderId)
     .input('attachmentFileName', form.attachmentFileName)
@@ -27,7 +25,7 @@ export default async function createWorkOrderAttachment(
     .input('fileSystemPath', form.fileSystemPath)
     .input('userName', userName)
     // eslint-disable-next-line no-secrets/no-secrets
-    .query(/* sql */ `
+    .query<{ workOrderAttachmentId: number }>(/* sql */ `
       INSERT INTO
         ShiftLog.WorkOrderAttachments (
           workOrderId,
@@ -50,7 +48,7 @@ export default async function createWorkOrderAttachment(
           @userName,
           @userName
         )
-    `)) as mssql.IResult<{ workOrderAttachmentId: number }>
+    `)
 
   return result.recordset[0].workOrderAttachmentId
 }

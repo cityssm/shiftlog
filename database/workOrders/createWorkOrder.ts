@@ -1,4 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString, TimeString } from '@cityssm/utils-datetime'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -76,12 +75,12 @@ export default async function createWorkOrder(
   }
 
   // Get the next sequence number for the current year and work order type
-  const sequenceResult = (await pool
+  const sequenceResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('year', currentYear)
     .input('workOrderNumberPrefix', workOrderType.workOrderNumberPrefix)
-    .query(/* sql */ `
+    .query<{ nextSequence: number }>(/* sql */ `
       SELECT
         isnull(max(workOrderNumberSequence), 0) + 1 AS nextSequence
       FROM
@@ -90,11 +89,11 @@ export default async function createWorkOrder(
         instance = @instance
         AND workOrderNumberPrefix = @workOrderNumberPrefix
         AND workOrderNumberYear = @year
-    `)) as mssql.IResult<{ nextSequence: number }>
+    `)
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('workOrderNumberPrefix', workOrderType.workOrderNumberPrefix)
@@ -160,7 +159,7 @@ export default async function createWorkOrder(
         : createWorkOrderForm.assignedToId
     )
     .input('userName', user.userName)
-    .query(/* sql */ `
+    .query<{ workOrderId: number }>(/* sql */ `
       INSERT INTO
         ShiftLog.WorkOrders (
           instance,
@@ -209,7 +208,7 @@ export default async function createWorkOrder(
           @userName,
           @userName
         )
-    `)) as mssql.IResult<{ workOrderId: number }>
+    `)
 
   const workOrderId = result.recordset[0].workOrderId
 

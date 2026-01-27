@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getUserGroup(userGroupId) {
     const pool = await getShiftLogConnectionPool();
-    const groupResult = (await pool
+    const groupResult = await pool
         .request()
         .input('userGroupId', userGroupId)
         .input('instance', getConfigProperty('application.instance'))
@@ -20,7 +20,7 @@ export default async function getUserGroup(userGroupId) {
         userGroupId = @userGroupId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
-    `));
+    `);
     if (groupResult.recordset.length === 0) {
         return undefined;
     }

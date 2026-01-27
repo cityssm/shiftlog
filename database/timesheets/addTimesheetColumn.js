@@ -14,7 +14,7 @@ export default async function addTimesheetColumn(addColumnForm) {
         timesheetId = @timesheetId
     `);
     const nextOrderNumber = maxOrderResult.recordset[0].nextOrderNumber;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('timesheetId', addColumnForm.timesheetId)
         .input('columnTitle', addColumnForm.columnTitle)
@@ -41,6 +41,6 @@ export default async function addTimesheetColumn(addColumnForm) {
           @costCenterB,
           @orderNumber
         )
-    `));
+    `);
     return result.recordset[0].timesheetColumnId;
 }

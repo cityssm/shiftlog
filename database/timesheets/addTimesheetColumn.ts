@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface AddTimesheetColumnForm {
@@ -30,7 +28,7 @@ export default async function addTimesheetColumn(
 
   const nextOrderNumber = maxOrderResult.recordset[0].nextOrderNumber
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('timesheetId', addColumnForm.timesheetId)
     .input('columnTitle', addColumnForm.columnTitle)
@@ -38,7 +36,7 @@ export default async function addTimesheetColumn(
     .input('costCenterA', addColumnForm.costCenterA ?? null)
     .input('costCenterB', addColumnForm.costCenterB ?? null)
     .input('orderNumber', nextOrderNumber)
-    .query(/* sql */ `
+    .query<{ timesheetColumnId: number }>(/* sql */ `
       INSERT INTO
         ShiftLog.TimesheetColumns (
           timesheetId,
@@ -57,7 +55,7 @@ export default async function addTimesheetColumn(
           @costCenterB,
           @orderNumber
         )
-    `)) as mssql.IResult<{ timesheetColumnId: number }>
+    `)
 
   return result.recordset[0].timesheetColumnId
 }

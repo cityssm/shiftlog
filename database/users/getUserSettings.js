@@ -1,9 +1,9 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { updateApiKeyUserSetting } from './updateUserSetting.js';
 export default async function getUserSettings(userName) {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
-    const result = (await pool
+    const pool = await getShiftLogConnectionPool();
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
@@ -16,7 +16,7 @@ export default async function getUserSettings(userName) {
       WHERE
         instance = @instance
         AND userName = @userName
-    `));
+    `);
     const settings = {};
     for (const row of result.recordset) {
         settings[row.settingKey] = row.settingValue;

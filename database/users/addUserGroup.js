@@ -4,7 +4,7 @@ export default async function addUserGroup(userGroupName, user) {
     const currentDate = new Date();
     try {
         const pool = await getShiftLogConnectionPool();
-        const result = (await pool
+        const result = await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('userGroupName', userGroupName)
@@ -31,7 +31,7 @@ export default async function addUserGroup(userGroupName, user) {
             @recordUpdate_userName,
             @recordUpdate_dateTime
           )
-      `));
+      `);
         return result.recordset[0].userGroupId;
     }
     catch {

@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -14,11 +12,11 @@ export default async function deleteTimesheetColumn(
   const pool = await getShiftLogConnectionPool()
 
   // Check for recorded hours before deleting
-  const hoursResult = (await pool
+  const hoursResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('timesheetColumnId', timesheetColumnId)
-    .query(/* sql */ `
+    .query<{ totalHours: number }>(/* sql */ `
       SELECT
         isnull(sum(recordHours), 0) AS totalHours
       FROM
@@ -33,7 +31,7 @@ export default async function deleteTimesheetColumn(
           WHERE
             instance = @instance
         )
-    `)) as mssql.IResult<{ totalHours: number }>
+    `)
 
   const totalHours = hoursResult.recordset[0]?.totalHours ?? 0
 

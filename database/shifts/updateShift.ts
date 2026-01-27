@@ -1,4 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString } from '@cityssm/utils-datetime'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -30,7 +29,7 @@ export default async function updateShift(
 
   recordLockDate.setDate(recordLockDate.getDate() + 7)
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('shiftTypeDataListItemId', updateShiftForm.shiftTypeDataListItemId)
@@ -41,7 +40,7 @@ export default async function updateShift(
     .input('userName', userName)
     .input('recordLockDate', recordLockDate)
     .input('shiftId', updateShiftForm.shiftId)
-    .query(/* sql */ `
+    .query<{ shiftId: number }>(/* sql */ `
       UPDATE ShiftLog.Shifts
       SET
         shiftTypeDataListItemId = @shiftTypeDataListItemId,
@@ -56,7 +55,7 @@ export default async function updateShift(
         shiftId = @shiftId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
-    `)) as mssql.IResult<{ shiftId: number }>
+    `)
 
   return result.rowsAffected[0] > 0
 }

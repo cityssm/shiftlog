@@ -1,16 +1,14 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function getApiKeys(): Promise<Record<string, string>> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('settingKey', 'apiKey')
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `
+    .query<{ settingValue: string; userName: string; }>(/* sql */ `
       SELECT
         s.userName,
         s.settingValue
@@ -29,7 +27,7 @@ export default async function getApiKeys(): Promise<Record<string, string>> {
             AND isActive = 1
             AND recordDelete_dateTime IS NULL
         )
-    `)) as mssql.IResult<{ userName: string; settingValue: string }>
+    `)
 
   const apiKeys: Record<string, string> = {}
 

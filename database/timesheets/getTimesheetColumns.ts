@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { TimesheetColumn } from '../../types/record.types.js'
@@ -35,11 +33,11 @@ export default async function getTimesheetColumns(
       timesheetColumnId
   `
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('timesheetId', timesheetId)
-    .query(sql)) as mssql.IResult<TimesheetColumn>
+    .query<TimesheetColumn>(sql)
 
   return result.recordset
 }

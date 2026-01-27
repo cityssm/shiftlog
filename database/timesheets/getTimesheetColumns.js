@@ -27,10 +27,10 @@ export default async function getTimesheetColumns(timesheetId) {
       orderNumber,
       timesheetColumnId
   `;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('timesheetId', timesheetId)
-        .query(sql));
+        .query(sql);
     return result.recordset;
 }

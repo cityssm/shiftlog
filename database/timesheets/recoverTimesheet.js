@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function recoverTimesheet(timesheetId, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('timesheetId', timesheetId)
         .input('instance', getConfigProperty('application.instance'))
@@ -18,6 +18,6 @@ export default async function recoverTimesheet(timesheetId, userName) {
         timesheetId = @timesheetId
         AND instance = @instance
         AND recordDelete_dateTime IS NOT NULL
-    `));
+    `);
     return result.rowsAffected[0] > 0;
 }

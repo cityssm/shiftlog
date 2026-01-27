@@ -3,7 +3,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function deleteTimesheetColumn(timesheetColumnId) {
     const pool = await getShiftLogConnectionPool();
     // Check for recorded hours before deleting
-    const hoursResult = (await pool
+    const hoursResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('timesheetColumnId', timesheetColumnId)
@@ -22,7 +22,7 @@ export default async function deleteTimesheetColumn(timesheetColumnId) {
           WHERE
             instance = @instance
         )
-    `));
+    `);
     const totalHours = hoursResult.recordset[0]?.totalHours ?? 0;
     // Delete cells first
     await pool

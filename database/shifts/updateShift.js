@@ -7,7 +7,7 @@ export default async function updateShift(updateShiftForm, userName) {
         recordLockDate = new Date();
     }
     recordLockDate.setDate(recordLockDate.getDate() + 7);
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('shiftTypeDataListItemId', updateShiftForm.shiftTypeDataListItemId)
@@ -33,6 +33,6 @@ export default async function updateShift(updateShiftForm, userName) {
         shiftId = @shiftId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
-    `));
+    `);
     return result.rowsAffected[0] > 0;
 }

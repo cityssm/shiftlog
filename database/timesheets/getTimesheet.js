@@ -46,12 +46,12 @@ export default async function getTimesheet(timesheetId, user) {
             )
           `}
   `;
-    const timesheetsResult = (await pool
+    const timesheetsResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('timesheetId', timesheetId)
         .input('userName', user?.userName)
-        .query(sql));
+        .query(sql);
     if (timesheetsResult.recordset.length === 0) {
         return undefined;
     }

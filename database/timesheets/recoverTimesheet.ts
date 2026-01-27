@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -9,7 +7,7 @@ export default async function recoverTimesheet(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('timesheetId', timesheetId)
     .input('instance', getConfigProperty('application.instance'))
@@ -25,7 +23,7 @@ export default async function recoverTimesheet(
         timesheetId = @timesheetId
         AND instance = @instance
         AND recordDelete_dateTime IS NOT NULL
-    `)) as mssql.IResult<Record<string, never>>
+    `)
 
   return result.rowsAffected[0] > 0
 }

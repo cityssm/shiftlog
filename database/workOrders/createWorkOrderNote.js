@@ -2,7 +2,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createWorkOrderNote(createWorkOrderNoteForm, userName) {
     const pool = await getShiftLogConnectionPool();
     // Get the next sequence number
-    const sequenceResult = (await pool
+    const sequenceResult = await pool
         .request()
         .input('workOrderId', createWorkOrderNoteForm.workOrderId)
         .query(/* sql */ `
@@ -12,7 +12,7 @@ export default async function createWorkOrderNote(createWorkOrderNoteForm, userN
         ShiftLog.WorkOrderNotes
       WHERE
         workOrderId = @workOrderId
-    `));
+    `);
     const nextSequence = sequenceResult.recordset[0].nextSequence;
     await pool
         .request()
