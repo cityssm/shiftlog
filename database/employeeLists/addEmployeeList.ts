@@ -24,21 +24,31 @@ export default async function addEmployeeList(
       .input('recordCreate_userName', user.userName)
       .input('recordCreate_dateTime', currentDate)
       .input('recordUpdate_userName', user.userName)
-      .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        insert into ShiftLog.EmployeeLists (
-          instance, employeeListName, userGroupId,
-          recordCreate_userName, recordCreate_dateTime,
-          recordUpdate_userName, recordUpdate_dateTime
-        )
-        output inserted.employeeListId
-        values (
-          @instance, @employeeListName, @userGroupId,
-          @recordCreate_userName, @recordCreate_dateTime,
-          @recordUpdate_userName, @recordUpdate_dateTime
-        )
+      .input('recordUpdate_dateTime', currentDate)
+      .query<{ employeeListId: number }>(/* sql */ `
+        INSERT INTO
+          ShiftLog.EmployeeLists (
+            instance,
+            employeeListName,
+            userGroupId,
+            recordCreate_userName,
+            recordCreate_dateTime,
+            recordUpdate_userName,
+            recordUpdate_dateTime
+          ) output inserted.employeeListId
+        VALUES
+          (
+            @instance,
+            @employeeListName,
+            @userGroupId,
+            @recordCreate_userName,
+            @recordCreate_dateTime,
+            @recordUpdate_userName,
+            @recordUpdate_dateTime
+          )
       `)
 
-    return result.recordset[0]?.employeeListId
+    return result.recordset[0].employeeListId
   } catch {
     return undefined
   }

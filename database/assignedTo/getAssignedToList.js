@@ -2,11 +2,12 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getAssignedToList(userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('userName', userName).query(/* sql */ `
-      select
+        .input('userName', userName)
+        .query(/* sql */ `
+      SELECT
         a.assignedToId,
         a.assignedToName,
         a.orderNumber,
@@ -16,20 +17,29 @@ export default async function getAssignedToList(userName) {
         a.recordCreate_dateTime,
         a.recordUpdate_userName,
         a.recordUpdate_dateTime
-      from ShiftLog.AssignedTo a
-      left join ShiftLog.UserGroups ug on a.userGroupId = ug.userGroupId
-      where a.instance = @instance
-        and a.recordDelete_dateTime is null
-        ${userName === undefined
+      FROM
+        ShiftLog.AssignedTo a
+        LEFT JOIN ShiftLog.UserGroups ug ON a.userGroupId = ug.userGroupId
+      WHERE
+        a.instance = @instance
+        AND a.recordDelete_dateTime IS NULL ${userName === undefined
         ? ''
-        : `
-                and (a.userGroupId is null or a.userGroupId in (
-                  select userGroupId
-                  from ShiftLog.UserGroupMembers
-                  where userName = @userName
-                ))
-              `}
-      order by a.orderNumber, a.assignedToName
-    `));
+        : /* sql */ `
+              AND (
+                a.userGroupId IS NULL
+                OR a.userGroupId IN (
+                  SELECT
+                    userGroupId
+                  FROM
+                    ShiftLog.UserGroupMembers
+                  WHERE
+                    userName = @userName
+                )
+              )
+            `}
+      ORDER BY
+        a.orderNumber,
+        a.assignedToName
+    `);
     return result.recordset;
 }

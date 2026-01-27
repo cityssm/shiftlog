@@ -11,11 +11,14 @@ export default async function updateCrewEquipment(
     .request()
     .input('crewId', crewId)
     .input('equipmentNumber', equipmentNumber)
-    .input('employeeNumber', employeeNumber ?? undefined).query(/* sql */ `
-      update ShiftLog.CrewEquipment
-      set employeeNumber = @employeeNumber
-      where crewId = @crewId
-        and equipmentNumber = @equipmentNumber
+    .input('employeeNumber', employeeNumber ?? undefined)
+    .query(/* sql */ `
+      UPDATE ShiftLog.CrewEquipment
+      SET
+        employeeNumber = @employeeNumber
+      WHERE
+        crewId = @crewId
+        AND equipmentNumber = @equipmentNumber
     `)
 
   return result.rowsAffected[0] > 0

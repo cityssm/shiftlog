@@ -6,29 +6,45 @@ export default async function getCrews(user?: User): Promise<Crew[]> {
   const pool = await getShiftLogConnectionPool()
 
   const sql = /* sql */ `
-    select c.crewId, c.crewName, c.userGroupId,
+    SELECT
+      c.crewId,
+      c.crewName,
+      c.userGroupId,
       ug.userGroupName,
-      (select count(*) from ShiftLog.CrewMembers cm where cm.crewId = c.crewId) as memberCount,
-      c.recordCreate_userName, c.recordCreate_dateTime,
-      c.recordUpdate_userName, c.recordUpdate_dateTime
-    from ShiftLog.Crews c
-    left join ShiftLog.UserGroups ug on c.userGroupId = ug.userGroupId
-    where c.recordDelete_dateTime is null
-      and c.instance = @instance
-      ${
-        user === undefined
-          ? ''
-          : `
-            and (
-              c.userGroupId is null or c.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+      (
+        SELECT
+          count(*)
+        FROM
+          ShiftLog.CrewMembers cm
+        WHERE
+          cm.crewId = c.crewId
+      ) AS memberCount,
+      c.recordCreate_userName,
+      c.recordCreate_dateTime,
+      c.recordUpdate_userName,
+      c.recordUpdate_dateTime
+    FROM
+      ShiftLog.Crews c
+      LEFT JOIN ShiftLog.UserGroups ug ON c.userGroupId = ug.userGroupId
+    WHERE
+      c.recordDelete_dateTime IS NULL
+      AND c.instance = @instance ${user === undefined
+        ? ''
+        : /* sql */ `
+            AND (
+              c.userGroupId IS NULL
+              OR c.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
-          `
-      }
-    order by c.crewName
+          `}
+    ORDER BY
+      c.crewName
   `
 
   const result = await pool

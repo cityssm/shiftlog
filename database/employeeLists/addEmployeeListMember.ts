@@ -19,15 +19,24 @@ export default async function addEmployeeListMember(
       .input('employeeListId', employeeListId)
       .input('employeeNumber', employeeNumber)
       .input('seniorityDate', seniorityDate ?? null)
-      .input('seniorityOrderNumber', seniorityOrderNumber).query(/* sql */ `
-        insert into ShiftLog.EmployeeListMembers (
-          employeeListId, instance, employeeNumber,
-          seniorityDate, seniorityOrderNumber
-        )
-        values (
-          @employeeListId, @instance, @employeeNumber,
-          @seniorityDate, @seniorityOrderNumber
-        )
+      .input('seniorityOrderNumber', seniorityOrderNumber)
+      .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.EmployeeListMembers (
+            employeeListId,
+            instance,
+            employeeNumber,
+            seniorityDate,
+            seniorityOrderNumber
+          )
+        VALUES
+          (
+            @employeeListId,
+            @instance,
+            @employeeNumber,
+            @seniorityDate,
+            @seniorityOrderNumber
+          )
       `)
 
     return true

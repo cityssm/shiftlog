@@ -18,15 +18,27 @@ export default async function addCrew(
     .input('crewName', crewForm.crewName)
     .input('userGroupId', crewForm.userGroupId ?? undefined)
     .input('recordCreate_userName', user.userName)
-    .input('recordUpdate_userName', user.userName).query(/* sql */ `
-      insert into ShiftLog.Crews (
-        instance, crewName, userGroupId,
-        recordCreate_userName, recordUpdate_userName
-      ) values (
-        @instance, @crewName, @userGroupId,
-        @recordCreate_userName, @recordUpdate_userName
-      );
-      select cast(scope_identity() as int) as crewId;
+    .input('recordUpdate_userName', user.userName)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.Crews (
+          instance,
+          crewName,
+          userGroupId,
+          recordCreate_userName,
+          recordUpdate_userName
+        )
+      VALUES
+        (
+          @instance,
+          @crewName,
+          @userGroupId,
+          @recordCreate_userName,
+          @recordUpdate_userName
+        );
+
+      SELECT
+        cast(scope_identity() AS INT) AS crewId;
     `)
 
   return (result.recordset[0] as { crewId: number }).crewId

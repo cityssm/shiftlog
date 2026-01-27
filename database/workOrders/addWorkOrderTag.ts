@@ -10,9 +10,12 @@ export default async function addWorkOrderTag(
     await pool
       .request()
       .input('workOrderId', workOrderId)
-      .input('tagName', tagName).query(/* sql */ `
-        INSERT INTO ShiftLog.WorkOrderTags (workOrderId, tagName)
-        VALUES (@workOrderId, @tagName)
+      .input('tagName', tagName)
+      .query(/* sql */ `
+        INSERT INTO
+          ShiftLog.WorkOrderTags (workOrderId, tagName)
+        VALUES
+          (@workOrderId, @tagName)
       `)
 
     return true

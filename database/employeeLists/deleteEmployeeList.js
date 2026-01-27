@@ -9,13 +9,16 @@ export default async function deleteEmployeeList(employeeListId, user) {
             .input('instance', getConfigProperty('application.instance'))
             .input('employeeListId', employeeListId)
             .input('recordDelete_userName', user.userName)
-            .input('recordDelete_dateTime', currentDate).query(/* sql */ `
-        update ShiftLog.EmployeeLists
-        set recordDelete_userName = @recordDelete_userName,
+            .input('recordDelete_dateTime', currentDate)
+            .query(/* sql */ `
+        UPDATE ShiftLog.EmployeeLists
+        SET
+          recordDelete_userName = @recordDelete_userName,
           recordDelete_dateTime = @recordDelete_dateTime
-        where instance = @instance
-          and employeeListId = @employeeListId
-          and recordDelete_dateTime is null
+        WHERE
+          instance = @instance
+          AND employeeListId = @employeeListId
+          AND recordDelete_dateTime IS NULL
       `);
         return result.rowsAffected[0] > 0;
     }

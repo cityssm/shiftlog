@@ -9,10 +9,12 @@ export default async function deleteCrewMember(
   const result = await pool
     .request()
     .input('crewId', crewId)
-    .input('employeeNumber', employeeNumber).query(/* sql */ `
-      delete from ShiftLog.CrewMembers
-      where crewId = @crewId
-        and employeeNumber = @employeeNumber
+    .input('employeeNumber', employeeNumber)
+    .query(/* sql */ `
+      DELETE FROM ShiftLog.CrewMembers
+      WHERE
+        crewId = @crewId
+        AND employeeNumber = @employeeNumber
     `)
 
   return result.rowsAffected[0] > 0

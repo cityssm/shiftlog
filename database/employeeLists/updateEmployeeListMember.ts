@@ -19,12 +19,15 @@ export default async function updateEmployeeListMember(
       .input('employeeListId', employeeListId)
       .input('employeeNumber', employeeNumber)
       .input('seniorityDate', seniorityDate ?? null)
-      .input('seniorityOrderNumber', seniorityOrderNumber).query(/* sql */ `
-        update ShiftLog.EmployeeListMembers
-        set seniorityDate = @seniorityDate,
+      .input('seniorityOrderNumber', seniorityOrderNumber)
+      .query(/* sql */ `
+        UPDATE ShiftLog.EmployeeListMembers
+        SET
+          seniorityDate = @seniorityDate,
           seniorityOrderNumber = @seniorityOrderNumber
-        where employeeListId = @employeeListId
-          and employeeNumber = @employeeNumber
+        WHERE
+          employeeListId = @employeeListId
+          AND employeeNumber = @employeeNumber
       `)
 
     return result.rowsAffected[0] > 0

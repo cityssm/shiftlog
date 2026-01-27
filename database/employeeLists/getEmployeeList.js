@@ -8,17 +8,22 @@ export default async function getEmployeeList(employeeListId) {
         .input('instance', getConfigProperty('application.instance'))
         .input('employeeListId', employeeListId)
         .query(/* sql */ `
-      select el.employeeListId, el.employeeListName,
+      SELECT
+        el.employeeListId,
+        el.employeeListName,
         el.userGroupId,
         ug.userGroupName,
-        el.recordCreate_userName, el.recordCreate_dateTime,
-        el.recordUpdate_userName, el.recordUpdate_dateTime
-      from ShiftLog.EmployeeLists el
-      left join ShiftLog.UserGroups ug on el.userGroupId = ug.userGroupId
-      where
+        el.recordCreate_userName,
+        el.recordCreate_dateTime,
+        el.recordUpdate_userName,
+        el.recordUpdate_dateTime
+      FROM
+        ShiftLog.EmployeeLists el
+        LEFT JOIN ShiftLog.UserGroups ug ON el.userGroupId = ug.userGroupId
+      WHERE
         el.instance = @instance
-        and el.employeeListId = @employeeListId
-        and el.recordDelete_dateTime is null
+        AND el.employeeListId = @employeeListId
+        AND el.recordDelete_dateTime IS NULL
     `);
     if (listResult.recordset.length === 0) {
         return undefined;
@@ -30,18 +35,24 @@ export default async function getEmployeeList(employeeListId) {
         .input('instance', getConfigProperty('application.instance'))
         .input('employeeListId', employeeListId)
         .query(/* sql */ `
-      select elm.employeeListId, elm.employeeNumber,
-        e.firstName, e.lastName,
-        elm.seniorityDate, elm.seniorityOrderNumber
-      from ShiftLog.EmployeeListMembers elm
-      left join ShiftLog.Employees e on
-        elm.instance = e.instance and
-        elm.employeeNumber = e.employeeNumber and
-        e.recordDelete_dateTime is null
-      where
+      SELECT
+        elm.employeeListId,
+        elm.employeeNumber,
+        e.firstName,
+        e.lastName,
+        elm.seniorityDate,
+        elm.seniorityOrderNumber
+      FROM
+        ShiftLog.EmployeeListMembers elm
+        LEFT JOIN ShiftLog.Employees e ON elm.instance = e.instance
+        AND elm.employeeNumber = e.employeeNumber
+        AND e.recordDelete_dateTime IS NULL
+      WHERE
         elm.instance = @instance
-        and elm.employeeListId = @employeeListId
-      order by elm.seniorityDate, elm.seniorityOrderNumber
+        AND elm.employeeListId = @employeeListId
+      ORDER BY
+        elm.seniorityDate,
+        elm.seniorityOrderNumber
     `);
     return {
         ...employeeList,

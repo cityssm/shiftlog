@@ -8,15 +8,18 @@ export default async function updateCrew(crewForm, user) {
         .input('crewId', crewForm.crewId)
         .input('crewName', crewForm.crewName)
         .input('userGroupId', crewForm.userGroupId ?? undefined)
-        .input('recordUpdate_userName', user.userName).query(/* sql */ `
-      update ShiftLog.Crews
-      set crewName = @crewName,
-          userGroupId = @userGroupId,
-          recordUpdate_userName = @recordUpdate_userName,
-          recordUpdate_dateTime = getdate()
-      where instance = @instance
-        and crewId = @crewId
-        and recordDelete_dateTime is null
+        .input('recordUpdate_userName', user.userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.Crews
+      SET
+        crewName = @crewName,
+        userGroupId = @userGroupId,
+        recordUpdate_userName = @recordUpdate_userName,
+        recordUpdate_dateTime = getdate()
+      WHERE
+        instance = @instance
+        AND crewId = @crewId
+        AND recordDelete_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }

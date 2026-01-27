@@ -7,19 +7,25 @@ export default async function reorderEmployeeListMembers(form) {
         await transaction.begin();
         try {
             for (const [index, employeeNumber] of form.employeeNumbers.entries()) {
+                // eslint-disable-next-line no-await-in-loop
                 await transaction
                     .request()
                     .input('instance', getConfigProperty('application.instance'))
                     .input('employeeListId', form.employeeListId)
                     .input('employeeNumber', employeeNumber)
                     .input('seniorityDate', form.seniorityDate ?? null)
-                    .input('seniorityOrderNumber', index).query(/* sql */ `
-            update ShiftLog.EmployeeListMembers
-            set seniorityOrderNumber = @seniorityOrderNumber
-            where instance = @instance
-              and employeeListId = @employeeListId
-              and employeeNumber = @employeeNumber
-              ${form.seniorityDate === undefined ? '' : 'and seniorityDate = @seniorityDate'}
+                    .input('seniorityOrderNumber', index)
+                    .query(/* sql */ `
+            UPDATE ShiftLog.EmployeeListMembers
+            SET
+              seniorityOrderNumber = @seniorityOrderNumber
+            WHERE
+              instance = @instance
+              AND employeeListId = @employeeListId
+              AND employeeNumber = @employeeNumber ${form.seniorityDate ===
+                    undefined
+                    ? ''
+                    : /* sql */ 'AND seniorityDate = @seniorityDate'}
           `);
             }
             await transaction.commit();

@@ -15,11 +15,13 @@ export default async function deleteEmployeeListMember(
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('employeeListId', employeeListId)
-      .input('employeeNumber', employeeNumber).query(/* sql */ `
-        delete from ShiftLog.EmployeeListMembers
-        where instance = @instance
-          and employeeListId = @employeeListId
-          and employeeNumber = @employeeNumber
+      .input('employeeNumber', employeeNumber)
+      .query(/* sql */ `
+        DELETE FROM ShiftLog.EmployeeListMembers
+        WHERE
+          instance = @instance
+          AND employeeListId = @employeeListId
+          AND employeeNumber = @employeeNumber
       `)
 
     return result.rowsAffected[0] > 0

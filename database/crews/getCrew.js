@@ -6,18 +6,24 @@ export default async function getCrew(crewId) {
     const crewResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('crewId', crewId).query(/* sql */ `
-      select c.crewId, c.crewName,
+        .input('crewId', crewId)
+        .query(/* sql */ `
+      SELECT
+        c.crewId,
+        c.crewName,
         c.userGroupId,
         ug.userGroupName,
-        c.recordCreate_userName, c.recordCreate_dateTime,
-        c.recordUpdate_userName, c.recordUpdate_dateTime
-      from ShiftLog.Crews c
-      left join ShiftLog.UserGroups ug on c.userGroupId = ug.userGroupId
-      where
+        c.recordCreate_userName,
+        c.recordCreate_dateTime,
+        c.recordUpdate_userName,
+        c.recordUpdate_dateTime
+      FROM
+        ShiftLog.Crews c
+        LEFT JOIN ShiftLog.UserGroups ug ON c.userGroupId = ug.userGroupId
+      WHERE
         c.instance = @instance
-        and c.crewId = @crewId
-        and c.recordDelete_dateTime is null
+        AND c.crewId = @crewId
+        AND c.recordDelete_dateTime IS NULL
     `);
     if (crewResult.recordset.length === 0) {
         return undefined;
@@ -27,45 +33,55 @@ export default async function getCrew(crewId) {
     const membersResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('crewId', crewId).query(/* sql */ `
-      select cm.crewId, cm.employeeNumber,
-        e.firstName, e.lastName
-      from ShiftLog.CrewMembers cm
-      left join ShiftLog.Employees e on
-        cm.instance = e.instance and
-        cm.employeeNumber = e.employeeNumber and
-        e.recordDelete_dateTime is null
-      where
+        .input('crewId', crewId)
+        .query(/* sql */ `
+      SELECT
+        cm.crewId,
+        cm.employeeNumber,
+        e.firstName,
+        e.lastName
+      FROM
+        ShiftLog.CrewMembers cm
+        LEFT JOIN ShiftLog.Employees e ON cm.instance = e.instance
+        AND cm.employeeNumber = e.employeeNumber
+        AND e.recordDelete_dateTime IS NULL
+      WHERE
         cm.instance = @instance
-        and cm.crewId = @crewId
-      order by e.lastName, e.firstName
+        AND cm.crewId = @crewId
+      ORDER BY
+        e.lastName,
+        e.firstName
     `);
     // Get the equipment
     const equipmentResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .input('crewId', crewId).query(/* sql */ `
-      select ce.crewId, ce.equipmentNumber, ce.employeeNumber,
+        .input('crewId', crewId)
+        .query(/* sql */ `
+      SELECT
+        ce.crewId,
+        ce.equipmentNumber,
+        ce.employeeNumber,
         eq.equipmentName,
         eq.employeeListId,
         el.employeeListName,
-        e.firstName as employeeFirstName, e.lastName as employeeLastName
-      from ShiftLog.CrewEquipment ce
-      left join ShiftLog.Equipment eq on
-        ce.instance = eq.instance and
-        ce.equipmentNumber = eq.equipmentNumber and
-        eq.recordDelete_dateTime is null
-      left join ShiftLog.EmployeeLists el on
-        eq.employeeListId = el.employeeListId and
-        el.recordDelete_dateTime is null
-      left join ShiftLog.Employees e on
-        ce.instance = e.instance and
-        ce.employeeNumber = e.employeeNumber and
-        e.recordDelete_dateTime is null
-      where
+        e.firstName AS employeeFirstName,
+        e.lastName AS employeeLastName
+      FROM
+        ShiftLog.CrewEquipment ce
+        LEFT JOIN ShiftLog.Equipment eq ON ce.instance = eq.instance
+        AND ce.equipmentNumber = eq.equipmentNumber
+        AND eq.recordDelete_dateTime IS NULL
+        LEFT JOIN ShiftLog.EmployeeLists el ON eq.employeeListId = el.employeeListId
+        AND el.recordDelete_dateTime IS NULL
+        LEFT JOIN ShiftLog.Employees e ON ce.instance = e.instance
+        AND ce.employeeNumber = e.employeeNumber
+        AND e.recordDelete_dateTime IS NULL
+      WHERE
         ce.instance = @instance
-        and ce.crewId = @crewId
-      order by eq.equipmentName
+        AND ce.crewId = @crewId
+      ORDER BY
+        eq.equipmentName
     `);
     return {
         ...crew,

@@ -9,19 +9,31 @@ export default async function getEmployeeLists(): Promise<EmployeeList[]> {
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .query<EmployeeList>(/* sql */ `
-      select el.employeeListId, el.employeeListName,
+      SELECT
+        el.employeeListId,
+        el.employeeListName,
         el.userGroupId,
         ug.userGroupName,
-        (select count(*) from ShiftLog.EmployeeListMembers elm
-          where elm.employeeListId = el.employeeListId) as memberCount,
-        el.recordCreate_userName, el.recordCreate_dateTime,
-        el.recordUpdate_userName, el.recordUpdate_dateTime
-      from ShiftLog.EmployeeLists el
-      left join ShiftLog.UserGroups ug on el.userGroupId = ug.userGroupId
-      where
+        (
+          SELECT
+            count(*)
+          FROM
+            ShiftLog.EmployeeListMembers elm
+          WHERE
+            elm.employeeListId = el.employeeListId
+        ) AS memberCount,
+        el.recordCreate_userName,
+        el.recordCreate_dateTime,
+        el.recordUpdate_userName,
+        el.recordUpdate_dateTime
+      FROM
+        ShiftLog.EmployeeLists el
+        LEFT JOIN ShiftLog.UserGroups ug ON el.userGroupId = ug.userGroupId
+      WHERE
         el.instance = @instance
-        and el.recordDelete_dateTime is null
-      order by el.employeeListName
+        AND el.recordDelete_dateTime IS NULL
+      ORDER BY
+        el.employeeListName
     `)
 
   return result.recordset

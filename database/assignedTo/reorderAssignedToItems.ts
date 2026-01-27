@@ -18,15 +18,17 @@ export default async function reorderAssignedToItems(
       .input('instance', getConfigProperty('application.instance'))
       .input('assignedToId', assignedToId)
       .input('orderNumber', orderNumber)
-      .input('userName', userName).query(/* sql */ `
-        update ShiftLog.AssignedTo
-        set
+      .input('userName', userName)
+      .query(/* sql */ `
+        UPDATE ShiftLog.AssignedTo
+        SET
           orderNumber = @orderNumber,
           recordUpdate_userName = @userName,
           recordUpdate_dateTime = getdate()
-        where assignedToId = @assignedToId
-          and instance = @instance
-          and recordDelete_dateTime is null
+        WHERE
+          assignedToId = @assignedToId
+          AND instance = @instance
+          AND recordDelete_dateTime IS NULL
       `)
   }
 

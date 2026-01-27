@@ -18,15 +18,17 @@ export default async function createAssignedToItem(
   const existingResult = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('assignedToName', form.assignedToName).query(
-      /* sql */ `
-      select assignedToId
-      from ShiftLog.AssignedTo
-      where instance = @instance
-        and assignedToName = @assignedToName
-        and recordDelete_dateTime is not null
-    `
-    )) as mssql.IResult<{ assignedToId: number }>
+    .input('assignedToName', form.assignedToName)
+    .query(/* sql */ `
+      SELECT
+        assignedToId
+      FROM
+        ShiftLog.AssignedTo
+      WHERE
+        instance = @instance
+        AND assignedToName = @assignedToName
+        AND recordDelete_dateTime IS NOT NULL
+    `)) as mssql.IResult<{ assignedToId: number }>
 
   // If a deleted item exists, undelete it
   if (existingResult.recordset.length > 0) {
@@ -40,16 +42,18 @@ export default async function createAssignedToItem(
         'userGroupId',
         form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null
       )
-      .input('userName', userName).query(/* sql */ `
-        update ShiftLog.AssignedTo
-        set
+      .input('userName', userName)
+      .query(/* sql */ `
+        UPDATE ShiftLog.AssignedTo
+        SET
           userGroupId = @userGroupId,
-          recordDelete_userName = null,
-          recordDelete_dateTime = null,
+          recordDelete_userName = NULL,
+          recordDelete_dateTime = NULL,
           recordUpdate_userName = @userName,
           recordUpdate_dateTime = getdate()
-        where assignedToId = @assignedToId
-          and instance = @instance
+        WHERE
+          assignedToId = @assignedToId
+          AND instance = @instance
       `)
 
     return assignedToId
@@ -58,14 +62,16 @@ export default async function createAssignedToItem(
   // Get the next order number
   const orderResult = (await pool
     .request()
-    .input('instance', getConfigProperty('application.instance')).query(
-      /* sql */ `
-      select isnull(max(orderNumber), 0) + 1 as nextOrderNumber
-      from ShiftLog.AssignedTo
-      where instance = @instance
-        and recordDelete_dateTime is null
-    `
-    )) as mssql.IResult<{ nextOrderNumber: number }>
+    .input('instance', getConfigProperty('application.instance'))
+    .query(/* sql */ `
+      SELECT
+        isnull(max(orderNumber), 0) + 1 AS nextOrderNumber
+      FROM
+        ShiftLog.AssignedTo
+      WHERE
+        instance = @instance
+        AND recordDelete_dateTime IS NULL
+    `)) as mssql.IResult<{ nextOrderNumber: number }>
 
   const nextOrderNumber = orderResult.recordset[0].nextOrderNumber
 
@@ -78,24 +84,26 @@ export default async function createAssignedToItem(
       form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null
     )
     .input('orderNumber', nextOrderNumber)
-    .input('userName', userName).query(/* sql */ `
-      insert into ShiftLog.AssignedTo (
-        instance,
-        assignedToName,
-        userGroupId,
-        orderNumber,
-        recordCreate_userName,
-        recordUpdate_userName
-      )
-      output inserted.assignedToId
-      values (
-        @instance,
-        @assignedToName,
-        @userGroupId,
-        @orderNumber,
-        @userName,
-        @userName
-      )
+    .input('userName', userName)
+    .query(/* sql */ `
+      INSERT INTO
+        ShiftLog.AssignedTo (
+          instance,
+          assignedToName,
+          userGroupId,
+          orderNumber,
+          recordCreate_userName,
+          recordUpdate_userName
+        ) output inserted.assignedToId
+      VALUES
+        (
+          @instance,
+          @assignedToName,
+          @userGroupId,
+          @orderNumber,
+          @userName,
+          @userName
+        )
     `)) as mssql.IResult<{ assignedToId: number }>
 
   return result.recordset[0].assignedToId

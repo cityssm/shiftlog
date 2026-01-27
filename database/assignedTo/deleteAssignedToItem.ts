@@ -11,14 +11,16 @@ export default async function deleteAssignedToItem(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('assignedToId', assignedToId)
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.AssignedTo
-      set
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.AssignedTo
+      SET
         recordDelete_userName = @userName,
         recordDelete_dateTime = getdate()
-      where assignedToId = @assignedToId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      WHERE
+        assignedToId = @assignedToId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `)
 
   return result.rowsAffected[0] > 0

@@ -24,15 +24,18 @@ export default async function updateEmployeeList(
       .input('employeeListName', employeeListFields.employeeListName)
       .input('userGroupId', employeeListFields.userGroupId ?? undefined)
       .input('recordUpdate_userName', user.userName)
-      .input('recordUpdate_dateTime', currentDate).query(/* sql */ `
-        update ShiftLog.EmployeeLists
-        set employeeListName = @employeeListName,
+      .input('recordUpdate_dateTime', currentDate)
+      .query(/* sql */ `
+        UPDATE ShiftLog.EmployeeLists
+        SET
+          employeeListName = @employeeListName,
           userGroupId = @userGroupId,
           recordUpdate_userName = @recordUpdate_userName,
           recordUpdate_dateTime = @recordUpdate_dateTime
-        where instance = @instance
-          and employeeListId = @employeeListId
-          and recordDelete_dateTime is null
+        WHERE
+          instance = @instance
+          AND employeeListId = @employeeListId
+          AND recordDelete_dateTime IS NULL
       `)
 
     return result.rowsAffected[0] > 0

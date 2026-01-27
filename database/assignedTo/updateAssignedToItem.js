@@ -8,16 +8,18 @@ export default async function updateAssignedToItem(form, userName) {
         .input('assignedToId', form.assignedToId)
         .input('assignedToName', form.assignedToName)
         .input('userGroupId', form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null)
-        .input('userName', userName).query(/* sql */ `
-      update ShiftLog.AssignedTo
-      set
+        .input('userName', userName)
+        .query(/* sql */ `
+      UPDATE ShiftLog.AssignedTo
+      SET
         assignedToName = @assignedToName,
         userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where assignedToId = @assignedToId
-        and instance = @instance
-        and recordDelete_dateTime is null
+      WHERE
+        assignedToId = @assignedToId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
     `);
     return result.rowsAffected[0] > 0;
 }
