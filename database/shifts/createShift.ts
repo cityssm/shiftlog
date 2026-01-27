@@ -1,4 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
 import type { DateString } from '@cityssm/utils-datetime'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -28,7 +27,7 @@ export default async function createShift(
 
   recordLockDate.setDate(recordLockDate.getDate() + 7)
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('shiftDate', createShiftForm.shiftDateString)
@@ -38,7 +37,7 @@ export default async function createShift(
     .input('shiftDescription', createShiftForm.shiftDescription)
     .input('userName', userName)
     .input('recordLockDate', recordLockDate)
-    .query(/* sql */ `
+    .query<{ shiftId: number }>(/* sql */ `
       INSERT INTO
         ShiftLog.Shifts (
           instance,
@@ -63,7 +62,7 @@ export default async function createShift(
           @userName,
           @recordLockDate
         )
-    `)) as mssql.IResult<{ shiftId: number }>
+    `)
 
   return result.recordset[0].shiftId
 }

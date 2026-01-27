@@ -1,6 +1,5 @@
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { Setting } from '../../types/record.types.js'
 import {
   type SettingProperties,
@@ -10,12 +9,12 @@ import {
 export default async function getSettings(): Promise<
   Array<Partial<Setting> & SettingProperties>
 > {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   const result = (await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `
+    .query<Setting>(/* sql */ `
       SELECT
         s.settingKey,
         s.settingValue,
@@ -25,7 +24,7 @@ export default async function getSettings(): Promise<
         ShiftLog.ApplicationSettings s
       WHERE
         instance = @instance
-    `)) as mssql.IResult<Setting>
+    `))
 
   const databaseSettings = result.recordset
 

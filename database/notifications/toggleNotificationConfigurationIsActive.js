@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function toggleNotificationConfigurationIsActive(notificationConfigurationId, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('notificationConfigurationId', notificationConfigurationId)
@@ -20,6 +20,6 @@ export default async function toggleNotificationConfigurationIsActive(notificati
         notificationConfigurationId = @notificationConfigurationId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
-    `));
+    `);
     return result.rowsAffected[0] > 0;
 }

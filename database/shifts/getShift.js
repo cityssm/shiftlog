@@ -41,12 +41,12 @@ export default async function getShift(shiftId, user) {
             )
           `}
   `;
-    const shiftsResult = (await pool
+    const shiftsResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('shiftId', shiftId)
         .input('userName', user?.userName)
-        .query(sql));
+        .query(sql);
     if (shiftsResult.recordset.length === 0) {
         return undefined;
     }

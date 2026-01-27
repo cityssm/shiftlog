@@ -3,7 +3,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createAssignedToItem(form, userName) {
     const pool = await getShiftLogConnectionPool();
     // Check if a deleted item with the same name exists
-    const existingResult = (await pool
+    const existingResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('assignedToName', form.assignedToName)
@@ -16,7 +16,7 @@ export default async function createAssignedToItem(form, userName) {
         instance = @instance
         AND assignedToName = @assignedToName
         AND recordDelete_dateTime IS NOT NULL
-    `));
+    `);
     // If a deleted item exists, undelete it
     if (existingResult.recordset.length > 0) {
         const assignedToId = existingResult.recordset[0].assignedToId;
@@ -41,7 +41,7 @@ export default async function createAssignedToItem(form, userName) {
         return assignedToId;
     }
     // Get the next order number
-    const orderResult = (await pool
+    const orderResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .query(/* sql */ `
@@ -52,9 +52,9 @@ export default async function createAssignedToItem(form, userName) {
       WHERE
         instance = @instance
         AND recordDelete_dateTime IS NULL
-    `));
+    `);
     const nextOrderNumber = orderResult.recordset[0].nextOrderNumber;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('assignedToName', form.assignedToName)
@@ -80,6 +80,6 @@ export default async function createAssignedToItem(form, userName) {
           @userName,
           @userName
         )
-    `));
+    `);
     return result.recordset[0].assignedToId;
 }

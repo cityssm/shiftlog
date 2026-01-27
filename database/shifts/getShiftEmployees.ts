@@ -1,13 +1,11 @@
-import mssqlPool, { type mssql } from '@cityssm/mssql-multi-pool'
-
-import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { ShiftEmployee } from '../../types/record.types.js'
 
 export default async function getShiftEmployees(
   shiftId: number | string,
   user?: User
 ): Promise<ShiftEmployee[]> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   const sql = /* sql */ `
     SELECT
@@ -46,11 +44,11 @@ export default async function getShiftEmployees(
       e.firstName
   `
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('shiftId', shiftId)
     .input('userName', user?.userName)
-    .query(sql)) as mssql.IResult<ShiftEmployee>
+    .query<ShiftEmployee>(sql)
 
   return result.recordset
 }

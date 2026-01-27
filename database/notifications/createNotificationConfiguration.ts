@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -17,7 +15,7 @@ export default async function createNotificationConfiguration(
 ): Promise<number> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('notificationQueue', form.notificationQueue)
@@ -29,7 +27,7 @@ export default async function createNotificationConfiguration(
     )
     .input('isActive', form.isActive === true || form.isActive === '1' ? 1 : 0)
     .input('userName', userName)
-    .query(/* sql */ `
+    .query<{ notificationConfigurationId: number }>(/* sql */ `
       INSERT INTO
         ShiftLog.NotificationConfigurations (
           instance,
@@ -52,7 +50,7 @@ export default async function createNotificationConfiguration(
           @userName,
           @userName
         )
-    `)) as mssql.IResult<{ notificationConfigurationId: number }>
+    `)
 
   return result.recordset[0].notificationConfigurationId
 }

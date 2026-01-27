@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function deleteShift(shiftId, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('shiftId', shiftId)
         .input('instance', getConfigProperty('application.instance'))
@@ -16,6 +16,6 @@ export default async function deleteShift(shiftId, userName) {
         shiftId = @shiftId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
-    `));
+    `);
     return result.rowsAffected[0] > 0;
 }

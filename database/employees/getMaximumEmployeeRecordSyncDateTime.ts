@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -8,10 +6,12 @@ export default async function getMaximumEmployeeRecordSyncDateTime(): Promise<
 > {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `
+    .query<{
+      maxRecordSyncDateTime: Date | null
+    }>(/* sql */ `
       SELECT
         max(recordSync_dateTime) AS maxRecordSyncDateTime
       FROM
@@ -19,9 +19,7 @@ export default async function getMaximumEmployeeRecordSyncDateTime(): Promise<
       WHERE
         instance = @instance
         AND recordSync_isSynced = 1
-    `)) as mssql.IResult<{
-    maxRecordSyncDateTime: Date | null
-  }>
+    `)
 
   if (
     result.recordset.length === 0 ||

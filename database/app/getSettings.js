@@ -1,8 +1,8 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { settingProperties } from '../../types/setting.types.js';
 export default async function getSettings() {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     const result = (await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))

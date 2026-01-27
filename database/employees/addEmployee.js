@@ -74,7 +74,7 @@ async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user)
 export default async function addEmployee(employeeNumber, firstName, lastName, user) {
     const pool = await getShiftLogConnectionPool();
     // Check if an employee with the same number already exists
-    const recordDeleteResult = (await pool
+    const recordDeleteResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('employeeNumber', employeeNumber)
@@ -86,7 +86,7 @@ export default async function addEmployee(employeeNumber, firstName, lastName, u
       WHERE
         instance = @instance
         AND employeeNumber = @employeeNumber
-    `));
+    `);
     let success = false;
     if (recordDeleteResult.recordset.length === 0) {
         success = await insertNewEmployee(employeeNumber, firstName, lastName, user);

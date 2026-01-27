@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createNotificationConfiguration(form, userName) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('notificationQueue', form.notificationQueue)
@@ -34,6 +34,6 @@ export default async function createNotificationConfiguration(form, userName) {
           @userName,
           @userName
         )
-    `));
+    `);
     return result.recordset[0].notificationConfigurationId;
 }

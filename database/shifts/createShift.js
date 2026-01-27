@@ -7,7 +7,7 @@ export default async function createShift(createShiftForm, userName) {
         recordLockDate = new Date();
     }
     recordLockDate.setDate(recordLockDate.getDate() + 7);
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('shiftDate', createShiftForm.shiftDateString)
@@ -42,6 +42,6 @@ export default async function createShift(createShiftForm, userName) {
           @userName,
           @recordLockDate
         )
-    `));
+    `);
     return result.recordset[0].shiftId;
 }

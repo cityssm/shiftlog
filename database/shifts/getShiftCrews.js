@@ -1,7 +1,6 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
-import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShiftCrews(shiftId, user) {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     const sql = /* sql */ `
     SELECT
       sc.shiftId,
@@ -16,22 +15,26 @@ export default async function getShiftCrews(shiftId, user) {
       sc.shiftId = @shiftId
       AND c.recordDelete_dateTime IS NULL ${user === undefined
         ? ''
-        : `
-            and (
-              c.userGroupId is null or c.userGroupId in (
-                select userGroupId
-                from ShiftLog.UserGroupMembers
-                where userName = @userName
+        : /* sql */ `
+            AND (
+              c.userGroupId IS NULL
+              OR c.userGroupId IN (
+                SELECT
+                  userGroupId
+                FROM
+                  ShiftLog.UserGroupMembers
+                WHERE
+                  userName = @userName
               )
             )
           `}
     ORDER BY
       c.crewName
   `;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('shiftId', shiftId)
         .input('userName', user?.userName)
-        .query(sql));
+        .query(sql);
     return result.recordset;
 }

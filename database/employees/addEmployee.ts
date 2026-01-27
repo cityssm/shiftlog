@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -101,11 +99,11 @@ export default async function addEmployee(
 
   // Check if an employee with the same number already exists
 
-  const recordDeleteResult = (await pool
+  const recordDeleteResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('employeeNumber', employeeNumber)
-    .query(/* sql */ `
+    .query<{ recordDelete_dateTime: Date | null }>(/* sql */ `
       SELECT
         recordDelete_dateTime
       FROM
@@ -113,7 +111,7 @@ export default async function addEmployee(
       WHERE
         instance = @instance
         AND employeeNumber = @employeeNumber
-    `)) as mssql.IResult<{ recordDelete_dateTime: Date | null }>
+    `)
 
   let success = false
 

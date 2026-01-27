@@ -1,7 +1,6 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
-import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShiftEquipment(shiftId, user) {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     const sql = /* sql */ `
     SELECT
       se.shiftId,
@@ -38,10 +37,10 @@ export default async function getShiftEquipment(shiftId, user) {
     ORDER BY
       eq.equipmentName
   `;
-    const result = (await pool
+    const result = await pool
         .request()
         .input('shiftId', shiftId)
         .input('userName', user?.userName)
-        .query(sql));
+        .query(sql);
     return result.recordset;
 }

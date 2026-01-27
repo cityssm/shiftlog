@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function isAdhocTaskOnShift(
@@ -8,11 +6,11 @@ export default async function isAdhocTaskOnShift(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('shiftId', shiftId)
     .input('adhocTaskId', adhocTaskId)
-    .query(/* sql */ `
+    .query<{ recordCount: number }>(/* sql */ `
       SELECT
         count(*) AS recordCount
       FROM
@@ -20,7 +18,7 @@ export default async function isAdhocTaskOnShift(
       WHERE
         shiftId = @shiftId
         AND adhocTaskId = @adhocTaskId
-    `)) as mssql.IResult<{ recordCount: number }>
+    `)
 
   return result.recordset[0].recordCount > 0
 }

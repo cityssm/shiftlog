@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -15,11 +13,11 @@ export default async function createAssignedToItem(
   const pool = await getShiftLogConnectionPool()
 
   // Check if a deleted item with the same name exists
-  const existingResult = (await pool
+  const existingResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('assignedToName', form.assignedToName)
-    .query(/* sql */ `
+    .query<{ assignedToId: number }>(/* sql */ `
       SELECT
         assignedToId
       FROM
@@ -28,7 +26,7 @@ export default async function createAssignedToItem(
         instance = @instance
         AND assignedToName = @assignedToName
         AND recordDelete_dateTime IS NOT NULL
-    `)) as mssql.IResult<{ assignedToId: number }>
+    `)
 
   // If a deleted item exists, undelete it
   if (existingResult.recordset.length > 0) {
@@ -60,10 +58,10 @@ export default async function createAssignedToItem(
   }
 
   // Get the next order number
-  const orderResult = (await pool
+  const orderResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `
+    .query<{ nextOrderNumber: number }>(/* sql */ `
       SELECT
         isnull(max(orderNumber), 0) + 1 AS nextOrderNumber
       FROM
@@ -71,11 +69,11 @@ export default async function createAssignedToItem(
       WHERE
         instance = @instance
         AND recordDelete_dateTime IS NULL
-    `)) as mssql.IResult<{ nextOrderNumber: number }>
+    `)
 
   const nextOrderNumber = orderResult.recordset[0].nextOrderNumber
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('assignedToName', form.assignedToName)
@@ -85,7 +83,7 @@ export default async function createAssignedToItem(
     )
     .input('orderNumber', nextOrderNumber)
     .input('userName', userName)
-    .query(/* sql */ `
+    .query<{ assignedToId: number }>(/* sql */ `
       INSERT INTO
         ShiftLog.AssignedTo (
           instance,
@@ -104,7 +102,7 @@ export default async function createAssignedToItem(
           @userName,
           @userName
         )
-    `)) as mssql.IResult<{ assignedToId: number }>
+    `)
 
   return result.recordset[0].assignedToId
 }
