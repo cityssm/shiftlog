@@ -9,11 +9,8 @@
     let adhocTaskTypes = [];
     // Load task types
     function loadAdhocTaskTypes() {
-        cityssm.postJSON(`${urlPrefix}/doGetAdhocTaskTypes`, {}, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (responseJSON.success && responseJSON.adhocTaskTypes !== undefined) {
-                adhocTaskTypes = responseJSON.adhocTaskTypes;
-            }
+        cityssm.postJSON(`${urlPrefix}/doGetAdhocTaskTypes`, {}, (responseJSON) => {
+            adhocTaskTypes = responseJSON.adhocTaskTypes;
         });
     }
     function populateTaskTypeDropdown(selectElement, selectedId) {
@@ -236,9 +233,8 @@
         let modalElement;
         function doCreate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doCreateAdhocTask`, formEvent.currentTarget, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
-                if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+            cityssm.postJSON(`${urlPrefix}/doCreateAdhocTask`, formEvent.currentTarget, (responseJSON) => {
+                if (responseJSON.success) {
                     shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                     renderShiftAdhocTasks();
                     updateCount();
@@ -248,7 +244,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Creating Task',
-                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                        message: responseJSON.errorMessage
                     });
                 }
             });
@@ -304,9 +300,8 @@
         let modalElement;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doUpdateAdhocTask`, formEvent.currentTarget, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
-                if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+            cityssm.postJSON(`${urlPrefix}/doUpdateAdhocTask`, formEvent.currentTarget, (responseJSON) => {
+                if (responseJSON.success) {
                     shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                     renderShiftAdhocTasks();
                     closeModalFunction();
@@ -315,7 +310,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Task',
-                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                        message: responseJSON.errorMessage
                     });
                 }
             });
@@ -387,8 +382,7 @@
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             const note = formEvent.currentTarget.querySelector('[name="shiftAdhocTaskNote"]').value;
-            cityssm.postJSON(`${urlPrefix}/doUpdateShiftAdhocTaskNote`, formEvent.currentTarget, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftAdhocTaskNote`, formEvent.currentTarget, (responseJSON) => {
                 if (responseJSON.success) {
                     ;
                     task.shiftAdhocTaskNote = note;
@@ -399,7 +393,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Note',
-                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                        message: responseJSON.errorMessage
                     });
                 }
             });
@@ -428,9 +422,8 @@
         let closeModalFunction;
         let modalElement;
         // Load available tasks
-        cityssm.postJSON(`${urlPrefix}/doGetAvailableAdhocTasks`, { shiftId }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (!responseJSON.success || responseJSON.adhocTasks.length === 0) {
+        cityssm.postJSON(`${urlPrefix}/doGetAvailableAdhocTasks`, { shiftId }, (responseJSON) => {
+            if (responseJSON.adhocTasks.length === 0) {
                 bulmaJS.alert({
                     contextualColorName: 'info',
                     message: 'No incomplete ad hoc tasks available to add.'
@@ -441,10 +434,8 @@
                 let selectedCloseModalFunction;
                 function doAdd(formEvent) {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${urlPrefix}/doAddShiftAdhocTask`, formEvent.currentTarget, (rawAddResponseJSON) => {
-                        const addResponseJSON = rawAddResponseJSON;
-                        if (addResponseJSON.success &&
-                            addResponseJSON.shiftAdhocTasks) {
+                    cityssm.postJSON(`${urlPrefix}/doAddShiftAdhocTask`, formEvent.currentTarget, (addResponseJSON) => {
+                        if (addResponseJSON.success) {
                             shiftAdhocTasks = addResponseJSON.shiftAdhocTasks;
                             renderShiftAdhocTasks();
                             updateCount();
@@ -454,8 +445,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Adding Task',
-                                message: addResponseJSON.errorMessage ??
-                                    'An unknown error occurred.'
+                                message: addResponseJSON.errorMessage
                             });
                         }
                     });
@@ -610,9 +600,8 @@
                         adhocTaskId,
                         shiftId,
                         deleteTask: deleteOption === 'delete'
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+                    }, (responseJSON) => {
+                        if (responseJSON.success) {
                             shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                             renderShiftAdhocTasks();
                             updateCount();
@@ -621,7 +610,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Removing Task',
-                                message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                message: responseJSON.errorMessage
                             });
                         }
                     });

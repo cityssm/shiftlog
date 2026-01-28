@@ -14,7 +14,7 @@ export type DoCreateAdhocTaskResponse =
     }
   | {
       success: true
-      shiftAdhocTasks?: AdhocTask[]
+      shiftAdhocTasks: AdhocTask[]
     }
 
 export default async function handler(
@@ -82,6 +82,7 @@ export default async function handler(
   if (adhocTaskId === undefined) {
     response.json({
       success: false,
+
       errorMessage: 'Failed to create ad hoc task.'
     })
 

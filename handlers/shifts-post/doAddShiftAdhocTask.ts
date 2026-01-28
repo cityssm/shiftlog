@@ -12,7 +12,7 @@ export type DoAddShiftAdhocTaskResponse =
     }
   | {
       success: true
-      shiftAdhocTasks?: AdhocTask[]
+      shiftAdhocTasks: AdhocTask[]
     }
 
 export default async function handler(
