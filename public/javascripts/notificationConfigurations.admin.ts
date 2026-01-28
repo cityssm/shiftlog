@@ -3,6 +3,10 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddNotificationConfigurationResponse } from '../../handlers/admin-post/doAddNotificationConfiguration.js'
+import type { DoDeleteNotificationConfigurationResponse } from '../../handlers/admin-post/doDeleteNotificationConfiguration.js'
+import type { DoToggleNotificationConfigurationIsActiveResponse } from '../../handlers/admin-post/doToggleNotificationConfigurationIsActive.js'
+import type { DoUpdateNotificationConfigurationResponse } from '../../handlers/admin-post/doUpdateNotificationConfiguration.js'
 import type {
   EmailNotificationConfig,
   MsTeamsNotificationConfig,
@@ -199,7 +203,8 @@ declare const exports: {
       {
         notificationConfigurationId
       },
-      (responseJSON: { success: boolean }) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoToggleNotificationConfigurationIsActiveResponse
 
         if (responseJSON.success) {
           const configIndex = notificationConfigurations.findIndex(
@@ -402,16 +407,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddNotificationConfiguration`,
         formData,
-        (responseJSON: {
-            success: boolean
-            errorMessage?: string
-            notificationConfigurationId?: number
-          }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddNotificationConfigurationResponse
 
-          if (
-            responseJSON.success &&
-            responseJSON.notificationConfigurationId
-          ) {
+          if (responseJSON.success) {
             notificationConfigurations.push({
               notificationConfigurationId:
                 responseJSON.notificationConfigurationId,
@@ -431,7 +430,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Configuration',
-              message: responseJSON.errorMessage ?? 'An error occurred.'
+              message: responseJSON.errorMessage
             })
           }
         }
@@ -613,7 +612,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateNotificationConfiguration`,
         formData,
-        (responseJSON: { success: boolean }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateNotificationConfigurationResponse
 
           if (responseJSON.success) {
             const configIndex = notificationConfigurations.findIndex(
@@ -767,7 +767,8 @@ declare const exports: {
             {
               notificationConfigurationId
             },
-            (responseJSON: { success: boolean }) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteNotificationConfigurationResponse
 
               if (responseJSON.success) {
                 notificationConfigurations = notificationConfigurations.filter(
