@@ -4,6 +4,7 @@ import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTy
 import updateWorkOrderType, {
   type UpdateWorkOrderTypeForm
 } from '../../database/workOrderTypes/updateWorkOrderType.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
 export type DoUpdateWorkOrderTypeResponse =
@@ -33,7 +34,7 @@ export default async function handler(
     })
   } else {
     response.json({
-      message: 'Work order type could not be updated.',
+      message: `${getConfigProperty('workOrders.sectionNameSingular')} Type could not be updated.`,
       success: false
     })
   }

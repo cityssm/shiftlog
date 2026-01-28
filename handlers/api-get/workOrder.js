@@ -16,15 +16,17 @@ export default async function handler(request, response) {
     if (workOrder === undefined) {
         response
             .status(404)
-            .json({ error: 'Access denied or work order not found' });
+            .json({
+            error: `Access denied or ${getConfigProperty('workOrders.sectionNameSingular')} not found`
+        });
         return;
     }
     const workOrderMilestones = await getWorkOrderMilestones(workOrder.workOrderId);
     // Create calendar
     const workOrderUrl = `${getApplicationUrl(request)}/${getConfigProperty('workOrders.router')}/${workOrder.workOrderId}`;
-    const descriptionString = `Work Order #${workOrder.workOrderNumber}\n\n${workOrderUrl}`;
+    const descriptionString = `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}\n\n${workOrderUrl}`;
     const calendar = ical({
-        name: `Work Order #${workOrder.workOrderNumber}`,
+        name: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
         prodId: {
             company: 'cityssm.github.io/shiftlog',
             product: `${getConfigProperty('application.applicationName')} (${getConfigProperty('application.instance')})`
@@ -72,7 +74,7 @@ export default async function handler(request, response) {
                     ? ICalEventStatus.CANCELLED
                     : ICalEventStatus.CONFIRMED,
                 summary: `${milestone.milestoneCompleteDateTime ? '✅' : '⚠️'} Milestone Due: ${workOrder.workOrderNumber} - ${milestone.milestoneTitle}`,
-                description: `Work Order #${workOrder.workOrderNumber}\nMilestone: ${milestone.milestoneTitle}\n\n${workOrderUrl}`,
+                description: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}\nMilestone: ${milestone.milestoneTitle}\n\n${workOrderUrl}`,
                 url: workOrderUrl
             });
         }
@@ -81,7 +83,7 @@ export default async function handler(request, response) {
                 start: milestone.milestoneCompleteDateTime,
                 status: ICalEventStatus.CONFIRMED,
                 summary: `⏹️ Milestone Completed: ${workOrder.workOrderNumber} - ${milestone.milestoneTitle}`,
-                description: `Work Order #${workOrder.workOrderNumber}\nMilestone: ${milestone.milestoneTitle}\n\n${workOrderUrl}`,
+                description: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}\nMilestone: ${milestone.milestoneTitle}\n\n${workOrderUrl}`,
                 url: workOrderUrl
             });
         }

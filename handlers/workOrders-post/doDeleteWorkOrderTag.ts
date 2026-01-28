@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 
 import deleteWorkOrderTag from '../../database/workOrders/deleteWorkOrderTag.js'
 import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { WorkOrderTag } from '../../types/record.types.js'
 
 interface DeleteWorkOrderTagForm {
@@ -37,7 +38,7 @@ export default async function handler(
   } else {
     response.json({
       success: false,
-      message: 'Tag could not be removed from work order.'
+      message: `Failed to remove tag from ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
     })
   }
 }

@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
 import reorderWorkOrderTypes from '../../database/workOrderTypes/reorderWorkOrderTypes.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
 interface ReorderWorkOrderTypesForm {
@@ -36,7 +37,7 @@ export default async function handler(
     })
   } else {
     response.json({
-      message: 'Work order types could not be reordered.',
+      message: `${getConfigProperty('workOrders.sectionNameSingular')} Types could not be reordered.`,
       success: false
     })
   }

@@ -1,11 +1,12 @@
 import getWorkOrder from '../../../database/workOrders/getWorkOrder.js';
 import getWorkOrderMilestones from '../../../database/workOrders/getWorkOrderMilestones.js';
+import { getConfigProperty } from '../../../helpers/config.helpers.js';
 export async function getWorkOrderToSend(workOrderId, notificationConfiguration) {
     const workOrder = await getWorkOrder(workOrderId);
     if (workOrder === undefined) {
         return {
             success: false,
-            errorMessage: `Work order ID ${workOrderId} not found`
+            errorMessage: `${getConfigProperty('workOrders.sectionNameSingular')} ID ${workOrderId} not found`
         };
     }
     let sendMessage = notificationConfiguration.assignedToId === null ||

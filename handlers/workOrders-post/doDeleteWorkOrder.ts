@@ -32,7 +32,7 @@ export default async function handler(
   } else {
     response.json({
       success: false,
-      errorMessage: 'Failed to delete work order.'
+      errorMessage: `Failed to delete ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
     })
   }
 }

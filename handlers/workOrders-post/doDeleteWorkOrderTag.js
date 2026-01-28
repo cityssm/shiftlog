@@ -1,5 +1,6 @@
 import deleteWorkOrderTag from '../../database/workOrders/deleteWorkOrderTag.js';
 import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
     const success = await deleteWorkOrderTag(request.body.workOrderId, request.body.tagName);
     if (success) {
@@ -12,7 +13,7 @@ export default async function handler(request, response) {
     else {
         response.json({
             success: false,
-            message: 'Tag could not be removed from work order.'
+            message: `Failed to remove tag from ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
         });
     }
 }

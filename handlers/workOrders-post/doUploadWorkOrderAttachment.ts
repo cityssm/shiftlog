@@ -26,13 +26,14 @@ export type DoUploadWorkOrderAttachmentResponse =
 function sanitizeFileName(originalName: string): string {
   // Remove control characters, newlines, and null bytes
   // eslint-disable-next-line no-control-regex, sonarjs/no-control-regex
-  let sanitized = originalName.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, '')
+  let sanitized = originalName.replaceAll(/[\u0000-\u001F\u007F-\u009F]/gv, '')
 
   // Remove characters that are problematic in file systems
+  // eslint-disable-next-line require-unicode-regexp
   sanitized = sanitized.replaceAll(/[<>:"/\\|?*]/g, '_')
 
   // Remove leading dots to prevent hidden files on Unix
-  sanitized = sanitized.replace(/^\.+/, '')
+  sanitized = sanitized.replace(/^\.+/v, '')
 
   // Limit length to prevent issues with long filenames
   if (sanitized.length > 200) {
@@ -113,7 +114,7 @@ export default async function handler(
     })
   } catch (error) {
     debug(
-      'Error uploading attachment for work order %s: %O',
+      `Error uploading attachment for ${getConfigProperty('workOrders.sectionNameSingular')} %s: %O`,
       workOrderId,
       error
     )

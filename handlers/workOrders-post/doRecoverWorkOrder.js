@@ -6,14 +6,14 @@ export default async function handler(request, response) {
     if (success) {
         response.json({
             success: true,
-            message: 'Work order recovered successfully.',
+            message: `${getConfigProperty('workOrders.sectionNameSingular')} recovered successfully.`,
             redirectUrl: `${redirectRoot}/${request.body.workOrderId}`
         });
     }
     else {
         response.json({
             success: false,
-            errorMessage: 'Failed to recover work order.'
+            errorMessage: `Failed to recover ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
         });
     }
 }

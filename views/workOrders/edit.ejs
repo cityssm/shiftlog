@@ -371,7 +371,7 @@
         <figure class="image">
           <img 
             src="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= thumbnailAttachment.workOrderAttachmentId %>/inline" 
-            alt="<%= (thumbnailAttachment.attachmentDescription || 'Work order thumbnail') %>"
+            alt="<%= (thumbnailAttachment.attachmentDescription || 'Thumbnail') %>"
             style="max-width: 100%; height: auto;"
             loading="lazy"
           />
@@ -547,7 +547,7 @@
                 <div class="dropdown-content">
                   <a href="#" class="dropdown-item" id="button--deleteWorkOrder">
                     <span class="icon has-text-danger"><i class="fa-solid fa-trash"></i></span>
-                    <span>Delete Work Order</span>
+                    <span>Delete <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
                   </a>
                 </div>
               </div>

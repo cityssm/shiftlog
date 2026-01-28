@@ -25,7 +25,7 @@ export default async function handler(
   // Check workOrderId validity
   if (workOrderId === '' || Number.isNaN(Number(workOrderId))) {
     response.json({
-      errorMessage: 'Invalid work order ID.',
+      errorMessage: `Invalid ${getConfigProperty('workOrders.sectionNameSingular')} ID.`,
       success: false
     })
 
@@ -39,13 +39,13 @@ export default async function handler(
 
   if (success) {
     response.json({
-      message: 'Work order reopened successfully.',
+      message: `${getConfigProperty('workOrders.sectionNameSingular')} reopened successfully.`,
       redirectUrl: `${redirectRoot}/${workOrderId}/edit`,
       success: true
     })
   } else {
     response.json({
-      errorMessage: 'Failed to reopen work order.',
+      errorMessage: `Failed to reopen ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`,
       success: false
     })
   }

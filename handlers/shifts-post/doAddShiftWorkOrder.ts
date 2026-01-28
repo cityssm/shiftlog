@@ -5,6 +5,7 @@ import getShiftWorkOrders, {
   type ShiftWorkOrder
 } from '../../database/shifts/getShiftWorkOrders.js'
 import isWorkOrderOnShift from '../../database/shifts/isWorkOrderOnShift.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 export type DoAddShiftWorkOrderResponse =
   | {
@@ -37,7 +38,7 @@ export default async function handler(
   if (alreadyExists) {
     response.json({
       success: false,
-      errorMessage: 'This work order is already assigned to the shift.'
+      errorMessage: `This ${getConfigProperty('workOrders.sectionNameSingular')} is already assigned to the shift.`
     })
     return
   }
@@ -58,7 +59,7 @@ export default async function handler(
   } else {
     response.json({
       success: false,
-      errorMessage: 'Failed to add work order to shift.'
+      errorMessage: `Failed to add ${getConfigProperty('workOrders.sectionNameSingular')} to shift.`
     })
   }
 }

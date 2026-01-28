@@ -1,13 +1,14 @@
 import addShiftWorkOrder from '../../database/shifts/addShiftWorkOrder.js';
 import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js';
 import isWorkOrderOnShift from '../../database/shifts/isWorkOrderOnShift.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
     // Check if work order is already on this shift
     const alreadyExists = await isWorkOrderOnShift(request.body.shiftId, request.body.workOrderId);
     if (alreadyExists) {
         response.json({
             success: false,
-            errorMessage: 'This work order is already assigned to the shift.'
+            errorMessage: `This ${getConfigProperty('workOrders.sectionNameSingular')} is already assigned to the shift.`
         });
         return;
     }
@@ -22,7 +23,7 @@ export default async function handler(request, response) {
     else {
         response.json({
             success: false,
-            errorMessage: 'Failed to add work order to shift.'
+            errorMessage: `Failed to add ${getConfigProperty('workOrders.sectionNameSingular')} to shift.`
         });
     }
 }

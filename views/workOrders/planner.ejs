@@ -24,18 +24,6 @@
       </ul>
     </nav>
 
-    <% if (error !== '') { %>
-    <div class="notification is-danger is-light">
-      <button class="delete"></button>
-      <strong>Error:</strong>
-      <% if (error === 'notFound') { %>
-      <span>The requested work order was not found.</span>
-      <% } else { %>
-      <span>An unknown error occurred. (<%= error %>)</span>
-      <% } %>
-    </div>
-    <% } %>
-
     <h1 class="title is-1">
       <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Work Planner
     </h1>

@@ -4,6 +4,7 @@ import deleteShiftWorkOrder from '../../database/shifts/deleteShiftWorkOrder.js'
 import getShiftWorkOrders, {
   type ShiftWorkOrder
 } from '../../database/shifts/getShiftWorkOrders.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 export type DoDeleteShiftWorkOrderResponse =
   | {
@@ -41,7 +42,7 @@ export default async function handler(
   } else {
     response.json({
       success: false,
-      errorMessage: 'Failed to remove work order from shift.'
+      errorMessage: `Failed to remove ${getConfigProperty('workOrders.sectionNameSingular')} from shift.`
     })
   }
 }

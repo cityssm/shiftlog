@@ -1,5 +1,6 @@
 import deleteWorkOrderType from '../../database/workOrderTypes/deleteWorkOrderType.js';
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
     const success = await deleteWorkOrderType(request.body.workOrderTypeId, request.session.user?.userName ?? '');
     if (success) {
@@ -11,7 +12,7 @@ export default async function handler(request, response) {
     }
     else {
         response.json({
-            message: 'Work order type could not be deleted.',
+            message: `${getConfigProperty('workOrders.sectionName')} Type could not be deleted.`,
             success: false
         });
     }

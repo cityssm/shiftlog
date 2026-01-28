@@ -1,5 +1,6 @@
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js';
 import updateWorkOrderType from '../../database/workOrderTypes/updateWorkOrderType.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
     const success = await updateWorkOrderType(request.body, request.session.user?.userName ?? '');
     if (success) {
@@ -11,7 +12,7 @@ export default async function handler(request, response) {
     }
     else {
         response.json({
-            message: 'Work order type could not be updated.',
+            message: `${getConfigProperty('workOrders.sectionNameSingular')} Type could not be updated.`,
             success: false
         });
     }

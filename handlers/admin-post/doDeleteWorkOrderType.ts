@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 
 import deleteWorkOrderType from '../../database/workOrderTypes/deleteWorkOrderType.js'
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
 interface DeleteWorkOrderTypeForm {
@@ -35,7 +36,7 @@ export default async function handler(
     })
   } else {
     response.json({
-      message: 'Work order type could not be deleted.',
+      message: `${getConfigProperty('workOrders.sectionName')} Type could not be deleted.`,
       success: false
     })
   }

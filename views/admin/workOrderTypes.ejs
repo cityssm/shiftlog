@@ -78,7 +78,8 @@
         <% if (workOrderTypes.length === 0) { %>
         <tr id="tr--noWorkOrderTypes">
           <td class="has-text-centered has-text-grey" colspan="5">
-            No work order types found. Click "Add Work Order Type" to create one.
+            No <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular').toLowerCase() %> types found.
+            Click "Add <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type" to create one.
           </td>
         </tr>
         <% } else { %>

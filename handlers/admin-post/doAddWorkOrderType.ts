@@ -4,6 +4,7 @@ import addWorkOrderType, {
   type AddWorkOrderTypeForm
 } from '../../database/workOrderTypes/addWorkOrderType.js'
 import getWorkOrderTypesAdmin from '../../database/workOrderTypes/getWorkOrderTypesAdmin.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
 export type DoAddWorkOrderTypeResponse =
@@ -33,7 +34,7 @@ export default async function handler(
     })
   } else {
     response.json({
-      message: 'Work order type could not be added.',
+      message: `${getConfigProperty('workOrders.sectionNameSingular')} Type could not be added.`,
       success: false
     })
   }

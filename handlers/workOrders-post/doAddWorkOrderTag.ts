@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 
 import addWorkOrderTag from '../../database/workOrders/addWorkOrderTag.js'
 import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type { WorkOrderTag } from '../../types/record.types.js'
 
 interface AddWorkOrderTagForm {
@@ -37,7 +38,7 @@ export default async function handler(
   } else {
     response.json({
       success: false,
-      message: 'Tag could not be added to work order.'
+      message: `Failed to add tag to ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
     })
   }
 }
