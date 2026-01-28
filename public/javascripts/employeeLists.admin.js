@@ -80,8 +80,8 @@
         }
         cityssm.openHtmlModal('adminEmployeeLists-edit', {
             onshow(modalElement) {
-                modalElement.querySelector('.modal-card-title').textContent =
-                    'Edit Employee List';
+                ;
+                modalElement.querySelector('.modal-card-title').textContent = 'Edit Employee List';
                 formElement = modalElement.querySelector('form');
                 formElement.querySelector('#employeeListEdit--employeeListId').value = employeeListId.toString();
                 formElement.querySelector('#employeeListEdit--employeeListName').value = employeeList.employeeListName;
@@ -588,5 +588,5 @@
     renderEmployeeLists();
     document
         .querySelector('#button--addEmployeeList')
-        .addEventListener('click', addEmployeeList);
+        ?.addEventListener('click', addEmployeeList);
 })();

@@ -9,7 +9,12 @@ import type { Shift } from '../../types/record.types.js'
 import type { TimesheetEditResponse } from './types.js'
 
 export default async function handler(
-  request: Request<unknown, unknown, unknown, { error?: string; shiftId?: string }>,
+  request: Request<
+    unknown,
+    unknown,
+    unknown,
+    { error?: string; shiftId?: string }
+  >,
   response: Response
 ): Promise<void> {
   let supervisors = await getEmployees({ isSupervisor: true })
@@ -25,7 +30,7 @@ export default async function handler(
   )
 
   // Get shift data if shiftId is provided
-  let shift: Shift | undefined = undefined
+  let shift: Shift | undefined
   let timesheetDate = new Date()
   let supervisorEmployeeNumber = ''
 

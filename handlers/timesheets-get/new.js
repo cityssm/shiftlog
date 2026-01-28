@@ -9,7 +9,7 @@ export default async function handler(request, response) {
     }
     const timesheetTypes = await getTimesheetTypeDataListItems(request.session.user);
     // Get shift data if shiftId is provided
-    let shift = undefined;
+    let shift;
     let timesheetDate = new Date();
     let supervisorEmployeeNumber = '';
     if (request.query.shiftId !== undefined && request.query.shiftId !== '') {

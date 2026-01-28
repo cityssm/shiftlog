@@ -105,12 +105,12 @@
                           class="tag is-info is-light ml-1"
                           title="Thumbnail"
                         >
-                          <span class="icon is-small"
-                            ><i class="fa-solid fa-image"></i
-                          ></span>
+                          <span class="icon is-small">
+                            <i class="fa-solid fa-image"></i>
+                          </span>
                           <span>Thumbnail</span>
                         </span>
-                    `
+                      `
                 : ''}
                 </strong>
                 <br />
@@ -131,13 +131,13 @@
                       class="button is-small is-info is-light set-thumbnail"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
                     >
-                      <span class="icon is-small"
-                        ><i class="fa-solid fa-image"></i
-                      ></span>
+                      <span class="icon is-small">
+                        <i class="fa-solid fa-image"></i>
+                      </span>
                       <span>Set as Thumbnail</span>
                     </button>
                   </div>
-              `
+                `
                 : ''}
           </div>
           ${canEdit
@@ -151,7 +151,7 @@
                     <span class="icon"><i class="fa-solid fa-trash"></i></span>
                   </button>
                 </div>
-            `
+              `
                 : ''}
         </article>
       `;
@@ -170,7 +170,7 @@
                     });
                 }
             }
-            attachmentsContainerElement?.append(attachmentElement);
+            attachmentsContainerElement.append(attachmentElement);
         }
     }
     function showAddAttachmentModal() {

@@ -172,8 +172,9 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminEmployeeLists-edit', {
       onshow(modalElement) {
-        modalElement.querySelector('.modal-card-title')!.textContent =
-          'Edit Employee List'
+        ;(
+          modalElement.querySelector('.modal-card-title') as HTMLElement
+        ).textContent = 'Edit Employee List'
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         ;(
@@ -929,6 +930,6 @@ declare const exports: {
   renderEmployeeLists()
 
   document
-    .querySelector('#button--addEmployeeList')!
-    .addEventListener('click', addEmployeeList)
+    .querySelector('#button--addEmployeeList')
+    ?.addEventListener('click', addEmployeeList)
 })()
