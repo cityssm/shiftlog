@@ -3,6 +3,10 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddTagResponse } from '../../handlers/admin-post/doAddTag.js'
+import type { DoDeleteTagResponse } from '../../handlers/admin-post/doDeleteTag.js'
+import type { DoGetOrphanedTagsResponse } from '../../handlers/admin-post/doGetOrphanedTags.js'
+import type { DoUpdateTagResponse } from '../../handlers/admin-post/doUpdateTag.js'
 import type { Tag } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -172,18 +176,15 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteTag`,
             { tagName },
-            (responseJSON: {
-              success: boolean
-              message?: string
-              tags?: Tag[]
-            }) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteTagResponse
+
               if (responseJSON.success) {
-                if (responseJSON.tags !== undefined) {
-                  exports.tags = responseJSON.tags
-                  currentFilteredTags = responseJSON.tags
-                  currentPage = 1
-                  renderTagsWithPagination(responseJSON.tags)
-                }
+                exports.tags = responseJSON.tags
+                currentFilteredTags = responseJSON.tags
+                currentPage = 1
+                renderTagsWithPagination(responseJSON.tags)
+
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Tag Deleted',
@@ -195,7 +196,10 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error Deleting Tag',
 
-                  message: responseJSON.message ?? 'Please try again.'
+                  message:
+                    'message' in responseJSON
+                      ? responseJSON.message
+                      : 'Please try again.'
                 })
               }
             }
@@ -230,19 +234,16 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateTag`,
         editForm,
-        (responseJSON: {
-          success: boolean
-          message?: string
-          tags?: Tag[]
-        }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateTagResponse
+
           if (responseJSON.success) {
             closeModalFunction()
-            if (responseJSON.tags !== undefined) {
-              exports.tags = responseJSON.tags
-              currentFilteredTags = responseJSON.tags
-              currentPage = 1
-              renderTagsWithPagination(responseJSON.tags)
-            }
+            exports.tags = responseJSON.tags
+            currentFilteredTags = responseJSON.tags
+            currentPage = 1
+            renderTagsWithPagination(responseJSON.tags)
+
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Tag Updated',
@@ -254,7 +255,10 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Updating Tag',
 
-              message: responseJSON.message ?? 'Please try again.'
+              message:
+                'message' in responseJSON
+                  ? responseJSON.message
+                  : 'Please try again.'
             })
           }
         }
@@ -352,19 +356,16 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddTag`,
         addForm,
-        (responseJSON: {
-          success: boolean
-          message?: string
-          tags?: Tag[]
-        }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddTagResponse
+
           if (responseJSON.success) {
             closeModalFunction()
-            if (responseJSON.tags !== undefined) {
-              exports.tags = responseJSON.tags
-              currentFilteredTags = responseJSON.tags
-              currentPage = 1
-              renderTagsWithPagination(responseJSON.tags)
-            }
+            exports.tags = responseJSON.tags
+            currentFilteredTags = responseJSON.tags
+            currentPage = 1
+            renderTagsWithPagination(responseJSON.tags)
+
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Tag Added',
@@ -376,7 +377,10 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Adding Tag',
 
-              message: responseJSON.message ?? 'Please try again.'
+              message:
+                'message' in responseJSON
+                  ? responseJSON.message
+                  : 'Please try again.'
             })
           }
         }
@@ -622,19 +626,16 @@ declare const exports: {
               cityssm.postJSON(
                 `${shiftLog.urlPrefix}/admin/doAddTag`,
                 addForm,
-                (responseJSON: {
-                  success: boolean
-                  message?: string
-                  tags?: Tag[]
-                }) => {
+                (rawResponseJSON) => {
+                  const responseJSON = rawResponseJSON as DoAddTagResponse
+
                   if (responseJSON.success) {
                     closeAddModalFunction()
-                    if (responseJSON.tags !== undefined) {
-                      exports.tags = responseJSON.tags
-                      currentFilteredTags = responseJSON.tags
-                      currentPage = 1
-                      renderTagsWithPagination(responseJSON.tags)
-                    }
+                    exports.tags = responseJSON.tags
+                    currentFilteredTags = responseJSON.tags
+                    currentPage = 1
+                    renderTagsWithPagination(responseJSON.tags)
+
                     bulmaJS.alert({
                       contextualColorName: 'success',
                       title: 'Tag Added',
@@ -644,7 +645,10 @@ declare const exports: {
                     bulmaJS.alert({
                       contextualColorName: 'danger',
                       title: 'Error Adding Tag',
-                      message: responseJSON.message ?? 'Please try again.'
+                      message:
+                        'message' in responseJSON
+                          ? responseJSON.message
+                          : 'Please try again.'
                     })
                   }
                 }
@@ -680,14 +684,10 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doGetOrphanedTags`,
           {},
-          (responseJSON: {
-            success: boolean
-            orphanedTags?: Array<{ tagName: string; usageCount: number }>
-          }) => {
-            if (
-              responseJSON.success &&
-              responseJSON.orphanedTags !== undefined
-            ) {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as DoGetOrphanedTagsResponse
+
+            if (responseJSON.success) {
               if (responseJSON.orphanedTags.length === 0) {
                 containerElement.innerHTML = /* html */ `
                   <div class="message is-success">
