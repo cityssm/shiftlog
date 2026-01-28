@@ -925,6 +925,7 @@ declare const exports: {
     const equipmentList = document.querySelector(
       '#available--equipment .available-resources-list'
     ) as HTMLElement
+    
     if (equipmentList !== null) {
       equipmentList.textContent = ''
 
