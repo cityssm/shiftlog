@@ -761,10 +761,7 @@ declare const exports: {
             {
               notificationConfigurationId
             },
-            (rawResponseJSON) => {
-              const responseJSON =
-                rawResponseJSON as DoDeleteNotificationConfigurationResponse
-
+            (responseJSON: DoDeleteNotificationConfigurationResponse) => {
               if (responseJSON.success) {
                 notificationConfigurations = notificationConfigurations.filter(
                   (c) =>
