@@ -3,6 +3,11 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddUserResponse } from '../../handlers/admin-post/doAddUser.js'
+import type { DoDeleteUserResponse } from '../../handlers/admin-post/doDeleteUser.js'
+import type { DoResetUserApiKeyResponse } from '../../handlers/admin-post/doResetUserApiKey.js'
+import type { DoToggleUserPermissionResponse } from '../../handlers/admin-post/doToggleUserPermission.js'
+import type { DoUpdateUserSettingsResponse } from '../../handlers/admin-post/doUpdateUserSettings.js'
 import type { DatabaseUser } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -50,12 +55,9 @@ declare const exports: {
             {
               userName
             },
-            (responseJSON: {
-              message?: string
-              success: boolean
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteUserResponse
 
-              users?: DatabaseUser[]
-            }) => {
               if (responseJSON.success) {
                 // Update the users list with the new data from the server
                 if (responseJSON.users !== undefined) {
@@ -98,12 +100,10 @@ declare const exports: {
         permissionField: permission,
         userName
       },
-      (responseJSON: {
-        message?: string
-        success: boolean
+      (rawResponseJSON) => {
+        const responseJSON =
+          rawResponseJSON as DoToggleUserPermissionResponse
 
-        users: DatabaseUser[]
-      }) => {
         if (responseJSON.success) {
           renderUsers(responseJSON.users)
         } else {
@@ -143,11 +143,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateUserSettings`,
         settingsForm,
-        (responseJSON: {
-          message?: string
-          success: boolean
-          users?: DatabaseUser[]
-        }) => {
+        (rawResponseJSON) => {
+          const responseJSON =
+            rawResponseJSON as DoUpdateUserSettingsResponse
+
           if (responseJSON.success) {
             closeModalFunction()
 
@@ -286,12 +285,9 @@ declare const exports: {
       {
         userName
       },
-      (responseJSON: {
-        message?: string
-        success: boolean
-        users?: DatabaseUser[]
-        apiKey?: string
-      }) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoResetUserApiKeyResponse
+
         if (responseJSON.success) {
           // Update the users list with the new data from the server
           if (responseJSON.users !== undefined) {
@@ -598,11 +594,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddUser`,
         addForm,
-        (responseJSON: {
-          success: boolean
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddUserResponse
 
-          users: DatabaseUser[]
-        }) => {
           if (responseJSON.success) {
             closeModalFunction()
             exports.users = responseJSON.users
