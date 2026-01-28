@@ -465,16 +465,15 @@ declare const exports: {
                   cityssm.postJSON(
                     `${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`,
                     { equipmentNumber: selectedEquipment },
-                    (rawEligibleResponseJSON) => {
-                      const eligibleResponse =
-                        rawEligibleResponseJSON as DoGetEligibleEmployeesForEquipmentResponse
-
+                    (
+                      eligibleResponseJSON: DoGetEligibleEmployeesForEquipmentResponse
+                    ) => {
                       if (
-                        eligibleResponse.success &&
-                        eligibleResponse.employees !== undefined
+                        eligibleResponseJSON.success &&
+                        eligibleResponseJSON.employees !== undefined
                       ) {
                         const eligibleEmployeeNumbers = new Set(
-                          eligibleResponse.employees.map(
+                          eligibleResponseJSON.employees.map(
                             (emp) => emp.employeeNumber
                           )
                         )
@@ -756,16 +755,14 @@ declare const exports: {
             cityssm.postJSON(
               `${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`,
               { equipmentNumber: equipmentItem.equipmentNumber },
-              (rawEligibleResponseJSON) => {
-                const eligibleResponse =
-                  rawEligibleResponseJSON as DoGetEligibleEmployeesForEquipmentResponse
-
-                if (
-                  eligibleResponse.success &&
-                  eligibleResponse.employees !== undefined
-                ) {
+              (
+                eligibleResponseJSON: DoGetEligibleEmployeesForEquipmentResponse
+              ) => {
+                if (eligibleResponseJSON.success) {
                   const eligibleEmployeeNumbers = new Set(
-                    eligibleResponse.employees.map((emp) => emp.employeeNumber)
+                    eligibleResponseJSON.employees.map(
+                      (emp) => emp.employeeNumber
+                    )
                   )
                   populateDropdown(eligibleEmployeeNumbers)
                 } else {

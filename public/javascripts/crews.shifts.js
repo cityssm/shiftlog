@@ -284,11 +284,10 @@
                             }
                             else {
                                 // Get eligible employees for the selected equipment
-                                cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (rawEligibleResponseJSON) => {
-                                    const eligibleResponse = rawEligibleResponseJSON;
-                                    if (eligibleResponse.success &&
-                                        eligibleResponse.employees !== undefined) {
-                                        const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map((emp) => emp.employeeNumber));
+                                cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
+                                    if (eligibleResponseJSON.success &&
+                                        eligibleResponseJSON.employees !== undefined) {
+                                        const eligibleEmployeeNumbers = new Set(eligibleResponseJSON.employees.map((emp) => emp.employeeNumber));
                                         populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers);
                                     }
                                     else {
@@ -494,11 +493,9 @@
                         const loadingOption = document.createElement('option');
                         loadingOption.textContent = 'Loading...';
                         select.append(loadingOption);
-                        cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: equipmentItem.equipmentNumber }, (rawEligibleResponseJSON) => {
-                            const eligibleResponse = rawEligibleResponseJSON;
-                            if (eligibleResponse.success &&
-                                eligibleResponse.employees !== undefined) {
-                                const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map((emp) => emp.employeeNumber));
+                        cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: equipmentItem.equipmentNumber }, (eligibleResponseJSON) => {
+                            if (eligibleResponseJSON.success) {
+                                const eligibleEmployeeNumbers = new Set(eligibleResponseJSON.employees.map((emp) => emp.employeeNumber));
                                 populateDropdown(eligibleEmployeeNumbers);
                             }
                             else {

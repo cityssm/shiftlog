@@ -5,6 +5,6 @@ export type DoGetEligibleEmployeesForEquipmentResponse = {
     message: string;
 } | {
     success: true;
-    employees?: Employee[];
+    employees: Employee[];
 };
 export default function handler(request: Request, response: Response<DoGetEligibleEmployeesForEquipmentResponse>): Promise<void>;

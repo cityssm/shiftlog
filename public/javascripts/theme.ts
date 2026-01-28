@@ -52,12 +52,8 @@ declare const exports: {
       {
         t: Date.now()
       },
-      (rawResponseJson: unknown) => {
-        const responseJson = rawResponseJson as {
-          activeSession: boolean
-        }
-
-        if (!responseJson.activeSession) {
+      (responseJSON: { activeSession: boolean }) => {
+        if (!responseJSON.activeSession) {
           bulmaJS.alert({
             contextualColorName: 'danger',
             title: 'Session Expired',
