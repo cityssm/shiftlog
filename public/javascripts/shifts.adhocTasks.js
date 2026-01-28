@@ -457,10 +457,9 @@
                         addModalElement.querySelector('input[name="adhocTaskId"]').value = task.adhocTaskId.toString();
                         // Display task details
                         const detailsDiv = addModalElement.querySelector('#addAdhocTask--taskDetails');
+                        // eslint-disable-next-line no-unsanitized/property
                         detailsDiv.innerHTML = /* html */ `
-                <p
-                  class="mb-2"
-                >
+                <p class="mb-2">
                   <strong>Type:</strong>
                   ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
                 </p>
@@ -470,19 +469,19 @@
                 </p>
                 ${task.locationAddress1
                             ? /* html */ `
-                    <p class="mb-2">
+                      <p class="mb-2">
                         <strong>Location:</strong>
                         ${cityssm.escapeHTML(task.locationAddress1)}
                       </p>
-                  `
+                    `
                             : ''}
                 ${task.taskDueDateTime
                             ? /* html */ `
-                    <p class="mb-2">
+                      <p class="mb-2">
                         <strong>Due:</strong>
                         ${cityssm.dateToString(new Date(task.taskDueDateTime))}
                       </p>
-                  `
+                    `
                             : ''}
               `;
                     },

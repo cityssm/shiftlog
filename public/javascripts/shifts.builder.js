@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;

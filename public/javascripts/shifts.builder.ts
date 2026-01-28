@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
@@ -3905,7 +3907,7 @@ declare const exports: {
         ) as HTMLTextAreaElement
         textarea?.focus()
       },
-      
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
