@@ -176,9 +176,7 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteTag`,
             { tagName },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteTagResponse
-
+            (responseJSON: DoDeleteTagResponse) => {
               if (responseJSON.success) {
                 exports.tags = responseJSON.tags
                 currentFilteredTags = responseJSON.tags
@@ -234,9 +232,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateTag`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateTagResponse
-
+        (responseJSON: DoUpdateTagResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
             exports.tags = responseJSON.tags
@@ -356,9 +352,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddTag`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddTagResponse
-
+        (responseJSON: DoAddTagResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
             exports.tags = responseJSON.tags
@@ -626,9 +620,7 @@ declare const exports: {
               cityssm.postJSON(
                 `${shiftLog.urlPrefix}/admin/doAddTag`,
                 addForm,
-                (rawResponseJSON) => {
-                  const responseJSON = rawResponseJSON as DoAddTagResponse
-
+                (responseJSON: DoAddTagResponse) => {
                   if (responseJSON.success) {
                     closeAddModalFunction()
                     exports.tags = responseJSON.tags
@@ -684,9 +676,7 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doGetOrphanedTags`,
           {},
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoGetOrphanedTagsResponse
-
+          (responseJSON: DoGetOrphanedTagsResponse) => {
             if (responseJSON.success) {
               if (responseJSON.orphanedTags.length === 0) {
                 containerElement.innerHTML = /* html */ `
