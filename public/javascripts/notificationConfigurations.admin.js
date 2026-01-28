@@ -497,8 +497,7 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNotificationConfiguration`, {
                         notificationConfigurationId
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success) {
                             notificationConfigurations = notificationConfigurations.filter((c) => c.notificationConfigurationId !==
                                 Number.parseInt(notificationConfigurationId, 10));

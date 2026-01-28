@@ -265,23 +265,23 @@ declare const exports: {
         ${
           isEdit
             ? /* html */ `
-            <td class="has-text-right">
+              <td class="has-text-right">
                 <div class="buttons is-right">
                   ${
                     isComplete
                       ? ''
                       : /* html */ `
-                  <button
+                        <button
                           class="button is-small is-info button--edit"
                           data-adhoc-task-id="${task.adhocTaskId}"
                           type="button"
                           aria-label="Edit Task"
                         >
-                          <span class="icon is-small"
-                            ><i class="fa-solid fa-pencil"></i
-                          ></span>
+                          <span class="icon is-small">
+                            <i class="fa-solid fa-pencil"></i>
+                          </span>
                         </button>
-                `
+                      `
                   }
                   <button
                     class="button is-small is-info button--editNote"
@@ -305,7 +305,7 @@ declare const exports: {
                   </button>
                 </div>
               </td>
-          `
+            `
             : ''
         }
       `
