@@ -57,17 +57,14 @@
                         cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShift`, {
                             shiftId
                         }, (responseJSON) => {
-                            if (responseJSON.success &&
-                                'redirectUrl' in responseJSON) {
+                            if (responseJSON.success) {
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }
                             else {
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Delete Error',
-                                    message: !responseJSON.success && 'errorMessage' in responseJSON
-                                        ? responseJSON.errorMessage
-                                        : 'An unknown error occurred.'
+                                    message: responseJSON.errorMessage
                                 });
                             }
                         });

@@ -756,11 +756,9 @@ declare const exports: {
         shiftDateString
       },
       (responseJSON: DoGetShiftsForBuilderResponse) => {
-        if (responseJSON.success) {
-          currentShifts = responseJSON.shifts
-          renderShifts()
-          loadAvailableResources()
-        }
+        currentShifts = responseJSON.shifts
+        renderShifts()
+        loadAvailableResources()
       }
     )
   }

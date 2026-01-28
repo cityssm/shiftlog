@@ -5,6 +5,7 @@ import type FlatPickr from 'flatpickr'
 import type { DoCreateShiftResponse } from '../../handlers/shifts-post/doCreateShift.js'
 import type { DoDeleteShiftResponse } from '../../handlers/shifts-post/doDeleteShift.js'
 import type { DoUpdateShiftResponse } from '../../handlers/shifts-post/doUpdateShift.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -108,20 +109,14 @@ declare const exports: {
                 shiftId
               },
               (responseJSON: DoDeleteShiftResponse) => {
-                if (
-                  responseJSON.success &&
-                  'redirectUrl' in responseJSON
-                ) {
+                if (responseJSON.success) {
                   globalThis.location.href = responseJSON.redirectUrl
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Delete Error',
 
-                    message:
-                      !responseJSON.success && 'errorMessage' in responseJSON
-                        ? responseJSON.errorMessage
-                        : 'An unknown error occurred.'
+                    message: responseJSON.errorMessage
                   })
                 }
               }
