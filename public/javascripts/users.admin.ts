@@ -55,14 +55,10 @@ declare const exports: {
             {
               userName
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteUserResponse
-
+            (responseJSON: DoDeleteUserResponse) => {
               if (responseJSON.success) {
                 // Update the users list with the new data from the server
-                if (responseJSON.users !== undefined) {
-                  renderUsers(responseJSON.users)
-                }
+                renderUsers(responseJSON.users)
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -75,7 +71,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error Deleting User',
 
-                  message: responseJSON.message ?? 'Please try again.'
+                  message: responseJSON.message
                 })
               }
             }
@@ -100,10 +96,7 @@ declare const exports: {
         permissionField: permission,
         userName
       },
-      (rawResponseJSON) => {
-        const responseJSON =
-          rawResponseJSON as DoToggleUserPermissionResponse
-
+      (responseJSON: DoToggleUserPermissionResponse) => {
         if (responseJSON.success) {
           renderUsers(responseJSON.users)
         } else {
@@ -111,7 +104,7 @@ declare const exports: {
             contextualColorName: 'danger',
             title: 'Error Updating Permission',
 
-            message: responseJSON.message ?? 'Please try again.'
+            message: responseJSON.message
           })
         }
       }
@@ -143,18 +136,13 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateUserSettings`,
         settingsForm,
-        (rawResponseJSON) => {
-          const responseJSON =
-            rawResponseJSON as DoUpdateUserSettingsResponse
-
+        (responseJSON: DoUpdateUserSettingsResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
 
             // Update the users list with the new data from the server
-            if (responseJSON.users !== undefined) {
-              exports.users = responseJSON.users
-              renderUsers(responseJSON.users)
-            }
+            exports.users = responseJSON.users
+            renderUsers(responseJSON.users)
 
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -285,15 +273,11 @@ declare const exports: {
       {
         userName
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoResetUserApiKeyResponse
-
+      (responseJSON: DoResetUserApiKeyResponse) => {
         if (responseJSON.success) {
           // Update the users list with the new data from the server
-          if (responseJSON.users !== undefined) {
-            exports.users = responseJSON.users
-            renderUsers(responseJSON.users)
-          }
+          exports.users = responseJSON.users
+          renderUsers(responseJSON.users)
 
           bulmaJS.alert({
             contextualColorName: 'success',
@@ -594,9 +578,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddUser`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddUserResponse
-
+        (responseJSON: DoAddUserResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
             exports.users = responseJSON.users

@@ -18,13 +18,10 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteUser`, {
                         userName
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success) {
                             // Update the users list with the new data from the server
-                            if (responseJSON.users !== undefined) {
-                                renderUsers(responseJSON.users);
-                            }
+                            renderUsers(responseJSON.users);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'User Deleted',
@@ -35,7 +32,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Deleting User',
-                                message: responseJSON.message ?? 'Please try again.'
+                                message: responseJSON.message
                             });
                         }
                     });
@@ -53,8 +50,7 @@
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doToggleUserPermission`, {
             permissionField: permission,
             userName
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.success) {
                 renderUsers(responseJSON.users);
             }
@@ -62,7 +58,7 @@
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Updating Permission',
-                    message: responseJSON.message ?? 'Please try again.'
+                    message: responseJSON.message
                 });
             }
         });
@@ -82,15 +78,12 @@
         function doUpdateUserSettings(submitEvent) {
             submitEvent.preventDefault();
             const settingsForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserSettings`, settingsForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserSettings`, settingsForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     // Update the users list with the new data from the server
-                    if (responseJSON.users !== undefined) {
-                        exports.users = responseJSON.users;
-                        renderUsers(responseJSON.users);
-                    }
+                    exports.users = responseJSON.users;
+                    renderUsers(responseJSON.users);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Settings Updated',
@@ -190,14 +183,11 @@
     function resetUserApiKey(userName) {
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doResetUserApiKey`, {
             userName
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.success) {
                 // Update the users list with the new data from the server
-                if (responseJSON.users !== undefined) {
-                    exports.users = responseJSON.users;
-                    renderUsers(responseJSON.users);
-                }
+                exports.users = responseJSON.users;
+                renderUsers(responseJSON.users);
                 bulmaJS.alert({
                     contextualColorName: 'success',
                     title: 'API Key Reset',
@@ -455,8 +445,7 @@
         function doAddUser(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUser`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUser`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     exports.users = responseJSON.users;
