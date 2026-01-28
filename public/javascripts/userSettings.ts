@@ -1,6 +1,9 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoResetApiKeyResponse } from '../../handlers/dashboard-post/doResetApiKey.js'
+import type { DoUpdateEmployeeContactResponse } from '../../handlers/dashboard-post/doUpdateEmployeeContact.js'
+import type { DoUpdateUserSettingResponse } from '../../handlers/dashboard-post/doUpdateUserSetting.js'
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -27,9 +30,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`,
         formElement,
-        (responseJSON: {
-          success: boolean
-        }) => {
+        (rawResponseJSON) => {
+          const responseJSON =
+            rawResponseJSON as DoUpdateEmployeeContactResponse
+
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -71,7 +75,9 @@ declare const exports: {
           settingKey,
           settingValue
         },
-        (responseJSON: { success: boolean }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateUserSettingResponse
+
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -98,10 +104,9 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/dashboard/doResetApiKey`,
       {},
-      (responseJSON: {
-        apiKey?: string
-        success: boolean
-      }) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoResetApiKeyResponse
+
         if (responseJSON.success) {
           bulmaJS.alert({
             contextualColorName: 'success',
