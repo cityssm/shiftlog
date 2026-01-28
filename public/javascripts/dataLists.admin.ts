@@ -207,9 +207,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddDataListItem`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddDataListItemResponse
-
+        (responseJSON: DoAddDataListItemResponse) => {
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
 
@@ -340,9 +338,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateDataListItem`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateDataListItemResponse
-
+        (responseJSON: DoUpdateDataListItemResponse) => {
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
             renderDataListItems(dataListKey as string, responseJSON.items)
@@ -474,11 +470,10 @@ declare const exports: {
               dataListKey,
               dataListItemId: Number.parseInt(dataListItemId, 10)
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteDataListItemResponse
-
+            (responseJSON: DoDeleteDataListItemResponse) => {
               if (responseJSON.success && responseJSON.items !== undefined) {
                 renderDataListItems(dataListKey, responseJSON.items)
+
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Item Deleted',
@@ -579,9 +574,7 @@ declare const exports: {
             dataListKey,
             dataListItemIds
           },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoReorderDataListItemsResponse
-
+          (responseJSON: DoReorderDataListItemsResponse) => {
             if (!responseJSON.success) {
               bulmaJS.alert({
                 contextualColorName: 'danger',

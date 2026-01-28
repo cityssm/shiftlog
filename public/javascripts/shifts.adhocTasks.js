@@ -9,7 +9,8 @@
     let adhocTaskTypes = [];
     // Load task types
     function loadAdhocTaskTypes() {
-        cityssm.postJSON(`${urlPrefix}/doGetAdhocTaskTypes`, {}, (responseJSON) => {
+        cityssm.postJSON(`${urlPrefix}/doGetAdhocTaskTypes`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success && responseJSON.adhocTaskTypes !== undefined) {
                 adhocTaskTypes = responseJSON.adhocTaskTypes;
             }
@@ -235,7 +236,8 @@
         let modalElement;
         function doCreate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doCreateAdhocTask`, formEvent.currentTarget, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doCreateAdhocTask`, formEvent.currentTarget, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.shiftAdhocTasks) {
                     shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                     renderShiftAdhocTasks();
@@ -302,7 +304,8 @@
         let modalElement;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doUpdateAdhocTask`, formEvent.currentTarget, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doUpdateAdhocTask`, formEvent.currentTarget, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.shiftAdhocTasks) {
                     shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                     renderShiftAdhocTasks();
@@ -384,7 +387,8 @@
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             const note = formEvent.currentTarget.querySelector('[name="shiftAdhocTaskNote"]').value;
-            cityssm.postJSON(`${urlPrefix}/doUpdateShiftAdhocTaskNote`, formEvent.currentTarget, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftAdhocTaskNote`, formEvent.currentTarget, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     ;
                     task.shiftAdhocTaskNote = note;
@@ -424,7 +428,8 @@
         let closeModalFunction;
         let modalElement;
         // Load available tasks
-        cityssm.postJSON(`${urlPrefix}/doGetAvailableAdhocTasks`, { shiftId }, (responseJSON) => {
+        cityssm.postJSON(`${urlPrefix}/doGetAvailableAdhocTasks`, { shiftId }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (!responseJSON.success || responseJSON.adhocTasks.length === 0) {
                 bulmaJS.alert({
                     contextualColorName: 'info',
@@ -605,7 +610,8 @@
                         adhocTaskId,
                         shiftId,
                         deleteTask: deleteOption === 'delete'
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.shiftAdhocTasks) {
                             shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                             renderShiftAdhocTasks();

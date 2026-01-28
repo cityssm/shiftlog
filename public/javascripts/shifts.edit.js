@@ -18,9 +18,10 @@
     }
     function updateShift(formEvent) {
         formEvent.preventDefault();
-        cityssm.postJSON(`${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`, shiftFormElement, (responseJSON) => {
+        cityssm.postJSON(`${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`, shiftFormElement, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
-                if (isCreate && responseJSON.shiftId !== undefined) {
+                if (isCreate && 'shiftId' in responseJSON) {
                     globalThis.location.href = shiftLog.buildShiftURL(responseJSON.shiftId, true);
                 }
                 else {
@@ -34,7 +35,7 @@
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Update Error',
-                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    message: 'An unknown error occurred.'
                 });
             }
         });
@@ -56,16 +57,19 @@
                     callbackFunction: () => {
                         cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShift`, {
                             shiftId
-                        }, (responseJSON) => {
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success &&
-                                responseJSON.redirectUrl !== undefined) {
+                                'redirectUrl' in responseJSON) {
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }
                             else {
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Delete Error',
-                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                    message: !responseJSON.success && 'errorMessage' in responseJSON
+                                        ? responseJSON.errorMessage
+                                        : 'An unknown error occurred.'
                                 });
                             }
                         });
