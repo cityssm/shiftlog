@@ -47,8 +47,7 @@ declare const exports: {
             {
               userName
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoResetUserApiKeyResponse
+            (responseJSON: DoResetUserApiKeyResponse) => {
               if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -219,24 +218,23 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`,
       requestBody,
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoGetApiAuditLogsResponse
-        if (responseJSON.success) {
-          totalCount = responseJSON.totalCount
-          renderAuditLogs(responseJSON.logs)
+      (responseJSON: DoGetApiAuditLogsResponse) => {
+        // if (responseJSON.success) {
+        totalCount = responseJSON.totalCount
+        renderAuditLogs(responseJSON.logs)
 
-          // Add pagination controls if needed
-          if (totalCount > ITEMS_PER_PAGE) {
-            const paginationControls = shiftLog.buildPaginationControls({
-              clickHandler: pageSelect,
-              currentPageOrOffset: currentPage,
-              itemsPerPageOrLimit: ITEMS_PER_PAGE,
-              totalCount
-            })
+        // Add pagination controls if needed
+        if (totalCount > ITEMS_PER_PAGE) {
+          const paginationControls = shiftLog.buildPaginationControls({
+            clickHandler: pageSelect,
+            currentPageOrOffset: currentPage,
+            itemsPerPageOrLimit: ITEMS_PER_PAGE,
+            totalCount
+          })
 
-            containerElement.append(paginationControls)
-          }
+          containerElement.append(paginationControls)
         }
+        // }
       }
     )
   }

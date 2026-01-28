@@ -21,8 +21,7 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doResetUserApiKey`, {
                         userName
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -153,22 +152,21 @@
         if (isValidApiKeyValue !== '') {
             requestBody.isValidApiKey = isValidApiKeyValue === 'true';
         }
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`, requestBody, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (responseJSON.success) {
-                totalCount = responseJSON.totalCount;
-                renderAuditLogs(responseJSON.logs);
-                // Add pagination controls if needed
-                if (totalCount > ITEMS_PER_PAGE) {
-                    const paginationControls = shiftLog.buildPaginationControls({
-                        clickHandler: pageSelect,
-                        currentPageOrOffset: currentPage,
-                        itemsPerPageOrLimit: ITEMS_PER_PAGE,
-                        totalCount
-                    });
-                    containerElement.append(paginationControls);
-                }
+        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`, requestBody, (responseJSON) => {
+            // if (responseJSON.success) {
+            totalCount = responseJSON.totalCount;
+            renderAuditLogs(responseJSON.logs);
+            // Add pagination controls if needed
+            if (totalCount > ITEMS_PER_PAGE) {
+                const paginationControls = shiftLog.buildPaginationControls({
+                    clickHandler: pageSelect,
+                    currentPageOrOffset: currentPage,
+                    itemsPerPageOrLimit: ITEMS_PER_PAGE,
+                    totalCount
+                });
+                containerElement.append(paginationControls);
             }
+            // }
         });
     }
     // Event listeners
