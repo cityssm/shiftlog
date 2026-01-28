@@ -4,7 +4,16 @@ import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { ShiftWorkOrder } from '../../database/shifts/getShiftWorkOrders.js'
-import type { WorkOrderMilestone } from '../../types/record.types.js'
+import type { DoAddShiftWorkOrderResponse } from '../../handlers/shifts-post/doAddShiftWorkOrder.js'
+import type { DoDeleteShiftWorkOrderResponse } from '../../handlers/shifts-post/doDeleteShiftWorkOrder.js'
+import type { DoUpdateShiftWorkOrderNoteResponse } from '../../handlers/shifts-post/doUpdateShiftWorkOrderNote.js'
+import type { DoGetWorkOrderMilestonesResponse } from '../../handlers/workOrders-post/doGetWorkOrderMilestones.js'
+import type { DoSearchWorkOrdersResponse } from '../../handlers/workOrders-post/doSearchWorkOrders.js'
+import type { DoUpdateWorkOrderMilestoneResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderMilestone.js'
+import type {
+  WorkOrder,
+  WorkOrderMilestone
+} from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -272,10 +281,10 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`,
         {},
-        (responseJSON: {
-          success: boolean
-          milestones: WorkOrderMilestone[]
-        }) => {
+        (rawResponseJSON) => {
+          const responseJSON =
+            rawResponseJSON as DoGetWorkOrderMilestonesResponse
+
           if (responseJSON.success && responseJSON.milestones) {
             allMilestones.push(...responseJSON.milestones)
           }
@@ -350,11 +359,9 @@ declare const exports: {
           limit: 20,
           offset: 0
         },
-        (responseJSON: {
-          success: boolean
-          workOrders: ShiftWorkOrder[]
-          totalCount: number
-        }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoSearchWorkOrdersResponse
+
           if (!responseJSON.success || responseJSON.workOrders.length === 0) {
             resultsContainer.innerHTML = /* html */ `
               <div class="message is-warning">
@@ -446,7 +453,7 @@ declare const exports: {
       )
     }
 
-    function selectWorkOrder(workOrder: ShiftWorkOrder): void {
+    function selectWorkOrder(workOrder: WorkOrder): void {
       // Hide search results and show the form
       const resultsContainer = modalElement.querySelector(
         '#addWorkOrder--results'
@@ -503,11 +510,9 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftWorkOrder`,
         formEvent.currentTarget,
-        (responseJSON: {
-          success: boolean
-          shiftWorkOrders?: ShiftWorkOrder[]
-          errorMessage?: string
-        }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddShiftWorkOrderResponse
+
           if (responseJSON.success && responseJSON.shiftWorkOrders) {
             shiftWorkOrders = responseJSON.shiftWorkOrders
             renderShiftWorkOrders()
@@ -515,10 +520,15 @@ declare const exports: {
             loadMilestones()
             closeModalFunction()
           } else {
+            const errorMessage =
+              responseJSON.success === false
+                ? responseJSON.errorMessage
+                : 'An unknown error occurred.'
+
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Work Order',
-              message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+              message: errorMessage
             })
           }
         }
@@ -592,10 +602,10 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftWorkOrderNote`,
         formEvent.currentTarget,
-        (responseJSON: {
-          success: boolean
-          errorMessage?: string
-        }) => {
+        (rawResponseJSON) => {
+          const responseJSON =
+            rawResponseJSON as DoUpdateShiftWorkOrderNoteResponse
+
           if (responseJSON.success) {
             ;(workOrder as ShiftWorkOrder).shiftWorkOrderNote = note
 
@@ -678,23 +688,26 @@ declare const exports: {
           cityssm.postJSON(
             `${urlPrefix}/doDeleteShiftWorkOrder`,
             { shiftId, workOrderId },
-            (responseJSON: {
-              success: boolean
-              shiftWorkOrders?: ShiftWorkOrder[]
-              errorMessage?: string
-            }) => {
+            (rawResponseJSON) => {
+              const responseJSON =
+                rawResponseJSON as DoDeleteShiftWorkOrderResponse
+
               if (responseJSON.success && responseJSON.shiftWorkOrders) {
                 shiftWorkOrders = responseJSON.shiftWorkOrders
                 renderShiftWorkOrders()
                 updateCounts()
                 loadMilestones()
               } else {
+                const errorMessage =
+                  responseJSON.success === false
+                    ? responseJSON.errorMessage
+                    : 'An unknown error occurred.'
+
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Removing Work Order',
 
-                  message:
-                    responseJSON.errorMessage ?? 'An unknown error occurred.'
+                  message: errorMessage
                 })
               }
             }
@@ -745,10 +758,10 @@ declare const exports: {
 
               milestoneCompleteDateTimeString: currentDateString
             },
-            (responseJSON: {
-              success: boolean
-              errorMessage?: string
-            }) => {
+            (rawResponseJSON) => {
+              const responseJSON =
+                rawResponseJSON as DoUpdateWorkOrderMilestoneResponse
+
               if (responseJSON.success) {
                 loadMilestones()
               } else {
@@ -756,8 +769,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error Completing Milestone',
 
-                  message:
-                    responseJSON.errorMessage ?? 'An unknown error occurred.'
+                  message: 'An unknown error occurred.'
                 })
               }
             }
