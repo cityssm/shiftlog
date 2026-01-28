@@ -1,4 +1,3 @@
-import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 interface DeleteShiftEquipmentForm {
