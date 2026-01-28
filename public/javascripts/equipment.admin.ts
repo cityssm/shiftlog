@@ -1,6 +1,9 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddEquipmentResponse } from '../../handlers/admin-post/doAddEquipment.js'
+import type { DoDeleteEquipmentResponse } from '../../handlers/admin-post/doDeleteEquipment.js'
+import type { DoUpdateEquipmentResponse } from '../../handlers/admin-post/doUpdateEquipment.js'
 import type {
   DataListItem,
   EmployeeList,
@@ -9,10 +12,6 @@ import type {
 } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
-
-import type { DoAddEquipmentResponse } from '../../handlers/admin-post/doAddEquipment.js'
-import type { DoDeleteEquipmentResponse } from '../../handlers/admin-post/doDeleteEquipment.js'
-import type { DoUpdateEquipmentResponse } from '../../handlers/admin-post/doUpdateEquipment.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
@@ -65,16 +64,12 @@ declare const exports: {
             {
               equipmentNumber
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteEquipmentResponse
-
+            (responseJSON: DoDeleteEquipmentResponse) => {
               if (responseJSON.success) {
-                if (responseJSON.equipment !== undefined) {
-                  exports.equipment = responseJSON.equipment
-                  currentFilteredEquipment = responseJSON.equipment
-                  currentPage = 1
-                  renderEquipmentWithPagination(responseJSON.equipment)
-                }
+                exports.equipment = responseJSON.equipment
+                currentFilteredEquipment = responseJSON.equipment
+                currentPage = 1
+                renderEquipmentWithPagination(responseJSON.equipment)
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -123,18 +118,14 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEquipment`,
         updateForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateEquipmentResponse
-
+        (responseJSON: DoUpdateEquipmentResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
 
-            if (responseJSON.equipment !== undefined) {
-              exports.equipment = responseJSON.equipment
-              currentFilteredEquipment = responseJSON.equipment
-              currentPage = 1
-              renderEquipmentWithPagination(responseJSON.equipment)
-            }
+            exports.equipment = responseJSON.equipment
+            currentFilteredEquipment = responseJSON.equipment
+            currentPage = 1
+            renderEquipmentWithPagination(responseJSON.equipment)
 
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -374,18 +365,14 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEquipment`,
         addForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddEquipmentResponse
-
+        (responseJSON: DoAddEquipmentResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
 
-            if (responseJSON.equipment !== undefined) {
-              exports.equipment = responseJSON.equipment
-              currentFilteredEquipment = responseJSON.equipment
-              currentPage = 1
-              renderEquipmentWithPagination(responseJSON.equipment)
-            }
+            exports.equipment = responseJSON.equipment
+            currentFilteredEquipment = responseJSON.equipment
+            currentPage = 1
+            renderEquipmentWithPagination(responseJSON.equipment)
 
             bulmaJS.alert({
               contextualColorName: 'success',
