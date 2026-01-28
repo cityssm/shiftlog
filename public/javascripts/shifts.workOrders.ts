@@ -281,10 +281,7 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`,
         {},
-        (rawResponseJSON) => {
-          const responseJSON =
-            rawResponseJSON as DoGetWorkOrderMilestonesResponse
-
+        (responseJSON: DoGetWorkOrderMilestonesResponse) => {
           if (responseJSON.success && responseJSON.milestones) {
             allMilestones.push(...responseJSON.milestones)
           }
@@ -359,9 +356,7 @@ declare const exports: {
           limit: 20,
           offset: 0
         },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoSearchWorkOrdersResponse
-
+        (responseJSON: DoSearchWorkOrdersResponse) => {
           if (!responseJSON.success || responseJSON.workOrders.length === 0) {
             resultsContainer.innerHTML = /* html */ `
               <div class="message is-warning">
@@ -510,9 +505,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftWorkOrder`,
         formEvent.currentTarget,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddShiftWorkOrderResponse
-
+        (responseJSON: DoAddShiftWorkOrderResponse) => {
           if (responseJSON.success && responseJSON.shiftWorkOrders) {
             shiftWorkOrders = responseJSON.shiftWorkOrders
             renderShiftWorkOrders()
@@ -602,10 +595,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftWorkOrderNote`,
         formEvent.currentTarget,
-        (rawResponseJSON) => {
-          const responseJSON =
-            rawResponseJSON as DoUpdateShiftWorkOrderNoteResponse
-
+        (responseJSON: DoUpdateShiftWorkOrderNoteResponse) => {
           if (responseJSON.success) {
             ;(workOrder as ShiftWorkOrder).shiftWorkOrderNote = note
 
@@ -688,10 +678,7 @@ declare const exports: {
           cityssm.postJSON(
             `${urlPrefix}/doDeleteShiftWorkOrder`,
             { shiftId, workOrderId },
-            (rawResponseJSON) => {
-              const responseJSON =
-                rawResponseJSON as DoDeleteShiftWorkOrderResponse
-
+            (responseJSON: DoDeleteShiftWorkOrderResponse) => {
               if (responseJSON.success && responseJSON.shiftWorkOrders) {
                 shiftWorkOrders = responseJSON.shiftWorkOrders
                 renderShiftWorkOrders()
@@ -758,10 +745,7 @@ declare const exports: {
 
               milestoneCompleteDateTimeString: currentDateString
             },
-            (rawResponseJSON) => {
-              const responseJSON =
-                rawResponseJSON as DoUpdateWorkOrderMilestoneResponse
-
+            (responseJSON: DoUpdateWorkOrderMilestoneResponse) => {
               if (responseJSON.success) {
                 loadMilestones()
               } else {
