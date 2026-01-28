@@ -1,14 +1,17 @@
-(() => {
-    const shiftLog = exports.shiftLog;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(function () {
+    var _a;
+    var shiftLog = exports.shiftLog;
     /*
      * Employee Contact Information
      */
-    const employeeContactForm = document.querySelector('#employeeContactForm');
+    var employeeContactForm = document.querySelector('#employeeContactForm');
     if (employeeContactForm !== null) {
-        employeeContactForm.addEventListener('submit', (formEvent) => {
+        employeeContactForm.addEventListener('submit', function (formEvent) {
             formEvent.preventDefault();
-            const formElement = formEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`, formElement, (responseJSON) => {
+            var formElement = formEvent.currentTarget;
+            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/dashboard/doUpdateEmployeeContact"), formElement, function (responseJSON) {
                 if (responseJSON.success) {
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -29,18 +32,19 @@
     /*
      * User Settings
      */
-    const userSettingForms = document.querySelectorAll('.userSettingForm');
-    for (const userSettingForm of userSettingForms) {
-        userSettingForm.addEventListener('submit', (formEvent) => {
+    var userSettingForms = document.querySelectorAll('.userSettingForm');
+    for (var _i = 0, userSettingForms_1 = userSettingForms; _i < userSettingForms_1.length; _i++) {
+        var userSettingForm = userSettingForms_1[_i];
+        userSettingForm.addEventListener('submit', function (formEvent) {
             formEvent.preventDefault();
-            const formElement = formEvent.currentTarget;
-            const formData = new FormData(formElement);
-            const settingKey = formData.get('settingKey');
-            const settingValue = formData.get('settingValue');
-            cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doUpdateUserSetting`, {
-                settingKey,
-                settingValue
-            }, (responseJSON) => {
+            var formElement = formEvent.currentTarget;
+            var formData = new FormData(formElement);
+            var settingKey = formData.get('settingKey');
+            var settingValue = formData.get('settingValue');
+            cityssm.postJSON("".concat(shiftLog.urlPrefix, "/dashboard/doUpdateUserSetting"), {
+                settingKey: settingKey,
+                settingValue: settingValue
+            }, function (responseJSON) {
                 if (responseJSON.success) {
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -62,7 +66,7 @@
      * API Key
      */
     function doResetApiKey() {
-        cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doResetApiKey`, {}, (responseJSON) => {
+        cityssm.postJSON("".concat(shiftLog.urlPrefix, "/dashboard/doResetApiKey"), {}, function (responseJSON) {
             if (responseJSON.success) {
                 bulmaJS.alert({
                     contextualColorName: 'success',
@@ -72,9 +76,8 @@
             }
         });
     }
-    document
-        .querySelector('#button--resetApiKey')
-        ?.addEventListener('click', (event) => {
+    (_a = document
+        .querySelector('#button--resetApiKey')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function (event) {
         event.preventDefault();
         bulmaJS.confirm({
             contextualColorName: 'warning',

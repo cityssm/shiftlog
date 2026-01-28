@@ -1,14 +1,16 @@
-import { DEBUG_ENABLE_NAMESPACES as DEBUG_ENABLE_NAMESPACES_AVANTI } from '@cityssm/avanti-api/debug';
-import { DEBUG_ENABLE_NAMESPACES as DEBUG_ENABLE_NAMESPACES_MSSQL } from '@cityssm/mssql-multi-pool/debug';
-import { DEBUG_ENABLE_NAMESPACES as DEBUG_ENABLE_NAMESPACES_TASK } from '@cityssm/scheduled-task/debug';
-import { DEBUG_ENABLE_NAMESPACES as DEBUG_ENABLE_NAMESPACES_WORKTECH } from '@cityssm/worktech-api/debug';
-export const DEBUG_NAMESPACE = 'shiftlog';
-export const DEBUG_ENABLE_NAMESPACES = [
-    `${DEBUG_NAMESPACE}:*`,
-    DEBUG_ENABLE_NAMESPACES_AVANTI,
-    DEBUG_ENABLE_NAMESPACES_MSSQL,
-    DEBUG_ENABLE_NAMESPACES_TASK,
-    DEBUG_ENABLE_NAMESPACES_WORKTECH
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PROCESS_ID_MAX_DIGITS = exports.DEBUG_ENABLE_NAMESPACES = exports.DEBUG_NAMESPACE = void 0;
+var debug_1 = require("@cityssm/avanti-api/debug");
+var debug_2 = require("@cityssm/mssql-multi-pool/debug");
+var debug_3 = require("@cityssm/scheduled-task/debug");
+var debug_4 = require("@cityssm/worktech-api/debug");
+exports.DEBUG_NAMESPACE = 'shiftlog';
+exports.DEBUG_ENABLE_NAMESPACES = [
+    "".concat(exports.DEBUG_NAMESPACE, ":*"),
+    debug_1.DEBUG_ENABLE_NAMESPACES,
+    debug_2.DEBUG_ENABLE_NAMESPACES,
+    debug_3.DEBUG_ENABLE_NAMESPACES,
+    debug_4.DEBUG_ENABLE_NAMESPACES
 ].join(',');
-export const PROCESS_ID_MAX_DIGITS = 5;
-//# sourceMappingURL=debug.config.js.map
+exports.PROCESS_ID_MAX_DIGITS = 5;

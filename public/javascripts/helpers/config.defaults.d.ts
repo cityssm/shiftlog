@@ -69,3 +69,4 @@ export declare const configDefaultValues: {
     'notifications.protocols': NotificationType[];
 };
 export default configDefaultValues;
+//# sourceMappingURL=config.defaults.d.ts.map

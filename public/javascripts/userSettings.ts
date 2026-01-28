@@ -30,10 +30,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON =
-            rawResponseJSON as DoUpdateEmployeeContactResponse
-
+        (responseJSON: DoUpdateEmployeeContactResponse) => {
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -75,9 +72,7 @@ declare const exports: {
           settingKey,
           settingValue
         },
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateUserSettingResponse
-
+        (responseJSON: DoUpdateUserSettingResponse) => {
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -104,9 +99,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/dashboard/doResetApiKey`,
       {},
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoResetApiKeyResponse
-
+      (responseJSON: DoResetApiKeyResponse) => {
         if (responseJSON.success) {
           bulmaJS.alert({
             contextualColorName: 'success',

@@ -1,0 +1,121 @@
+import type { ActiveDirectoryAuthenticatorConfiguration, ADWebAuthAuthenticatorConfiguration, FunctionAuthenticatorConfiguration, PlainTextAuthenticatorConfiguration } from '@cityssm/authentication-helper';
+import type { AvantiApiConfiguration, GetEmployeesRequest } from '@cityssm/avanti-api/types.js';
+import type { GetEmployeesFilters, GetEquipmentFilters } from '@cityssm/worktech-api';
+import type { config as MSSQLConfig } from 'mssql';
+import type { NotificationType } from '../tasks/notifications/types.js';
+export interface Config {
+    application: ConfigApplication;
+    session: ConfigSession;
+    /** Reverse Proxy Configuration */
+    reverseProxy: {
+        /** Disable Compression */
+        disableCompression?: boolean;
+        /** Disable ETag */
+        disableEtag?: boolean;
+        /** Disable Rate Limiting */
+        disableRateLimit?: boolean;
+        /** Is traffic forwarded by a reverse proxy */
+        trafficIsForwarded?: boolean;
+        /** URL Prefix, should start with a slash, but have no trailing slash */
+        urlPrefix?: string;
+        disableCsrf?: boolean;
+    };
+    login?: {
+        authentication: {
+            config: ActiveDirectoryAuthenticatorConfiguration;
+            type: 'activeDirectory';
+        } | {
+            config: ADWebAuthAuthenticatorConfiguration;
+            type: 'adWebAuth';
+        } | {
+            config: FunctionAuthenticatorConfiguration;
+            type: 'function';
+        } | {
+            config: PlainTextAuthenticatorConfiguration;
+            type: 'plainText';
+        };
+        domain: string;
+    };
+    connectors: {
+        shiftLog: MSSQLConfig;
+        avanti?: AvantiApiConfiguration;
+        pearl?: MSSQLConfig;
+        ntfy?: {
+            serverUrl?: string;
+            defaultTopic: string;
+        };
+        email?: ConfigEmail;
+    };
+    shifts?: ConfigSection;
+    timesheets?: ConfigSection;
+    workOrders?: ConfigSection;
+    employees?: ConfigEmployees;
+    equipment?: ConfigEquipment;
+    locations?: ConfigLocations;
+    notifications?: {
+        protocols?: NotificationType[];
+    };
+}
+export type ConfigEmployees = {
+    syncSource: '';
+} | {
+    syncSource: 'avanti';
+    filters?: GetEmployeesRequest;
+} | {
+    syncSource: 'pearl';
+    filters?: GetEmployeesFilters;
+};
+export type ConfigEquipment = {
+    syncSource: '';
+} | {
+    syncSource: 'pearl';
+    filters?: GetEquipmentFilters;
+};
+export type ConfigLocations = {
+    syncSource: '';
+} | {
+    syncSource: 'arcgis';
+    layerURL: string;
+    whereClause?: string;
+    mappings: {
+        latitude?: ((record: unknown) => number | undefined) | string;
+        longitude?: ((record: unknown) => number | undefined) | string;
+        address1: ((record: unknown) => string | undefined) | string;
+        address2?: ((record: unknown) => string | undefined) | string;
+        cityProvince?: ((record: unknown) => string | undefined) | string;
+    };
+};
+interface ConfigSection {
+    isEnabled?: boolean;
+    router?: string;
+    sectionName?: string;
+    sectionNameSingular?: string;
+    iconClass?: `fa-${string}`;
+}
+interface ConfigApplication {
+    applicationName?: string;
+    httpPort?: number;
+    instance?: string;
+    /** The base, public facing URL of the application, including the protocol (http or https), and any URL prefixes */
+    applicationUrl?: string;
+    /** The maximum number of concurrent processes */
+    maximumProcesses?: number;
+    backgroundImage?: string;
+    attachmentMaximumFileSizeBytes?: number;
+    attachmentStoragePath?: string;
+}
+interface ConfigSession {
+    cookieName?: string;
+    maxAgeMillis?: number;
+    secret?: string;
+    doKeepAlive?: boolean;
+}
+export interface ConfigEmail {
+    server: string;
+    port?: number;
+    userName?: string;
+    password?: string;
+    fromAddress?: string;
+}
+export {};
+//# sourceMappingURL=config.types.d.ts.map
