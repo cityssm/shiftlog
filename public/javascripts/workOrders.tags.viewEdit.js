@@ -16,10 +16,11 @@
             }
             if (tags.length === 0) {
                 ;
-                tagsContainerElement.innerHTML = /* html */ `
+                tagsContainerElement.innerHTML =
+                    /* html */ `
           <div class="message is-info">
-            <p class="message-body">No tags have been added yet.</p>
-          </div>
+              <p class="message-body">No tags have been added yet.</p>
+            </div>
         `;
                 return;
             }
@@ -104,7 +105,12 @@
                         bulmaJS.alert({
                             contextualColorName: 'success',
                             title: 'Tag Added',
-                            message: 'Tag has been successfully added to this work order.'
+                            message: 'Tag has been successfully added to this work order.',
+                            okButton: {
+                                callbackFunction() {
+                                    addTag();
+                                }
+                            }
                         });
                     }
                     else {

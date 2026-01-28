@@ -45,10 +45,11 @@ declare const bulmaJS: BulmaJS
       }
 
       if (tags.length === 0) {
-        ;(tagsContainerElement as HTMLElement).innerHTML = /* html */ `
+        ;(tagsContainerElement as HTMLElement).innerHTML =
+          /* html */ `
           <div class="message is-info">
-            <p class="message-body">No tags have been added yet.</p>
-          </div>
+              <p class="message-body">No tags have been added yet.</p>
+            </div>
         `
         return
       }
@@ -171,7 +172,13 @@ declare const bulmaJS: BulmaJS
                 contextualColorName: 'success',
                 title: 'Tag Added',
 
-                message: 'Tag has been successfully added to this work order.'
+                message: 'Tag has been successfully added to this work order.',
+
+                okButton: {
+                  callbackFunction() {
+                    addTag()
+                  }
+                }
               })
             } else {
               bulmaJS.alert({
@@ -213,10 +220,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`,
         {},
-        (responseJSON: {
-          success: boolean
-          tags?: WorkOrderTag[]
-        }) => {
+        (responseJSON: { success: boolean; tags?: WorkOrderTag[] }) => {
           if (responseJSON.success && responseJSON.tags !== undefined) {
             renderTags(responseJSON.tags)
           }
