@@ -203,9 +203,7 @@ declare const exports: {
       {
         notificationConfigurationId
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoToggleNotificationConfigurationIsActiveResponse
-
+      (responseJSON: DoToggleNotificationConfigurationIsActiveResponse) => {
         if (responseJSON.success) {
           const configIndex = notificationConfigurations.findIndex(
             (c) =>
@@ -407,9 +405,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddNotificationConfiguration`,
         formData,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddNotificationConfigurationResponse
-
+        (responseJSON: DoAddNotificationConfigurationResponse) => {
           if (responseJSON.success) {
             notificationConfigurations.push({
               notificationConfigurationId:
@@ -612,9 +608,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateNotificationConfiguration`,
         formData,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateNotificationConfigurationResponse
-
+        (responseJSON: DoUpdateNotificationConfigurationResponse) => {
           if (responseJSON.success) {
             const configIndex = notificationConfigurations.findIndex(
               (c) =>
@@ -768,7 +762,8 @@ declare const exports: {
               notificationConfigurationId
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteNotificationConfigurationResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteNotificationConfigurationResponse
 
               if (responseJSON.success) {
                 notificationConfigurations = notificationConfigurations.filter(

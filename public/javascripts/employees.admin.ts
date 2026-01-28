@@ -136,7 +136,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Updating Employee',
 
-              message: responseJSON.message ?? 'Please try again.'
+              message: responseJSON.message
             })
           }
         }

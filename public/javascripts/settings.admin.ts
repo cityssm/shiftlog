@@ -2,6 +2,7 @@ import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoUpdateSettingResponse } from '../../handlers/admin-post/doUpdateSetting.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -60,9 +61,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/admin/doUpdateSetting`,
       formElement,
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoUpdateSettingResponse
-
+      (responseJSON: DoUpdateSettingResponse) => {
         if (responseJSON.success) {
           bulmaJS.alert({
             contextualColorName: 'success',
@@ -79,9 +78,7 @@ declare const exports: {
             contextualColorName: 'danger',
             title: 'Update Failed',
 
-            message:
-              responseJSON.errorMessage ??
-              'There was an error updating the setting.'
+            message: 'There was an error updating the setting.'
           })
         }
       }
