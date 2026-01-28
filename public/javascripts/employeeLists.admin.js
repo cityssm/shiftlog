@@ -21,13 +21,10 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEmployeeList`, {
                         employeeListId
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success) {
-                            if (responseJSON.employeeLists !== undefined) {
-                                exports.employeeLists = responseJSON.employeeLists;
-                                renderEmployeeLists();
-                            }
+                            exports.employeeLists = responseJSON.employeeLists;
+                            renderEmployeeLists();
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Employee List Deleted',
@@ -57,13 +54,10 @@
         let closeModalFunction;
         function doEdit(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeList`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeList`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
-                    if (responseJSON.employeeLists !== undefined) {
-                        exports.employeeLists = responseJSON.employeeLists;
-                        renderEmployeeLists();
-                    }
+                    exports.employeeLists = responseJSON.employeeLists;
+                    renderEmployeeLists();
                     closeModalFunction();
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -104,13 +98,10 @@
         let closeModalFunction;
         function doAdd(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeList`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeList`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
-                    if (responseJSON.employeeLists !== undefined) {
-                        exports.employeeLists = responseJSON.employeeLists;
-                        renderEmployeeLists();
-                    }
+                    exports.employeeLists = responseJSON.employeeLists;
+                    renderEmployeeLists();
                     closeModalFunction();
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -145,8 +136,7 @@
     function loadEmployeeListDetails(employeeListId, panelElement) {
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetEmployeeList`, {
             employeeListId
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.employeeList !== undefined) {
                 renderEmployeeListMembers(responseJSON.employeeList, panelElement);
             }
@@ -156,8 +146,7 @@
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEmployeeListMember`, {
             employeeListId,
             employeeNumber
-        }, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
+        }, (responseJSON) => {
             if (responseJSON.success && responseJSON.employeeList !== undefined) {
                 renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                 bulmaJS.alert({
@@ -190,8 +179,7 @@
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`, formElement, (responseJSON) => {
                 if (responseJSON.success && responseJSON.employeeList !== undefined) {
                     renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                     bulmaJS.alert({
@@ -248,8 +236,7 @@
         let closeModalFunction;
         function doUpdate(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`, formElement, (responseJSON) => {
                 if (responseJSON.success && responseJSON.employeeList !== undefined) {
                     renderEmployeeListMembers(responseJSON.employeeList, panelElement);
                     bulmaJS.alert({
@@ -342,8 +329,7 @@
                     employeeListId,
                     employeeNumbers,
                     seniorityDate: seniorityDate ?? undefined
-                }, (rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
+                }, (responseJSON) => {
                     if (responseJSON.success &&
                         responseJSON.employeeList !== undefined) {
                         renderEmployeeListMembers(responseJSON.employeeList, panelElement);

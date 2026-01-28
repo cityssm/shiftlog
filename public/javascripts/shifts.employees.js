@@ -1067,4 +1067,3 @@
     renderShiftEquipment();
     updateCounts();
 })();
-export {};

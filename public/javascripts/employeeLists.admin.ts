@@ -92,14 +92,10 @@ declare const exports: {
             {
               employeeListId
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteEmployeeListResponse
-
+            (responseJSON: DoDeleteEmployeeListResponse) => {
               if (responseJSON.success) {
-                if (responseJSON.employeeLists !== undefined) {
-                  exports.employeeLists = responseJSON.employeeLists
-                  renderEmployeeLists()
-                }
+                exports.employeeLists = responseJSON.employeeLists
+                renderEmployeeLists()
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -146,14 +142,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployeeList`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateEmployeeListResponse
-
+        (responseJSON: DoUpdateEmployeeListResponse) => {
           if (responseJSON.success) {
-            if (responseJSON.employeeLists !== undefined) {
-              exports.employeeLists = responseJSON.employeeLists
-              renderEmployeeLists()
-            }
+            exports.employeeLists = responseJSON.employeeLists
+            renderEmployeeLists()
 
             closeModalFunction()
 
@@ -222,14 +214,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEmployeeList`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddEmployeeListResponse
-
+        (responseJSON: DoAddEmployeeListResponse) => {
           if (responseJSON.success) {
-            if (responseJSON.employeeLists !== undefined) {
-              exports.employeeLists = responseJSON.employeeLists
-              renderEmployeeLists()
-            }
+            exports.employeeLists = responseJSON.employeeLists
+            renderEmployeeLists()
 
             closeModalFunction()
 
@@ -283,9 +271,7 @@ declare const exports: {
       {
         employeeListId
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoGetEmployeeListResponse
-
+      (responseJSON: DoGetEmployeeListResponse) => {
         if (responseJSON.employeeList !== undefined) {
           renderEmployeeListMembers(responseJSON.employeeList, panelElement)
         }
@@ -304,9 +290,7 @@ declare const exports: {
         employeeListId,
         employeeNumber
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoDeleteEmployeeListMemberResponse
-
+      (responseJSON: DoDeleteEmployeeListMemberResponse) => {
         if (responseJSON.success && responseJSON.employeeList !== undefined) {
           renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -355,9 +339,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddEmployeeListMemberResponse
-
+        (responseJSON: DoAddEmployeeListMemberResponse) => {
           if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -450,9 +432,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateEmployeeListMemberResponse
-
+        (responseJSON: DoUpdateEmployeeListMemberResponse) => {
           if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -599,9 +579,7 @@ declare const exports: {
             employeeNumbers,
             seniorityDate: seniorityDate ?? undefined
           },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoReorderEmployeeListMembersResponse
-
+          (responseJSON: DoReorderEmployeeListMembersResponse) => {
             if (
               responseJSON.success &&
               responseJSON.employeeList !== undefined
