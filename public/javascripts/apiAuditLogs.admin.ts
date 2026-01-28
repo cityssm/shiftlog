@@ -1,6 +1,8 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoGetApiAuditLogsResponse } from '../../handlers/admin-post/doGetApiAuditLogs.js'
+import type { DoResetUserApiKeyResponse } from '../../handlers/admin-post/doResetUserApiKey.js'
 import type { ApiAuditLog } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -45,11 +47,8 @@ declare const exports: {
             {
               userName
             },
-            (responseJSON: {
-              message?: string
-              success: boolean
-              apiKey?: string
-            }) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoResetUserApiKeyResponse
               if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -220,11 +219,8 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`,
       requestBody,
-      (responseJSON: {
-        logs: ApiAuditLog[]
-        success: boolean
-        totalCount: number
-      }) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoGetApiAuditLogsResponse
         if (responseJSON.success) {
           totalCount = responseJSON.totalCount
           renderAuditLogs(responseJSON.logs)
