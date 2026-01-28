@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
@@ -34,12 +32,12 @@ export default async function getOverdueWorkOrders(
     `
   }
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('userName', user?.userName)
     .input('limit', limit)
-    .query(/* sql */ `
+    .query<WorkOrder>(/* sql */ `
       SELECT
         TOP (@limit) w.workOrderId,
         w.workOrderNumberYear,
@@ -74,7 +72,7 @@ export default async function getOverdueWorkOrders(
         w.workOrderDueDateTime ASC,
         w.workOrderNumberYear DESC,
         w.workOrderNumberSequence DESC
-    `)) as mssql.IResult<WorkOrder>
+    `)
 
   return result.recordset
 }

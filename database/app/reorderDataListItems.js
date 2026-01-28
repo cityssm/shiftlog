@@ -1,7 +1,6 @@
-import mssqlPool from '@cityssm/mssql-multi-pool';
-import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function reorderDataListItems(form) {
-    const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'));
+    const pool = await getShiftLogConnectionPool();
     try {
         for (const [index, dataListItemId] of form.dataListItemIds.entries()) {
             // eslint-disable-next-line no-await-in-loop

@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrderCost } from '../../types/record.types.js'
@@ -9,11 +7,11 @@ export default async function getWorkOrderCosts(
 ): Promise<WorkOrderCost[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `
+    .query<WorkOrderCost>(/* sql */ `
       SELECT
         c.workOrderCostId,
         c.workOrderId,
@@ -39,7 +37,7 @@ export default async function getWorkOrderCosts(
         )
       ORDER BY
         c.workOrderCostId
-    `)) as mssql.IResult<WorkOrderCost>
+    `)
 
   return result.recordset
 }

@@ -1,6 +1,5 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface UpdateShiftEmployeeNoteForm {
   shiftId: number | string
@@ -11,7 +10,7 @@ export interface UpdateShiftEmployeeNoteForm {
 export default async function updateShiftEmployeeNote(
   form: UpdateShiftEmployeeNoteForm
 ): Promise<boolean> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   try {
     await pool

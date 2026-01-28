@@ -1,6 +1,5 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface DeleteDataListItemForm {
   dataListItemId: number
@@ -10,7 +9,7 @@ export interface DeleteDataListItemForm {
 export default async function deleteDataListItem(
   form: DeleteDataListItemForm
 ): Promise<boolean> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   try {
     const result = await pool

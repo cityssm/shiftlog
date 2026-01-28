@@ -24,7 +24,7 @@ export default async function getOverdueWorkOrders(limit, user) {
       )
     `;
     }
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
@@ -64,6 +64,6 @@ export default async function getOverdueWorkOrders(limit, user) {
         w.workOrderDueDateTime ASC,
         w.workOrderNumberYear DESC,
         w.workOrderNumberSequence DESC
-    `));
+    `);
     return result.recordset;
 }

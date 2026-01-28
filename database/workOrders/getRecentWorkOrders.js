@@ -18,7 +18,7 @@ export default async function getRecentWorkOrders(limit, user) {
       )
     `;
     }
-    const result = (await pool
+    const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
@@ -56,6 +56,6 @@ export default async function getRecentWorkOrders(limit, user) {
         LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId ${whereClause}
       ORDER BY
         w.recordUpdate_dateTime DESC
-    `));
+    `);
     return result.recordset;
 }

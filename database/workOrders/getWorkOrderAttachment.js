@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getWorkOrderAttachment(workOrderAttachmentId) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('workOrderAttachmentId', workOrderAttachmentId)
         .input('instance', getConfigProperty('application.instance'))
@@ -36,6 +36,6 @@ export default async function getWorkOrderAttachment(workOrderAttachmentId) {
             recordDelete_dateTime IS NULL
             AND instance = @instance
         )
-    `));
+    `);
     return result.recordset[0];
 }

@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -20,11 +18,11 @@ export default async function getWorkOrderNotes(
 ): Promise<WorkOrderNote[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
-    .query(/* sql */ `
+    .query<WorkOrderNote>(/* sql */ `
       SELECT
         workOrderId,
         noteSequence,
@@ -51,7 +49,7 @@ export default async function getWorkOrderNotes(
         )
       ORDER BY
         noteSequence DESC
-    `)) as mssql.IResult<WorkOrderNote>
+    `)
 
   return result.recordset
 }

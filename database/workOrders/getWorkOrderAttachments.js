@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getWorkOrderAttachments(workOrderId) {
     const pool = await getShiftLogConnectionPool();
-    const result = (await pool
+    const result = await pool
         .request()
         .input('workOrderId', workOrderId)
         .input('instance', getConfigProperty('application.instance'))
@@ -38,6 +38,6 @@ export default async function getWorkOrderAttachments(workOrderId) {
         )
       ORDER BY
         recordCreate_dateTime DESC
-    `));
+    `);
     return result.recordset;
 }

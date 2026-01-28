@@ -1,5 +1,3 @@
-import type { mssql } from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -9,12 +7,12 @@ export default async function recoverWorkOrder(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = (await pool
+  const result = await pool
     .request()
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
     .input('userName', userName)
-    .query(/* sql */ `
+    .query<Record<string, never>>(/* sql */ `
       UPDATE ShiftLog.WorkOrders
       SET
         recordDelete_userName = NULL,
@@ -25,7 +23,7 @@ export default async function recoverWorkOrder(
         workOrderId = @workOrderId
         AND instance = @instance
         AND recordDelete_dateTime IS NOT NULL
-    `)) as mssql.IResult<Record<string, never>>
+    `)
 
   return result.rowsAffected[0] > 0
 }

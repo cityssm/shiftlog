@@ -1,6 +1,5 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 interface AddShiftCrewForm {
   shiftId: number | string
@@ -12,7 +11,7 @@ export default async function addShiftCrew(
   form: AddShiftCrewForm,
   user: User
 ): Promise<boolean> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   try {
     // Add the crew to the shift

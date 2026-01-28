@@ -1,6 +1,5 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 interface CopyFromPreviousShiftForm {
   currentShiftId: number | string
@@ -14,7 +13,7 @@ export default async function copyFromPreviousShift(
   form: CopyFromPreviousShiftForm,
   user: User
 ): Promise<boolean> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   try {
     // Copy crews

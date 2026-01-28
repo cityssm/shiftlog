@@ -1,6 +1,5 @@
-import mssqlPool from '@cityssm/mssql-multi-pool'
-
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface ReorderDataListItemsForm {
   dataListKey: string
@@ -11,7 +10,7 @@ export interface ReorderDataListItemsForm {
 export default async function reorderDataListItems(
   form: ReorderDataListItemsForm
 ): Promise<boolean> {
-  const pool = await mssqlPool.connect(getConfigProperty('connectors.shiftLog'))
+  const pool = await getShiftLogConnectionPool()
 
   try {
     for (const [index, dataListItemId] of form.dataListItemIds.entries()) {
