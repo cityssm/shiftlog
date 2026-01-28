@@ -524,4 +524,3 @@
         ?.addEventListener('click', addNotificationConfiguration);
     renderNotificationConfigurations();
 })();
-export {};
