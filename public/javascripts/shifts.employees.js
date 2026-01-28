@@ -305,21 +305,24 @@
         }
     }
     function refreshCrewData() {
-        cityssm.postJSON(`${urlPrefix}/doGetShiftCrews`, { shiftId }, (responseJSON) => {
+        cityssm.postJSON(`${urlPrefix}/doGetShiftCrews`, { shiftId }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             shiftCrews = responseJSON.shiftCrews;
             renderShiftCrews();
             updateCounts();
         });
     }
     function refreshEmployeeData() {
-        cityssm.postJSON(`${urlPrefix}/doGetShiftEmployees`, { shiftId }, (responseJSON) => {
+        cityssm.postJSON(`${urlPrefix}/doGetShiftEmployees`, { shiftId }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             shiftEmployees = responseJSON.shiftEmployees;
             renderShiftEmployees();
             updateCounts();
         });
     }
     function refreshEquipmentData() {
-        cityssm.postJSON(`${urlPrefix}/doGetShiftEquipment`, { shiftId }, (responseJSON) => {
+        cityssm.postJSON(`${urlPrefix}/doGetShiftEquipment`, { shiftId }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             shiftEquipment = responseJSON.shiftEquipment;
             renderShiftEquipment();
             updateCounts();
@@ -333,7 +336,8 @@
     function loadAvailableData() {
         cityssm.postJSON(
         // eslint-disable-next-line no-secrets/no-secrets
-        `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`, {}, (responseJSON) => {
+        `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             availableCrews = responseJSON.crews;
             availableEmployees = responseJSON.employees;
             availableEquipment = responseJSON.equipment;
@@ -344,7 +348,8 @@
         let formElement;
         function doAdd(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doAddShiftCrew`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doAddShiftCrew`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     switchToTab('tab-content--crews');
@@ -396,7 +401,8 @@
         let closeModalFunction;
         function doAdd(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doAddShiftEmployee`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doAddShiftEmployee`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     switchToTab('tab-content--employees');
@@ -461,7 +467,8 @@
         let formElement;
         function doAdd(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doAddShiftEquipment`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doAddShiftEquipment`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     switchToTab('tab-content--equipment');
@@ -533,7 +540,8 @@
         let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doUpdateShiftCrewNote`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftCrewNote`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     closeModalFunction();
@@ -576,7 +584,8 @@
         let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployee`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployee`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     closeModalFunction();
@@ -632,7 +641,8 @@
         let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployeeNote`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEmployeeNote`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     closeModalFunction();
@@ -675,7 +685,8 @@
         let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipment`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipment`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     closeModalFunction();
@@ -731,7 +742,8 @@
         let closeModalFunction;
         function doUpdate(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipmentNote`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftEquipmentNote`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     closeModalFunction();
@@ -778,7 +790,8 @@
                     cityssm.postJSON(`${urlPrefix}/doDeleteShiftCrew`, {
                         shiftId,
                         crewId
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             refreshData();
                             bulmaJS.alert({
@@ -813,7 +826,8 @@
                     cityssm.postJSON(`${urlPrefix}/doDeleteShiftEmployee`, {
                         shiftId,
                         employeeNumber
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             refreshData();
                             bulmaJS.alert({
@@ -848,7 +862,8 @@
                     cityssm.postJSON(`${urlPrefix}/doDeleteShiftEquipment`, {
                         shiftId,
                         equipmentNumber
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             refreshData();
                             bulmaJS.alert({
@@ -875,7 +890,8 @@
         let closeModalFunction;
         function doImport(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doCopyFromPreviousShift`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doCopyFromPreviousShift`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     refreshData();
                     bulmaJS.alert({
@@ -895,7 +911,8 @@
         }
         function doSearch(searchEvent) {
             searchEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doGetPreviousShifts`, searchFormElement, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doGetPreviousShifts`, searchFormElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 const resultsContainer = document.querySelector('#container--searchResults');
                 const listContainer = document.querySelector('#list--shifts');
                 if (responseJSON.shifts.length === 0) {
@@ -1050,3 +1067,4 @@
     renderShiftEquipment();
     updateCounts();
 })();
+export {};
