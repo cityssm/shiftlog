@@ -11,3 +11,4 @@ export const DEBUG_ENABLE_NAMESPACES = [
     DEBUG_ENABLE_NAMESPACES_WORKTECH
 ].join(',');
 export const PROCESS_ID_MAX_DIGITS = 5;
+//# sourceMappingURL=debug.config.js.map
