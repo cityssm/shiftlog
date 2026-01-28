@@ -27,6 +27,6 @@ export default async function handler(
   response.json({
     success: true,
 
-    crew: crew
+    crew
   })
 }

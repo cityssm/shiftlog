@@ -25,7 +25,7 @@ export type DoUploadWorkOrderAttachmentResponse =
 
 function sanitizeFileName(originalName: string): string {
   // Remove control characters, newlines, and null bytes
-  // eslint-disable-next-line no-control-regex, sonarjs/no-control-regex
+  // eslint-disable-next-line no-control-regex
   let sanitized = originalName.replaceAll(/[\u0000-\u001F\u007F-\u009F]/gv, '')
 
   // Remove characters that are problematic in file systems

@@ -38,7 +38,7 @@ declare const exports: {
     flatpickr(shiftDateStringElement, {
       allowInput: true,
       dateFormat: 'Y-m-d',
-      
+
       nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
       prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
     })
@@ -57,7 +57,10 @@ declare const exports: {
       }) => {
         if (responseJSON.success) {
           if (isCreate && responseJSON.shiftId !== undefined) {
-            globalThis.location.href = shiftLog.buildShiftURL(responseJSON.shiftId, true)
+            globalThis.location.href = shiftLog.buildShiftURL(
+              responseJSON.shiftId,
+              true
+            )
           } else {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -94,7 +97,8 @@ declare const exports: {
         contextualColorName: 'danger',
         title: 'Delete Shift',
 
-        message: 'Are you sure you want to delete this shift? This action cannot be undone.',
+        message:
+          'Are you sure you want to delete this shift? This action cannot be undone.',
         okButton: {
           text: 'Delete Shift',
 

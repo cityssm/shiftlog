@@ -181,7 +181,9 @@ declare const exports: {
     if (shiftAdhocTasks.length === 0) {
       containerElement.innerHTML = /* html */ `
         <div class="message">
-          <div class="message-body">No ad hoc tasks assigned to this shift.</div>
+          <div class="message-body">
+            No ad hoc tasks assigned to this shift.
+          </div>
         </div>
       `
       return
@@ -221,7 +223,7 @@ declare const exports: {
       if (task.locationAddress1) {
         locationString = cityssm.escapeHTML(task.locationAddress1)
         if (task.locationAddress2) {
-          locationString += '<br />' + cityssm.escapeHTML(task.locationAddress2)
+          locationString += `<br />${cityssm.escapeHTML(task.locationAddress2)}`
         }
       }
 
@@ -236,7 +238,7 @@ declare const exports: {
           if (task.fromLocationAddress1) locationString += '<br />'
           locationString += `To: ${cityssm.escapeHTML(task.toLocationAddress1)}`
         }
-        
+
         locationString += '</small>'
       }
 
@@ -254,38 +256,41 @@ declare const exports: {
 
       // eslint-disable-next-line no-unsanitized/property
       trElement.innerHTML = /* html */ `
-        <td>${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}</td>
+        <td>
+          ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
+        </td>
         <td>${cityssm.escapeHTML(task.taskDescription)}</td>
         <td>${locationString}</td>
         <td>${dueDateString}</td>
         <td>${statusHtml}</td>
         <td>${cityssm.escapeHTML(task.shiftAdhocTaskNote ?? '')}</td>
-        ${
-          isEdit
-            ? /* html */ `
-              <td class="has-text-right">
+        ${isEdit
+          ? /* html */ `
+            <td class="has-text-right">
                 <div class="buttons is-right">
-                  ${
-                    isComplete
-                      ? ''
-                      : /* html */ `
-                        <button
+                  ${isComplete
+                    ? ''
+                    : /* html */ `
+                  <button
                           class="button is-small is-info button--edit"
                           data-adhoc-task-id="${task.adhocTaskId}"
                           type="button"
                           aria-label="Edit Task"
                         >
-                          <span class="icon is-small"><i class="fa-solid fa-pencil"></i></span>
+                          <span class="icon is-small"
+                            ><i class="fa-solid fa-pencil"></i
+                          ></span>
                         </button>
-                      `
-                  }
+                `}
                   <button
                     class="button is-small is-info button--editNote"
                     data-adhoc-task-id="${task.adhocTaskId}"
                     type="button"
                     aria-label="Edit Note"
                   >
-                    <span class="icon is-small"><i class="fa-solid fa-comment"></i></span>
+                    <span class="icon is-small">
+                      <i class="fa-solid fa-comment"></i>
+                    </span>
                   </button>
                   <button
                     class="button is-small is-danger is-light button--remove"
@@ -293,13 +298,14 @@ declare const exports: {
                     type="button"
                     aria-label="Remove"
                   >
-                    <span class="icon is-small"><i class="fa-solid fa-trash"></i></span>
+                    <span class="icon is-small">
+                      <i class="fa-solid fa-trash"></i>
+                    </span>
                   </button>
                 </div>
               </td>
-            `
-            : ''
-        }
+          `
+          : ''}
       `
 
       tbodyElement.append(trElement)
@@ -719,10 +725,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftAdhocTaskNote`,
         formEvent.currentTarget,
-        (responseJSON: {
-          success: boolean
-          errorMessage?: string
-        }) => {
+        (responseJSON: { success: boolean; errorMessage?: string }) => {
           if (responseJSON.success) {
             ;(task as AdhocTask).shiftAdhocTaskNote = note
 
@@ -789,10 +792,7 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetAvailableAdhocTasks`,
       { shiftId },
-      (responseJSON: {
-        success: boolean
-        adhocTasks: AdhocTask[]
-      }) => {
+      (responseJSON: { success: boolean; adhocTasks: AdhocTask[] }) => {
         if (!responseJSON.success || responseJSON.adhocTasks.length === 0) {
           bulmaJS.alert({
             contextualColorName: 'info',
@@ -858,30 +858,32 @@ declare const exports: {
               ) as HTMLElement
 
               detailsDiv.innerHTML = /* html */ `
-                <p class="mb-2">
-                  <strong>Type:</strong> ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
+                <p
+                  class="mb-2"
+                >
+                  <strong>Type:</strong>
+                  ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
                 </p>
                 <p class="mb-2">
-                  <strong>Description:</strong> ${cityssm.escapeHTML(task.taskDescription)}
+                  <strong>Description:</strong>
+                  ${cityssm.escapeHTML(task.taskDescription)}
                 </p>
-                ${
-                  task.locationAddress1
-                    ? /* html */ `
-                      <p class="mb-2">
-                        <strong>Location:</strong> ${cityssm.escapeHTML(task.locationAddress1)}
+                ${task.locationAddress1
+                  ? /* html */ `
+                    <p class="mb-2">
+                        <strong>Location:</strong>
+                        ${cityssm.escapeHTML(task.locationAddress1)}
                       </p>
-                    `
-                    : ''
-                }
-                ${
-                  task.taskDueDateTime
-                    ? /* html */ `
-                      <p class="mb-2">
-                        <strong>Due:</strong> ${cityssm.dateToString(new Date(task.taskDueDateTime))}
+                  `
+                  : ''}
+                ${task.taskDueDateTime
+                  ? /* html */ `
+                    <p class="mb-2">
+                        <strong>Due:</strong>
+                        ${cityssm.dateToString(new Date(task.taskDueDateTime))}
                       </p>
-                    `
-                    : ''
-                }
+                  `
+                  : ''}
               `
             },
             onshown(addModalElement, _selectedCloseModalFunction) {
@@ -947,13 +949,20 @@ declare const exports: {
 
               // eslint-disable-next-line no-unsanitized/property
               trElement.innerHTML = /* html */ `
-                <td>${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}</td>
+                <td>
+                  ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
+                </td>
                 <td>${cityssm.escapeHTML(task.taskDescription)}</td>
                 <td>${cityssm.escapeHTML(task.locationAddress1)}</td>
                 <td>${dueDateString}</td>
                 <td class="has-text-right">
-                  <button class="button is-small is-primary button--select" type="button">
-                    <span class="icon is-small"><i class="fa-solid fa-check"></i></span>
+                  <button
+                    class="button is-small is-primary button--select"
+                    type="button"
+                  >
+                    <span class="icon is-small">
+                      <i class="fa-solid fa-check"></i>
+                    </span>
                     <span>Select</span>
                   </button>
                 </td>
@@ -1002,15 +1011,11 @@ declare const exports: {
       title: 'Remove Ad Hoc Task from Shift',
 
       message: /* html */ `
-        Are you sure you want to remove this task from this shift?<br /><br />
+        Are you sure you want to remove this task
+        from this shift?<br /><br />
         <strong>Would you like to:</strong><br />
         <label class="radio">
-          <input
-            name="deleteOption"
-            type="radio"
-            value="remove"
-            checked
-          />
+          <input name="deleteOption" type="radio" value="remove" checked />
           Just remove from this shift (keep available for other shifts)
         </label>
         <br />

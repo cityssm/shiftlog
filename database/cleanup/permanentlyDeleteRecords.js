@@ -159,58 +159,58 @@ export default async function permanentlyDeleteRecords() {
             debug(`Permanently deleted ${costsResult.rowsAffected[0]} WorkOrderCosts records`);
         }
         // Step 3: Clean up WorkOrders that have no active child records
-        const workOrdersResult = await pool
+        const workOrdersResult = await // eslint-disable-next-line no-secrets/no-secrets
+         pool
             .request()
             .input('cutoffDate', cutoffDate)
-            // eslint-disable-next-line no-secrets/no-secrets
             .query(/* sql */ `
-        DELETE wo
-        FROM
-          ShiftLog.WorkOrders wo
-        WHERE
-          wo.recordDelete_dateTime IS NOT NULL
-          AND wo.recordDelete_dateTime < @cutoffDate
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
-              ShiftLog.WorkOrderTags wt
-            WHERE
-              wt.workOrderId = wo.workOrderId
-          )
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
-              ShiftLog.WorkOrderNotes wn
-            WHERE
-              wn.workOrderId = wo.workOrderId
-          )
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
-              ShiftLog.WorkOrderMilestones wm
-            WHERE
-              wm.workOrderId = wo.workOrderId
-          )
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
-              ShiftLog.WorkOrderAttachments wa
-            WHERE
-              wa.workOrderId = wo.workOrderId
-          )
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
-              ShiftLog.WorkOrderCosts wc
-            WHERE
-              wc.workOrderId = wo.workOrderId
-          )
-      `);
+          DELETE wo
+          FROM
+            ShiftLog.WorkOrders wo
+          WHERE
+            wo.recordDelete_dateTime IS NOT NULL
+            AND wo.recordDelete_dateTime < @cutoffDate
+            AND NOT EXISTS (
+              SELECT
+                1
+              FROM
+                ShiftLog.WorkOrderTags wt
+              WHERE
+                wt.workOrderId = wo.workOrderId
+            )
+            AND NOT EXISTS (
+              SELECT
+                1
+              FROM
+                ShiftLog.WorkOrderNotes wn
+              WHERE
+                wn.workOrderId = wo.workOrderId
+            )
+            AND NOT EXISTS (
+              SELECT
+                1
+              FROM
+                ShiftLog.WorkOrderMilestones wm
+              WHERE
+                wm.workOrderId = wo.workOrderId
+            )
+            AND NOT EXISTS (
+              SELECT
+                1
+              FROM
+                ShiftLog.WorkOrderAttachments wa
+              WHERE
+                wa.workOrderId = wo.workOrderId
+            )
+            AND NOT EXISTS (
+              SELECT
+                1
+              FROM
+                ShiftLog.WorkOrderCosts wc
+              WHERE
+                wc.workOrderId = wo.workOrderId
+            )
+        `);
         if (workOrdersResult.rowsAffected[0] > 0) {
             deletedCount += workOrdersResult.rowsAffected[0];
             debug(`Permanently deleted ${workOrdersResult.rowsAffected[0]} WorkOrders records`);

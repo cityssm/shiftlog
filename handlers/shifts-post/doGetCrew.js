@@ -9,6 +9,6 @@ export default async function handler(request, response) {
     }
     response.json({
         success: true,
-        crew: crew
+        crew
     });
 }

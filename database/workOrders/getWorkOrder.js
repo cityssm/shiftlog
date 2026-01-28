@@ -1,6 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-import getWorkOrderTags from '../workOrders/getWorkOrderTags.js';
+import getWorkOrderTags from './getWorkOrderTags.js';
 export default async function getWorkOrder(workOrderId, userName) {
     const pool = await getShiftLogConnectionPool();
     const sql = /* sql */ `

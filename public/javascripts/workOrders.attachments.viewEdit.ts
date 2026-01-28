@@ -48,371 +48,396 @@ declare const bulmaJS: BulmaJS
 
   const attachmentsContainerElement = document.querySelector(
     '#container--attachments'
-  ) as HTMLElement | null
+  ) as HTMLElement
 
-  if (attachmentsContainerElement !== null) {
-    function formatFileSize(bytes: number): string {
-      if (bytes === 0) return '0 Bytes'
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- for safety
+  if (attachmentsContainerElement === null) {
+    return
+  }
 
-      const k = 1024
-      const sizes = ['Bytes', 'KB', 'MB', 'GB']
-      const i = Math.floor(Math.log(bytes) / Math.log(k))
-      
-      return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`
+  function formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes'
+
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const sizeIndex = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${Number.parseFloat((bytes / k ** sizeIndex).toFixed(2))} ${sizes[sizeIndex]}`
+  }
+
+  function getFileIcon(fileType: string): string {
+    if (fileType.startsWith('image/')) {
+      return 'fa-file-image'
+    } else if (fileType === 'application/pdf') {
+      return 'fa-file-pdf'
+    } else if (fileType.includes('word') || fileType.includes('document')) {
+      return 'fa-file-word'
+    } else if (fileType.includes('excel') || fileType.includes('spreadsheet')) {
+      return 'fa-file-excel'
+    } else if (fileType.includes('zip') || fileType.includes('archive')) {
+      return 'fa-file-archive'
+    } else if (fileType.startsWith('text/')) {
+      return 'fa-file-alt'
+    }
+    return 'fa-file'
+  }
+
+  function renderAttachments(attachments: WorkOrderAttachment[]): void {
+    // Update attachments count
+    const attachmentsCountElement = document.querySelector('#attachmentsCount')
+
+    if (attachmentsCountElement !== null) {
+      attachmentsCountElement.textContent = attachments.length.toString()
     }
 
-    function getFileIcon(fileType: string): string {
-      if (fileType.startsWith('image/')) {
-        return 'fa-file-image'
-      } else if (fileType === 'application/pdf') {
-        return 'fa-file-pdf'
-      } else if (fileType.includes('word') || fileType.includes('document')) {
-        return 'fa-file-word'
-      } else if (
-        fileType.includes('excel') ||
-        fileType.includes('spreadsheet')
-      ) {
-        return 'fa-file-excel'
-      } else if (fileType.includes('zip') || fileType.includes('archive')) {
-        return 'fa-file-archive'
-      } else if (fileType.startsWith('text/')) {
-        return 'fa-file-alt'
-      }
-      return 'fa-file'
+    if (attachments.length === 0) {
+      attachmentsContainerElement.innerHTML = /* html */ `
+        <div
+          class="message is-info"
+        >
+          <p class="message-body">No attachments have been added yet.</p>
+        </div>
+      `
+      return
     }
 
-    function renderAttachments(attachments: WorkOrderAttachment[]): void {
-      // Update attachments count
-      const attachmentsCountElement =
-        document.querySelector('#attachmentsCount')
-        
-      if (attachmentsCountElement !== null) {
-        attachmentsCountElement.textContent = attachments.length.toString()
-      }
+    attachmentsContainerElement.innerHTML = ''
 
-      if (attachments.length === 0) {
-        attachmentsContainerElement.innerHTML = /* html */ `
-          <div class="message is-info">
-            <p class="message-body">No attachments have been added yet.</p>
-          </div>
-        `
-        return
-      }
+    for (const attachment of attachments) {
+      const attachmentElement = document.createElement('div')
+      attachmentElement.className = 'box'
 
-      attachmentsContainerElement.innerHTML = ''
+      const canEdit =
+        exports.isEdit &&
+        (exports.shiftLog.userCanManageWorkOrders ||
+          attachment.recordCreate_userName === exports.shiftLog.userName)
 
-      for (const attachment of attachments) {
-        const attachmentElement = document.createElement('div')
-        attachmentElement.className = 'box'
+      const fileIcon = getFileIcon(attachment.attachmentFileType)
+      const isImage = attachment.attachmentFileType.startsWith('image/')
 
-        const canEdit =
-          exports.isEdit &&
-          (exports.shiftLog.userCanManageWorkOrders ||
-            attachment.recordCreate_userName === exports.shiftLog.userName)
-
-        const fileIcon = getFileIcon(attachment.attachmentFileType)
-        const isImage = attachment.attachmentFileType.startsWith('image/')
-
-        // eslint-disable-next-line no-unsanitized/property
-        attachmentElement.innerHTML = /* html */ `
-          <article class="media">
-            <figure class="media-left">
-              <p class="image is-48x48">
-                ${
-                  isImage
-                    ? /* html */ `
-                      <img
-                        src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline"
-                        alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
-                        style="object-fit: cover; width: 48px; height: 48px;"
-                        loading="lazy"
-                      />
+      // eslint-disable-next-line no-unsanitized/property
+      attachmentElement.innerHTML = /* html */ `
+        <article class="media">
+          <figure class="media-left">
+            <p class="image is-48x48">
+              ${
+                isImage
+                  ? /* html */ `
+                    <img
+                      src="${exports.shiftLog.urlPrefix}/${
+                        exports.shiftLog.workOrdersRouter
+                      }/attachments/${attachment.workOrderAttachmentId}/inline"
+                      alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
+                      style="object-fit: cover; width: 48px; height: 48px;"
+                      loading="lazy"
+                    />
+                  `
+                  : `
+                    <span
+                      class="icon is-large has-text-grey"
+                    >
+                      <i class="fa-solid ${fileIcon} fa-2x"></i>
+                    </span>
                     `
-                    : /* html */ `
-                      <span class="icon is-large has-text-grey">
-                        <i class="fa-solid ${fileIcon} fa-2x"></i>
-                      </span>
-                    `
-                }
-              </p>
-            </figure>
-            <div class="media-content">
-              <div class="content">
-                <p>
-                  <strong>
-                    <a href="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/download" title="Download Attachment" target="_blank">
-                      ${cityssm.escapeHTML(attachment.attachmentFileName)}
-                    </a>
-                    ${
-                      attachment.isWorkOrderThumbnail
-                        ? /* html */ `
-                          <span class="tag is-info is-light ml-1" title="Thumbnail">
-                            <span class="icon is-small"><i class="fa-solid fa-image"></i></span>
-                            <span>Thumbnail</span>
-                          </span>
-                        `
-                        : ''
-                    }
-                  </strong>
-                  <br />
-                  <small class="has-text-grey">
-                    ${formatFileSize(attachment.attachmentFileSizeInBytes)}
-                    &bull;
-                    ${cityssm.escapeHTML(attachment.recordCreate_userName)}
-                    &bull;
-                    ${cityssm.dateToString(new Date(attachment.recordCreate_dateTime))}
-                  </small>
+              }
+            </p>
+          </figure>
+          <div class="media-content">
+            <div class="content">
+              <p>
+                <strong>
+                  <a
+                    href="${exports.shiftLog.urlPrefix}/${
+                      exports.shiftLog.workOrdersRouter
+                    }/attachments/${attachment.workOrderAttachmentId}/download"
+                    title="Download Attachment"
+                    target="_blank"
+                  >
+                    ${cityssm.escapeHTML(attachment.attachmentFileName)}
+                  </a>
                   ${
-                    attachment.attachmentDescription
-                      ? `<br /><span class="is-size-7">${cityssm.escapeHTML(attachment.attachmentDescription)}</span>`
+                    attachment.isWorkOrderThumbnail
+                      ? /* html */ `
+                        <span
+                          class="tag is-info is-light ml-1"
+                          title="Thumbnail"
+                        >
+                          <span class="icon is-small">
+                            <i class="fa-solid fa-image"></i>
+                          </span>
+                          <span>Thumbnail</span>
+                        </span>
+                      `
                       : ''
                   }
-                </p>
-              </div>
-              ${
-                canEdit && isImage && !attachment.isWorkOrderThumbnail
-                  ? /* html */ `
-                    <div class="buttons">
-                      <button class="button is-small is-info is-light set-thumbnail" data-attachment-id="${attachment.workOrderAttachmentId}">
-                        <span class="icon is-small"><i class="fa-solid fa-image"></i></span>
-                        <span>Set as Thumbnail</span>
-                      </button>
-                    </div>
-                  `
-                  : ''
-              }
+                </strong>
+                <br />
+                <small class="has-text-grey">
+                  ${formatFileSize(attachment.attachmentFileSizeInBytes)} &bull;
+                  ${cityssm.escapeHTML(attachment.recordCreate_userName)} &bull;
+                  ${cityssm.dateToString(
+                    new Date(attachment.recordCreate_dateTime)
+                  )}
+                </small>
+                ${
+                  attachment.attachmentDescription
+                    ? `<br /><span class="is-size-7">${cityssm.escapeHTML(attachment.attachmentDescription)}</span>`
+                    : ''
+                }
+              </p>
             </div>
             ${
-              canEdit
+              canEdit && isImage && !attachment.isWorkOrderThumbnail
                 ? /* html */ `
-                  <div class="media-right">
-                    <button class="button is-small is-light is-danger delete-attachment" data-attachment-id="${attachment.workOrderAttachmentId}" title="Delete Attachment">
-                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                  <div class="buttons">
+                    <button
+                      class="button is-small is-info is-light set-thumbnail"
+                      data-attachment-id="${attachment.workOrderAttachmentId}"
+                    >
+                      <span class="icon is-small">
+                        <i class="fa-solid fa-image"></i>
+                      </span>
+                      <span>Set as Thumbnail</span>
                     </button>
                   </div>
                 `
                 : ''
             }
-          </article>
-        `
+          </div>
+          ${
+            canEdit
+              ? /* html */ `
+                <div class="media-right">
+                  <button
+                    class="button is-small is-light is-danger delete-attachment"
+                    data-attachment-id="${attachment.workOrderAttachmentId}"
+                    title="Delete Attachment"
+                  >
+                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                  </button>
+                </div>
+              `
+              : ''
+          }
+        </article>
+      `
 
-        // Add event listeners
-        if (canEdit) {
-          const deleteLink = attachmentElement.querySelector(
-            '.delete-attachment'
-          ) as HTMLAnchorElement
-          deleteLink.addEventListener('click', (event) => {
+      // Add event listeners
+      if (canEdit) {
+        const deleteLink = attachmentElement.querySelector(
+          '.delete-attachment'
+        ) as HTMLAnchorElement
+        deleteLink.addEventListener('click', (event) => {
+          event.preventDefault()
+          deleteAttachment(attachment.workOrderAttachmentId)
+        })
+
+        const setThumbnailLink = attachmentElement.querySelector(
+          '.set-thumbnail'
+        ) as HTMLAnchorElement | null
+        if (setThumbnailLink !== null) {
+          setThumbnailLink.addEventListener('click', (event) => {
             event.preventDefault()
-            deleteAttachment(attachment.workOrderAttachmentId)
+            setThumbnail(attachment.workOrderAttachmentId)
           })
-
-          const setThumbnailLink = attachmentElement.querySelector(
-            '.set-thumbnail'
-          ) as HTMLAnchorElement | null
-          if (setThumbnailLink !== null) {
-            setThumbnailLink.addEventListener('click', (event) => {
-              event.preventDefault()
-              setThumbnail(attachment.workOrderAttachmentId)
-            })
-          }
         }
-
-        attachmentsContainerElement?.append(attachmentElement)
-      }
-    }
-
-    function showAddAttachmentModal(): void {
-      let closeModalFunction: () => void
-
-      function doAddAttachment(submitEvent: Event): void {
-        submitEvent.preventDefault()
-        const formElement = submitEvent.currentTarget as HTMLFormElement
-        const fileInput = formElement.querySelector(
-          '#addWorkOrderAttachment--attachmentFile'
-        ) as HTMLInputElement
-
-        if (!fileInput.files || fileInput.files.length === 0) {
-          bulmaJS.alert({
-            contextualColorName: 'warning',
-            message: 'Please select a file to upload.'
-          })
-          return
-        }
-
-        const file = fileInput.files[0]
-        if (file.size > exports.attachmentMaximumFileSizeBytes) {
-          bulmaJS.alert({
-            contextualColorName: 'danger',
-            message: `File size exceeds the maximum allowed size of ${formatFileSize(exports.attachmentMaximumFileSizeBytes)}.`
-          })
-          return
-        }
-
-        const submitButton = document.querySelector(
-          '#button--submitAttachment'
-        ) as HTMLButtonElement
-        submitButton.disabled = true
-        submitButton.classList.add('is-loading')
-
-        const formData = new FormData(formElement)
-
-        globalThis
-          .fetch(
-            `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUploadWorkOrderAttachment`,
-            {
-              method: 'POST',
-              body: formData
-            }
-          )
-          .then(async (response) => response.json())
-          .then((responseJSON) => {
-            submitButton.disabled = false
-            submitButton.classList.remove('is-loading')
-
-            if (responseJSON.success) {
-              closeModalFunction()
-              loadAttachments()
-            } else {
-              bulmaJS.alert({
-                contextualColorName: 'danger',
-                message: responseJSON.message || 'Failed to upload attachment.'
-              })
-            }
-          })
-          .catch(() => {
-            submitButton.disabled = false
-            submitButton.classList.remove('is-loading')
-            bulmaJS.alert({
-              contextualColorName: 'danger',
-              message: 'Failed to upload attachment.'
-            })
-          })
       }
 
-      cityssm.openHtmlModal('workOrders-addAttachment', {
-        onshow(modalElement) {
-          ;(
-            modalElement.querySelector(
-              '#addWorkOrderAttachment--workOrderId'
-            ) as HTMLInputElement
-          ).value = workOrderId
-
-          // Display max file size
-          const maxSizeElement = modalElement.querySelector(
-            '#addWorkOrderAttachment--maxSize'
-          ) as HTMLParagraphElement
-          maxSizeElement.textContent = `Maximum file size: ${formatFileSize(exports.attachmentMaximumFileSizeBytes)}`
-
-          // Handle file selection display
-          const fileInput = modalElement.querySelector(
-            '#addWorkOrderAttachment--attachmentFile'
-          ) as HTMLInputElement
-          const fileNameSpan = modalElement.querySelector(
-            '#addWorkOrderAttachment--fileName'
-          ) as HTMLSpanElement
-
-          fileInput.addEventListener('change', () => {
-            fileNameSpan.textContent =
-              fileInput.files && fileInput.files.length > 0
-                ? fileInput.files[0].name
-                : 'No file selected'
-          })
-        },
-        onshown(modalElement, _closeModalFunction) {
-          bulmaJS.toggleHtmlClipped()
-          closeModalFunction = _closeModalFunction
-          modalElement
-            .querySelector('form')
-            ?.addEventListener('submit', doAddAttachment)
-        },
-
-        onremoved() {
-          bulmaJS.toggleHtmlClipped()
-        }
-      })
+      attachmentsContainerElement.append(attachmentElement)
     }
+  }
 
-    function deleteAttachment(workOrderAttachmentId: number): void {
-      bulmaJS.confirm({
-        contextualColorName: 'danger',
-        title: 'Delete Attachment',
+  function showAddAttachmentModal(): void {
+    let closeModalFunction: () => void
 
-        message: 'Are you sure you want to delete this attachment?',
-        okButton: {
-          text: 'Delete',
+    function doAddAttachment(submitEvent: Event): void {
+      submitEvent.preventDefault()
+      const formElement = submitEvent.currentTarget as HTMLFormElement
+      const fileInput = formElement.querySelector(
+        '#addWorkOrderAttachment--attachmentFile'
+      ) as HTMLInputElement
 
-          callbackFunction: () => {
-            cityssm.postJSON(
-              `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderAttachment`,
-              {
-                workOrderAttachmentId
-              },
-              (responseJSON: { success: boolean }) => {
-                if (responseJSON.success) {
-                  loadAttachments()
-                } else {
-                  bulmaJS.alert({
-                    contextualColorName: 'danger',
-                    message: 'Failed to delete attachment.'
-                  })
-                }
-              }
-            )
+      if (!fileInput.files || fileInput.files.length === 0) {
+        bulmaJS.alert({
+          contextualColorName: 'warning',
+          message: 'Please select a file to upload.'
+        })
+        return
+      }
+
+      const file = fileInput.files[0]
+      if (file.size > exports.attachmentMaximumFileSizeBytes) {
+        bulmaJS.alert({
+          contextualColorName: 'danger',
+          message: `File size exceeds the maximum allowed size of ${formatFileSize(exports.attachmentMaximumFileSizeBytes)}.`
+        })
+        return
+      }
+
+      const submitButton = document.querySelector(
+        '#button--submitAttachment'
+      ) as HTMLButtonElement
+      submitButton.disabled = true
+      submitButton.classList.add('is-loading')
+
+      const formData = new FormData(formElement)
+
+      globalThis
+        .fetch(
+          `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUploadWorkOrderAttachment`,
+          {
+            method: 'POST',
+            body: formData
           }
-        }
-      })
-    }
+        )
+        .then(async (response) => response.json())
+        .then((responseJSON) => {
+          submitButton.disabled = false
+          submitButton.classList.remove('is-loading')
 
-    function setThumbnail(workOrderAttachmentId: number): void {
-      cityssm.postJSON(
-        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doSetWorkOrderAttachmentThumbnail`,
-        {
-          workOrderAttachmentId
-        },
-        (responseJSON: { success: boolean }) => {
           if (responseJSON.success) {
+            closeModalFunction()
             loadAttachments()
-            bulmaJS.alert({
-              contextualColorName: 'success',
-              message: 'Thumbnail set successfully.'
-            })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              message: 'Failed to set thumbnail.'
+              message: responseJSON.message || 'Failed to upload attachment.'
             })
           }
-        }
-      )
+        })
+        .catch(() => {
+          submitButton.disabled = false
+          submitButton.classList.remove('is-loading')
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to upload attachment.'
+          })
+        })
     }
 
-    function loadAttachments(): void {
-      cityssm.postJSON(
-        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`,
-        {},
-        (responseJSON: {
-          success: boolean
+    cityssm.openHtmlModal('workOrders-addAttachment', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            '#addWorkOrderAttachment--workOrderId'
+          ) as HTMLInputElement
+        ).value = workOrderId
 
-          attachments: WorkOrderAttachment[]
-        }) => {
-          if (responseJSON.success) {
-            renderAttachments(responseJSON.attachments)
-          }
-        }
-      )
-    }
+        // Display max file size
+        const maxSizeElement = modalElement.querySelector(
+          '#addWorkOrderAttachment--maxSize'
+        ) as HTMLParagraphElement
+        maxSizeElement.textContent = `Maximum file size: ${formatFileSize(exports.attachmentMaximumFileSizeBytes)}`
 
-    // Add attachment button
-    const addAttachmentButton = document.querySelector(
-      '#button--addAttachment'
-    ) as HTMLButtonElement | null
-    if (addAttachmentButton !== null) {
-      addAttachmentButton.addEventListener('click', () => {
-        showAddAttachmentModal()
-      })
-    }
+        // Handle file selection display
+        const fileInput = modalElement.querySelector(
+          '#addWorkOrderAttachment--attachmentFile'
+        ) as HTMLInputElement
+        const fileNameSpan = modalElement.querySelector(
+          '#addWorkOrderAttachment--fileName'
+        ) as HTMLSpanElement
 
-    // Load attachments initially
-    loadAttachments()
+        fileInput.addEventListener('change', () => {
+          fileNameSpan.textContent =
+            fileInput.files && fileInput.files.length > 0
+              ? fileInput.files[0].name
+              : 'No file selected'
+        })
+      },
+      onshown(modalElement, _closeModalFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', doAddAttachment)
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
   }
+
+  function deleteAttachment(workOrderAttachmentId: number): void {
+    bulmaJS.confirm({
+      contextualColorName: 'danger',
+      title: 'Delete Attachment',
+
+      message: 'Are you sure you want to delete this attachment?',
+      okButton: {
+        text: 'Delete',
+
+        callbackFunction: () => {
+          cityssm.postJSON(
+            `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderAttachment`,
+            {
+              workOrderAttachmentId
+            },
+            (responseJSON: { success: boolean }) => {
+              if (responseJSON.success) {
+                loadAttachments()
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  message: 'Failed to delete attachment.'
+                })
+              }
+            }
+          )
+        }
+      }
+    })
+  }
+
+  function setThumbnail(workOrderAttachmentId: number): void {
+    cityssm.postJSON(
+      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doSetWorkOrderAttachmentThumbnail`,
+      {
+        workOrderAttachmentId
+      },
+      (responseJSON: { success: boolean }) => {
+        if (responseJSON.success) {
+          loadAttachments()
+          bulmaJS.alert({
+            contextualColorName: 'success',
+            message: 'Thumbnail set successfully.'
+          })
+        } else {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: 'Failed to set thumbnail.'
+          })
+        }
+      }
+    )
+  }
+
+  function loadAttachments(): void {
+    cityssm.postJSON(
+      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`,
+      {},
+      (responseJSON: {
+        success: boolean
+
+        attachments: WorkOrderAttachment[]
+      }) => {
+        if (responseJSON.success) {
+          renderAttachments(responseJSON.attachments)
+        }
+      }
+    )
+  }
+
+  // Add attachment button
+  const addAttachmentButton = document.querySelector(
+    '#button--addAttachment'
+  ) as HTMLButtonElement | null
+  if (addAttachmentButton !== null) {
+    addAttachmentButton.addEventListener('click', () => {
+      showAddAttachmentModal()
+    })
+  }
+
+  // Load attachments initially
+  loadAttachments()
 })()

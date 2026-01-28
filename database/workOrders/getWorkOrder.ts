@@ -1,7 +1,8 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
-import getWorkOrderTags from '../workOrders/getWorkOrderTags.js'
+
+import getWorkOrderTags from './getWorkOrderTags.js'
 
 export default async function getWorkOrder(
   workOrderId: number | string,
