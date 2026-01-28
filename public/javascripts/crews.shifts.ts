@@ -3,6 +3,16 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddCrewResponse } from '../../handlers/shifts-post/doAddCrew.js'
+import type { DoAddCrewEquipmentResponse } from '../../handlers/shifts-post/doAddCrewEquipment.js'
+import type { DoAddCrewMemberResponse } from '../../handlers/shifts-post/doAddCrewMember.js'
+import type { DoDeleteCrewResponse } from '../../handlers/shifts-post/doDeleteCrew.js'
+import type { DoDeleteCrewEquipmentResponse } from '../../handlers/shifts-post/doDeleteCrewEquipment.js'
+import type { DoDeleteCrewMemberResponse } from '../../handlers/shifts-post/doDeleteCrewMember.js'
+import type { DoGetCrewResponse } from '../../handlers/shifts-post/doGetCrew.js'
+import type { DoGetEligibleEmployeesForEquipmentResponse } from '../../handlers/shifts-post/doGetEligibleEmployeesForEquipment.js'
+import type { DoUpdateCrewResponse } from '../../handlers/shifts-post/doUpdateCrew.js'
+import type { DoUpdateCrewEquipmentResponse } from '../../handlers/shifts-post/doUpdateCrewEquipment.js'
 import type {
   Crew,
   CrewEquipment,
@@ -13,17 +23,6 @@ import type {
 } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
-
-import type { DoAddCrewResponse } from '../../handlers/shifts-post/doAddCrew.js'
-import type { DoUpdateCrewResponse } from '../../handlers/shifts-post/doUpdateCrew.js'
-import type { DoDeleteCrewResponse } from '../../handlers/shifts-post/doDeleteCrew.js'
-import type { DoDeleteCrewMemberResponse } from '../../handlers/shifts-post/doDeleteCrewMember.js'
-import type { DoGetCrewResponse } from '../../handlers/shifts-post/doGetCrew.js'
-import type { DoAddCrewMemberResponse } from '../../handlers/shifts-post/doAddCrewMember.js'
-import type { DoDeleteCrewEquipmentResponse } from '../../handlers/shifts-post/doDeleteCrewEquipment.js'
-import type { DoUpdateCrewEquipmentResponse } from '../../handlers/shifts-post/doUpdateCrewEquipment.js'
-import type { DoGetEligibleEmployeesForEquipmentResponse } from '../../handlers/shifts-post/doGetEligibleEmployeesForEquipment.js'
-import type { DoAddCrewEquipmentResponse } from '../../handlers/shifts-post/doAddCrewEquipment.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
@@ -480,14 +479,12 @@ declare const exports: {
                           )
                         )
                         populateEmployeeOptions(
-                          responseJSON.crew?.members ?? [],
+                          responseJSON.crew.members,
                           eligibleEmployeeNumbers
                         )
                       } else {
                         // On error, show all crew members
-                        populateEmployeeOptions(
-                          responseJSON.crew?.members ?? []
-                        )
+                        populateEmployeeOptions(responseJSON.crew.members)
 
                         if (
                           !eligibleResponse.success &&

@@ -134,7 +134,7 @@ declare const exports: {
         `${shiftLog.urlPrefix}/admin/doAddAssignedToItem`,
         addForm,
         (responseJSON: DoAddAssignedToItemResponse) => {
-          if (responseJSON.success && responseJSON.assignedToId) {
+          if (responseJSON.success) {
             assignedToList.push({
               assignedToId: responseJSON.assignedToId,
               assignedToName: (
@@ -167,7 +167,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Adding Item',
 
-              message: responseJSON.errorMessage ?? 'An error occurred.'
+              message: responseJSON.errorMessage
             })
           }
         }

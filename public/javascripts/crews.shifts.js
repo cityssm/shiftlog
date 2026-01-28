@@ -289,11 +289,11 @@
                                     if (eligibleResponse.success &&
                                         eligibleResponse.employees !== undefined) {
                                         const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map((emp) => emp.employeeNumber));
-                                        populateEmployeeOptions(responseJSON.crew?.members ?? [], eligibleEmployeeNumbers);
+                                        populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers);
                                     }
                                     else {
                                         // On error, show all crew members
-                                        populateEmployeeOptions(responseJSON.crew?.members ?? []);
+                                        populateEmployeeOptions(responseJSON.crew.members);
                                         if (!eligibleResponse.success &&
                                             eligibleResponse.message) {
                                             bulmaJS.alert({

@@ -63,7 +63,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error Resetting API Key',
 
-                  message: responseJSON.message ?? 'Please try again.'
+                  message: responseJSON.message
                 })
               }
             }
