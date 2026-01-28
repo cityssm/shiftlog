@@ -78,7 +78,7 @@
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddAssignedToItem`, addForm, (responseJSON) => {
-                if (responseJSON.success && responseJSON.assignedToId) {
+                if (responseJSON.success) {
                     assignedToList.push({
                         assignedToId: responseJSON.assignedToId,
                         assignedToName: addForm.querySelector('#addAssignedTo--assignedToName').value,
@@ -94,7 +94,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Item',
-                        message: responseJSON.errorMessage ?? 'An error occurred.'
+                        message: responseJSON.errorMessage
                     });
                 }
             });

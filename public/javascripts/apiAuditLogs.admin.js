@@ -35,7 +35,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Resetting API Key',
-                                message: responseJSON.message ?? 'Please try again.'
+                                message: responseJSON.message
                             });
                         }
                     });
@@ -153,20 +153,20 @@
             requestBody.isValidApiKey = isValidApiKeyValue === 'true';
         }
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`, requestBody, (responseJSON) => {
-            if (responseJSON.success) {
-                totalCount = responseJSON.totalCount;
-                renderAuditLogs(responseJSON.logs);
-                // Add pagination controls if needed
-                if (totalCount > ITEMS_PER_PAGE) {
-                    const paginationControls = shiftLog.buildPaginationControls({
-                        clickHandler: pageSelect,
-                        currentPageOrOffset: currentPage,
-                        itemsPerPageOrLimit: ITEMS_PER_PAGE,
-                        totalCount
-                    });
-                    containerElement.append(paginationControls);
-                }
+            // if (responseJSON.success) {
+            totalCount = responseJSON.totalCount;
+            renderAuditLogs(responseJSON.logs);
+            // Add pagination controls if needed
+            if (totalCount > ITEMS_PER_PAGE) {
+                const paginationControls = shiftLog.buildPaginationControls({
+                    clickHandler: pageSelect,
+                    currentPageOrOffset: currentPage,
+                    itemsPerPageOrLimit: ITEMS_PER_PAGE,
+                    totalCount
+                });
+                containerElement.append(paginationControls);
             }
+            // }
         });
     }
     // Event listeners

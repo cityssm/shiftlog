@@ -3,6 +3,11 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddDataListItemResponse } from '../../handlers/admin-post/doAddDataListItem.js'
+import type { DoDeleteDataListItemResponse } from '../../handlers/admin-post/doDeleteDataListItem.js'
+import type { DoReorderDataListItemsResponse } from '../../handlers/admin-post/doReorderDataListItems.js'
+import type { DoUpdateDataListItemResponse } from '../../handlers/admin-post/doUpdateDataListItem.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -202,11 +207,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddDataListItem`,
         addForm,
-        (responseJSON: {
-          success: boolean
-
-          items?: DataListItemWithDetails[]
-        }) => {
+        (responseJSON: DoAddDataListItemResponse) => {
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
 
@@ -337,11 +338,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateDataListItem`,
         editForm,
-        (responseJSON: {
-          success: boolean
-
-          items?: DataListItemWithDetails[]
-        }) => {
+        (responseJSON: DoUpdateDataListItemResponse) => {
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
             renderDataListItems(dataListKey as string, responseJSON.items)
@@ -473,13 +470,10 @@ declare const exports: {
               dataListKey,
               dataListItemId: Number.parseInt(dataListItemId, 10)
             },
-            (responseJSON: {
-              success: boolean
-
-              items?: DataListItemWithDetails[]
-            }) => {
+            (responseJSON: DoDeleteDataListItemResponse) => {
               if (responseJSON.success && responseJSON.items !== undefined) {
                 renderDataListItems(dataListKey, responseJSON.items)
+
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Item Deleted',
@@ -580,11 +574,7 @@ declare const exports: {
             dataListKey,
             dataListItemIds
           },
-          (responseJSON: {
-            success: boolean
-
-            items?: DataListItemWithDetails[]
-          }) => {
+          (responseJSON: DoReorderDataListItemsResponse) => {
             if (!responseJSON.success) {
               bulmaJS.alert({
                 contextualColorName: 'danger',

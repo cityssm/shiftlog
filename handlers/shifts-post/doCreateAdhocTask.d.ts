@@ -6,7 +6,7 @@ export type DoCreateAdhocTaskResponse = {
     errorMessage: string;
 } | {
     success: true;
-    shiftAdhocTasks?: AdhocTask[];
+    shiftAdhocTasks: AdhocTask[];
 };
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;

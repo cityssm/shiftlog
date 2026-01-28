@@ -271,8 +271,7 @@
                 isActive: addForm.querySelector('#addNotificationConfiguration--isActive').checked
             };
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNotificationConfiguration`, formData, (responseJSON) => {
-                if (responseJSON.success &&
-                    responseJSON.notificationConfigurationId) {
+                if (responseJSON.success) {
                     notificationConfigurations.push({
                         notificationConfigurationId: responseJSON.notificationConfigurationId,
                         notificationQueue: formData.notificationQueue,
@@ -290,7 +289,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Configuration',
-                        message: responseJSON.errorMessage ?? 'An error occurred.'
+                        message: responseJSON.errorMessage
                     });
                 }
             });

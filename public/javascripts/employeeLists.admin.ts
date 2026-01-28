@@ -3,6 +3,14 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddEmployeeListResponse } from '../../handlers/admin-post/doAddEmployeeList.js'
+import type { DoAddEmployeeListMemberResponse } from '../../handlers/admin-post/doAddEmployeeListMember.js'
+import type { DoDeleteEmployeeListResponse } from '../../handlers/admin-post/doDeleteEmployeeList.js'
+import type { DoDeleteEmployeeListMemberResponse } from '../../handlers/admin-post/doDeleteEmployeeListMember.js'
+import type { DoGetEmployeeListResponse } from '../../handlers/admin-post/doGetEmployeeList.js'
+import type { DoReorderEmployeeListMembersResponse } from '../../handlers/admin-post/doReorderEmployeeListMembers.js'
+import type { DoUpdateEmployeeListResponse } from '../../handlers/admin-post/doUpdateEmployeeList.js'
+import type { DoUpdateEmployeeListMemberResponse } from '../../handlers/admin-post/doUpdateEmployeeListMember.js'
 import type {
   Employee,
   EmployeeList,
@@ -83,16 +91,10 @@ declare const exports: {
             {
               employeeListId
             },
-            (responseJSON: {
-              success: boolean
-
-              employeeLists?: EmployeeList[]
-            }) => {
+            (responseJSON: DoDeleteEmployeeListResponse) => {
               if (responseJSON.success) {
-                if (responseJSON.employeeLists !== undefined) {
-                  exports.employeeLists = responseJSON.employeeLists
-                  renderEmployeeLists()
-                }
+                exports.employeeLists = responseJSON.employeeLists
+                renderEmployeeLists()
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -139,16 +141,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployeeList`,
         formElement,
-        (responseJSON: {
-          success: boolean
-
-          employeeLists?: EmployeeList[]
-        }) => {
+        (responseJSON: DoUpdateEmployeeListResponse) => {
           if (responseJSON.success) {
-            if (responseJSON.employeeLists !== undefined) {
-              exports.employeeLists = responseJSON.employeeLists
-              renderEmployeeLists()
-            }
+            exports.employeeLists = responseJSON.employeeLists
+            renderEmployeeLists()
 
             closeModalFunction()
 
@@ -217,17 +213,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEmployeeList`,
         formElement,
-        (responseJSON: {
-          success: boolean
-
-          employeeListId?: number
-          employeeLists?: EmployeeList[]
-        }) => {
+        (responseJSON: DoAddEmployeeListResponse) => {
           if (responseJSON.success) {
-            if (responseJSON.employeeLists !== undefined) {
-              exports.employeeLists = responseJSON.employeeLists
-              renderEmployeeLists()
-            }
+            exports.employeeLists = responseJSON.employeeLists
+            renderEmployeeLists()
 
             closeModalFunction()
 
@@ -281,7 +270,7 @@ declare const exports: {
       {
         employeeListId
       },
-      (responseJSON: { employeeList?: EmployeeListWithMembers }) => {
+      (responseJSON: DoGetEmployeeListResponse) => {
         if (responseJSON.employeeList !== undefined) {
           renderEmployeeListMembers(responseJSON.employeeList, panelElement)
         }
@@ -300,11 +289,7 @@ declare const exports: {
         employeeListId,
         employeeNumber
       },
-      (responseJSON: {
-        success: boolean
-
-        employeeList?: EmployeeListWithMembers
-      }) => {
+      (responseJSON: DoDeleteEmployeeListMemberResponse) => {
         if (responseJSON.success && responseJSON.employeeList !== undefined) {
           renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -353,11 +338,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`,
         formElement,
-        (responseJSON: {
-          success: boolean
-
-          employeeList?: EmployeeListWithMembers
-        }) => {
+        (responseJSON: DoAddEmployeeListMemberResponse) => {
           if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -450,11 +431,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`,
         formElement,
-        (responseJSON: {
-          success: boolean
-
-          employeeList?: EmployeeListWithMembers
-        }) => {
+        (responseJSON: DoUpdateEmployeeListMemberResponse) => {
           if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -601,11 +578,7 @@ declare const exports: {
             employeeNumbers,
             seniorityDate: seniorityDate ?? undefined
           },
-          (responseJSON: {
-            success: boolean
-
-            employeeList?: EmployeeListWithMembers
-          }) => {
+          (responseJSON: DoReorderEmployeeListMembersResponse) => {
             if (
               responseJSON.success &&
               responseJSON.employeeList !== undefined

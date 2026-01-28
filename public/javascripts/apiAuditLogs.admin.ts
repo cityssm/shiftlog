@@ -1,6 +1,8 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoGetApiAuditLogsResponse } from '../../handlers/admin-post/doGetApiAuditLogs.js'
+import type { DoResetUserApiKeyResponse } from '../../handlers/admin-post/doResetUserApiKey.js'
 import type { ApiAuditLog } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -45,11 +47,7 @@ declare const exports: {
             {
               userName
             },
-            (responseJSON: {
-              message?: string
-              success: boolean
-              apiKey?: string
-            }) => {
+            (responseJSON: DoResetUserApiKeyResponse) => {
               if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -65,7 +63,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error Resetting API Key',
 
-                  message: responseJSON.message ?? 'Please try again.'
+                  message: responseJSON.message
                 })
               }
             }
@@ -220,27 +218,23 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`,
       requestBody,
-      (responseJSON: {
-        logs: ApiAuditLog[]
-        success: boolean
-        totalCount: number
-      }) => {
-        if (responseJSON.success) {
-          totalCount = responseJSON.totalCount
-          renderAuditLogs(responseJSON.logs)
+      (responseJSON: DoGetApiAuditLogsResponse) => {
+        // if (responseJSON.success) {
+        totalCount = responseJSON.totalCount
+        renderAuditLogs(responseJSON.logs)
 
-          // Add pagination controls if needed
-          if (totalCount > ITEMS_PER_PAGE) {
-            const paginationControls = shiftLog.buildPaginationControls({
-              clickHandler: pageSelect,
-              currentPageOrOffset: currentPage,
-              itemsPerPageOrLimit: ITEMS_PER_PAGE,
-              totalCount
-            })
+        // Add pagination controls if needed
+        if (totalCount > ITEMS_PER_PAGE) {
+          const paginationControls = shiftLog.buildPaginationControls({
+            clickHandler: pageSelect,
+            currentPageOrOffset: currentPage,
+            itemsPerPageOrLimit: ITEMS_PER_PAGE,
+            totalCount
+          })
 
-            containerElement.append(paginationControls)
-          }
+          containerElement.append(paginationControls)
         }
+        // }
       }
     )
   }

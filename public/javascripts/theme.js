@@ -24,9 +24,8 @@
     function doKeepAlive() {
         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/keepAlive`, {
             t: Date.now()
-        }, (rawResponseJson) => {
-            const responseJson = rawResponseJson;
-            if (!responseJson.activeSession) {
+        }, (responseJSON) => {
+            if (!responseJSON.activeSession) {
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Session Expired',

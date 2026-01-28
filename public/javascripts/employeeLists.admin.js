@@ -23,10 +23,8 @@
                         employeeListId
                     }, (responseJSON) => {
                         if (responseJSON.success) {
-                            if (responseJSON.employeeLists !== undefined) {
-                                exports.employeeLists = responseJSON.employeeLists;
-                                renderEmployeeLists();
-                            }
+                            exports.employeeLists = responseJSON.employeeLists;
+                            renderEmployeeLists();
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Employee List Deleted',
@@ -58,10 +56,8 @@
             submitEvent.preventDefault();
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployeeList`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
-                    if (responseJSON.employeeLists !== undefined) {
-                        exports.employeeLists = responseJSON.employeeLists;
-                        renderEmployeeLists();
-                    }
+                    exports.employeeLists = responseJSON.employeeLists;
+                    renderEmployeeLists();
                     closeModalFunction();
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -104,10 +100,8 @@
             submitEvent.preventDefault();
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployeeList`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
-                    if (responseJSON.employeeLists !== undefined) {
-                        exports.employeeLists = responseJSON.employeeLists;
-                        renderEmployeeLists();
-                    }
+                    exports.employeeLists = responseJSON.employeeLists;
+                    renderEmployeeLists();
                     closeModalFunction();
                     bulmaJS.alert({
                         contextualColorName: 'success',

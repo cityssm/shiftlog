@@ -350,10 +350,13 @@
                     closeModalFunction();
                 }
                 else {
+                    const errorMessage = responseJSON.success === false
+                        ? responseJSON.errorMessage
+                        : 'An unknown error occurred.';
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Work Order',
-                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                        message: errorMessage
                     });
                 }
             });
@@ -448,10 +451,13 @@
                             loadMilestones();
                         }
                         else {
+                            const errorMessage = responseJSON.success === false
+                                ? responseJSON.errorMessage
+                                : 'An unknown error occurred.';
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Removing Work Order',
-                                message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                message: errorMessage
                             });
                         }
                     });
@@ -493,7 +499,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Completing Milestone',
-                                message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                message: 'An unknown error occurred.'
                             });
                         }
                     });

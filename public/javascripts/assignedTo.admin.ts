@@ -1,6 +1,10 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddAssignedToItemResponse } from '../../handlers/admin-post/doAddAssignedToItem.js'
+import type { DoDeleteAssignedToItemResponse } from '../../handlers/admin-post/doDeleteAssignedToItem.js'
+import type { DoReorderAssignedToItemsResponse } from '../../handlers/admin-post/doReorderAssignedToItems.js'
+import type { DoUpdateAssignedToItemResponse } from '../../handlers/admin-post/doUpdateAssignedToItem.js'
 import type { AssignedTo } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -129,14 +133,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddAssignedToItem`,
         addForm,
-        (responseJSON: {
-          success: boolean
-
-          errorMessage?: string
-
-          assignedToId?: number
-        }) => {
-          if (responseJSON.success && responseJSON.assignedToId) {
+        (responseJSON: DoAddAssignedToItemResponse) => {
+          if (responseJSON.success) {
             assignedToList.push({
               assignedToId: responseJSON.assignedToId,
               assignedToName: (
@@ -169,7 +167,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Adding Item',
 
-              message: responseJSON.errorMessage ?? 'An error occurred.'
+              message: responseJSON.errorMessage
             })
           }
         }
@@ -230,7 +228,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`,
         editForm,
-        (responseJSON: { success: boolean }) => {
+        (responseJSON: DoUpdateAssignedToItemResponse) => {
           if (responseJSON.success) {
             const itemIndex = assignedToList.findIndex(
               (item) =>
@@ -344,7 +342,7 @@ declare const exports: {
         {
           assignedToId
         },
-        (responseJSON: { success: boolean }) => {
+        (responseJSON: DoDeleteAssignedToItemResponse) => {
           if (responseJSON.success) {
             assignedToList = assignedToList.filter(
               (item) => item.assignedToId !== assignedToId
@@ -396,7 +394,7 @@ declare const exports: {
         {
           assignedToIds
         },
-        (responseJSON: { success: boolean }) => {
+        (responseJSON: DoReorderAssignedToItemsResponse) => {
           if (!responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'danger',

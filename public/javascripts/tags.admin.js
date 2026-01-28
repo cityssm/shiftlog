@@ -106,12 +106,10 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteTag`, { tagName }, (responseJSON) => {
                         if (responseJSON.success) {
-                            if (responseJSON.tags !== undefined) {
-                                exports.tags = responseJSON.tags;
-                                currentFilteredTags = responseJSON.tags;
-                                currentPage = 1;
-                                renderTagsWithPagination(responseJSON.tags);
-                            }
+                            exports.tags = responseJSON.tags;
+                            currentFilteredTags = responseJSON.tags;
+                            currentPage = 1;
+                            renderTagsWithPagination(responseJSON.tags);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Tag Deleted',
@@ -122,7 +120,9 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Deleting Tag',
-                                message: responseJSON.message ?? 'Please try again.'
+                                message: 'message' in responseJSON
+                                    ? responseJSON.message
+                                    : 'Please try again.'
                             });
                         }
                     });
@@ -147,12 +147,10 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateTag`, editForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
-                    if (responseJSON.tags !== undefined) {
-                        exports.tags = responseJSON.tags;
-                        currentFilteredTags = responseJSON.tags;
-                        currentPage = 1;
-                        renderTagsWithPagination(responseJSON.tags);
-                    }
+                    exports.tags = responseJSON.tags;
+                    currentFilteredTags = responseJSON.tags;
+                    currentPage = 1;
+                    renderTagsWithPagination(responseJSON.tags);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Tag Updated',
@@ -163,7 +161,9 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Tag',
-                        message: responseJSON.message ?? 'Please try again.'
+                        message: 'message' in responseJSON
+                            ? responseJSON.message
+                            : 'Please try again.'
                     });
                 }
             });
@@ -220,12 +220,10 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTag`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
-                    if (responseJSON.tags !== undefined) {
-                        exports.tags = responseJSON.tags;
-                        currentFilteredTags = responseJSON.tags;
-                        currentPage = 1;
-                        renderTagsWithPagination(responseJSON.tags);
-                    }
+                    exports.tags = responseJSON.tags;
+                    currentFilteredTags = responseJSON.tags;
+                    currentPage = 1;
+                    renderTagsWithPagination(responseJSON.tags);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Tag Added',
@@ -236,7 +234,9 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Tag',
-                        message: responseJSON.message ?? 'Please try again.'
+                        message: 'message' in responseJSON
+                            ? responseJSON.message
+                            : 'Please try again.'
                     });
                 }
             });
@@ -409,12 +409,10 @@
                         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTag`, addForm, (responseJSON) => {
                             if (responseJSON.success) {
                                 closeAddModalFunction();
-                                if (responseJSON.tags !== undefined) {
-                                    exports.tags = responseJSON.tags;
-                                    currentFilteredTags = responseJSON.tags;
-                                    currentPage = 1;
-                                    renderTagsWithPagination(responseJSON.tags);
-                                }
+                                exports.tags = responseJSON.tags;
+                                currentFilteredTags = responseJSON.tags;
+                                currentPage = 1;
+                                renderTagsWithPagination(responseJSON.tags);
                                 bulmaJS.alert({
                                     contextualColorName: 'success',
                                     title: 'Tag Added',
@@ -425,7 +423,9 @@
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Error Adding Tag',
-                                    message: responseJSON.message ?? 'Please try again.'
+                                    message: 'message' in responseJSON
+                                        ? responseJSON.message
+                                        : 'Please try again.'
                                 });
                             }
                         });
@@ -452,8 +452,7 @@
           </div>
         `;
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetOrphanedTags`, {}, (responseJSON) => {
-                    if (responseJSON.success &&
-                        responseJSON.orphanedTags !== undefined) {
+                    if (responseJSON.success) {
                         if (responseJSON.orphanedTags.length === 0) {
                             containerElement.innerHTML = /* html */ `
                   <div class="message is-success">

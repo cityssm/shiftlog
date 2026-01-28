@@ -21,9 +21,7 @@
                     }, (responseJSON) => {
                         if (responseJSON.success) {
                             // Update the users list with the new data from the server
-                            if (responseJSON.users !== undefined) {
-                                renderUsers(responseJSON.users);
-                            }
+                            renderUsers(responseJSON.users);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'User Deleted',
@@ -34,7 +32,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Deleting User',
-                                message: responseJSON.message ?? 'Please try again.'
+                                message: responseJSON.message
                             });
                         }
                     });
@@ -60,7 +58,7 @@
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Updating Permission',
-                    message: responseJSON.message ?? 'Please try again.'
+                    message: responseJSON.message
                 });
             }
         });
@@ -84,10 +82,8 @@
                 if (responseJSON.success) {
                     closeModalFunction();
                     // Update the users list with the new data from the server
-                    if (responseJSON.users !== undefined) {
-                        exports.users = responseJSON.users;
-                        renderUsers(responseJSON.users);
-                    }
+                    exports.users = responseJSON.users;
+                    renderUsers(responseJSON.users);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Settings Updated',
@@ -190,10 +186,8 @@
         }, (responseJSON) => {
             if (responseJSON.success) {
                 // Update the users list with the new data from the server
-                if (responseJSON.users !== undefined) {
-                    exports.users = responseJSON.users;
-                    renderUsers(responseJSON.users);
-                }
+                exports.users = responseJSON.users;
+                renderUsers(responseJSON.users);
                 bulmaJS.alert({
                     contextualColorName: 'success',
                     title: 'API Key Reset',

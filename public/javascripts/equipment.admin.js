@@ -27,12 +27,10 @@
                         equipmentNumber
                     }, (responseJSON) => {
                         if (responseJSON.success) {
-                            if (responseJSON.equipment !== undefined) {
-                                exports.equipment = responseJSON.equipment;
-                                currentFilteredEquipment = responseJSON.equipment;
-                                currentPage = 1;
-                                renderEquipmentWithPagination(responseJSON.equipment);
-                            }
+                            exports.equipment = responseJSON.equipment;
+                            currentFilteredEquipment = responseJSON.equipment;
+                            currentPage = 1;
+                            renderEquipmentWithPagination(responseJSON.equipment);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Equipment Deleted',
@@ -68,12 +66,10 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEquipment`, updateForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
-                    if (responseJSON.equipment !== undefined) {
-                        exports.equipment = responseJSON.equipment;
-                        currentFilteredEquipment = responseJSON.equipment;
-                        currentPage = 1;
-                        renderEquipmentWithPagination(responseJSON.equipment);
-                    }
+                    exports.equipment = responseJSON.equipment;
+                    currentFilteredEquipment = responseJSON.equipment;
+                    currentPage = 1;
+                    renderEquipmentWithPagination(responseJSON.equipment);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Equipment Updated',
@@ -254,12 +250,10 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEquipment`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
-                    if (responseJSON.equipment !== undefined) {
-                        exports.equipment = responseJSON.equipment;
-                        currentFilteredEquipment = responseJSON.equipment;
-                        currentPage = 1;
-                        renderEquipmentWithPagination(responseJSON.equipment);
-                    }
+                    exports.equipment = responseJSON.equipment;
+                    currentFilteredEquipment = responseJSON.equipment;
+                    currentPage = 1;
+                    renderEquipmentWithPagination(responseJSON.equipment);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Equipment Added',

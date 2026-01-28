@@ -756,11 +756,9 @@ declare const exports: {
         shiftDateString
       },
       (responseJSON: DoGetShiftsForBuilderResponse) => {
-        if (responseJSON.success) {
-          currentShifts = responseJSON.shifts
-          renderShifts()
-          loadAvailableResources()
-        }
+        currentShifts = responseJSON.shifts
+        renderShifts()
+        loadAvailableResources()
       }
     )
   }
@@ -927,6 +925,7 @@ declare const exports: {
     const equipmentList = document.querySelector(
       '#available--equipment .available-resources-list'
     ) as HTMLElement
+    
     if (equipmentList !== null) {
       equipmentList.textContent = ''
 

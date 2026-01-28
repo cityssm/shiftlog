@@ -548,11 +548,9 @@
         cityssm.postJSON(`${shiftUrlPrefix}/doGetShiftsForBuilder`, {
             shiftDateString
         }, (responseJSON) => {
-            if (responseJSON.success) {
-                currentShifts = responseJSON.shifts;
-                renderShifts();
-                loadAvailableResources();
-            }
+            currentShifts = responseJSON.shifts;
+            renderShifts();
+            loadAvailableResources();
         });
     }
     function loadAvailableResources() {

@@ -20,7 +20,7 @@
         formEvent.preventDefault();
         cityssm.postJSON(`${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`, shiftFormElement, (responseJSON) => {
             if (responseJSON.success) {
-                if (isCreate && responseJSON.shiftId !== undefined) {
+                if (isCreate && 'shiftId' in responseJSON) {
                     globalThis.location.href = shiftLog.buildShiftURL(responseJSON.shiftId, true);
                 }
                 else {
@@ -34,7 +34,7 @@
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Update Error',
-                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    message: 'An unknown error occurred.'
                 });
             }
         });
@@ -57,15 +57,14 @@
                         cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShift`, {
                             shiftId
                         }, (responseJSON) => {
-                            if (responseJSON.success &&
-                                responseJSON.redirectUrl !== undefined) {
+                            if (responseJSON.success) {
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }
                             else {
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Delete Error',
-                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                    message: responseJSON.errorMessage
                                 });
                             }
                         });

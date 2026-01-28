@@ -134,7 +134,7 @@
                 const selectElement = modalElement.querySelector('#crewMemberAdd--employeeNumber');
                 // Get existing members to exclude them
                 cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (responseJSON) => {
-                    if (responseJSON.success && responseJSON.crew !== undefined) {
+                    if (responseJSON.success) {
                         const existingMemberNumbers = new Set(responseJSON.crew.members.map((member) => member.employeeNumber));
                         for (const employee of exports.employees) {
                             if (!existingMemberNumbers.has(employee.employeeNumber)) {
@@ -248,7 +248,7 @@
                 const employeeSelectElement = modalElement.querySelector('#crewEquipmentAdd--employeeNumber');
                 // Get existing equipment to exclude them
                 cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (responseJSON) => {
-                    if (responseJSON.success && responseJSON.crew !== undefined) {
+                    if (responseJSON.success) {
                         const existingEquipmentNumbers = new Set(responseJSON.crew.equipment.map((equipment) => equipment.equipmentNumber));
                         // Populate equipment
                         for (const equipmentItem of exports.equipment) {
@@ -280,21 +280,21 @@
                             const selectedEquipment = equipmentSelectElement.value;
                             if (selectedEquipment === '') {
                                 // Reset to all crew members
-                                populateEmployeeOptions(responseJSON.crew?.members ?? []);
+                                populateEmployeeOptions(responseJSON.crew.members);
                             }
                             else {
                                 // Get eligible employees for the selected equipment
                                 cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
-                                    const eligibleResponse = eligibleResponseJSON;
-                                    if (eligibleResponse.success &&
-                                        eligibleResponse.employees !== undefined) {
-                                        const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map((emp) => emp.employeeNumber));
-                                        populateEmployeeOptions(responseJSON.crew?.members ?? [], eligibleEmployeeNumbers);
+                                    if (eligibleResponseJSON.success &&
+                                        eligibleResponseJSON.employees !== undefined) {
+                                        const eligibleEmployeeNumbers = new Set(eligibleResponseJSON.employees.map((emp) => emp.employeeNumber));
+                                        populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers);
                                     }
                                     else {
                                         // On error, show all crew members
-                                        populateEmployeeOptions(responseJSON.crew?.members ?? []);
-                                        if (eligibleResponse.message) {
+                                        populateEmployeeOptions(responseJSON.crew.members);
+                                        if (!eligibleResponse.success &&
+                                            eligibleResponse.message) {
                                             bulmaJS.alert({
                                                 contextualColorName: 'warning',
                                                 title: 'Unable to Filter Employees',
@@ -494,10 +494,8 @@
                         loadingOption.textContent = 'Loading...';
                         select.append(loadingOption);
                         cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: equipmentItem.equipmentNumber }, (eligibleResponseJSON) => {
-                            const eligibleResponse = eligibleResponseJSON;
-                            if (eligibleResponse.success &&
-                                eligibleResponse.employees !== undefined) {
-                                const eligibleEmployeeNumbers = new Set(eligibleResponse.employees.map((emp) => emp.employeeNumber));
+                            if (eligibleResponseJSON.success) {
+                                const eligibleEmployeeNumbers = new Set(eligibleResponseJSON.employees.map((emp) => emp.employeeNumber));
                                 populateDropdown(eligibleEmployeeNumbers);
                             }
                             else {
@@ -620,7 +618,7 @@
                 if (panelElement.open) {
                     const crewId = Number.parseInt(panelElement.dataset.crewId ?? '', 10);
                     cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (responseJSON) => {
-                        if (responseJSON.success && responseJSON.crew !== undefined) {
+                        if (responseJSON.success) {
                             renderCrewDetails(crewId, responseJSON.crew, panelElement);
                         }
                     });
@@ -638,10 +636,8 @@
                     formEvent.preventDefault();
                     cityssm.postJSON(`${shiftUrlPrefix}/doAddCrew`, formEvent.currentTarget, (responseJSON) => {
                         if (responseJSON.success) {
-                            if (responseJSON.crews !== undefined) {
-                                exports.crews = responseJSON.crews;
-                                renderCrews();
-                            }
+                            exports.crews = responseJSON.crews;
+                            renderCrews();
                             closeModalFunction();
                             bulmaJS.alert({
                                 contextualColorName: 'success',

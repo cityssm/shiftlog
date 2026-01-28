@@ -2,6 +2,10 @@ import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 
+import type { DoCreateShiftResponse } from '../../handlers/shifts-post/doCreateShift.js'
+import type { DoDeleteShiftResponse } from '../../handlers/shifts-post/doDeleteShift.js'
+import type { DoUpdateShiftResponse } from '../../handlers/shifts-post/doUpdateShift.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -50,13 +54,9 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`,
       shiftFormElement,
-      (responseJSON: {
-        success: boolean
-        shiftId?: number
-        errorMessage?: string
-      }) => {
+      (responseJSON: DoCreateShiftResponse | DoUpdateShiftResponse) => {
         if (responseJSON.success) {
-          if (isCreate && responseJSON.shiftId !== undefined) {
+          if (isCreate && 'shiftId' in responseJSON) {
             globalThis.location.href = shiftLog.buildShiftURL(
               responseJSON.shiftId,
               true
@@ -72,7 +72,7 @@ declare const exports: {
             contextualColorName: 'danger',
             title: 'Update Error',
 
-            message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+            message: 'An unknown error occurred.'
           })
         }
       }
@@ -108,23 +108,15 @@ declare const exports: {
               {
                 shiftId
               },
-              (responseJSON: {
-                success: boolean
-                redirectUrl?: string
-                errorMessage?: string
-              }) => {
-                if (
-                  responseJSON.success &&
-                  responseJSON.redirectUrl !== undefined
-                ) {
+              (responseJSON: DoDeleteShiftResponse) => {
+                if (responseJSON.success) {
                   globalThis.location.href = responseJSON.redirectUrl
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Delete Error',
 
-                    message:
-                      responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    message: responseJSON.errorMessage
                   })
                 }
               }

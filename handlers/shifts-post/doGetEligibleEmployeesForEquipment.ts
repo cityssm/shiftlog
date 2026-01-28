@@ -11,7 +11,7 @@ export type DoGetEligibleEmployeesForEquipmentResponse =
     }
   | {
       success: true
-      employees?: Employee[]
+      employees: Employee[]
     }
 
 export default async function handler(

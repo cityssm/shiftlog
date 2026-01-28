@@ -30,10 +30,8 @@
                     }, (responseJSON) => {
                         if (responseJSON.success) {
                             // Update the employees list with the new data from the server
-                            if (responseJSON.employees !== undefined) {
-                                exports.employees = responseJSON.employees;
-                                applyCurrentFilter();
-                            }
+                            exports.employees = responseJSON.employees;
+                            applyCurrentFilter();
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Employee Deleted',
@@ -44,7 +42,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Deleting Employee',
-                                message: responseJSON.message ?? 'Please try again.'
+                                message: responseJSON.message
                             });
                         }
                     });
@@ -71,10 +69,8 @@
                 if (responseJSON.success) {
                     closeModalFunction();
                     // Update the employees list with the new data from the server
-                    if (responseJSON.employees !== undefined) {
-                        exports.employees = responseJSON.employees;
-                        applyCurrentFilter();
-                    }
+                    exports.employees = responseJSON.employees;
+                    applyCurrentFilter();
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Employee Updated',
@@ -85,7 +81,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Employee',
-                        message: responseJSON.message ?? 'Please try again.'
+                        message: responseJSON.message
                     });
                 }
             });
@@ -264,10 +260,8 @@
                     closeModalFunction();
                     addForm.reset();
                     // Update the employees list with the new data from the server
-                    if (responseJSON.employees !== undefined) {
-                        exports.employees = responseJSON.employees;
-                        applyCurrentFilter();
-                    }
+                    exports.employees = responseJSON.employees;
+                    applyCurrentFilter();
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Employee Added',
@@ -278,7 +272,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Employee',
-                        message: responseJSON.message ?? 'Please try again.'
+                        message: 'Please try again.'
                     });
                 }
             });

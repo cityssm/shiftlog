@@ -10,9 +10,7 @@
     // Load task types
     function loadAdhocTaskTypes() {
         cityssm.postJSON(`${urlPrefix}/doGetAdhocTaskTypes`, {}, (responseJSON) => {
-            if (responseJSON.success && responseJSON.adhocTaskTypes !== undefined) {
-                adhocTaskTypes = responseJSON.adhocTaskTypes;
-            }
+            adhocTaskTypes = responseJSON.adhocTaskTypes;
         });
     }
     function populateTaskTypeDropdown(selectElement, selectedId) {
@@ -170,22 +168,22 @@
         <td>${cityssm.escapeHTML(task.shiftAdhocTaskNote ?? '')}</td>
         ${isEdit
                 ? /* html */ `
-            <td class="has-text-right">
+              <td class="has-text-right">
                 <div class="buttons is-right">
                   ${isComplete
                     ? ''
                     : /* html */ `
-                  <button
+                        <button
                           class="button is-small is-info button--edit"
                           data-adhoc-task-id="${task.adhocTaskId}"
                           type="button"
                           aria-label="Edit Task"
                         >
-                          <span class="icon is-small"
-                            ><i class="fa-solid fa-pencil"></i
-                          ></span>
+                          <span class="icon is-small">
+                            <i class="fa-solid fa-pencil"></i>
+                          </span>
                         </button>
-                `}
+                      `}
                   <button
                     class="button is-small is-info button--editNote"
                     data-adhoc-task-id="${task.adhocTaskId}"
@@ -208,7 +206,7 @@
                   </button>
                 </div>
               </td>
-          `
+            `
                 : ''}
       `;
             tbodyElement.append(trElement);
@@ -236,7 +234,7 @@
         function doCreate(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doCreateAdhocTask`, formEvent.currentTarget, (responseJSON) => {
-                if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+                if (responseJSON.success) {
                     shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                     renderShiftAdhocTasks();
                     updateCount();
@@ -246,7 +244,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Creating Task',
-                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                        message: responseJSON.errorMessage
                     });
                 }
             });
@@ -303,7 +301,7 @@
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doUpdateAdhocTask`, formEvent.currentTarget, (responseJSON) => {
-                if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+                if (responseJSON.success) {
                     shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                     renderShiftAdhocTasks();
                     closeModalFunction();
@@ -312,7 +310,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Task',
-                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                        message: responseJSON.errorMessage
                     });
                 }
             });
@@ -395,7 +393,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Note',
-                        message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                        message: responseJSON.errorMessage
                     });
                 }
             });
@@ -425,7 +423,7 @@
         let modalElement;
         // Load available tasks
         cityssm.postJSON(`${urlPrefix}/doGetAvailableAdhocTasks`, { shiftId }, (responseJSON) => {
-            if (!responseJSON.success || responseJSON.adhocTasks.length === 0) {
+            if (responseJSON.adhocTasks.length === 0) {
                 bulmaJS.alert({
                     contextualColorName: 'info',
                     message: 'No incomplete ad hoc tasks available to add.'
@@ -436,10 +434,8 @@
                 let selectedCloseModalFunction;
                 function doAdd(formEvent) {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${urlPrefix}/doAddShiftAdhocTask`, formEvent.currentTarget, (rawAddResponseJSON) => {
-                        const addResponseJSON = rawAddResponseJSON;
-                        if (addResponseJSON.success &&
-                            addResponseJSON.shiftAdhocTasks) {
+                    cityssm.postJSON(`${urlPrefix}/doAddShiftAdhocTask`, formEvent.currentTarget, (addResponseJSON) => {
+                        if (addResponseJSON.success) {
                             shiftAdhocTasks = addResponseJSON.shiftAdhocTasks;
                             renderShiftAdhocTasks();
                             updateCount();
@@ -449,8 +445,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Adding Task',
-                                message: addResponseJSON.errorMessage ??
-                                    'An unknown error occurred.'
+                                message: addResponseJSON.errorMessage
                             });
                         }
                     });
@@ -462,10 +457,9 @@
                         addModalElement.querySelector('input[name="adhocTaskId"]').value = task.adhocTaskId.toString();
                         // Display task details
                         const detailsDiv = addModalElement.querySelector('#addAdhocTask--taskDetails');
+                        // eslint-disable-next-line no-unsanitized/property
                         detailsDiv.innerHTML = /* html */ `
-                <p
-                  class="mb-2"
-                >
+                <p class="mb-2">
                   <strong>Type:</strong>
                   ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
                 </p>
@@ -475,19 +469,19 @@
                 </p>
                 ${task.locationAddress1
                             ? /* html */ `
-                    <p class="mb-2">
+                      <p class="mb-2">
                         <strong>Location:</strong>
                         ${cityssm.escapeHTML(task.locationAddress1)}
                       </p>
-                  `
+                    `
                             : ''}
                 ${task.taskDueDateTime
                             ? /* html */ `
-                    <p class="mb-2">
+                      <p class="mb-2">
                         <strong>Due:</strong>
                         ${cityssm.dateToString(new Date(task.taskDueDateTime))}
                       </p>
-                  `
+                    `
                             : ''}
               `;
                     },
@@ -606,7 +600,7 @@
                         shiftId,
                         deleteTask: deleteOption === 'delete'
                     }, (responseJSON) => {
-                        if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+                        if (responseJSON.success) {
                             shiftAdhocTasks = responseJSON.shiftAdhocTasks;
                             renderShiftAdhocTasks();
                             updateCount();
@@ -615,7 +609,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Removing Task',
-                                message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                message: responseJSON.errorMessage
                             });
                         }
                     });

@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const locationsContainerElement = document.querySelector('#container--locations');
@@ -85,16 +84,14 @@
                         locationId
                     }, (responseJSON) => {
                         if (responseJSON.success) {
-                            if (responseJSON.locations !== undefined) {
-                                exports.locations = responseJSON.locations;
-                                currentFilteredLocations = responseJSON.locations;
-                                // Adjust current page if it becomes invalid after deletion
-                                const totalPages = Math.ceil(responseJSON.locations.length / ITEMS_PER_PAGE);
-                                if (currentPage > totalPages && totalPages > 0) {
-                                    currentPage = totalPages;
-                                }
-                                renderLocationsWithPagination(responseJSON.locations);
+                            exports.locations = responseJSON.locations;
+                            currentFilteredLocations = responseJSON.locations;
+                            // Adjust current page if it becomes invalid after deletion
+                            const totalPages = Math.ceil(responseJSON.locations.length / ITEMS_PER_PAGE);
+                            if (currentPage > totalPages && totalPages > 0) {
+                                currentPage = totalPages;
                             }
+                            renderLocationsWithPagination(responseJSON.locations);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Location Deleted',
@@ -105,7 +102,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Deleting Location',
-                                message: responseJSON.message ?? 'Please try again.'
+                                message: responseJSON.message
                             });
                         }
                     });
@@ -130,12 +127,10 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateLocation`, editForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
-                    if (responseJSON.locations !== undefined) {
-                        exports.locations = responseJSON.locations;
-                        currentFilteredLocations = responseJSON.locations;
-                        // Keep the current page after updating
-                        renderLocationsWithPagination(responseJSON.locations);
-                    }
+                    exports.locations = responseJSON.locations;
+                    currentFilteredLocations = responseJSON.locations;
+                    // Keep the current page after updating
+                    renderLocationsWithPagination(responseJSON.locations);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Location Updated',
@@ -146,7 +141,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Location',
-                        message: responseJSON.message ?? 'Please try again.'
+                        message: responseJSON.message
                     });
                 }
             });
@@ -302,12 +297,10 @@
                 if (responseJSON.success) {
                     closeModalFunction();
                     addForm.reset();
-                    if (responseJSON.locations !== undefined) {
-                        exports.locations = responseJSON.locations;
-                        currentFilteredLocations = responseJSON.locations;
-                        currentPage = 1;
-                        renderLocationsWithPagination(responseJSON.locations);
-                    }
+                    exports.locations = responseJSON.locations;
+                    currentFilteredLocations = responseJSON.locations;
+                    currentPage = 1;
+                    renderLocationsWithPagination(responseJSON.locations);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Location Added',
@@ -318,7 +311,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Location',
-                        message: responseJSON.message ?? 'Please try again.'
+                        message: responseJSON.message
                     });
                 }
             });

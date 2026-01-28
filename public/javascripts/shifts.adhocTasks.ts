@@ -5,6 +5,13 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 import type Leaflet from 'leaflet'
 
+import type { DoAddShiftAdhocTaskResponse } from '../../handlers/shifts-post/doAddShiftAdhocTask.js'
+import type { DoCreateAdhocTaskResponse } from '../../handlers/shifts-post/doCreateAdhocTask.js'
+import type { DoDeleteShiftAdhocTaskResponse } from '../../handlers/shifts-post/doDeleteShiftAdhocTask.js'
+import type { DoGetAdhocTaskTypesResponse } from '../../handlers/shifts-post/doGetAdhocTaskTypes.js'
+import type { DoGetAvailableAdhocTasksResponse } from '../../handlers/shifts-post/doGetAvailableAdhocTasks.js'
+import type { DoUpdateAdhocTaskResponse } from '../../handlers/shifts-post/doUpdateAdhocTask.js'
+import type { DoUpdateShiftAdhocTaskNoteResponse } from '../../handlers/shifts-post/doUpdateShiftAdhocTaskNote.js'
 import type { AdhocTask } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -39,17 +46,8 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetAdhocTaskTypes`,
       {},
-      (responseJSON: {
-        success: boolean
-
-        adhocTaskTypes?: Array<{
-          dataListItem: string
-          dataListItemId: number
-        }>
-      }) => {
-        if (responseJSON.success && responseJSON.adhocTaskTypes !== undefined) {
-          adhocTaskTypes = responseJSON.adhocTaskTypes
-        }
+      (responseJSON: DoGetAdhocTaskTypesResponse) => {
+        adhocTaskTypes = responseJSON.adhocTaskTypes
       }
     )
   }
@@ -264,24 +262,27 @@ declare const exports: {
         <td>${dueDateString}</td>
         <td>${statusHtml}</td>
         <td>${cityssm.escapeHTML(task.shiftAdhocTaskNote ?? '')}</td>
-        ${isEdit
-          ? /* html */ `
-            <td class="has-text-right">
+        ${
+          isEdit
+            ? /* html */ `
+              <td class="has-text-right">
                 <div class="buttons is-right">
-                  ${isComplete
-                    ? ''
-                    : /* html */ `
-                  <button
+                  ${
+                    isComplete
+                      ? ''
+                      : /* html */ `
+                        <button
                           class="button is-small is-info button--edit"
                           data-adhoc-task-id="${task.adhocTaskId}"
                           type="button"
                           aria-label="Edit Task"
                         >
-                          <span class="icon is-small"
-                            ><i class="fa-solid fa-pencil"></i
-                          ></span>
+                          <span class="icon is-small">
+                            <i class="fa-solid fa-pencil"></i>
+                          </span>
                         </button>
-                `}
+                      `
+                  }
                   <button
                     class="button is-small is-info button--editNote"
                     data-adhoc-task-id="${task.adhocTaskId}"
@@ -304,8 +305,9 @@ declare const exports: {
                   </button>
                 </div>
               </td>
-          `
-          : ''}
+            `
+            : ''
+        }
       `
 
       tbodyElement.append(trElement)
@@ -344,12 +346,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doCreateAdhocTask`,
         formEvent.currentTarget,
-        (responseJSON: {
-          success: boolean
-          shiftAdhocTasks?: AdhocTask[]
-          errorMessage?: string
-        }) => {
-          if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+        (responseJSON: DoCreateAdhocTaskResponse) => {
+          if (responseJSON.success) {
             shiftAdhocTasks = responseJSON.shiftAdhocTasks
             renderShiftAdhocTasks()
             updateCount()
@@ -359,7 +357,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Creating Task',
 
-              message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+              message: responseJSON.errorMessage
             })
           }
         }
@@ -490,13 +488,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateAdhocTask`,
         formEvent.currentTarget,
-        (responseJSON: {
-          success: boolean
-
-          errorMessage?: string
-          shiftAdhocTasks?: AdhocTask[]
-        }) => {
-          if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+        (responseJSON: DoUpdateAdhocTaskResponse) => {
+          if (responseJSON.success) {
             shiftAdhocTasks = responseJSON.shiftAdhocTasks
             renderShiftAdhocTasks()
             closeModalFunction()
@@ -505,7 +498,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Updating Task',
 
-              message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+              message: responseJSON.errorMessage
             })
           }
         }
@@ -725,7 +718,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftAdhocTaskNote`,
         formEvent.currentTarget,
-        (responseJSON: { success: boolean; errorMessage?: string }) => {
+        (responseJSON: DoUpdateShiftAdhocTaskNoteResponse) => {
           if (responseJSON.success) {
             ;(task as AdhocTask).shiftAdhocTaskNote = note
 
@@ -736,7 +729,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Updating Note',
 
-              message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+              message: responseJSON.errorMessage
             })
           }
         }
@@ -792,8 +785,8 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetAvailableAdhocTasks`,
       { shiftId },
-      (responseJSON: { success: boolean; adhocTasks: AdhocTask[] }) => {
-        if (!responseJSON.success || responseJSON.adhocTasks.length === 0) {
+      (responseJSON: DoGetAvailableAdhocTasksResponse) => {
+        if (responseJSON.adhocTasks.length === 0) {
           bulmaJS.alert({
             contextualColorName: 'info',
             message: 'No incomplete ad hoc tasks available to add.'
@@ -810,17 +803,8 @@ declare const exports: {
             cityssm.postJSON(
               `${urlPrefix}/doAddShiftAdhocTask`,
               formEvent.currentTarget,
-              (rawAddResponseJSON) => {
-                const addResponseJSON = rawAddResponseJSON as {
-                  success: boolean
-                  shiftAdhocTasks?: AdhocTask[]
-                  errorMessage?: string
-                }
-
-                if (
-                  addResponseJSON.success &&
-                  addResponseJSON.shiftAdhocTasks
-                ) {
+              (addResponseJSON: DoAddShiftAdhocTaskResponse) => {
+                if (addResponseJSON.success) {
                   shiftAdhocTasks = addResponseJSON.shiftAdhocTasks
                   renderShiftAdhocTasks()
                   updateCount()
@@ -830,9 +814,7 @@ declare const exports: {
                     contextualColorName: 'danger',
                     title: 'Error Adding Task',
 
-                    message:
-                      addResponseJSON.errorMessage ??
-                      'An unknown error occurred.'
+                    message: addResponseJSON.errorMessage
                   })
                 }
               }
@@ -857,10 +839,9 @@ declare const exports: {
                 '#addAdhocTask--taskDetails'
               ) as HTMLElement
 
+              // eslint-disable-next-line no-unsanitized/property
               detailsDiv.innerHTML = /* html */ `
-                <p
-                  class="mb-2"
-                >
+                <p class="mb-2">
                   <strong>Type:</strong>
                   ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
                 </p>
@@ -868,22 +849,26 @@ declare const exports: {
                   <strong>Description:</strong>
                   ${cityssm.escapeHTML(task.taskDescription)}
                 </p>
-                ${task.locationAddress1
-                  ? /* html */ `
-                    <p class="mb-2">
+                ${
+                  task.locationAddress1
+                    ? /* html */ `
+                      <p class="mb-2">
                         <strong>Location:</strong>
                         ${cityssm.escapeHTML(task.locationAddress1)}
                       </p>
-                  `
-                  : ''}
-                ${task.taskDueDateTime
-                  ? /* html */ `
-                    <p class="mb-2">
+                    `
+                    : ''
+                }
+                ${
+                  task.taskDueDateTime
+                    ? /* html */ `
+                      <p class="mb-2">
                         <strong>Due:</strong>
                         ${cityssm.dateToString(new Date(task.taskDueDateTime))}
                       </p>
-                  `
-                  : ''}
+                    `
+                    : ''
+                }
               `
             },
             onshown(addModalElement, _selectedCloseModalFunction) {
@@ -1044,14 +1029,8 @@ declare const exports: {
 
               deleteTask: deleteOption === 'delete'
             },
-            (responseJSON: {
-              success: boolean
-
-              errorMessage?: string
-
-              shiftAdhocTasks?: AdhocTask[]
-            }) => {
-              if (responseJSON.success && responseJSON.shiftAdhocTasks) {
+            (responseJSON: DoDeleteShiftAdhocTaskResponse) => {
+              if (responseJSON.success) {
                 shiftAdhocTasks = responseJSON.shiftAdhocTasks
                 renderShiftAdhocTasks()
                 updateCount()
@@ -1060,8 +1039,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error Removing Task',
 
-                  message:
-                    responseJSON.errorMessage ?? 'An unknown error occurred.'
+                  message: responseJSON.errorMessage
                 })
               }
             }
