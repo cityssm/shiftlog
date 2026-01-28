@@ -1,3 +1,4 @@
+import { DEFAULT_NTFY_SERVER } from '@cityssm/ntfy-publish';
 import { hoursToMillis } from '@cityssm/to-millis';
 export const configDefaultValues = {
     'application.applicationName': 'ShiftLog',
@@ -23,6 +24,7 @@ export const configDefaultValues = {
     'connectors.shiftLog': undefined,
     'connectors.avanti': undefined,
     'connectors.ntfy': undefined,
+    'connectors.ntfy.serverUrl': DEFAULT_NTFY_SERVER,
     'connectors.pearl': undefined,
     'connectors.email': undefined,
     // Shifts

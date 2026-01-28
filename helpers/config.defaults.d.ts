@@ -42,6 +42,7 @@ export declare const configDefaultValues: {
         serverUrl?: string;
         defaultTopic: string;
     } | undefined;
+    'connectors.ntfy.serverUrl': string;
     'connectors.pearl': MSSQLConfig | undefined;
     'connectors.email': ConfigEmail | undefined;
     'shifts.isEnabled': boolean;

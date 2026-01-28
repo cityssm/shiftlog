@@ -116,6 +116,46 @@
       </div>
     </div>
     <% } %>
+    <% if (ntfyNotificationConfigurations.length > 0) { %>
+    <div class="panel">
+      <div class="panel-heading">Available ntfy Notifications</div>
+      <div class="panel-block">
+        <p>
+          <strong>ntfy Server</strong><br />
+          <%= configFunctions.getConfigProperty('connectors.ntfy.serverUrl') %>
+        </p>
+      </div>
+      <div class="panel-block is-block">
+        <table class="table is-fullwidth is-striped is-hoverable">
+          <thead>
+            <tr>
+              <th>Notification Queue</th>
+              <th>Assigned To</th>
+              <th>Topic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (const ntfyConfig of ntfyNotificationConfigurations) { %>
+              <%
+                const ntfyTopic = JSON.parse(ntfyConfig.notificationTypeFormJson || '{}').topic;
+              %>
+            <tr>
+              <td><%= ntfyConfig.notificationQueue %></td>
+              <td>
+                <% if (ntfyConfig.assignedToId === null) { %>
+                  (All)
+                <% } else { %>
+                  <%= ntfyConfig.assignedToName %>
+                <% } %>
+              </td>
+              <td><%= ntfyTopic %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
   </div>
   <div class="column">
     <div class="panel">

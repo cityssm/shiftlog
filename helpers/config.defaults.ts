@@ -5,6 +5,7 @@ import type {
   PlainTextAuthenticatorConfiguration
 } from '@cityssm/authentication-helper'
 import type { AvantiApiConfiguration } from '@cityssm/avanti-api'
+import { DEFAULT_NTFY_SERVER } from '@cityssm/ntfy-publish'
 import { hoursToMillis } from '@cityssm/to-millis'
 import type { config as MSSQLConfig } from 'mssql'
 
@@ -74,6 +75,7 @@ export const configDefaultValues = {
         defaultTopic: string
       }
     | undefined,
+  'connectors.ntfy.serverUrl': DEFAULT_NTFY_SERVER,
 
   'connectors.pearl': undefined as unknown as MSSQLConfig | undefined,
 

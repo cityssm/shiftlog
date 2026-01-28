@@ -2,6 +2,9 @@ import type { Request, Response } from 'express'
 
 import getAssignedToList from '../../database/assignedTo/getAssignedToList.js'
 import getEmployee from '../../database/employees/getEmployee.js'
+import getNotificationConfigurations from '../../database/notifications/getNotificationConfigurations.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
+import type { NotificationConfiguration } from '../../types/record.types.js'
 
 export default async function handler(
   request: Request,
@@ -24,10 +27,32 @@ export default async function handler(
     employee = undefined
   }
 
+  let ntfyNotificationConfigurations: NotificationConfiguration[] = []
+
+  if (getConfigProperty('notifications.protocols').includes('ntfy')) {
+    const notificationConfigurations = await getNotificationConfigurations()
+
+    const assignedToItems = await getAssignedToList(
+      request.session.user?.userName
+    )
+
+    ntfyNotificationConfigurations = notificationConfigurations.filter(
+      (config) => (
+        config.isActive &&
+          config.notificationType === 'ntfy' &&
+          (config.assignedToId === null ||
+            assignedToItems.some(
+              (item) => item.assignedToId === config.assignedToId
+            ))
+        )
+    )
+  }
+
   response.render('dashboard/userSettings', {
     headTitle: 'User Settings',
 
     assignedToDataListItems,
-    employee
+    employee,
+    ntfyNotificationConfigurations
   })
 }
