@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type Leaflet from 'leaflet'
@@ -145,20 +143,22 @@ declare const exports: {
             {
               locationId
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteLocationResponse
-
+            (responseJSON: DoDeleteLocationResponse) => {
               if (responseJSON.success) {
                 exports.locations = responseJSON.locations
                 currentFilteredLocations = responseJSON.locations
+
                 // Adjust current page if it becomes invalid after deletion
                 const totalPages = Math.ceil(
                   responseJSON.locations.length / ITEMS_PER_PAGE
                 )
+
                 if (currentPage > totalPages && totalPages > 0) {
                   currentPage = totalPages
                 }
+
                 renderLocationsWithPagination(responseJSON.locations)
+
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Location Deleted',
@@ -170,9 +170,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error Deleting Location',
 
-                  message:
-                    (responseJSON as { message: string }).message ??
-                    'Please try again.'
+                  message: responseJSON.message
                 })
               }
             }
@@ -207,15 +205,16 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateLocation`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateLocationResponse
-
+        (responseJSON: DoUpdateLocationResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
+
             exports.locations = responseJSON.locations
             currentFilteredLocations = responseJSON.locations
+
             // Keep the current page after updating
             renderLocationsWithPagination(responseJSON.locations)
+
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Location Updated',
@@ -227,9 +226,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Updating Location',
 
-              message:
-                (responseJSON as { message: string }).message ??
-                'Please try again.'
+              message: responseJSON.message
             })
           }
         }
@@ -440,9 +437,7 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doAddLocation`,
           addForm,
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoAddLocationResponse
-
+          (responseJSON: DoAddLocationResponse) => {
             if (responseJSON.success) {
               closeModalFunction()
 
@@ -452,6 +447,7 @@ declare const exports: {
               currentFilteredLocations = responseJSON.locations
               currentPage = 1
               renderLocationsWithPagination(responseJSON.locations)
+
               bulmaJS.alert({
                 contextualColorName: 'success',
                 title: 'Location Added',
@@ -463,9 +459,7 @@ declare const exports: {
                 contextualColorName: 'danger',
                 title: 'Error Adding Location',
 
-                message:
-                  (responseJSON as { message: string }).message ??
-                  'Please try again.'
+                message: responseJSON.message
               })
             }
           }

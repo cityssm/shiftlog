@@ -524,4 +524,3 @@
     updateCounts();
     loadMilestones();
 })();
-export {};

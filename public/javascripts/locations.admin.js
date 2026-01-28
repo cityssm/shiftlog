@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const locationsContainerElement = document.querySelector('#container--locations');
@@ -83,8 +82,7 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteLocation`, {
                         locationId
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success) {
                             exports.locations = responseJSON.locations;
                             currentFilteredLocations = responseJSON.locations;
@@ -104,8 +102,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Deleting Location',
-                                message: responseJSON.message ??
-                                    'Please try again.'
+                                message: responseJSON.message
                             });
                         }
                     });
@@ -127,8 +124,7 @@
         function doUpdateLocation(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateLocation`, editForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateLocation`, editForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     exports.locations = responseJSON.locations;
@@ -145,8 +141,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Location',
-                        message: responseJSON.message ??
-                            'Please try again.'
+                        message: responseJSON.message
                     });
                 }
             });
@@ -298,8 +293,7 @@
         function doAddLocation(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddLocation`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddLocation`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     addForm.reset();
@@ -317,8 +311,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Adding Location',
-                        message: responseJSON.message ??
-                            'Please try again.'
+                        message: responseJSON.message
                     });
                 }
             });
