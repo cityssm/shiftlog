@@ -10,6 +10,10 @@ import type {
 
 import type { ShiftLogGlobal } from './types.js'
 
+import type { DoAddEquipmentResponse } from '../../handlers/admin-post/doAddEquipment.js'
+import type { DoDeleteEquipmentResponse } from '../../handlers/admin-post/doDeleteEquipment.js'
+import type { DoUpdateEquipmentResponse } from '../../handlers/admin-post/doUpdateEquipment.js'
+
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
 
@@ -61,10 +65,8 @@ declare const exports: {
             {
               equipmentNumber
             },
-            (responseJSON: {
-                success: boolean
-                equipment?: Equipment[]
-              }) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteEquipmentResponse
 
               if (responseJSON.success) {
                 if (responseJSON.equipment !== undefined) {
@@ -121,10 +123,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEquipment`,
         updateForm,
-        (responseJSON: {
-            success: boolean
-            equipment?: Equipment[]
-          }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateEquipmentResponse
 
           if (responseJSON.success) {
             closeModalFunction()
@@ -374,10 +374,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEquipment`,
         addForm,
-        (responseJSON: {
-            success: boolean
-            equipment?: Equipment[]
-          }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddEquipmentResponse
 
           if (responseJSON.success) {
             closeModalFunction()
