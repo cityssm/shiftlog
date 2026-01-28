@@ -63,15 +63,11 @@ declare const exports: {
             {
               employeeNumber
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteEmployeeResponse
-
+            (responseJSON: DoDeleteEmployeeResponse) => {
               if (responseJSON.success) {
                 // Update the employees list with the new data from the server
-                if (responseJSON.employees !== undefined) {
-                  exports.employees = responseJSON.employees
-                  applyCurrentFilter()
-                }
+                exports.employees = responseJSON.employees
+                applyCurrentFilter()
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -84,7 +80,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error Deleting Employee',
 
-                  message: responseJSON.message ?? 'Please try again.'
+                  message: responseJSON.message
                 })
               }
             }
@@ -121,17 +117,13 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployee`,
         editForm,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateEmployeeResponse
-
+        (responseJSON: DoUpdateEmployeeResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
 
             // Update the employees list with the new data from the server
-            if (responseJSON.employees !== undefined) {
-              exports.employees = responseJSON.employees
-              applyCurrentFilter()
-            }
+            exports.employees = responseJSON.employees
+            applyCurrentFilter()
 
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -392,19 +384,15 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doAddEmployee`,
           addForm,
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoAddEmployeeResponse
-
+          (responseJSON: DoAddEmployeeResponse) => {
             if (responseJSON.success) {
               closeModalFunction()
 
               addForm.reset()
 
               // Update the employees list with the new data from the server
-              if (responseJSON.employees !== undefined) {
-                exports.employees = responseJSON.employees
-                applyCurrentFilter()
-              }
+              exports.employees = responseJSON.employees
+              applyCurrentFilter()
 
               bulmaJS.alert({
                 contextualColorName: 'success',

@@ -27,14 +27,11 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEmployee`, {
                         employeeNumber
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    }, (responseJSON) => {
                         if (responseJSON.success) {
                             // Update the employees list with the new data from the server
-                            if (responseJSON.employees !== undefined) {
-                                exports.employees = responseJSON.employees;
-                                applyCurrentFilter();
-                            }
+                            exports.employees = responseJSON.employees;
+                            applyCurrentFilter();
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Employee Deleted',
@@ -45,7 +42,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error Deleting Employee',
-                                message: responseJSON.message ?? 'Please try again.'
+                                message: responseJSON.message
                             });
                         }
                     });
@@ -68,15 +65,12 @@
         function doUpdateEmployee(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployee`, editForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployee`, editForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     // Update the employees list with the new data from the server
-                    if (responseJSON.employees !== undefined) {
-                        exports.employees = responseJSON.employees;
-                        applyCurrentFilter();
-                    }
+                    exports.employees = responseJSON.employees;
+                    applyCurrentFilter();
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Employee Updated',
@@ -261,16 +255,13 @@
         function doAddEmployee(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployee`, addForm, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployee`, addForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     addForm.reset();
                     // Update the employees list with the new data from the server
-                    if (responseJSON.employees !== undefined) {
-                        exports.employees = responseJSON.employees;
-                        applyCurrentFilter();
-                    }
+                    exports.employees = responseJSON.employees;
+                    applyCurrentFilter();
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Employee Added',
