@@ -113,7 +113,8 @@
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
                     // Open the details panel if it's closed
@@ -201,7 +202,8 @@
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
                     renderDataListItems(dataListKey, responseJSON.items);
@@ -290,7 +292,8 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataListItem`, {
                         dataListKey,
                         dataListItemId: Number.parseInt(dataListItemId, 10)
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.items !== undefined) {
                             renderDataListItems(dataListKey, responseJSON.items);
                             bulmaJS.alert({
@@ -366,7 +369,8 @@
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderDataListItems`, {
                     dataListKey,
                     dataListItemIds
-                }, (responseJSON) => {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (!responseJSON.success) {
                         bulmaJS.alert({
                             contextualColorName: 'danger',

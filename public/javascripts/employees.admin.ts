@@ -1,6 +1,9 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddEmployeeResponse } from '../../handlers/admin-post/doAddEmployee.js'
+import type { DoDeleteEmployeeResponse } from '../../handlers/admin-post/doDeleteEmployee.js'
+import type { DoUpdateEmployeeResponse } from '../../handlers/admin-post/doUpdateEmployee.js'
 import type { Employee, UserGroup } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -60,12 +63,8 @@ declare const exports: {
             {
               employeeNumber
             },
-            (responseJSON: {
-                message?: string
-                success: boolean
-
-                employees?: Employee[]
-              }) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteEmployeeResponse
 
               if (responseJSON.success) {
                 // Update the employees list with the new data from the server
@@ -122,11 +121,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployee`,
         editForm,
-        (responseJSON: {
-            message?: string
-            success: boolean
-            employees?: Employee[]
-          }) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateEmployeeResponse
 
           if (responseJSON.success) {
             closeModalFunction()
@@ -396,12 +392,8 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doAddEmployee`,
           addForm,
-          (responseJSON: {
-              message?: string
-              success: boolean
-
-              employees?: Employee[]
-            }) => {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as DoAddEmployeeResponse
 
             if (responseJSON.success) {
               closeModalFunction()
@@ -426,7 +418,7 @@ declare const exports: {
                 contextualColorName: 'danger',
                 title: 'Error Adding Employee',
 
-                message: responseJSON.message ?? 'Please try again.'
+                message: 'Please try again.'
               })
             }
           }

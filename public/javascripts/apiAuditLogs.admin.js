@@ -21,7 +21,8 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doResetUserApiKey`, {
                         userName
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -152,7 +153,8 @@
         if (isValidApiKeyValue !== '') {
             requestBody.isValidApiKey = isValidApiKeyValue === 'true';
         }
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`, requestBody, (responseJSON) => {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`, requestBody, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 totalCount = responseJSON.totalCount;
                 renderAuditLogs(responseJSON.logs);
