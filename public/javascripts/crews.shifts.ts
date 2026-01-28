@@ -77,9 +77,7 @@ declare const exports: {
             {
               crewId
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteCrewResponse
-
+            (responseJSON: DoDeleteCrewResponse) => {
               if (responseJSON.success) {
                 if (responseJSON.crews !== undefined) {
                   exports.crews = responseJSON.crews
@@ -141,9 +139,7 @@ declare const exports: {
             cityssm.postJSON(
               `${shiftUrlPrefix}/doUpdateCrew`,
               formEvent.currentTarget,
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoUpdateCrewResponse
-
+              (responseJSON: DoUpdateCrewResponse) => {
                 if (responseJSON.success) {
                   if (responseJSON.crews !== undefined) {
                     exports.crews = responseJSON.crews
@@ -203,9 +199,7 @@ declare const exports: {
               crewId,
               employeeNumber
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteCrewMemberResponse
-
+            (responseJSON: DoDeleteCrewMemberResponse) => {
               if (responseJSON.success && responseJSON.crew !== undefined) {
                 const panelElement = document.querySelector(
                   `details[data-crew-id="${crewId}"]`
@@ -245,10 +239,8 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftUrlPrefix}/doGetCrew`,
           { crewId },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoGetCrewResponse
-
-            if (responseJSON.success && responseJSON.crew !== undefined) {
+          (responseJSON: DoGetCrewResponse) => {
+            if (responseJSON.success) {
               const existingMemberNumbers = new Set(
                 responseJSON.crew.members.map((member) => member.employeeNumber)
               )
@@ -273,9 +265,7 @@ declare const exports: {
             cityssm.postJSON(
               `${shiftUrlPrefix}/doAddCrewMember`,
               formEvent.currentTarget,
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoAddCrewMemberResponse
-
+              (responseJSON: DoAddCrewMemberResponse) => {
                 if (responseJSON.success && responseJSON.crew !== undefined) {
                   const panelElement = document.querySelector(
                     `details[data-crew-id="${crewId}"]`
@@ -329,9 +319,7 @@ declare const exports: {
               crewId,
               equipmentNumber
             },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteCrewEquipmentResponse
-
+            (responseJSON: DoDeleteCrewEquipmentResponse) => {
               if (responseJSON.success && responseJSON.crew !== undefined) {
                 const panelElement = document.querySelector(
                   `details[data-crew-id="${crewId}"]`
@@ -363,9 +351,7 @@ declare const exports: {
         equipmentNumber,
         employeeNumber
       },
-      (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoUpdateCrewEquipmentResponse
-
+      (responseJSON: DoUpdateCrewEquipmentResponse) => {
         if (responseJSON.success && responseJSON.crew !== undefined) {
           const panelElement = document.querySelector(
             `details[data-crew-id="${crewId}"]`
@@ -421,10 +407,8 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftUrlPrefix}/doGetCrew`,
           { crewId },
-          (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoGetCrewResponse
-
-            if (responseJSON.success && responseJSON.crew !== undefined) {
+          (responseJSON: DoGetCrewResponse) => {
+            if (responseJSON.success) {
               const existingEquipmentNumbers = new Set(
                 responseJSON.crew.equipment.map(
                   (equipment) => equipment.equipmentNumber
@@ -476,14 +460,15 @@ declare const exports: {
 
                 if (selectedEquipment === '') {
                   // Reset to all crew members
-                  populateEmployeeOptions(responseJSON.crew?.members ?? [])
+                  populateEmployeeOptions(responseJSON.crew.members)
                 } else {
                   // Get eligible employees for the selected equipment
                   cityssm.postJSON(
                     `${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`,
                     { equipmentNumber: selectedEquipment },
                     (rawEligibleResponseJSON) => {
-                      const eligibleResponse = rawEligibleResponseJSON as DoGetEligibleEmployeesForEquipmentResponse
+                      const eligibleResponse =
+                        rawEligibleResponseJSON as DoGetEligibleEmployeesForEquipmentResponse
 
                       if (
                         eligibleResponse.success &&
@@ -532,9 +517,7 @@ declare const exports: {
             cityssm.postJSON(
               `${shiftUrlPrefix}/doAddCrewEquipment`,
               formEvent.currentTarget,
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoAddCrewEquipmentResponse
-
+              (responseJSON: DoAddCrewEquipmentResponse) => {
                 if (responseJSON.success && responseJSON.crew !== undefined) {
                   const panelElement = document.querySelector(
                     `details[data-crew-id="${crewId}"]`
@@ -777,7 +760,8 @@ declare const exports: {
               `${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`,
               { equipmentNumber: equipmentItem.equipmentNumber },
               (rawEligibleResponseJSON) => {
-                const eligibleResponse = rawEligibleResponseJSON as DoGetEligibleEmployeesForEquipmentResponse
+                const eligibleResponse =
+                  rawEligibleResponseJSON as DoGetEligibleEmployeesForEquipmentResponse
 
                 if (
                   eligibleResponse.success &&
@@ -937,10 +921,8 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftUrlPrefix}/doGetCrew`,
             { crewId },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoGetCrewResponse
-
-              if (responseJSON.success && responseJSON.crew !== undefined) {
+            (responseJSON: DoGetCrewResponse) => {
+              if (responseJSON.success) {
                 renderCrewDetails(crewId, responseJSON.crew, panelElement)
               }
             }
@@ -963,14 +945,10 @@ declare const exports: {
             cityssm.postJSON(
               `${shiftUrlPrefix}/doAddCrew`,
               formEvent.currentTarget,
-              (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoAddCrewResponse
-
+              (responseJSON: DoAddCrewResponse) => {
                 if (responseJSON.success) {
-                  if (responseJSON.crews !== undefined) {
-                    exports.crews = responseJSON.crews
-                    renderCrews()
-                  }
+                  exports.crews = responseJSON.crews
+                  renderCrews()
 
                   closeModalFunction()
 
