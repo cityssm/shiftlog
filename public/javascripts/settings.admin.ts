@@ -1,6 +1,7 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoUpdateSettingResponse } from '../../handlers/admin-post/doUpdateSetting.js'
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -59,10 +60,8 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/admin/doUpdateSetting`,
       formElement,
-      (responseJSON: {
-          errorMessage?: string
-          success: boolean
-        }) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoUpdateSettingResponse
 
         if (responseJSON.success) {
           bulmaJS.alert({

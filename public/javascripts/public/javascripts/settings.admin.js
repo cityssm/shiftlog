@@ -54,3 +54,5 @@
             ?.addEventListener('change', highlightChangedSettings);
     }
 })();
+export {};
+//# sourceMappingURL=settings.admin.js.map
