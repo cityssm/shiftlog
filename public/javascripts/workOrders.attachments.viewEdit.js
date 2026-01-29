@@ -139,11 +139,13 @@
                   </div>
                 `
                 : ''}
-            ${canEdit
+          </div>
+          ${canEdit
                 ? /* html */ `
+                <div class="media-right">
                   <div class="buttons">
                     <button
-                      class="button is-small is-light edit-attachment"
+                      class="button is-small edit-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
                       title="Edit Description"
                     >
@@ -152,20 +154,14 @@
                       </span>
                       <span>Edit Description</span>
                     </button>
+                    <button
+                      class="button is-small is-light is-danger delete-attachment"
+                      data-attachment-id="${attachment.workOrderAttachmentId}"
+                      title="Delete Attachment"
+                    >
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
                   </div>
-                `
-                : ''}
-          </div>
-          ${canEdit
-                ? /* html */ `
-                <div class="media-right">
-                  <button
-                    class="button is-small is-light is-danger delete-attachment"
-                    data-attachment-id="${attachment.workOrderAttachmentId}"
-                    title="Delete Attachment"
-                  >
-                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
-                  </button>
                 </div>
               `
                 : ''}

@@ -203,12 +203,14 @@ declare const bulmaJS: BulmaJS
                 `
                 : ''
             }
-            ${
-              canEdit
-                ? /* html */ `
+          </div>
+          ${
+            canEdit
+              ? /* html */ `
+                <div class="media-right">
                   <div class="buttons">
                     <button
-                      class="button is-small is-light edit-attachment"
+                      class="button is-small edit-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
                       title="Edit Description"
                     >
@@ -217,22 +219,14 @@ declare const bulmaJS: BulmaJS
                       </span>
                       <span>Edit Description</span>
                     </button>
+                    <button
+                      class="button is-small is-light is-danger delete-attachment"
+                      data-attachment-id="${attachment.workOrderAttachmentId}"
+                      title="Delete Attachment"
+                    >
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
                   </div>
-                `
-                : ''
-            }
-          </div>
-          ${
-            canEdit
-              ? /* html */ `
-                <div class="media-right">
-                  <button
-                    class="button is-small is-light is-danger delete-attachment"
-                    data-attachment-id="${attachment.workOrderAttachmentId}"
-                    title="Delete Attachment"
-                  >
-                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
-                  </button>
                 </div>
               `
               : ''
@@ -346,7 +340,6 @@ declare const bulmaJS: BulmaJS
     cityssm.openHtmlModal('workOrders-addAttachment', {
       onshow(modalElement) {
         exports.shiftLog.setUnsavedChanges('modal')
-
         ;(
           modalElement.querySelector(
             '#addWorkOrderAttachment--workOrderId'
