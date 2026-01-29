@@ -378,4 +378,3 @@
     // Load attachments initially
     loadAttachments();
 })();
-export {};
