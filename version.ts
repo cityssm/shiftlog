@@ -1,3 +1,3 @@
-export const version = '1.0.0-dev.1'
+export const version = '1.0.0-dev.2'
 
 export default version
