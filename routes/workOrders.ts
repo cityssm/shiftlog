@@ -40,6 +40,7 @@ import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkO
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js'
 import handler_doSetWorkOrderAttachmentThumbnail from '../handlers/workOrders-post/doSetWorkOrderAttachmentThumbnail.js'
 import handler_doUpdateWorkOrder from '../handlers/workOrders-post/doUpdateWorkOrder.js'
+import handler_doUpdateWorkOrderAttachment from '../handlers/workOrders-post/doUpdateWorkOrderAttachment.js'
 import handler_doUpdateWorkOrderCost from '../handlers/workOrders-post/doUpdateWorkOrderCost.js'
 import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUpdateWorkOrderMilestone.js'
 import handler_doUpdateWorkOrderMilestoneOrder from '../handlers/workOrders-post/doUpdateWorkOrderMilestoneOrder.js'
@@ -151,6 +152,11 @@ router
     updateHandler,
     upload.single('attachmentFile'),
     handler_doUploadWorkOrderAttachment
+  )
+  .post(
+    '/doUpdateWorkOrderAttachment',
+    updateHandler,
+    handler_doUpdateWorkOrderAttachment
   )
   .post(
     '/doDeleteWorkOrderAttachment',

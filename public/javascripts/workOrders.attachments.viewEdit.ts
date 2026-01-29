@@ -208,13 +208,25 @@ declare const bulmaJS: BulmaJS
             canEdit
               ? /* html */ `
                 <div class="media-right">
-                  <button
-                    class="button is-small is-light is-danger delete-attachment"
-                    data-attachment-id="${attachment.workOrderAttachmentId}"
-                    title="Delete Attachment"
-                  >
-                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
-                  </button>
+                  <div class="buttons">
+                    <button
+                      class="button is-small edit-attachment"
+                      data-attachment-id="${attachment.workOrderAttachmentId}"
+                      title="Edit Description"
+                    >
+                      <span class="icon is-small">
+                        <i class="fa-solid fa-edit"></i>
+                      </span>
+                      <span>Edit Description</span>
+                    </button>
+                    <button
+                      class="button is-small is-light is-danger delete-attachment"
+                      data-attachment-id="${attachment.workOrderAttachmentId}"
+                      title="Delete Attachment"
+                    >
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
                 </div>
               `
               : ''
@@ -231,6 +243,16 @@ declare const bulmaJS: BulmaJS
           event.preventDefault()
           deleteAttachment(attachment.workOrderAttachmentId)
         })
+
+        const editLink = attachmentElement.querySelector(
+          '.edit-attachment'
+        ) as HTMLButtonElement | null
+        if (editLink !== null) {
+          editLink.addEventListener('click', (event) => {
+            event.preventDefault()
+            showEditAttachmentModal(attachment)
+          })
+        }
 
         const setThumbnailLink = attachmentElement.querySelector(
           '.set-thumbnail'
@@ -318,7 +340,6 @@ declare const bulmaJS: BulmaJS
     cityssm.openHtmlModal('workOrders-addAttachment', {
       onshow(modalElement) {
         exports.shiftLog.setUnsavedChanges('modal')
-
         ;(
           modalElement.querySelector(
             '#addWorkOrderAttachment--workOrderId'
@@ -353,6 +374,59 @@ declare const bulmaJS: BulmaJS
         modalElement
           .querySelector('form')
           ?.addEventListener('submit', doAddAttachment)
+      },
+
+      onremoved() {
+        exports.shiftLog.clearUnsavedChanges('modal')
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function showEditAttachmentModal(attachment: WorkOrderAttachment): void {
+    let closeModalFunction: () => void
+
+    function doUpdateAttachment(submitEvent: Event): void {
+      submitEvent.preventDefault()
+      const formElement = submitEvent.currentTarget as HTMLFormElement
+
+      cityssm.postJSON(
+        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderAttachment`,
+        formElement,
+        (responseJSON: { success: boolean }) => {
+          if (responseJSON.success) {
+            closeModalFunction()
+            loadAttachments()
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              message: 'Failed to update attachment description.'
+            })
+          }
+        }
+      )
+    }
+
+    cityssm.openHtmlModal('workOrders-editAttachment', {
+      onshow(modalElement) {
+        exports.shiftLog.setUnsavedChanges('modal')
+        ;(
+          modalElement.querySelector(
+            '#editWorkOrderAttachment--workOrderAttachmentId'
+          ) as HTMLInputElement
+        ).value = attachment.workOrderAttachmentId.toString()
+        ;(
+          modalElement.querySelector(
+            '#editWorkOrderAttachment--attachmentDescription'
+          ) as HTMLInputElement
+        ).value = attachment.attachmentDescription
+      },
+      onshown(modalElement, _closeModalFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = _closeModalFunction
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', doUpdateAttachment)
       },
 
       onremoved() {

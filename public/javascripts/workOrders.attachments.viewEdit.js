@@ -143,13 +143,25 @@
           ${canEdit
                 ? /* html */ `
                 <div class="media-right">
-                  <button
-                    class="button is-small is-light is-danger delete-attachment"
-                    data-attachment-id="${attachment.workOrderAttachmentId}"
-                    title="Delete Attachment"
-                  >
-                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
-                  </button>
+                  <div class="buttons">
+                    <button
+                      class="button is-small edit-attachment"
+                      data-attachment-id="${attachment.workOrderAttachmentId}"
+                      title="Edit Description"
+                    >
+                      <span class="icon is-small">
+                        <i class="fa-solid fa-edit"></i>
+                      </span>
+                      <span>Edit Description</span>
+                    </button>
+                    <button
+                      class="button is-small is-light is-danger delete-attachment"
+                      data-attachment-id="${attachment.workOrderAttachmentId}"
+                      title="Delete Attachment"
+                    >
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
                 </div>
               `
                 : ''}
@@ -162,6 +174,13 @@
                     event.preventDefault();
                     deleteAttachment(attachment.workOrderAttachmentId);
                 });
+                const editLink = attachmentElement.querySelector('.edit-attachment');
+                if (editLink !== null) {
+                    editLink.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        showEditAttachmentModal(attachment);
+                    });
+                }
                 const setThumbnailLink = attachmentElement.querySelector('.set-thumbnail');
                 if (setThumbnailLink !== null) {
                     setThumbnailLink.addEventListener('click', (event) => {
@@ -250,6 +269,43 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddAttachment);
+            },
+            onremoved() {
+                exports.shiftLog.clearUnsavedChanges('modal');
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function showEditAttachmentModal(attachment) {
+        let closeModalFunction;
+        function doUpdateAttachment(submitEvent) {
+            submitEvent.preventDefault();
+            const formElement = submitEvent.currentTarget;
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderAttachment`, formElement, (responseJSON) => {
+                if (responseJSON.success) {
+                    closeModalFunction();
+                    loadAttachments();
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        message: 'Failed to update attachment description.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('workOrders-editAttachment', {
+            onshow(modalElement) {
+                exports.shiftLog.setUnsavedChanges('modal');
+                modalElement.querySelector('#editWorkOrderAttachment--workOrderAttachmentId').value = attachment.workOrderAttachmentId.toString();
+                modalElement.querySelector('#editWorkOrderAttachment--attachmentDescription').value = attachment.attachmentDescription;
+            },
+            onshown(modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doUpdateAttachment);
             },
             onremoved() {
                 exports.shiftLog.clearUnsavedChanges('modal');
