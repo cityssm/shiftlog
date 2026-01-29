@@ -231,6 +231,14 @@
         clickEvent.preventDefault();
         let closeModalFunction;
         let modalElement;
+        if (adhocTaskTypes.length === 0) {
+            bulmaJS.alert({
+                contextualColorName: 'warning',
+                title: 'No Task Types Available',
+                message: 'Please create ad hoc task types before creating tasks.'
+            });
+            return;
+        }
         function doCreate(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doCreateAdhocTask`, formEvent.currentTarget, (responseJSON) => {

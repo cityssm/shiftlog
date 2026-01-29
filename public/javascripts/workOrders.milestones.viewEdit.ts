@@ -13,6 +13,7 @@ interface AssignedToOption {
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+  
   assignedToOptions: AssignedToOption[]
   workOrderAssignedToId: number | null
   workOrderOpenDateTime: string

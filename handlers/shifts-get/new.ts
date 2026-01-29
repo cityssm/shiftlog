@@ -48,7 +48,8 @@ export default async function handler(
       shiftTimes.length === 1 ? shiftTimes[0].dataListItemId : -1,
     shiftTypeDataListItemId:
       shiftTypes.length === 1 ? shiftTypes[0].dataListItemId : -1,
-    supervisorEmployeeNumber: '',
+    supervisorEmployeeNumber:
+      supervisors.length === 1 ? supervisors[0].employeeNumber : '',
     shiftDescription: ''
   } satisfies Partial<Shift>
 

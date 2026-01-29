@@ -285,22 +285,18 @@
                             else {
                                 // Get eligible employees for the selected equipment
                                 cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
-                                    if (eligibleResponseJSON.success &&
-                                        eligibleResponseJSON.employees !== undefined) {
+                                    if (eligibleResponseJSON.success) {
                                         const eligibleEmployeeNumbers = new Set(eligibleResponseJSON.employees.map((emp) => emp.employeeNumber));
                                         populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers);
                                     }
                                     else {
                                         // On error, show all crew members
                                         populateEmployeeOptions(responseJSON.crew.members);
-                                        if (!eligibleResponse.success &&
-                                            eligibleResponse.message) {
-                                            bulmaJS.alert({
-                                                contextualColorName: 'warning',
-                                                title: 'Unable to Filter Employees',
-                                                message: eligibleResponse.message
-                                            });
-                                        }
+                                        bulmaJS.alert({
+                                            contextualColorName: 'warning',
+                                            title: 'Unable to Filter Employees',
+                                            message: eligibleResponseJSON.message
+                                        });
                                     }
                                 });
                             }

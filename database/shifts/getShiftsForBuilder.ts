@@ -10,6 +10,7 @@ export interface ShiftForBuilder extends Shift {
     crewName: string
     shiftCrewNote: string
   }>
+
   employees: Array<{
     employeeNumber: string
     firstName: string
@@ -21,6 +22,7 @@ export interface ShiftForBuilder extends Shift {
     isSupervisor: boolean
     shiftEmployeeNote: string
   }>
+
   equipment: Array<{
     equipmentNumber: string
 
@@ -32,6 +34,7 @@ export interface ShiftForBuilder extends Shift {
 
     shiftEquipmentNote: string
   }>
+
   workOrders: Array<{
     workOrderId: number
     workOrderNumber: string
@@ -40,6 +43,7 @@ export interface ShiftForBuilder extends Shift {
 
     shiftWorkOrderNote: string
   }>
+
   adhocTasks: Array<{
     adhocTaskId: number
     adhocTaskTypeDataListItemId: number

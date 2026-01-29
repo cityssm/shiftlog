@@ -9,7 +9,7 @@ config.application.backgroundImage = 'background-playground.jpg'
 config.application.instance = 'csd'
 
 config.shifts = {
-  isEnabled: false
+  isEnabled: true
 }
 
 config.workOrders = {

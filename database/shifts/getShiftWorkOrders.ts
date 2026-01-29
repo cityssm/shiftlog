@@ -35,8 +35,8 @@ export default async function getShiftWorkOrders(
         w.workOrderCloseDateTime,
         w.requestorName,
         w.requestorContactInfo,
-        w.assignedToDataListItemId,
-        atd.dataListItem AS assignedToDataListItem,
+        w.assignedToId,
+        atd.assignedToName,
         w.locationAddress1,
         w.locationAddress2,
         w.locationCityProvince,
@@ -53,7 +53,7 @@ export default async function getShiftWorkOrders(
         INNER JOIN ShiftLog.WorkOrderTypes wt ON w.workOrderTypeId = wt.workOrderTypeId
         LEFT JOIN ShiftLog.DataListItems wsd ON w.workOrderStatusDataListItemId = wsd.dataListItemId
         LEFT JOIN ShiftLog.DataListItems wpd ON w.workOrderPriorityDataListItemId = wpd.dataListItemId
-        LEFT JOIN ShiftLog.DataListItems atd ON w.assignedToDataListItemId = atd.dataListItemId
+        LEFT JOIN ShiftLog.AssignedTo atd ON w.assignedToId = atd.assignedToId
       WHERE
         sw.shiftId = @shiftId
         AND w.instance = @instance

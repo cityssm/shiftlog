@@ -39,12 +39,10 @@
                 tracker[key].push(shift.shiftId);
             }
             // Track adhoc tasks
-            if (shift.adhocTasks) {
-                for (const adhocTask of shift.adhocTasks) {
-                    const key = getItemKey('adhocTask', adhocTask.adhocTaskId);
-                    tracker[key] ??= [];
-                    tracker[key].push(shift.shiftId);
-                }
+            for (const adhocTask of shift.adhocTasks) {
+                const key = getItemKey('adhocTask', adhocTask.adhocTaskId);
+                tracker[key] ??= [];
+                tracker[key].push(shift.shiftId);
             }
         }
         // Remove items that only appear once
@@ -324,7 +322,7 @@
             containerElement.append(workOrdersSection);
         }
         // Add adhoc tasks section
-        if (shift.adhocTasks && shift.adhocTasks.length > 0) {
+        if (shift.adhocTasks.length > 0) {
             const adhocTasksSection = document.createElement('div');
             adhocTasksSection.className = 'mb-3';
             const adhocTasksLabel = document.createElement('strong');
@@ -1655,7 +1653,7 @@
                                                                     equipmentNumber: equipment.equipmentNumber,
                                                                     shiftEquipmentNote: '',
                                                                     shiftId: toShiftId
-                                                                }, (addEqResponse) => {
+                                                                }, (_addEqResponse) => {
                                                                     equipmentProcessed += 1;
                                                                     if (equipmentProcessed ===
                                                                         totalEquipment) {
@@ -2484,7 +2482,7 @@
                         equipmentNumber: resourceId,
                         shiftEquipmentNote: '',
                         shiftId
-                    }, (response) => {
+                    }, (_response) => {
                         processedCount += 1;
                         successCount += 1;
                         checkbox.checked = false;

@@ -1,5 +1,5 @@
 import { ScheduledTask } from '@cityssm/scheduled-task';
-import { daysToMillis } from '@cityssm/to-millis';
+import { millisecondsInOneDay } from '@cityssm/to-millis';
 import Debug from 'debug';
 import permanentlyDeleteRecords from '../../database/cleanup/permanentlyDeleteRecords.js';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
@@ -40,7 +40,7 @@ const scheduledTask = new ScheduledTask('Database Cleanup', runCleanup, {
         second: 0
     },
     // Do not run more than once a day
-    minimumIntervalMillis: daysToMillis(1),
+    minimumIntervalMillis: millisecondsInOneDay,
     startTask: true
 });
 debug('Database cleanup task initialized and scheduled for weekly execution on Monday at 2:00 AM');

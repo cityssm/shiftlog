@@ -115,6 +115,8 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
         OR w.requestorName LIKE @searchString
         OR w.requestorContactInfo LIKE @searchString
         OR w.workOrderDetails LIKE @searchString
+        OR w.locationAddress1 LIKE @searchString
+        OR w.locationAddress2 LIKE @searchString
       )
     `
   }

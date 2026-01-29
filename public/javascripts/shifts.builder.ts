@@ -86,12 +86,10 @@ declare const exports: {
       }
 
       // Track adhoc tasks
-      if (shift.adhocTasks) {
-        for (const adhocTask of shift.adhocTasks) {
-          const key = getItemKey('adhocTask', adhocTask.adhocTaskId)
-          tracker[key] ??= []
-          tracker[key].push(shift.shiftId)
-        }
+      for (const adhocTask of shift.adhocTasks) {
+        const key = getItemKey('adhocTask', adhocTask.adhocTaskId)
+        tracker[key] ??= []
+        tracker[key].push(shift.shiftId)
       }
     }
 
@@ -462,7 +460,7 @@ declare const exports: {
     }
 
     // Add adhoc tasks section
-    if (shift.adhocTasks && shift.adhocTasks.length > 0) {
+    if (shift.adhocTasks.length > 0) {
       const adhocTasksSection = document.createElement('div')
       adhocTasksSection.className = 'mb-3'
 
@@ -925,7 +923,7 @@ declare const exports: {
     const equipmentList = document.querySelector(
       '#available--equipment .available-resources-list'
     ) as HTMLElement
-    
+
     if (equipmentList !== null) {
       equipmentList.textContent = ''
 
@@ -2272,7 +2270,7 @@ declare const exports: {
                                               shiftEquipmentNote: '',
                                               shiftId: toShiftId
                                             },
-                                            (addEqResponse: {
+                                            (_addEqResponse: {
                                               success: boolean
                                             }) => {
                                               equipmentProcessed += 1
@@ -3472,7 +3470,7 @@ declare const exports: {
               shiftEquipmentNote: '',
               shiftId
             },
-            (response) => {
+            (_response) => {
               processedCount += 1
               successCount += 1
               checkbox.checked = false
