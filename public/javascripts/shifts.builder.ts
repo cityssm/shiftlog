@@ -5,8 +5,23 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 import type Leaflet from 'leaflet'
 
+import type { AvailableCrew } from '../../database/shifts/getAvailableCrews.js'
+import type { AvailableEmployee } from '../../database/shifts/getAvailableEmployees.js'
+import type { AvailableEquipment } from '../../database/shifts/getAvailableEquipment.js'
 import type { ShiftForBuilder } from '../../database/shifts/getShiftsForBuilder.js'
+import type { DoAddShiftEmployeeResponse } from '../../handlers/shifts-post/doAddShiftEmployee.js'
+import type { DoAddShiftEquipmentResponse } from '../../handlers/shifts-post/doAddShiftEquipment.js'
+import type { DoAddShiftWorkOrderResponse } from '../../handlers/shifts-post/doAddShiftWorkOrder.js'
+import type { DoCreateShiftResponse } from '../../handlers/shifts-post/doCreateShift.js'
+import type { DoDeleteShiftEmployeeResponse } from '../../handlers/shifts-post/doDeleteShiftEmployee.js'
+import type { DoDeleteShiftEquipmentResponse } from '../../handlers/shifts-post/doDeleteShiftEquipment.js'
+import type { DoGetAvailableAdhocTasksResponse } from '../../handlers/shifts-post/doGetAvailableAdhocTasks.js'
+import type { DoGetAvailableResourcesResponse } from '../../handlers/shifts-post/doGetAvailableResources.js'
+import type { DoGetShiftCreationDataResponse } from '../../handlers/shifts-post/doGetShiftCreationData.js'
 import type { DoGetShiftsForBuilderResponse } from '../../handlers/shifts-post/doGetShiftsForBuilder.js'
+import type { DoUpdateShiftResponse } from '../../handlers/shifts-post/doUpdateShift.js'
+import type { DoUpdateShiftEmployeeResponse } from '../../handlers/shifts-post/doUpdateShiftEmployee.js'
+import type { DoUpdateShiftEquipmentResponse } from '../../handlers/shifts-post/doUpdateShiftEquipment.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -783,25 +798,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftUrlPrefix}/doGetAvailableAdhocTasks`,
         {},
-        (responseJSON: {
-          success: boolean
-
-          adhocTasks: Array<{
-            adhocTaskId: number
-            adhocTaskTypeDataListItemId: number
-            adhocTaskTypeDataListItem?: string
-            taskDescription: string
-            locationAddress1: string
-            locationAddress2: string
-            locationCityProvince: string
-            locationLatitude?: number | null
-            locationLongitude?: number | null
-            taskDueDateTime?: Date | string | null
-          }>
-        }) => {
-          if (responseJSON.success) {
-            renderAvailableAdhocTasks(responseJSON.adhocTasks)
-          }
+        (responseJSON: DoGetAvailableAdhocTasksResponse) => {
+          renderAvailableAdhocTasks(responseJSON.adhocTasks)
         }
       )
     } else {
@@ -811,34 +809,17 @@ declare const exports: {
         {
           shiftDateString
         },
-        (responseJSON: {
-          crews: Array<{ crewId: number; crewName: string }>
-          employees: Array<{
-            employeeNumber: string
-            firstName: string
-            lastName: string
-            isSupervisor: boolean
-          }>
-          equipment: Array<{ equipmentName: string; equipmentNumber: string }>
-          success: boolean
-        }) => {
-          if (responseJSON.success) {
-            renderAvailableResources(responseJSON)
-          }
+        (responseJSON: DoGetAvailableResourcesResponse) => {
+          renderAvailableResources(responseJSON)
         }
       )
     }
   }
 
   function renderAvailableResources(resources: {
-    crews: Array<{ crewId: number; crewName: string }>
-    employees: Array<{
-      employeeNumber: string
-      firstName: string
-      lastName: string
-      isSupervisor: boolean
-    }>
-    equipment: Array<{ equipmentName: string; equipmentNumber: string }>
+    crews: AvailableCrew[]
+    employees: AvailableEmployee[]
+    equipment: AvailableEquipment[]
   }): void {
     // Show employees, equipment, and crews sections
     const employeesSection = document.querySelector(
@@ -1125,6 +1106,7 @@ declare const exports: {
     } else {
       const itemsContainer = document.createElement('div')
       itemsContainer.className = 'available-items'
+
       for (const adhocTask of adhocTasks) {
         const itemBox = document.createElement('div')
         itemBox.className = 'box p-2 mb-2'
@@ -1166,6 +1148,7 @@ declare const exports: {
 
         itemsContainer.append(itemBox)
       }
+
       adhocTasksList.append(itemsContainer)
     }
 
@@ -1700,7 +1683,8 @@ declare const exports: {
                       employeeNumber: employee.employeeNumber,
                       shiftId: draggedData.fromShiftId
                     },
-                    (empResponse: { success: boolean }) => {
+                    // eslint-disable-next-line @typescript-eslint/no-loop-func
+                    (empResponse: DoDeleteShiftEmployeeResponse) => {
                       if (empResponse.success) {
                         employeesDeletedCount += 1
                       } else {
@@ -1737,7 +1721,8 @@ declare const exports: {
                                 equipmentNumber: equipment.equipmentNumber,
                                 shiftId: draggedData.fromShiftId
                               },
-                              (eqResponse: { success: boolean }) => {
+                              // eslint-disable-next-line @typescript-eslint/no-loop-func
+                              (eqResponse: DoDeleteShiftEquipmentResponse) => {
                                 if (eqResponse.success) {
                                   equipmentDeletedCount += 1
                                 } else {
@@ -1984,7 +1969,7 @@ declare const exports: {
                         equipmentNumber: equipment.equipmentNumber,
                         shiftId: fromShiftId
                       },
-                      (deleteEquipResponse: { success: boolean }) => {
+                      (deleteEquipResponse: DoDeleteShiftEquipmentResponse) => {
                         if (deleteEquipResponse.success) {
                           // Add equipment to new shift with operator assignment
                           cityssm.postJSON(
@@ -2218,7 +2203,7 @@ declare const exports: {
                         employeeNumber: employee.employeeNumber,
                         shiftId: fromShiftId
                       },
-                      (deleteEmpResponse: { success: boolean }) => {
+                      (deleteEmpResponse: DoDeleteShiftEmployeeResponse) => {
                         if (deleteEmpResponse.success) {
                           // Add employee to new shift with crew assignment
                           cityssm.postJSON(
@@ -2549,7 +2534,7 @@ declare const exports: {
         shiftTypeDataListItemId: shift.shiftTypeDataListItemId,
         supervisorEmployeeNumber: employeeNumber
       },
-      (responseJSON: { success: boolean }) => {
+      (responseJSON: DoUpdateShiftResponse) => {
         if (responseJSON.success) {
           bulmaJS.alert({
             contextualColorName: 'success',
@@ -2584,7 +2569,7 @@ declare const exports: {
           employeeNumber,
           shiftId: toShiftId
         },
-        (responseJSON: { success: boolean }) => {
+        (responseJSON: DoUpdateShiftEmployeeResponse) => {
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2619,7 +2604,7 @@ declare const exports: {
                 shiftEmployeeNote: '',
                 shiftId: toShiftId
               },
-              (addResponse: { success: boolean }) => {
+              (addResponse: DoAddShiftEmployeeResponse) => {
                 if (addResponse.success) {
                   bulmaJS.alert({
                     contextualColorName: 'success',
@@ -2665,7 +2650,7 @@ declare const exports: {
           equipmentNumber,
           shiftId: toShiftId
         },
-        (responseJSON: { success: boolean; message?: string }) => {
+        (responseJSON: DoUpdateShiftEquipmentResponse) => {
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2702,7 +2687,7 @@ declare const exports: {
                 shiftEquipmentNote: '',
                 shiftId: toShiftId
               },
-              (addResponse: { success: boolean; message?: string }) => {
+              (addResponse: DoAddShiftEquipmentResponse) => {
                 if (addResponse.success) {
                   bulmaJS.alert({
                     contextualColorName: 'success',
@@ -2809,22 +2794,7 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftUrlPrefix}/doGetShiftCreationData`,
           {},
-          (responseJSON: {
-            shiftTimes: Array<{
-              dataListItem: string
-              dataListItemId: number
-            }>
-            shiftTypes: Array<{
-              dataListItem: string
-              dataListItemId: number
-            }>
-            success: boolean
-            supervisors: Array<{
-              employeeNumber: string
-              firstName: string
-              lastName: string
-            }>
-          }) => {
+          (responseJSON: DoGetShiftCreationDataResponse) => {
             if (responseJSON.success) {
               // Populate shift types
               for (const shiftType of responseJSON.shiftTypes) {
@@ -2860,26 +2830,14 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftUrlPrefix}/doCreateShift`,
             formElement,
-            (responseJSON: {
-              errorMessage?: string
-              shiftId?: number
-              success: boolean
-            }) => {
-              if (responseJSON.success) {
-                bulmaJS.alert({
-                  contextualColorName: 'success',
-                  message: 'Shift created successfully!'
-                })
-                closeModalFunction()
-                loadShifts()
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  message:
-                    responseJSON.errorMessage ?? 'Failed to create shift.',
-                  title: 'Creation Error'
-                })
-              }
+            (_responseJSON: DoCreateShiftResponse) => {
+              bulmaJS.alert({
+                contextualColorName: 'success',
+                message: 'Shift created successfully!'
+              })
+
+              closeModalFunction()
+              loadShifts()
             }
           )
         })
@@ -3098,47 +3056,38 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (responseJSON: {
-        employees: Array<{
-          employeeNumber: string
-          firstName: string
-          lastName: string
-        }>
-        success: boolean
-      }) => {
-        if (responseJSON.success) {
-          // Filter out employees already on the shift
-          const shiftEmployeeNumbers = new Set(
-            shift.employees.map((employee) => employee.employeeNumber)
-          )
-          const availableEmployees = responseJSON.employees.filter(
-            (employee) => !shiftEmployeeNumbers.has(employee.employeeNumber)
-          )
+      (responseJSON: DoGetAvailableResourcesResponse) => {
+        // Filter out employees already on the shift
+        const shiftEmployeeNumbers = new Set(
+          shift.employees.map((employee) => employee.employeeNumber)
+        )
+        const availableEmployees = responseJSON.employees.filter(
+          (employee) => !shiftEmployeeNumbers.has(employee.employeeNumber)
+        )
 
-          const employeeList = modalElement.querySelector(
-            '#builderAddResource--employeeList'
-          ) as HTMLElement
-          employeeList.innerHTML = ''
+        const employeeList = modalElement.querySelector(
+          '#builderAddResource--employeeList'
+        ) as HTMLElement
+        employeeList.innerHTML = ''
 
-          if (availableEmployees.length === 0) {
-            employeeList.innerHTML =
-              '<p class="has-text-grey-light">No available employees</p>'
-          } else {
-            for (const employee of availableEmployees) {
-              const label = document.createElement('label')
-              label.className = 'checkbox is-block mb-2'
+        if (availableEmployees.length === 0) {
+          employeeList.innerHTML =
+            '<p class="has-text-grey-light">No available employees</p>'
+        } else {
+          for (const employee of availableEmployees) {
+            const label = document.createElement('label')
+            label.className = 'checkbox is-block mb-2'
 
-              const checkbox = document.createElement('input')
-              checkbox.type = 'checkbox'
-              checkbox.value = employee.employeeNumber
-              checkbox.dataset.resourceType = 'employee'
+            const checkbox = document.createElement('input')
+            checkbox.type = 'checkbox'
+            checkbox.value = employee.employeeNumber
+            checkbox.dataset.resourceType = 'employee'
 
-              label.append(
-                checkbox,
-                ` ${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`
-              )
-              employeeList.append(label)
-            }
+            label.append(
+              checkbox,
+              ` ${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`
+            )
+            employeeList.append(label)
           }
         }
       }
@@ -3153,50 +3102,42 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (responseJSON: {
-        equipment: Array<{
-          equipmentName: string
-          equipmentNumber: string
-        }>
-        success: boolean
-      }) => {
-        if (responseJSON.success) {
-          // Filter out equipment already on the shift
-          const shiftEquipmentNumbers = new Set(
-            shift.equipment.map(
-              (equipmentEntry) => equipmentEntry.equipmentNumber
+      (responseJSON: DoGetAvailableResourcesResponse) => {
+        // Filter out equipment already on the shift
+        const shiftEquipmentNumbers = new Set(
+          shift.equipment.map(
+            (equipmentEntry) => equipmentEntry.equipmentNumber
+          )
+        )
+        const availableEquipment = responseJSON.equipment.filter(
+          (equipmentEntry) =>
+            !shiftEquipmentNumbers.has(equipmentEntry.equipmentNumber)
+        )
+
+        const equipmentList = modalElement.querySelector(
+          '#builderAddResource--equipmentList'
+        ) as HTMLElement
+        equipmentList.innerHTML = ''
+
+        if (availableEquipment.length === 0) {
+          equipmentList.innerHTML =
+            '<p class="has-text-grey-light">No available equipment</p>'
+        } else {
+          for (const equipment of availableEquipment) {
+            const label = document.createElement('label')
+            label.className = 'checkbox is-block mb-2'
+
+            const checkbox = document.createElement('input')
+            checkbox.type = 'checkbox'
+            checkbox.value = equipment.equipmentNumber
+            checkbox.dataset.resourceType = 'equipment'
+
+            label.append(
+              checkbox,
+              ` ${equipment.equipmentName} (#${equipment.equipmentNumber})`
             )
-          )
-          const availableEquipment = responseJSON.equipment.filter(
-            (equipmentEntry) =>
-              !shiftEquipmentNumbers.has(equipmentEntry.equipmentNumber)
-          )
 
-          const equipmentList = modalElement.querySelector(
-            '#builderAddResource--equipmentList'
-          ) as HTMLElement
-          equipmentList.innerHTML = ''
-
-          if (availableEquipment.length === 0) {
-            equipmentList.innerHTML =
-              '<p class="has-text-grey-light">No available equipment</p>'
-          } else {
-            for (const equipment of availableEquipment) {
-              const label = document.createElement('label')
-              label.className = 'checkbox is-block mb-2'
-
-              const checkbox = document.createElement('input')
-              checkbox.type = 'checkbox'
-              checkbox.value = equipment.equipmentNumber
-              checkbox.dataset.resourceType = 'equipment'
-
-              label.append(
-                checkbox,
-                ` ${equipment.equipmentName} (#${equipment.equipmentNumber})`
-              )
-
-              equipmentList.append(label)
-            }
+            equipmentList.append(label)
           }
         }
       }
@@ -3211,41 +3152,33 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (responseJSON: {
-        crews: Array<{
-          crewId: number
-          crewName: string
-        }>
-        success: boolean
-      }) => {
-        if (responseJSON.success) {
-          // Filter out crews already on the shift
-          const shiftCrewIds = new Set(shift.crews.map((c) => c.crewId))
-          const availableCrews = responseJSON.crews.filter(
-            (c) => !shiftCrewIds.has(c.crewId)
-          )
+      (responseJSON: DoGetAvailableResourcesResponse) => {
+        // Filter out crews already on the shift
+        const shiftCrewIds = new Set(shift.crews.map((c) => c.crewId))
+        const availableCrews = responseJSON.crews.filter(
+          (c) => !shiftCrewIds.has(c.crewId)
+        )
 
-          const crewList = modalElement.querySelector(
-            '#builderAddResource--crewList'
-          ) as HTMLElement
-          crewList.innerHTML = ''
+        const crewList = modalElement.querySelector(
+          '#builderAddResource--crewList'
+        ) as HTMLElement
+        crewList.innerHTML = ''
 
-          if (availableCrews.length === 0) {
-            crewList.innerHTML =
-              '<p class="has-text-grey-light">No available crews</p>'
-          } else {
-            for (const crew of availableCrews) {
-              const label = document.createElement('label')
-              label.className = 'checkbox is-block mb-2'
+        if (availableCrews.length === 0) {
+          crewList.innerHTML =
+            '<p class="has-text-grey-light">No available crews</p>'
+        } else {
+          for (const crew of availableCrews) {
+            const label = document.createElement('label')
+            label.className = 'checkbox is-block mb-2'
 
-              const checkbox = document.createElement('input')
-              checkbox.type = 'checkbox'
-              checkbox.value = crew.crewId.toString()
-              checkbox.dataset.resourceType = 'crew'
+            const checkbox = document.createElement('input')
+            checkbox.type = 'checkbox'
+            checkbox.value = crew.crewId.toString()
+            checkbox.dataset.resourceType = 'crew'
 
-              label.append(checkbox, ` ${crew.crewName}`)
-              crewList.append(label)
-            }
+            label.append(checkbox, ` ${crew.crewName}`)
+            crewList.append(label)
           }
         }
       }
@@ -3422,7 +3355,7 @@ declare const exports: {
               shiftCrewNote: '',
               shiftId
             },
-            (_response) => {
+            (_response: DoAddShiftCrewResponse) => {
               processedCount += 1
               successCount += 1
               checkbox.checked = false
@@ -3446,7 +3379,7 @@ declare const exports: {
               shiftEmployeeNote: '',
               shiftId
             },
-            (_response) => {
+            (_response: DoAddShiftEmployeeResponse) => {
               processedCount += 1
               successCount += 1
               checkbox.checked = false
@@ -3470,7 +3403,7 @@ declare const exports: {
               shiftEquipmentNote: '',
               shiftId
             },
-            (_response) => {
+            (_response: DoAddShiftEquipmentResponse) => {
               processedCount += 1
               successCount += 1
               checkbox.checked = false
@@ -3494,7 +3427,7 @@ declare const exports: {
               shiftWorkOrderNote: '',
               workOrderId: resourceId
             },
-            (response: { success: boolean; errorMessage?: string }) => {
+            (response: DoAddShiftWorkOrderResponse) => {
               processedCount += 1
 
               if (!response.success) {

@@ -565,9 +565,7 @@
         if (viewMode === 'tasks') {
             // Load available adhoc tasks for tasks view
             cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableAdhocTasks`, {}, (responseJSON) => {
-                if (responseJSON.success) {
-                    renderAvailableAdhocTasks(responseJSON.adhocTasks);
-                }
+                renderAvailableAdhocTasks(responseJSON.adhocTasks);
             });
         }
         else {
@@ -575,9 +573,7 @@
             cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableResources`, {
                 shiftDateString
             }, (responseJSON) => {
-                if (responseJSON.success) {
-                    renderAvailableResources(responseJSON);
-                }
+                renderAvailableResources(responseJSON);
             });
         }
     }
@@ -1204,7 +1200,9 @@
                                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEmployee`, {
                                     employeeNumber: employee.employeeNumber,
                                     shiftId: draggedData.fromShiftId
-                                }, (empResponse) => {
+                                }, 
+                                // eslint-disable-next-line @typescript-eslint/no-loop-func
+                                (empResponse) => {
                                     if (empResponse.success) {
                                         employeesDeletedCount += 1;
                                     }
@@ -1238,7 +1236,9 @@
                                                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEquipment`, {
                                                     equipmentNumber: equipment.equipmentNumber,
                                                     shiftId: draggedData.fromShiftId
-                                                }, (eqResponse) => {
+                                                }, 
+                                                // eslint-disable-next-line @typescript-eslint/no-loop-func
+                                                (eqResponse) => {
                                                     if (eqResponse.success) {
                                                         equipmentDeletedCount += 1;
                                                     }
@@ -2103,22 +2103,13 @@
                 // Handle form submission
                 formElement.addEventListener('submit', (submitEvent) => {
                     submitEvent.preventDefault();
-                    cityssm.postJSON(`${shiftUrlPrefix}/doCreateShift`, formElement, (responseJSON) => {
-                        if (responseJSON.success) {
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                message: 'Shift created successfully!'
-                            });
-                            closeModalFunction();
-                            loadShifts();
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                message: responseJSON.errorMessage ?? 'Failed to create shift.',
-                                title: 'Creation Error'
-                            });
-                        }
+                    cityssm.postJSON(`${shiftUrlPrefix}/doCreateShift`, formElement, (_responseJSON) => {
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            message: 'Shift created successfully!'
+                        });
+                        closeModalFunction();
+                        loadShifts();
                     });
                 });
             },
@@ -2275,27 +2266,25 @@
     function loadAvailableEmployeesForModal(modalElement, shift) {
         const shiftDateString = shiftDateElement.value;
         cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableResources`, { shiftDateString }, (responseJSON) => {
-            if (responseJSON.success) {
-                // Filter out employees already on the shift
-                const shiftEmployeeNumbers = new Set(shift.employees.map((employee) => employee.employeeNumber));
-                const availableEmployees = responseJSON.employees.filter((employee) => !shiftEmployeeNumbers.has(employee.employeeNumber));
-                const employeeList = modalElement.querySelector('#builderAddResource--employeeList');
-                employeeList.innerHTML = '';
-                if (availableEmployees.length === 0) {
-                    employeeList.innerHTML =
-                        '<p class="has-text-grey-light">No available employees</p>';
-                }
-                else {
-                    for (const employee of availableEmployees) {
-                        const label = document.createElement('label');
-                        label.className = 'checkbox is-block mb-2';
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.value = employee.employeeNumber;
-                        checkbox.dataset.resourceType = 'employee';
-                        label.append(checkbox, ` ${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`);
-                        employeeList.append(label);
-                    }
+            // Filter out employees already on the shift
+            const shiftEmployeeNumbers = new Set(shift.employees.map((employee) => employee.employeeNumber));
+            const availableEmployees = responseJSON.employees.filter((employee) => !shiftEmployeeNumbers.has(employee.employeeNumber));
+            const employeeList = modalElement.querySelector('#builderAddResource--employeeList');
+            employeeList.innerHTML = '';
+            if (availableEmployees.length === 0) {
+                employeeList.innerHTML =
+                    '<p class="has-text-grey-light">No available employees</p>';
+            }
+            else {
+                for (const employee of availableEmployees) {
+                    const label = document.createElement('label');
+                    label.className = 'checkbox is-block mb-2';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = employee.employeeNumber;
+                    checkbox.dataset.resourceType = 'employee';
+                    label.append(checkbox, ` ${employee.lastName}, ${employee.firstName} (#${employee.employeeNumber})`);
+                    employeeList.append(label);
                 }
             }
         });
@@ -2303,27 +2292,25 @@
     function loadAvailableEquipmentForModal(modalElement, shift) {
         const shiftDateString = shiftDateElement.value;
         cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableResources`, { shiftDateString }, (responseJSON) => {
-            if (responseJSON.success) {
-                // Filter out equipment already on the shift
-                const shiftEquipmentNumbers = new Set(shift.equipment.map((equipmentEntry) => equipmentEntry.equipmentNumber));
-                const availableEquipment = responseJSON.equipment.filter((equipmentEntry) => !shiftEquipmentNumbers.has(equipmentEntry.equipmentNumber));
-                const equipmentList = modalElement.querySelector('#builderAddResource--equipmentList');
-                equipmentList.innerHTML = '';
-                if (availableEquipment.length === 0) {
-                    equipmentList.innerHTML =
-                        '<p class="has-text-grey-light">No available equipment</p>';
-                }
-                else {
-                    for (const equipment of availableEquipment) {
-                        const label = document.createElement('label');
-                        label.className = 'checkbox is-block mb-2';
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.value = equipment.equipmentNumber;
-                        checkbox.dataset.resourceType = 'equipment';
-                        label.append(checkbox, ` ${equipment.equipmentName} (#${equipment.equipmentNumber})`);
-                        equipmentList.append(label);
-                    }
+            // Filter out equipment already on the shift
+            const shiftEquipmentNumbers = new Set(shift.equipment.map((equipmentEntry) => equipmentEntry.equipmentNumber));
+            const availableEquipment = responseJSON.equipment.filter((equipmentEntry) => !shiftEquipmentNumbers.has(equipmentEntry.equipmentNumber));
+            const equipmentList = modalElement.querySelector('#builderAddResource--equipmentList');
+            equipmentList.innerHTML = '';
+            if (availableEquipment.length === 0) {
+                equipmentList.innerHTML =
+                    '<p class="has-text-grey-light">No available equipment</p>';
+            }
+            else {
+                for (const equipment of availableEquipment) {
+                    const label = document.createElement('label');
+                    label.className = 'checkbox is-block mb-2';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = equipment.equipmentNumber;
+                    checkbox.dataset.resourceType = 'equipment';
+                    label.append(checkbox, ` ${equipment.equipmentName} (#${equipment.equipmentNumber})`);
+                    equipmentList.append(label);
                 }
             }
         });
@@ -2331,27 +2318,25 @@
     function loadAvailableCrewsForModal(modalElement, shift) {
         const shiftDateString = shiftDateElement.value;
         cityssm.postJSON(`${shiftUrlPrefix}/doGetAvailableResources`, { shiftDateString }, (responseJSON) => {
-            if (responseJSON.success) {
-                // Filter out crews already on the shift
-                const shiftCrewIds = new Set(shift.crews.map((c) => c.crewId));
-                const availableCrews = responseJSON.crews.filter((c) => !shiftCrewIds.has(c.crewId));
-                const crewList = modalElement.querySelector('#builderAddResource--crewList');
-                crewList.innerHTML = '';
-                if (availableCrews.length === 0) {
-                    crewList.innerHTML =
-                        '<p class="has-text-grey-light">No available crews</p>';
-                }
-                else {
-                    for (const crew of availableCrews) {
-                        const label = document.createElement('label');
-                        label.className = 'checkbox is-block mb-2';
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.value = crew.crewId.toString();
-                        checkbox.dataset.resourceType = 'crew';
-                        label.append(checkbox, ` ${crew.crewName}`);
-                        crewList.append(label);
-                    }
+            // Filter out crews already on the shift
+            const shiftCrewIds = new Set(shift.crews.map((c) => c.crewId));
+            const availableCrews = responseJSON.crews.filter((c) => !shiftCrewIds.has(c.crewId));
+            const crewList = modalElement.querySelector('#builderAddResource--crewList');
+            crewList.innerHTML = '';
+            if (availableCrews.length === 0) {
+                crewList.innerHTML =
+                    '<p class="has-text-grey-light">No available crews</p>';
+            }
+            else {
+                for (const crew of availableCrews) {
+                    const label = document.createElement('label');
+                    label.className = 'checkbox is-block mb-2';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = crew.crewId.toString();
+                    checkbox.dataset.resourceType = 'crew';
+                    label.append(checkbox, ` ${crew.crewName}`);
+                    crewList.append(label);
                 }
             }
         });
