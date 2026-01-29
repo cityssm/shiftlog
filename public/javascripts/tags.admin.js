@@ -212,6 +212,33 @@
             }
         });
     }
+    /**
+     * Set up the tag preview and WCAG contrast ratio updates for the add tag modal
+     */
+    function setupTagModalPreview(modalElement) {
+        const tagNameInput = modalElement.querySelector('#addTag--tagName');
+        const backgroundColorInput = modalElement.querySelector('#addTag--tagBackgroundColor');
+        const textColorInput = modalElement.querySelector('#addTag--tagTextColor');
+        const previewElement = modalElement.querySelector('#addTag--preview');
+        const contrastRatioElement = modalElement.querySelector('#addTag--contrastRatio');
+        const wcagAAElement = modalElement.querySelector('#addTag--wcagAA');
+        const wcagAAAElement = modalElement.querySelector('#addTag--wcagAAA');
+        // Update preview when colors or name change
+        function updatePreview() {
+            updateTagPreview({
+                previewElement,
+                contrastRatioElement,
+                wcagAAElement,
+                wcagAAAElement
+            }, backgroundColorInput.value, textColorInput.value, tagNameInput.value || 'Sample Tag');
+        }
+        // Initialize preview with default values
+        updatePreview();
+        // Add event listeners for real-time updates
+        tagNameInput.addEventListener('input', updatePreview);
+        backgroundColorInput.addEventListener('input', updatePreview);
+        textColorInput.addEventListener('input', updatePreview);
+    }
     function addTag() {
         let closeModalFunction;
         function doAddTag(submitEvent) {
@@ -243,28 +270,7 @@
         }
         cityssm.openHtmlModal('adminTags-add', {
             onshow(modalElement) {
-                const tagNameInput = modalElement.querySelector('#addTag--tagName');
-                const backgroundColorInput = modalElement.querySelector('#addTag--tagBackgroundColor');
-                const textColorInput = modalElement.querySelector('#addTag--tagTextColor');
-                const previewElement = modalElement.querySelector('#addTag--preview');
-                const contrastRatioElement = modalElement.querySelector('#addTag--contrastRatio');
-                const wcagAAElement = modalElement.querySelector('#addTag--wcagAA');
-                const wcagAAAElement = modalElement.querySelector('#addTag--wcagAAA');
-                // Update preview when colors or name change
-                function updatePreview() {
-                    updateTagPreview({
-                        previewElement,
-                        contrastRatioElement,
-                        wcagAAElement,
-                        wcagAAAElement
-                    }, backgroundColorInput.value, textColorInput.value, tagNameInput.value || 'Sample Tag');
-                }
-                // Initialize preview with default values
-                updatePreview();
-                // Add event listeners for real-time updates
-                tagNameInput.addEventListener('input', updatePreview);
-                backgroundColorInput.addEventListener('input', updatePreview);
-                textColorInput.addEventListener('input', updatePreview);
+                setupTagModalPreview(modalElement);
                 modalElement.querySelector('form')?.addEventListener('submit', doAddTag);
             },
             onshown(modalElement, closeFunction) {
@@ -398,9 +404,12 @@
             let closeAddModalFunction;
             cityssm.openHtmlModal('adminTags-add', {
                 onshow(modalElement) {
-                    ;
-                    modalElement.querySelector('#addTag--tagName').value = tagName;
-                    modalElement.querySelector('#addTag--tagName').readOnly = true;
+                    // Set tag name and make it readonly
+                    const tagNameInput = modalElement.querySelector('#addTag--tagName');
+                    tagNameInput.value = tagName;
+                    tagNameInput.readOnly = true;
+                    // Set up preview and event listeners
+                    setupTagModalPreview(modalElement);
                     modalElement
                         .querySelector('form')
                         ?.addEventListener('submit', (submitEvent) => {
