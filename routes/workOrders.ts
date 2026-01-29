@@ -44,6 +44,7 @@ import handler_doUpdateWorkOrderCost from '../handlers/workOrders-post/doUpdateW
 import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUpdateWorkOrderMilestone.js'
 import handler_doUpdateWorkOrderMilestoneOrder from '../handlers/workOrders-post/doUpdateWorkOrderMilestoneOrder.js'
 import handler_doUpdateWorkOrderNote from '../handlers/workOrders-post/doUpdateWorkOrderNote.js'
+import handler_doUpdateWorkOrderAttachment from '../handlers/workOrders-post/doUpdateWorkOrderAttachment.js'
 import handler_doUploadWorkOrderAttachment from '../handlers/workOrders-post/doUploadWorkOrderAttachment.js'
 import { getConfigProperty } from '../helpers/config.helpers.js'
 
@@ -151,6 +152,11 @@ router
     updateHandler,
     upload.single('attachmentFile'),
     handler_doUploadWorkOrderAttachment
+  )
+  .post(
+    '/doUpdateWorkOrderAttachment',
+    updateHandler,
+    handler_doUpdateWorkOrderAttachment
   )
   .post(
     '/doDeleteWorkOrderAttachment',
