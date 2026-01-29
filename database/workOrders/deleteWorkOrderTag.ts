@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function deleteWorkOrderTag(
@@ -9,6 +10,7 @@ export default async function deleteWorkOrderTag(
 
     const result = await pool
       .request()
+      .input('instance', getConfigProperty('application.instance'))
       .input('workOrderId', workOrderId)
       .input('tagName', tagName)
       .query(/* sql */ `
@@ -16,6 +18,15 @@ export default async function deleteWorkOrderTag(
         WHERE
           workOrderId = @workOrderId
           AND tagName = @tagName
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NULL
+              AND instance = @instance
+          )
       `)
 
     return result.rowsAffected[0] > 0
