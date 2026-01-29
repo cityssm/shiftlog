@@ -398,9 +398,31 @@
             let closeAddModalFunction;
             cityssm.openHtmlModal('adminTags-add', {
                 onshow(modalElement) {
-                    ;
-                    modalElement.querySelector('#addTag--tagName').value = tagName;
-                    modalElement.querySelector('#addTag--tagName').readOnly = true;
+                    const tagNameInput = modalElement.querySelector('#addTag--tagName');
+                    const backgroundColorInput = modalElement.querySelector('#addTag--tagBackgroundColor');
+                    const textColorInput = modalElement.querySelector('#addTag--tagTextColor');
+                    const previewElement = modalElement.querySelector('#addTag--preview');
+                    const contrastRatioElement = modalElement.querySelector('#addTag--contrastRatio');
+                    const wcagAAElement = modalElement.querySelector('#addTag--wcagAA');
+                    const wcagAAAElement = modalElement.querySelector('#addTag--wcagAAA');
+                    // Set tag name and make it readonly
+                    tagNameInput.value = tagName;
+                    tagNameInput.readOnly = true;
+                    // Update preview when colors or name change
+                    function updatePreview() {
+                        updateTagPreview({
+                            previewElement,
+                            contrastRatioElement,
+                            wcagAAElement,
+                            wcagAAAElement
+                        }, backgroundColorInput.value, textColorInput.value, tagNameInput.value || 'Sample Tag');
+                    }
+                    // Initialize preview with default values
+                    updatePreview();
+                    // Add event listeners for real-time updates
+                    tagNameInput.addEventListener('input', updatePreview);
+                    backgroundColorInput.addEventListener('input', updatePreview);
+                    textColorInput.addEventListener('input', updatePreview);
                     modalElement
                         .querySelector('form')
                         ?.addEventListener('submit', (submitEvent) => {

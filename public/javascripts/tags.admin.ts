@@ -603,12 +603,60 @@ declare const exports: {
 
       cityssm.openHtmlModal('adminTags-add', {
         onshow(modalElement) {
-          ;(
-            modalElement.querySelector('#addTag--tagName') as HTMLInputElement
-          ).value = tagName
-          ;(
-            modalElement.querySelector('#addTag--tagName') as HTMLInputElement
-          ).readOnly = true
+          const tagNameInput = modalElement.querySelector(
+            '#addTag--tagName'
+          ) as HTMLInputElement
+
+          const backgroundColorInput = modalElement.querySelector(
+            '#addTag--tagBackgroundColor'
+          ) as HTMLInputElement
+
+          const textColorInput = modalElement.querySelector(
+            '#addTag--tagTextColor'
+          ) as HTMLInputElement
+
+          const previewElement = modalElement.querySelector(
+            '#addTag--preview'
+          ) as HTMLElement
+
+          const contrastRatioElement = modalElement.querySelector(
+            '#addTag--contrastRatio'
+          ) as HTMLElement
+
+          const wcagAAElement = modalElement.querySelector(
+            '#addTag--wcagAA'
+          ) as HTMLElement
+
+          const wcagAAAElement = modalElement.querySelector(
+            '#addTag--wcagAAA'
+          ) as HTMLElement
+
+          // Set tag name and make it readonly
+          tagNameInput.value = tagName
+          tagNameInput.readOnly = true
+
+          // Update preview when colors or name change
+          function updatePreview(): void {
+            updateTagPreview(
+              {
+                previewElement,
+                contrastRatioElement,
+                wcagAAElement,
+                wcagAAAElement
+              },
+              backgroundColorInput.value,
+              textColorInput.value,
+              tagNameInput.value || 'Sample Tag'
+            )
+          }
+
+          // Initialize preview with default values
+          updatePreview()
+
+          // Add event listeners for real-time updates
+          tagNameInput.addEventListener('input', updatePreview)
+          backgroundColorInput.addEventListener('input', updatePreview)
+          textColorInput.addEventListener('input', updatePreview)
 
           modalElement
             .querySelector('form')
