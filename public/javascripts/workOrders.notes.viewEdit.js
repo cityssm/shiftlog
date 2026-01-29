@@ -242,4 +242,3 @@
     // Load notes initially
     loadNotes();
 })();
-export {};
