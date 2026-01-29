@@ -415,6 +415,7 @@ export default async function getWorkOrders(
           wot.workOrderId IN (${parameterNames.join(',')})
         ORDER BY
           wot.workOrderId,
+          case when t.tagBackgroundColor is null then 1 else 0 end,
           wot.tagName
       `)
 

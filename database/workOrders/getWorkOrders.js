@@ -309,6 +309,7 @@ export default async function getWorkOrders(filters, options, user) {
           wot.workOrderId IN (${parameterNames.join(',')})
         ORDER BY
           wot.workOrderId,
+          case when t.tagBackgroundColor is null then 1 else 0 end,
           wot.tagName
       `);
             // Group tags by workOrderId
