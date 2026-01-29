@@ -2,19 +2,21 @@
     /*
      * Unsaved Changes
      */
-    let _hasUnsavedChanges = false;
-    function setUnsavedChanges() {
-        if (!hasUnsavedChanges()) {
-            _hasUnsavedChanges = true;
+    const unsavedChanges = new Set();
+    function setUnsavedChanges(changeTracker = '') {
+        if (!unsavedChanges.has(changeTracker)) {
+            unsavedChanges.add(changeTracker);
             cityssm.enableNavBlocker();
         }
     }
-    function clearUnsavedChanges() {
-        _hasUnsavedChanges = false;
-        cityssm.disableNavBlocker();
+    function clearUnsavedChanges(changeTracker = '') {
+        unsavedChanges.delete(changeTracker);
+        if (unsavedChanges.size === 0) {
+            cityssm.disableNavBlocker();
+        }
     }
-    function hasUnsavedChanges() {
-        return _hasUnsavedChanges;
+    function hasUnsavedChanges(changeTracker = '') {
+        return unsavedChanges.has(changeTracker);
     }
     /*
      * Record Menu Tabs

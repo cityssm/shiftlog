@@ -45,11 +45,10 @@ declare const bulmaJS: BulmaJS
       }
 
       if (tags.length === 0) {
-        ;(tagsContainerElement as HTMLElement).innerHTML =
-          /* html */ `
+        ;(tagsContainerElement as HTMLElement).innerHTML = /* html */ `
           <div class="message is-info">
-              <p class="message-body">No tags have been added yet.</p>
-            </div>
+            <p class="message-body">No tags have been added yet.</p>
+          </div>
         `
         return
       }
@@ -196,6 +195,8 @@ declare const bulmaJS: BulmaJS
 
       cityssm.openHtmlModal('workOrders-addTag', {
         onshow(modalElement) {
+          exports.shiftLog.setUnsavedChanges('modal')
+
           modalElement
             .querySelector('form')
             ?.addEventListener('submit', doAddTag)
@@ -211,6 +212,7 @@ declare const bulmaJS: BulmaJS
         },
 
         onremoved() {
+          exports.shiftLog.clearUnsavedChanges('modal')
           bulmaJS.toggleHtmlClipped()
         }
       })

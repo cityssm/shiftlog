@@ -229,7 +229,7 @@
         }
         cityssm.openHtmlModal('workOrders-addAttachment', {
             onshow(modalElement) {
-                ;
+                exports.shiftLog.setUnsavedChanges('modal');
                 modalElement.querySelector('#addWorkOrderAttachment--workOrderId').value = workOrderId;
                 // Display max file size
                 const maxSizeElement = modalElement.querySelector('#addWorkOrderAttachment--maxSize');
@@ -252,6 +252,7 @@
                     ?.addEventListener('submit', doAddAttachment);
             },
             onremoved() {
+                exports.shiftLog.clearUnsavedChanges('modal');
                 bulmaJS.toggleHtmlClipped();
             }
         });

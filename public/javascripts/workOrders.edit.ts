@@ -39,10 +39,6 @@ declare const exports: {
 
   const isCreate = workOrderId === ''
 
-  function setUnsavedChanges(): void {
-    cityssm.enableNavBlocker()
-  }
-
   // Track original work order type for change detection
   const workOrderTypeSelect = workOrderFormElement.querySelector(
     '#workOrder--workOrderTypeId'
@@ -100,9 +96,8 @@ declare const exports: {
 
         workOrderId?: number
       }) => {
-
         if (responseJSON.success) {
-          cityssm.disableNavBlocker()
+          shiftLog.clearUnsavedChanges()
 
           if (isCreate && responseJSON.workOrderId !== undefined) {
             globalThis.location.href = shiftLog.buildWorkOrderURL(
@@ -184,7 +179,6 @@ declare const exports: {
               requestorName: string
             }>
           }) => {
-
             if (responseJSON.success && responseJSON.requestors) {
               requestorsData = responseJSON.requestors
 
@@ -319,7 +313,6 @@ declare const exports: {
 
           locations?: Location[]
         }) => {
-
           if (responseJSON.success && responseJSON.locations) {
             locationsData = responseJSON.locations
             populateLocationDatalist(responseJSON.locations)
@@ -595,7 +588,7 @@ declare const exports: {
 
       marker = new L.Marker([lat, lng]).addTo(map)
 
-      setUnsavedChanges()
+      shiftLog.setUnsavedChanges()
     })
 
     // Update map when coordinates are manually entered
@@ -674,7 +667,6 @@ declare const exports: {
                 redirectUrl?: string
                 errorMessage?: string
               }) => {
-
                 if (
                   responseJSON.success &&
                   responseJSON.redirectUrl !== undefined
@@ -705,6 +697,8 @@ declare const exports: {
   for (const inputElement of workOrderFormElement.querySelectorAll(
     'input, select, textarea'
   )) {
-    inputElement.addEventListener('change', setUnsavedChanges)
+    inputElement.addEventListener('change', () => {
+      shiftLog.setUnsavedChanges()
+    })
   }
 })()

@@ -36,6 +36,7 @@ export const config = defineConfig(configWebApp, {
 
             // App
             'hellip',
+            'latlng',
             'noopener',
             'noreferrer',
             'onhidden',

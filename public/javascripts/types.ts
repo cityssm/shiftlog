@@ -1,3 +1,5 @@
+export type ShiftLogUnsavedChangeTracker = '' | 'modal'
+
 export interface ShiftLogGlobal {
   daysOfWeek: string[]
 
@@ -21,7 +23,7 @@ export interface ShiftLogGlobal {
   workOrdersSectionName: string
   workOrdersSectionNameSingular: string
   workOrdersIconClass: string
-  
+
   userCanManageWorkOrders: boolean
   userCanUpdateWorkOrders: boolean
 
@@ -33,13 +35,13 @@ export interface ShiftLogGlobal {
   timesheetsSectionNameSingular: string
 
   buildTimesheetURL: (timesheetId: number, edit?: boolean) => string
-  
+
   isAdmin: boolean
   userName: string
 
-  clearUnsavedChanges: () => void
-  hasUnsavedChanges: () => boolean
-  setUnsavedChanges: () => void
+  clearUnsavedChanges: (changeTracker?: ShiftLogUnsavedChangeTracker) => void
+  hasUnsavedChanges: (changeTracker?: ShiftLogUnsavedChangeTracker) => boolean
+  setUnsavedChanges: (changeTracker?: ShiftLogUnsavedChangeTracker) => void
 
   initializeRecordTabs: (tabsContainerElement: HTMLElement) => void
 

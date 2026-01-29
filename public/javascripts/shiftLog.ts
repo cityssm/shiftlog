@@ -12,22 +12,25 @@ declare const exports: {
    * Unsaved Changes
    */
 
-  let _hasUnsavedChanges = false
+  const unsavedChanges = new Set<string>()
 
-  function setUnsavedChanges(): void {
-    if (!hasUnsavedChanges()) {
-      _hasUnsavedChanges = true
+  function setUnsavedChanges(changeTracker = ''): void {
+    if (!unsavedChanges.has(changeTracker)) {
+      unsavedChanges.add(changeTracker)
       cityssm.enableNavBlocker()
     }
   }
 
-  function clearUnsavedChanges(): void {
-    _hasUnsavedChanges = false
-    cityssm.disableNavBlocker()
+  function clearUnsavedChanges(changeTracker = ''): void {
+    unsavedChanges.delete(changeTracker)
+
+    if (unsavedChanges.size === 0) {
+      cityssm.disableNavBlocker()
+    }
   }
 
-  function hasUnsavedChanges(): boolean {
-    return _hasUnsavedChanges
+  function hasUnsavedChanges(changeTracker = ''): boolean {
+    return unsavedChanges.has(changeTracker)
   }
 
   /*

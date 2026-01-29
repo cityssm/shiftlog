@@ -192,6 +192,7 @@ declare const bulmaJS: BulmaJS
 
       cityssm.openHtmlModal('workOrders-editCost', {
         onshow(modalElement) {
+          exports.shiftLog.setUnsavedChanges('modal')
           ;(
             modalElement.querySelector(
               '#editWorkOrderCost--workOrderCostId'
@@ -217,6 +218,7 @@ declare const bulmaJS: BulmaJS
         },
 
         onremoved() {
+          exports.shiftLog.clearUnsavedChanges('modal')
           bulmaJS.toggleHtmlClipped()
         }
       })
@@ -251,6 +253,7 @@ declare const bulmaJS: BulmaJS
 
       cityssm.openHtmlModal('workOrders-addCost', {
         onshow(modalElement) {
+          exports.shiftLog.setUnsavedChanges('modal')
           ;(
             modalElement.querySelector(
               '#addWorkOrderCost--workOrderId'
@@ -271,6 +274,7 @@ declare const bulmaJS: BulmaJS
         },
 
         onremoved() {
+          exports.shiftLog.clearUnsavedChanges('modal')
           bulmaJS.toggleHtmlClipped()
         }
       })

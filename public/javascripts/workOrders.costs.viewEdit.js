@@ -124,7 +124,7 @@
             }
             cityssm.openHtmlModal('workOrders-editCost', {
                 onshow(modalElement) {
-                    ;
+                    exports.shiftLog.setUnsavedChanges('modal');
                     modalElement.querySelector('#editWorkOrderCost--workOrderCostId').value = cost.workOrderCostId.toString();
                     modalElement.querySelector('#editWorkOrderCost--costAmount').value = cost.costAmount.toString();
                     modalElement.querySelector('#editWorkOrderCost--costDescription').value = cost.costDescription;
@@ -137,6 +137,7 @@
                         ?.addEventListener('submit', doUpdateCost);
                 },
                 onremoved() {
+                    exports.shiftLog.clearUnsavedChanges('modal');
                     bulmaJS.toggleHtmlClipped();
                 }
             });
@@ -163,7 +164,7 @@
             }
             cityssm.openHtmlModal('workOrders-addCost', {
                 onshow(modalElement) {
-                    ;
+                    exports.shiftLog.setUnsavedChanges('modal');
                     modalElement.querySelector('#addWorkOrderCost--workOrderId').value = workOrderId;
                 },
                 onshown(modalElement, _closeModalFunction) {
@@ -175,6 +176,7 @@
                     modalElement.querySelector('#addWorkOrderCost--costAmount').focus();
                 },
                 onremoved() {
+                    exports.shiftLog.clearUnsavedChanges('modal');
                     bulmaJS.toggleHtmlClipped();
                 }
             });

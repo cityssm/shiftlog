@@ -317,6 +317,8 @@ declare const bulmaJS: BulmaJS
 
     cityssm.openHtmlModal('workOrders-addAttachment', {
       onshow(modalElement) {
+        exports.shiftLog.setUnsavedChanges('modal')
+
         ;(
           modalElement.querySelector(
             '#addWorkOrderAttachment--workOrderId'
@@ -347,12 +349,14 @@ declare const bulmaJS: BulmaJS
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = _closeModalFunction
+
         modalElement
           .querySelector('form')
           ?.addEventListener('submit', doAddAttachment)
       },
 
       onremoved() {
+        exports.shiftLog.clearUnsavedChanges('modal')
         bulmaJS.toggleHtmlClipped()
       }
     })

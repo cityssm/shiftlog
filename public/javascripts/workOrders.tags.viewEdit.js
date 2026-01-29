@@ -16,11 +16,10 @@
             }
             if (tags.length === 0) {
                 ;
-                tagsContainerElement.innerHTML =
-                    /* html */ `
+                tagsContainerElement.innerHTML = /* html */ `
           <div class="message is-info">
-              <p class="message-body">No tags have been added yet.</p>
-            </div>
+            <p class="message-body">No tags have been added yet.</p>
+          </div>
         `;
                 return;
             }
@@ -125,6 +124,7 @@
             }
             cityssm.openHtmlModal('workOrders-addTag', {
                 onshow(modalElement) {
+                    exports.shiftLog.setUnsavedChanges('modal');
                     modalElement
                         .querySelector('form')
                         ?.addEventListener('submit', doAddTag);
@@ -135,6 +135,7 @@
                     modalElement.querySelector('#addWorkOrderTag--tagName').focus();
                 },
                 onremoved() {
+                    exports.shiftLog.clearUnsavedChanges('modal');
                     bulmaJS.toggleHtmlClipped();
                 }
             });
