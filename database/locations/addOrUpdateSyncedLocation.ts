@@ -9,7 +9,7 @@ import type { Location } from '../../types/record.types.js'
 import getLocationByAddress1 from './getLocationByAddress1.js'
 
 const debug = Debug(
-  `${DEBUG_NAMESPACE}:database:equipment:addOrUpdateSyncedEquipment`
+  `${DEBUG_NAMESPACE}:database:locations:addOrUpdateSyncedLocation`
 )
 
 async function addSyncedLocation(
@@ -128,6 +128,7 @@ async function updateSyncedLocation(
   await pool
     .request()
     .input('locationId', updateLocation.locationId)
+    .input('instance', getConfigProperty('application.instance'))
     .input('address1', updateLocation.address1)
     .input('address2', updateLocation.address2)
     .input('cityProvince', updateLocation.cityProvince)
@@ -157,6 +158,7 @@ async function updateSyncedLocation(
         recordDelete_dateTime = NULL
       WHERE
         locationId = @locationId
+        AND instance = @instance
     `)
 }
 

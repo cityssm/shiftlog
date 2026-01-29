@@ -4,7 +4,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { usePartialOrCurrentValue } from '../../helpers/sync.helpers.js';
 import getLocationByAddress1 from './getLocationByAddress1.js';
-const debug = Debug(`${DEBUG_NAMESPACE}:database:equipment:addOrUpdateSyncedEquipment`);
+const debug = Debug(`${DEBUG_NAMESPACE}:database:locations:addOrUpdateSyncedLocation`);
 async function addSyncedLocation(partialLocation, syncUserName) {
     const pool = await getShiftLogConnectionPool();
     await pool
@@ -77,6 +77,7 @@ async function updateSyncedLocation(currentLocation, partialLocation, syncUserNa
     await pool
         .request()
         .input('locationId', updateLocation.locationId)
+        .input('instance', getConfigProperty('application.instance'))
         .input('address1', updateLocation.address1)
         .input('address2', updateLocation.address2)
         .input('cityProvince', updateLocation.cityProvince)
@@ -106,6 +107,7 @@ async function updateSyncedLocation(currentLocation, partialLocation, syncUserNa
         recordDelete_dateTime = NULL
       WHERE
         locationId = @locationId
+        AND instance = @instance
     `);
 }
 export default async function addOrUpdateSyncedLocation(partialLocation, syncUserName) {

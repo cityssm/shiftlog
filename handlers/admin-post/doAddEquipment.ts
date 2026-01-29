@@ -26,16 +26,23 @@ export default async function handler(
   response: Response<DoAddEquipmentResponse>
 ): Promise<void> {
   const success = await addEquipment(
-    request.body.equipmentNumber,
-    request.body.equipmentName,
-    request.body.equipmentDescription,
-    Number.parseInt(request.body.equipmentTypeDataListItemId, 10),
-    request.body.employeeListId === ''
-      ? undefined
-      : Number.parseInt(request.body.employeeListId, 10),
-    request.body.userGroupId === ''
-      ? undefined
-      : Number.parseInt(request.body.userGroupId, 10),
+    {
+      equipmentNumber: request.body.equipmentNumber,
+      equipmentName: request.body.equipmentName,
+      equipmentDescription: request.body.equipmentDescription,
+      equipmentTypeDataListItemId: Number.parseInt(
+        request.body.equipmentTypeDataListItemId,
+        10
+      ),
+      employeeListId:
+        request.body.employeeListId === ''
+          ? undefined
+          : Number.parseInt(request.body.employeeListId, 10),
+      userGroupId:
+        request.body.userGroupId === ''
+          ? undefined
+          : Number.parseInt(request.body.userGroupId, 10)
+    },
     request.session.user as User
   )
 

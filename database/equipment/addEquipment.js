@@ -1,19 +1,18 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-// eslint-disable-next-line @typescript-eslint/max-params
-export default async function addEquipment(equipmentNumber, equipmentName, equipmentDescription, equipmentTypeDataListItemId, employeeListId, userGroupId, user) {
+export default async function addEquipment(addEquipmentForm, user) {
     const currentDate = new Date();
     try {
         const pool = await getShiftLogConnectionPool();
         const result = await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
-            .input('equipmentNumber', equipmentNumber)
-            .input('equipmentName', equipmentName)
-            .input('equipmentDescription', equipmentDescription)
-            .input('equipmentTypeDataListItemId', equipmentTypeDataListItemId)
-            .input('employeeListId', employeeListId ?? undefined)
-            .input('userGroupId', userGroupId ?? undefined)
+            .input('equipmentNumber', addEquipmentForm.equipmentNumber)
+            .input('equipmentName', addEquipmentForm.equipmentName)
+            .input('equipmentDescription', addEquipmentForm.equipmentDescription)
+            .input('equipmentTypeDataListItemId', addEquipmentForm.equipmentTypeDataListItemId)
+            .input('employeeListId', addEquipmentForm.employeeListId ?? undefined)
+            .input('userGroupId', addEquipmentForm.userGroupId ?? undefined)
             .input('recordCreate_userName', user.userName)
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
