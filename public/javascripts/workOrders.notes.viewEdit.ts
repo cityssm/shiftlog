@@ -108,26 +108,30 @@ declare const bulmaJS: BulmaJS
                 }
               </p>
             </div>
-            ${
-              canEdit
-                ? /* html */ `
-                  <div class="buttons">
-                    <a class="button is-small edit-note" data-note-sequence="${note.noteSequence}">
-                      <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
-                      <span>Edit Note</span>
-                    </a>
-                  </div>
-                `
-                : ''
-            }
           </div>
           ${
             canEdit
               ? /* html */ `
                 <div class="media-right">
-                  <button class="button is-small is-light is-danger delete-note" data-note-sequence="${note.noteSequence}" title="Delete Note">
-                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
-                  </button>
+                  <div class="buttons">
+                    <button
+                      class="button is-small edit-note"
+                      data-note-sequence="${note.noteSequence}"
+                      type="button"
+                      title="Edit Note"
+                    >
+                      <span class="icon is-small"><i class="fa-solid fa-edit"></i></span>
+                      <span>Edit Note</span>
+                    </button>
+                    <button
+                      class="button is-small is-light is-danger delete-note"
+                      data-note-sequence="${note.noteSequence}"
+                      type="button"
+                      title="Delete Note"
+                    >
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
                 </div>
               `
               : ''
