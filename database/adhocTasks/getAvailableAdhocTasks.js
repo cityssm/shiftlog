@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getAvailableAdhocTasks(shiftId) {
     const pool = await getShiftLogConnectionPool();
@@ -43,6 +44,7 @@ export default async function getAvailableAdhocTasks(shiftId) {
     WHERE
       t.recordDelete_dateTime IS NULL
       AND t.taskCompleteDateTime IS NULL
+      AND td.instance = @instance
   `;
     if (shiftId !== undefined && shiftId !== '') {
         request.input('shiftId', shiftId);
@@ -62,6 +64,8 @@ export default async function getAvailableAdhocTasks(shiftId) {
       t.taskDueDateTime,
       t.recordCreate_dateTime DESC
   `;
-    const result = await request.query(query);
+    const result = await request
+        .input('instance', getConfigProperty('application.instance'))
+        .query(query);
     return result.recordset;
 }
