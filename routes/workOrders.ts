@@ -42,9 +42,9 @@ import handler_doSetWorkOrderAttachmentThumbnail from '../handlers/workOrders-po
 import handler_doUpdateWorkOrder from '../handlers/workOrders-post/doUpdateWorkOrder.js'
 import handler_doUpdateWorkOrderCost from '../handlers/workOrders-post/doUpdateWorkOrderCost.js'
 import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUpdateWorkOrderMilestone.js'
+import handler_doUpdateWorkOrderAttachment from '../handlers/workOrders-post/doUpdateWorkOrderAttachment.js'
 import handler_doUpdateWorkOrderMilestoneOrder from '../handlers/workOrders-post/doUpdateWorkOrderMilestoneOrder.js'
 import handler_doUpdateWorkOrderNote from '../handlers/workOrders-post/doUpdateWorkOrderNote.js'
-import handler_doUpdateWorkOrderAttachment from '../handlers/workOrders-post/doUpdateWorkOrderAttachment.js'
 import handler_doUploadWorkOrderAttachment from '../handlers/workOrders-post/doUploadWorkOrderAttachment.js'
 import { getConfigProperty } from '../helpers/config.helpers.js'
 

@@ -2,8 +2,8 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface UpdateWorkOrderAttachmentForm {
-  workOrderAttachmentId: number | string
   attachmentDescription: string
+  workOrderAttachmentId: number | string
 }
 
 export default async function updateWorkOrderAttachment(
