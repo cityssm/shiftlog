@@ -341,6 +341,62 @@ declare const exports: {
     })
   }
 
+  /**
+   * Set up the tag preview and WCAG contrast ratio updates for the add tag modal
+   */
+  function setupTagModalPreview(modalElement: HTMLElement): void {
+    const tagNameInput = modalElement.querySelector(
+      '#addTag--tagName'
+    ) as HTMLInputElement
+
+    const backgroundColorInput = modalElement.querySelector(
+      '#addTag--tagBackgroundColor'
+    ) as HTMLInputElement
+
+    const textColorInput = modalElement.querySelector(
+      '#addTag--tagTextColor'
+    ) as HTMLInputElement
+
+    const previewElement = modalElement.querySelector(
+      '#addTag--preview'
+    ) as HTMLElement
+
+    const contrastRatioElement = modalElement.querySelector(
+      '#addTag--contrastRatio'
+    ) as HTMLElement
+
+    const wcagAAElement = modalElement.querySelector(
+      '#addTag--wcagAA'
+    ) as HTMLElement
+
+    const wcagAAAElement = modalElement.querySelector(
+      '#addTag--wcagAAA'
+    ) as HTMLElement
+
+    // Update preview when colors or name change
+    function updatePreview(): void {
+      updateTagPreview(
+        {
+          previewElement,
+          contrastRatioElement,
+          wcagAAElement,
+          wcagAAAElement
+        },
+        backgroundColorInput.value,
+        textColorInput.value,
+        tagNameInput.value || 'Sample Tag'
+      )
+    }
+
+    // Initialize preview with default values
+    updatePreview()
+
+    // Add event listeners for real-time updates
+    tagNameInput.addEventListener('input', updatePreview)
+    backgroundColorInput.addEventListener('input', updatePreview)
+    textColorInput.addEventListener('input', updatePreview)
+  }
+
   function addTag(): void {
     let closeModalFunction: () => void
 
@@ -383,56 +439,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTags-add', {
       onshow(modalElement) {
-        const tagNameInput = modalElement.querySelector(
-          '#addTag--tagName'
-        ) as HTMLInputElement
-
-        const backgroundColorInput = modalElement.querySelector(
-          '#addTag--tagBackgroundColor'
-        ) as HTMLInputElement
-
-        const textColorInput = modalElement.querySelector(
-          '#addTag--tagTextColor'
-        ) as HTMLInputElement
-
-        const previewElement = modalElement.querySelector(
-          '#addTag--preview'
-        ) as HTMLElement
-
-        const contrastRatioElement = modalElement.querySelector(
-          '#addTag--contrastRatio'
-        ) as HTMLElement
-
-        const wcagAAElement = modalElement.querySelector(
-          '#addTag--wcagAA'
-        ) as HTMLElement
-
-        const wcagAAAElement = modalElement.querySelector(
-          '#addTag--wcagAAA'
-        ) as HTMLElement
-
-        // Update preview when colors or name change
-        function updatePreview(): void {
-          updateTagPreview(
-            {
-              previewElement,
-              contrastRatioElement,
-              wcagAAElement,
-              wcagAAAElement
-            },
-            backgroundColorInput.value,
-            textColorInput.value,
-            tagNameInput.value || 'Sample Tag'
-          )
-        }
-
-        // Initialize preview with default values
-        updatePreview()
-
-        // Add event listeners for real-time updates
-        tagNameInput.addEventListener('input', updatePreview)
-        backgroundColorInput.addEventListener('input', updatePreview)
-        textColorInput.addEventListener('input', updatePreview)
+        setupTagModalPreview(modalElement)
 
         modalElement.querySelector('form')?.addEventListener('submit', doAddTag)
       },
@@ -603,60 +610,15 @@ declare const exports: {
 
       cityssm.openHtmlModal('adminTags-add', {
         onshow(modalElement) {
+          // Set tag name and make it readonly
           const tagNameInput = modalElement.querySelector(
             '#addTag--tagName'
           ) as HTMLInputElement
-
-          const backgroundColorInput = modalElement.querySelector(
-            '#addTag--tagBackgroundColor'
-          ) as HTMLInputElement
-
-          const textColorInput = modalElement.querySelector(
-            '#addTag--tagTextColor'
-          ) as HTMLInputElement
-
-          const previewElement = modalElement.querySelector(
-            '#addTag--preview'
-          ) as HTMLElement
-
-          const contrastRatioElement = modalElement.querySelector(
-            '#addTag--contrastRatio'
-          ) as HTMLElement
-
-          const wcagAAElement = modalElement.querySelector(
-            '#addTag--wcagAA'
-          ) as HTMLElement
-
-          const wcagAAAElement = modalElement.querySelector(
-            '#addTag--wcagAAA'
-          ) as HTMLElement
-
-          // Set tag name and make it readonly
           tagNameInput.value = tagName
           tagNameInput.readOnly = true
 
-          // Update preview when colors or name change
-          function updatePreview(): void {
-            updateTagPreview(
-              {
-                previewElement,
-                contrastRatioElement,
-                wcagAAElement,
-                wcagAAAElement
-              },
-              backgroundColorInput.value,
-              textColorInput.value,
-              tagNameInput.value || 'Sample Tag'
-            )
-          }
-
-          // Initialize preview with default values
-          updatePreview()
-
-          // Add event listeners for real-time updates
-          tagNameInput.addEventListener('input', updatePreview)
-          backgroundColorInput.addEventListener('input', updatePreview)
-          textColorInput.addEventListener('input', updatePreview)
+          // Set up preview and event listeners
+          setupTagModalPreview(modalElement)
 
           modalElement
             .querySelector('form')
