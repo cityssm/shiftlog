@@ -110,34 +110,20 @@
         }
     }
     function showFullNoteModal(note) {
-        const modalElement = document.createElement('div');
-        modalElement.className = 'modal is-active';
-        modalElement.innerHTML = /* html */ `
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Full Note</p>
-          <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-          <p><strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong></p>
-          <p><small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small></p>
-          <div class="content mt-3">
-            <p style="white-space: pre-wrap;">${cityssm.escapeHTML(note.noteText)}</p>
-          </div>
-        </section>
-        <footer class="modal-card-foot">
-          <button class="button close-modal">Close</button>
-        </footer>
-      </div>
-    `;
-        document.body.append(modalElement);
-        const closeButtons = modalElement.querySelectorAll('.delete, .close-modal, .modal-background');
-        for (const button of closeButtons) {
-            button.addEventListener('click', () => {
-                modalElement.remove();
-            });
-        }
+        cityssm.openHtmlModal('workOrders-viewNote', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('#viewWorkOrderNote--userName').textContent = note.recordCreate_userName;
+                modalElement.querySelector('#viewWorkOrderNote--dateTime').textContent = cityssm.dateToString(new Date(note.recordCreate_dateTime));
+                modalElement.querySelector('#viewWorkOrderNote--noteText').textContent = note.noteText;
+            },
+            onshown(_modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
     }
     function showEditNoteModal(note) {
         let closeModalFunction;
@@ -256,3 +242,4 @@
     // Load notes initially
     loadNotes();
 })();
+export {};

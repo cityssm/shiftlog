@@ -1,0 +1,32 @@
+<div
+  class="modal"
+  id="modal--viewWorkOrderNote"
+  role="dialog"
+  aria-label="Full Note"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Full Note</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <p><strong id="viewWorkOrderNote--userName"></strong></p>
+      <p><small id="viewWorkOrderNote--dateTime"></small></p>
+      <div class="content mt-3">
+        <p id="viewWorkOrderNote--noteText" style="white-space: pre-wrap;"></p>
+      </div>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
