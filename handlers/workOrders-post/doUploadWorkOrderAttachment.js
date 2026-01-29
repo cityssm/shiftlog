@@ -67,6 +67,9 @@ export default async function handler(request, response) {
             attachmentDescription,
             fileSystemPath
         }, request.session.user?.userName ?? '');
+        if (workOrderAttachmentId === undefined) {
+            throw new Error('Work order not found');
+        }
         response.json({
             success: true,
             workOrderAttachmentId

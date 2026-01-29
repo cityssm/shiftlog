@@ -43,7 +43,7 @@
         cityssm.postJSON(`${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (responseJSON) => {
             if (responseJSON.success) {
                 shiftLog.clearUnsavedChanges();
-                if (isCreate && responseJSON.workOrderId !== undefined) {
+                if (isCreate) {
                     globalThis.location.href = shiftLog.buildWorkOrderURL(responseJSON.workOrderId, true);
                 }
                 else if (workOrderCloseDateTimeStringElement.value === '') {
@@ -66,7 +66,7 @@
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Update Error',
-                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    message: 'An unknown error occurred.'
                 });
             }
         });
@@ -90,20 +90,17 @@
                 cityssm.postJSON(`${workOrderUrlPrefix}/doGetRequestorSuggestions`, {
                     searchString: requestorSearchString
                 }, (responseJSON) => {
-                    if (responseJSON.success && responseJSON.requestors) {
-                        requestorsData = responseJSON.requestors;
-                        for (const requestor of responseJSON.requestors) {
-                            const option = document.createElement('option');
-                            option.value = requestor.requestorName;
-                            option.textContent =
-                                requestor.requestorName +
-                                    (requestor.requestorContactInfo
-                                        ? ` (${requestor.requestorContactInfo})`
-                                        : '');
-                            option.dataset.contactInfo =
-                                requestor.requestorContactInfo ?? '';
-                            requestorDatalist.append(option);
-                        }
+                    requestorsData = responseJSON.requestors;
+                    for (const requestor of responseJSON.requestors) {
+                        const option = document.createElement('option');
+                        option.value = requestor.requestorName;
+                        option.textContent =
+                            requestor.requestorName +
+                                (requestor.requestorContactInfo
+                                    ? ` (${requestor.requestorContactInfo})`
+                                    : '');
+                        option.dataset.contactInfo = requestor.requestorContactInfo;
+                        requestorDatalist.append(option);
                     }
                 });
             }
@@ -176,12 +173,10 @@
          */
         function fetchLocationSuggestions(searchString, callback) {
             cityssm.postJSON(`${workOrderUrlPrefix}/doGetLocationSuggestions`, { searchString }, (responseJSON) => {
-                if (responseJSON.success && responseJSON.locations) {
-                    locationsData = responseJSON.locations;
-                    populateLocationDatalist(responseJSON.locations);
-                    if (callback !== undefined) {
-                        callback(responseJSON.locations);
-                    }
+                locationsData = responseJSON.locations;
+                populateLocationDatalist(responseJSON.locations);
+                if (callback !== undefined) {
+                    callback(responseJSON.locations);
                 }
             });
         }
@@ -411,16 +406,15 @@
                         cityssm.postJSON(`${workOrderUrlPrefix}/doDeleteWorkOrder`, {
                             workOrderId
                         }, (responseJSON) => {
-                            if (responseJSON.success &&
-                                responseJSON.redirectUrl !== undefined) {
-                                cityssm.disableNavBlocker();
+                            if (responseJSON.success) {
+                                shiftLog.clearUnsavedChanges();
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }
                             else {
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Delete Error',
-                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+                                    message: responseJSON.errorMessage
                                 });
                             }
                         });

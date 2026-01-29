@@ -1,5 +1,7 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+import getWorkOrder from './getWorkOrder.js'
+
 export interface CreateWorkOrderAttachmentForm {
   workOrderId: number | string
   attachmentFileName: string
@@ -12,7 +14,13 @@ export interface CreateWorkOrderAttachmentForm {
 export default async function createWorkOrderAttachment(
   form: CreateWorkOrderAttachmentForm,
   userName: string
-): Promise<number> {
+): Promise<number | undefined> {
+  const workOrder = await getWorkOrder(form.workOrderId)
+
+  if (workOrder === undefined) {
+    return undefined
+  }
+
   const pool = await getShiftLogConnectionPool()
 
   const result = await pool

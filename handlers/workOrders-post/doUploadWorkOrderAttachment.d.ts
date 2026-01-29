@@ -7,7 +7,7 @@ export type DoUploadWorkOrderAttachmentResponse = {
     message: string;
 } | {
     success: true;
-    workOrderAttachmentId?: number;
+    workOrderAttachmentId: number;
 };
 export default function handler(request: MulterRequest, response: Response<DoUploadWorkOrderAttachmentResponse>): Promise<void>;
 export {};

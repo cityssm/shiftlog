@@ -230,9 +230,7 @@
     }
     function loadNotes() {
         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`, {}, (responseJSON) => {
-            if (responseJSON.success) {
-                renderNotes(responseJSON.notes);
-            }
+            renderNotes(responseJSON.notes);
         });
     }
     // Add note button

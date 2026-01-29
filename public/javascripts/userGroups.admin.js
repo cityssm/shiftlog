@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const userGroupsContainerElement = document.querySelector('#container--userGroups');
@@ -20,10 +19,8 @@
                         userGroupId
                     }, (responseJSON) => {
                         if (responseJSON.success) {
-                            if (responseJSON.userGroups !== undefined) {
-                                exports.userGroups = responseJSON.userGroups;
-                                renderUserGroups(responseJSON.userGroups);
-                            }
+                            exports.userGroups = responseJSON.userGroups;
+                            renderUserGroups(responseJSON.userGroups);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'User Group Deleted',
@@ -59,10 +56,8 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserGroup`, updateForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
-                    if (responseJSON.userGroups !== undefined) {
-                        exports.userGroups = responseJSON.userGroups;
-                        renderUserGroups(responseJSON.userGroups);
-                    }
+                    exports.userGroups = responseJSON.userGroups;
+                    renderUserGroups(responseJSON.userGroups);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'User Group Updated',
@@ -106,23 +101,7 @@
         if (userGroup === undefined) {
             return;
         }
-        // let closeModalFunction: () => void
         let currentMembers = [];
-        /*
-        function refreshMembers(): void {
-          fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
-            .then(async (response) => await response.json())
-            .then((responseJSON: { userGroup?: UserGroup }) => {
-              if (responseJSON.userGroup !== undefined) {
-                currentMembers = responseJSON.userGroup.members ?? []
-                renderMembersList()
-              }
-            })
-            .catch(() => {
-              // Error handling
-            })
-        }
-        */
         function renderMembersList() {
             const modalElement = document.querySelector('.modal.is-active');
             const membersContainer = modalElement.querySelector('#container--members');

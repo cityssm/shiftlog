@@ -6,4 +6,4 @@ export interface CreateWorkOrderAttachmentForm {
     attachmentDescription?: string;
     fileSystemPath: string;
 }
-export default function createWorkOrderAttachment(form: CreateWorkOrderAttachmentForm, userName: string): Promise<number>;
+export default function createWorkOrderAttachment(form: CreateWorkOrderAttachmentForm, userName: string): Promise<number | undefined>;

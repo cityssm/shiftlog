@@ -67,7 +67,7 @@
                             workOrderId: Number.parseInt(workOrderId, 10),
                             tagName
                         }, (responseJSON) => {
-                            if (responseJSON.success && responseJSON.tags !== undefined) {
+                            if (responseJSON.success) {
                                 renderTags(responseJSON.tags);
                                 bulmaJS.alert({
                                     contextualColorName: 'success',
@@ -79,8 +79,7 @@
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
                                     title: 'Error Removing Tag',
-                                    message: responseJSON.message ??
-                                        'An error occurred while removing the tag.'
+                                    message: responseJSON.errorMessage
                                 });
                             }
                         });
@@ -98,7 +97,7 @@
                     workOrderId: Number.parseInt(workOrderId, 10),
                     tagName: tagNameInput.value
                 }, (responseJSON) => {
-                    if (responseJSON.success && responseJSON.tags !== undefined) {
+                    if (responseJSON.success) {
                         closeModalFunction();
                         renderTags(responseJSON.tags);
                         bulmaJS.alert({
@@ -116,8 +115,7 @@
                         bulmaJS.alert({
                             contextualColorName: 'danger',
                             title: 'Error Adding Tag',
-                            message: responseJSON.message ??
-                                'An error occurred while adding the tag.'
+                            message: responseJSON.errorMessage
                         });
                     }
                 });
@@ -142,9 +140,7 @@
         }
         function getTags() {
             cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`, {}, (responseJSON) => {
-                if (responseJSON.success && responseJSON.tags !== undefined) {
-                    renderTags(responseJSON.tags);
-                }
+                renderTags(responseJSON.tags);
             });
         }
         // Add tag button

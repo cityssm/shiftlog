@@ -1,5 +1,7 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+import getWorkOrder from './getWorkOrder.js'
+
 export interface CreateWorkOrderMilestoneForm {
   workOrderId: number | string
   milestoneTitle: string
@@ -12,7 +14,13 @@ export interface CreateWorkOrderMilestoneForm {
 export default async function createWorkOrderMilestone(
   form: CreateWorkOrderMilestoneForm,
   userName: string
-): Promise<number> {
+): Promise<number | undefined> {
+  const workOrder = await getWorkOrder(form.workOrderId)
+
+  if (workOrder === undefined) {
+    return undefined
+  }
+
   const pool = await getShiftLogConnectionPool()
 
   // Get the next order number

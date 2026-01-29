@@ -3,7 +3,12 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddWorkOrderTypeResponse } from '../../handlers/admin-post/doAddWorkOrderType.js'
+import type { DoDeleteWorkOrderTypeResponse } from '../../handlers/admin-post/doDeleteWorkOrderType.js'
+import type { DoReorderWorkOrderTypesResponse } from '../../handlers/admin-post/doReorderWorkOrderTypes.js'
+import type { DoUpdateWorkOrderTypeResponse } from '../../handlers/admin-post/doUpdateWorkOrderType.js'
 import type { WorkOrderMoreInfoForm } from '../../helpers/workOrderMoreInfoForms.helpers.js'
+import type { WorkOrderType } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -25,18 +30,6 @@ interface WorkOrderTypeDefaultMilestone {
   milestoneDescription: string
   dueDays?: number | null
   orderNumber: number
-}
-
-interface WorkOrderType {
-  defaultMilestones?: WorkOrderTypeDefaultMilestone[]
-  dueDays?: number | null
-  moreInfoFormNames?: string[]
-  orderNumber: number
-  userGroupId: number | null
-  userGroupName?: string | null
-  workOrderNumberPrefix: string
-  workOrderType: string
-  workOrderTypeId: number
 }
 
 interface UserGroup {
@@ -152,14 +145,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddWorkOrderType`,
         addForm,
-        (responseJSON: {
-          success: boolean
-          workOrderTypes?: WorkOrderType[]
-        }) => {
-          if (
-            responseJSON.success &&
-            responseJSON.workOrderTypes !== undefined
-          ) {
+        (responseJSON: DoAddWorkOrderTypeResponse) => {
+          if (responseJSON.success) {
             closeModalFunction()
             workOrderTypes = responseJSON.workOrderTypes
             renderWorkOrderTypes()
@@ -254,7 +241,7 @@ declare const exports: {
         const titleInput = item.querySelector(
           '.milestone-title'
         ) as HTMLInputElement
-        
+
         const descriptionInput = item.querySelector(
           '.milestone-description'
         ) as HTMLTextAreaElement
@@ -293,17 +280,12 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`,
         editForm,
-        (responseJSON: {
-          success: boolean
-          workOrderTypes?: WorkOrderType[]
-        }) => {
-          if (
-            responseJSON.success &&
-            responseJSON.workOrderTypes !== undefined
-          ) {
+        (responseJSON: DoUpdateWorkOrderTypeResponse) => {
+          if (responseJSON.success) {
             closeModalFunction()
             workOrderTypes = responseJSON.workOrderTypes
             renderWorkOrderTypes()
+
             bulmaJS.alert({
               contextualColorName: 'success',
               message: 'The work order type has been successfully updated.',
@@ -571,14 +553,8 @@ declare const exports: {
             {
               workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
             },
-            (responseJSON: {
-              success: boolean
-              workOrderTypes?: WorkOrderType[]
-            }) => {
-              if (
-                responseJSON.success &&
-                responseJSON.workOrderTypes !== undefined
-              ) {
+            (responseJSON: DoDeleteWorkOrderTypeResponse) => {
+              if (responseJSON.success) {
                 workOrderTypes = responseJSON.workOrderTypes
                 renderWorkOrderTypes()
                 bulmaJS.alert({
@@ -589,7 +565,7 @@ declare const exports: {
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  message: 'An error occurred. Please try again.',
+                  message: responseJSON.errorMessage,
                   title: 'Error Deleting Work Order Type'
                 })
               }
@@ -644,10 +620,7 @@ declare const exports: {
             {
               workOrderTypeIds
             },
-            (responseJSON: {
-              success: boolean
-              workOrderTypes?: WorkOrderType[]
-            }) => {
+            (responseJSON: DoReorderWorkOrderTypesResponse) => {
               if (!responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'danger',

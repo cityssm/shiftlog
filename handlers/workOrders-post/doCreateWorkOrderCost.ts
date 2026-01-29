@@ -4,11 +4,15 @@ import createWorkOrderCost, {
   type CreateWorkOrderCostForm
 } from '../../database/workOrders/createWorkOrderCost.js'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
-export type DoCreateWorkOrderCostResponse = {
-  success: true
-  workOrderCostId: number
-}
+export type DoCreateWorkOrderCostResponse =
+  | {
+      success: false
+      errorMessage: string
+    }
+  | {
+      success: true
+      workOrderCostId: number
+    }
 
 export default async function handler(
   request: Request<unknown, unknown, CreateWorkOrderCostForm>,
@@ -18,6 +22,14 @@ export default async function handler(
     request.body,
     request.session.user?.userName ?? ''
   )
+
+  if (workOrderCostId === undefined) {
+    response.json({
+      success: false,
+      errorMessage: 'Work order not found.'
+    })
+    return
+  }
 
   response.json({
     success: true,

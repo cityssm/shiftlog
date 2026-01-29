@@ -1,6 +1,12 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoCreateWorkOrderCostResponse } from '../../handlers/workOrders-post/doCreateWorkOrderCost.js'
+import type { DoDeleteWorkOrderCostResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderCost.js'
+import type { DoGetWorkOrderCostsResponse } from '../../handlers/workOrders-post/doGetWorkOrderCosts.js'
+import type { DoUpdateWorkOrderCostResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderCost.js'
+import type { WorkOrderCost } from '../../types/record.types.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
@@ -34,18 +40,6 @@ declare const bulmaJS: BulmaJS
   ) as HTMLElement | null
 
   if (costsContainerElement !== null) {
-    interface WorkOrderCost {
-      workOrderCostId: number
-      workOrderId: number
-
-      costAmount: number
-      costDescription: string
-      recordCreate_dateTime: string
-      recordCreate_userName: string
-      recordUpdate_dateTime: string
-      recordUpdate_userName: string
-    }
-
     function renderCosts(costs: WorkOrderCost[]): void {
       // Update costs count
       const costsCountElement = document.querySelector('#costsCount')
@@ -176,7 +170,7 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderCost`,
           formElement,
-          (responseJSON: { success: boolean }) => {
+          (responseJSON: DoUpdateWorkOrderCostResponse) => {
             if (responseJSON.success) {
               closeModalFunction()
               loadCosts()
@@ -236,7 +230,7 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderCost`,
           formElement,
-          (responseJSON: { success: boolean }) => {
+          (responseJSON: DoCreateWorkOrderCostResponse) => {
             if (responseJSON.success) {
               closeModalFunction()
               formElement.reset()
@@ -244,7 +238,8 @@ declare const bulmaJS: BulmaJS
             } else {
               bulmaJS.alert({
                 contextualColorName: 'danger',
-                message: 'Failed to add cost.'
+                title: 'Error Adding Cost',
+                message: responseJSON.errorMessage
               })
             }
           }
@@ -295,7 +290,7 @@ declare const bulmaJS: BulmaJS
               {
                 workOrderCostId
               },
-              (responseJSON: { success: boolean }) => {
+              (responseJSON: DoDeleteWorkOrderCostResponse) => {
                 if (responseJSON.success) {
                   loadCosts()
                 } else {
@@ -315,14 +310,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderCosts`,
         {},
-        (responseJSON: {
-          success: boolean
-
-          costs: WorkOrderCost[]
-        }) => {
-          if (responseJSON.success) {
-            renderCosts(responseJSON.costs)
-          }
+        (responseJSON: DoGetWorkOrderCostsResponse) => {
+          renderCosts(responseJSON.costs)
         }
       )
     }

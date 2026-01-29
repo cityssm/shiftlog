@@ -4,7 +4,7 @@ interface DeleteWorkOrderTypeForm {
     workOrderTypeId: number | string;
 }
 export type DoDeleteWorkOrderTypeResponse = {
-    message: string;
+    errorMessage: string;
     success: false;
 } | {
     success: true;

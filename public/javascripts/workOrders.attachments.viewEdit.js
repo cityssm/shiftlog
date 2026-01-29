@@ -222,7 +222,7 @@
                 method: 'POST',
                 body: formData
             })
-                .then(async (response) => response.json())
+                .then(async (response) => (await response.json()))
                 .then((responseJSON) => {
                 submitButton.disabled = false;
                 submitButton.classList.remove('is-loading');
@@ -359,18 +359,15 @@
     }
     function loadAttachments() {
         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`, {}, (responseJSON) => {
-            if (responseJSON.success) {
-                renderAttachments(responseJSON.attachments);
-            }
+            renderAttachments(responseJSON.attachments);
         });
     }
     // Add attachment button
-    const addAttachmentButton = document.querySelector('#button--addAttachment');
-    if (addAttachmentButton !== null) {
-        addAttachmentButton.addEventListener('click', () => {
-            showAddAttachmentModal();
-        });
-    }
+    document
+        .querySelector('#button--addAttachment')
+        ?.addEventListener('click', () => {
+        showAddAttachmentModal();
+    });
     // Load attachments initially
     loadAttachments();
 })();

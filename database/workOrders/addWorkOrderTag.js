@@ -1,6 +1,11 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import getWorkOrder from './getWorkOrder.js';
 export default async function addWorkOrderTag(workOrderId, tagName) {
     try {
+        const workOrder = await getWorkOrder(workOrderId);
+        if (workOrder === undefined) {
+            return false;
+        }
         const pool = await getShiftLogConnectionPool();
         await pool
             .request()

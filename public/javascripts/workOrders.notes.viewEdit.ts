@@ -1,6 +1,12 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { WorkOrderNote } from '../../database/workOrders/getWorkOrderNotes.js'
+import type { DoCreateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doCreateWorkOrderNote.js'
+import type { DoDeleteWorkOrderNoteResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderNote.js'
+import type { DoGetWorkOrderNotesResponse } from '../../handlers/workOrders-post/doGetWorkOrderNotes.js'
+import type { DoUpdateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderNote.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
@@ -36,17 +42,6 @@ declare const bulmaJS: BulmaJS
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (notesContainerElement === null) {
     return
-  }
-
-  interface WorkOrderNote {
-    workOrderId: number
-    noteSequence: number
-    noteText: string
-
-    recordCreate_dateTime: string
-    recordCreate_userName: string
-    recordUpdate_dateTime: string
-    recordUpdate_userName: string
   }
 
   function truncateText(text: string, maxLength: number): string {
@@ -184,7 +179,9 @@ declare const bulmaJS: BulmaJS
           modalElement.querySelector(
             '#viewWorkOrderNote--dateTime'
           ) as HTMLElement
-        ).textContent = cityssm.dateToString(new Date(note.recordCreate_dateTime))
+        ).textContent = cityssm.dateToString(
+          new Date(note.recordCreate_dateTime)
+        )
         ;(
           modalElement.querySelector(
             '#viewWorkOrderNote--noteText'
@@ -194,6 +191,7 @@ declare const bulmaJS: BulmaJS
       onshown(_modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -210,7 +208,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`,
         formElement,
-        (responseJSON: { success: boolean }) => {
+        (responseJSON: DoUpdateWorkOrderNoteResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
             loadNotes()
@@ -269,7 +267,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`,
         formElement,
-        (responseJSON: { success: boolean }) => {
+        (responseJSON: DoCreateWorkOrderNoteResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
             formElement.reset()
@@ -330,7 +328,7 @@ declare const bulmaJS: BulmaJS
               workOrderId,
               noteSequence
             },
-            (responseJSON: { success: boolean }) => {
+            (responseJSON: DoDeleteWorkOrderNoteResponse) => {
               if (responseJSON.success) {
                 loadNotes()
               } else {
@@ -350,10 +348,8 @@ declare const bulmaJS: BulmaJS
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`,
       {},
-      (responseJSON: { success: boolean; notes: WorkOrderNote[] }) => {
-        if (responseJSON.success) {
-          renderNotes(responseJSON.notes)
-        }
+      (responseJSON: DoGetWorkOrderNotesResponse) => {
+        renderNotes(responseJSON.notes)
       }
     )
   }

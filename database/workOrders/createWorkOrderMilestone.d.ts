@@ -6,4 +6,4 @@ export interface CreateWorkOrderMilestoneForm {
     milestoneCompleteDateTimeString?: string;
     assignedToId?: number | string;
 }
-export default function createWorkOrderMilestone(form: CreateWorkOrderMilestoneForm, userName: string): Promise<number>;
+export default function createWorkOrderMilestone(form: CreateWorkOrderMilestoneForm, userName: string): Promise<number | undefined>;

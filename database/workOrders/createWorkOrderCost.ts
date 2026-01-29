@@ -1,5 +1,7 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+import getWorkOrder from './getWorkOrder.js'
+
 export interface CreateWorkOrderCostForm {
   workOrderId: number | string
   costAmount: number | string
@@ -9,7 +11,13 @@ export interface CreateWorkOrderCostForm {
 export default async function createWorkOrderCost(
   createWorkOrderCostForm: CreateWorkOrderCostForm,
   userName: string
-): Promise<number> {
+): Promise<number | undefined> {
+  const workOrder = await getWorkOrder(createWorkOrderCostForm.workOrderId)
+  
+    if (workOrder === undefined) {
+      return undefined
+    }
+
   const pool = await getShiftLogConnectionPool()
 
   const result = await pool

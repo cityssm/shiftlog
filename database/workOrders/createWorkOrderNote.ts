@@ -1,5 +1,7 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+import getWorkOrder from './getWorkOrder.js'
+
 export interface CreateWorkOrderNoteForm {
   workOrderId: number | string
   noteText: string
@@ -8,7 +10,13 @@ export interface CreateWorkOrderNoteForm {
 export default async function createWorkOrderNote(
   createWorkOrderNoteForm: CreateWorkOrderNoteForm,
   userName: string
-): Promise<number> {
+): Promise<number | undefined> {
+  const workOrder = await getWorkOrder(createWorkOrderNoteForm.workOrderId)
+
+  if (workOrder === undefined) {
+    return undefined
+  }
+
   const pool = await getShiftLogConnectionPool()
 
   // Get the next sequence number

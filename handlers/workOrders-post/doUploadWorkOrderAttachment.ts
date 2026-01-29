@@ -21,7 +21,7 @@ export type DoUploadWorkOrderAttachmentResponse =
       success: false
       message: string
     }
-  | { success: true; workOrderAttachmentId?: number }
+  | { success: true; workOrderAttachmentId: number }
 
 function sanitizeFileName(originalName: string): string {
   // Remove control characters, newlines, and null bytes
@@ -107,6 +107,10 @@ export default async function handler(
       },
       request.session.user?.userName ?? ''
     )
+
+    if (workOrderAttachmentId === undefined) {
+      throw new Error('Work order not found')
+    }
 
     response.json({
       success: true,

@@ -19,15 +19,14 @@
                         cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doReopenWorkOrder`, {
                             workOrderId: workOrderIdElement.value
                         }, (responseJSON) => {
-                            if (responseJSON.success &&
-                                responseJSON.redirectUrl !== undefined) {
+                            if (responseJSON.success) {
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }
                             else {
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
-                                    message: responseJSON.errorMessage ?? 'An unknown error occurred.',
-                                    title: 'Reopen Error'
+                                    title: 'Reopen Error',
+                                    message: responseJSON.errorMessage
                                 });
                             }
                         });

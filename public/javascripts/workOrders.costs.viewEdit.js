@@ -157,7 +157,8 @@
                     else {
                         bulmaJS.alert({
                             contextualColorName: 'danger',
-                            message: 'Failed to add cost.'
+                            title: 'Error Adding Cost',
+                            message: responseJSON.errorMessage
                         });
                     }
                 });
@@ -208,9 +209,7 @@
         }
         function loadCosts() {
             cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderCosts`, {}, (responseJSON) => {
-                if (responseJSON.success) {
-                    renderCosts(responseJSON.costs);
-                }
+                renderCosts(responseJSON.costs);
             });
         }
         // Add cost button

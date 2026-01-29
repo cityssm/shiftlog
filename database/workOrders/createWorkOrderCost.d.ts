@@ -3,4 +3,4 @@ export interface CreateWorkOrderCostForm {
     costAmount: number | string;
     costDescription: string;
 }
-export default function createWorkOrderCost(createWorkOrderCostForm: CreateWorkOrderCostForm, userName: string): Promise<number>;
+export default function createWorkOrderCost(createWorkOrderCostForm: CreateWorkOrderCostForm, userName: string): Promise<number | undefined>;

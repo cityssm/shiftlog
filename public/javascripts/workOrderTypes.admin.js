@@ -82,8 +82,7 @@
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddWorkOrderType`, addForm, (responseJSON) => {
-                if (responseJSON.success &&
-                    responseJSON.workOrderTypes !== undefined) {
+                if (responseJSON.success) {
                     closeModalFunction();
                     workOrderTypes = responseJSON.workOrderTypes;
                     renderWorkOrderTypes();
@@ -175,8 +174,7 @@
             milestonesInput.value = JSON.stringify(milestones);
             editForm.append(milestonesInput);
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, editForm, (responseJSON) => {
-                if (responseJSON.success &&
-                    responseJSON.workOrderTypes !== undefined) {
+                if (responseJSON.success) {
                     closeModalFunction();
                     workOrderTypes = responseJSON.workOrderTypes;
                     renderWorkOrderTypes();
@@ -383,8 +381,7 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteWorkOrderType`, {
                         workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
                     }, (responseJSON) => {
-                        if (responseJSON.success &&
-                            responseJSON.workOrderTypes !== undefined) {
+                        if (responseJSON.success) {
                             workOrderTypes = responseJSON.workOrderTypes;
                             renderWorkOrderTypes();
                             bulmaJS.alert({
@@ -396,7 +393,7 @@
                         else {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
-                                message: 'An error occurred. Please try again.',
+                                message: responseJSON.errorMessage,
                                 title: 'Error Deleting Work Order Type'
                             });
                         }

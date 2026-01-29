@@ -1,33 +1,16 @@
+import type { BulmaJS } from '@cityssm/bulma-js/types.js'
+import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+
+import type { DoReopenWorkOrderResponse } from '../../handlers/workOrders-post/doReopenWorkOrder.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
 }
 
-declare const cityssm: {
-  postJSON: (
-    url: string,
-    data: unknown,
-    callback: (responseJSON: unknown) => void
-  ) => void
-}
-
-declare const bulmaJS: {
-  alert: (options: {
-    contextualColorName: string
-    message?: string
-    title?: string
-  }) => void
-  confirm: (options: {
-    contextualColorName: string
-    message: string
-    okButton: {
-      callbackFunction: () => void
-      text: string
-    }
-    title: string
-  }) => void
-}
+declare const cityssm: cityssmGlobal
+declare const bulmaJS: BulmaJS
 ;(() => {
   const shiftLog = exports.shiftLog
 
@@ -36,9 +19,7 @@ declare const bulmaJS: {
   )
 
   if (workOrderTabsContainerElement !== null) {
-    shiftLog.initializeRecordTabs(
-      workOrderTabsContainerElement as HTMLElement
-    )
+    shiftLog.initializeRecordTabs(workOrderTabsContainerElement as HTMLElement)
   }
 
   /*
@@ -65,22 +46,15 @@ declare const bulmaJS: {
               {
                 workOrderId: workOrderIdElement.value
               },
-              (responseJSON: {
-                errorMessage?: string
-                redirectUrl?: string
-                success: boolean
-              }) => {
-                if (
-                  responseJSON.success &&
-                  responseJSON.redirectUrl !== undefined
-                ) {
+              (responseJSON: DoReopenWorkOrderResponse) => {
+                if (responseJSON.success) {
                   globalThis.location.href = responseJSON.redirectUrl
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
-                    message:
-                      responseJSON.errorMessage ?? 'An unknown error occurred.',
-                    title: 'Reopen Error'
+                    title: 'Reopen Error',
+                    
+                    message: responseJSON.errorMessage
                   })
                 }
               }

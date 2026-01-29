@@ -12,7 +12,7 @@ export default async function handler(request, response) {
     }
     else {
         response.json({
-            message: `${getConfigProperty('workOrders.sectionName')} Type could not be deleted.`,
+            errorMessage: `${getConfigProperty('workOrders.sectionName')} Type could not be deleted.`,
             success: false
         });
     }

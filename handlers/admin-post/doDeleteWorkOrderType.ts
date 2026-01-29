@@ -11,7 +11,7 @@ interface DeleteWorkOrderTypeForm {
 
 export type DoDeleteWorkOrderTypeResponse =
   | {
-      message: string
+      errorMessage: string
       success: false
     }
   | {
@@ -36,7 +36,7 @@ export default async function handler(
     })
   } else {
     response.json({
-      message: `${getConfigProperty('workOrders.sectionName')} Type could not be deleted.`,
+      errorMessage: `${getConfigProperty('workOrders.sectionName')} Type could not be deleted.`,
       success: false
     })
   }

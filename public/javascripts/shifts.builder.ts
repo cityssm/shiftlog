@@ -3810,16 +3810,20 @@ declare const exports: {
                   if (responseJSON.success) {
                     bulmaJS.alert({
                       contextualColorName: 'success',
-                      message: 'Ad hoc task created successfully.',
-                      title: 'Success'
+                      title: 'Success',
+
+                      message: 'Ad hoc task created successfully.'
                     })
+
                     closeModalFunction()
+
                     // Reload available resources to show the new task
                     loadAvailableResources()
                   } else {
                     bulmaJS.alert({
                       contextualColorName: 'danger',
                       title: 'Error Creating Task',
+
                       message:
                         responseJSON.errorMessage ??
                         'An unknown error occurred.'
@@ -3833,6 +3837,7 @@ declare const exports: {
               .querySelector('#createAdhocTask--adhocTaskTypeDataListItemId')
               ?.focus()
           },
+
           onremoved() {
             bulmaJS.toggleHtmlClipped()
           }
@@ -3898,11 +3903,13 @@ declare const exports: {
       onshown(modalElement, closeFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
+
         // Focus the textarea
         const textarea = modalElement.querySelector(
           '[name="shiftCrewNote"]'
         ) as HTMLTextAreaElement
-        textarea?.focus()
+
+        textarea.focus()
       },
 
       onremoved() {

@@ -1,6 +1,9 @@
 import type { Request, Response } from 'express';
 import { type CreateWorkOrderCostForm } from '../../database/workOrders/createWorkOrderCost.js';
 export type DoCreateWorkOrderCostResponse = {
+    success: false;
+    errorMessage: string;
+} | {
     success: true;
     workOrderCostId: number;
 };

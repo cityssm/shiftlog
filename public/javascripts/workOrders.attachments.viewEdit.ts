@@ -1,23 +1,14 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoDeleteWorkOrderAttachmentResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderAttachment.js'
+import type { DoGetWorkOrderAttachmentsResponse } from '../../handlers/workOrders-post/doGetWorkOrderAttachments.js'
+import type { DoSetWorkOrderAttachmentThumbnailResponse } from '../../handlers/workOrders-post/doSetWorkOrderAttachmentThumbnail.js'
+import type { DoUpdateWorkOrderAttachmentResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderAttachment.js'
+import type { DoUploadWorkOrderAttachmentResponse } from '../../handlers/workOrders-post/doUploadWorkOrderAttachment.js'
+import type { WorkOrderAttachment } from '../../types/record.types.js'
+
 import type { ShiftLogGlobal } from './types.js'
-
-interface WorkOrderAttachment {
-  workOrderAttachmentId: number
-  workOrderId: number
-
-  attachmentDescription: string
-
-  attachmentFileName: string
-  attachmentFileSizeInBytes: number
-  attachmentFileType: string
-
-  isWorkOrderThumbnail: boolean
-
-  recordCreate_dateTime: string
-  recordCreate_userName: string
-}
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
@@ -312,7 +303,10 @@ declare const bulmaJS: BulmaJS
             body: formData
           }
         )
-        .then(async (response) => response.json())
+        .then(
+          async (response: Response) =>
+            (await response.json()) as DoUploadWorkOrderAttachmentResponse
+        )
         .then((responseJSON) => {
           submitButton.disabled = false
           submitButton.classList.remove('is-loading')
@@ -393,7 +387,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderAttachment`,
         formElement,
-        (responseJSON: { success: boolean }) => {
+        (responseJSON: DoUpdateWorkOrderAttachmentResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
             loadAttachments()
@@ -451,7 +445,7 @@ declare const bulmaJS: BulmaJS
             {
               workOrderAttachmentId
             },
-            (responseJSON: { success: boolean }) => {
+            (responseJSON: DoDeleteWorkOrderAttachmentResponse) => {
               if (responseJSON.success) {
                 loadAttachments()
               } else {
@@ -473,7 +467,7 @@ declare const bulmaJS: BulmaJS
       {
         workOrderAttachmentId
       },
-      (responseJSON: { success: boolean }) => {
+      (responseJSON: DoSetWorkOrderAttachmentThumbnailResponse) => {
         if (responseJSON.success) {
           loadAttachments()
           bulmaJS.alert({
@@ -494,27 +488,18 @@ declare const bulmaJS: BulmaJS
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`,
       {},
-      (responseJSON: {
-        success: boolean
-
-        attachments: WorkOrderAttachment[]
-      }) => {
-        if (responseJSON.success) {
-          renderAttachments(responseJSON.attachments)
-        }
+      (responseJSON: DoGetWorkOrderAttachmentsResponse) => {
+        renderAttachments(responseJSON.attachments)
       }
     )
   }
 
   // Add attachment button
-  const addAttachmentButton = document.querySelector(
-    '#button--addAttachment'
-  ) as HTMLButtonElement | null
-  if (addAttachmentButton !== null) {
-    addAttachmentButton.addEventListener('click', () => {
+  document
+    .querySelector('#button--addAttachment')
+    ?.addEventListener('click', () => {
       showAddAttachmentModal()
     })
-  }
 
   // Load attachments initially
   loadAttachments()

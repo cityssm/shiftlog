@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
@@ -54,10 +52,8 @@ declare const exports: {
             },
             (responseJSON: DoDeleteUserGroupResponse) => {
               if (responseJSON.success) {
-                if (responseJSON.userGroups !== undefined) {
-                  exports.userGroups = responseJSON.userGroups
-                  renderUserGroups(responseJSON.userGroups)
-                }
+                exports.userGroups = responseJSON.userGroups
+                renderUserGroups(responseJSON.userGroups)
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -110,10 +106,8 @@ declare const exports: {
           if (responseJSON.success) {
             closeModalFunction()
 
-            if (responseJSON.userGroups !== undefined) {
-              exports.userGroups = responseJSON.userGroups
-              renderUserGroups(responseJSON.userGroups)
-            }
+            exports.userGroups = responseJSON.userGroups
+            renderUserGroups(responseJSON.userGroups)
 
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -175,25 +169,7 @@ declare const exports: {
       return
     }
 
-    // let closeModalFunction: () => void
-
     let currentMembers: string[] = []
-
-    /*
-    function refreshMembers(): void {
-      fetch(`${shiftLog.urlPrefix}/admin/userGroup/${userGroupId}`)
-        .then(async (response) => await response.json())
-        .then((responseJSON: { userGroup?: UserGroup }) => {
-          if (responseJSON.userGroup !== undefined) {
-            currentMembers = responseJSON.userGroup.members ?? []
-            renderMembersList()
-          }
-        })
-        .catch(() => {
-          // Error handling
-        })
-    }
-    */
 
     function renderMembersList(): void {
       const modalElement = document.querySelector(
@@ -491,16 +467,19 @@ declare const exports: {
     // Add event listeners
     const manageMembersButtons =
       tableElement.querySelectorAll('.manage-members')
+
     for (const button of manageMembersButtons) {
       button.addEventListener('click', manageMembers)
     }
 
     const editButtons = tableElement.querySelectorAll('.edit-user-group')
+
     for (const button of editButtons) {
       button.addEventListener('click', editUserGroup)
     }
 
     const deleteButtons = tableElement.querySelectorAll('.delete-user-group')
+
     for (const button of deleteButtons) {
       button.addEventListener('click', deleteUserGroup)
     }

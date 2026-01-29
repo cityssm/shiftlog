@@ -1,6 +1,9 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddWorkOrderTagResponse } from '../../handlers/workOrders-post/doAddWorkOrderTag.js'
+import type { DoDeleteWorkOrderTagResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderTag.js'
+import type { DoGetWorkOrderTagsResponse } from '../../handlers/workOrders-post/doGetWorkOrderTags.js'
 import type { WorkOrderTag } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -111,12 +114,8 @@ declare const bulmaJS: BulmaJS
                 workOrderId: Number.parseInt(workOrderId, 10),
                 tagName
               },
-              (responseJSON: {
-                success: boolean
-                message?: string
-                tags?: WorkOrderTag[]
-              }) => {
-                if (responseJSON.success && responseJSON.tags !== undefined) {
+              (responseJSON: DoDeleteWorkOrderTagResponse) => {
+                if (responseJSON.success) {
                   renderTags(responseJSON.tags)
                   bulmaJS.alert({
                     contextualColorName: 'success',
@@ -130,9 +129,7 @@ declare const bulmaJS: BulmaJS
                     contextualColorName: 'danger',
                     title: 'Error Removing Tag',
 
-                    message:
-                      responseJSON.message ??
-                      'An error occurred while removing the tag.'
+                    message: responseJSON.errorMessage
                   })
                 }
               }
@@ -159,12 +156,8 @@ declare const bulmaJS: BulmaJS
             workOrderId: Number.parseInt(workOrderId, 10),
             tagName: tagNameInput.value
           },
-          (responseJSON: {
-            success: boolean
-            message?: string
-            tags?: WorkOrderTag[]
-          }) => {
-            if (responseJSON.success && responseJSON.tags !== undefined) {
+          (responseJSON: DoAddWorkOrderTagResponse) => {
+            if (responseJSON.success) {
               closeModalFunction()
               renderTags(responseJSON.tags)
               bulmaJS.alert({
@@ -184,9 +177,7 @@ declare const bulmaJS: BulmaJS
                 contextualColorName: 'danger',
                 title: 'Error Adding Tag',
 
-                message:
-                  responseJSON.message ??
-                  'An error occurred while adding the tag.'
+                message: responseJSON.errorMessage
               })
             }
           }
@@ -222,10 +213,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`,
         {},
-        (responseJSON: { success: boolean; tags?: WorkOrderTag[] }) => {
-          if (responseJSON.success && responseJSON.tags !== undefined) {
-            renderTags(responseJSON.tags)
-          }
+        (responseJSON: DoGetWorkOrderTagsResponse) => {
+          renderTags(responseJSON.tags)
         }
       )
     }

@@ -75,10 +75,22 @@ export const workOrderReports = {
       FROM
         ShiftLog.WorkOrderCosts c
         LEFT JOIN ShiftLog.WorkOrders w ON c.workOrderId = w.workOrderId
+        LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
       WHERE
         w.instance = @instance
         AND c.recordDelete_dateTime IS NULL
         AND c.workOrderId = @workOrderId
+        AND (
+          wType.userGroupId IN (
+            SELECT
+              userGroupId
+            FROM
+              ShiftLog.UserGroupMembers
+            WHERE
+              userName = @userName
+          )
+          OR wType.userGroupId IS NULL
+        )
       ORDER BY
         c.workOrderCostId ASC
     `
@@ -97,10 +109,22 @@ export const workOrderReports = {
       FROM
         ShiftLog.WorkOrderNotes n
         LEFT JOIN ShiftLog.WorkOrders w ON n.workOrderId = w.workOrderId
+        LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
       WHERE
         w.instance = @instance
         AND n.recordDelete_dateTime IS NULL
         AND n.workOrderId = @workOrderId
+        AND (
+          wType.userGroupId IN (
+            SELECT
+              userGroupId
+            FROM
+              ShiftLog.UserGroupMembers
+            WHERE
+              userName = @userName
+          )
+          OR wType.userGroupId IS NULL
+        )
       ORDER BY
         n.noteSequence ASC
     `

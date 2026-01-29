@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 (() => {
     const workOrderFormElement = document.querySelector('#form--workOrder');
     const workOrderId = workOrderFormElement === null
@@ -333,9 +334,7 @@
     }
     function loadMilestones() {
         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (responseJSON) => {
-            if (responseJSON.success) {
-                renderMilestones(responseJSON.milestones);
-            }
+            renderMilestones(responseJSON.milestones);
         });
     }
     // Add milestone button

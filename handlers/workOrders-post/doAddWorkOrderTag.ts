@@ -13,7 +13,7 @@ interface AddWorkOrderTagForm {
 export type DoAddWorkOrderTagResponse =
   | {
       success: false
-      message: string
+      errorMessage: string
     }
   | {
       success: true
@@ -38,7 +38,7 @@ export default async function handler(
   } else {
     response.json({
       success: false,
-      message: `Failed to add tag to ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
+      errorMessage: `Failed to add tag to ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
     })
   }
 }

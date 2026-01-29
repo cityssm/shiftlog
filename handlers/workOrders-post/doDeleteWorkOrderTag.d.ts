@@ -6,10 +6,10 @@ interface DeleteWorkOrderTagForm {
 }
 export type DoDeleteWorkOrderTagResponse = {
     success: false;
-    message: string;
+    errorMessage: string;
 } | {
     success: true;
-    tags?: WorkOrderTag[];
+    tags: WorkOrderTag[];
 };
 export default function handler(request: Request<unknown, unknown, DeleteWorkOrderTagForm>, response: Response<DoDeleteWorkOrderTagResponse>): Promise<void>;
 export {};

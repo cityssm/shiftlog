@@ -13,7 +13,7 @@ export default async function handler(request, response) {
     else {
         response.json({
             success: false,
-            message: `Failed to add tag to ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
+            errorMessage: `Failed to add tag to ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
         });
     }
 }

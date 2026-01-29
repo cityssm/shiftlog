@@ -13,7 +13,7 @@ export default async function handler(request, response) {
     else {
         response.json({
             success: false,
-            message: `Failed to remove tag from ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
+            errorMessage: `Failed to remove tag from ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
         });
     }
 }

@@ -6,7 +6,7 @@ interface AddWorkOrderTagForm {
 }
 export type DoAddWorkOrderTagResponse = {
     success: false;
-    message: string;
+    errorMessage: string;
 } | {
     success: true;
     tags: WorkOrderTag[];

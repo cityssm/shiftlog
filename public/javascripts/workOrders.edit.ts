@@ -5,6 +5,11 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 import type Leaflet from 'leaflet'
 
+import type { DoCreateWorkOrderResponse } from '../../handlers/workOrders-post/doCreateWorkOrder.js'
+import type { DoDeleteWorkOrderResponse } from '../../handlers/workOrders-post/doDeleteWorkOrder.js'
+import type { DoGetLocationSuggestionsResponse } from '../../handlers/workOrders-post/doGetLocationSuggestions.js'
+import type { DoGetRequestorSuggestionsResponse } from '../../handlers/workOrders-post/doGetRequestorSuggestions.js'
+import type { DoUpdateWorkOrderResponse } from '../../handlers/workOrders-post/doUpdateWorkOrder.js'
 import type { Location } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -89,19 +94,13 @@ declare const exports: {
     cityssm.postJSON(
       `${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`,
       workOrderFormElement,
-      (responseJSON: {
-        success: boolean
-
-        errorMessage?: string
-
-        workOrderId?: number
-      }) => {
+      (responseJSON: DoCreateWorkOrderResponse | DoUpdateWorkOrderResponse) => {
         if (responseJSON.success) {
           shiftLog.clearUnsavedChanges()
 
-          if (isCreate && responseJSON.workOrderId !== undefined) {
+          if (isCreate) {
             globalThis.location.href = shiftLog.buildWorkOrderURL(
-              responseJSON.workOrderId,
+              (responseJSON as DoCreateWorkOrderResponse).workOrderId,
               true
             )
           } else if (workOrderCloseDateTimeStringElement.value === '') {
@@ -127,7 +126,7 @@ declare const exports: {
             contextualColorName: 'danger',
             title: 'Update Error',
 
-            message: responseJSON.errorMessage ?? 'An unknown error occurred.'
+            message: 'An unknown error occurred.'
           })
         }
       }
@@ -171,32 +170,22 @@ declare const exports: {
           {
             searchString: requestorSearchString
           },
-          (responseJSON: {
-            success: boolean
+          (responseJSON: DoGetRequestorSuggestionsResponse) => {
+            requestorsData = responseJSON.requestors
 
-            requestors?: Array<{
-              requestorContactInfo?: string
-              requestorName: string
-            }>
-          }) => {
-            if (responseJSON.success && responseJSON.requestors) {
-              requestorsData = responseJSON.requestors
+            for (const requestor of responseJSON.requestors) {
+              const option = document.createElement('option')
 
-              for (const requestor of responseJSON.requestors) {
-                const option = document.createElement('option')
+              option.value = requestor.requestorName
+              option.textContent =
+                requestor.requestorName +
+                (requestor.requestorContactInfo
+                  ? ` (${requestor.requestorContactInfo})`
+                  : '')
 
-                option.value = requestor.requestorName
-                option.textContent =
-                  requestor.requestorName +
-                  (requestor.requestorContactInfo
-                    ? ` (${requestor.requestorContactInfo})`
-                    : '')
+              option.dataset.contactInfo = requestor.requestorContactInfo
 
-                option.dataset.contactInfo =
-                  requestor.requestorContactInfo ?? ''
-
-                requestorDatalist.append(option)
-              }
+              requestorDatalist.append(option)
             }
           }
         )
@@ -308,18 +297,12 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrderUrlPrefix}/doGetLocationSuggestions`,
         { searchString },
-        (responseJSON: {
-          success: boolean
+        (responseJSON: DoGetLocationSuggestionsResponse) => {
+          locationsData = responseJSON.locations
+          populateLocationDatalist(responseJSON.locations)
 
-          locations?: Location[]
-        }) => {
-          if (responseJSON.success && responseJSON.locations) {
-            locationsData = responseJSON.locations
-            populateLocationDatalist(responseJSON.locations)
-
-            if (callback !== undefined) {
-              callback(responseJSON.locations)
-            }
+          if (callback !== undefined) {
+            callback(responseJSON.locations)
           }
         }
       )
@@ -662,24 +645,16 @@ declare const exports: {
               {
                 workOrderId
               },
-              (responseJSON: {
-                success: boolean
-                redirectUrl?: string
-                errorMessage?: string
-              }) => {
-                if (
-                  responseJSON.success &&
-                  responseJSON.redirectUrl !== undefined
-                ) {
-                  cityssm.disableNavBlocker()
+              (responseJSON: DoDeleteWorkOrderResponse) => {
+                if (responseJSON.success) {
+                  shiftLog.clearUnsavedChanges()
                   globalThis.location.href = responseJSON.redirectUrl
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Delete Error',
 
-                    message:
-                      responseJSON.errorMessage ?? 'An unknown error occurred.'
+                    message: responseJSON.errorMessage
                   })
                 }
               }

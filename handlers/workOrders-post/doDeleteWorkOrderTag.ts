@@ -13,11 +13,11 @@ interface DeleteWorkOrderTagForm {
 export type DoDeleteWorkOrderTagResponse =
   | {
       success: false
-      message: string
+      errorMessage: string
     }
   | {
       success: true
-      tags?: WorkOrderTag[]
+      tags: WorkOrderTag[]
     }
 
 export default async function handler(
@@ -31,6 +31,7 @@ export default async function handler(
 
   if (success) {
     const tags = await getWorkOrderTags(request.body.workOrderId)
+    
     response.json({
       success: true,
       tags
@@ -38,7 +39,7 @@ export default async function handler(
   } else {
     response.json({
       success: false,
-      message: `Failed to remove tag from ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
+      errorMessage: `Failed to remove tag from ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
     })
   }
 }

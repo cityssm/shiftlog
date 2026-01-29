@@ -2714,8 +2714,8 @@
                             if (responseJSON.success) {
                                 bulmaJS.alert({
                                     contextualColorName: 'success',
-                                    message: 'Ad hoc task created successfully.',
-                                    title: 'Success'
+                                    title: 'Success',
+                                    message: 'Ad hoc task created successfully.'
                                 });
                                 closeModalFunction();
                                 // Reload available resources to show the new task
@@ -2777,7 +2777,7 @@
                 closeModalFunction = closeFunction;
                 // Focus the textarea
                 const textarea = modalElement.querySelector('[name="shiftCrewNote"]');
-                textarea?.focus();
+                textarea.focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
