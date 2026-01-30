@@ -74,8 +74,8 @@ declare const exports: {
     }
 
     // Check for hash in URL and activate corresponding tab
-    if (window.location.hash !== '') {
-      const targetTabId = window.location.hash.substring(1)
+    if (globalThis.location.hash !== '') {
+      const targetTabId = globalThis.location.hash.slice(1)
       const targetTabLink = tabsContainerElement.querySelector(
         `.menu a[href="#${targetTabId}"]`
       ) as HTMLAnchorElement | null
