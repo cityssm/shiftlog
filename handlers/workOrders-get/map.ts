@@ -14,6 +14,7 @@ export default async function handler(
 
   response.render('workOrders/map', {
     headTitle: `${getConfigProperty('workOrders.sectionName')} - Map`,
+    section: 'workOrders',
 
     assignedToItems,
     workOrderTypes

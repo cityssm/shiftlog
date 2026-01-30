@@ -6,6 +6,7 @@ export default async function handler(request, response) {
     const timesheetTypes = await getTimesheetTypeDataListItems(request.session.user);
     response.render('timesheets/search', {
         headTitle: `${getConfigProperty('timesheets.sectionNameSingular')} Search`,
+        section: 'timesheets',
         supervisors,
         timesheetTypes
     });

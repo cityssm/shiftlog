@@ -58,7 +58,7 @@
         <div class="navbar-menu">
           <div class="navbar-start">
             <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
-            <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
+            <a class="navbar-item <%= section === 'workOrders' ? 'has-background-grey-lighter' : '' %>" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
               <span class="icon">
                 <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
               </span>
@@ -68,7 +68,7 @@
             </a>
             <% } %>
             <% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canView) { %>
-            <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
+            <a class="navbar-item <%= section === 'shifts' ? 'has-background-grey-lighter' : '' %>" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
               <span class="icon">
                 <i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i>
               </span>
@@ -78,7 +78,7 @@
             </a>
             <% } %>
             <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
-            <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
+            <a class="navbar-item <%= section === 'timesheets' ? 'has-background-grey-lighter' : '' %>" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
               <span class="icon">
                 <i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
               </span>
@@ -87,7 +87,7 @@
               </span>
             </a>
             <% } %>
-            <a class="navbar-item" href="<%= urlPrefix %>/dashboard/reports">
+            <a class="navbar-item <%= section === 'reports' ? 'has-background-grey-lighter' : '' %>" href="<%= urlPrefix %>/dashboard/reports">
               <span class="icon">
                 <i class="fa-solid fa-file-lines"></i>
               </span>

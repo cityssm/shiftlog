@@ -9,6 +9,7 @@ export default async function handler(request, response) {
     }
     response.render('timesheets/edit', {
         headTitle: `${getConfigProperty('timesheets.sectionNameSingular')} #${request.params.timesheetId}`,
+        section: 'timesheets',
         isCreate: false,
         isEdit: false,
         timesheet,

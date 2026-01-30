@@ -24,6 +24,7 @@ export default async function handler(request, response) {
     const assignedToOptions = await getAssignedToList(request.session.user?.userName);
     response.render('workOrders/edit', {
         headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
+        section: 'workOrders',
         isCreate: false,
         isEdit: true,
         workOrder,

@@ -50,6 +50,7 @@ export default async function handler(
 
   response.render('dashboard/userSettings', {
     headTitle: 'User Settings',
+    section: 'dashboard',
 
     assignedToDataListItems,
     employee,

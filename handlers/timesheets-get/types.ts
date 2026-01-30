@@ -2,6 +2,8 @@ import type { DataListItem, Employee, Timesheet } from '../../types/record.types
 
 export interface TimesheetEditResponse {
   headTitle: string
+  section: 'timesheets',
+  
   isCreate: boolean
   isEdit: boolean
 

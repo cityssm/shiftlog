@@ -30,6 +30,7 @@ export default async function handler(request, response) {
     }
     response.render('workOrders/edit', {
         headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,
+        section: 'workOrders',
         isCreate: false,
         isEdit: false,
         canReopen,

@@ -15,10 +15,12 @@ export default async function handler(
   const userGroups = await getUserGroups()
 
   response.render('shifts/crews', {
+    headTitle: 'Crew Maintenance',
+    section: 'shifts',
+    
     crews,
     employees,
     equipment,
-    headTitle: 'Crew Maintenance',
     userGroups
   })
 }

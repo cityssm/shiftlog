@@ -2,6 +2,7 @@ import type { AssignedTo, DataListItem, WorkOrder, WorkOrderAttachment, WorkOrde
 
 export interface WorkOrderEditResponse {
   headTitle: string
+  section: 'workOrders',
 
   isCreate: boolean
   isEdit: boolean

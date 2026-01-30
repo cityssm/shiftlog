@@ -38,12 +38,15 @@ export default async function handler(
   // Load milestones for all work orders
   const allMilestones: WorkOrderMilestone[] = []
   for (const workOrder of shiftWorkOrders) {
+    // eslint-disable-next-line no-await-in-loop
     const milestones = await getWorkOrderMilestones(workOrder.workOrderId.toString())
     allMilestones.push(...milestones)
   }
 
   response.render('print/shift', {
     headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${shift.shiftId}`,
+    section: 'shifts',
+    
     shift,
     shiftCrews,
     shiftEmployees,

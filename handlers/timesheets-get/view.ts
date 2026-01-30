@@ -22,6 +22,7 @@ export default async function handler(
     headTitle: `${getConfigProperty('timesheets.sectionNameSingular')} #${
       request.params.timesheetId
     }`,
+    section: 'timesheets',
 
     isCreate: false,
     isEdit: false,

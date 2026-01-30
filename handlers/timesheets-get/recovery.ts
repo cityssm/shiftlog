@@ -8,6 +8,8 @@ export default function handler(
 ): void {
   response.render('timesheets/recovery', {
     headTitle: `${getConfigProperty('timesheets.sectionName')} - Record Recovery`,
+    section: 'timesheets',
+    
     error: request.query.error ?? ''
   })
 }

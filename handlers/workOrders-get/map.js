@@ -6,6 +6,7 @@ export default async function handler(request, response) {
     const workOrderTypes = await getWorkOrderTypes(request.session.user);
     response.render('workOrders/map', {
         headTitle: `${getConfigProperty('workOrders.sectionName')} - Map`,
+        section: 'workOrders',
         assignedToItems,
         workOrderTypes
     });

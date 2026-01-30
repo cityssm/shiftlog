@@ -11,6 +11,7 @@ import type {
 
 export interface ShiftEditResponse {
   headTitle: string
+  section: 'shifts'
 
   isCreate: boolean
   isEdit: boolean

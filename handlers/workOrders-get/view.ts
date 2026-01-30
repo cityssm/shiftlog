@@ -70,6 +70,7 @@ export default async function handler(
     headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${
       workOrder.workOrderNumber
     }`,
+    section: 'workOrders',
 
     isCreate: false,
     isEdit: false,

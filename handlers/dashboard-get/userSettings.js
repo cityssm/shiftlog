@@ -24,6 +24,7 @@ export default async function handler(request, response) {
     }
     response.render('dashboard/userSettings', {
         headTitle: 'User Settings',
+        section: 'dashboard',
         assignedToDataListItems,
         employee,
         ntfyNotificationConfigurations

@@ -28,6 +28,7 @@ export default async function handler(request, response) {
     const timesheetTypes = await getTimesheetTypeDataListItems(request.session.user);
     response.render('timesheets/edit', {
         headTitle: `${getConfigProperty('timesheets.sectionNameSingular')} #${request.params.timesheetId}`,
+        section: 'timesheets',
         isCreate: false,
         isEdit: true,
         timesheet,
