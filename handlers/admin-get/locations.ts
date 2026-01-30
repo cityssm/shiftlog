@@ -12,6 +12,8 @@ export default async function handler(
 
   response.render('admin/locations', {
     headTitle: 'Location Maintenance',
+    section: 'admin',
+    
     locations,
     defaultCityProvince
   })

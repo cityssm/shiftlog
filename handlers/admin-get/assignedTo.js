@@ -5,6 +5,7 @@ export default async function handler(_request, response) {
     const userGroups = await getUserGroups();
     response.render('admin/assignedTo', {
         headTitle: 'Assigned To Management',
+        section: 'admin',
         assignedToList,
         userGroups
     });

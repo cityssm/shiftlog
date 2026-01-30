@@ -10,6 +10,8 @@ export default async function handler(
 
   response.render('admin/tags', {
     headTitle: 'Tag Management',
+    section: 'admin',
+
     tags
   })
 }

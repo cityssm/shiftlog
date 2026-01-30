@@ -21,6 +21,7 @@ export default async function handler(
 
   response.render('admin/dataLists', {
     headTitle: 'Data List Management',
+    section: 'admin',
     
     dataLists: dataListsWithItems,
     userGroups

@@ -18,10 +18,12 @@ export default async function handler(
   const employeeLists = await getEmployeeLists()
 
   response.render('admin/equipment', {
+    headTitle: 'Equipment Maintenance',
+    section: 'admin',
+
     employeeLists,
     equipment,
     equipmentTypes,
-    headTitle: 'Equipment Maintenance',
     userGroups
   })
 }

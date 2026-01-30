@@ -9,10 +9,11 @@ export default async function handler(_request, response) {
     const configuredProtocols = getConfigProperty('notifications.protocols');
     // Filter notification types to only include configured protocols
     const filteredNotificationTypes = configuredProtocols.length > 0
-        ? notificationTypes.filter(type => configuredProtocols.includes(type))
+        ? notificationTypes.filter((type) => configuredProtocols.includes(type))
         : [];
     response.render('admin/notificationConfigurations', {
         headTitle: 'Notification Configuration',
+        section: 'admin',
         notificationConfigurations,
         assignedToList,
         notificationQueueTypes,
