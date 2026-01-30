@@ -18,15 +18,12 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
-  // Clear URL hash in edit mode to ensure page loads at top
+  // Scroll to top in edit mode while preserving the active tab
+  // Use setTimeout to ensure this runs after tabs are initialized
   if (globalThis.location.hash !== '') {
-    globalThis.history.replaceState(
-      null,
-      '',
-      globalThis.location.pathname + globalThis.location.search
-    )
-    // Scroll to top after clearing hash
-    globalThis.scrollTo(0, 0)
+    setTimeout(() => {
+      globalThis.scrollTo(0, 0)
+    }, 0)
   }
 
   const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`
