@@ -12,9 +12,7 @@
             if (tags.length === 0) {
                 ;
                 tagsContainerElement.innerHTML = /* html */ `
-          <div class="message is-info">
-            <p class="message-body">No tags have been added yet.</p>
-          </div>
+          <p class="has-text-grey">No tags have been added.</p>
         `;
                 return;
             }
@@ -39,7 +37,7 @@
                     deleteButton.className = 'delete is-small';
                     deleteButton.type = 'button';
                     deleteButton.dataset.tagName = tag.tagName;
-                    deleteButton.setAttribute('aria-label', `Remove tag ${tag.tagName}`);
+                    deleteButton.title = `Remove tag ${tag.tagName}`;
                     deleteButton.addEventListener('click', () => {
                         deleteTag(tag.tagName);
                     });
