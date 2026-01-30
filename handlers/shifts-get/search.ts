@@ -16,7 +16,7 @@ export default async function handler(
   const shiftTimes = await getShiftTimeDataListItems(request.session.user)
 
   response.render('shifts/search', {
-    headTitle: `${getConfigProperty('shifts.sectionNameSingular')} - Search`,
+    headTitle: `${getConfigProperty('shifts.sectionName')} - Search`,
 
     shiftTimes,
     shiftTypes,
