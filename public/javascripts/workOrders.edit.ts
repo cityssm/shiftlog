@@ -25,6 +25,17 @@ declare const exports: {
 ;(() => {
   const shiftLog = exports.shiftLog
 
+  // Clear URL hash in edit mode to ensure page loads at top
+  if (globalThis.location.hash !== '') {
+    globalThis.history.replaceState(
+      null,
+      '',
+      globalThis.location.pathname + globalThis.location.search
+    )
+    // Scroll to top after clearing hash
+    globalThis.scrollTo(0, 0)
+  }
+
   const workOrderUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`
 
   const workOrderFormElement = document.querySelector(

@@ -1,5 +1,11 @@
 (() => {
     const shiftLog = exports.shiftLog;
+    // Clear URL hash in edit mode to ensure page loads at top
+    if (globalThis.location.hash !== '') {
+        globalThis.history.replaceState(null, '', globalThis.location.pathname + globalThis.location.search);
+        // Scroll to top after clearing hash
+        globalThis.scrollTo(0, 0);
+    }
     const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
     const shiftFormElement = document.querySelector('#form--shift');
     const shiftId = shiftFormElement.querySelector('#shift--shiftId').value;
