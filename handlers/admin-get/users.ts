@@ -12,6 +12,8 @@ export default async function handler(
 
   response.render('admin/users', {
     headTitle: 'User Management',
+    section: 'admin',
+    
     users,
 
     domain: getConfigProperty('login.domain'),

@@ -5,6 +5,7 @@ export default async function handler(_request, response) {
     const users = await getUsers();
     response.render('admin/userGroups', {
         headTitle: 'User Group Management',
+        section: 'admin',
         userGroups,
         users
     });

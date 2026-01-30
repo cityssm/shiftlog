@@ -10,6 +10,8 @@ export default async function handler(
 
   response.render('admin/settings', {
     headTitle: 'Settings Management',
+    section: 'admin',
+    
     settings
   })
 }

@@ -5,6 +5,7 @@ export default async function handler(_request, response) {
     const users = await getUsers();
     response.render('admin/users', {
         headTitle: 'User Management',
+        section: 'admin',
         users,
         domain: getConfigProperty('login.domain'),
         userSettingKeys

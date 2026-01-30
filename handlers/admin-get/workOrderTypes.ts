@@ -13,8 +13,10 @@ export default async function handler(
   const workOrderTypes = await getWorkOrderTypesAdmin()
 
   response.render('admin/workOrderTypes', {
-    availableWorkOrderMoreInfoForms,
     headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} Type Maintenance`,
+    section: 'admin',
+    
+    availableWorkOrderMoreInfoForms,
     userGroups,
     workOrderTypes
   })

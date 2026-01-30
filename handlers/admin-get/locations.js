@@ -5,6 +5,7 @@ export default async function handler(request, response) {
     const defaultCityProvince = await getCachedSettingValue('locations.defaultCityProvince');
     response.render('admin/locations', {
         headTitle: 'Location Maintenance',
+        section: 'admin',
         locations,
         defaultCityProvince
     });
