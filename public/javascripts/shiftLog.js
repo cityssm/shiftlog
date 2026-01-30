@@ -64,7 +64,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
         // Check for hash in URL and activate corresponding tab
         if (globalThis.location.hash !== '') {
             var targetTabId = globalThis.location.hash.slice(1);
-            var targetTabLink = tabsContainerElement.querySelector(".menu a[href=\"#".concat(targetTabId, "\"]"));
+            // Escape the targetTabId for safe use in CSS selector
+            var escapedTargetTabId = CSS.escape(targetTabId);
+            var targetTabLink = tabsContainerElement.querySelector(".menu a[href=\"#".concat(escapedTargetTabId, "\"]"));
             if (targetTabLink !== null) {
                 // Remove .is-active from all tabs
                 for (var _a = 0, menuTabElements_2 = menuTabElements; _a < menuTabElements_2.length; _a++) {
