@@ -72,6 +72,32 @@ declare const exports: {
     for (const menuTabElement of menuTabElements) {
       menuTabElement.addEventListener('click', doSelectTab)
     }
+
+    // Check for hash in URL and activate corresponding tab
+    if (window.location.hash !== '') {
+      const targetTabId = window.location.hash.substring(1)
+      const targetTabLink = tabsContainerElement.querySelector(
+        `.menu a[href="#${targetTabId}"]`
+      ) as HTMLAnchorElement | null
+
+      if (targetTabLink !== null) {
+        // Remove .is-active from all tabs
+        for (const menuTabElement of menuTabElements) {
+          menuTabElement.classList.remove('is-active')
+        }
+
+        // Set .is-active on target tab
+        targetTabLink.classList.add('is-active')
+
+        // Hide all but target tab
+        for (const tabContainerElement of tabContainerElements) {
+          tabContainerElement.classList.toggle(
+            'is-hidden',
+            tabContainerElement.id !== targetTabId
+          )
+        }
+      }
+    }
   }
 
   /*

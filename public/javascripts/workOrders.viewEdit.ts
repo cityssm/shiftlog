@@ -20,6 +20,27 @@ declare const bulmaJS: BulmaJS
 
   if (workOrderTabsContainerElement !== null) {
     shiftLog.initializeRecordTabs(workOrderTabsContainerElement as HTMLElement)
+
+    // Update Edit button href when tabs are clicked to preserve the selected tab
+    const editButtonLink = document.querySelector(
+      'a[href*="/edit"]'
+    ) as HTMLAnchorElement | null
+
+    if (editButtonLink !== null) {
+      const menuTabLinks =
+        workOrderTabsContainerElement.querySelectorAll('.menu a')
+
+      for (const menuTabLink of menuTabLinks) {
+        menuTabLink.addEventListener('click', (clickEvent) => {
+          const target = clickEvent.currentTarget as HTMLAnchorElement
+          const tabHash = target.getAttribute('href') ?? ''
+
+          // Update the Edit button href to include the selected tab hash
+          const baseHref = editButtonLink.href.split('#')[0]
+          editButtonLink.href = baseHref + tabHash
+        })
+      }
+    }
   }
 
   /*
