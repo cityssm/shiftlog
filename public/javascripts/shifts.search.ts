@@ -50,8 +50,8 @@ declare const exports: {
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>${cityssm.escapeHTML(shiftLog.shiftsSectionNameSingular)}</th>
           <th>Date</th>
+          <th>${cityssm.escapeHTML(shiftLog.shiftsSectionNameSingular)}</th>
           <th>Supervisor</th>
           <th>
             <span class="is-sr-only">Properties</span>
@@ -121,6 +121,10 @@ declare const exports: {
 
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
+        <td class="${dateIsToday(shiftDate) ? 'has-background-success-light' : ''}">
+          ${cityssm.dateToString(shiftDate)}<br />
+          <span class="is-size-7">${shiftLog.daysOfWeek[shiftDate.getDay()]}</span>
+        </td>
         <td>
           <a class="has-text-weight-semibold" href="${shiftLog.buildShiftURL(shift.shiftId)}">
             ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '(Unknown Shift Type)')}
@@ -128,10 +132,6 @@ declare const exports: {
             ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '(Unknown Shift Time)')}
           </a><br />
           <span class="is-size-7">#${cityssm.escapeHTML(shift.shiftId.toString())}</span>
-        </td>
-        <td class="${dateIsToday(shiftDate) ? 'has-background-success-light' : ''}">
-          ${cityssm.dateToString(shiftDate)}<br />
-          <span class="is-size-7">${shiftLog.daysOfWeek[shiftDate.getDay()]}</span>
         </td>
         <td class="${shift.supervisorUserName === shiftLog.userName ? 'has-background-success-light' : ''}">
           ${cityssm.escapeHTML(shift.supervisorLastName ?? '')}, ${cityssm.escapeHTML(shift.supervisorFirstName ?? '')}
