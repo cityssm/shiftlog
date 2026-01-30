@@ -9,11 +9,6 @@
     const tagsContainerElement = document.querySelector('#container--tags');
     if (tagsContainerElement !== null) {
         function renderTags(tags) {
-            // Update tags count
-            const tagsCountElement = document.querySelector('#tagsCount');
-            if (tagsCountElement !== null) {
-                tagsCountElement.textContent = tags.length.toString();
-            }
             if (tags.length === 0) {
                 ;
                 tagsContainerElement.innerHTML = /* html */ `

@@ -378,8 +378,7 @@
             adhocTasksSection.append(adhocTasksList);
             containerElement.append(adhocTasksSection);
         }
-        if (shift.workOrders.length === 0 &&
-            (!shift.adhocTasks || shift.adhocTasks.length === 0)) {
+        if (shift.workOrders.length === 0 && shift.adhocTasks.length === 0) {
             const emptyMessage = document.createElement('p');
             emptyMessage.className = 'has-text-grey-light';
             emptyMessage.textContent = 'No tasks assigned';
@@ -2076,28 +2075,26 @@
                 const supervisorSelect = modalElement.querySelector('#createShift--supervisorEmployeeNumber');
                 // Load shift types, times, and supervisors
                 cityssm.postJSON(`${shiftUrlPrefix}/doGetShiftCreationData`, {}, (responseJSON) => {
-                    if (responseJSON.success) {
-                        // Populate shift types
-                        for (const shiftType of responseJSON.shiftTypes) {
-                            const optionElement = document.createElement('option');
-                            optionElement.value = shiftType.dataListItemId.toString();
-                            optionElement.textContent = shiftType.dataListItem;
-                            shiftTypeSelect.append(optionElement);
-                        }
-                        // Populate shift times
-                        for (const shiftTime of responseJSON.shiftTimes) {
-                            const optionElement = document.createElement('option');
-                            optionElement.value = shiftTime.dataListItemId.toString();
-                            optionElement.textContent = shiftTime.dataListItem;
-                            shiftTimeSelect.append(optionElement);
-                        }
-                        // Populate supervisors
-                        for (const supervisor of responseJSON.supervisors) {
-                            const optionElement = document.createElement('option');
-                            optionElement.value = supervisor.employeeNumber;
-                            optionElement.textContent = `${supervisor.lastName}, ${supervisor.firstName}`;
-                            supervisorSelect.append(optionElement);
-                        }
+                    // Populate shift types
+                    for (const shiftType of responseJSON.shiftTypes) {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = shiftType.dataListItemId.toString();
+                        optionElement.textContent = shiftType.dataListItem;
+                        shiftTypeSelect.append(optionElement);
+                    }
+                    // Populate shift times
+                    for (const shiftTime of responseJSON.shiftTimes) {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = shiftTime.dataListItemId.toString();
+                        optionElement.textContent = shiftTime.dataListItem;
+                        shiftTimeSelect.append(optionElement);
+                    }
+                    // Populate supervisors
+                    for (const supervisor of responseJSON.supervisors) {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = supervisor.employeeNumber;
+                        optionElement.textContent = `${supervisor.lastName}, ${supervisor.firstName}`;
+                        supervisorSelect.append(optionElement);
                     }
                 });
                 // Handle form submission
@@ -2487,17 +2484,17 @@
                         workOrderId: resourceId
                     }, (response) => {
                         processedCount += 1;
-                        if (!response.success) {
+                        if (response.success) {
+                            successCount += 1;
+                            checkbox.checked = false;
+                        }
+                        else {
                             // Show error for this specific work order
                             bulmaJS.alert({
                                 contextualColorName: 'warning',
                                 message: response.errorMessage ?? 'Failed to add work order.',
                                 title: 'Could Not Add Resource'
                             });
-                        }
-                        else {
-                            successCount += 1;
-                            checkbox.checked = false;
                         }
                         if (processedCount === totalToAdd) {
                             successText.textContent = `Successfully added ${successCount} of ${totalToAdd} resource(s) to the shift.`;
@@ -2548,7 +2545,7 @@
             let equipmentVisible = 0;
             let crewsVisible = 0;
             for (const item of allResourceItems) {
-                const text = item.textContent?.toLowerCase() ?? '';
+                const text = item.textContent.toLowerCase();
                 const isVisible = text.includes(filterText);
                 if (isVisible) {
                     item.style.display = '';
@@ -2614,40 +2611,29 @@
             cityssm.openHtmlModal('shifts-createAdhocTask', {
                 onshow(modalElement) {
                     // Remove the shiftId input (not needed for standalone)
-                    const shiftIdInput = modalElement.querySelector('input[name="shiftId"]');
-                    if (shiftIdInput) {
-                        shiftIdInput.remove();
-                    }
+                    modalElement.querySelector('input[name="shiftId"]')?.remove();
                     // Remove shift note field (not needed for standalone)
-                    const shiftNoteField = modalElement.querySelector('[name="shiftAdhocTaskNote"]');
-                    if (shiftNoteField) {
-                        shiftNoteField.closest('.field')?.remove();
-                    }
+                    modalElement
+                        .querySelector('[name="shiftAdhocTaskNote"]')
+                        ?.closest('.field')
+                        ?.remove();
                     // Populate task types
                     const taskTypeSelect = modalElement.querySelector('#createAdhocTask--adhocTaskTypeDataListItemId');
-                    if (taskTypeSelect) {
-                        // Clear existing options except first
-                        while (taskTypeSelect.options.length > 1) {
-                            taskTypeSelect.remove(1);
-                        }
-                        for (const taskType of adhocTaskTypes) {
-                            const option = document.createElement('option');
-                            option.value = taskType.dataListItemId.toString();
-                            option.textContent = taskType.dataListItem;
-                            taskTypeSelect.append(option);
-                        }
+                    // Clear existing options except first
+                    while (taskTypeSelect.options.length > 1) {
+                        taskTypeSelect.remove(1);
+                    }
+                    for (const taskType of adhocTaskTypes) {
+                        const option = document.createElement('option');
+                        option.value = taskType.dataListItemId.toString();
+                        option.textContent = taskType.dataListItem;
+                        taskTypeSelect.append(option);
                     }
                     // Set default city/province
-                    const defaultCityProvince = shiftLog.defaultCityProvince ?? '';
-                    const locationCity = modalElement.querySelector('#createAdhocTask--locationCityProvince');
-                    const fromLocationCity = modalElement.querySelector('#createAdhocTask--fromLocationCityProvince');
-                    const toLocationCity = modalElement.querySelector('#createAdhocTask--toLocationCityProvince');
-                    if (locationCity)
-                        locationCity.value = defaultCityProvince;
-                    if (fromLocationCity)
-                        fromLocationCity.value = defaultCityProvince;
-                    if (toLocationCity)
-                        toLocationCity.value = defaultCityProvince;
+                    const defaultCityProvince = shiftLog.defaultCityProvince;
+                    modalElement.querySelector('#createAdhocTask--locationCityProvince').value = defaultCityProvince;
+                    modalElement.querySelector('#createAdhocTask--fromLocationCityProvince').value = defaultCityProvince;
+                    modalElement.querySelector('#createAdhocTask--toLocationCityProvince').value = defaultCityProvince;
                 },
                 onshown(modalElement, closeModalFunction) {
                     bulmaJS.toggleHtmlClipped();

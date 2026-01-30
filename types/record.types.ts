@@ -402,7 +402,9 @@ export interface WorkOrder extends BaseRecord {
 
   attachmentsCount?: number
   thumbnailAttachmentId?: number | null
+
   notesCount?: number
+  
   costsCount?: number
   costsTotal?: number
 
@@ -411,7 +413,9 @@ export interface WorkOrder extends BaseRecord {
 
 export interface WorkOrderTag {
   workOrderId: number
+
   tagName: string
+
   tagBackgroundColor?: string
   tagTextColor?: string
 }

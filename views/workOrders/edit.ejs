@@ -189,6 +189,25 @@
             ><%= workOrder.workOrderDetails ?? '' %></textarea>
           </div>
         </div>
+        <% if (!isCreate) { %>
+          <div class="columns">
+            <div class="column">
+              <strong>Tags</strong>
+            </div>
+            <% if (isEdit) { %>
+            <div class="column is-narrow">
+              <button class="button is-small is-success" id="button--addTag" type="button">
+                <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                <span>Add Tag</span>
+              </button>
+            </div>
+            <% } %>
+          </div>
+
+          <div id="container--tags">
+            <!-- Tags will be loaded here -->
+          </div>
+        <% } %>
       </div>
       <div class="box">
         <div class="field">
@@ -614,19 +633,6 @@
           </a>
         </li> 
         <li>
-          <a href="#tab--tags" title="Tags">
-            <div class="columns is-mobile is-1">
-              <div class="column is-narrow">
-                <span class="icon"><i class="fa-solid fa-tag"></i></span>
-              </div>
-              <div class="column is-hidden-touch">
-                Tags
-                <span class="tag is-rounded ml-2" id="tagsCount">0</span>
-              </div>
-            </div>
-          </a>
-        </li>
-        <li>
           <a href="#tab--notes" title="Notes">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
@@ -686,9 +692,6 @@
       </div>
       <div id="tab--costs" class="is-hidden">
         <%- await include('_edit-costs'); -%>
-      </div>
-      <div id="tab--tags" class="is-hidden">
-        <%- await include('_edit-tags'); -%>
       </div>
     </div>
   </div>

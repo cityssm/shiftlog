@@ -9,6 +9,7 @@ import type { AvailableCrew } from '../../database/shifts/getAvailableCrews.js'
 import type { AvailableEmployee } from '../../database/shifts/getAvailableEmployees.js'
 import type { AvailableEquipment } from '../../database/shifts/getAvailableEquipment.js'
 import type { ShiftForBuilder } from '../../database/shifts/getShiftsForBuilder.js'
+import type { DoAddShiftCrewResponse } from '../../handlers/shifts-post/doAddShiftCrew.js'
 import type { DoAddShiftEmployeeResponse } from '../../handlers/shifts-post/doAddShiftEmployee.js'
 import type { DoAddShiftEquipmentResponse } from '../../handlers/shifts-post/doAddShiftEquipment.js'
 import type { DoAddShiftWorkOrderResponse } from '../../handlers/shifts-post/doAddShiftWorkOrder.js'
@@ -60,7 +61,7 @@ declare const exports: {
   const lockedShifts = new Set<number>()
 
   // Track items appearing on multiple shifts
-  type DuplicateTracker = Record<string, number[]>
+  type DuplicateTracker = Record<string, number[] | undefined>
 
   type ItemType = 'adhocTask' | 'crew' | 'employee' | 'equipment' | 'workOrder'
 
@@ -549,10 +550,7 @@ declare const exports: {
       containerElement.append(adhocTasksSection)
     }
 
-    if (
-      shift.workOrders.length === 0 &&
-      (!shift.adhocTasks || shift.adhocTasks.length === 0)
-    ) {
+    if (shift.workOrders.length === 0 && shift.adhocTasks.length === 0) {
       const emptyMessage = document.createElement('p')
       emptyMessage.className = 'has-text-grey-light'
       emptyMessage.textContent = 'No tasks assigned'
@@ -2795,30 +2793,28 @@ declare const exports: {
           `${shiftUrlPrefix}/doGetShiftCreationData`,
           {},
           (responseJSON: DoGetShiftCreationDataResponse) => {
-            if (responseJSON.success) {
-              // Populate shift types
-              for (const shiftType of responseJSON.shiftTypes) {
-                const optionElement = document.createElement('option')
-                optionElement.value = shiftType.dataListItemId.toString()
-                optionElement.textContent = shiftType.dataListItem
-                shiftTypeSelect.append(optionElement)
-              }
+            // Populate shift types
+            for (const shiftType of responseJSON.shiftTypes) {
+              const optionElement = document.createElement('option')
+              optionElement.value = shiftType.dataListItemId.toString()
+              optionElement.textContent = shiftType.dataListItem
+              shiftTypeSelect.append(optionElement)
+            }
 
-              // Populate shift times
-              for (const shiftTime of responseJSON.shiftTimes) {
-                const optionElement = document.createElement('option')
-                optionElement.value = shiftTime.dataListItemId.toString()
-                optionElement.textContent = shiftTime.dataListItem
-                shiftTimeSelect.append(optionElement)
-              }
+            // Populate shift times
+            for (const shiftTime of responseJSON.shiftTimes) {
+              const optionElement = document.createElement('option')
+              optionElement.value = shiftTime.dataListItemId.toString()
+              optionElement.textContent = shiftTime.dataListItem
+              shiftTimeSelect.append(optionElement)
+            }
 
-              // Populate supervisors
-              for (const supervisor of responseJSON.supervisors) {
-                const optionElement = document.createElement('option')
-                optionElement.value = supervisor.employeeNumber
-                optionElement.textContent = `${supervisor.lastName}, ${supervisor.firstName}`
-                supervisorSelect.append(optionElement)
-              }
+            // Populate supervisors
+            for (const supervisor of responseJSON.supervisors) {
+              const optionElement = document.createElement('option')
+              optionElement.value = supervisor.employeeNumber
+              optionElement.textContent = `${supervisor.lastName}, ${supervisor.firstName}`
+              supervisorSelect.append(optionElement)
             }
           }
         )
@@ -3430,16 +3426,16 @@ declare const exports: {
             (response: DoAddShiftWorkOrderResponse) => {
               processedCount += 1
 
-              if (!response.success) {
+              if (response.success) {
+                successCount += 1
+                checkbox.checked = false
+              } else {
                 // Show error for this specific work order
                 bulmaJS.alert({
                   contextualColorName: 'warning',
                   message: response.errorMessage ?? 'Failed to add work order.',
                   title: 'Could Not Add Resource'
                 })
-              } else {
-                successCount += 1
-                checkbox.checked = false
               }
 
               if (processedCount === totalToAdd) {
@@ -3519,7 +3515,7 @@ declare const exports: {
       let crewsVisible = 0
 
       for (const item of allResourceItems) {
-        const text = item.textContent?.toLowerCase() ?? ''
+        const text = item.textContent.toLowerCase()
         const isVisible = text.includes(filterText)
 
         if (isVisible) {
@@ -3598,52 +3594,48 @@ declare const exports: {
         cityssm.openHtmlModal('shifts-createAdhocTask', {
           onshow(modalElement: HTMLElement) {
             // Remove the shiftId input (not needed for standalone)
-            const shiftIdInput = modalElement.querySelector(
-              'input[name="shiftId"]'
-            )
-            if (shiftIdInput) {
-              shiftIdInput.remove()
-            }
+            modalElement.querySelector('input[name="shiftId"]')?.remove()
 
             // Remove shift note field (not needed for standalone)
-            const shiftNoteField = modalElement.querySelector(
-              '[name="shiftAdhocTaskNote"]'
-            )
-            if (shiftNoteField) {
-              shiftNoteField.closest('.field')?.remove()
-            }
+            modalElement
+              .querySelector('[name="shiftAdhocTaskNote"]')
+              ?.closest('.field')
+              ?.remove()
 
             // Populate task types
             const taskTypeSelect = modalElement.querySelector(
               '#createAdhocTask--adhocTaskTypeDataListItemId'
             ) as HTMLSelectElement
-            if (taskTypeSelect) {
-              // Clear existing options except first
-              while (taskTypeSelect.options.length > 1) {
-                taskTypeSelect.remove(1)
-              }
-              for (const taskType of adhocTaskTypes) {
-                const option = document.createElement('option')
-                option.value = taskType.dataListItemId.toString()
-                option.textContent = taskType.dataListItem
-                taskTypeSelect.append(option)
-              }
+
+            // Clear existing options except first
+            while (taskTypeSelect.options.length > 1) {
+              taskTypeSelect.remove(1)
+            }
+            for (const taskType of adhocTaskTypes) {
+              const option = document.createElement('option')
+              option.value = taskType.dataListItemId.toString()
+              option.textContent = taskType.dataListItem
+              taskTypeSelect.append(option)
             }
 
             // Set default city/province
-            const defaultCityProvince = shiftLog.defaultCityProvince ?? ''
-            const locationCity = modalElement.querySelector(
-              '#createAdhocTask--locationCityProvince'
-            ) as HTMLInputElement
-            const fromLocationCity = modalElement.querySelector(
-              '#createAdhocTask--fromLocationCityProvince'
-            ) as HTMLInputElement
-            const toLocationCity = modalElement.querySelector(
-              '#createAdhocTask--toLocationCityProvince'
-            ) as HTMLInputElement
-            if (locationCity) locationCity.value = defaultCityProvince
-            if (fromLocationCity) fromLocationCity.value = defaultCityProvince
-            if (toLocationCity) toLocationCity.value = defaultCityProvince
+            const defaultCityProvince = shiftLog.defaultCityProvince
+
+            ;(
+              modalElement.querySelector(
+                '#createAdhocTask--locationCityProvince'
+              ) as HTMLInputElement
+            ).value = defaultCityProvince
+            ;(
+              modalElement.querySelector(
+                '#createAdhocTask--fromLocationCityProvince'
+              ) as HTMLInputElement
+            ).value = defaultCityProvince
+            ;(
+              modalElement.querySelector(
+                '#createAdhocTask--toLocationCityProvince'
+              ) as HTMLInputElement
+            ).value = defaultCityProvince
           },
           onshown(modalElement: HTMLElement, closeModalFunction: () => void) {
             bulmaJS.toggleHtmlClipped()

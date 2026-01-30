@@ -40,13 +40,6 @@ declare const bulmaJS: BulmaJS
 
   if (tagsContainerElement !== null) {
     function renderTags(tags: WorkOrderTag[]): void {
-      // Update tags count
-      const tagsCountElement = document.querySelector('#tagsCount')
-
-      if (tagsCountElement !== null) {
-        tagsCountElement.textContent = tags.length.toString()
-      }
-
       if (tags.length === 0) {
         ;(tagsContainerElement as HTMLElement).innerHTML = /* html */ `
           <div class="message is-info">
