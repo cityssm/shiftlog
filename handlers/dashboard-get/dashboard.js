@@ -24,6 +24,7 @@ export default async function handler(request, response) {
         : [];
     response.render('dashboard/dashboard', {
         headTitle: 'Dashboard',
+        section: 'dashboard',
         shifts: shiftsResult.shifts,
         timesheets: timesheetsResult.timesheets,
         overdueWorkOrders,

@@ -12,6 +12,7 @@ export default async function handler(request, response) {
     const tags = await getTags();
     response.render('workOrders/search', {
         headTitle: `${getConfigProperty('workOrders.sectionName')} - Search`,
+        section: 'workOrders',
         error: request.query.error ?? '',
         assignedToItems,
         workOrderStatuses,

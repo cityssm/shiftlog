@@ -24,6 +24,7 @@ export default async function handler(
 
   response.render('workOrders/planner', {
     headTitle: `${getConfigProperty('workOrders.sectionName')} - Work Planner`,
+    section: 'workOrders',
 
     error: request.query.error ?? '',
 

@@ -14,6 +14,7 @@ export default async function handler(
 
   response.render('timesheets/search', {
     headTitle: `${getConfigProperty('timesheets.sectionNameSingular')} Search`,
+    section: 'timesheets',
 
     supervisors,
     timesheetTypes

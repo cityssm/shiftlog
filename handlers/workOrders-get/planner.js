@@ -10,6 +10,7 @@ export default async function handler(request, response) {
     const workOrderTypes = await getWorkOrderTypes(request.session.user);
     response.render('workOrders/planner', {
         headTitle: `${getConfigProperty('workOrders.sectionName')} - Work Planner`,
+        section: 'workOrders',
         error: request.query.error ?? '',
         assignedToItems,
         workOrderStatuses,

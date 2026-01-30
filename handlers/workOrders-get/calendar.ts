@@ -11,6 +11,7 @@ export default async function handler(
 
   response.render('workOrders/calendar', {
     headTitle: `${getConfigProperty('workOrders.sectionName')} - Calendar`,
+    section: 'workOrders',
 
     error: request.query.error ?? '',
 

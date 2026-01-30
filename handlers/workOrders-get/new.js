@@ -21,6 +21,7 @@ export default async function handler(request, response) {
     };
     response.render('workOrders/edit', {
         headTitle: `Create New ${getConfigProperty('workOrders.sectionNameSingular')}`,
+        section: 'workOrders',
         isCreate: true,
         isEdit: true,
         workOrder,

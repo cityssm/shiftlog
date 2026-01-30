@@ -44,6 +44,7 @@ export default async function handler(
 
   response.render('timesheets/edit', {
     headTitle: `Create New ${getConfigProperty('timesheets.sectionNameSingular')}`,
+    section: 'timesheets',
 
     isCreate: true,
     isEdit: true,

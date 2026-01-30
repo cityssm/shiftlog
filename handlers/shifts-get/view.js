@@ -19,6 +19,7 @@ export default async function handler(request, response) {
     const shiftAdhocTasks = await getShiftAdhocTasks(request.params.shiftId);
     response.render('shifts/edit', {
         headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${request.params.shiftId}`,
+        section: 'shifts',
         isCreate: false,
         isEdit: false,
         shift,

@@ -33,6 +33,7 @@ export default async function handler(
     headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${
       request.params.shiftId
     }`,
+    section: 'shifts',
 
     isCreate: false,
     isEdit: false,
@@ -47,5 +48,5 @@ export default async function handler(
     shiftTimes: [],
     shiftTypes: [],
     supervisors: []
-  })
+  } satisfies ShiftEditResponse)
 }

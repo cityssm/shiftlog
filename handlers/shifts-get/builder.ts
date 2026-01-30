@@ -8,6 +8,8 @@ export default function handler(
 ): void {
   response.render('shifts/builder', {
     headTitle: `${getConfigProperty('shifts.sectionNameSingular')} Builder`,
+    section: 'shifts',
+
     error: request.query.error ?? ''
   })
 }

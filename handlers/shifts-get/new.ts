@@ -55,6 +55,7 @@ export default async function handler(
 
   response.render('shifts/edit', {
     headTitle: `Create New ${getConfigProperty('shifts.sectionNameSingular')}`,
+    section: 'shifts',
 
     isCreate: true,
     isEdit: true,

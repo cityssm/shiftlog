@@ -17,6 +17,7 @@ export default async function handler(
 
   response.render('shifts/search', {
     headTitle: `${getConfigProperty('shifts.sectionName')} - Search`,
+    section: 'shifts',
 
     shiftTimes,
     shiftTypes,

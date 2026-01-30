@@ -39,6 +39,7 @@ export default async function handler(request, response) {
     const shiftTimes = await getShiftTimeDataListItems(request.session.user);
     response.render('shifts/edit', {
         headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${request.params.shiftId}`,
+        section: 'shifts',
         isCreate: false,
         isEdit: true,
         shift,

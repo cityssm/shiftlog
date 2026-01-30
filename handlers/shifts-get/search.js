@@ -8,6 +8,7 @@ export default async function handler(request, response) {
     const shiftTimes = await getShiftTimeDataListItems(request.session.user);
     response.render('shifts/search', {
         headTitle: `${getConfigProperty('shifts.sectionName')} - Search`,
+        section: 'shifts',
         shiftTimes,
         shiftTypes,
         supervisors

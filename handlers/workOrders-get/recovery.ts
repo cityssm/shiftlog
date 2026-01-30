@@ -8,6 +8,8 @@ export default function handler(
 ): void {
   response.render('workOrders/recovery', {
     headTitle: `${getConfigProperty('workOrders.sectionName')} - Record Recovery`,
+    section: 'workOrders',
+    
     error: request.query.error ?? ''
   })
 }

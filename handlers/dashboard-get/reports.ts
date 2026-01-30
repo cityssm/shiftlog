@@ -14,6 +14,7 @@ export default async function handler(
 
   response.render('dashboard/reports', {
     headTitle: 'Reports and Exports',
+    section: 'timesheets',
 
     activeTab,
 

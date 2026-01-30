@@ -47,6 +47,7 @@ export default async function handler(
 
   response.render('dashboard/dashboard', {
     headTitle: 'Dashboard',
+    section: 'dashboard',
 
     shifts: shiftsResult.shifts,
     timesheets: timesheetsResult.timesheets,
