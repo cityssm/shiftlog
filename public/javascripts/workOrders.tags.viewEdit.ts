@@ -42,9 +42,7 @@ declare const bulmaJS: BulmaJS
     function renderTags(tags: WorkOrderTag[]): void {
       if (tags.length === 0) {
         ;(tagsContainerElement as HTMLElement).innerHTML = /* html */ `
-          <div class="message is-info">
-            <p class="message-body">No tags have been added yet.</p>
-          </div>
+          <p class="has-text-grey">No tags have been added.</p>
         `
         return
       }
@@ -75,7 +73,7 @@ declare const bulmaJS: BulmaJS
           deleteButton.className = 'delete is-small'
           deleteButton.type = 'button'
           deleteButton.dataset.tagName = tag.tagName
-          deleteButton.setAttribute('aria-label', `Remove tag ${tag.tagName}`)
+          deleteButton.title = `Remove tag ${tag.tagName}`
 
           deleteButton.addEventListener('click', () => {
             deleteTag(tag.tagName)
@@ -110,6 +108,7 @@ declare const bulmaJS: BulmaJS
               (responseJSON: DoDeleteWorkOrderTagResponse) => {
                 if (responseJSON.success) {
                   renderTags(responseJSON.tags)
+
                   bulmaJS.alert({
                     contextualColorName: 'success',
                     title: 'Tag Removed',
@@ -153,6 +152,7 @@ declare const bulmaJS: BulmaJS
             if (responseJSON.success) {
               closeModalFunction()
               renderTags(responseJSON.tags)
+
               bulmaJS.alert({
                 contextualColorName: 'success',
                 title: 'Tag Added',
