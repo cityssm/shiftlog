@@ -4,7 +4,7 @@ export default async function handler(request, response) {
     const assignedToDataListItems = await getAssignedToList(request.session.user?.userName);
     response.render('dashboard/reports', {
         headTitle: 'Reports and Exports',
-        section: 'timesheets',
+        section: 'reports',
         activeTab,
         assignedToDataListItems
     });
