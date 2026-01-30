@@ -1,83 +1,62 @@
-"use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
+(() => {
     /*
      * Unsaved Changes
      */
-    var unsavedChanges = new Set();
-    function setUnsavedChanges(changeTracker) {
-        if (changeTracker === void 0) { changeTracker = ''; }
+    const unsavedChanges = new Set();
+    function setUnsavedChanges(changeTracker = '') {
         if (!unsavedChanges.has(changeTracker)) {
             unsavedChanges.add(changeTracker);
             cityssm.enableNavBlocker();
         }
     }
-    function clearUnsavedChanges(changeTracker) {
-        if (changeTracker === void 0) { changeTracker = ''; }
+    function clearUnsavedChanges(changeTracker = '') {
         unsavedChanges.delete(changeTracker);
         if (unsavedChanges.size === 0) {
             cityssm.disableNavBlocker();
         }
     }
-    function hasUnsavedChanges(changeTracker) {
-        if (changeTracker === void 0) { changeTracker = ''; }
+    function hasUnsavedChanges(changeTracker = '') {
         return unsavedChanges.has(changeTracker);
     }
     /*
      * Record Menu Tabs
      */
     function initializeRecordTabs(tabsContainerElement) {
-        var menuTabElements = tabsContainerElement.querySelectorAll('.menu a');
-        var tabContainerElements = tabsContainerElement.querySelectorAll('.tabs-container > div');
+        const menuTabElements = tabsContainerElement.querySelectorAll('.menu a');
+        const tabContainerElements = tabsContainerElement.querySelectorAll('.tabs-container > div');
         function doSelectTab(clickEvent) {
             clickEvent.preventDefault();
             // Remove .is-active from all tabs
-            for (var _i = 0, menuTabElements_3 = menuTabElements; _i < menuTabElements_3.length; _i++) {
-                var menuTabElement = menuTabElements_3[_i];
+            for (const menuTabElement of menuTabElements) {
                 menuTabElement.classList.remove('is-active');
             }
             // Set .is-active on clicked tab
-            var selectedTabElement = clickEvent.currentTarget;
+            const selectedTabElement = clickEvent.currentTarget;
             selectedTabElement.classList.add('is-active');
             // Hide all but selected tab
-            var selectedTabContainerId = selectedTabElement.href.slice(Math.max(0, selectedTabElement.href.indexOf('#') + 1));
-            for (var _a = 0, tabContainerElements_2 = tabContainerElements; _a < tabContainerElements_2.length; _a++) {
-                var tabContainerElement = tabContainerElements_2[_a];
+            const selectedTabContainerId = selectedTabElement.href.slice(Math.max(0, selectedTabElement.href.indexOf('#') + 1));
+            for (const tabContainerElement of tabContainerElements) {
                 tabContainerElement.classList.toggle('is-hidden', tabContainerElement.id !== selectedTabContainerId);
             }
         }
-        for (var _i = 0, menuTabElements_1 = menuTabElements; _i < menuTabElements_1.length; _i++) {
-            var menuTabElement = menuTabElements_1[_i];
+        for (const menuTabElement of menuTabElements) {
             menuTabElement.addEventListener('click', doSelectTab);
         }
         // Check for hash in URL and activate corresponding tab
         if (globalThis.location.hash !== '') {
-            var targetTabId = globalThis.location.hash.slice(1);
+            const targetTabId = globalThis.location.hash.slice(1);
             // Escape the targetTabId for safe use in CSS selector
-            var escapedTargetTabId = CSS.escape(targetTabId);
-            var targetTabLink = tabsContainerElement.querySelector(".menu a[href=\"#".concat(escapedTargetTabId, "\"]"));
+            const escapedTargetTabId = CSS.escape(targetTabId);
+            const targetTabLink = tabsContainerElement.querySelector(`.menu a[href="#${escapedTargetTabId}"]`);
             if (targetTabLink !== null) {
                 // Remove .is-active from all tabs
-                for (var _a = 0, menuTabElements_2 = menuTabElements; _a < menuTabElements_2.length; _a++) {
-                    var menuTabElement = menuTabElements_2[_a];
+                for (const menuTabElement of menuTabElements) {
                     menuTabElement.classList.remove('is-active');
                 }
                 // Set .is-active on target tab
                 targetTabLink.classList.add('is-active');
                 // Hide all but target tab
-                for (var _b = 0, tabContainerElements_1 = tabContainerElements; _b < tabContainerElements_1.length; _b++) {
-                    var tabContainerElement = tabContainerElements_1[_b];
+                for (const tabContainerElement of tabContainerElements) {
                     tabContainerElement.classList.toggle('is-hidden', tabContainerElement.id !== targetTabId);
                 }
             }
@@ -86,17 +65,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
     /*
      * URL builders
      */
-    function buildShiftURL(shiftId, edit) {
-        if (edit === void 0) { edit = false; }
-        return "".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.shiftsRouter, "/").concat(shiftId.toString()).concat(edit ? '/edit' : '');
+    function buildShiftURL(shiftId, edit = false) {
+        return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId.toString()}${edit ? '/edit' : ''}`;
     }
-    function buildWorkOrderURL(workOrderId, edit) {
-        if (edit === void 0) { edit = false; }
-        return "".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/").concat(workOrderId.toString()).concat(edit ? '/edit' : '');
+    function buildWorkOrderURL(workOrderId, edit = false) {
+        return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId.toString()}${edit ? '/edit' : ''}`;
     }
-    function buildTimesheetURL(timesheetId, edit) {
-        if (edit === void 0) { edit = false; }
-        return "".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.timesheetsRouter, "/").concat(timesheetId.toString()).concat(edit ? '/edit' : '');
+    function buildTimesheetURL(timesheetId, edit = false) {
+        return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/${timesheetId.toString()}${edit ? '/edit' : ''}`;
     }
     /*
      * Pagination Controls
@@ -112,40 +88,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
      * @returns HTMLElement containing the pagination controls
      */
     function buildPaginationControls(options) {
-        var totalCount = options.totalCount, currentPageOrOffset = options.currentPageOrOffset, itemsPerPageOrLimit = options.itemsPerPageOrLimit, clickHandler = options.clickHandler;
+        const { totalCount, currentPageOrOffset, itemsPerPageOrLimit, clickHandler } = options;
         // Validate itemsPerPageOrLimit to prevent division by zero
         if (itemsPerPageOrLimit <= 0) {
             throw new Error('itemsPerPageOrLimit must be greater than 0');
         }
-        var paginationElement = document.createElement('nav');
+        const paginationElement = document.createElement('nav');
         paginationElement.className = 'pagination is-centered mt-4';
         paginationElement.setAttribute('role', 'navigation');
         paginationElement.setAttribute('aria-label', 'pagination');
-        var totalPages = Math.ceil(totalCount / itemsPerPageOrLimit);
+        const totalPages = Math.ceil(totalCount / itemsPerPageOrLimit);
         // Calculate current page from either page number or offset
         // If currentPageOrOffset is 0 or greater than totalPages, treat it as an offset
-        var currentPage = currentPageOrOffset === 0 || currentPageOrOffset > totalPages
+        const currentPage = currentPageOrOffset === 0 || currentPageOrOffset > totalPages
             ? Math.floor(currentPageOrOffset / itemsPerPageOrLimit) + 1
             : currentPageOrOffset;
-        var paginationHTML = '';
+        let paginationHTML = '';
         // Previous button
         paginationHTML +=
             currentPage > 1
-                ? "<a class=\"pagination-previous\" href=\"#\" data-page-number=\"".concat(currentPage - 1, "\">Previous</a>")
+                ? `<a class="pagination-previous" href="#" data-page-number="${currentPage - 1}">Previous</a>`
                 : '<a class="pagination-previous" disabled>Previous</a>';
         // Next button
         paginationHTML +=
             currentPage < totalPages
-                ? "<a class=\"pagination-next\" href=\"#\" data-page-number=\"".concat(currentPage + 1, "\">Next</a>")
+                ? `<a class="pagination-next" href="#" data-page-number="${currentPage + 1}">Next</a>`
                 : '<a class="pagination-next" disabled>Next</a>';
         // Page numbers with smart ellipsis
         paginationHTML += '<ul class="pagination-list">';
-        var maxVisiblePages = 10;
-        var startPage = 1;
-        var endPage = totalPages;
+        const maxVisiblePages = 10;
+        let startPage = 1;
+        let endPage = totalPages;
         if (totalPages > maxVisiblePages) {
             // Calculate range around current page
-            var halfVisible = Math.floor(maxVisiblePages / 2);
+            const halfVisible = Math.floor(maxVisiblePages / 2);
             startPage = Math.max(1, currentPage - halfVisible);
             endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
             // Adjust if we're near the end
@@ -155,17 +131,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
         }
         // Always show first page
         if (startPage > 1) {
-            paginationHTML += /* html */ "\n        <li>\n          <a class=\"pagination-link\" data-page-number=\"1\" href=\"#\">1</a>\n        </li>\n      ";
+            paginationHTML += /* html */ `
+        <li>
+          <a class="pagination-link" data-page-number="1" href="#">1</a>
+        </li>
+      `;
             if (startPage > 2) {
-                paginationHTML += /* html */ "\n          <li>\n            <span class=\"pagination-ellipsis\">&hellip;</span>\n          </li>\n        ";
+                paginationHTML += /* html */ `
+          <li>
+            <span class="pagination-ellipsis">&hellip;</span>
+          </li>
+        `;
             }
         }
         // Show page range
-        for (var pageNumber = startPage; pageNumber <= endPage; pageNumber += 1) {
+        for (let pageNumber = startPage; pageNumber <= endPage; pageNumber += 1) {
             paginationHTML +=
                 pageNumber === currentPage
-                    ? /* html */ "\n            <li>\n              <a class=\"pagination-link is-current\" aria-current=\"page\">".concat(pageNumber, "</a>\n            </li>\n          ")
-                    : /* html */ "\n            <li>\n              <a class=\"pagination-link\" data-page-number=\"".concat(pageNumber, "\" href=\"#\">").concat(pageNumber, "</a>\n            </li>\n          ");
+                    ? /* html */ `
+            <li>
+              <a class="pagination-link is-current" aria-current="page">${pageNumber}</a>
+            </li>
+          `
+                    : /* html */ `
+            <li>
+              <a class="pagination-link" data-page-number="${pageNumber}" href="#">${pageNumber}</a>
+            </li>
+          `;
         }
         // Always show last page
         if (endPage < totalPages) {
@@ -173,21 +165,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 paginationHTML +=
                     '<li><span class="pagination-ellipsis">&hellip;</span></li>';
             }
-            paginationHTML += "<li><a class=\"pagination-link\" data-page-number=\"".concat(totalPages, "\" href=\"#\">").concat(totalPages, "</a></li>");
+            paginationHTML += `<li><a class="pagination-link" data-page-number="${totalPages}" href="#">${totalPages}</a></li>`;
         }
         paginationHTML += '</ul>';
         // eslint-disable-next-line no-unsanitized/property
         paginationElement.innerHTML = paginationHTML;
         // Event listeners
-        var pageLinks = paginationElement.querySelectorAll('a.pagination-previous, a.pagination-next, a.pagination-link');
-        for (var _i = 0, pageLinks_1 = pageLinks; _i < pageLinks_1.length; _i++) {
-            var pageLink = pageLinks_1[_i];
-            pageLink.addEventListener('click', function (event) {
+        const pageLinks = paginationElement.querySelectorAll('a.pagination-previous, a.pagination-next, a.pagination-link');
+        for (const pageLink of pageLinks) {
+            pageLink.addEventListener('click', (event) => {
                 event.preventDefault();
-                var target = event.currentTarget;
-                var pageNumberString = target.dataset.pageNumber;
+                const target = event.currentTarget;
+                const pageNumberString = target.dataset.pageNumber;
                 if (pageNumberString !== undefined) {
-                    var pageNumber = Number.parseInt(pageNumberString, 10);
+                    const pageNumber = Number.parseInt(pageNumberString, 10);
                     clickHandler(pageNumber);
                 }
             });
@@ -197,5 +188,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
     /*
      * Declare shiftLog
      */
-    exports.shiftLog = __assign(__assign({}, exports.shiftLog), { daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], clearUnsavedChanges: clearUnsavedChanges, hasUnsavedChanges: hasUnsavedChanges, setUnsavedChanges: setUnsavedChanges, buildShiftURL: buildShiftURL, buildTimesheetURL: buildTimesheetURL, buildWorkOrderURL: buildWorkOrderURL, initializeRecordTabs: initializeRecordTabs, buildPaginationControls: buildPaginationControls });
+    exports.shiftLog = {
+        ...exports.shiftLog,
+        daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        clearUnsavedChanges,
+        hasUnsavedChanges,
+        setUnsavedChanges,
+        buildShiftURL,
+        buildTimesheetURL,
+        buildWorkOrderURL,
+        initializeRecordTabs,
+        buildPaginationControls
+    };
 })();
