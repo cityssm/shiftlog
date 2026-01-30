@@ -1,5 +1,12 @@
 (() => {
     const shiftLog = exports.shiftLog;
+    // Scroll to top in edit mode while preserving the active tab
+    // Use setTimeout to ensure this runs after tabs are initialized
+    if (globalThis.location.hash !== '') {
+        setTimeout(() => {
+            globalThis.scrollTo(0, 0);
+        }, 0);
+    }
     const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
     const shiftFormElement = document.querySelector('#form--shift');
     const shiftId = shiftFormElement.querySelector('#shift--shiftId').value;

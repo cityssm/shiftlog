@@ -1,6 +1,13 @@
 /* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
+    // Scroll to top in edit mode while preserving the active tab
+    // Use setTimeout to ensure this runs after tabs are initialized
+    if (globalThis.location.hash !== '') {
+        setTimeout(() => {
+            globalThis.scrollTo(0, 0);
+        }, 0);
+    }
     const workOrderUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}`;
     const workOrderFormElement = document.querySelector('#form--workOrder');
     const workOrderId = workOrderFormElement.querySelector('#workOrder--workOrderId').value;
