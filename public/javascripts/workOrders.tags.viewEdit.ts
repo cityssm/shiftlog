@@ -103,8 +103,8 @@ declare const bulmaJS: BulmaJS
             cityssm.postJSON(
               `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderTag`,
               {
-                workOrderId: Number.parseInt(workOrderId, 10),
-                tagName
+                tagName,
+                workOrderId: Number.parseInt(workOrderId, 10)
               },
               (responseJSON: DoDeleteWorkOrderTagResponse) => {
                 if (responseJSON.success) {
@@ -138,11 +138,12 @@ declare const bulmaJS: BulmaJS
       function renderSuggestedTags(
         containerElement: HTMLElement,
         suggestedTags: Array<{
-          tagName: string
           tagBackgroundColor?: string
+          tagName: string
           tagTextColor?: string
           usageCount: number
-        }>
+        }>,
+        getCloseFunction: () => () => void
       ): void {
         if (suggestedTags.length === 0) {
           containerElement.innerHTML = ''
@@ -170,10 +171,8 @@ declare const bulmaJS: BulmaJS
 
           // Apply colors if available
           if (
-            suggestedTag.tagBackgroundColor !== undefined &&
-            suggestedTag.tagBackgroundColor !== null &&
-            suggestedTag.tagTextColor !== undefined &&
-            suggestedTag.tagTextColor !== null
+            (suggestedTag.tagBackgroundColor?.length ?? 0) > 0 &&
+            (suggestedTag.tagTextColor?.length ?? 0) > 0
           ) {
             tagElement.style.backgroundColor = `#${suggestedTag.tagBackgroundColor}`
             tagElement.style.color = `#${suggestedTag.tagTextColor}`
@@ -181,39 +180,41 @@ declare const bulmaJS: BulmaJS
 
           tagElement.textContent = suggestedTag.tagName
 
-          tagElement.addEventListener('click', () => {
+          const addSuggestedTag = (): void => {
             cityssm.postJSON(
               `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`,
               {
-                workOrderId: Number.parseInt(workOrderId, 10),
-                tagName: suggestedTag.tagName
+                tagName: suggestedTag.tagName,
+                workOrderId: Number.parseInt(workOrderId, 10)
               },
               (responseJSON: DoAddWorkOrderTagResponse) => {
                 if (responseJSON.success) {
-                  closeModalFunction()
+                  getCloseFunction()()
                   renderTags(responseJSON.tags)
 
                   bulmaJS.alert({
                     contextualColorName: 'success',
-                    title: 'Tag Added',
                     message:
                       'Tag has been successfully added to this work order.',
                     okButton: {
                       callbackFunction() {
                         addTag()
                       }
-                    }
+                    },
+                    title: 'Tag Added'
                   })
                 } else {
                   bulmaJS.alert({
                     contextualColorName: 'danger',
-                    title: 'Error Adding Tag',
-                    message: responseJSON.errorMessage
+                    message: responseJSON.errorMessage,
+                    title: 'Error Adding Tag'
                   })
                 }
               }
             )
-          })
+          }
+
+          tagElement.addEventListener('click', addSuggestedTag)
 
           tagsElement.append(tagElement)
         }
@@ -230,8 +231,8 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`,
           {
-            workOrderId: Number.parseInt(workOrderId, 10),
-            tagName: tagNameInput.value
+            tagName: tagNameInput.value,
+            workOrderId: Number.parseInt(workOrderId, 10)
           },
           (responseJSON: DoAddWorkOrderTagResponse) => {
             if (responseJSON.success) {
@@ -240,9 +241,8 @@ declare const bulmaJS: BulmaJS
 
               bulmaJS.alert({
                 contextualColorName: 'success',
-                title: 'Tag Added',
-
                 message: 'Tag has been successfully added to this work order.',
+                title: 'Tag Added',
 
                 okButton: {
                   callbackFunction() {
@@ -253,9 +253,8 @@ declare const bulmaJS: BulmaJS
             } else {
               bulmaJS.alert({
                 contextualColorName: 'danger',
-                title: 'Error Adding Tag',
-
-                message: responseJSON.errorMessage
+                message: responseJSON.errorMessage,
+                title: 'Error Adding Tag'
               })
             }
           }
@@ -282,7 +281,8 @@ declare const bulmaJS: BulmaJS
               (responseJSON: DoGetSuggestedTagsResponse) => {
                 renderSuggestedTags(
                   suggestedTagsContainer,
-                  responseJSON.suggestedTags
+                  responseJSON.suggestedTags,
+                  () => closeModalFunction
                 )
               }
             )

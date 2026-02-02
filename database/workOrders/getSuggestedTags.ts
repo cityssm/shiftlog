@@ -2,15 +2,17 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 interface SuggestedTag {
-  tagName: string
   tagBackgroundColor?: string
+  tagName: string
   tagTextColor?: string
   usageCount: number
 }
 
+const defaultLimit = 10
+
 export default async function getSuggestedTags(
   workOrderId: number | string,
-  limit: number = 10
+  limit = defaultLimit
 ): Promise<SuggestedTag[]> {
   const pool = await getShiftLogConnectionPool()
 

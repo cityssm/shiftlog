@@ -86,7 +86,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
         }
         function addTag() {
             var closeModalFunction;
-            function renderSuggestedTags(containerElement, suggestedTags) {
+            function renderSuggestedTags(containerElement, suggestedTags, getCloseFunction) {
+                var _a, _b, _c, _d;
                 if (suggestedTags.length === 0) {
                     containerElement.innerHTML = '';
                     return;
@@ -98,26 +99,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     tagElement.className = 'tag is-medium is-clickable';
                     tagElement.type = 'button';
                     // Apply colors if available
-                    if (suggestedTag.tagBackgroundColor !== undefined &&
-                        suggestedTag.tagBackgroundColor !== null &&
-                        suggestedTag.tagTextColor !== undefined &&
-                        suggestedTag.tagTextColor !== null) {
+                    if (((_b = (_a = suggestedTag.tagBackgroundColor) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) > 0 &&
+                        ((_d = (_c = suggestedTag.tagTextColor) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0) > 0) {
                         tagElement.style.backgroundColor = "#".concat(suggestedTag.tagBackgroundColor);
                         tagElement.style.color = "#".concat(suggestedTag.tagTextColor);
                     }
                     tagElement.textContent = suggestedTag.tagName;
-                    tagElement.addEventListener('click', function () {
+                    var addSuggestedTag = function () {
                         cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doAddWorkOrderTag"), {
-                            workOrderId: Number.parseInt(workOrderId, 10),
-                            tagName: suggestedTag.tagName
+                            tagName: suggestedTag.tagName,
+                            workOrderId: Number.parseInt(workOrderId, 10)
                         }, function (responseJSON) {
                             if (responseJSON.success) {
-                                closeModalFunction();
+                                getCloseFunction()();
                                 renderTags(responseJSON.tags);
                                 bulmaJS.alert({
                                     contextualColorName: 'success',
-                                    title: 'Tag Added',
                                     message: 'Tag has been successfully added to this work order.',
+                                    title: 'Tag Added',
                                     okButton: {
                                         callbackFunction: function () {
                                             addTag();
@@ -128,12 +127,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
                             else {
                                 bulmaJS.alert({
                                     contextualColorName: 'danger',
-                                    title: 'Error Adding Tag',
-                                    message: responseJSON.errorMessage
+                                    message: responseJSON.errorMessage,
+                                    title: 'Error Adding Tag'
                                 });
                             }
                         });
-                    });
+                    };
+                    tagElement.addEventListener('click', addSuggestedTag);
                     tagsElement.append(tagElement);
                 };
                 for (var _i = 0, suggestedTags_1 = suggestedTags; _i < suggestedTags_1.length; _i++) {
@@ -146,16 +146,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 var formElement = submitEvent.currentTarget;
                 var tagNameInput = formElement.querySelector('#addWorkOrderTag--tagName');
                 cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doAddWorkOrderTag"), {
-                    workOrderId: Number.parseInt(workOrderId, 10),
-                    tagName: tagNameInput.value
+                    tagName: tagNameInput.value,
+                    workOrderId: Number.parseInt(workOrderId, 10)
                 }, function (responseJSON) {
                     if (responseJSON.success) {
                         closeModalFunction();
                         renderTags(responseJSON.tags);
                         bulmaJS.alert({
                             contextualColorName: 'success',
-                            title: 'Tag Added',
                             message: 'Tag has been successfully added to this work order.',
+                            title: 'Tag Added',
                             okButton: {
                                 callbackFunction: function () {
                                     addTag();
@@ -166,8 +166,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     else {
                         bulmaJS.alert({
                             contextualColorName: 'danger',
-                            title: 'Error Adding Tag',
-                            message: responseJSON.errorMessage
+                            message: responseJSON.errorMessage,
+                            title: 'Error Adding Tag'
                         });
                     }
                 });
@@ -182,7 +182,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     var suggestedTagsContainer = modalElement.querySelector('#container--suggestedTags');
                     if (suggestedTagsContainer !== null) {
                         cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/").concat(workOrderId, "/doGetSuggestedTags"), {}, function (responseJSON) {
-                            renderSuggestedTags(suggestedTagsContainer, responseJSON.suggestedTags);
+                            renderSuggestedTags(suggestedTagsContainer, responseJSON.suggestedTags, function () { return closeModalFunction; });
                         });
                     }
                 },

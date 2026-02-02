@@ -1,6 +1,6 @@
 interface SuggestedTag {
-    tagName: string;
     tagBackgroundColor?: string;
+    tagName: string;
     tagTextColor?: string;
     usageCount: number;
 }

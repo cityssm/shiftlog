@@ -38,12 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = handler;
 var getSuggestedTags_js_1 = require("../../database/workOrders/getSuggestedTags.js");
+var suggestedTagsLimit = 10;
 function handler(request, response) {
     return __awaiter(this, void 0, void 0, function () {
         var suggestedTags;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, getSuggestedTags_js_1.default)(Number(request.params.workOrderId), 10)];
+                case 0: return [4 /*yield*/, (0, getSuggestedTags_js_1.default)(Number(request.params.workOrderId), suggestedTagsLimit)];
                 case 1:
                     suggestedTags = _a.sent();
                     response.json({

@@ -39,10 +39,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = getSuggestedTags;
 var config_helpers_js_1 = require("../../helpers/config.helpers.js");
 var database_helpers_js_1 = require("../../helpers/database.helpers.js");
+var defaultLimit = 10;
 function getSuggestedTags(workOrderId_1) {
     return __awaiter(this, arguments, void 0, function (workOrderId, limit) {
         var pool, result;
-        if (limit === void 0) { limit = 10; }
+        if (limit === void 0) { limit = defaultLimit; }
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];

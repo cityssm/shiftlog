@@ -3,8 +3,8 @@ import type { Request, Response } from 'express'
 import getSuggestedTags from '../../database/workOrders/getSuggestedTags.js'
 
 interface SuggestedTag {
-  tagName: string
   tagBackgroundColor?: string
+  tagName: string
   tagTextColor?: string
   usageCount: number
 }
@@ -15,13 +15,15 @@ export type DoGetSuggestedTagsResponse = {
   suggestedTags: SuggestedTag[]
 }
 
+const suggestedTagsLimit = 10
+
 export default async function handler(
   request: Request<{ workOrderId: string }>,
   response: Response<DoGetSuggestedTagsResponse>
 ): Promise<void> {
   const suggestedTags = await getSuggestedTags(
     Number(request.params.workOrderId),
-    10
+    suggestedTagsLimit
   )
 
   response.json({

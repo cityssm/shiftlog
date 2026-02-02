@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 interface SuggestedTag {
-    tagName: string;
     tagBackgroundColor?: string;
+    tagName: string;
     tagTextColor?: string;
     usageCount: number;
 }
