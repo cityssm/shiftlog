@@ -109,8 +109,7 @@ router
     .post('/doUploadWorkOrderAttachment', updateHandler, upload.single('attachmentFile'), handler_doUploadWorkOrderAttachment)
     .post('/doUpdateWorkOrderAttachment', updateHandler, handler_doUpdateWorkOrderAttachment)
     .post('/doDeleteWorkOrderAttachment', updateHandler, handler_doDeleteWorkOrderAttachment)
-    // eslint-disable-line no-secrets/no-secrets -- false positive, this is a route name
-    .post('/doSetWorkOrderAttachmentThumbnail', updateHandler, handler_doSetWorkOrderAttachmentThumbnail);
+    .post('/doSetWorkOrderAttachmentThumbnail', updateHandler, handler_doSetWorkOrderAttachmentThumbnail); // eslint-disable-line no-secrets/no-secrets -- false positive, this is a route name
 router
     .post('/:workOrderId/doGetWorkOrderTags', handler_doGetWorkOrderTags)
     .post('/:workOrderId/doGetSuggestedTags', handler_doGetSuggestedTags)
