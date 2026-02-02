@@ -248,6 +248,7 @@ declare const bulmaJS: BulmaJS
 
       cityssm.openHtmlModal('workOrders-addCost', {
         onshow(modalElement) {
+          exports.shiftLog.populateSectionAliases(modalElement)
           exports.shiftLog.setUnsavedChanges('modal')
           ;(
             modalElement.querySelector(

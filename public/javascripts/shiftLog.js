@@ -75,6 +75,48 @@
         return `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/${timesheetId.toString()}${edit ? '/edit' : ''}`;
     }
     /*
+     * Section Aliases
+     */
+    function populateSectionAliases(containerElement = document.body) {
+        const sectionAliasElements = containerElement.querySelectorAll('[data-section-alias]');
+        for (const sectionAliasElement of sectionAliasElements) {
+            const sectionAlias = sectionAliasElement.dataset.sectionAlias;
+            switch (sectionAlias) {
+                case 'shiftsSectionName': {
+                    sectionAliasElement.textContent =
+                        exports.shiftLog.shiftsSectionName ?? '';
+                    break;
+                }
+                case 'shiftsSectionNameSingular': {
+                    sectionAliasElement.textContent =
+                        exports.shiftLog.shiftsSectionNameSingular ?? '';
+                    break;
+                }
+                case 'timesheetsSectionName': {
+                    sectionAliasElement.textContent =
+                        exports.shiftLog.timesheetsSectionName ?? '';
+                    break;
+                }
+                case 'timesheetsSectionNameSingular': {
+                    sectionAliasElement.textContent =
+                        exports.shiftLog.timesheetsSectionNameSingular ?? '';
+                    break;
+                }
+                case 'workOrdersSectionName': {
+                    sectionAliasElement.textContent =
+                        exports.shiftLog.workOrdersSectionName ?? '';
+                    break;
+                }
+                case 'workOrdersSectionNameSingular': {
+                    sectionAliasElement.textContent =
+                        exports.shiftLog.workOrdersSectionNameSingular ?? '';
+                    break;
+                }
+                // No default
+            }
+        }
+    }
+    /*
      * Pagination Controls
      */
     /**
@@ -190,13 +232,22 @@
      */
     exports.shiftLog = {
         ...exports.shiftLog,
-        daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        daysOfWeek: [
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday'
+        ],
         clearUnsavedChanges,
         hasUnsavedChanges,
         setUnsavedChanges,
         buildShiftURL,
         buildTimesheetURL,
         buildWorkOrderURL,
+        populateSectionAliases,
         initializeRecordTabs,
         buildPaginationControls
     };
