@@ -36,21 +36,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = handler;
-var getWorkOrderTags_js_1 = require("../../database/workOrders/getWorkOrderTags.js");
-function handler(request, response) {
-    return __awaiter(this, void 0, void 0, function () {
-        var tags;
+exports.default = getSuggestedTags;
+var config_helpers_js_1 = require("../../helpers/config.helpers.js");
+var database_helpers_js_1 = require("../../helpers/database.helpers.js");
+function getSuggestedTags(workOrderId_1) {
+    return __awaiter(this, arguments, void 0, function (workOrderId, limit) {
+        var pool, result;
+        if (limit === void 0) { limit = 10; }
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, getWorkOrderTags_js_1.default)(Number(request.params.workOrderId))];
+                case 0: return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];
                 case 1:
-                    tags = _a.sent();
-                    response.json({
-                        success: true,
-                        tags: tags
-                    });
-                    return [2 /*return*/];
+                    pool = _a.sent();
+                    return [4 /*yield*/, pool
+                            .request()
+                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
+                            .input('workOrderId', workOrderId)
+                            .input('limit', limit)
+                            .query(/* sql */ "\n      SELECT TOP (@limit)\n        wot.tagName,\n        t.tagBackgroundColor,\n        t.tagTextColor,\n        COUNT(*) as usageCount\n      FROM\n        ShiftLog.WorkOrderTags wot\n        LEFT JOIN ShiftLog.Tags t ON wot.tagName = t.tagName\n          AND t.instance = @instance\n          AND t.recordDelete_dateTime IS NULL\n        INNER JOIN ShiftLog.WorkOrders wo ON wot.workOrderId = wo.workOrderId\n      WHERE\n        wo.instance = @instance\n        AND wo.recordDelete_dateTime IS NULL\n        AND wot.tagName NOT IN (\n          SELECT tagName\n          FROM ShiftLog.WorkOrderTags\n          WHERE workOrderId = @workOrderId\n        )\n      GROUP BY\n        wot.tagName,\n        t.tagBackgroundColor,\n        t.tagTextColor\n      ORDER BY\n        COUNT(*) DESC,\n        wot.tagName\n    ")];
+                case 2:
+                    result = _a.sent();
+                    return [2 /*return*/, result.recordset];
             }
         });
     });

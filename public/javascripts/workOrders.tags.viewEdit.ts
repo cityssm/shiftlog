@@ -3,6 +3,7 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddWorkOrderTagResponse } from '../../handlers/workOrders-post/doAddWorkOrderTag.js'
 import type { DoDeleteWorkOrderTagResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderTag.js'
+import type { DoGetSuggestedTagsResponse } from '../../handlers/workOrders-post/doGetSuggestedTags.js'
 import type { DoGetWorkOrderTagsResponse } from '../../handlers/workOrders-post/doGetWorkOrderTags.js'
 import type { WorkOrderTag } from '../../types/record.types.js'
 
@@ -134,6 +135,90 @@ declare const bulmaJS: BulmaJS
     function addTag(): void {
       let closeModalFunction: () => void
 
+      function renderSuggestedTags(
+        containerElement: HTMLElement,
+        suggestedTags: Array<{
+          tagName: string
+          tagBackgroundColor?: string
+          tagTextColor?: string
+          usageCount: number
+        }>
+      ): void {
+        if (suggestedTags.length === 0) {
+          containerElement.innerHTML = ''
+          return
+        }
+
+        containerElement.innerHTML = /* html */ `
+          <div class="field">
+            <label class="label">Suggested Tags</label>
+            <div class="control">
+              <div class="tags" id="tags--suggested"></div>
+            </div>
+            <p class="help">Recently used tags that are not yet on this work order. Click to add.</p>
+          </div>
+        `
+
+        const tagsElement = containerElement.querySelector(
+          '#tags--suggested'
+        ) as HTMLElement
+
+        for (const suggestedTag of suggestedTags) {
+          const tagElement = document.createElement('button')
+          tagElement.className = 'tag is-medium is-clickable'
+          tagElement.type = 'button'
+
+          // Apply colors if available
+          if (
+            suggestedTag.tagBackgroundColor !== undefined &&
+            suggestedTag.tagBackgroundColor !== null &&
+            suggestedTag.tagTextColor !== undefined &&
+            suggestedTag.tagTextColor !== null
+          ) {
+            tagElement.style.backgroundColor = `#${suggestedTag.tagBackgroundColor}`
+            tagElement.style.color = `#${suggestedTag.tagTextColor}`
+          }
+
+          tagElement.textContent = suggestedTag.tagName
+
+          tagElement.addEventListener('click', () => {
+            cityssm.postJSON(
+              `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`,
+              {
+                workOrderId: Number.parseInt(workOrderId, 10),
+                tagName: suggestedTag.tagName
+              },
+              (responseJSON: DoAddWorkOrderTagResponse) => {
+                if (responseJSON.success) {
+                  closeModalFunction()
+                  renderTags(responseJSON.tags)
+
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    title: 'Tag Added',
+                    message:
+                      'Tag has been successfully added to this work order.',
+                    okButton: {
+                      callbackFunction() {
+                        addTag()
+                      }
+                    }
+                  })
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Error Adding Tag',
+                    message: responseJSON.errorMessage
+                  })
+                }
+              }
+            )
+          })
+
+          tagsElement.append(tagElement)
+        }
+      }
+
       function doAddTag(submitEvent: Event): void {
         submitEvent.preventDefault()
 
@@ -184,6 +269,24 @@ declare const bulmaJS: BulmaJS
           modalElement
             .querySelector('form')
             ?.addEventListener('submit', doAddTag)
+
+          // Fetch and render suggested tags
+          const suggestedTagsContainer = modalElement.querySelector(
+            '#container--suggestedTags'
+          ) as HTMLElement | null
+
+          if (suggestedTagsContainer !== null) {
+            cityssm.postJSON(
+              `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`,
+              {},
+              (responseJSON: DoGetSuggestedTagsResponse) => {
+                renderSuggestedTags(
+                  suggestedTagsContainer,
+                  responseJSON.suggestedTags
+                )
+              }
+            )
+          }
         },
         onshown(modalElement, closeFunction) {
           closeModalFunction = closeFunction

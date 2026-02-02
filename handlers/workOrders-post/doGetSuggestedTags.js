@@ -37,18 +37,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = handler;
-var getWorkOrderTags_js_1 = require("../../database/workOrders/getWorkOrderTags.js");
+var getSuggestedTags_js_1 = require("../../database/workOrders/getSuggestedTags.js");
 function handler(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var tags;
+        var suggestedTags;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, getWorkOrderTags_js_1.default)(Number(request.params.workOrderId))];
+                case 0: return [4 /*yield*/, (0, getSuggestedTags_js_1.default)(Number(request.params.workOrderId), 10)];
                 case 1:
-                    tags = _a.sent();
+                    suggestedTags = _a.sent();
                     response.json({
                         success: true,
-                        tags: tags
+                        suggestedTags: suggestedTags
                     });
                     return [2 /*return*/];
             }
