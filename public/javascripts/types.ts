@@ -51,4 +51,6 @@ export interface ShiftLogGlobal {
     itemsPerPageOrLimit: number
     clickHandler: (pageNumber: number) => void
   }) => HTMLElement
+
+  populateSectionAliases: (containerElement?: HTMLElement) => void
 }

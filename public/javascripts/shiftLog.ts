@@ -76,7 +76,7 @@ declare const exports: {
     // Check for hash in URL and activate corresponding tab
     if (globalThis.location.hash !== '') {
       const targetTabId = globalThis.location.hash.slice(1)
-      
+
       // Escape the targetTabId for safe use in CSS selector
       const escapedTargetTabId = CSS.escape(targetTabId)
       const targetTabLink = tabsContainerElement.querySelector(
@@ -120,6 +120,61 @@ declare const exports: {
   }
 
   /*
+   * Section Aliases
+   */
+
+  function populateSectionAliases(
+    containerElement: HTMLElement = document.body
+  ): void {
+    const sectionAliasElements: NodeListOf<HTMLElement> =
+      containerElement.querySelectorAll('[data-section-alias]')
+
+    for (const sectionAliasElement of sectionAliasElements) {
+      const sectionAlias = sectionAliasElement.dataset.sectionAlias
+
+      switch (sectionAlias) {
+        case 'shiftsSectionName': {
+          sectionAliasElement.textContent =
+            exports.shiftLog.shiftsSectionName ?? ''
+          break
+        }
+
+        case 'shiftsSectionNameSingular': {
+          sectionAliasElement.textContent =
+            exports.shiftLog.shiftsSectionNameSingular ?? ''
+          break
+        }
+
+        case 'timesheetsSectionName': {
+          sectionAliasElement.textContent =
+            exports.shiftLog.timesheetsSectionName ?? ''
+          break
+        }
+
+        case 'timesheetsSectionNameSingular': {
+          sectionAliasElement.textContent =
+            exports.shiftLog.timesheetsSectionNameSingular ?? ''
+          break
+        }
+
+        case 'workOrdersSectionName': {
+          sectionAliasElement.textContent =
+            exports.shiftLog.workOrdersSectionName ?? ''
+          break
+        }
+
+        case 'workOrdersSectionNameSingular': {
+          sectionAliasElement.textContent =
+            exports.shiftLog.workOrdersSectionNameSingular ?? ''
+          break
+        }
+
+        // No default
+      }
+    }
+  }
+
+  /*
    * Pagination Controls
    */
 
@@ -139,20 +194,25 @@ declare const exports: {
     itemsPerPageOrLimit: number
     clickHandler: (pageNumber: number) => void
   }): HTMLElement {
-    const { totalCount, currentPageOrOffset, itemsPerPageOrLimit, clickHandler } = options
-    
+    const {
+      totalCount,
+      currentPageOrOffset,
+      itemsPerPageOrLimit,
+      clickHandler
+    } = options
+
     // Validate itemsPerPageOrLimit to prevent division by zero
     if (itemsPerPageOrLimit <= 0) {
       throw new Error('itemsPerPageOrLimit must be greater than 0')
     }
-    
+
     const paginationElement = document.createElement('nav')
     paginationElement.className = 'pagination is-centered mt-4'
     paginationElement.setAttribute('role', 'navigation')
     paginationElement.setAttribute('aria-label', 'pagination')
 
     const totalPages = Math.ceil(totalCount / itemsPerPageOrLimit)
-    
+
     // Calculate current page from either page number or offset
     // If currentPageOrOffset is 0 or greater than totalPages, treat it as an offset
     const currentPage =
@@ -271,7 +331,15 @@ declare const exports: {
   exports.shiftLog = {
     ...exports.shiftLog,
 
-    daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    daysOfWeek: [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday'
+    ],
 
     clearUnsavedChanges,
     hasUnsavedChanges,
@@ -280,6 +348,8 @@ declare const exports: {
     buildShiftURL,
     buildTimesheetURL,
     buildWorkOrderURL,
+
+    populateSectionAliases,
 
     initializeRecordTabs,
 
