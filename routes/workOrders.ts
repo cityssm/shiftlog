@@ -29,6 +29,7 @@ import handler_doGetCalendarEvents from '../handlers/workOrders-post/doGetCalend
 import handler_doGetDeletedWorkOrders from '../handlers/workOrders-post/doGetDeletedWorkOrders.js'
 import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js'
 import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGetRequestorSuggestions.js'
+import handler_doGetSuggestedTags from '../handlers/workOrders-post/doGetSuggestedTags.js'
 import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGetWorkOrderAttachments.js'
 import handler_doGetWorkOrderCosts from '../handlers/workOrders-post/doGetWorkOrderCosts.js'
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js'
@@ -164,13 +165,14 @@ router
     handler_doDeleteWorkOrderAttachment
   )
   .post(
-    '/doSetWorkOrderAttachmentThumbnail',
+    '/doSetWorkOrderAttachmentThumbnail', // eslint-disable-line no-secrets/no-secrets -- false positive, this is a route name
     updateHandler,
     handler_doSetWorkOrderAttachmentThumbnail
   )
 
 router
   .post('/:workOrderId/doGetWorkOrderTags', handler_doGetWorkOrderTags)
+  .post('/:workOrderId/doGetSuggestedTags', handler_doGetSuggestedTags)
   .post('/doAddWorkOrderTag', updateHandler, handler_doAddWorkOrderTag)
   .post('/doDeleteWorkOrderTag', updateHandler, handler_doDeleteWorkOrderTag)
 
