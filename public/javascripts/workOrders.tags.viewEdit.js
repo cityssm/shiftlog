@@ -1,69 +1,65 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
-    var workOrderFormElement = document.querySelector('#form--workOrder');
-    var workOrderId = workOrderFormElement === null
+(() => {
+    const workOrderFormElement = document.querySelector('#form--workOrder');
+    const workOrderId = workOrderFormElement === null
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     /*
      * Tags functionality
      */
-    var tagsContainerElement = document.querySelector('#container--tags');
+    const tagsContainerElement = document.querySelector('#container--tags');
     if (tagsContainerElement !== null) {
         function renderTags(tags) {
             if (tags.length === 0) {
                 ;
-                tagsContainerElement.innerHTML = /* html */ "\n          <p class=\"has-text-grey\">No tags have been added.</p>\n        ";
+                tagsContainerElement.innerHTML = /* html */ `
+          <p class="has-text-grey">No tags have been added.</p>
+        `;
                 return;
             }
             ;
             tagsContainerElement.innerHTML = '';
-            var tagsElement = document.createElement('div');
+            const tagsElement = document.createElement('div');
             tagsElement.className = 'tags';
-            var _loop_1 = function (tag) {
-                var tagElement = document.createElement('span');
+            for (const tag of tags) {
+                const tagElement = document.createElement('span');
                 tagElement.className = 'tag is-medium';
                 // Apply colors if available
                 if (tag.tagBackgroundColor && tag.tagTextColor) {
-                    tagElement.style.backgroundColor = "#".concat(tag.tagBackgroundColor);
-                    tagElement.style.color = "#".concat(tag.tagTextColor);
+                    tagElement.style.backgroundColor = `#${tag.tagBackgroundColor}`;
+                    tagElement.style.color = `#${tag.tagTextColor}`;
                 }
-                var tagTextElement = document.createElement('span');
+                const tagTextElement = document.createElement('span');
                 tagTextElement.textContent = tag.tagName;
                 tagElement.append(tagTextElement);
                 // Add delete button if in edit mode
                 if (exports.isEdit) {
-                    var deleteButton = document.createElement('button');
+                    const deleteButton = document.createElement('button');
                     deleteButton.className = 'delete is-small';
                     deleteButton.type = 'button';
                     deleteButton.dataset.tagName = tag.tagName;
-                    deleteButton.title = "Remove tag ".concat(tag.tagName);
-                    deleteButton.addEventListener('click', function () {
+                    deleteButton.title = `Remove tag ${tag.tagName}`;
+                    deleteButton.addEventListener('click', () => {
                         deleteTag(tag.tagName);
                     });
                     tagElement.append(deleteButton);
                 }
                 tagsElement.append(tagElement);
-            };
-            for (var _i = 0, tags_1 = tags; _i < tags_1.length; _i++) {
-                var tag = tags_1[_i];
-                _loop_1(tag);
             }
-            tagsContainerElement === null || tagsContainerElement === void 0 ? void 0 : tagsContainerElement.append(tagsElement);
+            tagsContainerElement?.append(tagsElement);
         }
         function deleteTag(tagName) {
             bulmaJS.confirm({
                 contextualColorName: 'warning',
                 title: 'Remove Tag',
-                message: "Are you sure you want to remove the tag \"".concat(tagName, "\" from this work order?"),
+                message: `Are you sure you want to remove the tag "${tagName}" from this work order?`,
                 okButton: {
                     contextualColorName: 'warning',
                     text: 'Remove Tag',
-                    callbackFunction: function () {
-                        cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doDeleteWorkOrderTag"), {
-                            workOrderId: Number.parseInt(workOrderId, 10),
-                            tagName: tagName
-                        }, function (responseJSON) {
+                    callbackFunction() {
+                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderTag`, {
+                            tagName,
+                            workOrderId: Number.parseInt(workOrderId, 10)
+                        }, (responseJSON) => {
                             if (responseJSON.success) {
                                 renderTags(responseJSON.tags);
                                 bulmaJS.alert({
@@ -85,43 +81,50 @@ Object.defineProperty(exports, "__esModule", { value: true });
             });
         }
         function addTag() {
-            var closeModalFunction;
+            let closeModalFunction;
             function renderSuggestedTags(containerElement, suggestedTags, getCloseFunction) {
-                var _a, _b, _c, _d;
                 if (suggestedTags.length === 0) {
                     containerElement.innerHTML = '';
                     return;
                 }
-                containerElement.innerHTML = /* html */ "\n          <div class=\"field\">\n            <label class=\"label\">Suggested Tags</label>\n            <div class=\"control\">\n              <div class=\"tags\" id=\"tags--suggested\"></div>\n            </div>\n            <p class=\"help\">Recently used tags that are not yet on this work order. Click to add.</p>\n          </div>\n        ";
-                var tagsElement = containerElement.querySelector('#tags--suggested');
-                var _loop_2 = function (suggestedTag) {
-                    var tagElement = document.createElement('button');
+                containerElement.innerHTML = /* html */ `
+          <div class="field">
+            <label class="label">Suggested Tags</label>
+            <div class="control">
+              <div class="tags" id="tags--suggested"></div>
+            </div>
+            <p class="help">Recently used tags that are not yet on this work order. Click to add.</p>
+          </div>
+        `;
+                const tagsElement = containerElement.querySelector('#tags--suggested');
+                for (const suggestedTag of suggestedTags) {
+                    const tagElement = document.createElement('button');
                     tagElement.className = 'tag is-medium is-clickable';
                     tagElement.type = 'button';
                     // Apply colors if available
-                    if (((_b = (_a = suggestedTag.tagBackgroundColor) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) > 0 &&
-                        ((_d = (_c = suggestedTag.tagTextColor) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0) > 0) {
-                        tagElement.style.backgroundColor = "#".concat(suggestedTag.tagBackgroundColor);
-                        tagElement.style.color = "#".concat(suggestedTag.tagTextColor);
+                    if ((suggestedTag.tagBackgroundColor?.length ?? 0) > 0 &&
+                        (suggestedTag.tagTextColor?.length ?? 0) > 0) {
+                        tagElement.style.backgroundColor = `#${suggestedTag.tagBackgroundColor}`;
+                        tagElement.style.color = `#${suggestedTag.tagTextColor}`;
                     }
                     tagElement.textContent = suggestedTag.tagName;
-                    var addSuggestedTag = function () {
-                        cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doAddWorkOrderTag"), {
+                    const addSuggestedTag = () => {
+                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`, {
                             tagName: suggestedTag.tagName,
                             workOrderId: Number.parseInt(workOrderId, 10)
-                        }, function (responseJSON) {
+                        }, (responseJSON) => {
                             if (responseJSON.success) {
                                 getCloseFunction()();
                                 renderTags(responseJSON.tags);
                                 bulmaJS.alert({
                                     contextualColorName: 'success',
                                     message: 'Tag has been successfully added to this work order.',
-                                    title: 'Tag Added',
                                     okButton: {
-                                        callbackFunction: function () {
+                                        callbackFunction() {
                                             addTag();
                                         }
-                                    }
+                                    },
+                                    title: 'Tag Added'
                                 });
                             }
                             else {
@@ -135,20 +138,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
                     };
                     tagElement.addEventListener('click', addSuggestedTag);
                     tagsElement.append(tagElement);
-                };
-                for (var _i = 0, suggestedTags_1 = suggestedTags; _i < suggestedTags_1.length; _i++) {
-                    var suggestedTag = suggestedTags_1[_i];
-                    _loop_2(suggestedTag);
                 }
             }
             function doAddTag(submitEvent) {
                 submitEvent.preventDefault();
-                var formElement = submitEvent.currentTarget;
-                var tagNameInput = formElement.querySelector('#addWorkOrderTag--tagName');
-                cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/doAddWorkOrderTag"), {
+                const formElement = submitEvent.currentTarget;
+                const tagNameInput = formElement.querySelector('#addWorkOrderTag--tagName');
+                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`, {
                     tagName: tagNameInput.value,
                     workOrderId: Number.parseInt(workOrderId, 10)
-                }, function (responseJSON) {
+                }, (responseJSON) => {
                     if (responseJSON.success) {
                         closeModalFunction();
                         renderTags(responseJSON.tags);
@@ -157,7 +156,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
                             message: 'Tag has been successfully added to this work order.',
                             title: 'Tag Added',
                             okButton: {
-                                callbackFunction: function () {
+                                callbackFunction() {
                                     addTag();
                                 }
                             }
@@ -173,37 +172,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 });
             }
             cityssm.openHtmlModal('workOrders-addTag', {
-                onshow: function (modalElement) {
-                    var _a;
+                onshow(modalElement) {
                     exports.shiftLog.setUnsavedChanges('modal');
-                    (_a = modalElement
-                        .querySelector('form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', doAddTag);
+                    modalElement
+                        .querySelector('form')
+                        ?.addEventListener('submit', doAddTag);
                     // Fetch and render suggested tags
-                    var suggestedTagsContainer = modalElement.querySelector('#container--suggestedTags');
+                    const suggestedTagsContainer = modalElement.querySelector('#container--suggestedTags');
                     if (suggestedTagsContainer !== null) {
-                        cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/").concat(workOrderId, "/doGetSuggestedTags"), {}, function (responseJSON) {
-                            renderSuggestedTags(suggestedTagsContainer, responseJSON.suggestedTags, function () { return closeModalFunction; });
+                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`, {}, (responseJSON) => {
+                            renderSuggestedTags(suggestedTagsContainer, responseJSON.suggestedTags, () => closeModalFunction);
                         });
                     }
                 },
-                onshown: function (modalElement, closeFunction) {
+                onshown(modalElement, closeFunction) {
                     closeModalFunction = closeFunction;
                     bulmaJS.toggleHtmlClipped();
                     modalElement.querySelector('#addWorkOrderTag--tagName').focus();
                 },
-                onremoved: function () {
+                onremoved() {
                     exports.shiftLog.clearUnsavedChanges('modal');
                     bulmaJS.toggleHtmlClipped();
                 }
             });
         }
         function getTags() {
-            cityssm.postJSON("".concat(exports.shiftLog.urlPrefix, "/").concat(exports.shiftLog.workOrdersRouter, "/").concat(workOrderId, "/doGetWorkOrderTags"), {}, function (responseJSON) {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`, {}, (responseJSON) => {
                 renderTags(responseJSON.tags);
             });
         }
         // Add tag button
-        var addTagButton = document.querySelector('#button--addTag');
+        const addTagButton = document.querySelector('#button--addTag');
         if (addTagButton !== null) {
             addTagButton.addEventListener('click', addTag);
         }

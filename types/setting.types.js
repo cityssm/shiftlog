@@ -1,8 +1,5 @@
-"use strict";
 /* eslint-disable perfectionist/sort-objects */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.settingProperties = void 0;
-exports.settingProperties = [
+export const settingProperties = [
     {
         settingKey: 'cleanup.apiAuditLogRetentionDays',
         settingName: 'Cleanup - API Audit Log Retention (Days)',
