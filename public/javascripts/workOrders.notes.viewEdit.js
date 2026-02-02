@@ -185,6 +185,7 @@
         }
         cityssm.openHtmlModal('workOrders-addNote', {
             onshow(modalElement) {
+                exports.shiftLog.populateSectionAliases(modalElement);
                 exports.shiftLog.setUnsavedChanges('modal');
                 modalElement.querySelector('#addWorkOrderNote--workOrderId').value = workOrderId;
             },

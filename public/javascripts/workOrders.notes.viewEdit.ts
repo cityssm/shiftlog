@@ -260,6 +260,7 @@ declare const bulmaJS: BulmaJS
     event?.preventDefault()
 
     let closeModalFunction: () => void
+
     function doAddNote(submitEvent: Event): void {
       submitEvent.preventDefault()
       const formElement = submitEvent.currentTarget as HTMLFormElement
@@ -284,6 +285,7 @@ declare const bulmaJS: BulmaJS
 
     cityssm.openHtmlModal('workOrders-addNote', {
       onshow(modalElement) {
+        exports.shiftLog.populateSectionAliases(modalElement)
         exports.shiftLog.setUnsavedChanges('modal')
         ;(
           modalElement.querySelector(

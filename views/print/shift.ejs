@@ -138,16 +138,18 @@
 
 <% if (shiftWorkOrders.length > 0) { %>
 <div class="box avoid-page-break report-block">
-  <button class="button is-delete-report-block-button" type="button" title="Remove Work Orders section from the report">
+  <button class="button is-delete-report-block-button" type="button" title="Remove <%= configFunctions.getConfigProperty('workOrders.sectionName') %> section from the report">
     <span class="icon is-small">
       <i class="fa-solid fa-xmark"></i>
     </span>
   </button>
-  <h2 class="title is-4">Work Orders</h2>
+  <h2 class="title is-4">
+    <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
+  </h2>
   <table class="table is-fullwidth is-striped">
     <thead>
       <tr>
-        <th>Work Order #</th>
+        <th><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #</th>
         <th>Type</th>
         <th>Status</th>
         <th>Priority</th>
@@ -173,16 +175,16 @@
 
 <% if (allMilestones.length > 0) { %>
 <div class="box avoid-page-break report-block">
-  <button class="button is-delete-report-block-button" type="button" title="Remove Work Order Milestones section from the report">
+  <button class="button is-delete-report-block-button" type="button" title="Remove <%= configFunctions.getConfigProperty('workOrders.sectionName') %> Milestones section from the report">
     <span class="icon is-small">
       <i class="fa-solid fa-xmark"></i>
     </span>
   </button>
-  <h2 class="title is-4">Work Order Milestones</h2>
+  <h2 class="title is-4"><%= configFunctions.getConfigProperty('workOrders.sectionName') %> Milestones</h2>
   <table class="table is-fullwidth is-striped">
     <thead>
       <tr>
-        <th>Work Order #</th>
+        <th><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> #</th>
         <th>Title</th>
         <th>Description</th>
         <th>Due Date</th>

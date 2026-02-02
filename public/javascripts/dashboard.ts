@@ -10,7 +10,7 @@ declare const L: typeof Leaflet
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
-  
+
   recentWorkOrders: WorkOrder[]
 }
 
@@ -207,7 +207,7 @@ interface WorkOrderWithOverdue {
       headerDiv.style.paddingBottom = '0.5em'
       headerDiv.style.borderBottom = '1px solid #ccc'
       headerDiv.style.fontWeight = 'bold'
-      headerDiv.textContent = `${workOrders.length} Work Orders at this Location`
+      headerDiv.textContent = `${workOrders.length} ${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} at this Location`
       popupContent.append(headerDiv)
     }
 
@@ -294,11 +294,13 @@ interface WorkOrderWithOverdue {
 
     // Update count display
     if (displayedCount === 0) {
-      workOrderCountElement.textContent =
-        'No recently updated work orders with location data found.'
+      workOrderCountElement.textContent = `No recently updated ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} with location data found.`
     } else {
-      workOrderCountElement.textContent = `Showing ${displayedCount} recently updated work order${displayedCount === 1 ? '' : 's'} with location data`
-      
+      workOrderCountElement.textContent = `Showing ${displayedCount}
+        recently updated
+        ${displayedCount === 1 ? cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular.toLowerCase()) : cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())}
+        with location data`
+
       if (overdueCount > 0) {
         workOrderCountElement.textContent += ` (${overdueCount} overdue)`
       }

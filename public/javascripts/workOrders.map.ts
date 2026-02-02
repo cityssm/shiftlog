@@ -156,20 +156,13 @@ interface WorkOrderWithOverdue {
     assignedLine.style.fontSize = '0.9em'
     assignedLine.textContent = `Assigned to: ${workOrder.assignedToName ?? '(Not Assigned)'}`
 
-    workOrderDiv.append(
-      titleLink,
-      typeSpan,
-      statusLine
-    )
-    
+    workOrderDiv.append(titleLink, typeSpan, statusLine)
+
     if (thumbnailElement !== null) {
       workOrderDiv.append(thumbnailElement)
     }
-    
-    workOrderDiv.append(
-      addressLine,
-      assignedLine
-    )
+
+    workOrderDiv.append(addressLine, assignedLine)
 
     return workOrderDiv
   }
@@ -208,7 +201,7 @@ interface WorkOrderWithOverdue {
       headerDiv.style.paddingBottom = '0.5em'
       headerDiv.style.borderBottom = '1px solid #ccc'
       headerDiv.style.fontWeight = 'bold'
-      headerDiv.textContent = `${workOrders.length} Work Orders at this Location`
+      headerDiv.textContent = `${workOrders.length} ${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} at this Location`
       popupContent.append(headerDiv)
     }
 
@@ -258,7 +251,6 @@ interface WorkOrderWithOverdue {
       `${urlPrefix}/doSearchWorkOrders`,
       filters,
       (responseJSON: DoSearchWorkOrdersResponse) => {
-
         // Clear existing markers
         markersLayer.clearLayers()
 
@@ -316,10 +308,17 @@ interface WorkOrderWithOverdue {
 
         // Update count display
         if (displayedCount === 0) {
-          workOrderCountElement.textContent =
-            'No open work orders with location data found.'
+          workOrderCountElement.textContent = `No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName).toLowerCase()} with location data found.`
         } else {
-          workOrderCountElement.textContent = `Showing ${displayedCount} open work order${displayedCount === 1 ? '' : 's'} with location data`
+          workOrderCountElement.textContent = `Showing ${displayedCount}
+            open
+            ${
+              displayedCount === 1
+                ? ` ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular.toLowerCase())}`
+                : ` ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())}`
+            }
+            with location data`
+
           if (overdueCount > 0) {
             workOrderCountElement.textContent += ` (${overdueCount} overdue)`
           }

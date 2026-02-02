@@ -7,7 +7,13 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <div class="modal-card-head">
-      <p class="modal-card-title">Edit Work Order Type</p>
+      <p class="modal-card-title">
+        Edit
+        <span data-section-alias="workOrdersSectionNameSingular">
+          Work Order
+        </span>
+        Type
+      </p>
       <button
         class="delete is-close-modal-button"
         type="button"
@@ -23,6 +29,9 @@
         />
         <div class="field">
           <label class="label" for="editWorkOrderType--workOrderType">
+            <span data-section-alias="workOrdersSectionNameSingular">
+              Work Order
+            </span>
             Type Name
           </label>
           <div class="control">
@@ -38,7 +47,10 @@
         </div>
         <div class="field">
           <label class="label" for="editWorkOrderType--workOrderNumberPrefix">
-            Work Order Number Prefix
+            <span data-section-alias="workOrdersSectionNameSingular">
+              Work Order
+            </span>
+            Number Prefix
           </label>
           <div class="control">
             <input
@@ -51,7 +63,14 @@
             />
           </div>
           <p class="help">
-            This prefix will be added to work order numbers for this type.
+            This prefix will be added to
+            <span
+              data-section-alias="workOrdersSectionNameSingular"
+              data-section-alias-transform="lowerCase"
+            >
+              work order
+            </span>
+            numbers for this type.
           </p>
         </div>
         <div class="field">
@@ -70,7 +89,15 @@
             />
           </div>
           <p class="help">
-            If specified, work orders of this type will automatically have a due date set this many days after the open date.
+            If specified,
+            <span
+              data-section-alias="workOrdersSectionName"
+              data-section-alias-transform="lowerCase"
+            >
+              work orders
+            </span>
+            of this type will automatically have a due date set this many days
+            after the open date.
           </p>
         </div>
         <div class="field">
@@ -85,8 +112,14 @@
             </div>
           </div>
           <p class="help">
-            If specified, only members of this user group will see this work
-            order type.
+            If specified, only members of this user group will see this
+            <span
+              data-section-alias="workOrdersSectionNameSingular"
+              data-section-alias-transform="lowerCase"
+            >
+              work order
+            </span>
+            type.
           </p>
         </div>
         <div class="field">
@@ -96,7 +129,14 @@
           </div>
           <p class="help">
             Select additional forms that should be displayed when creating or
-            editing work orders of this type.
+            editing
+            <span
+              data-section-alias="workOrdersSectionName"
+              data-section-alias-transform="lowerCase"
+            >
+              work orders
+            </span>
+            of this type.
           </p>
         </div>
         <div class="field">
@@ -117,7 +157,14 @@
             </button>
           </div>
           <p class="help">
-            These milestones will be automatically created when a new work order of this type is created.
+            These milestones will be automatically created when a new
+            <span
+              data-section-alias="workOrdersSectionNameSingular"
+              data-section-alias-transform="lowerCase"
+            >
+              work order
+            </span>
+            of this type is created.
           </p>
         </div>
       </form>
@@ -130,7 +177,13 @@
           form="form--editWorkOrderType"
         >
           <span class="icon"><i class="fa-solid fa-save"></i></span>
-          <span>Update Work Order Type</span>
+          <span>
+            Update
+            <span data-section-alias="workOrdersSectionNameSingular">
+              Work Order
+            </span>
+            Type
+          </span>
         </button>
         <button class="button is-close-modal-button" type="button">
           Cancel

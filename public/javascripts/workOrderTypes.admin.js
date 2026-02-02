@@ -7,7 +7,8 @@
         if (workOrderTypes.length === 0) {
             tbodyElement.innerHTML = `<tr id="tr--noWorkOrderTypes">
         <td colspan="5" class="has-text-centered has-text-grey">
-          No work order types found. Click "Add Work Order Type" to create one.
+          No ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} types found.
+          Click "Add ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} Type" to create one.
         </td>
       </tr>`;
             return;
@@ -88,14 +89,14 @@
                     renderWorkOrderTypes();
                     bulmaJS.alert({
                         contextualColorName: 'success',
-                        message: 'The work order type has been successfully added.',
-                        title: 'Work Order Type Added'
+                        message: `The ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular.toLowerCase())} type has been successfully added.`,
+                        title: `${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} Type Added`
                     });
                 }
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        title: 'Error Adding Work Order Type',
+                        title: `Error Adding ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} Type`,
                         message: 'An error occurred. Please try again.'
                     });
                 }
@@ -103,6 +104,7 @@
         }
         cityssm.openHtmlModal('adminWorkOrderTypes-add', {
             onshow(modalElement) {
+                shiftLog.populateSectionAliases(modalElement);
                 // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#addWorkOrderType--userGroupId');
                 for (const userGroup of exports.userGroups) {
@@ -180,23 +182,22 @@
                     renderWorkOrderTypes();
                     bulmaJS.alert({
                         contextualColorName: 'success',
-                        message: 'The work order type has been successfully updated.',
-                        title: 'Work Order Type Updated'
+                        message: `The ${shiftLog.workOrdersSectionNameSingular.toLowerCase()} type has been successfully updated.`,
+                        title: `${shiftLog.workOrdersSectionNameSingular} Type Updated`
                     });
                 }
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         message: 'An error occurred. Please try again.',
-                        title: 'Error Updating Work Order Type'
+                        title: `Error Updating ${shiftLog.workOrdersSectionNameSingular} Type`
                     });
                 }
             });
         }
         cityssm.openHtmlModal('adminWorkOrderTypes-edit', {
             onshow(modalElement) {
-                // Set form values
-                ;
+                shiftLog.populateSectionAliases(modalElement);
                 modalElement.querySelector('#editWorkOrderType--workOrderTypeId').value = workOrderTypeId;
                 modalElement.querySelector('#editWorkOrderType--workOrderType').value = currentWorkOrderType;
                 modalElement.querySelector('#editWorkOrderType--workOrderNumberPrefix').value = currentWorkOrderNumberPrefix;
@@ -299,7 +300,9 @@
                     />
                   </div>
                   <p class="help is-size-7">
-                    If specified, the milestone due date will be automatically set this many days after the work order open date.
+                    If specified, the milestone due date will be automatically set this many days after the
+                    ${shiftLog.workOrdersSectionNameSingular.toLowerCase()}
+                    open date.
                   </p>
                 </div>
               </div>
@@ -374,7 +377,7 @@
             return;
         }
         bulmaJS.confirm({
-            contextualColorName: 'warning',
+            contextualColorName: 'danger',
             message: `Are you sure you want to delete "${workOrderType}"? This action cannot be undone.`,
             okButton: {
                 callbackFunction() {
@@ -386,23 +389,22 @@
                             renderWorkOrderTypes();
                             bulmaJS.alert({
                                 contextualColorName: 'success',
-                                message: 'The work order type has been successfully deleted.',
-                                title: 'Work Order Type Deleted'
+                                message: `The ${shiftLog.workOrdersSectionNameSingular.toLowerCase()} type has been successfully deleted.`,
+                                title: `${shiftLog.workOrdersSectionNameSingular} Type Deleted`
                             });
                         }
                         else {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 message: responseJSON.errorMessage,
-                                title: 'Error Deleting Work Order Type'
+                                title: `Error Deleting ${shiftLog.workOrdersSectionNameSingular} Type`
                             });
                         }
                     });
                 },
-                contextualColorName: 'danger',
-                text: 'Delete Work Order Type'
+                text: `Delete ${shiftLog.workOrdersSectionNameSingular} Type`
             },
-            title: 'Delete Work Order Type'
+            title: `Delete ${shiftLog.workOrdersSectionNameSingular} Type`
         });
     }
     function attachEventListeners() {
@@ -440,7 +442,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 message: 'Please refresh the page and try again.',
-                                title: 'Error Reordering Work Order Types'
+                                title: `Error Reordering ${shiftLog.workOrdersSectionNameSingular} Types`
                             });
                         }
                     });

@@ -66,6 +66,8 @@ declare const exports: {
 
     if (countElement !== null) {
       countElement.textContent = count.toString()
+
+      countElement.classList.toggle('is-warning', count === 0)
     }
   }
 

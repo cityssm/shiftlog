@@ -66,8 +66,14 @@
       <thead>
         <tr>
           <th style="width: 60px;">Order</th>
-          <th>Type Name</th>
-          <th style="width: 150px;">Number Prefix</th>
+          <th>
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+            Type Name
+          </th>
+          <th style="width: 150px;">
+            <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+            Number Prefix
+          </th>
           <th style="width: 180px;">User Group</th>
           <th style="width: 200px;">
             <span class="is-sr-only">Actions</span>

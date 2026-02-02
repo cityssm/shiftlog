@@ -7,7 +7,13 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <div class="modal-card-head">
-      <p class="modal-card-title">Add Work Order Type</p>
+      <p class="modal-card-title">
+        Add
+        <span data-section-alias="workOrdersSectionNameSingular">
+          Work Order
+        </span>
+        Type
+      </p>
       <button
         class="delete is-close-modal-button"
         type="button"
@@ -18,6 +24,9 @@
       <form id="form--addWorkOrderType">
         <div class="field">
           <label class="label" for="addWorkOrderType--workOrderType">
+            <span data-section-alias="workOrdersSectionNameSingular">
+              Work Order
+            </span>
             Type Name
           </label>
           <div class="control">
@@ -33,7 +42,10 @@
         </div>
         <div class="field">
           <label class="label" for="addWorkOrderType--workOrderNumberPrefix">
-            Work Order Number Prefix
+            <span data-section-alias="workOrdersSectionNameSingular">
+              Work Order
+            </span>
+            Number Prefix
           </label>
           <div class="control">
             <input
@@ -46,7 +58,14 @@
             />
           </div>
           <p class="help">
-            This prefix will be added to work order numbers for this type.
+            This prefix will be added to
+            <span
+              data-section-alias="workOrdersSectionNameSingular"
+              data-section-alias-transform="lowerCase"
+            >
+              work order
+            </span>
+            numbers for this type.
           </p>
         </div>
         <div class="field">
@@ -65,7 +84,15 @@
             />
           </div>
           <p class="help">
-            If specified, work orders of this type will automatically have a due date set this many days after the open date.
+            If specified,
+            <span
+              data-section-alias="workOrdersSectionName"
+              data-section-alias-transform="lowerCase"
+            >
+              work orders
+            </span>
+            of this type will automatically have a due date set this many days
+            after the open date.
           </p>
         </div>
         <div class="field">
@@ -80,8 +107,14 @@
             </div>
           </div>
           <p class="help">
-            If specified, only members of this user group will see this work
-            order type.
+            If specified, only members of this user group will see this
+            <span
+              data-section-alias="workOrdersSectionNameSingular"
+              data-section-alias-transform="lowerCase"
+            >
+              work order
+            </span>
+            type.
           </p>
         </div>
       </form>
@@ -94,7 +127,13 @@
           form="form--addWorkOrderType"
         >
           <span class="icon"><i class="fa-solid fa-plus"></i></span>
-          <span>Add Work Order Type</span>
+          <span>
+            Add
+            <span data-section-alias="workOrdersSectionNameSingular">
+              Work Order
+            </span>
+            Type</span
+          >
         </button>
         <button class="button is-close-modal-button" type="button">
           Cancel

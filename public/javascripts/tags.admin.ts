@@ -670,6 +670,8 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTags-addFromWorkOrder', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
+
         const containerElement = modalElement.querySelector(
           '#container--orphanedTags'
         ) as HTMLDivElement

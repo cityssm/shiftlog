@@ -10,10 +10,7 @@ import type { DoUpdateShiftWorkOrderNoteResponse } from '../../handlers/shifts-p
 import type { DoGetWorkOrderMilestonesResponse } from '../../handlers/workOrders-post/doGetWorkOrderMilestones.js'
 import type { DoSearchWorkOrdersResponse } from '../../handlers/workOrders-post/doSearchWorkOrders.js'
 import type { DoUpdateWorkOrderMilestoneResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderMilestone.js'
-import type {
-  WorkOrder,
-  WorkOrderMilestone
-} from '../../types/record.types.js'
+import type { WorkOrder, WorkOrderMilestone } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -69,7 +66,9 @@ declare const exports: {
     if (shiftWorkOrders.length === 0) {
       containerElement.innerHTML = /* html */ `
         <div class="message">
-          <div class="message-body">No work orders assigned to this shift.</div>
+          <div class="message-body">
+            No ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} assigned to this shift.
+          </div>
         </div>
       `
       return
@@ -82,7 +81,7 @@ declare const exports: {
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>Work Order #</th>
+          <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} #</th>
           <th>Type</th>
           <th>Status</th>
           <th>Details</th>
@@ -170,7 +169,7 @@ declare const exports: {
     if (allMilestones.length === 0) {
       containerElement.innerHTML = /* html */ `
         <div class="message">
-          <div class="message-body">No milestones on related work orders.</div>
+          <div class="message-body">No milestones on related ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())}.</div>
         </div>
       `
       return
@@ -183,7 +182,7 @@ declare const exports: {
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>Work Order #</th>
+          <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} #</th>
           <th>Title</th>
           <th>Description</th>
           <th>Due Date</th>
@@ -360,7 +359,7 @@ declare const exports: {
           if (!responseJSON.success || responseJSON.workOrders.length === 0) {
             resultsContainer.innerHTML = /* html */ `
               <div class="message is-warning">
-                <div class="message-body">No open work orders found matching your search.</div>
+                <div class="message-body">No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found matching your search.</div>
               </div>
             `
             return
@@ -373,7 +372,7 @@ declare const exports: {
           tableElement.innerHTML = /* html */ `
             <thead>
               <tr>
-                <th>Work Order #</th>
+                <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} #</th>
                 <th>Type</th>
                 <th>Requestor</th>
                 <th>Details</th>

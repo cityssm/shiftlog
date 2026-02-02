@@ -7,6 +7,7 @@
         const countElement = document.querySelector(`#itemCount--${dataListKey}`);
         if (countElement !== null) {
             countElement.textContent = count.toString();
+            countElement.classList.toggle('is-warning', count === 0);
         }
     }
     function renderDataListItems(dataListKey, items) {

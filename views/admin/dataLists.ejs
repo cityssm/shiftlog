@@ -63,7 +63,7 @@
           <span class="has-text-weight-semibold mr-2">
             <%= dataList.dataListName %>
           </span>
-          <span class="tag is-rounded" id="itemCount--<%= dataList.dataListKey %>">
+          <span class="tag is-rounded <%= dataList.items.length === 0 ? 'is-warning' : '' %>" id="itemCount--<%= dataList.dataListKey %>">
             <%= dataList.items.length %>
           </span>
         </span>

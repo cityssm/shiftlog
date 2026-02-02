@@ -29,7 +29,9 @@
         if (shiftWorkOrders.length === 0) {
             containerElement.innerHTML = /* html */ `
         <div class="message">
-          <div class="message-body">No work orders assigned to this shift.</div>
+          <div class="message-body">
+            No ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} assigned to this shift.
+          </div>
         </div>
       `;
             return;
@@ -40,7 +42,7 @@
         tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>Work Order #</th>
+          <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} #</th>
           <th>Type</th>
           <th>Status</th>
           <th>Details</th>
@@ -112,7 +114,7 @@
         if (allMilestones.length === 0) {
             containerElement.innerHTML = /* html */ `
         <div class="message">
-          <div class="message-body">No milestones on related work orders.</div>
+          <div class="message-body">No milestones on related ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())}.</div>
         </div>
       `;
             return;
@@ -123,7 +125,7 @@
         tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>Work Order #</th>
+          <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} #</th>
           <th>Title</th>
           <th>Description</th>
           <th>Due Date</th>
@@ -248,7 +250,7 @@
                 if (!responseJSON.success || responseJSON.workOrders.length === 0) {
                     resultsContainer.innerHTML = /* html */ `
               <div class="message is-warning">
-                <div class="message-body">No open work orders found matching your search.</div>
+                <div class="message-body">No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found matching your search.</div>
               </div>
             `;
                     return;
@@ -259,7 +261,7 @@
                 tableElement.innerHTML = /* html */ `
             <thead>
               <tr>
-                <th>Work Order #</th>
+                <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} #</th>
                 <th>Type</th>
                 <th>Requestor</th>
                 <th>Details</th>

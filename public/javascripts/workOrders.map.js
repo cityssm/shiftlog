@@ -138,7 +138,7 @@ const shadowSize = [41, 41];
             headerDiv.style.paddingBottom = '0.5em';
             headerDiv.style.borderBottom = '1px solid #ccc';
             headerDiv.style.fontWeight = 'bold';
-            headerDiv.textContent = `${workOrders.length} Work Orders at this Location`;
+            headerDiv.textContent = `${workOrders.length} ${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} at this Location`;
             popupContent.append(headerDiv);
         }
         // Add each work order to the popup
@@ -214,11 +214,15 @@ const shadowSize = [41, 41];
             }
             // Update count display
             if (displayedCount === 0) {
-                workOrderCountElement.textContent =
-                    'No open work orders with location data found.';
+                workOrderCountElement.textContent = `No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName).toLowerCase()} with location data found.`;
             }
             else {
-                workOrderCountElement.textContent = `Showing ${displayedCount} open work order${displayedCount === 1 ? '' : 's'} with location data`;
+                workOrderCountElement.textContent = `Showing ${displayedCount}
+            open
+            ${displayedCount === 1
+                    ? ` ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular.toLowerCase())}`
+                    : ` ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())}`}
+            with location data`;
                 if (overdueCount > 0) {
                     workOrderCountElement.textContent += ` (${overdueCount} overdue)`;
                 }

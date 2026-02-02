@@ -171,6 +171,13 @@ declare const exports: {
 
         // No default
       }
+
+      const transform = sectionAliasElement.dataset.sectionAliasTransform
+
+      if (transform === 'lowerCase') {
+        sectionAliasElement.textContent =
+          sectionAliasElement.textContent.toLowerCase()
+      }
     }
   }
 
