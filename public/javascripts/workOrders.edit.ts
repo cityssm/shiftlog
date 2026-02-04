@@ -140,14 +140,6 @@ declare const exports: {
               callbackFunction() {
                 submitWorkOrderUpdate()
               }
-            },
-
-            cancelButton: {
-              text: 'Cancel',
-
-              callbackFunction() {
-                // Do nothing, user cancelled
-              }
             }
           })
         }
