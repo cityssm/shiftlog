@@ -52,6 +52,10 @@ declare const exports: {
 
   const isCreate = workOrderId === ''
 
+  // Track original close date for change detection
+  const originalWorkOrderCloseDateTime =
+    workOrderCloseDateTimeStringElement?.value ?? ''
+
   // Track original work order type for change detection
   const workOrderTypeSelect = workOrderFormElement.querySelector(
     '#workOrder--workOrderTypeId'
@@ -99,6 +103,61 @@ declare const exports: {
   function updateWorkOrder(formEvent: Event): void {
     formEvent.preventDefault()
 
+    // Check if work order is being closed (close date is being set)
+    const currentCloseDateTime = workOrderCloseDateTimeStringElement?.value ?? ''
+    const isBeingClosed =
+      !isCreate &&
+      originalWorkOrderCloseDateTime === '' &&
+      currentCloseDateTime !== ''
+
+    if (isBeingClosed) {
+      // Fetch milestones to check if there are any open ones
+      cityssm.postJSON(
+        `${workOrderUrlPrefix}/${workOrderId}/doGetWorkOrderMilestones`,
+        {},
+        (milestonesResponseJSON: {
+          milestones: Array<{
+            milestoneCompleteDateTime?: Date | string | null
+          }>
+        }) => {
+          const openMilestonesCount = milestonesResponseJSON.milestones.filter(
+            (m) => m.milestoneCompleteDateTime === null
+          ).length
+
+          const message =
+            openMilestonesCount > 0
+              ? `This work order has ${openMilestonesCount} open milestone${openMilestonesCount > 1 ? 's' : ''}. Are you sure you want to close this work order?`
+              : 'Are you sure you want to close this work order?'
+
+          bulmaJS.confirm({
+            contextualColorName: 'warning',
+            title: 'Close Work Order',
+
+            message,
+            okButton: {
+              text: 'Close Work Order',
+
+              callbackFunction() {
+                submitWorkOrderUpdate()
+              }
+            },
+
+            cancelButton: {
+              text: 'Cancel',
+
+              callbackFunction() {
+                // Do nothing, user cancelled
+              }
+            }
+          })
+        }
+      )
+    } else {
+      submitWorkOrderUpdate()
+    }
+  }
+
+  function submitWorkOrderUpdate(): void {
     cityssm.postJSON(
       `${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`,
       workOrderFormElement,
