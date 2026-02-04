@@ -22,11 +22,6 @@ export interface CreateWorkOrderForm {
     | `${DateString} ${TimeString}`
     | `${DateString}T${TimeString}`
 
-  workOrderCloseDateTimeString:
-    | ''
-    | `${DateString} ${TimeString}`
-    | `${DateString}T${TimeString}`
-
   requestorName: string
   requestorContactInfo: string
 
@@ -127,14 +122,6 @@ export default async function createWorkOrder(
             createWorkOrderForm.workOrderDueDateTimeString
           )
     )
-    .input(
-      'workOrderCloseDateTime',
-      createWorkOrderForm.workOrderCloseDateTimeString
-        ? dateTimeInputToSqlDateTime(
-            createWorkOrderForm.workOrderCloseDateTimeString
-          )
-        : null
-    )
     .input('requestorName', createWorkOrderForm.requestorName)
     .input('requestorContactInfo', createWorkOrderForm.requestorContactInfo)
     .input(
@@ -172,7 +159,6 @@ export default async function createWorkOrder(
           workOrderDetails,
           workOrderOpenDateTime,
           workOrderDueDateTime,
-          workOrderCloseDateTime,
           requestorName,
           requestorContactInfo,
           locationLatitude,
@@ -196,7 +182,6 @@ export default async function createWorkOrder(
           @workOrderDetails,
           @workOrderOpenDateTime,
           @workOrderDueDateTime,
-          @workOrderCloseDateTime,
           @requestorName,
           @requestorContactInfo,
           @locationLatitude,

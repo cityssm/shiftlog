@@ -48,7 +48,7 @@ declare const exports: {
   const workOrderCloseDateTimeStringElement =
     workOrderFormElement.querySelector(
       '#workOrder--workOrderCloseDateTimeString'
-    ) as HTMLInputElement
+    ) as HTMLInputElement | null
 
   const isCreate = workOrderId === ''
 
@@ -111,7 +111,7 @@ declare const exports: {
               (responseJSON as DoCreateWorkOrderResponse).workOrderId,
               true
             )
-          } else if (workOrderCloseDateTimeStringElement.value === '') {
+          } else if ((workOrderCloseDateTimeStringElement?.value ?? '') === '') {
             // If work order type changed, refresh the page to show updated form
             if (workOrderTypeChanged) {
               globalThis.location.href = shiftLog.buildWorkOrderURL(
@@ -426,17 +426,21 @@ declare const exports: {
     '#workOrder--workOrderDueDateTimeString'
   ) as HTMLInputElement
 
-  const workOrderCloseDateTimePicker = flatpickr(
-    workOrderCloseDateTimeStringElement,
-    {
-      ...dateTimePickerOptions,
-      maxDate: new Date(),
-      minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
-      onOpen: () => {
-        workOrderCloseDateTimePicker.set('maxDate', new Date())
+  let workOrderCloseDateTimePicker: FlatPickr.Instance | undefined
+
+  if (workOrderCloseDateTimeStringElement !== null) {
+    workOrderCloseDateTimePicker = flatpickr(
+      workOrderCloseDateTimeStringElement,
+      {
+        ...dateTimePickerOptions,
+        maxDate: new Date(),
+        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
+        onOpen: () => {
+          workOrderCloseDateTimePicker?.set('maxDate', new Date())
+        }
       }
-    }
-  )
+    )
+  }
 
   const workOrderDueDateTimePicker = flatpickr(
     workOrderDueDateTimeStringElement,
@@ -477,7 +481,7 @@ declare const exports: {
 
         workOrderDueDateTimePicker.set('minDate', selectedDate)
 
-        workOrderCloseDateTimePicker.set('minDate', selectedDate)
+        workOrderCloseDateTimePicker?.set('minDate', selectedDate)
       }
     }
   })
@@ -518,8 +522,8 @@ declare const exports: {
     .querySelector('#button--setCloseTimeNow')
     ?.addEventListener('click', () => {
       const now = new Date()
-      workOrderCloseDateTimePicker.set('maxDate', now)
-      workOrderCloseDateTimePicker.setDate(now, true)
+      workOrderCloseDateTimePicker?.set('maxDate', now)
+      workOrderCloseDateTimePicker?.setDate(now, true)
     })
 
   /*

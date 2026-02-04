@@ -67,6 +67,16 @@
             </div>
           </a>
         </li>
+        <li>
+          <a href="#tab--rawExports" title="Raw Data Exports">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-table"></i></span>
+              </div>
+              <div class="column is-hidden-touch">Raw Data Exports</div>
+            </div>
+          </a>
+        </li>
         <% } %>
       </ul>  
     </div>
@@ -91,6 +101,9 @@
       <% if (user.userProperties.isAdmin) { %>
       <div class="is-hidden" id="tab--admin">
         <%- await include('_reports-admin'); -%>
+      </div>
+      <div class="is-hidden" id="tab--rawExports">
+        <%- await include('_reports-rawExports'); -%>
       </div>
       <% } %>
     </div>

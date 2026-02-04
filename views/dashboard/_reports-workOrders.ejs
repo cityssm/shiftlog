@@ -22,6 +22,62 @@
           </div>
         </div>
       </a>
+      <div class="panel-block is-block">
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-3x fa-file-csv"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0">
+              Closed <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
+            </h2>
+            <p class="mb-4">
+              All closed <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>
+              within a specified date range.
+            </p>
+            <form
+              action="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/workOrders-closed-byCloseDate"
+              method="GET"
+            >
+              <div class="field has-addons">
+                <div class="control">
+                  <label class="button is-static has-text-grey-dark" for="report--workOrderClosed-byCloseDate-workOrderCloseDateStart">From</label>
+                </div>
+                <div class="control is-expanded">
+                  <input
+                    class="input"
+                    id="report--workOrderClosed-byCloseDate-workOrderCloseDateStart"
+                    name="workOrderCloseDateStart"
+                    type="date"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="field has-addons mt-2">
+                <div class="control">
+                  <label class="button is-static has-text-grey-dark" for="report--workOrderClosed-byCloseDate-workOrderCloseDateEnd">To</label>
+                </div>
+                <div class="control is-expanded">
+                  <input
+                    class="input"
+                    id="report--workOrderClosed-byCloseDate-workOrderCloseDateEnd"
+                    name="workOrderCloseDateEnd"
+                    type="date"
+                    required
+                  />
+                </div>
+                <div class="control">
+                  <button class="button" type="submit">
+                    Generate
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
       <div class="panel-block">
         <div class="media">
           <div class="media-left">

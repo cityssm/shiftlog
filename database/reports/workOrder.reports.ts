@@ -1,6 +1,9 @@
 import type { ReportDefinition } from './types.js'
 
-export const workOrderReports: Record<string, ReportDefinition> = {
+export const workOrderReports: Record<
+  `workOrders-${string}`,
+  ReportDefinition
+> = {
   'workOrders-open': {
     parameterNames: [],
     sql: /* sql */ `
@@ -48,6 +51,69 @@ export const workOrderReports: Record<string, ReportDefinition> = {
       WHERE
         w.recordDelete_dateTime IS NULL
         AND w.workOrderCloseDateTime IS NULL
+        AND w.instance = @instance
+        AND (
+          wType.userGroupId IN (
+            SELECT
+              userGroupId
+            FROM
+              ShiftLog.UserGroupMembers
+            WHERE
+              userName = @userName
+          )
+          OR wType.userGroupId IS NULL
+        )
+    `
+  },
+
+  'workOrders-closed-byCloseDate': {
+    parameterNames: ['workOrderCloseDateStart', 'workOrderCloseDateEnd'],
+    sql: /* sql */ `
+      SELECT
+        w.workOrderId,
+        w.workOrderNumber,
+        wType.workOrderType,
+        wStatus.dataListItem AS workOrderStatus,
+        w.workOrderDetails,
+        w.workOrderOpenDateTime,
+        w.workOrderDueDateTime,
+        w.workOrderCloseDateTime,
+        w.requestorName,
+        w.requestorContactInfo,
+        w.locationLatitude,
+        w.locationLongitude,
+        w.locationAddress1,
+        w.locationAddress2,
+        w.locationCityProvince,
+        assignedTo.assignedToName AS assignedTo,
+        milestones.milestonesCount,
+        milestones.milestonesCompletedCount
+      FROM
+        ShiftLog.WorkOrders w
+        LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+        LEFT JOIN ShiftLog.DataListItems wStatus ON w.workOrderStatusDataListItemId = wStatus.dataListItemId
+        LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
+        LEFT JOIN (
+          SELECT
+            workOrderId,
+            count(*) AS milestonesCount,
+            sum(
+              CASE
+                WHEN milestoneCompleteDateTime IS NULL THEN 0
+                ELSE 1
+              END
+            ) AS milestonesCompletedCount
+          FROM
+            ShiftLog.WorkOrderMilestones
+          WHERE
+            recordDelete_dateTime IS NULL
+          GROUP BY
+            workOrderId
+        ) AS milestones ON milestones.workOrderId = w.workOrderId
+      WHERE
+        w.recordDelete_dateTime IS NULL
+        AND w.workOrderCloseDateTime >= @workOrderCloseDateStart
+        AND w.workOrderCloseDateTime < dateadd(day, 1, @workOrderCloseDateEnd)
         AND w.instance = @instance
         AND (
           wType.userGroupId IN (

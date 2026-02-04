@@ -6,7 +6,6 @@ export interface CreateWorkOrderForm {
     workOrderTypeId: number | string;
     workOrderOpenDateTimeString: `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     workOrderDueDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
-    workOrderCloseDateTimeString: '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`;
     requestorName: string;
     requestorContactInfo: string;
     locationLatitude?: number | string;

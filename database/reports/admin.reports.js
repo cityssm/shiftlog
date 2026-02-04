@@ -1,4 +1,115 @@
+export const rawExportReports = {
+    // Raw Exports - Work Orders
+    'admin-workOrders-raw': {
+        parameterNames: [],
+        sql: /* sql */ `
+      SELECT
+        *
+      FROM
+        ShiftLog.WorkOrders
+      WHERE
+        instance = @instance
+    `
+    },
+    'admin-workOrderCosts-raw': {
+        parameterNames: [],
+        sql: /* sql */ `
+      SELECT
+        *
+      FROM
+        ShiftLog.WorkOrderCosts
+      WHERE
+        workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            instance = @instance
+        )
+    `
+    },
+    'admin-workOrderMilestones-raw': {
+        parameterNames: [],
+        sql: /* sql */ `
+      SELECT
+        *
+      FROM
+        ShiftLog.WorkOrderMilestones
+      WHERE
+        workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            instance = @instance
+        )
+    `
+    },
+    'admin-workOrderNotes-raw': {
+        parameterNames: [],
+        sql: /* sql */ `
+      SELECT
+        *
+      FROM
+        ShiftLog.WorkOrderNotes
+      WHERE
+        workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            instance = @instance
+        )
+    `
+    },
+    'admin-workOrderTags-raw': {
+        parameterNames: [],
+        sql: /* sql */ `
+      SELECT
+        *
+      FROM
+        ShiftLog.WorkOrderTags
+      WHERE
+        workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrders
+          WHERE
+            instance = @instance
+        )
+    `
+    },
+    // Raw Exports - Shifts
+    'admin-shifts-raw': {
+        parameterNames: [],
+        sql: /* sql */ `
+      SELECT
+        *
+      FROM
+        ShiftLog.Shifts
+      WHERE
+        instance = @instance
+    `
+    },
+    // Raw Exports - Timesheets
+    'admin-timesheets-raw': {
+        parameterNames: [],
+        sql: /* sql */ `
+      SELECT
+        *
+      FROM
+        ShiftLog.Timesheets
+      WHERE
+        instance = @instance
+    `
+    }
+};
 export const adminReports = {
+    ...rawExportReports,
     'admin-apiAuditLogs': {
         parameterNames: [],
         sql: /* sql */ `

@@ -53,7 +53,7 @@
                 if (isCreate) {
                     globalThis.location.href = shiftLog.buildWorkOrderURL(responseJSON.workOrderId, true);
                 }
-                else if (workOrderCloseDateTimeStringElement.value === '') {
+                else if ((workOrderCloseDateTimeStringElement?.value ?? '') === '') {
                     // If work order type changed, refresh the page to show updated form
                     if (workOrderTypeChanged) {
                         globalThis.location.href = shiftLog.buildWorkOrderURL(Number(workOrderId), true);
@@ -265,14 +265,17 @@
     };
     const workOrderOpenDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderOpenDateTimeString');
     const workOrderDueDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderDueDateTimeString');
-    const workOrderCloseDateTimePicker = flatpickr(workOrderCloseDateTimeStringElement, {
-        ...dateTimePickerOptions,
-        maxDate: new Date(),
-        minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
-        onOpen: () => {
-            workOrderCloseDateTimePicker.set('maxDate', new Date());
-        }
-    });
+    let workOrderCloseDateTimePicker;
+    if (workOrderCloseDateTimeStringElement !== null) {
+        workOrderCloseDateTimePicker = flatpickr(workOrderCloseDateTimeStringElement, {
+            ...dateTimePickerOptions,
+            maxDate: new Date(),
+            minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
+            onOpen: () => {
+                workOrderCloseDateTimePicker?.set('maxDate', new Date());
+            }
+        });
+    }
     const workOrderDueDateTimePicker = flatpickr(workOrderDueDateTimeStringElement, {
         ...dateTimePickerOptions,
         minDate: workOrderOpenDateTimeStringElement.valueAsDate ?? '',
@@ -298,7 +301,7 @@
                     }
                 }
                 workOrderDueDateTimePicker.set('minDate', selectedDate);
-                workOrderCloseDateTimePicker.set('minDate', selectedDate);
+                workOrderCloseDateTimePicker?.set('minDate', selectedDate);
             }
         }
     });
@@ -327,8 +330,8 @@
         .querySelector('#button--setCloseTimeNow')
         ?.addEventListener('click', () => {
         const now = new Date();
-        workOrderCloseDateTimePicker.set('maxDate', now);
-        workOrderCloseDateTimePicker.setDate(now, true);
+        workOrderCloseDateTimePicker?.set('maxDate', now);
+        workOrderCloseDateTimePicker?.setDate(now, true);
     });
     /*
      * Set up map for location picker

@@ -579,7 +579,7 @@ declare const exports: {
             }
           )
         },
-  
+
         text: `Delete ${shiftLog.workOrdersSectionNameSingular} Type`
       },
       title: `Delete ${shiftLog.workOrdersSectionNameSingular} Type`
@@ -643,10 +643,9 @@ declare const exports: {
   }
 
   // Add work order type button
-  const addButton = document.querySelector('#button--addWorkOrderType')
-  if (addButton !== null) {
-    addButton.addEventListener('click', addWorkOrderType)
-  }
+  document
+    .querySelector('#button--addWorkOrderType')
+    ?.addEventListener('click', addWorkOrderType)
 
   // Initialize
   attachEventListeners()

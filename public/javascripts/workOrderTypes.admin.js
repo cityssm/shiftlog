@@ -451,10 +451,9 @@
         }
     }
     // Add work order type button
-    const addButton = document.querySelector('#button--addWorkOrderType');
-    if (addButton !== null) {
-        addButton.addEventListener('click', addWorkOrderType);
-    }
+    document
+        .querySelector('#button--addWorkOrderType')
+        ?.addEventListener('click', addWorkOrderType);
     // Initialize
     attachEventListeners();
     initializeSortable();
