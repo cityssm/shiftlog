@@ -94,7 +94,16 @@
           ${milestone.milestoneDueDateTime ? formatDateTime(milestone.milestoneDueDateTime) : '<span class="has-text-grey">-</span>'}
         </td>
         <td>
-          ${milestone.milestoneCompleteDateTime ? formatDateTime(milestone.milestoneCompleteDateTime) : '<span class="has-text-grey">-</span>'}
+          ${milestone.milestoneCompleteDateTime
+                ? formatDateTime(milestone.milestoneCompleteDateTime)
+                : canEdit && exports.isEdit
+                    ? /* html */ `
+                  <button class="button is-small is-success is-light complete-milestone" type="button" title="Complete Milestone">
+                    <span class="icon"><i class="fa-solid fa-check"></i></span>
+                    <span>Mark as Complete</span>
+                  </button>
+                `
+                    : '<span class="has-text-grey">-</span>'}
         </td>
         ${exports.isEdit
                 ? /* html */ `
@@ -125,6 +134,13 @@
                 deleteButton.addEventListener('click', () => {
                     deleteMilestone(milestone.workOrderMilestoneId);
                 });
+                // Add complete button listener if milestone is not complete
+                if (!isComplete) {
+                    const completeButton = trElement.querySelector('.complete-milestone');
+                    completeButton?.addEventListener('click', () => {
+                        completeMilestone(milestone.workOrderMilestoneId);
+                    });
+                }
             }
             tbodyElement.append(trElement);
         }
@@ -304,6 +320,57 @@
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
                 exports.shiftLog.clearUnsavedChanges('modal');
+            }
+        });
+    }
+    function completeMilestone(workOrderMilestoneId) {
+        bulmaJS.confirm({
+            contextualColorName: 'success',
+            title: 'Complete Milestone',
+            message: 'Are you sure you want to complete this milestone?',
+            okButton: {
+                text: 'Complete Milestone',
+                callbackFunction: () => {
+                    // First, get the current milestone data
+                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (milestonesResponseJSON) => {
+                        const milestone = milestonesResponseJSON.milestones.find((m) => m.workOrderMilestoneId === workOrderMilestoneId);
+                        if (!milestone) {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                message: 'Failed to find milestone.'
+                            });
+                            return;
+                        }
+                        const now = new Date();
+                        const completeDateTimeString = `${cityssm.dateToString(now)}T${cityssm.dateToTimeString(now)}`;
+                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestone`, {
+                            workOrderMilestoneId,
+                            milestoneTitle: milestone.milestoneTitle,
+                            milestoneDescription: milestone.milestoneDescription,
+                            milestoneDueDateTimeString: milestone.milestoneDueDateTime
+                                ? typeof milestone.milestoneDueDateTime === 'string'
+                                    ? new Date(milestone.milestoneDueDateTime)
+                                        .toISOString()
+                                        .slice(0, 16)
+                                    : milestone.milestoneDueDateTime
+                                        .toISOString()
+                                        .slice(0, 16)
+                                : '',
+                            milestoneCompleteDateTimeString: completeDateTimeString,
+                            assignedToId: milestone.assignedToId ?? ''
+                        }, (responseJSON) => {
+                            if (responseJSON.success) {
+                                loadMilestones();
+                            }
+                            else {
+                                bulmaJS.alert({
+                                    contextualColorName: 'danger',
+                                    message: 'Failed to complete milestone.'
+                                });
+                            }
+                        });
+                    });
+                }
             }
         });
     }
