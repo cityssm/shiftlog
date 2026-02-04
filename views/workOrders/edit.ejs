@@ -190,7 +190,7 @@
           </div>
         </div>
         <% if (!isCreate) { %>
-          <div class="columns mb-0">
+          <div class="columns is-mobile mb-0">
             <div class="column">
               <strong>Tags</strong>
             </div>
@@ -489,7 +489,7 @@
           <div class="control">
             <button class="button" type="button" id="button--setCloseTimeNow" title="Set to Now">
               <span class="icon"><i class="fa-solid fa-clock"></i></span>
-              <span class="is-hidden-touch">Now</span>
+              <span>Now</span>
             </button>
           </div>
           <% } %>
@@ -500,10 +500,10 @@
     </div>
   </div>
 
-  <div class="columns is-vcentered is-fixed-bottom has-background-white has-shadow is-hidden-print">
+  <div class="columns is-vcentered is-fixed-bottom has-background-white has-shadow is-mobile is-hidden-print">
     <div class="column">
       <% if (!isCreate) { %>
-      #<%= workOrder.workOrderNumber %>
+      <span class="has-text-weight-bold">#<%= workOrder.workOrderNumber %></span>
       <% } %>
     </div>
     <div class="column is-narrow has-text-right">

@@ -280,6 +280,7 @@ declare const exports: {
       }
       case 'msTeams': {
         const msTeamsConfig = config as MsTeamsNotificationConfig | undefined
+        // eslint-disable-next-line no-secrets/no-secrets
         formContainer.innerHTML = /* html */ `
           <div class="field">
             <label class="label" for="notificationTypeForm--webhookUrl">

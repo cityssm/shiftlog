@@ -105,9 +105,9 @@ declare const exports: {
       const tableRowElement = document.createElement('tr')
 
       const supervisorName =
-        timesheet.supervisorEmployeeSurname ||
-        timesheet.supervisorEmployeeGivenName
-          ? `${timesheet.supervisorEmployeeSurname ?? ''}, ${timesheet.supervisorEmployeeGivenName ?? ''}`
+        timesheet.supervisorLastName ||
+        timesheet.supervisorFirstName
+          ? `${timesheet.supervisorLastName ?? ''}, ${timesheet.supervisorFirstName ?? ''}`
           : timesheet.supervisorEmployeeNumber ?? '-'
 
       // eslint-disable-next-line no-unsanitized/property

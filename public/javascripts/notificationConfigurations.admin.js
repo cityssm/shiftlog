@@ -189,6 +189,7 @@
             }
             case 'msTeams': {
                 const msTeamsConfig = config;
+                // eslint-disable-next-line no-secrets/no-secrets
                 formContainer.innerHTML = /* html */ `
           <div class="field">
             <label class="label" for="notificationTypeForm--webhookUrl">

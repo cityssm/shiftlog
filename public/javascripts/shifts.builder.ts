@@ -599,9 +599,12 @@ declare const exports: {
 
       const lockIcon = document.createElement('span')
       lockIcon.className = 'icon is-small'
+
+      // eslint-disable-next-line no-unsanitized/property
       lockIcon.innerHTML = isLocked
         ? '<i class="fa-solid fa-lock has-text-danger"></i>'
         : '<i class="fa-solid fa-lock-open has-text-success"></i>'
+        
       lockButton.append(lockIcon)
 
       lockButton.addEventListener('click', () => {
@@ -3757,10 +3760,11 @@ declare const exports: {
                 }
               )
             })
-
-            modalElement
-              .querySelector('#createAdhocTask--adhocTaskTypeDataListItemId')
-              ?.focus()
+            ;(
+              modalElement.querySelector(
+                '#createAdhocTask--adhocTaskTypeDataListItemId'
+              ) as HTMLSelectElement | null
+            )?.focus()
           },
 
           onremoved() {

@@ -99,9 +99,6 @@
                   <% } %>
                 </select>
               </div>
-              <p class="help">
-                This value will help highlight <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> and milestones assigned to you.
-              </p>
             </div>
             <div class="control">
               <button class="button is-success" type="submit">
@@ -112,6 +109,9 @@
               </button>
             </div>
           </div>
+          <p class="help">
+            This value will help highlight <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> and milestones assigned to you.
+          </p>
         </form>
       </div>
     </div>

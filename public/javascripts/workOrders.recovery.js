@@ -25,7 +25,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error',
-                                message: response.errorMessage ?? 'Failed to recover work order.'
+                                message: response.errorMessage
                             });
                         }
                     });
@@ -95,8 +95,7 @@
           </button>
         </td>
       `;
-            const recoverButton = tableRowElement.querySelector('button');
-            recoverButton.addEventListener('click', () => {
+            tableRowElement.querySelector('button')?.addEventListener('click', () => {
                 recoverWorkOrder(workOrder.workOrderId);
             });
             tableBodyElement.append(tableRowElement);

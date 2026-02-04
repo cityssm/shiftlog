@@ -94,7 +94,7 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Updating Settings',
-                        message: responseJSON.message ?? 'Please try again.'
+                        message: responseJSON.message
                     });
                 }
             });
@@ -195,14 +195,14 @@
                 });
                 const apiKeyInput = document.querySelector('#apiKey');
                 if (apiKeyInput !== null) {
-                    apiKeyInput.value = responseJSON.apiKey ?? '';
+                    apiKeyInput.value = responseJSON.apiKey;
                 }
             }
             else {
                 bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Error Resetting API Key',
-                    message: responseJSON.message ?? 'Please try again.'
+                    message: responseJSON.message
                 });
             }
         });

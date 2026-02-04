@@ -64,9 +64,9 @@
         const tableBodyElement = tableElement.querySelector('tbody');
         for (const timesheet of data.timesheets) {
             const tableRowElement = document.createElement('tr');
-            const supervisorName = timesheet.supervisorEmployeeSurname ||
-                timesheet.supervisorEmployeeGivenName
-                ? `${timesheet.supervisorEmployeeSurname ?? ''}, ${timesheet.supervisorEmployeeGivenName ?? ''}`
+            const supervisorName = timesheet.supervisorLastName ||
+                timesheet.supervisorFirstName
+                ? `${timesheet.supervisorLastName ?? ''}, ${timesheet.supervisorFirstName ?? ''}`
                 : timesheet.supervisorEmployeeNumber ?? '-';
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ `

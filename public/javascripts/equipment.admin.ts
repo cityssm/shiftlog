@@ -18,10 +18,12 @@ declare const bulmaJS: BulmaJS
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
-  employeeLists: EmployeeList[]
+
   equipment: Equipment[]
-  userGroups: UserGroup[]
+
+  employeeLists: EmployeeList[]
   equipmentTypes: DataListItem[]
+  userGroups: UserGroup[]
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -476,9 +478,11 @@ declare const exports: {
   /*
    * Filter equipment with debouncing
    */
+  
   const filterInput = document.querySelector(
     '#filter--equipment'
   ) as HTMLInputElement | null
+
   let filterTimeout: ReturnType<typeof setTimeout> | undefined
 
   if (filterInput !== null) {

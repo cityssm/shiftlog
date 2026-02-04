@@ -155,7 +155,7 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error Updating Settings',
 
-              message: responseJSON.message ?? 'Please try again.'
+              message: responseJSON.message
             })
           }
         }
@@ -291,14 +291,14 @@ declare const exports: {
           ) as HTMLInputElement | null
 
           if (apiKeyInput !== null) {
-            apiKeyInput.value = responseJSON.apiKey ?? ''
+            apiKeyInput.value = responseJSON.apiKey
           }
         } else {
           bulmaJS.alert({
             contextualColorName: 'danger',
             title: 'Error Resetting API Key',
 
-            message: responseJSON.message ?? 'Please try again.'
+            message: responseJSON.message
           })
         }
       }

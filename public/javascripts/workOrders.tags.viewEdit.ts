@@ -316,10 +316,7 @@ declare const bulmaJS: BulmaJS
     }
 
     // Add tag button
-    const addTagButton = document.querySelector('#button--addTag')
-    if (addTagButton !== null) {
-      addTagButton.addEventListener('click', addTag)
-    }
+    document.querySelector('#button--addTag')?.addEventListener('click', addTag)
 
     // Initial load
     getTags()

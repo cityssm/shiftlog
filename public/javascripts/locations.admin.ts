@@ -17,6 +17,7 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 
   locations: Location[]
+  
   defaultCityProvince: string
 }
 ;(() => {

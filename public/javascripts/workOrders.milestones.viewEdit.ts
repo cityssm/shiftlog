@@ -21,10 +21,11 @@ interface AssignedToOption {
 declare const exports: {
   shiftLog: ShiftLogGlobal
 
+  isEdit: boolean
+  
   assignedToOptions: AssignedToOption[]
   workOrderAssignedToId: number | null
   workOrderOpenDateTime: string
-  isEdit: boolean
 }
 
 declare const cityssm: cityssmGlobal
@@ -67,7 +68,7 @@ declare const Sortable: {
     return
   }
 
-  function formatDateTime(dateTimeString: string | Date | null): string {
+  function formatDateTime(dateTimeString: Date | string | null): string {
     if (dateTimeString === null) {
       return ''
     }

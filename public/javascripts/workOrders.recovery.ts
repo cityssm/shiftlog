@@ -1,6 +1,7 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoRecoverWorkOrderResponse } from '../../handlers/workOrders-post/doRecoverWorkOrder.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -29,12 +30,7 @@ declare const exports: {
           cityssm.postJSON(
             `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doRecoverWorkOrder`,
             { workOrderId },
-            (response: {
-              success: boolean
-              message?: string
-              redirectUrl?: string
-              errorMessage?: string
-            }) => {
+            (response: DoRecoverWorkOrderResponse) => {
               if (response.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -52,8 +48,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error',
 
-                  message:
-                    response.errorMessage ?? 'Failed to recover work order.'
+                  message: response.errorMessage
                 })
               }
             }
@@ -136,11 +131,7 @@ declare const exports: {
         </td>
       `
 
-      const recoverButton = tableRowElement.querySelector(
-        'button'
-      ) as HTMLButtonElement
-
-      recoverButton.addEventListener('click', () => {
+      tableRowElement.querySelector('button')?.addEventListener('click', () => {
         recoverWorkOrder(workOrder.workOrderId)
       })
 
