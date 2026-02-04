@@ -98,9 +98,9 @@
                 ? formatDateTime(milestone.milestoneCompleteDateTime)
                 : canEdit && exports.isEdit
                     ? /* html */ `
-                  <button class="button is-small is-success complete-milestone" type="button" title="Complete Milestone">
+                  <button class="button is-small is-success is-light complete-milestone" type="button" title="Complete Milestone">
                     <span class="icon"><i class="fa-solid fa-check"></i></span>
-                    <span>Complete</span>
+                    <span>Mark as Complete</span>
                   </button>
                 `
                     : '<span class="has-text-grey">-</span>'}
@@ -329,7 +329,7 @@
             title: 'Complete Milestone',
             message: 'Are you sure you want to complete this milestone?',
             okButton: {
-                text: 'Complete',
+                text: 'Complete Milestone',
                 callbackFunction: () => {
                     // First, get the current milestone data
                     cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (milestonesResponseJSON) => {
@@ -349,8 +349,12 @@
                             milestoneDescription: milestone.milestoneDescription,
                             milestoneDueDateTimeString: milestone.milestoneDueDateTime
                                 ? typeof milestone.milestoneDueDateTime === 'string'
-                                    ? new Date(milestone.milestoneDueDateTime).toISOString().slice(0, 16)
-                                    : milestone.milestoneDueDateTime.toISOString().slice(0, 16)
+                                    ? new Date(milestone.milestoneDueDateTime)
+                                        .toISOString()
+                                        .slice(0, 16)
+                                    : milestone.milestoneDueDateTime
+                                        .toISOString()
+                                        .slice(0, 16)
                                 : '',
                             milestoneCompleteDateTimeString: completeDateTimeString,
                             assignedToId: milestone.assignedToId ?? ''
@@ -409,4 +413,3 @@
     // Load milestones initially
     loadMilestones();
 })();
-export {};
