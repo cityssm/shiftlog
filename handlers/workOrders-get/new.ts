@@ -27,6 +27,8 @@ export default async function handler(
 
     workOrderDetails: '',
     workOrderOpenDateTime: new Date(),
+    workOrderDueDateTime: null,
+    workOrderCloseDateTime: null,
 
     requestorContactInfo: '',
     requestorName: `${request.session.user?.firstName} ${request.session.user?.lastName}`.trim(),

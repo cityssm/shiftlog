@@ -5,7 +5,7 @@
     const resultsContainerElement = document.querySelector('#container--workOrderSearchResults');
     // Validate hex color format (6 characters, alphanumeric)
     function isValidHex(color) {
-        return color !== undefined && /^[0-9a-f]{6}$/i.test(color);
+        return color !== undefined && /^[0-9a-f]{6}$/iv.test(color);
     }
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {
@@ -25,7 +25,9 @@
           <th class="has-width-1">
             <span class="is-sr-only">Open / Closed</span>
           </th>
-          <th>Number</th>
+          <th>
+            ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)}
+          </th>
           <th>Location</th>
           <th>Open Date</th>
           <th>Requestor</th>
@@ -94,15 +96,15 @@
             // Build thumbnail icon HTML
             const thumbnailIconHTML = workOrder.thumbnailAttachmentId
                 ? /* html */ `
-            <a 
-              class="icon has-text-info"
-              href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline" 
-              title="View thumbnail image"
-              target="_blank"
-            >
-              <i class="fa-solid fa-image"></i>
-            </a>
-          `
+          <a 
+            class="icon has-text-info"
+            href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline" 
+            title="View thumbnail image"
+            target="_blank"
+          >
+            <i class="fa-solid fa-image"></i>
+          </a>
+        `
                 : '';
             // Build notes icon HTML
             const notesIconHTML = workOrder.notesCount && workOrder.notesCount > 0

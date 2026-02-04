@@ -66,8 +66,8 @@
           type="hidden"
           value="0"
         />
-        <div class="columns">
-          <div class="column">
+        <div class="columns is-multiline">
+          <div class="column is-half-tablet is-one-quarter-desktop">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderNumber">
                 <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Number
@@ -85,7 +85,7 @@
               </div>
             </div>
           </div>
-          <div class="column">
+          <div class="column is-half-tablet is-one-quarter-desktop">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderTypeId">
                 <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
@@ -107,7 +107,7 @@
               </div>
             </div>
           </div>
-          <div class="column">
+          <div class="column is-half-tablet is-one-quarter-desktop">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderStatusDataListItemId">Status</label>
               <div class="control has-icons-left">
@@ -127,7 +127,7 @@
               </div>
             </div>
           </div>
-          <div class="column">
+          <div class="column is-half-tablet is-one-quarter-desktop">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderPriorityDataListItemId">Priority</label>
               <div class="control has-icons-left">
@@ -174,7 +174,10 @@
                   <select id="workOrderSearch--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
-                    <option value="<%= assignedToItem.assignedToId %>">
+                    <option
+                      value="<%= assignedToItem.assignedToId %>"
+                      <%= user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString() ? 'selected' : '' %>
+                    >
                       <%= assignedToItem.assignedToName %>
                     </option>
                     <% }); %>

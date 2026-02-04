@@ -469,7 +469,7 @@
           <% } %>
         </div>
         
-        <% if (!isCreate) { %>
+        <% if ((isEdit && !isCreate) || workOrder.workOrderCloseDateTime !== null) { %>
         <label class="label" for="workOrder--workOrderCloseDateTimeString">Close Date/Time</label>
         <div class="field has-addons">
           <div class="control is-expanded has-icons-left">

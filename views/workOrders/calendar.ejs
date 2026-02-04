@@ -47,8 +47,11 @@
                   <select id="calendar--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
-                    <option value="<%= assignedToItem.assignedToId %>">
-                      <%= assignedToItem.dataListItem %>
+                    <option
+                      value="<%= assignedToItem.assignedToId %>"
+                      <%= user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString() ? 'selected' : '' %>
+                    >
+                      <%= assignedToItem.assignedToName %>
                     </option>
                     <% }); %>
                   </select>

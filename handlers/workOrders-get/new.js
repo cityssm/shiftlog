@@ -13,6 +13,8 @@ export default async function handler(request, response) {
         workOrderTypeId: workOrderTypes.length === 1 ? workOrderTypes[0].workOrderTypeId : undefined,
         workOrderDetails: '',
         workOrderOpenDateTime: new Date(),
+        workOrderDueDateTime: null,
+        workOrderCloseDateTime: null,
         requestorContactInfo: '',
         requestorName: `${request.session.user?.firstName} ${request.session.user?.lastName}`.trim(),
         locationAddress1: '',

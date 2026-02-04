@@ -26,7 +26,7 @@ declare const exports: {
 
   // Validate hex color format (6 characters, alphanumeric)
   function isValidHex(color?: string): boolean {
-    return color !== undefined && /^[0-9a-f]{6}$/i.test(color)
+    return color !== undefined && /^[0-9a-f]{6}$/iv.test(color)
   }
 
   function renderWorkOrdersTable(data: DoSearchWorkOrdersResponse): void {
@@ -51,7 +51,9 @@ declare const exports: {
           <th class="has-width-1">
             <span class="is-sr-only">Open / Closed</span>
           </th>
-          <th>Number</th>
+          <th>
+            ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)}
+          </th>
           <th>Location</th>
           <th>Open Date</th>
           <th>Requestor</th>
@@ -135,19 +137,18 @@ declare const exports: {
           : ''
 
       // Build thumbnail icon HTML
-      const thumbnailIconHTML =
-        workOrder.thumbnailAttachmentId
-          ? /* html */ `
-            <a 
-              class="icon has-text-info"
-              href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline" 
-              title="View thumbnail image"
-              target="_blank"
-            >
-              <i class="fa-solid fa-image"></i>
-            </a>
-          `
-          : ''
+      const thumbnailIconHTML = workOrder.thumbnailAttachmentId
+        ? /* html */ `
+          <a 
+            class="icon has-text-info"
+            href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline" 
+            title="View thumbnail image"
+            target="_blank"
+          >
+            <i class="fa-solid fa-image"></i>
+          </a>
+        `
+        : ''
 
       // Build notes icon HTML
       const notesIconHTML =
