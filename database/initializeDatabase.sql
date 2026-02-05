@@ -269,7 +269,6 @@ CREATE TABLE ShiftLog.Locations (
   address1 VARCHAR(100) NOT NULL DEFAULT '',
   address2 VARCHAR(100) NOT NULL DEFAULT '',
   cityProvince VARCHAR(50) NOT NULL DEFAULT '',
-  userGroupId INT,
   recordSync_isSynced BIT NOT NULL DEFAULT 0,
   recordSync_source VARCHAR(20),
   recordSync_dateTime datetime,
@@ -278,8 +277,7 @@ CREATE TABLE ShiftLog.Locations (
   recordUpdate_userName VARCHAR(30) NOT NULL,
   recordUpdate_dateTime datetime NOT NULL DEFAULT getdate(),
   recordDelete_userName VARCHAR(30),
-  recordDelete_dateTime datetime,
-  FOREIGN KEY (userGroupId) REFERENCES ShiftLog.UserGroups (userGroupId)
+  recordDelete_dateTime datetime
 )
 GO
 --

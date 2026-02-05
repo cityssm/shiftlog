@@ -1,12 +1,11 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-export default async function getLocationSuggestions(searchString, user) {
+export default async function getLocationSuggestions(searchString) {
     const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('searchString', searchString)
-        .input('userName', user?.userName)
         .query(/* sql */ `
       SELECT
         locationId,
@@ -20,21 +19,7 @@ export default async function getLocationSuggestions(searchString, user) {
       WHERE
         instance = @instance
         AND recordDelete_dateTime IS NULL
-        AND address1 LIKE '%' + @searchString + '%' ${user === undefined
-        ? ''
-        : /* sql */ `
-              AND (
-                userGroupId IS NULL
-                OR userGroupId IN (
-                  SELECT
-                    userGroupId
-                  FROM
-                    ShiftLog.UserGroupMembers
-                  WHERE
-                    userName = @userName
-                )
-              )
-            `}
+        AND address1 LIKE '%' + @searchString + '%'
       ORDER BY
         address1
     `);

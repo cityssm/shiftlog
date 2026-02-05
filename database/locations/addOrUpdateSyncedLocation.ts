@@ -26,7 +26,6 @@ async function addSyncedLocation(
     .input('cityProvince', partialLocation.cityProvince ?? '')
     .input('latitude', partialLocation.latitude ?? undefined)
     .input('longitude', partialLocation.longitude ?? undefined)
-    .input('userGroupId', partialLocation.userGroupId ?? undefined)
     .input('recordSync_isSynced', true)
     .input('recordSync_source', partialLocation.recordSync_source ?? undefined)
     .input(
@@ -46,7 +45,6 @@ async function addSyncedLocation(
           cityProvince,
           latitude,
           longitude,
-          userGroupId,
           recordSync_isSynced,
           recordSync_source,
           recordSync_dateTime,
@@ -63,7 +61,6 @@ async function addSyncedLocation(
           @cityProvince,
           @latitude,
           @longitude,
-          @userGroupId,
           @recordSync_isSynced,
           @recordSync_source,
           @recordSync_dateTime,
@@ -111,11 +108,6 @@ async function updateSyncedLocation(
       currentLocation.longitude
     ),
 
-    userGroupId: usePartialOrCurrentValue(
-      partialLocation.userGroupId,
-      currentLocation.userGroupId
-    ),
-
     recordSync_isSynced: true,
 
     recordSync_source: partialLocation.recordSync_source,
@@ -134,7 +126,6 @@ async function updateSyncedLocation(
     .input('cityProvince', updateLocation.cityProvince)
     .input('latitude', updateLocation.latitude)
     .input('longitude', updateLocation.longitude)
-    .input('userGroupId', updateLocation.userGroupId)
     .input('recordSync_isSynced', updateLocation.recordSync_isSynced)
     .input('recordSync_source', updateLocation.recordSync_source)
     .input('recordSync_dateTime', updateLocation.recordSync_dateTime)
@@ -148,7 +139,6 @@ async function updateSyncedLocation(
         cityProvince = @cityProvince,
         latitude = @latitude,
         longitude = @longitude,
-        userGroupId = @userGroupId,
         recordSync_isSynced = @recordSync_isSynced,
         recordSync_source = @recordSync_source,
         recordSync_dateTime = @recordSync_dateTime,

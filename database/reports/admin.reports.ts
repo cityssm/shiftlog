@@ -148,6 +148,27 @@ export const adminReports: Record<`admin-${string}`, ReportDefinition> = {
     `
   },
 
+  'admin-locations': {
+    parameterNames: [],
+    sql: /* sql */ `
+      SELECT
+        locationId,
+        address1,
+        address2,
+        cityProvince,
+        latitude,
+        longitude,
+        recordSync_isSynced
+      FROM
+        ShiftLog.Locations
+      WHERE
+        instance = @instance
+        AND recordDelete_dateTime IS NULL
+      ORDER BY
+        address1
+    `
+  },
+
   'admin-notificationLogs': {
     parameterNames: [],
     sql: /* sql */ `

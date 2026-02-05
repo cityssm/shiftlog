@@ -15,7 +15,6 @@ async function addSyncedLocation(partialLocation, syncUserName) {
         .input('cityProvince', partialLocation.cityProvince ?? '')
         .input('latitude', partialLocation.latitude ?? undefined)
         .input('longitude', partialLocation.longitude ?? undefined)
-        .input('userGroupId', partialLocation.userGroupId ?? undefined)
         .input('recordSync_isSynced', true)
         .input('recordSync_source', partialLocation.recordSync_source ?? undefined)
         .input('recordSync_dateTime', partialLocation.recordSync_dateTime ?? new Date())
@@ -32,7 +31,6 @@ async function addSyncedLocation(partialLocation, syncUserName) {
           cityProvince,
           latitude,
           longitude,
-          userGroupId,
           recordSync_isSynced,
           recordSync_source,
           recordSync_dateTime,
@@ -49,7 +47,6 @@ async function addSyncedLocation(partialLocation, syncUserName) {
           @cityProvince,
           @latitude,
           @longitude,
-          @userGroupId,
           @recordSync_isSynced,
           @recordSync_source,
           @recordSync_dateTime,
@@ -68,7 +65,6 @@ async function updateSyncedLocation(currentLocation, partialLocation, syncUserNa
         cityProvince: usePartialOrCurrentValue(partialLocation.cityProvince, currentLocation.cityProvince) ?? '',
         latitude: usePartialOrCurrentValue(partialLocation.latitude, currentLocation.latitude),
         longitude: usePartialOrCurrentValue(partialLocation.longitude, currentLocation.longitude),
-        userGroupId: usePartialOrCurrentValue(partialLocation.userGroupId, currentLocation.userGroupId),
         recordSync_isSynced: true,
         recordSync_source: partialLocation.recordSync_source,
         recordSync_dateTime: partialLocation.recordSync_dateTime ?? new Date()
@@ -83,7 +79,6 @@ async function updateSyncedLocation(currentLocation, partialLocation, syncUserNa
         .input('cityProvince', updateLocation.cityProvince)
         .input('latitude', updateLocation.latitude)
         .input('longitude', updateLocation.longitude)
-        .input('userGroupId', updateLocation.userGroupId)
         .input('recordSync_isSynced', updateLocation.recordSync_isSynced)
         .input('recordSync_source', updateLocation.recordSync_source)
         .input('recordSync_dateTime', updateLocation.recordSync_dateTime)
@@ -97,7 +92,6 @@ async function updateSyncedLocation(currentLocation, partialLocation, syncUserNa
         cityProvince = @cityProvince,
         latitude = @latitude,
         longitude = @longitude,
-        userGroupId = @userGroupId,
         recordSync_isSynced = @recordSync_isSynced,
         recordSync_source = @recordSync_source,
         recordSync_dateTime = @recordSync_dateTime,

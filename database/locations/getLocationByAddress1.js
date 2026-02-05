@@ -14,7 +14,6 @@ export default async function getLocationByAddress1(address1) {
         cityProvince,
         latitude,
         longitude,
-        userGroupId,
         recordSync_isSynced,
         recordSync_source,
         recordSync_dateTime,

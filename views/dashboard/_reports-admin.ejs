@@ -1,5 +1,27 @@
 <div class="columns">
-  <div class="column is-7">
+  <div class="column">
+    <div class="panel">
+      <a
+        class="panel-block"
+        href="<%= urlPrefix %>/api/<%= user.userSettings.apiKey %>/reports/admin-locations"
+      >
+        <div class="media">
+          <div class="media-left">
+            <i class="fa-solid fa-3x fa-file-csv"></i>
+          </div>
+          <div class="media-content">
+            <h2 class="title is-4 mb-0 has-text-link">
+              Locations
+            </h2>
+            <p>
+              Export all active location records.
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="column">
     <div class="panel">
       <a
         class="panel-block"

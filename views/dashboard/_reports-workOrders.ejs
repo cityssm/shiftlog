@@ -1,3 +1,13 @@
+<% 
+const today = new Date()
+const todayDateString = dateTimeFunctions.dateToString(today)
+
+const oneMonthAgo = new Date()
+oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+
+const oneMonthAgoDateString = dateTimeFunctions.dateToString(oneMonthAgo)
+%>
+
 <div class="columns">
   <div class="column is-7">
     <div class="panel">
@@ -49,6 +59,7 @@
                     id="report--workOrderClosed-byCloseDate-workOrderCloseDateStart"
                     name="workOrderCloseDateStart"
                     type="date"
+                    value="<%= oneMonthAgoDateString %>"
                     required
                   />
                 </div>
@@ -63,6 +74,7 @@
                     id="report--workOrderClosed-byCloseDate-workOrderCloseDateEnd"
                     name="workOrderCloseDateEnd"
                     type="date"
+                    value="<%= todayDateString %>"
                     required
                   />
                 </div>
