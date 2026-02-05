@@ -1,4 +1,3 @@
-/* eslint-disable max-depth -- AI generated, needs refactoring */
 (() => {
     const shiftLog = exports.shiftLog;
     const calendarContainerElement = document.querySelector('#container--calendar');
@@ -134,15 +133,9 @@
                     dayCell.style.minHeight = '120px';
                     dayCell.innerHTML = `<div class="has-text-weight-bold mb-2">${cityssm.escapeHTML(String(calendarDay))}</div>`;
                     if (dayEvents.length > 0) {
-                        for (const event of dayEvents) {
-                            const eventClass = getEventTypeClass(event.eventType);
-                            const leftIcon = getEventTypeLeftIcon(event.eventType);
-                            const statusIcon = getEventTypeStatusIcon(event.eventType);
-                            // Determine status text and if item is overdue
+                        const getEventStatus = (event, currentDate) => {
                             let statusText;
                             let rightTagClass;
-                            const currentDate = new Date();
-                            currentDate.setHours(0, 0, 0, 0); // Reset to midnight for date comparison
                             if (event.eventType.startsWith('workOrder')) {
                                 // Work order logic
                                 if (event.workOrderCloseDateTime === null) {
@@ -171,7 +164,7 @@
                                 }
                             }
                             else if (event.milestoneCompleteDateTime === null) {
-                                // Milestone is open
+                                // Non-work-order event that is not yet complete
                                 statusText = 'Open';
                                 // Check if overdue: open and has due date and due date is in the past
                                 if (event.milestoneDueDateTime !== null &&
@@ -191,22 +184,34 @@
                                 }
                             }
                             else {
+                                // Non-work-order event that is complete
                                 statusText = 'Closed';
                                 rightTagClass = 'is-light';
                             }
+                            return { statusText, rightTagClass };
+                        };
+                        for (const event of dayEvents) {
+                            const eventClass = getEventTypeClass(event.eventType);
+                            const leftIcon = getEventTypeLeftIcon(event.eventType);
+                            const statusIcon = getEventTypeStatusIcon(event.eventType);
+                            // Determine status text and if item is overdue
+                            const currentDate = new Date();
+                            currentDate.setHours(0, 0, 0, 0); // Reset to midnight for date comparison
+                            const { statusText, rightTagClass } = getEventStatus(event, currentDate);
                             const titleWithStatus = event.milestoneTitle
                                 ? `${event.workOrderNumber} - ${event.milestoneTitle} (${statusText})`
                                 : `${event.workOrderNumber} (${statusText})`;
                             // Create a tag with addons: left side has icons, right side has work order number
-                            // eslint-disable-next-line no-unsanitized/method
+                            const safeHref = encodeURI(shiftLog.buildWorkOrderURL(event.workOrderId));
+                            // eslint-disable-next-line no-unsanitized/method -- URL is encoded, user content is escaped
                             dayCell.insertAdjacentHTML('beforeend', 
                             /* html */ `
                   <div class="tags has-addons mb-1">
-                    <a class="tag ${eventClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(titleWithStatus)}">
+                    <a class="tag ${eventClass}" href="${safeHref}" title="${escapeHtml(titleWithStatus)}">
                       <span class="icon is-small">${leftIcon}</span>
                       <span class="icon is-small">${statusIcon}</span>
                     </a>
-                    <a class="tag ${rightTagClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(titleWithStatus)}">
+                    <a class="tag ${rightTagClass}" href="${safeHref}" title="${escapeHtml(titleWithStatus)}">
                       ${escapeHtml(event.workOrderNumber)}
                     </a>
                   </div>
