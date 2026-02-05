@@ -29,13 +29,10 @@
     ];
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     /**
-     * Escapes HTML special characters to prevent XSS
+     * Note:
+     * Use cityssm.escapeHTML(text) for HTML escaping to ensure consistent behavior
+     * across the application.
      */
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
     function updateMonthTitle() {
         monthTitleElement.textContent = `${monthNames[currentMonth - 1]} ${currentYear}`;
     }
@@ -90,27 +87,34 @@
     function getEventStatus(event, currentDate) {
         let statusText;
         let rightTagClass;
+        function getOpenOrOverdueStatus(dueDateTime, currentDate) {
+            let localStatusText = 'Open';
+            let localRightTagClass;
+            if (dueDateTime !== null && dueDateTime !== undefined) {
+                const dueDate = new Date(dueDateTime);
+                dueDate.setHours(0, 0, 0, 0);
+                if (dueDate < currentDate) {
+                    localStatusText = 'Overdue';
+                    localRightTagClass = 'is-light is-danger';
+                }
+                else {
+                    localRightTagClass = 'is-light is-success';
+                }
+            }
+            else {
+                localRightTagClass = 'is-light is-success';
+            }
+            return {
+                statusText: localStatusText,
+                rightTagClass: localRightTagClass
+            };
+        }
         if (event.eventType.startsWith('workOrder')) {
             // Work order logic
             if (event.workOrderCloseDateTime === null) {
                 // Work order is open
-                statusText = 'Open';
-                // Check if overdue: open and has due date and due date is in the past
-                if (event.workOrderDueDateTime !== null &&
-                    event.workOrderDueDateTime !== undefined) {
-                    const dueDate = new Date(event.workOrderDueDateTime);
-                    dueDate.setHours(0, 0, 0, 0);
-                    if (dueDate < currentDate) {
-                        statusText = 'Overdue';
-                        rightTagClass = 'is-light is-danger';
-                    }
-                    else {
-                        rightTagClass = 'is-light is-success';
-                    }
-                }
-                else {
-                    rightTagClass = 'is-light is-success';
-                }
+                ;
+                ({ statusText, rightTagClass } = getOpenOrOverdueStatus(event.workOrderDueDateTime, currentDate));
             }
             else {
                 statusText = 'Closed';
@@ -119,23 +123,8 @@
         }
         else if (event.milestoneCompleteDateTime === null) {
             // Non-work-order event that is not yet complete
-            statusText = 'Open';
-            // Check if overdue: open and has due date and due date is in the past
-            if (event.milestoneDueDateTime !== null &&
-                event.milestoneDueDateTime !== undefined) {
-                const dueDate = new Date(event.milestoneDueDateTime);
-                dueDate.setHours(0, 0, 0, 0);
-                if (dueDate < currentDate) {
-                    statusText = 'Overdue';
-                    rightTagClass = 'is-light is-danger';
-                }
-                else {
-                    rightTagClass = 'is-light is-success';
-                }
-            }
-            else {
-                rightTagClass = 'is-light is-success';
-            }
+            ;
+            ({ statusText, rightTagClass } = getOpenOrOverdueStatus(event.milestoneDueDateTime, currentDate));
         }
         else {
             // Non-work-order event that is complete
@@ -207,12 +196,12 @@
                             dayCell.insertAdjacentHTML('beforeend', 
                             /* html */ `
                   <div class="tags has-addons mb-1">
-                    <a class="tag ${eventClass}" href="${safeHref}" title="${escapeHtml(titleWithStatus)}">
+                    <a class="tag ${eventClass}" href="${safeHref}" title="${cityssm.escapeHTML(titleWithStatus)}">
                       <span class="icon is-small">${leftIcon}</span>
                       <span class="icon is-small">${statusIcon}</span>
                     </a>
-                    <a class="tag ${rightTagClass}" href="${safeHref}" title="${escapeHtml(titleWithStatus)}">
-                      ${escapeHtml(event.workOrderNumber)}
+                    <a class="tag ${rightTagClass}" href="${safeHref}" title="${cityssm.escapeHTML(titleWithStatus)}">
+                      ${cityssm.escapeHTML(event.workOrderNumber)}
                     </a>
                   </div>
                 `);
