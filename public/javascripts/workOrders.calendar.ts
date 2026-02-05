@@ -138,6 +138,69 @@ declare const exports: {
     }
   }
 
+  function getEventStatus(
+    event: WorkOrderCalendarEvent,
+    currentDate: Date
+  ): { statusText: string; rightTagClass: string } {
+    let statusText: string
+    let rightTagClass: string
+
+    if (event.eventType.startsWith('workOrder')) {
+      // Work order logic
+      if (event.workOrderCloseDateTime === null) {
+        // Work order is open
+        statusText = 'Open'
+
+        // Check if overdue: open and has due date and due date is in the past
+        if (
+          event.workOrderDueDateTime !== null &&
+          event.workOrderDueDateTime !== undefined
+        ) {
+          const dueDate = new Date(event.workOrderDueDateTime as string)
+          dueDate.setHours(0, 0, 0, 0)
+
+          if (dueDate < currentDate) {
+            statusText = 'Overdue'
+            rightTagClass = 'is-light is-danger'
+          } else {
+            rightTagClass = 'is-light is-success'
+          }
+        } else {
+          rightTagClass = 'is-light is-success'
+        }
+      } else {
+        statusText = 'Closed'
+        rightTagClass = 'is-light'
+      }
+    } else if (event.milestoneCompleteDateTime === null) {
+      // Non-work-order event that is not yet complete
+      statusText = 'Open'
+      // Check if overdue: open and has due date and due date is in the past
+      if (
+        event.milestoneDueDateTime !== null &&
+        event.milestoneDueDateTime !== undefined
+      ) {
+        const dueDate = new Date(event.milestoneDueDateTime as string)
+        dueDate.setHours(0, 0, 0, 0)
+
+        if (dueDate < currentDate) {
+          statusText = 'Overdue'
+          rightTagClass = 'is-light is-danger'
+        } else {
+          rightTagClass = 'is-light is-success'
+        }
+      } else {
+        rightTagClass = 'is-light is-success'
+      }
+    } else {
+      // Non-work-order event that is complete
+      statusText = 'Closed'
+      rightTagClass = 'is-light'
+    }
+
+    return { statusText, rightTagClass }
+  }
+
   function renderCalendar(events: WorkOrderCalendarEvent[]): void {
     // Group events by date
     const eventsByDate = new Map<string, WorkOrderCalendarEvent[]>()
@@ -199,79 +262,14 @@ declare const exports: {
           dayCell.innerHTML = `<div class="has-text-weight-bold mb-2">${cityssm.escapeHTML(String(calendarDay))}</div>`
 
           if (dayEvents.length > 0) {
-            const getEventStatus = (
-              event: WorkOrderCalendarEvent,
-              currentDate: Date
-            ): { statusText: string; rightTagClass: string } => {
-              let statusText: string
-              let rightTagClass: string
-
-              if (event.eventType.startsWith('workOrder')) {
-                // Work order logic
-                if (event.workOrderCloseDateTime === null) {
-                  // Work order is open
-                  statusText = 'Open'
-
-                  // Check if overdue: open and has due date and due date is in the past
-                  if (
-                    event.workOrderDueDateTime !== null &&
-                    event.workOrderDueDateTime !== undefined
-                  ) {
-                    const dueDate = new Date(
-                      event.workOrderDueDateTime as string
-                    )
-                    dueDate.setHours(0, 0, 0, 0)
-
-                    if (dueDate < currentDate) {
-                      statusText = 'Overdue'
-                      rightTagClass = 'is-light is-danger'
-                    } else {
-                      rightTagClass = 'is-light is-success'
-                    }
-                  } else {
-                    rightTagClass = 'is-light is-success'
-                  }
-                } else {
-                  statusText = 'Closed'
-                  rightTagClass = 'is-light'
-                }
-              } else if (event.milestoneCompleteDateTime === null) {
-                // Non-work-order event that is not yet complete
-                statusText = 'Open'
-                // Check if overdue: open and has due date and due date is in the past
-                if (
-                  event.milestoneDueDateTime !== null &&
-                  event.milestoneDueDateTime !== undefined
-                ) {
-                  const dueDate = new Date(event.milestoneDueDateTime as string)
-                  dueDate.setHours(0, 0, 0, 0)
-
-                  if (dueDate < currentDate) {
-                    statusText = 'Overdue'
-                    rightTagClass = 'is-light is-danger'
-                  } else {
-                    rightTagClass = 'is-light is-success'
-                  }
-                } else {
-                  rightTagClass = 'is-light is-success'
-                }
-              } else {
-                // Non-work-order event that is complete
-                statusText = 'Closed'
-                rightTagClass = 'is-light'
-              }
-
-              return { statusText, rightTagClass }
-            }
+            // Create current date once for all events in this day
+            const currentDate = new Date()
+            currentDate.setHours(0, 0, 0, 0) // Reset to midnight for date comparison
 
             for (const event of dayEvents) {
               const eventClass = getEventTypeClass(event.eventType)
               const leftIcon = getEventTypeLeftIcon(event.eventType)
               const statusIcon = getEventTypeStatusIcon(event.eventType)
-
-              // Determine status text and if item is overdue
-              const currentDate = new Date()
-              currentDate.setHours(0, 0, 0, 0) // Reset to midnight for date comparison
 
               const { statusText, rightTagClass } = getEventStatus(
                 event,
