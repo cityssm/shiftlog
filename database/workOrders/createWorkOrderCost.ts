@@ -1,4 +1,5 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js'
 
 import getWorkOrder from './getWorkOrder.js'
 
@@ -13,10 +14,10 @@ export default async function createWorkOrderCost(
   userName: string
 ): Promise<number | undefined> {
   const workOrder = await getWorkOrder(createWorkOrderCostForm.workOrderId)
-  
-    if (workOrder === undefined) {
-      return undefined
-    }
+
+  if (workOrder === undefined) {
+    return undefined
+  }
 
   const pool = await getShiftLogConnectionPool()
 
@@ -44,6 +45,16 @@ export default async function createWorkOrderCost(
           @userName
         )
     `)
+
+  if (result.rowsAffected[0] > 0) {
+    // Send Notification
+    sendNotificationWorkerMessage(
+      'workOrder.update',
+      typeof createWorkOrderCostForm.workOrderId === 'string'
+        ? Number.parseInt(createWorkOrderCostForm.workOrderId, 10)
+        : createWorkOrderCostForm.workOrderId
+    )
+  }
 
   return result.recordset[0].workOrderCostId
 }

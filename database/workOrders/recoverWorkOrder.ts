@@ -1,5 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js'
 
 export default async function recoverWorkOrder(
   workOrderId: number | string,
@@ -24,6 +25,16 @@ export default async function recoverWorkOrder(
         AND instance = @instance
         AND recordDelete_dateTime IS NOT NULL
     `)
+
+  if (result.rowsAffected[0] > 0) {
+    // Send Notification
+    sendNotificationWorkerMessage(
+      'workOrder.update',
+      typeof workOrderId === 'string'
+        ? Number.parseInt(workOrderId, 10)
+        : workOrderId
+    )
+  }
 
   return result.rowsAffected[0] > 0
 }

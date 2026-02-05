@@ -1,4 +1,5 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js';
 import getWorkOrder from './getWorkOrder.js';
 export default async function createWorkOrderCost(createWorkOrderCostForm, userName) {
     const workOrder = await getWorkOrder(createWorkOrderCostForm.workOrderId);
@@ -30,5 +31,11 @@ export default async function createWorkOrderCost(createWorkOrderCostForm, userN
           @userName
         )
     `);
+    if (result.rowsAffected[0] > 0) {
+        // Send Notification
+        sendNotificationWorkerMessage('workOrder.update', typeof createWorkOrderCostForm.workOrderId === 'string'
+            ? Number.parseInt(createWorkOrderCostForm.workOrderId, 10)
+            : createWorkOrderCostForm.workOrderId);
+    }
     return result.recordset[0].workOrderCostId;
 }

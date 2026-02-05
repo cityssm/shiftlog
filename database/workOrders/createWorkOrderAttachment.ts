@@ -1,4 +1,5 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js'
 
 import getWorkOrder from './getWorkOrder.js'
 
@@ -57,6 +58,16 @@ export default async function createWorkOrderAttachment(
           @userName
         )
     `)
+
+  if (result.rowsAffected[0] > 0) {
+    // Send Notification
+    sendNotificationWorkerMessage(
+      'workOrder.update',
+      typeof form.workOrderId === 'string'
+        ? Number.parseInt(form.workOrderId, 10)
+        : form.workOrderId
+    )
+  }
 
   return result.recordset[0].workOrderAttachmentId
 }

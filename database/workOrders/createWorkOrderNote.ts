@@ -1,4 +1,5 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js'
 
 import getWorkOrder from './getWorkOrder.js'
 
@@ -34,7 +35,7 @@ export default async function createWorkOrderNote(
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
 
-  await pool
+  const result = await pool
     .request()
     .input('workOrderId', createWorkOrderNoteForm.workOrderId)
     .input('noteSequence', nextSequence)
@@ -58,6 +59,16 @@ export default async function createWorkOrderNote(
           @userName
         )
     `)
+
+  if (result.rowsAffected[0] > 0) {
+    // Send Notification
+    sendNotificationWorkerMessage(
+      'workOrder.update',
+      typeof createWorkOrderNoteForm.workOrderId === 'string'
+        ? Number.parseInt(createWorkOrderNoteForm.workOrderId, 10)
+        : createWorkOrderNoteForm.workOrderId
+    )
+  }
 
   return nextSequence
 }
