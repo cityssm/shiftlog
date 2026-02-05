@@ -113,6 +113,7 @@
             // Work order logic
             if (event.workOrderCloseDateTime === null) {
                 // Work order is open
+                ;
                 ({ statusText, rightTagClass } = getOpenOrOverdueStatus(event.workOrderDueDateTime, currentDate));
             }
             else {
@@ -122,6 +123,7 @@
         }
         else if (event.milestoneCompleteDateTime === null) {
             // Non-work-order event that is not yet complete
+            ;
             ({ statusText, rightTagClass } = getOpenOrOverdueStatus(event.milestoneDueDateTime, currentDate));
         }
         else {

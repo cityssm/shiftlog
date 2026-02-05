@@ -173,7 +173,7 @@ declare const exports: {
       // Work order logic
       if (event.workOrderCloseDateTime === null) {
         // Work order is open
-        ({ statusText, rightTagClass } = getOpenOrOverdueStatus(
+        ;({ statusText, rightTagClass } = getOpenOrOverdueStatus(
           event.workOrderDueDateTime,
           currentDate
         ))
@@ -183,7 +183,7 @@ declare const exports: {
       }
     } else if (event.milestoneCompleteDateTime === null) {
       // Non-work-order event that is not yet complete
-      ({ statusText, rightTagClass } = getOpenOrOverdueStatus(
+      ;({ statusText, rightTagClass } = getOpenOrOverdueStatus(
         event.milestoneDueDateTime,
         currentDate
       ))
