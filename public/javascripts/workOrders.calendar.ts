@@ -207,8 +207,9 @@ declare const exports: {
               const statusIcon = getEventTypeStatusIcon(event.eventType)
 
               // Determine status text and if item is overdue
-              let statusText = ''
-              let rightTagClass = 'is-light'
+              let statusText: string
+              let rightTagClass: string
+
               const currentDate = new Date()
               currentDate.setHours(0, 0, 0, 0) // Reset to midnight for date comparison
 
@@ -223,7 +224,9 @@ declare const exports: {
                     event.workOrderDueDateTime !== null &&
                     event.workOrderDueDateTime !== undefined
                   ) {
-                    const dueDate = new Date(event.workOrderDueDateTime as string)
+                    const dueDate = new Date(
+                      event.workOrderDueDateTime as string
+                    )
                     dueDate.setHours(0, 0, 0, 0)
 
                     if (dueDate < currentDate) {
@@ -238,33 +241,30 @@ declare const exports: {
                 } else {
                   statusText = 'Closed'
                   rightTagClass = 'is-light'
+                }
+              } else if (event.milestoneCompleteDateTime === null) {
+                // Milestone is open
+                statusText = 'Open'
+                // Check if overdue: open and has due date and due date is in the past
+                if (
+                  event.milestoneDueDateTime !== null &&
+                  event.milestoneDueDateTime !== undefined
+                ) {
+                  const dueDate = new Date(event.milestoneDueDateTime as string)
+                  dueDate.setHours(0, 0, 0, 0)
+
+                  if (dueDate < currentDate) {
+                    statusText = 'Overdue'
+                    rightTagClass = 'is-light is-danger'
+                  } else {
+                    rightTagClass = 'is-light is-success'
+                  }
+                } else {
+                  rightTagClass = 'is-light is-success'
                 }
               } else {
-                // Milestone logic
-                if (event.milestoneCompleteDateTime === null) {
-                  // Milestone is open
-                  statusText = 'Open'
-                  // Check if overdue: open and has due date and due date is in the past
-                  if (
-                    event.milestoneDueDateTime !== null &&
-                    event.milestoneDueDateTime !== undefined
-                  ) {
-                    const dueDate = new Date(event.milestoneDueDateTime as string)
-                    dueDate.setHours(0, 0, 0, 0)
-
-                    if (dueDate < currentDate) {
-                      statusText = 'Overdue'
-                      rightTagClass = 'is-light is-danger'
-                    } else {
-                      rightTagClass = 'is-light is-success'
-                    }
-                  } else {
-                    rightTagClass = 'is-light is-success'
-                  }
-                } else {
-                  statusText = 'Closed'
-                  rightTagClass = 'is-light'
-                }
+                statusText = 'Closed'
+                rightTagClass = 'is-light'
               }
 
               const titleWithStatus = event.milestoneTitle

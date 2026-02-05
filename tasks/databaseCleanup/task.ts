@@ -42,7 +42,7 @@ debug('Starting database cleanup task')
 
 // Run the cleanup task on Monday at 2:00 AM
 // The task is automatically started and managed by the ScheduledTask class
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const scheduledTask = new ScheduledTask('Database Cleanup', runCleanup, {
   schedule: {
     dayOfWeek: 1, // Monday
@@ -52,10 +52,10 @@ const scheduledTask = new ScheduledTask('Database Cleanup', runCleanup, {
   },
 
   // Do not run more than once a day
-  minimumIntervalMillis: millisecondsInOneDay,
-
-  startTask: true
+  minimumIntervalMillis: millisecondsInOneDay
 })
+
+scheduledTask.startTask()
 
 debug(
   'Database cleanup task initialized and scheduled for weekly execution on Monday at 2:00 AM'

@@ -139,8 +139,8 @@
                             const leftIcon = getEventTypeLeftIcon(event.eventType);
                             const statusIcon = getEventTypeStatusIcon(event.eventType);
                             // Determine status text and if item is overdue
-                            let statusText = '';
-                            let rightTagClass = 'is-light';
+                            let statusText;
+                            let rightTagClass;
                             const currentDate = new Date();
                             currentDate.setHours(0, 0, 0, 0); // Reset to midnight for date comparison
                             if (event.eventType.startsWith('workOrder')) {
@@ -170,32 +170,29 @@
                                     rightTagClass = 'is-light';
                                 }
                             }
-                            else {
-                                // Milestone logic
-                                if (event.milestoneCompleteDateTime === null) {
-                                    // Milestone is open
-                                    statusText = 'Open';
-                                    // Check if overdue: open and has due date and due date is in the past
-                                    if (event.milestoneDueDateTime !== null &&
-                                        event.milestoneDueDateTime !== undefined) {
-                                        const dueDate = new Date(event.milestoneDueDateTime);
-                                        dueDate.setHours(0, 0, 0, 0);
-                                        if (dueDate < currentDate) {
-                                            statusText = 'Overdue';
-                                            rightTagClass = 'is-light is-danger';
-                                        }
-                                        else {
-                                            rightTagClass = 'is-light is-success';
-                                        }
+                            else if (event.milestoneCompleteDateTime === null) {
+                                // Milestone is open
+                                statusText = 'Open';
+                                // Check if overdue: open and has due date and due date is in the past
+                                if (event.milestoneDueDateTime !== null &&
+                                    event.milestoneDueDateTime !== undefined) {
+                                    const dueDate = new Date(event.milestoneDueDateTime);
+                                    dueDate.setHours(0, 0, 0, 0);
+                                    if (dueDate < currentDate) {
+                                        statusText = 'Overdue';
+                                        rightTagClass = 'is-light is-danger';
                                     }
                                     else {
                                         rightTagClass = 'is-light is-success';
                                     }
                                 }
                                 else {
-                                    statusText = 'Closed';
-                                    rightTagClass = 'is-light';
+                                    rightTagClass = 'is-light is-success';
                                 }
+                            }
+                            else {
+                                statusText = 'Closed';
+                                rightTagClass = 'is-light';
                             }
                             const titleWithStatus = event.milestoneTitle
                                 ? `${event.workOrderNumber} - ${event.milestoneTitle} (${statusText})`

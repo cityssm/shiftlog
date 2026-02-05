@@ -1,6 +1,6 @@
 {
   "name": "@cityssm/shiftlog",
-  "version": "1.0.0-dev.4",
+  "version": "1.0.0-dev.5",
   "description": "ShiftLog - A work management system with work order recording, shift activity logging, and timesheet tracking",
   "keywords": [
     "worktech"

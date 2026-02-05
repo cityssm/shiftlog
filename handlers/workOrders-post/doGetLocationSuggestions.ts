@@ -13,10 +13,7 @@ export default async function handler(
   request: Request<unknown, unknown, { searchString: string }>,
   response: Response<DoGetLocationSuggestionsResponse>
 ): Promise<void> {
-  const locations = await getLocationSuggestions(
-    request.body.searchString,
-    request.session.user
-  )
+  const locations = await getLocationSuggestions(request.body.searchString)
 
   response.json({
     success: true,
