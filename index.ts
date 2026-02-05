@@ -7,6 +7,7 @@ import { secondsToMillis } from '@cityssm/to-millis'
 import Debug from 'debug'
 import exitHook, { gracefulExit } from 'exit-hook'
 
+import { runConnectivityTestUntilSuccess } from './database/app/runConnectivityTest.js'
 import { DEBUG_NAMESPACE } from './debug.config.js'
 import { getConfigProperty } from './helpers/config.helpers.js'
 import { validateSystemLists } from './helpers/startup.helpers.js'
@@ -101,6 +102,8 @@ function initializeCluster(): void {
 }
 
 async function startApplication(): Promise<void> {
+  await runConnectivityTestUntilSuccess()
+
   /*
    * Validate System Lists
    */

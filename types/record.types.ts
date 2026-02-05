@@ -70,6 +70,7 @@ export interface ApiAuditLog {
 export interface UserGroup extends BaseRecord {
   userGroupId: number
   userGroupName: string
+
   memberCount?: number
   members?: string[]
 }
@@ -130,9 +131,9 @@ export interface Employee extends SyncRecord {
   userName?: string | null
   isSupervisor: boolean
 
+  emailAddress?: string | null
   phoneNumber?: string | null
   phoneNumberAlternate?: string | null
-  emailAddress?: string | null
 
   userGroupId?: number | null
 }
@@ -163,9 +164,11 @@ export interface CrewEquipment {
   crewId: number
   equipmentNumber: string
   equipmentName?: string
+
   employeeNumber?: string | null
   employeeFirstName?: string
   employeeLastName?: string
+  
   employeeListId?: number | null
   employeeListName?: string
 }

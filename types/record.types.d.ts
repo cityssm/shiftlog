@@ -97,9 +97,9 @@ export interface Employee extends SyncRecord {
     lastName: string;
     userName?: string | null;
     isSupervisor: boolean;
+    emailAddress?: string | null;
     phoneNumber?: string | null;
     phoneNumberAlternate?: string | null;
-    emailAddress?: string | null;
     userGroupId?: number | null;
 }
 export interface Tag extends BaseRecord {
