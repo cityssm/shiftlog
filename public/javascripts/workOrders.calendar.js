@@ -1,21 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
-    var shiftLog = exports.shiftLog;
-    var calendarContainerElement = document.querySelector('#container--calendar');
-    var monthTitleElement = document.querySelector('#calendar--monthTitle');
-    var previousMonthButtonElement = document.querySelector('#btn--previousMonth');
-    var nextMonthButtonElement = document.querySelector('#btn--nextMonth');
-    var assignedToSelect = document.querySelector('#calendar--assignedToId');
-    var showOpenDatesCheckbox = document.querySelector('#calendar--showOpenDates');
-    var showDueDatesCheckbox = document.querySelector('#calendar--showDueDates');
-    var showCloseDatesCheckbox = document.querySelector('#calendar--showCloseDates');
-    var showMilestoneDueDatesCheckbox = document.querySelector('#calendar--showMilestoneDueDates');
-    var showMilestoneCompleteDatesCheckbox = document.querySelector('#calendar--showMilestoneCompleteDates');
+(() => {
+    const shiftLog = exports.shiftLog;
+    const calendarContainerElement = document.querySelector('#container--calendar');
+    const monthTitleElement = document.querySelector('#calendar--monthTitle');
+    const previousMonthButtonElement = document.querySelector('#btn--previousMonth');
+    const nextMonthButtonElement = document.querySelector('#btn--nextMonth');
+    const assignedToSelect = document.querySelector('#calendar--assignedToId');
+    const showOpenDatesCheckbox = document.querySelector('#calendar--showOpenDates');
+    const showDueDatesCheckbox = document.querySelector('#calendar--showDueDates');
+    const showCloseDatesCheckbox = document.querySelector('#calendar--showCloseDates');
+    const showMilestoneDueDatesCheckbox = document.querySelector('#calendar--showMilestoneDueDates');
+    const showMilestoneCompleteDatesCheckbox = document.querySelector('#calendar--showMilestoneCompleteDates');
     // Current date state
-    var currentYear = new Date().getFullYear();
-    var currentMonth = new Date().getMonth() + 1; // 1-12
-    var monthNames = [
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth() + 1; // 1-12
+    const monthNames = [
         'January',
         'February',
         'March',
@@ -29,14 +27,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
         'November',
         'December'
     ];
-    var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     /**
      * Note:
      * Use cityssm.escapeHTML(text) for HTML escaping to ensure consistent behavior
      * across the application.
      */
     function updateMonthTitle() {
-        monthTitleElement.textContent = "".concat(monthNames[currentMonth - 1], " ").concat(currentYear);
+        monthTitleElement.textContent = `${monthNames[currentMonth - 1]} ${currentYear}`;
     }
     /**
      * Get the left icon HTML for an event type (work order icon or check icon)
@@ -45,7 +43,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
         if (eventType.startsWith('milestone')) {
             return '<i class="fa-solid fa-check"></i>';
         }
-        return "<i class=\"fa-solid ".concat(shiftLog.workOrdersIconClass, "\"></i>");
+        return `<i class="fa-solid ${shiftLog.workOrdersIconClass}"></i>`;
     }
     /**
      * Get the status icon HTML for an event type (play/exclamation-triangle/stop)
@@ -87,14 +85,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
         }
     }
     function getEventStatus(event, currentDate) {
-        var _a, _b;
-        var statusText;
-        var rightTagClass;
+        let statusText;
+        let rightTagClass;
         function getOpenOrOverdueStatus(dueDateTime, currentDate) {
-            var localStatusText = 'Open';
-            var localRightTagClass;
+            let localStatusText = 'Open';
+            let localRightTagClass;
             if (dueDateTime !== null && dueDateTime !== undefined) {
-                var dueDate = new Date(dueDateTime);
+                const dueDate = new Date(dueDateTime);
                 dueDate.setHours(0, 0, 0, 0);
                 if (dueDate < currentDate) {
                     localStatusText = 'Overdue';
@@ -117,7 +114,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
             if (event.workOrderCloseDateTime === null) {
                 // Work order is open
                 ;
-                (_a = getOpenOrOverdueStatus(event.workOrderDueDateTime, currentDate), statusText = _a.statusText, rightTagClass = _a.rightTagClass);
+                ({ statusText, rightTagClass } = getOpenOrOverdueStatus(event.workOrderDueDateTime, currentDate));
             }
             else {
                 statusText = 'Closed';
@@ -127,80 +124,87 @@ Object.defineProperty(exports, "__esModule", { value: true });
         else if (event.milestoneCompleteDateTime === null) {
             // Non-work-order event that is not yet complete
             ;
-            (_b = getOpenOrOverdueStatus(event.milestoneDueDateTime, currentDate), statusText = _b.statusText, rightTagClass = _b.rightTagClass);
+            ({ statusText, rightTagClass } = getOpenOrOverdueStatus(event.milestoneDueDateTime, currentDate));
         }
         else {
             // Non-work-order event that is complete
             statusText = 'Closed';
             rightTagClass = 'is-light';
         }
-        return { statusText: statusText, rightTagClass: rightTagClass };
+        return { statusText, rightTagClass };
     }
     function renderCalendar(events) {
-        var _a, _b, _c, _d;
         // Group events by date
-        var eventsByDate = new Map();
-        for (var _i = 0, events_1 = events; _i < events_1.length; _i++) {
-            var event_1 = events_1[_i];
-            var eventDate = new Date(event_1.eventDate);
-            var dateKey = eventDate.toISOString().split('T')[0];
+        const eventsByDate = new Map();
+        for (const event of events) {
+            const eventDate = new Date(event.eventDate);
+            const dateKey = eventDate.toISOString().split('T')[0];
             if (!eventsByDate.has(dateKey)) {
                 eventsByDate.set(dateKey, []);
             }
-            (_a = eventsByDate.get(dateKey)) === null || _a === void 0 ? void 0 : _a.push(event_1);
+            eventsByDate.get(dateKey)?.push(event);
         }
         // Calculate calendar grid
-        var firstDay = new Date(currentYear, currentMonth - 1, 1);
-        var lastDay = new Date(currentYear, currentMonth, 0);
-        var daysInMonth = lastDay.getDate();
-        var startingDayOfWeek = firstDay.getDay();
-        var calendarElement = document.createElement('table');
+        const firstDay = new Date(currentYear, currentMonth - 1, 1);
+        const lastDay = new Date(currentYear, currentMonth, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDayOfWeek = firstDay.getDay();
+        const calendarElement = document.createElement('table');
         calendarElement.className = 'table is-fullwidth is-bordered';
         calendarElement.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
         // Header row
-        for (var _e = 0, dayNames_1 = dayNames; _e < dayNames_1.length; _e++) {
-            var dayName = dayNames_1[_e];
-            (_b = calendarElement
-                .querySelector('thead tr')) === null || _b === void 0 ? void 0 : _b.insertAdjacentHTML('beforeend', "<th class=\"has-text-centered\">".concat(cityssm.escapeHTML(dayName), "</th>"));
+        for (const dayName of dayNames) {
+            calendarElement
+                .querySelector('thead tr')
+                ?.insertAdjacentHTML('beforeend', `<th class="has-text-centered">${cityssm.escapeHTML(dayName)}</th>`);
         }
-        var dayCounter = 1;
-        var calendarDay = 1 - startingDayOfWeek;
+        let dayCounter = 1;
+        let calendarDay = 1 - startingDayOfWeek;
         // Generate weeks
         while (dayCounter <= daysInMonth) {
-            var weekRowElement = document.createElement('tr');
+            const weekRowElement = document.createElement('tr');
             // Generate days in week
-            for (var dayOfWeek = 0; dayOfWeek < 7; dayOfWeek += 1) {
+            for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek += 1) {
                 if (calendarDay < 1 || calendarDay > daysInMonth) {
-                    var emptyCell = document.createElement('td');
+                    const emptyCell = document.createElement('td');
                     emptyCell.className = 'has-background-light';
                     weekRowElement.append(emptyCell);
                 }
                 else {
-                    var dateKey = "".concat(currentYear, "-").concat(String(currentMonth).padStart(2, '0'), "-").concat(String(calendarDay).padStart(2, '0'));
-                    var dayEvents = (_c = eventsByDate.get(dateKey)) !== null && _c !== void 0 ? _c : [];
-                    var dayCell = document.createElement('td');
+                    const dateKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(calendarDay).padStart(2, '0')}`;
+                    const dayEvents = eventsByDate.get(dateKey) ?? [];
+                    const dayCell = document.createElement('td');
                     dayCell.className = 'is-vcentered';
                     dayCell.style.verticalAlign = 'top';
                     dayCell.style.minHeight = '120px';
-                    dayCell.innerHTML = "<div class=\"has-text-weight-bold mb-2\">".concat(cityssm.escapeHTML(String(calendarDay)), "</div>");
+                    dayCell.innerHTML = `<div class="has-text-weight-bold mb-2">${cityssm.escapeHTML(String(calendarDay))}</div>`;
                     if (dayEvents.length > 0) {
                         // Create current date once for all events in this day
-                        var currentDate = new Date();
+                        const currentDate = new Date();
                         currentDate.setHours(0, 0, 0, 0); // Reset to midnight for date comparison
-                        for (var _f = 0, dayEvents_1 = dayEvents; _f < dayEvents_1.length; _f++) {
-                            var event_2 = dayEvents_1[_f];
-                            var eventClass = getEventTypeClass(event_2.eventType);
-                            var leftIcon = getEventTypeLeftIcon(event_2.eventType);
-                            var statusIcon = getEventTypeStatusIcon(event_2.eventType);
-                            var _g = getEventStatus(event_2, currentDate), statusText = _g.statusText, rightTagClass = _g.rightTagClass;
-                            var titleWithStatus = event_2.milestoneTitle
-                                ? "".concat(event_2.workOrderNumber, " - ").concat(event_2.milestoneTitle, " (").concat(statusText, ")")
-                                : "".concat(event_2.workOrderNumber, " (").concat(statusText, ")");
+                        for (const event of dayEvents) {
+                            const eventClass = getEventTypeClass(event.eventType);
+                            const leftIcon = getEventTypeLeftIcon(event.eventType);
+                            const statusIcon = getEventTypeStatusIcon(event.eventType);
+                            const { statusText, rightTagClass } = getEventStatus(event, currentDate);
+                            const titleWithStatus = event.milestoneTitle
+                                ? `${event.workOrderNumber} - ${event.milestoneTitle} (${statusText})`
+                                : `${event.workOrderNumber} (${statusText})`;
                             // Create a tag with addons: left side has icons, right side has work order number
-                            var safeHref = encodeURI(shiftLog.buildWorkOrderURL(event_2.workOrderId));
+                            const safeHref = encodeURI(shiftLog.buildWorkOrderURL(event.workOrderId));
                             // eslint-disable-next-line no-unsanitized/method -- URL is encoded, user content is escaped
                             dayCell.insertAdjacentHTML('beforeend', 
-                            /* html */ "\n                  <div class=\"tags has-addons mb-1\">\n                    <a class=\"tag ".concat(eventClass, "\" href=\"").concat(safeHref, "\" title=\"").concat(cityssm.escapeHTML(titleWithStatus), "\">\n                      <span class=\"icon is-small\">").concat(leftIcon, "</span>\n                      <span class=\"icon is-small\">").concat(statusIcon, "</span>\n                    </a>\n                    <a class=\"tag ").concat(rightTagClass, "\" href=\"").concat(safeHref, "\" title=\"").concat(cityssm.escapeHTML(titleWithStatus), "\">\n                      ").concat(cityssm.escapeHTML(event_2.workOrderNumber), "\n                    </a>\n                  </div>\n                "));
+                            /* html */ `
+                  <div class="tags has-addons mb-1">
+                    <a class="tag ${eventClass}" href="${safeHref}" title="${cityssm.escapeHTML(titleWithStatus)}">
+                      <span class="icon is-small">${leftIcon}</span>
+                      <span class="icon is-small">${statusIcon}</span>
+                    </a>
+                    <a class="tag ${rightTagClass}" href="${safeHref}" title="${cityssm.escapeHTML(titleWithStatus)}">
+                      ${cityssm.escapeHTML(event.workOrderNumber)}
+                    </a>
+                  </div>
+                `);
                         }
                     }
                     weekRowElement.append(dayCell);
@@ -210,13 +214,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 }
                 calendarDay += 1;
             }
-            (_d = calendarElement.querySelector('tbody')) === null || _d === void 0 ? void 0 : _d.append(weekRowElement);
+            calendarElement.querySelector('tbody')?.append(weekRowElement);
         }
         calendarContainerElement.replaceChildren(calendarElement);
     }
     function loadCalendar() {
         updateMonthTitle();
-        cityssm.postJSON("".concat(shiftLog.urlPrefix, "/").concat(shiftLog.workOrdersRouter, "/doGetCalendarEvents"), {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`, {
             month: currentMonth,
             year: currentYear,
             assignedToId: assignedToSelect.value,
@@ -225,12 +229,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
             showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked,
             showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
             showOpenDates: showOpenDatesCheckbox.checked
-        }, function (responseJSON) {
+        }, (responseJSON) => {
             renderCalendar(responseJSON.events);
         });
     }
     // Event listeners
-    previousMonthButtonElement.addEventListener('click', function () {
+    previousMonthButtonElement.addEventListener('click', () => {
         if (currentMonth === 1) {
             currentMonth = 12;
             currentYear -= 1;
@@ -240,7 +244,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
         }
         loadCalendar();
     });
-    nextMonthButtonElement.addEventListener('click', function () {
+    nextMonthButtonElement.addEventListener('click', () => {
         if (currentMonth === 12) {
             currentMonth = 1;
             currentYear += 1;
@@ -250,22 +254,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
         }
         loadCalendar();
     });
-    assignedToSelect.addEventListener('change', function () {
+    assignedToSelect.addEventListener('change', () => {
         loadCalendar();
     });
-    showOpenDatesCheckbox.addEventListener('change', function () {
+    showOpenDatesCheckbox.addEventListener('change', () => {
         loadCalendar();
     });
-    showDueDatesCheckbox.addEventListener('change', function () {
+    showDueDatesCheckbox.addEventListener('change', () => {
         loadCalendar();
     });
-    showCloseDatesCheckbox.addEventListener('change', function () {
+    showCloseDatesCheckbox.addEventListener('change', () => {
         loadCalendar();
     });
-    showMilestoneDueDatesCheckbox.addEventListener('change', function () {
+    showMilestoneDueDatesCheckbox.addEventListener('change', () => {
         loadCalendar();
     });
-    showMilestoneCompleteDatesCheckbox.addEventListener('change', function () {
+    showMilestoneCompleteDatesCheckbox.addEventListener('change', () => {
         loadCalendar();
     });
     // Initial load
