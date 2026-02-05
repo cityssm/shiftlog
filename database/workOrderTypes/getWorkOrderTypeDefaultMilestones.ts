@@ -9,16 +9,21 @@ export default async function getWorkOrderTypeDefaultMilestones(
   const result = await pool
     .request()
     .input('workOrderTypeId', workOrderTypeId)
+    // eslint-disable-next-line no-secrets/no-secrets
     .query<WorkOrderTypeDefaultMilestone>(/* sql */ `
-      select
+      SELECT
         workOrderTypeId,
         milestoneTitle,
         milestoneDescription,
         dueDays,
         orderNumber
-      from ShiftLog.WorkOrderTypeMilestones
-      where workOrderTypeId = @workOrderTypeId
-      order by orderNumber, milestoneTitle
+      FROM
+        ShiftLog.WorkOrderTypeMilestones
+      WHERE
+        workOrderTypeId = @workOrderTypeId
+      ORDER BY
+        orderNumber,
+        milestoneTitle
     `)
 
   return result.recordset

@@ -11,12 +11,16 @@ export default async function getDeletedWorkOrders(
     'where w.instance = @instance and w.recordDelete_dateTime is not null'
 
   if (user !== undefined) {
-    whereClause += `
-      and (
-        wType.userGroupId is null or wType.userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
+    whereClause += /* sql */ `
+      AND (
+        wType.userGroupId IS NULL
+        OR wType.userGroupId IN (
+          SELECT
+            userGroupId
+          FROM
+            ShiftLog.UserGroupMembers
+          WHERE
+            userName = @userName
         )
       )
     `

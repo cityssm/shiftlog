@@ -4,14 +4,16 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface GetCalendarEventsFilters {
-  year: number
   month: number
+  year: number
+  
   assignedToId?: number
-  showOpenDates: boolean
-  showDueDates: boolean
+
   showCloseDates: boolean
-  showMilestoneDueDates: boolean
+  showDueDates: boolean
   showMilestoneCompleteDates: boolean
+  showMilestoneDueDates: boolean
+  showOpenDates: boolean
 }
 
 export interface WorkOrderCalendarEvent {
@@ -32,10 +34,10 @@ export interface WorkOrderCalendarEvent {
   milestoneId?: number | null
   milestoneTitle?: string | null
 
-  workOrderCloseDateTime?: Date | string | null
-  workOrderDueDateTime?: Date | string | null
   milestoneCompleteDateTime?: Date | string | null
   milestoneDueDateTime?: Date | string | null
+  workOrderCloseDateTime?: Date | string | null
+  workOrderDueDateTime?: Date | string | null
 }
 
 /**
@@ -63,11 +65,19 @@ export default async function getCalendarEvents(
   const userGroupWhereClause =
     user === undefined
       ? ''
-      : `and (wType.userGroupId is null or wType.userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
-        ))`
+      : /* sql */ `
+          AND (
+            wType.userGroupId IS NULL
+            OR wType.userGroupId IN (
+              SELECT
+                userGroupId
+              FROM
+                ShiftLog.UserGroupMembers
+              WHERE
+                userName = @userName
+            )
+          )
+        `
 
   // Query for work order dates
   if (filters.showOpenDates || filters.showDueDates || filters.showCloseDates) {

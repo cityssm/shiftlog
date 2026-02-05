@@ -17,11 +17,19 @@ export default async function getCalendarEvents(filters, user) {
     // Build user group WHERE clause for security
     const userGroupWhereClause = user === undefined
         ? ''
-        : `and (wType.userGroupId is null or wType.userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
-        ))`;
+        : /* sql */ `
+          AND (
+            wType.userGroupId IS NULL
+            OR wType.userGroupId IN (
+              SELECT
+                userGroupId
+              FROM
+                ShiftLog.UserGroupMembers
+              WHERE
+                userName = @userName
+            )
+          )
+        `;
     // Query for work order dates
     if (filters.showOpenDates || filters.showDueDates || filters.showCloseDates) {
         const workOrderDateQueries = [];

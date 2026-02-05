@@ -5,6 +5,7 @@ import getWorkOrder from './getWorkOrder.js'
 
 export interface CreateWorkOrderNoteForm {
   workOrderId: number | string
+  
   noteText: string
 }
 

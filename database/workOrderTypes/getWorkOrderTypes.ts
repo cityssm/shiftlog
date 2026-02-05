@@ -12,8 +12,9 @@ export default async function getWorkOrderTypes(
   const workOrderTypesResult = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
-    .input('userName', user?.userName).query<WorkOrderType>(/* sql */ `
-      select
+    .input('userName', user?.userName)
+    .query<WorkOrderType>(/* sql */ `
+      SELECT
         wt.workOrderTypeId,
         wt.workOrderType,
         wt.workOrderNumberPrefix,
@@ -21,23 +22,29 @@ export default async function getWorkOrderTypes(
         wt.orderNumber,
         wt.userGroupId,
         ug.userGroupName
-      from ShiftLog.WorkOrderTypes wt
-      left join ShiftLog.UserGroups ug
-        on wt.userGroupId = ug.userGroupId
-      where wt.instance = @instance
-        and wt.recordDelete_dateTime is null
-        ${
-          user === undefined
-            ? ''
-            : `
-                and (wt.userGroupId is null or wt.userGroupId in (
-                  select userGroupId
-                  from ShiftLog.UserGroupMembers
-                  where userName = @userName
-                ))
-              `
-        }
-      order by wt.orderNumber, wt.workOrderType
+      FROM
+        ShiftLog.WorkOrderTypes wt
+        LEFT JOIN ShiftLog.UserGroups ug ON wt.userGroupId = ug.userGroupId
+      WHERE
+        wt.instance = @instance
+        AND wt.recordDelete_dateTime IS NULL ${user === undefined
+          ? ''
+          : /* sql */ `
+              AND (
+                wt.userGroupId IS NULL
+                OR wt.userGroupId IN (
+                  SELECT
+                    userGroupId
+                  FROM
+                    ShiftLog.UserGroupMembers
+                  WHERE
+                    userName = @userName
+                )
+              )
+            `}
+      ORDER BY
+        wt.orderNumber,
+        wt.workOrderType
     `)
 
   const workOrderTypes = workOrderTypesResult.recordset

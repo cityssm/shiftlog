@@ -7,8 +7,9 @@ export default async function getWorkOrderType(workOrderTypeId, user, includeDel
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName ?? '')
-        .input('workOrderTypeId', workOrderTypeId).query(/* sql */ `
-      select
+        .input('workOrderTypeId', workOrderTypeId)
+        .query(/* sql */ `
+      SELECT
         wt.workOrderTypeId,
         wt.workOrderType,
         wt.workOrderNumberPrefix,
@@ -16,23 +17,28 @@ export default async function getWorkOrderType(workOrderTypeId, user, includeDel
         wt.orderNumber,
         wt.userGroupId,
         ug.userGroupName
-      from ShiftLog.WorkOrderTypes wt
-      left join ShiftLog.UserGroups ug
-        on wt.userGroupId = ug.userGroupId
-      where wt.instance = @instance
-        and wt.workOrderTypeId = @workOrderTypeId
-        ${includeDeleted ? '' : 'and wt.recordDelete_dateTime is null'}
-        ${user === undefined
+      FROM
+        ShiftLog.WorkOrderTypes wt
+        LEFT JOIN ShiftLog.UserGroups ug ON wt.userGroupId = ug.userGroupId
+      WHERE
+        wt.instance = @instance
+        AND wt.workOrderTypeId = @workOrderTypeId ${includeDeleted
+        ? ''
+        : 'and wt.recordDelete_dateTime is null'} ${user === undefined
         ? ''
         : /* sql */ `
-              and (
-                wt.userGroupId is null or wt.userGroupId in (
-                  select userGroupId
-                  from ShiftLog.UserGroupMembers
-                  where userName = @userName
+              AND (
+                wt.userGroupId IS NULL
+                OR wt.userGroupId IN (
+                  SELECT
+                    userGroupId
+                  FROM
+                    ShiftLog.UserGroupMembers
+                  WHERE
+                    userName = @userName
                 )
               )
-              `}
+            `}
     `);
     const workOrderType = result.recordset[0];
     workOrderType.moreInfoFormNames = await getWorkOrderTypeMoreInfoFormNames(workOrderType.workOrderTypeId);

@@ -1,25 +1,29 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 function buildWhereClause(filters, user) {
-    let whereClause = 'where s.instance = @instance and s.recordDelete_dateTime is null';
+    let whereClause = 'WHERE s.instance = @instance AND s.recordDelete_dateTime IS NULL';
     if (filters.shiftDateString !== undefined && filters.shiftDateString !== '') {
-        whereClause += ' and s.shiftDate = @shiftDateString';
+        whereClause += ' AND s.shiftDate = @shiftDateString';
     }
     if (filters.shiftTypeDataListItemId !== undefined &&
         filters.shiftTypeDataListItemId !== '') {
-        whereClause += ' and s.shiftTypeDataListItemId = @shiftTypeDataListItemId';
+        whereClause += ' AND s.shiftTypeDataListItemId = @shiftTypeDataListItemId';
     }
     if (filters.supervisorEmployeeNumber !== undefined &&
         filters.supervisorEmployeeNumber !== '') {
-        whereClause += ' and s.supervisorEmployeeNumber = @supervisorEmployeeNumber';
+        whereClause += ' AND s.supervisorEmployeeNumber = @supervisorEmployeeNumber';
     }
     if (user !== undefined) {
-        whereClause += `
-      and (
-        sType.userGroupId is null or sType.userGroupId in (
-          select userGroupId
-          from ShiftLog.UserGroupMembers
-          where userName = @userName
+        whereClause += /* sql */ `
+      AND (
+        sType.userGroupId IS NULL
+        OR sType.userGroupId IN (
+          SELECT
+            userGroupId
+          FROM
+            ShiftLog.UserGroupMembers
+          WHERE
+            userName = @userName
         )
       )
     `;

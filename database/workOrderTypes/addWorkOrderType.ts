@@ -21,40 +21,43 @@ export default async function addWorkOrderType(
     .input('workOrderNumberPrefix', form.workOrderNumberPrefix ?? '')
     .input(
       'dueDays',
-      form.dueDays === '' || form.dueDays === undefined
-        ? null
-        : form.dueDays
+      form.dueDays === '' || form.dueDays === undefined ? null : form.dueDays
     )
     .input(
       'userGroupId',
       form.userGroupId === '' ? null : (form.userGroupId ?? null)
     )
-    .input('userName', userName).query<{ workOrderTypeId: number }>(/* sql */ `
-      insert into ShiftLog.WorkOrderTypes (
-        instance,
-        workOrderType,
-        workOrderNumberPrefix,
-        dueDays,
-        userGroupId,
-        orderNumber,
-        recordCreate_userName,
-        recordUpdate_userName
-      )
-      output inserted.workOrderTypeId
-      values (
-        @instance,
-        @workOrderType,
-        @workOrderNumberPrefix,
-        @dueDays,
-        @userGroupId,
+    .input('userName', userName)
+    .query<{ workOrderTypeId: number }>(/* sql */ `
+      INSERT INTO
+        ShiftLog.WorkOrderTypes (
+          instance,
+          workOrderType,
+          workOrderNumberPrefix,
+          dueDays,
+          userGroupId,
+          orderNumber,
+          recordCreate_userName,
+          recordUpdate_userName
+        ) output inserted.workOrderTypeId
+      VALUES
         (
-          select isnull(max(orderNumber), 0) + 1
-          from ShiftLog.WorkOrderTypes
-          where instance = @instance
-        ),
-        @userName,
-        @userName
-      )
+          @instance,
+          @workOrderType,
+          @workOrderNumberPrefix,
+          @dueDays,
+          @userGroupId,
+          (
+            SELECT
+              isnull(max(orderNumber), 0) + 1
+            FROM
+              ShiftLog.WorkOrderTypes
+            WHERE
+              instance = @instance
+          ),
+          @userName,
+          @userName
+        )
     `)
 
   return result.recordset[0].workOrderTypeId

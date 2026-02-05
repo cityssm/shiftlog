@@ -1,12 +1,12 @@
 export interface GetCalendarEventsFilters {
-    year: number;
     month: number;
+    year: number;
     assignedToId?: number;
-    showOpenDates: boolean;
-    showDueDates: boolean;
     showCloseDates: boolean;
-    showMilestoneDueDates: boolean;
+    showDueDates: boolean;
     showMilestoneCompleteDates: boolean;
+    showMilestoneDueDates: boolean;
+    showOpenDates: boolean;
 }
 export interface WorkOrderCalendarEvent {
     eventDate: Date | string;
@@ -18,10 +18,10 @@ export interface WorkOrderCalendarEvent {
     assignedToId?: number | null;
     milestoneId?: number | null;
     milestoneTitle?: string | null;
-    workOrderCloseDateTime?: Date | string | null;
-    workOrderDueDateTime?: Date | string | null;
     milestoneCompleteDateTime?: Date | string | null;
     milestoneDueDateTime?: Date | string | null;
+    workOrderCloseDateTime?: Date | string | null;
+    workOrderDueDateTime?: Date | string | null;
 }
 /**
  * Retrieves calendar events for work orders and milestones within a specified month.

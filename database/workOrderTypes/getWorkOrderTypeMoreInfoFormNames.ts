@@ -7,12 +7,16 @@ export default async function getWorkOrderTypeMoreInfoFormNames(
 ): Promise<string[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = await pool.request().input('workOrderTypeId', workOrderTypeId)
+  const result = await pool
+    .request()
+    .input('workOrderTypeId', workOrderTypeId)
     .query<{ formName: string }>(/* sql */ `
-      select
+      SELECT
         formName
-      from ShiftLog.WorkOrderTypeMoreInfoForms
-      where workOrderTypeId = @workOrderTypeId
+      FROM
+        ShiftLog.WorkOrderTypeMoreInfoForms
+      WHERE
+        workOrderTypeId = @workOrderTypeId
     `)
 
   return result.recordset.map((row) => row.formName)

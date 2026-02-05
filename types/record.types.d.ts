@@ -264,11 +264,11 @@ export interface WorkOrderType extends BaseRecord {
 }
 export interface WorkOrder extends BaseRecord {
     workOrderId: number;
+    workOrderNumber: string;
+    workOrderNumberOverride?: string | null;
     workOrderNumberPrefix: string;
     workOrderNumberYear: number;
     workOrderNumberSequence: number;
-    workOrderNumberOverride?: string | null;
-    workOrderNumber: string;
     workOrderTypeId: number;
     workOrderType?: string;
     workOrderStatusDataListItemId?: number | null;
