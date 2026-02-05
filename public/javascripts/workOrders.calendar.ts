@@ -281,7 +281,9 @@ declare const exports: {
                 : `${event.workOrderNumber} (${statusText})`
 
               // Create a tag with addons: left side has icons, right side has work order number
-              const safeHref = encodeURI(shiftLog.buildWorkOrderURL(event.workOrderId))
+              const safeHref = encodeURI(
+                shiftLog.buildWorkOrderURL(event.workOrderId)
+              )
               // eslint-disable-next-line no-unsanitized/method -- URL is encoded, user content is escaped
               dayCell.insertAdjacentHTML(
                 'beforeend',
@@ -322,19 +324,19 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`,
       {
-        year: currentYear,
         month: currentMonth,
+        year: currentYear,
+
         assignedToId: assignedToSelect.value,
-        showOpenDates: showOpenDatesCheckbox.checked,
-        showDueDates: showDueDatesCheckbox.checked,
+        
         showCloseDates: showCloseDatesCheckbox.checked,
+        showDueDates: showDueDatesCheckbox.checked,
+        showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked,
         showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
-        showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
+        showOpenDates: showOpenDatesCheckbox.checked
       },
       (responseJSON: DoGetCalendarEventsResponse) => {
-        if (responseJSON.success) {
-          renderCalendar(responseJSON.events)
-        }
+        renderCalendar(responseJSON.events)
       }
     )
   }

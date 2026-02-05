@@ -232,18 +232,16 @@
     function loadCalendar() {
         updateMonthTitle();
         cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`, {
-            year: currentYear,
             month: currentMonth,
+            year: currentYear,
             assignedToId: assignedToSelect.value,
-            showOpenDates: showOpenDatesCheckbox.checked,
-            showDueDates: showDueDatesCheckbox.checked,
             showCloseDates: showCloseDatesCheckbox.checked,
+            showDueDates: showDueDatesCheckbox.checked,
+            showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked,
             showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
-            showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
+            showOpenDates: showOpenDatesCheckbox.checked
         }, (responseJSON) => {
-            if (responseJSON.success) {
-                renderCalendar(responseJSON.events);
-            }
+            renderCalendar(responseJSON.events);
         });
     }
     // Event listeners
