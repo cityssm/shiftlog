@@ -1,4 +1,3 @@
-/* eslint-disable max-depth -- AI generated, needs refactoring */
 (() => {
     const shiftLog = exports.shiftLog;
     const calendarContainerElement = document.querySelector('#container--calendar');
@@ -88,6 +87,63 @@
             }
         }
     }
+    function getEventStatus(event, currentDate) {
+        let statusText;
+        let rightTagClass;
+        if (event.eventType.startsWith('workOrder')) {
+            // Work order logic
+            if (event.workOrderCloseDateTime === null) {
+                // Work order is open
+                statusText = 'Open';
+                // Check if overdue: open and has due date and due date is in the past
+                if (event.workOrderDueDateTime !== null &&
+                    event.workOrderDueDateTime !== undefined) {
+                    const dueDate = new Date(event.workOrderDueDateTime);
+                    dueDate.setHours(0, 0, 0, 0);
+                    if (dueDate < currentDate) {
+                        statusText = 'Overdue';
+                        rightTagClass = 'is-light is-danger';
+                    }
+                    else {
+                        rightTagClass = 'is-light is-success';
+                    }
+                }
+                else {
+                    rightTagClass = 'is-light is-success';
+                }
+            }
+            else {
+                statusText = 'Closed';
+                rightTagClass = 'is-light';
+            }
+        }
+        else if (event.milestoneCompleteDateTime === null) {
+            // Non-work-order event that is not yet complete
+            statusText = 'Open';
+            // Check if overdue: open and has due date and due date is in the past
+            if (event.milestoneDueDateTime !== null &&
+                event.milestoneDueDateTime !== undefined) {
+                const dueDate = new Date(event.milestoneDueDateTime);
+                dueDate.setHours(0, 0, 0, 0);
+                if (dueDate < currentDate) {
+                    statusText = 'Overdue';
+                    rightTagClass = 'is-light is-danger';
+                }
+                else {
+                    rightTagClass = 'is-light is-success';
+                }
+            }
+            else {
+                rightTagClass = 'is-light is-success';
+            }
+        }
+        else {
+            // Non-work-order event that is complete
+            statusText = 'Closed';
+            rightTagClass = 'is-light';
+        }
+        return { statusText, rightTagClass };
+    }
     function renderCalendar(events) {
         // Group events by date
         const eventsByDate = new Map();
@@ -134,79 +190,28 @@
                     dayCell.style.minHeight = '120px';
                     dayCell.innerHTML = `<div class="has-text-weight-bold mb-2">${cityssm.escapeHTML(String(calendarDay))}</div>`;
                     if (dayEvents.length > 0) {
+                        // Create current date once for all events in this day
+                        const currentDate = new Date();
+                        currentDate.setHours(0, 0, 0, 0); // Reset to midnight for date comparison
                         for (const event of dayEvents) {
                             const eventClass = getEventTypeClass(event.eventType);
                             const leftIcon = getEventTypeLeftIcon(event.eventType);
                             const statusIcon = getEventTypeStatusIcon(event.eventType);
-                            // Determine status text and if item is overdue
-                            let statusText;
-                            let rightTagClass;
-                            const currentDate = new Date();
-                            currentDate.setHours(0, 0, 0, 0); // Reset to midnight for date comparison
-                            if (event.eventType.startsWith('workOrder')) {
-                                // Work order logic
-                                if (event.workOrderCloseDateTime === null) {
-                                    // Work order is open
-                                    statusText = 'Open';
-                                    // Check if overdue: open and has due date and due date is in the past
-                                    if (event.workOrderDueDateTime !== null &&
-                                        event.workOrderDueDateTime !== undefined) {
-                                        const dueDate = new Date(event.workOrderDueDateTime);
-                                        dueDate.setHours(0, 0, 0, 0);
-                                        if (dueDate < currentDate) {
-                                            statusText = 'Overdue';
-                                            rightTagClass = 'is-light is-danger';
-                                        }
-                                        else {
-                                            rightTagClass = 'is-light is-success';
-                                        }
-                                    }
-                                    else {
-                                        rightTagClass = 'is-light is-success';
-                                    }
-                                }
-                                else {
-                                    statusText = 'Closed';
-                                    rightTagClass = 'is-light';
-                                }
-                            }
-                            else if (event.milestoneCompleteDateTime === null) {
-                                // Milestone is open
-                                statusText = 'Open';
-                                // Check if overdue: open and has due date and due date is in the past
-                                if (event.milestoneDueDateTime !== null &&
-                                    event.milestoneDueDateTime !== undefined) {
-                                    const dueDate = new Date(event.milestoneDueDateTime);
-                                    dueDate.setHours(0, 0, 0, 0);
-                                    if (dueDate < currentDate) {
-                                        statusText = 'Overdue';
-                                        rightTagClass = 'is-light is-danger';
-                                    }
-                                    else {
-                                        rightTagClass = 'is-light is-success';
-                                    }
-                                }
-                                else {
-                                    rightTagClass = 'is-light is-success';
-                                }
-                            }
-                            else {
-                                statusText = 'Closed';
-                                rightTagClass = 'is-light';
-                            }
+                            const { statusText, rightTagClass } = getEventStatus(event, currentDate);
                             const titleWithStatus = event.milestoneTitle
                                 ? `${event.workOrderNumber} - ${event.milestoneTitle} (${statusText})`
                                 : `${event.workOrderNumber} (${statusText})`;
                             // Create a tag with addons: left side has icons, right side has work order number
-                            // eslint-disable-next-line no-unsanitized/method
+                            const safeHref = encodeURI(shiftLog.buildWorkOrderURL(event.workOrderId));
+                            // eslint-disable-next-line no-unsanitized/method -- URL is encoded, user content is escaped
                             dayCell.insertAdjacentHTML('beforeend', 
                             /* html */ `
                   <div class="tags has-addons mb-1">
-                    <a class="tag ${eventClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(titleWithStatus)}">
+                    <a class="tag ${eventClass}" href="${safeHref}" title="${escapeHtml(titleWithStatus)}">
                       <span class="icon is-small">${leftIcon}</span>
                       <span class="icon is-small">${statusIcon}</span>
                     </a>
-                    <a class="tag ${rightTagClass}" href="${shiftLog.buildWorkOrderURL(event.workOrderId)}" title="${escapeHtml(titleWithStatus)}">
+                    <a class="tag ${rightTagClass}" href="${safeHref}" title="${escapeHtml(titleWithStatus)}">
                       ${escapeHtml(event.workOrderNumber)}
                     </a>
                   </div>
@@ -227,18 +232,16 @@
     function loadCalendar() {
         updateMonthTitle();
         cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetCalendarEvents`, {
-            year: currentYear,
             month: currentMonth,
+            year: currentYear,
             assignedToId: assignedToSelect.value,
-            showOpenDates: showOpenDatesCheckbox.checked,
-            showDueDates: showDueDatesCheckbox.checked,
             showCloseDates: showCloseDatesCheckbox.checked,
+            showDueDates: showDueDatesCheckbox.checked,
+            showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked,
             showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
-            showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked
+            showOpenDates: showOpenDatesCheckbox.checked
         }, (responseJSON) => {
-            if (responseJSON.success) {
-                renderCalendar(responseJSON.events);
-            }
+            renderCalendar(responseJSON.events);
         });
     }
     // Event listeners
