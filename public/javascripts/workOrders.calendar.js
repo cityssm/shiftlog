@@ -88,25 +88,25 @@
         let statusText;
         let rightTagClass;
         function getOpenOrOverdueStatus(dueDateTime, currentDate) {
-            let localStatusText = 'Open';
-            let localRightTagClass;
+            let statusText = 'Open';
+            let rightTagClass;
             if (dueDateTime !== null && dueDateTime !== undefined) {
                 const dueDate = new Date(dueDateTime);
                 dueDate.setHours(0, 0, 0, 0);
                 if (dueDate < currentDate) {
-                    localStatusText = 'Overdue';
-                    localRightTagClass = 'is-light is-danger';
+                    statusText = 'Overdue';
+                    rightTagClass = 'is-light is-danger';
                 }
                 else {
-                    localRightTagClass = 'is-light is-success';
+                    rightTagClass = 'is-light is-success';
                 }
             }
             else {
-                localRightTagClass = 'is-light is-success';
+                rightTagClass = 'is-light is-success';
             }
             return {
-                statusText: localStatusText,
-                rightTagClass: localRightTagClass
+                statusText,
+                rightTagClass
             };
         }
         if (event.eventType.startsWith('workOrder')) {
@@ -137,7 +137,15 @@
         // Group events by date
         const eventsByDate = new Map();
         for (const event of events) {
+            if (!event.eventDate) {
+                // Skip events without an eventDate
+                continue;
+            }
             const eventDate = new Date(event.eventDate);
+            if (Number.isNaN(eventDate.getTime())) {
+                // Skip events with invalid dates
+                continue;
+            }
             const dateKey = eventDate.toISOString().split('T')[0];
             if (!eventsByDate.has(dateKey)) {
                 eventsByDate.set(dateKey, []);
