@@ -1,0 +1,66 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <nav class="breadcrumb">
+          <ul>
+            <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+            <li>
+              <a href="#">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-cog"></i>
+                </span>
+                <span>Administrator Tools</span>
+              </a>
+            </li>
+            <li class="is-active">
+              <a href="#" aria-current="page"> Note Type Maintenance </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="columns is-vcentered">
+      <div class="column">
+        <h1 class="title is-1">Note Type Maintenance</h1>
+      </div>
+      <div class="column is-narrow">
+        <button class="button is-success" id="button--addNoteType" type="button">
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Add Note Type</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="message is-info">
+      <div class="message-body">
+        Create and manage note types with custom fields for categorizing and recording detailed information.
+        Note types can be configured for use with
+        <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>,
+        <%= configFunctions.getConfigProperty('shifts.sectionName').toLowerCase() %>,
+        and <%= configFunctions.getConfigProperty('timesheets.sectionName').toLowerCase() %>.
+      </div>
+    </div>
+
+    <div id="container--noteTypes"></div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script>
+  exports.noteTypes = <%- JSON.stringify(noteTypes) %>;
+  exports.userGroups = <%- JSON.stringify(userGroups) %>;
+  exports.dataLists = <%- JSON.stringify(dataLists) %>;
+</script>
+<script src="<%= urlPrefix %>/javascripts/noteTypes.admin.js"></script>
+
+<%- await include('../_footerB'); -%>

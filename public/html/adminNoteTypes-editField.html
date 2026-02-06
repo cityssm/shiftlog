@@ -1,0 +1,165 @@
+<div
+  class="modal"
+  id="modal--editNoteTypeField"
+  role="dialog"
+  aria-label="Edit Field"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Field</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editNoteTypeField">
+        <input id="fieldEdit--noteTypeFieldId" name="noteTypeFieldId" type="hidden" />
+        <div class="field">
+          <label class="label" for="fieldEdit--fieldLabel">
+            Field Label
+            <span class="has-text-danger" title="Required">*</span>
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="fieldEdit--fieldLabel"
+              name="fieldLabel"
+              type="text"
+              maxlength="100"
+              autofocus
+              required
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="fieldEdit--fieldInputType">
+            Field Type
+            <span class="has-text-danger" title="Required">*</span>
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="fieldEdit--fieldInputType"
+                name="fieldInputType"
+                disabled
+                required
+              >
+                <option value="text">Text (Single Line)</option>
+                <option value="textbox">Textbox (Multiple Lines)</option>
+                <option value="number">Number</option>
+                <option value="date">Date</option>
+                <option value="select">Select (Dropdown)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">Field type cannot be changed after creation.</p>
+        </div>
+
+        <div class="field" id="field--dataListKey">
+          <label class="label" for="fieldEdit--dataListKey">Data List</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="fieldEdit--dataListKey" name="dataListKey">
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">For text fields with autocomplete or select dropdowns.</p>
+        </div>
+
+        <div id="fields--minMax">
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label" for="fieldEdit--fieldValueMin">Minimum Value</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="fieldEdit--fieldValueMin"
+                    name="fieldValueMin"
+                    type="number"
+                  />
+                </div>
+                <p class="help">For text: min length. For number: min value.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="fieldEdit--fieldValueMax">Maximum Value</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="fieldEdit--fieldValueMax"
+                    name="fieldValueMax"
+                    type="number"
+                  />
+                </div>
+                <p class="help">For text: max length. For number: max value.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="fieldEdit--fieldHelpText">Help Text</label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="fieldEdit--fieldHelpText"
+              name="fieldHelpText"
+              maxlength="500"
+            ></textarea>
+          </div>
+          <p class="help">Optional text to help users understand this field.</p>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <label class="checkbox">
+              <input
+                id="fieldEdit--fieldValueRequired"
+                name="fieldValueRequired"
+                type="checkbox"
+                value="1"
+              />
+              Required Field
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <label class="checkbox">
+              <input
+                id="fieldEdit--hasDividerAbove"
+                name="hasDividerAbove"
+                type="checkbox"
+                value="1"
+              />
+              Show Divider Above Field
+            </label>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-success"
+          type="submit"
+          form="form--editNoteTypeField"
+        >
+          <span class="icon"><i class="fa-solid fa-save"></i></span>
+          <span>Save Changes</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

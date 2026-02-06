@@ -154,6 +154,24 @@
     <% } %>
     <li>
       <a
+        class="<%= headTitle === 'Note Type Maintenance' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/noteTypes"
+        title="Note Type Maintenance"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-note-sticky"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Note Types
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
         class="<%= headTitle === 'Data List Management' ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/admin/dataLists"
         title="Data List Management"
