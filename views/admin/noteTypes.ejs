@@ -31,6 +31,20 @@
         <h1 class="title is-1">Note Type Maintenance</h1>
       </div>
       <div class="column is-narrow">
+        <div class="field has-addons">
+          <div class="control">
+            <span class="select">
+              <select id="filter--availability" aria-label="Filter by Availability">
+                <option value="">All</option>
+                <option value="workOrders"><%= workOrdersSectionName %></option>
+                <option value="shifts"><%= shiftsSectionName %></option>
+                <option value="timesheets"><%= timesheetsSectionName %></option>
+              </select>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="column is-narrow">
         <button class="button is-success" id="button--addNoteType" type="button">
           <span class="icon">
             <i class="fa-solid fa-plus"></i>
