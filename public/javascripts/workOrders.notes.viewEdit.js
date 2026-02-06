@@ -735,4 +735,3 @@
     loadNoteTypes();
     loadNotes();
 })();
-export {};
