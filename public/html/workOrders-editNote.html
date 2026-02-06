@@ -7,7 +7,11 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <div class="modal-card-head">
-      <p class="modal-card-title">Edit Note</p>
+      <p class="modal-card-title">
+        Edit
+        <span id="editWorkOrderNote--noteType"></span>
+        Note
+      </p>
       <button
         class="delete is-close-modal-button"
         type="button"
@@ -18,10 +22,6 @@
       <form id="form--editWorkOrderNote">
         <input id="editWorkOrderNote--workOrderId" name="workOrderId" type="hidden" />
         <input id="editWorkOrderNote--noteSequence" name="noteSequence" type="hidden" />
-        
-        <div id="editWorkOrderNote--noteTypeContainer" class="notification is-info is-light mb-3" style="display: none;">
-          <strong id="editWorkOrderNote--noteType"></strong>
-        </div>
         
         <div class="field">
           <label class="label" for="editWorkOrderNote--noteText">

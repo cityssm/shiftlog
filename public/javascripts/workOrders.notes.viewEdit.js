@@ -32,10 +32,10 @@
         let loadedCount = 0;
         const totalCount = dataListKeys.size;
         for (const key of dataListKeys) {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, { dataListKey: key }, (responseJSON) => {
-                if (responseJSON.success && responseJSON.items !== undefined) {
-                    dataListMap.set(key, responseJSON.items);
-                }
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, { dataListKey: key }, 
+            // eslint-disable-next-line @typescript-eslint/no-loop-func
+            (responseJSON) => {
+                dataListMap.set(key, responseJSON.items);
                 loadedCount += 1;
                 // When all data lists are loaded, call the callback
                 if (loadedCount === totalCount) {
@@ -226,7 +226,7 @@
             // Extract fields with pattern fields[noteTypeFieldId]
             const fields = {};
             for (const [key, value] of formData.entries()) {
-                const match = /^fields\[(\d+)\]$/.exec(key);
+                const match = /^fields\[\d+\]$/v.exec(key);
                 if (match !== null && typeof value === 'string') {
                     fields[match[1]] = value;
                 }
@@ -280,9 +280,11 @@
                     }
                     case 'number': {
                         const minAttribute = field.fieldValueMin !== null && field.fieldValueMin !== undefined
-                            ? `min="${field.fieldValueMin}"` : '';
+                            ? `min="${field.fieldValueMin}"`
+                            : '';
                         const maxAttribute = field.fieldValueMax !== null && field.fieldValueMax !== undefined
-                            ? `max="${field.fieldValueMax}"` : '';
+                            ? `max="${field.fieldValueMax}"`
+                            : '';
                         fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
@@ -297,7 +299,7 @@
                     case 'select': {
                         // Populate select with data list items
                         const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-                            ? dataListMap.get(field.dataListKey) ?? []
+                            ? (dataListMap.get(field.dataListKey) ?? [])
                             : [];
                         fieldsHTML += `
               <div class="control">
@@ -306,10 +308,14 @@
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
-                    ${dataListItems.map((item) => {
-                            const selected = item.dataListItem === field.fieldValue ? 'selected' : '';
+                    ${dataListItems
+                            .map((item) => {
+                            const selected = item.dataListItem === field.fieldValue
+                                ? 'selected'
+                                : '';
                             return `<option value="${cityssm.escapeHTML(item.dataListItem)}" ${selected}>${cityssm.escapeHTML(item.dataListItem)}</option>`;
-                        }).join('')}
+                        })
+                            .join('')}
                   </select>
                 </div>
               </div>
@@ -319,9 +325,9 @@
                     case 'text': {
                         // If field has a data list, add datalist element
                         const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-                            ? dataListMap.get(field.dataListKey) ?? []
+                            ? (dataListMap.get(field.dataListKey) ?? [])
                             : [];
-                        const dataListAttr = dataListItems.length > 0
+                        const dataListAttribute = dataListItems.length > 0
                             ? `list="datalist-edit-${field.noteTypeFieldId}"`
                             : '';
                         fieldsHTML += `
@@ -330,7 +336,7 @@
                   id="editWorkOrderNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   value="${cityssm.escapeHTML(field.fieldValue)}"
-                  ${dataListAttr}
+                  ${dataListAttribute}
                   ${requiredAttribute} />
               </div>
             `;
@@ -338,7 +344,9 @@
                         if (dataListItems.length > 0) {
                             fieldsHTML += `
                 <datalist id="datalist-edit-${field.noteTypeFieldId}">
-                  ${dataListItems.map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`).join('')}
+                  ${dataListItems
+                                .map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`)
+                                .join('')}
                 </datalist>
               `;
                         }
@@ -368,15 +376,9 @@
                 modalElement.querySelector('#editWorkOrderNote--workOrderId').value = workOrderId;
                 modalElement.querySelector('#editWorkOrderNote--noteSequence').value = note.noteSequence.toString();
                 modalElement.querySelector('#editWorkOrderNote--noteText').value = note.noteText;
-                // Show note type if present
-                const noteTypeContainer = modalElement.querySelector('#editWorkOrderNote--noteTypeContainer');
                 if (note.noteType !== null && note.noteType !== undefined) {
                     ;
-                    modalElement.querySelector('#editWorkOrderNote--noteType').textContent = note.noteType;
-                    noteTypeContainer.style.display = 'block';
-                }
-                else {
-                    noteTypeContainer.style.display = 'none';
+                    modalElement.querySelector('#editWorkOrderNote--noteType').textContent = `"${note.noteType}"`;
                 }
                 // Render fields if present
                 const fieldsContainer = modalElement.querySelector('#editWorkOrderNote--fieldsContainer');
@@ -392,30 +394,31 @@
                             }
                         }
                         // Merge all fields from note type with saved values
-                        const allFields = noteType.fields.map((fieldDef) => ({
-                            dataListKey: fieldDef.dataListKey,
-                            fieldHelpText: fieldDef.fieldHelpText,
-                            fieldInputType: fieldDef.fieldInputType,
-                            fieldLabel: fieldDef.fieldLabel,
-                            fieldValue: savedFieldValues.get(fieldDef.noteTypeFieldId) ?? '',
-                            fieldValueMax: fieldDef.fieldValueMax,
-                            fieldValueMin: fieldDef.fieldValueMin,
-                            fieldValueRequired: fieldDef.fieldValueRequired,
-                            hasDividerAbove: fieldDef.hasDividerAbove,
-                            noteTypeFieldId: fieldDef.noteTypeFieldId,
-                            orderNumber: fieldDef.orderNumber
+                        const allFields = noteType.fields.map((fieldDefinition) => ({
+                            dataListKey: fieldDefinition.dataListKey,
+                            fieldHelpText: fieldDefinition.fieldHelpText,
+                            fieldInputType: fieldDefinition.fieldInputType,
+                            fieldLabel: fieldDefinition.fieldLabel,
+                            fieldValue: savedFieldValues.get(fieldDefinition.noteTypeFieldId) ?? '',
+                            fieldValueMax: fieldDefinition.fieldValueMax,
+                            fieldValueMin: fieldDefinition.fieldValueMin,
+                            fieldValueRequired: fieldDefinition.fieldValueRequired,
+                            hasDividerAbove: fieldDefinition.hasDividerAbove,
+                            noteTypeFieldId: fieldDefinition.noteTypeFieldId,
+                            orderNumber: fieldDefinition.orderNumber
                         }));
                         // Add any orphaned fields (fields in note data but not in note type definition)
                         // This handles fields that have been deleted from the note type but still have values
                         if (note.fields !== undefined) {
-                            const noteTypeFieldIds = new Set(noteType.fields.map(f => f.noteTypeFieldId));
+                            const noteTypeFieldIds = new Set(noteType.fields.map((f) => f.noteTypeFieldId));
                             for (const savedField of note.fields) {
                                 if (!noteTypeFieldIds.has(savedField.noteTypeFieldId)) {
                                     // This field has been deleted from the note type, but has a value
                                     // Add it with a special indicator
                                     allFields.push({
                                         dataListKey: savedField.dataListKey,
-                                        fieldHelpText: savedField.fieldHelpText ?? 'This field has been deleted from the note type.',
+                                        fieldHelpText: savedField.fieldHelpText ??
+                                            'This field has been deleted from the note type.',
                                         fieldInputType: savedField.fieldInputType,
                                         fieldLabel: savedField.fieldLabel,
                                         fieldValue: savedField.fieldValue,
@@ -432,7 +435,8 @@
                         // Collect all unique data list keys
                         const dataListKeys = new Set();
                         for (const field of allFields) {
-                            if (field.dataListKey !== null && field.dataListKey !== undefined) {
+                            if (field.dataListKey !== null &&
+                                field.dataListKey !== undefined) {
                                 dataListKeys.add(field.dataListKey);
                             }
                         }
@@ -447,7 +451,8 @@
                         // Show the orphaned fields from the note
                         const dataListKeys = new Set();
                         for (const field of note.fields) {
-                            if (field.dataListKey !== null && field.dataListKey !== undefined) {
+                            if (field.dataListKey !== null &&
+                                field.dataListKey !== undefined) {
                                 dataListKeys.add(field.dataListKey);
                             }
                         }
@@ -499,7 +504,8 @@
                 return;
             }
             const selectedNoteType = noteTypes.find((nt) => nt.noteTypeId.toString() === selectedNoteTypeId);
-            if (selectedNoteType === undefined || selectedNoteType.fields.length === 0) {
+            if (selectedNoteType === undefined ||
+                selectedNoteType.fields.length === 0) {
                 fieldsContainer.innerHTML = '';
                 return;
             }
@@ -559,7 +565,7 @@
                     case 'select': {
                         // Populate select with data list items
                         const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-                            ? dataListMap.get(field.dataListKey) ?? []
+                            ? (dataListMap.get(field.dataListKey) ?? [])
                             : [];
                         fieldsHTML += `
               <div class="control">
@@ -568,7 +574,9 @@
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
-                    ${dataListItems.map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}">${cityssm.escapeHTML(item.dataListItem)}</option>`).join('')}
+                    ${dataListItems
+                            .map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}">${cityssm.escapeHTML(item.dataListItem)}</option>`)
+                            .join('')}
                   </select>
                 </div>
               </div>
@@ -578,9 +586,9 @@
                     case 'text': {
                         // If field has a data list, add datalist element
                         const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-                            ? dataListMap.get(field.dataListKey) ?? []
+                            ? (dataListMap.get(field.dataListKey) ?? [])
                             : [];
-                        const dataListAttr = dataListItems.length > 0
+                        const dataListAttribute = dataListItems.length > 0
                             ? `list="datalist-${field.noteTypeFieldId}"`
                             : '';
                         fieldsHTML += `
@@ -588,7 +596,7 @@
                 <input class="input" type="text" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
-                  ${dataListAttr}
+                  ${dataListAttribute}
                   ${requiredAttribute} />
               </div>
             `;
@@ -596,7 +604,9 @@
                         if (dataListItems.length > 0) {
                             fieldsHTML += `
                 <datalist id="datalist-${field.noteTypeFieldId}">
-                  ${dataListItems.map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`).join('')}
+                  ${dataListItems
+                                .map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`)
+                                .join('')}
                 </datalist>
               `;
                         }
@@ -636,7 +646,7 @@
             // Extract fields with pattern fields[noteTypeFieldId]
             const fields = {};
             for (const [key, value] of formData.entries()) {
-                const match = /^fields\[(\d+)\]$/.exec(key);
+                const match = /^fields\[\d+\]$/v.exec(key);
                 if (match !== null && typeof value === 'string') {
                     fields[match[1]] = value;
                 }

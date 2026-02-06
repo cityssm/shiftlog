@@ -4,7 +4,11 @@ import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
-import type { WorkOrderNote } from '../../database/workOrders/getWorkOrderNotes.js'
+import type {
+  WorkOrderNote,
+  WorkOrderNoteField
+} from '../../database/workOrders/getWorkOrderNotes.js'
+import type { DoGetDataListItemsResponse } from '../../handlers/dashboard-post/doGetDataListItems.js'
 import type { DoCreateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doCreateWorkOrderNote.js'
 import type { DoDeleteWorkOrderNoteResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderNote.js'
 import type { DoGetNoteTypesResponse } from '../../handlers/workOrders-post/doGetNoteTypes.js'
@@ -63,7 +67,9 @@ declare const bulmaJS: BulmaJS
    */
   function loadDataLists(
     dataListKeys: Set<string>,
-    callback: (dataListMap: Map<string, Array<{ dataListItem: string }>>) => void
+    callback: (
+      dataListMap: Map<string, Array<{ dataListItem: string }>>
+    ) => void
   ): void {
     if (dataListKeys.size === 0) {
       callback(new Map())
@@ -78,13 +84,12 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
         { dataListKey: key },
-        (responseJSON: { success: boolean; items: Array<{ dataListItem: string }> }) => {
-          if (responseJSON.success && responseJSON.items !== undefined) {
-            dataListMap.set(key, responseJSON.items)
-          }
-          
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        (responseJSON: DoGetDataListItemsResponse) => {
+          dataListMap.set(key, responseJSON.items)
+
           loadedCount += 1
-          
+
           // When all data lists are loaded, call the callback
           if (loadedCount === totalCount) {
             callback(dataListMap)
@@ -260,12 +265,14 @@ declare const bulmaJS: BulmaJS
         const noteTypeContainer = modalElement.querySelector(
           '#viewWorkOrderNote--noteTypeContainer'
         ) as HTMLElement
+
         if (note.noteType !== null && note.noteType !== undefined) {
           ;(
             modalElement.querySelector(
               '#viewWorkOrderNote--noteType'
             ) as HTMLElement
           ).textContent = note.noteType
+
           noteTypeContainer.style.display = 'block'
         } else {
           noteTypeContainer.style.display = 'none'
@@ -338,7 +345,7 @@ declare const bulmaJS: BulmaJS
       // Extract fields with pattern fields[noteTypeFieldId]
       const fields: Record<string, string> = {}
       for (const [key, value] of formData.entries()) {
-        const match = /^fields\[(\d+)\]$/.exec(key)
+        const match = /^fields\[\d+\]$/v.exec(key)
         if (match !== null && typeof value === 'string') {
           fields[match[1]] = value
         }
@@ -378,11 +385,13 @@ declare const bulmaJS: BulmaJS
         }
 
         const fieldName = `fields[${field.noteTypeFieldId}]`
-        const requiredAttribute = field.fieldValueRequired === true ? 'required' : ''
-        const helpText = field.fieldHelpText !== undefined && field.fieldHelpText !== '' 
-          ? `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>` 
-          : ''
-        
+        const requiredAttribute =
+          field.fieldValueRequired === true ? 'required' : ''
+        const helpText =
+          field.fieldHelpText !== undefined && field.fieldHelpText !== ''
+            ? `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`
+            : ''
+
         fieldsHTML += `<div class="field">`
         fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
@@ -404,10 +413,14 @@ declare const bulmaJS: BulmaJS
             break
           }
           case 'number': {
-            const minAttribute = field.fieldValueMin !== null && field.fieldValueMin !== undefined
-              ? `min="${field.fieldValueMin}"` : ''
-            const maxAttribute = field.fieldValueMax !== null && field.fieldValueMax !== undefined
-              ? `max="${field.fieldValueMax}"` : ''
+            const minAttribute =
+              field.fieldValueMin !== null && field.fieldValueMin !== undefined
+                ? `min="${field.fieldValueMin}"`
+                : ''
+            const maxAttribute =
+              field.fieldValueMax !== null && field.fieldValueMax !== undefined
+                ? `max="${field.fieldValueMax}"`
+                : ''
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
@@ -421,10 +434,11 @@ declare const bulmaJS: BulmaJS
           }
           case 'select': {
             // Populate select with data list items
-            const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-              ? dataListMap.get(field.dataListKey) ?? []
-              : []
-            
+            const dataListItems =
+              field.dataListKey !== null && field.dataListKey !== undefined
+                ? (dataListMap.get(field.dataListKey) ?? [])
+                : []
+
             fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
@@ -432,10 +446,15 @@ declare const bulmaJS: BulmaJS
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
-                    ${dataListItems.map((item) => {
-                      const selected = item.dataListItem === field.fieldValue ? 'selected' : ''
-                      return `<option value="${cityssm.escapeHTML(item.dataListItem)}" ${selected}>${cityssm.escapeHTML(item.dataListItem)}</option>`
-                    }).join('')}
+                    ${dataListItems
+                      .map((item) => {
+                        const selected =
+                          item.dataListItem === field.fieldValue
+                            ? 'selected'
+                            : ''
+                        return `<option value="${cityssm.escapeHTML(item.dataListItem)}" ${selected}>${cityssm.escapeHTML(item.dataListItem)}</option>`
+                      })
+                      .join('')}
                   </select>
                 </div>
               </div>
@@ -444,32 +463,37 @@ declare const bulmaJS: BulmaJS
           }
           case 'text': {
             // If field has a data list, add datalist element
-            const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-              ? dataListMap.get(field.dataListKey) ?? []
-              : []
-            
-            const dataListAttr = dataListItems.length > 0 
-              ? `list="datalist-edit-${field.noteTypeFieldId}"` 
-              : ''
-            
+            const dataListItems =
+              field.dataListKey !== null && field.dataListKey !== undefined
+                ? (dataListMap.get(field.dataListKey) ?? [])
+                : []
+
+            const dataListAttribute =
+              dataListItems.length > 0
+                ? `list="datalist-edit-${field.noteTypeFieldId}"`
+                : ''
+
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
                   id="editWorkOrderNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   value="${cityssm.escapeHTML(field.fieldValue)}"
-                  ${dataListAttr}
+                  ${dataListAttribute}
                   ${requiredAttribute} />
               </div>
             `
-            
+
             // Add datalist element if applicable
             if (dataListItems.length > 0) {
               fieldsHTML += `
                 <datalist id="datalist-edit-${field.noteTypeFieldId}">
-                  ${dataListItems.map((item) => 
-                    `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`
-                  ).join('')}
+                  ${dataListItems
+                    .map(
+                      (item) =>
+                        `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`
+                    )
+                    .join('')}
                 </datalist>
               `
             }
@@ -491,7 +515,7 @@ declare const bulmaJS: BulmaJS
         fieldsHTML += helpText
         fieldsHTML += `</div>`
       }
-      
+
       // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
       fieldsContainer.innerHTML = fieldsHTML
     }
@@ -515,30 +539,24 @@ declare const bulmaJS: BulmaJS
           ) as HTMLTextAreaElement
         ).value = note.noteText
 
-        // Show note type if present
-        const noteTypeContainer = modalElement.querySelector(
-          '#editWorkOrderNote--noteTypeContainer'
-        ) as HTMLElement
         if (note.noteType !== null && note.noteType !== undefined) {
           ;(
             modalElement.querySelector(
               '#editWorkOrderNote--noteType'
             ) as HTMLElement
-          ).textContent = note.noteType
-          noteTypeContainer.style.display = 'block'
-        } else {
-          noteTypeContainer.style.display = 'none'
+          ).textContent = `"${note.noteType}"`
         }
-
         // Render fields if present
         const fieldsContainer = modalElement.querySelector(
           '#editWorkOrderNote--fieldsContainer'
         ) as HTMLElement
-        
+
         // If note has a note type, get all fields from the note type definition
         if (note.noteTypeId !== null && note.noteTypeId !== undefined) {
-          const noteType = noteTypes.find((nt) => nt.noteTypeId === note.noteTypeId)
-          
+          const noteType = noteTypes.find(
+            (nt) => nt.noteTypeId === note.noteTypeId
+          )
+
           if (noteType !== undefined && noteType.fields.length > 0) {
             // Create a map of saved field values by noteTypeFieldId
             const savedFieldValues = new Map<number, string>()
@@ -549,31 +567,38 @@ declare const bulmaJS: BulmaJS
             }
 
             // Merge all fields from note type with saved values
-            const allFields: WorkOrderNoteField[] = noteType.fields.map((fieldDef) => ({
-              dataListKey: fieldDef.dataListKey,
-              fieldHelpText: fieldDef.fieldHelpText,
-              fieldInputType: fieldDef.fieldInputType,
-              fieldLabel: fieldDef.fieldLabel,
-              fieldValue: savedFieldValues.get(fieldDef.noteTypeFieldId) ?? '',
-              fieldValueMax: fieldDef.fieldValueMax,
-              fieldValueMin: fieldDef.fieldValueMin,
-              fieldValueRequired: fieldDef.fieldValueRequired,
-              hasDividerAbove: fieldDef.hasDividerAbove,
-              noteTypeFieldId: fieldDef.noteTypeFieldId,
-              orderNumber: fieldDef.orderNumber
-            }))
+            const allFields: WorkOrderNoteField[] = noteType.fields.map(
+              (fieldDefinition) => ({
+                dataListKey: fieldDefinition.dataListKey,
+                fieldHelpText: fieldDefinition.fieldHelpText,
+                fieldInputType: fieldDefinition.fieldInputType,
+                fieldLabel: fieldDefinition.fieldLabel,
+                fieldValue:
+                  savedFieldValues.get(fieldDefinition.noteTypeFieldId) ?? '',
+                fieldValueMax: fieldDefinition.fieldValueMax,
+                fieldValueMin: fieldDefinition.fieldValueMin,
+                fieldValueRequired: fieldDefinition.fieldValueRequired,
+                hasDividerAbove: fieldDefinition.hasDividerAbove,
+                noteTypeFieldId: fieldDefinition.noteTypeFieldId,
+                orderNumber: fieldDefinition.orderNumber
+              })
+            )
 
             // Add any orphaned fields (fields in note data but not in note type definition)
             // This handles fields that have been deleted from the note type but still have values
             if (note.fields !== undefined) {
-              const noteTypeFieldIds = new Set(noteType.fields.map(f => f.noteTypeFieldId))
+              const noteTypeFieldIds = new Set(
+                noteType.fields.map((f) => f.noteTypeFieldId)
+              )
               for (const savedField of note.fields) {
                 if (!noteTypeFieldIds.has(savedField.noteTypeFieldId)) {
                   // This field has been deleted from the note type, but has a value
                   // Add it with a special indicator
                   allFields.push({
                     dataListKey: savedField.dataListKey,
-                    fieldHelpText: savedField.fieldHelpText ?? 'This field has been deleted from the note type.',
+                    fieldHelpText:
+                      savedField.fieldHelpText ??
+                      'This field has been deleted from the note type.',
                     fieldInputType: savedField.fieldInputType,
                     fieldLabel: savedField.fieldLabel,
                     fieldValue: savedField.fieldValue,
@@ -591,14 +616,21 @@ declare const bulmaJS: BulmaJS
             // Collect all unique data list keys
             const dataListKeys = new Set<string>()
             for (const field of allFields) {
-              if (field.dataListKey !== null && field.dataListKey !== undefined) {
+              if (
+                field.dataListKey !== null &&
+                field.dataListKey !== undefined
+              ) {
                 dataListKeys.add(field.dataListKey)
               }
             }
 
             // Load data list items if needed
             loadDataLists(dataListKeys, (dataListMap) => {
-              renderEditFieldsWithDataLists(allFields, dataListMap, fieldsContainer)
+              renderEditFieldsWithDataLists(
+                allFields,
+                dataListMap,
+                fieldsContainer
+              )
             })
           } else if (note.fields !== undefined && note.fields.length > 0) {
             // Note type found but has no fields, yet note has field data
@@ -606,13 +638,20 @@ declare const bulmaJS: BulmaJS
             // Show the orphaned fields from the note
             const dataListKeys = new Set<string>()
             for (const field of note.fields) {
-              if (field.dataListKey !== null && field.dataListKey !== undefined) {
+              if (
+                field.dataListKey !== null &&
+                field.dataListKey !== undefined
+              ) {
                 dataListKeys.add(field.dataListKey)
               }
             }
 
             loadDataLists(dataListKeys, (dataListMap) => {
-              renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer)
+              renderEditFieldsWithDataLists(
+                note.fields ?? [],
+                dataListMap,
+                fieldsContainer
+              )
             })
           } else {
             fieldsContainer.innerHTML = ''
@@ -628,9 +667,12 @@ declare const bulmaJS: BulmaJS
           }
 
           loadDataLists(dataListKeys, (dataListMap) => {
-            renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer)
+            renderEditFieldsWithDataLists(
+              note.fields ?? [],
+              dataListMap,
+              fieldsContainer
+            )
           })
-          
         } else {
           fieldsContainer.innerHTML = ''
         }
@@ -669,7 +711,10 @@ declare const bulmaJS: BulmaJS
         (nt) => nt.noteTypeId.toString() === selectedNoteTypeId
       )
 
-      if (selectedNoteType === undefined || selectedNoteType.fields.length === 0) {
+      if (
+        selectedNoteType === undefined ||
+        selectedNoteType.fields.length === 0
+      ) {
         fieldsContainer.innerHTML = ''
         return
       }
@@ -684,7 +729,11 @@ declare const bulmaJS: BulmaJS
 
       // Load data list items if needed
       loadDataLists(dataListKeys, (dataListMap) => {
-        renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer)
+        renderFieldsWithDataLists(
+          selectedNoteType,
+          dataListMap,
+          fieldsContainer
+        )
       })
     }
 
@@ -701,9 +750,10 @@ declare const bulmaJS: BulmaJS
 
         const fieldName = `fields[${field.noteTypeFieldId}]`
         const requiredAttribute = field.fieldValueRequired ? 'required' : ''
-        const helpText = field.fieldHelpText === '' 
-          ? '' 
-          : `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`
+        const helpText =
+          field.fieldHelpText === ''
+            ? ''
+            : `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`
 
         fieldsHTML += `<div class="field">`
         fieldsHTML += `<label class="label" for="addWorkOrderNote--field-${field.noteTypeFieldId}">
@@ -724,8 +774,10 @@ declare const bulmaJS: BulmaJS
             break
           }
           case 'number': {
-            const minAttribute = field.fieldValueMin === null ? '' : `min="${field.fieldValueMin}"`
-            const maxAttribute = field.fieldValueMax === null ? '' : `max="${field.fieldValueMax}"`
+            const minAttribute =
+              field.fieldValueMin === null ? '' : `min="${field.fieldValueMin}"`
+            const maxAttribute =
+              field.fieldValueMax === null ? '' : `max="${field.fieldValueMax}"`
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
@@ -738,10 +790,11 @@ declare const bulmaJS: BulmaJS
           }
           case 'select': {
             // Populate select with data list items
-            const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-              ? dataListMap.get(field.dataListKey) ?? []
-              : []
-            
+            const dataListItems =
+              field.dataListKey !== null && field.dataListKey !== undefined
+                ? (dataListMap.get(field.dataListKey) ?? [])
+                : []
+
             fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
@@ -749,9 +802,12 @@ declare const bulmaJS: BulmaJS
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
-                    ${dataListItems.map((item) => 
-                      `<option value="${cityssm.escapeHTML(item.dataListItem)}">${cityssm.escapeHTML(item.dataListItem)}</option>`
-                    ).join('')}
+                    ${dataListItems
+                      .map(
+                        (item) =>
+                          `<option value="${cityssm.escapeHTML(item.dataListItem)}">${cityssm.escapeHTML(item.dataListItem)}</option>`
+                      )
+                      .join('')}
                   </select>
                 </div>
               </div>
@@ -760,31 +816,36 @@ declare const bulmaJS: BulmaJS
           }
           case 'text': {
             // If field has a data list, add datalist element
-            const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-              ? dataListMap.get(field.dataListKey) ?? []
-              : []
-            
-            const dataListAttr = dataListItems.length > 0 
-              ? `list="datalist-${field.noteTypeFieldId}"` 
-              : ''
-            
+            const dataListItems =
+              field.dataListKey !== null && field.dataListKey !== undefined
+                ? (dataListMap.get(field.dataListKey) ?? [])
+                : []
+
+            const dataListAttribute =
+              dataListItems.length > 0
+                ? `list="datalist-${field.noteTypeFieldId}"`
+                : ''
+
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
-                  ${dataListAttr}
+                  ${dataListAttribute}
                   ${requiredAttribute} />
               </div>
             `
-            
+
             // Add datalist element if applicable
             if (dataListItems.length > 0) {
               fieldsHTML += `
                 <datalist id="datalist-${field.noteTypeFieldId}">
-                  ${dataListItems.map((item) => 
-                    `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`
-                  ).join('')}
+                  ${dataListItems
+                    .map(
+                      (item) =>
+                        `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`
+                    )
+                    .join('')}
                 </datalist>
               `
             }
@@ -835,7 +896,7 @@ declare const bulmaJS: BulmaJS
       // Extract fields with pattern fields[noteTypeFieldId]
       const fields: Record<string, string> = {}
       for (const [key, value] of formData.entries()) {
-        const match = /^fields\[(\d+)\]$/.exec(key)
+        const match = /^fields\[\d+\]$/v.exec(key)
         if (match !== null && typeof value === 'string') {
           fields[match[1]] = value
         }
