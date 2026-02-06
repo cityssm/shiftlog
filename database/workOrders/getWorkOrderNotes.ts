@@ -10,6 +10,7 @@ export interface WorkOrderNoteField {
   fieldValueMax?: number | null
   fieldValueMin?: number | null
   fieldValueRequired?: boolean
+  hasDividerAbove?: boolean
   noteTypeFieldId: number
 }
 
@@ -90,6 +91,7 @@ export default async function getWorkOrderNotes(
         ntf.fieldValueMin,
         ntf.fieldValueMax,
         ntf.fieldValueRequired,
+        ntf.hasDividerAbove,
         wnf.fieldValue
       FROM
         ShiftLog.WorkOrderNoteFields wnf
@@ -116,6 +118,7 @@ export default async function getWorkOrderNotes(
       fieldValueMax: field.fieldValueMax,
       fieldValueMin: field.fieldValueMin,
       fieldValueRequired: field.fieldValueRequired,
+      hasDividerAbove: field.hasDividerAbove,
       noteTypeFieldId: field.noteTypeFieldId
     })
   }

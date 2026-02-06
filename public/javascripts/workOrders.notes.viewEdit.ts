@@ -335,6 +335,11 @@ declare const bulmaJS: BulmaJS
     ): void {
       let fieldsHTML = ''
       for (const field of fields) {
+        // Render divider if field has one
+        if (field.hasDividerAbove === true) {
+          fieldsHTML += `<hr class="mt-4 mb-4" />`
+        }
+
         const fieldName = `fields[${field.noteTypeFieldId}]`
         const requiredAttribute = field.fieldValueRequired === true ? 'required' : ''
         const helpText = field.fieldHelpText !== undefined && field.fieldHelpText !== '' 
@@ -493,8 +498,72 @@ declare const bulmaJS: BulmaJS
           '#editWorkOrderNote--fieldsContainer'
         ) as HTMLElement
         
-        if (note.fields !== undefined && note.fields.length > 0) {
-          // Collect all unique data list keys
+        // If note has a note type, get all fields from the note type definition
+        if (note.noteTypeId !== null && note.noteTypeId !== undefined) {
+          const noteType = noteTypes.find((nt) => nt.noteTypeId === note.noteTypeId)
+          
+          if (noteType !== undefined && noteType.fields.length > 0) {
+            // Create a map of saved field values by noteTypeFieldId
+            const savedFieldValues = new Map<number, string>()
+            if (note.fields !== undefined) {
+              for (const field of note.fields) {
+                savedFieldValues.set(field.noteTypeFieldId, field.fieldValue)
+              }
+            }
+
+            // Merge all fields from note type with saved values
+            const allFields: WorkOrderNoteField[] = noteType.fields.map((fieldDef) => ({
+              dataListKey: fieldDef.dataListKey,
+              fieldHelpText: fieldDef.fieldHelpText,
+              fieldInputType: fieldDef.fieldInputType,
+              fieldLabel: fieldDef.fieldLabel,
+              fieldValue: savedFieldValues.get(fieldDef.noteTypeFieldId) ?? '',
+              fieldValueMax: fieldDef.fieldValueMax,
+              fieldValueMin: fieldDef.fieldValueMin,
+              fieldValueRequired: fieldDef.fieldValueRequired,
+              hasDividerAbove: fieldDef.hasDividerAbove,
+              noteTypeFieldId: fieldDef.noteTypeFieldId
+            }))
+
+            // Collect all unique data list keys
+            const dataListKeys = new Set<string>()
+            for (const field of allFields) {
+              if (field.dataListKey !== null && field.dataListKey !== undefined) {
+                dataListKeys.add(field.dataListKey)
+              }
+            }
+
+            // Load data list items if needed
+            if (dataListKeys.size > 0) {
+              const dataListPromises = Array.from(dataListKeys).map((key) =>
+                fetch(
+                  `${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`
+                )
+                  .then((response) => response.json())
+                  .then((data) => ({ key, items: data as Array<{ dataListItem: string }> }))
+              )
+
+              Promise.all(dataListPromises)
+                .then((dataLists) => {
+                  const dataListMap = new Map<string, Array<{ dataListItem: string }>>()
+                  for (const dl of dataLists) {
+                    dataListMap.set(dl.key, dl.items)
+                  }
+                  renderEditFieldsWithDataLists(allFields, dataListMap, fieldsContainer)
+                })
+                .catch(() => {
+                  // If data list loading fails, render without data lists
+                  renderEditFieldsWithDataLists(allFields, new Map(), fieldsContainer)
+                })
+            } else {
+              renderEditFieldsWithDataLists(allFields, new Map(), fieldsContainer)
+            }
+          } else {
+            fieldsContainer.innerHTML = ''
+          }
+        } else if (note.fields !== undefined && note.fields.length > 0) {
+          // Fallback: If no note type found but fields exist, use saved fields only
+          // This handles cases where note type might have been deleted
           const dataListKeys = new Set<string>()
           for (const field of note.fields) {
             if (field.dataListKey !== null && field.dataListKey !== undefined) {
@@ -502,7 +571,6 @@ declare const bulmaJS: BulmaJS
             }
           }
 
-          // Load data list items if needed
           if (dataListKeys.size > 0) {
             const dataListPromises = Array.from(dataListKeys).map((key) =>
               fetch(
@@ -521,11 +589,11 @@ declare const bulmaJS: BulmaJS
                 renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer)
               })
               .catch(() => {
-                // If data list loading fails, render without data lists
                 renderEditFieldsWithDataLists(note.fields ?? [], new Map(), fieldsContainer)
               })
           } else {
             renderEditFieldsWithDataLists(note.fields, new Map(), fieldsContainer)
+          }
           }
         } else {
           fieldsContainer.innerHTML = ''
