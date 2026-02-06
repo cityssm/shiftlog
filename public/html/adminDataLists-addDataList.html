@@ -20,20 +20,25 @@
           <label class="label" for="addDataList--dataListKey">
             Data List Key
           </label>
-          <div class="control">
-            <input
-              class="input"
-              id="addDataList--dataListKey"
-              name="dataListKey"
-              type="text"
-              pattern="user-[a-zA-Z0-9\-]+"
-              placeholder="user-myList"
-              autofocus
-              required
-            />
+          <div class="field has-addons">
+            <div class="control">
+              <a class="button is-static">user-</a>
+            </div>
+            <div class="control is-expanded">
+              <input
+                class="input"
+                id="addDataList--dataListKey"
+                name="dataListKey"
+                type="text"
+                pattern="[a-zA-Z0-9\-]+"
+                placeholder="myList"
+                autofocus
+                required
+              />
+            </div>
           </div>
           <p class="help">
-            Must start with "user-" prefix followed by at least one letter, number, or hyphen. This cannot be changed later.
+            Enter a unique identifier using letters, numbers, or hyphens. This cannot be changed later.
           </p>
         </div>
         <div class="field">

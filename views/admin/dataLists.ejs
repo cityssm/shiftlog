@@ -82,43 +82,49 @@
           <% } %>
         </span>
       </summary>
-      <div class="panel-block is-justify-content-space-between">
-        <div class="buttons are-small">
+      <div class="panel-block">
+        <div class="field is-grouped is-grouped-multiline" style="width: 100%;">
+          <div class="control">
+            <button
+              class="button is-success is-small button--addItem" 
+              data-data-list-key="<%= dataList.dataListKey %>"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-plus"></i>
+              </span>
+              <span>Add Item</span>
+            </button>
+          </div>
           <% if (!dataList.isSystemList) { %>
-          <button
-            class="button is-info button--renameDataList" 
-            data-data-list-key="<%= dataList.dataListKey %>"
-            data-data-list-name="<%= dataList.dataListName %>"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-pencil"></i>
-            </span>
-            <span>Rename List</span>
-          </button>
-          <button
-            class="button is-danger button--deleteDataList" 
-            data-data-list-key="<%= dataList.dataListKey %>"
-            data-data-list-name="<%= dataList.dataListName %>"
-            type="button"
-          >
-            <span class="icon">
-              <i class="fa-solid fa-trash"></i>
-            </span>
-            <span>Delete List</span>
-          </button>
+          <div class="control">
+            <button
+              class="button is-info is-small button--renameDataList" 
+              data-data-list-key="<%= dataList.dataListKey %>"
+              data-data-list-name="<%= dataList.dataListName %>"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-pencil"></i>
+              </span>
+              <span>Rename List</span>
+            </button>
+          </div>
+          <div class="control">
+            <button
+              class="button is-danger is-small button--deleteDataList" 
+              data-data-list-key="<%= dataList.dataListKey %>"
+              data-data-list-name="<%= dataList.dataListName %>"
+              type="button"
+            >
+              <span class="icon">
+                <i class="fa-solid fa-trash"></i>
+              </span>
+              <span>Delete List</span>
+            </button>
+          </div>
           <% } %>
         </div>
-        <button
-          class="button is-success is-small button--addItem" 
-          data-data-list-key="<%= dataList.dataListKey %>"
-          type="button"
-        >
-          <span class="icon">
-            <i class="fa-solid fa-plus"></i>
-          </span>
-          <span>Add Item</span>
-        </button>
       </div>
       <div class="panel-block p-0">
         <div class="table-container" style="width: 100%;">

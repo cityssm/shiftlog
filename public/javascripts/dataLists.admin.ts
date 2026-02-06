@@ -237,10 +237,10 @@ declare const exports: {
       const addForm = submitEvent.currentTarget as HTMLFormElement
       const formData = new FormData(addForm)
 
-      const dataListKey = (formData.get('dataListKey') as string | null)?.trim()
+      const dataListKeySuffix = (formData.get('dataListKey') as string | null)?.trim()
       const dataListName = (formData.get('dataListName') as string | null)?.trim()
 
-      if (dataListKey === '' || dataListName === '') {
+      if (dataListKeySuffix === '' || dataListName === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
           title: 'Required Fields',
@@ -249,27 +249,27 @@ declare const exports: {
         return
       }
 
-      // Server will validate the "user-" prefix, but we check here for immediate feedback
-      if (!dataListKey?.startsWith('user-')) {
-        bulmaJS.alert({
-          contextualColorName: 'warning',
-          title: 'Invalid Key',
-          message: 'Data list key must start with "user-".'
-        })
-        return
-      }
+      // Prepend "user-" to the key
+      const dataListKey = `user-${dataListKeySuffix}`
 
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddDataList`,
-        addForm,
+        {
+          dataListKey,
+          dataListName
+        },
         (responseJSON: DoAddDataListResponse) => {
           if (responseJSON.success && responseJSON.dataLists !== undefined) {
             closeModalFunction()
 
+            const message = responseJSON.wasRecovered
+              ? 'The previously deleted data list has been recovered.'
+              : 'The data list has been successfully created.'
+
             bulmaJS.alert({
               contextualColorName: 'success',
-              title: 'Data List Created',
-              message: 'The data list has been successfully created.',
+              title: responseJSON.wasRecovered ? 'Data List Recovered' : 'Data List Created',
+              message,
               onconfirm() {
                 // Reload the page to show the new list
                 window.location.reload()

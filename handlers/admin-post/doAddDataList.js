@@ -1,5 +1,6 @@
 import createDataList from '../../database/app/createDataList.js';
 import getDataLists from '../../database/app/getDataLists.js';
+import recoverDataList from '../../database/app/recoverDataList.js';
 export default async function handler(request, response) {
     // Validate that the dataListKey starts with "user-"
     if (!request.body.dataListKey.startsWith('user-')) {
@@ -9,12 +10,23 @@ export default async function handler(request, response) {
         });
         return;
     }
-    const form = {
-        ...request.body,
-        isSystemList: false,
-        userName: request.session.user?.userName ?? ''
-    };
-    const success = await createDataList(form, form.userName);
+    const userName = request.session.user?.userName ?? '';
+    // First, try to recover a deleted data list with the same key
+    const wasRecovered = await recoverDataList({
+        dataListKey: request.body.dataListKey,
+        dataListName: request.body.dataListName,
+        userName
+    });
+    let success = wasRecovered;
+    // If not recovered, create a new data list
+    if (!wasRecovered) {
+        const form = {
+            ...request.body,
+            isSystemList: false,
+            userName
+        };
+        success = await createDataList(form, form.userName);
+    }
     let dataLists;
     if (success) {
         dataLists = await getDataLists();
@@ -22,6 +34,7 @@ export default async function handler(request, response) {
     response.json({
         success,
         errorMessage: success ? undefined : 'Failed to create data list.',
-        dataLists
+        dataLists,
+        wasRecovered
     });
 }

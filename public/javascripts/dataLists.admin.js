@@ -143,9 +143,9 @@
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
             const formData = new FormData(addForm);
-            const dataListKey = formData.get('dataListKey')?.trim();
-            const dataListName = formData.get('dataListName')?.trim();
-            if (dataListKey === '' || dataListName === '') {
+            const dataListKeySuffix = (formData.get('dataListKey'))?.trim();
+            const dataListName = (formData.get('dataListName'))?.trim();
+            if (dataListKeySuffix === '' || dataListName === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
                     title: 'Required Fields',
@@ -153,25 +153,24 @@
                 });
                 return;
             }
-            // Server will validate the "user-" prefix, but we check here for immediate feedback
-            if (!dataListKey?.startsWith('user-')) {
-                bulmaJS.alert({
-                    contextualColorName: 'warning',
-                    title: 'Invalid Key',
-                    message: 'Data list key must start with "user-".'
-                });
-                return;
-            }
+            // Prepend "user-" to the key
+            const dataListKey = `user-${dataListKeySuffix}`;
             cityssm.postJSON(
                 `${shiftLog.urlPrefix}/admin/doAddDataList`,
-                addForm,
+                {
+                    dataListKey,
+                    dataListName
+                },
                 (responseJSON) => {
                     if (responseJSON.success && responseJSON.dataLists !== undefined) {
                         closeModalFunction();
+                        const message = responseJSON.wasRecovered
+                            ? 'The previously deleted data list has been recovered.'
+                            : 'The data list has been successfully created.';
                         bulmaJS.alert({
                             contextualColorName: 'success',
-                            title: 'Data List Created',
-                            message: 'The data list has been successfully created.',
+                            title: responseJSON.wasRecovered ? 'Data List Recovered' : 'Data List Created',
+                            message,
                             onconfirm() {
                                 // Reload the page to show the new list
                                 window.location.reload();

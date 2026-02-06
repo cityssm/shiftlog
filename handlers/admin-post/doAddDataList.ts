@@ -4,12 +4,14 @@ import createDataList, {
   type CreateDataListForm
 } from '../../database/app/createDataList.js'
 import getDataLists, { type DataList } from '../../database/app/getDataLists.js'
+import recoverDataList from '../../database/app/recoverDataList.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddDataListResponse = {
   success: boolean
   errorMessage?: string
   dataLists?: DataList[]
+  wasRecovered?: boolean
 }
 
 export default async function handler(
@@ -30,13 +32,27 @@ export default async function handler(
     return
   }
 
-  const form: CreateDataListForm = {
-    ...request.body,
-    isSystemList: false,
-    userName: request.session.user?.userName ?? ''
-  }
+  const userName = request.session.user?.userName ?? ''
 
-  const success = await createDataList(form, form.userName)
+  // First, try to recover a deleted data list with the same key
+  const wasRecovered = await recoverDataList({
+    dataListKey: request.body.dataListKey,
+    dataListName: request.body.dataListName,
+    userName
+  })
+
+  let success = wasRecovered
+
+  // If not recovered, create a new data list
+  if (!wasRecovered) {
+    const form: CreateDataListForm = {
+      ...request.body,
+      isSystemList: false,
+      userName
+    }
+
+    success = await createDataList(form, form.userName)
+  }
 
   let dataLists: DataList[] | undefined
 
@@ -47,6 +63,7 @@ export default async function handler(
   response.json({
     success,
     errorMessage: success ? undefined : 'Failed to create data list.',
-    dataLists
+    dataLists,
+    wasRecovered
   })
 }

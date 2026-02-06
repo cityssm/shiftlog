@@ -16,6 +16,7 @@ export default async function getDataLists() {
         recordDelete_dateTime IS NULL
         AND instance = @instance
       ORDER BY
+        isSystemList ASC,
         dataListName
     `);
     return dataListsResult.recordset;
