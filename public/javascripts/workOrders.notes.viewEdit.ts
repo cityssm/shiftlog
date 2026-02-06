@@ -336,6 +336,46 @@ declare const bulmaJS: BulmaJS
         return
       }
 
+      // Collect all unique data list keys
+      const dataListKeys = new Set<string>()
+      for (const field of selectedNoteType.fields) {
+        if (field.dataListKey !== null && field.dataListKey !== undefined) {
+          dataListKeys.add(field.dataListKey)
+        }
+      }
+
+      // Load data list items if needed
+      if (dataListKeys.size > 0) {
+        const dataListPromises = Array.from(dataListKeys).map((key) =>
+          fetch(
+            `${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`
+          )
+            .then((response) => response.json())
+            .then((data) => ({ key, items: data as Array<{ dataListItem: string }> }))
+        )
+
+        Promise.all(dataListPromises)
+          .then((dataLists) => {
+            const dataListMap = new Map<string, Array<{ dataListItem: string }>>()
+            for (const dl of dataLists) {
+              dataListMap.set(dl.key, dl.items)
+            }
+            renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer)
+          })
+          .catch(() => {
+            // If data list loading fails, render without data lists
+            renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer)
+          })
+      } else {
+        renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer)
+      }
+    }
+
+    function renderFieldsWithDataLists(
+      selectedNoteType: NoteTypeWithFields,
+      dataListMap: Map<string, Array<{ dataListItem: string }>>,
+      fieldsContainer: HTMLElement
+    ): void {
       let fieldsHTML = ''
       for (const field of selectedNoteType.fields) {
         if (field.hasDividerAbove) {
@@ -380,7 +420,11 @@ declare const bulmaJS: BulmaJS
             break
           }
           case 'select': {
-            // Select fields with data list are not yet fully implemented
+            // Populate select with data list items
+            const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+              ? dataListMap.get(field.dataListKey) ?? []
+              : []
+            
             fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
@@ -388,6 +432,9 @@ declare const bulmaJS: BulmaJS
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
+                    ${dataListItems.map((item) => 
+                      `<option value="${cityssm.escapeHTML(item.dataListItem)}">${cityssm.escapeHTML(item.dataListItem)}</option>`
+                    ).join('')}
                   </select>
                 </div>
               </div>
@@ -395,14 +442,35 @@ declare const bulmaJS: BulmaJS
             break
           }
           case 'text': {
+            // If field has a data list, add datalist element
+            const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+              ? dataListMap.get(field.dataListKey) ?? []
+              : []
+            
+            const dataListAttr = dataListItems.length > 0 
+              ? `list="datalist-${field.noteTypeFieldId}"` 
+              : ''
+            
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
+                  ${dataListAttr}
                   ${requiredAttribute} />
               </div>
             `
+            
+            // Add datalist element if applicable
+            if (dataListItems.length > 0) {
+              fieldsHTML += `
+                <datalist id="datalist-${field.noteTypeFieldId}">
+                  ${dataListItems.map((item) => 
+                    `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`
+                  ).join('')}
+                </datalist>
+              `
+            }
             break
           }
           case 'textbox': {
