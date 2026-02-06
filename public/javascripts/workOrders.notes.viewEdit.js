@@ -217,6 +217,36 @@
                 fieldsContainer.innerHTML = '';
                 return;
             }
+            // Collect all unique data list keys
+            const dataListKeys = new Set();
+            for (const field of selectedNoteType.fields) {
+                if (field.dataListKey !== null && field.dataListKey !== undefined) {
+                    dataListKeys.add(field.dataListKey);
+                }
+            }
+            // Load data list items if needed
+            if (dataListKeys.size > 0) {
+                const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                    .then((response) => response.json())
+                    .then((data) => ({ key, items: data })));
+                Promise.all(dataListPromises)
+                    .then((dataLists) => {
+                    const dataListMap = new Map();
+                    for (const dl of dataLists) {
+                        dataListMap.set(dl.key, dl.items);
+                    }
+                    renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer);
+                })
+                    .catch(() => {
+                    // If data list loading fails, render without data lists
+                    renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer);
+                });
+            }
+            else {
+                renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer);
+            }
+        }
+        function renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer) {
             let fieldsHTML = '';
             for (const field of selectedNoteType.fields) {
                 if (field.hasDividerAbove) {
@@ -258,7 +288,10 @@
                         break;
                     }
                     case 'select': {
-                        // Select fields with data list are not yet fully implemented
+                        // Populate select with data list items
+                        const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+                            ? dataListMap.get(field.dataListKey) ?? []
+                            : [];
                         fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
@@ -266,6 +299,7 @@
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
+                    ${dataListItems.map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}">${cityssm.escapeHTML(item.dataListItem)}</option>`).join('')}
                   </select>
                 </div>
               </div>
@@ -273,14 +307,30 @@
                         break;
                     }
                     case 'text': {
+                        // If field has a data list, add datalist element
+                        const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+                            ? dataListMap.get(field.dataListKey) ?? []
+                            : [];
+                        const dataListAttr = dataListItems.length > 0
+                            ? `list="datalist-${field.noteTypeFieldId}"`
+                            : '';
                         fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
+                  ${dataListAttr}
                   ${requiredAttribute} />
               </div>
             `;
+                        // Add datalist element if applicable
+                        if (dataListItems.length > 0) {
+                            fieldsHTML += `
+                <datalist id="datalist-${field.noteTypeFieldId}">
+                  ${dataListItems.map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`).join('')}
+                </datalist>
+              `;
+                        }
                         break;
                     }
                     case 'textbox': {
