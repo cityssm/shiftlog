@@ -418,6 +418,7 @@
 
 <% if (!isCreate) { %>
 <script>
+  exports.isEdit = <%= isEdit %>;
   exports.shiftCrews = <%- JSON.stringify(shiftCrews) %>;
   exports.shiftEmployees = <%- JSON.stringify(shiftEmployees) %>;  
   exports.shiftEquipment = <%- JSON.stringify(shiftEquipment) %>;
