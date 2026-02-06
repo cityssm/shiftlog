@@ -36,33 +36,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = getShift;
-var config_helpers_js_1 = require("../../helpers/config.helpers.js");
-var database_helpers_js_1 = require("../../helpers/database.helpers.js");
-function getShift(shiftId, user) {
+exports.default = handler;
+var deleteShiftNote_js_1 = require("../../database/shifts/deleteShiftNote.js");
+function handler(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool, sql, shiftsResult, shift;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];
+        var success;
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, (0, deleteShiftNote_js_1.default)(request.body.shiftId, request.body.noteSequence, (_b = (_a = request.session.user) === null || _a === void 0 ? void 0 : _a.userName) !== null && _b !== void 0 ? _b : '')];
                 case 1:
-                    pool = _a.sent();
-                    sql = "\n    SELECT\n      s.shiftId,\n      s.shiftDate,\n      s.shiftTimeDataListItemId,\n      sTime.dataListItem AS shiftTimeDataListItem,\n      s.shiftTypeDataListItemId,\n      sType.dataListItem AS shiftTypeDataListItem,\n      s.supervisorEmployeeNumber,\n      e.firstName AS supervisorFirstName,\n      e.lastName AS supervisorLastName,\n      e.userName AS supervisorUserName,\n      s.shiftDescription,\n      s.recordLock_dateTime\n    FROM\n      ShiftLog.Shifts s\n      LEFT JOIN ShiftLog.DataListItems sTime ON s.shiftTimeDataListItemId = sTime.dataListItemId\n      LEFT JOIN ShiftLog.DataListItems sType ON s.shiftTypeDataListItemId = sType.dataListItemId\n      LEFT JOIN ShiftLog.Employees e ON s.supervisorEmployeeNumber = e.employeeNumber\n      AND s.instance = e.instance\n    WHERE\n      s.instance = @instance\n      AND s.recordDelete_dateTime IS NULL\n      AND s.shiftId = @shiftId ".concat(user === undefined
-                        ? ''
-                        : /* sql */ "\n            AND (\n              sType.userGroupId IS NULL\n              OR sType.userGroupId IN (\n                SELECT\n                  userGroupId\n                FROM\n                  ShiftLog.UserGroupMembers\n                WHERE\n                  userName = @userName\n              )\n            )\n          ", "\n  ");
-                    return [4 /*yield*/, pool
-                            .request()
-                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
-                            .input('shiftId', shiftId)
-                            .input('userName', user === null || user === void 0 ? void 0 : user.userName)
-                            .query(sql)];
-                case 2:
-                    shiftsResult = _a.sent();
-                    if (shiftsResult.recordset.length === 0) {
-                        return [2 /*return*/, undefined];
-                    }
-                    shift = shiftsResult.recordset[0];
-                    return [2 /*return*/, shift];
+                    success = _c.sent();
+                    response.json({
+                        success: success
+                    });
+                    return [2 /*return*/];
             }
         });
     });

@@ -1,0 +1,70 @@
+<div
+  class="modal"
+  id="modal--addShiftNote"
+  role="dialog"
+  aria-label="Add Note"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">
+        Add Shift Note
+      </p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addShiftNote">
+        <input id="addShiftNote--shiftId" name="shiftId" type="hidden" />
+        
+        <div class="field">
+          <label class="label" for="addShiftNote--noteTypeId">
+            Note Type (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="addShiftNote--noteTypeId" name="noteTypeId">
+                <option value="">(No Type - Standard Note)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            Select a note type to capture additional structured information.
+          </p>
+        </div>
+
+        <div class="field">
+          <label class="label" for="addShiftNote--noteText">
+            Note Text
+          </label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="addShiftNote--noteText"
+              name="noteText"
+              placeholder="Enter note text..."
+              rows="8"
+              required
+            ></textarea>
+          </div>
+        </div>
+
+        <div id="addShiftNote--fieldsContainer"></div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-success" type="submit" form="form--addShiftNote">
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Add Note</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

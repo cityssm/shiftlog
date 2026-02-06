@@ -1,0 +1,56 @@
+<div
+  class="modal"
+  id="modal--editShiftNote"
+  role="dialog"
+  aria-label="Edit Note"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">
+        Edit
+        <span id="editShiftNote--noteType"></span>
+        Note
+      </p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editShiftNote">
+        <input id="editShiftNote--shiftId" name="shiftId" type="hidden" />
+        <input id="editShiftNote--noteSequence" name="noteSequence" type="hidden" />
+        
+        <div class="field">
+          <label class="label" for="editShiftNote--noteText">
+            Note Text
+          </label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="editShiftNote--noteText"
+              name="noteText"
+              rows="8"
+              required
+            ></textarea>
+          </div>
+        </div>
+        
+        <div id="editShiftNote--fieldsContainer"></div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-success" type="submit" form="form--editShiftNote">
+          <span class="icon"><i class="fa-solid fa-save"></i></span>
+          <span>Save</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div
+  class="modal"
+  id="modal--viewShiftNote"
+  role="dialog"
+  aria-label="Full Note"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Full Note</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <p><strong id="viewShiftNote--userName"></strong></p>
+      <p><small id="viewShiftNote--dateTime"></small></p>
+      
+      <div id="viewShiftNote--noteTypeContainer" class="notification is-info is-light mt-3" style="display: none;">
+        <strong id="viewShiftNote--noteType"></strong>
+      </div>
+      
+      <div class="content mt-3">
+        <p id="viewShiftNote--noteText" style="white-space: pre-wrap;"></p>
+      </div>
+      
+      <div id="viewShiftNote--fieldsContainer"></div>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-close-modal-button" type="button">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

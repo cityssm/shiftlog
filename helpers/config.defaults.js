@@ -1,6 +1,9 @@
-import { DEFAULT_NTFY_SERVER } from '@cityssm/ntfy-publish';
-import { hoursToMillis } from '@cityssm/to-millis';
-export const configDefaultValues = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.configDefaultValues = void 0;
+var ntfy_publish_1 = require("@cityssm/ntfy-publish");
+var to_millis_1 = require("@cityssm/to-millis");
+exports.configDefaultValues = {
     'application.applicationName': 'ShiftLog',
     'application.applicationUrl': undefined,
     'application.backgroundImage': 'background.jpg',
@@ -19,12 +22,12 @@ export const configDefaultValues = {
     'reverseProxy.urlPrefix': '',
     'session.cookieName': 'shiftlog-user-sid',
     'session.doKeepAlive': false,
-    'session.maxAgeMillis': hoursToMillis(1),
+    'session.maxAgeMillis': (0, to_millis_1.hoursToMillis)(1),
     'session.secret': 'cityssm/shiftlog',
     'connectors.shiftLog': undefined,
     'connectors.avanti': undefined,
     'connectors.ntfy': undefined,
-    'connectors.ntfy.serverUrl': DEFAULT_NTFY_SERVER,
+    'connectors.ntfy.serverUrl': ntfy_publish_1.DEFAULT_NTFY_SERVER,
     'connectors.pearl': undefined,
     'connectors.email': undefined,
     // Shifts
@@ -63,4 +66,4 @@ export const configDefaultValues = {
     // Notifications
     'notifications.protocols': []
 };
-export default configDefaultValues;
+exports.default = exports.configDefaultValues;

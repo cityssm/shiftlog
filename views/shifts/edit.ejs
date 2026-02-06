@@ -425,6 +425,7 @@
   exports.shiftAdhocTasks = <%- JSON.stringify(shiftAdhocTasks) %>;
 </script>
 <script src="<%= urlPrefix %>/javascripts/shifts.employees.js"></script>
+<script src="<%= urlPrefix %>/javascripts/shifts.notes.viewEdit.js"></script>
 <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
 <script src="<%= urlPrefix %>/javascripts/shifts.workOrders.js"></script>
 <% } %>

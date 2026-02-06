@@ -58,6 +58,11 @@ import handler_doUpdateShiftEmployeeNote from '../handlers/shifts-post/doUpdateS
 import handler_doUpdateShiftEquipment from '../handlers/shifts-post/doUpdateShiftEquipment.js'
 import handler_doUpdateShiftEquipmentNote from '../handlers/shifts-post/doUpdateShiftEquipmentNote.js'
 import handler_doUpdateShiftWorkOrderNote from '../handlers/shifts-post/doUpdateShiftWorkOrderNote.js'
+import handler_doCreateShiftNote from '../handlers/shifts-post/doCreateShiftNote.js'
+import handler_doDeleteShiftNote from '../handlers/shifts-post/doDeleteShiftNote.js'
+import handler_doGetNoteTypes from '../handlers/shifts-post/doGetNoteTypes.js'
+import handler_doGetShiftNotes from '../handlers/shifts-post/doGetShiftNotes.js'
+import handler_doUpdateShiftNote from '../handlers/shifts-post/doUpdateShiftNote.js'
 
 function updateHandler(
   request: Request<unknown, unknown, unknown, { error?: string }>,
@@ -101,6 +106,14 @@ router
   .get('/:shiftId/edit', updateHandler, handler_edit)
   .post('/doUpdateShift', updateHandler, handler_doUpdateShift)
   .post('/doDeleteShift', updateHandler, handler_doDeleteShift)
+
+// Shift notes endpoints
+router
+  .post('/:shiftId/doGetShiftNotes', handler_doGetShiftNotes)
+  .post('/doGetNoteTypes', handler_doGetNoteTypes)
+  .post('/doCreateShiftNote', updateHandler, handler_doCreateShiftNote)
+  .post('/doUpdateShiftNote', updateHandler, handler_doUpdateShiftNote)
+  .post('/doDeleteShiftNote', updateHandler, handler_doDeleteShiftNote)
 
 // Shift crews, employees, and equipment endpoints
 router
