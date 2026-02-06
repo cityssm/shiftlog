@@ -447,6 +447,7 @@ GO
 CREATE TABLE ShiftLog.WorkOrderNotes (
   workOrderId INT NOT NULL,
   noteSequence INT NOT NULL,
+  noteTypeId INT,
   noteText VARCHAR(max) NOT NULL,
   recordCreate_userName VARCHAR(30) NOT NULL,
   recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
@@ -455,7 +456,18 @@ CREATE TABLE ShiftLog.WorkOrderNotes (
   recordDelete_userName VARCHAR(30),
   recordDelete_dateTime datetime,
   PRIMARY KEY (workOrderId, noteSequence),
-  FOREIGN KEY (workOrderId) REFERENCES ShiftLog.WorkOrders (workOrderId)
+  FOREIGN KEY (workOrderId) REFERENCES ShiftLog.WorkOrders (workOrderId),
+  FOREIGN KEY (noteTypeId) REFERENCES ShiftLog.NoteTypes (noteTypeId)
+)
+GO
+CREATE TABLE ShiftLog.WorkOrderNoteFields (
+  workOrderId INT NOT NULL,
+  noteSequence INT NOT NULL,
+  noteTypeFieldId INT NOT NULL,
+  fieldValue NVARCHAR(max) NOT NULL,
+  PRIMARY KEY (workOrderId, noteSequence, noteTypeFieldId),
+  FOREIGN KEY (workOrderId, noteSequence) REFERENCES ShiftLog.WorkOrderNotes (workOrderId, noteSequence),
+  FOREIGN KEY (noteTypeFieldId) REFERENCES ShiftLog.NoteTypeFields (noteTypeFieldId)
 )
 GO
 CREATE TABLE ShiftLog.WorkOrderMilestones (
