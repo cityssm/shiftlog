@@ -1,10 +1,20 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
+export interface WorkOrderNoteField {
+  noteTypeFieldId: number
+  fieldLabel: string
+  fieldInputType: string
+  fieldValue: string
+}
+
 export interface WorkOrderNote {
   workOrderId: number
   noteSequence: number
+  noteTypeId?: number | null
+  noteType?: string | null
   noteText: string
+  fields?: WorkOrderNoteField[]
   recordCreate_dateTime: Date
   recordCreate_userName: string
   recordUpdate_dateTime: Date
@@ -18,27 +28,32 @@ export default async function getWorkOrderNotes(
 ): Promise<WorkOrderNote[]> {
   const pool = await getShiftLogConnectionPool()
 
-  const result = await pool
+  // Get notes with note type information
+  const notesResult = await pool
     .request()
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
     .query<WorkOrderNote>(/* sql */ `
       SELECT
-        workOrderId,
-        noteSequence,
-        noteText,
-        recordCreate_userName,
-        recordCreate_dateTime,
-        recordUpdate_userName,
-        recordUpdate_dateTime,
-        recordDelete_userName,
-        recordDelete_dateTime
+        wn.workOrderId,
+        wn.noteSequence,
+        wn.noteTypeId,
+        nt.noteType,
+        wn.noteText,
+        wn.recordCreate_userName,
+        wn.recordCreate_dateTime,
+        wn.recordUpdate_userName,
+        wn.recordUpdate_dateTime,
+        wn.recordDelete_userName,
+        wn.recordDelete_dateTime
       FROM
-        ShiftLog.WorkOrderNotes
+        ShiftLog.WorkOrderNotes wn
+      LEFT JOIN
+        ShiftLog.NoteTypes nt ON wn.noteTypeId = nt.noteTypeId
       WHERE
-        workOrderId = @workOrderId
-        AND recordDelete_dateTime IS NULL
-        AND workOrderId IN (
+        wn.workOrderId = @workOrderId
+        AND wn.recordDelete_dateTime IS NULL
+        AND wn.workOrderId IN (
           SELECT
             workOrderId
           FROM
@@ -48,8 +63,52 @@ export default async function getWorkOrderNotes(
             AND instance = @instance
         )
       ORDER BY
-        noteSequence DESC
+        wn.noteSequence DESC
     `)
 
-  return result.recordset
+  const notes = notesResult.recordset
+
+  // Get all field values for these notes
+  const fieldsResult = await pool
+    .request()
+    .input('workOrderId', workOrderId)
+    .query<
+      WorkOrderNoteField & { noteSequence: number }
+    >(/* sql */ `
+      SELECT
+        wnf.noteSequence,
+        wnf.noteTypeFieldId,
+        ntf.fieldLabel,
+        ntf.fieldInputType,
+        wnf.fieldValue
+      FROM
+        ShiftLog.WorkOrderNoteFields wnf
+      INNER JOIN
+        ShiftLog.NoteTypeFields ntf ON wnf.noteTypeFieldId = ntf.noteTypeFieldId
+      WHERE
+        wnf.workOrderId = @workOrderId
+      ORDER BY
+        ntf.orderNumber
+    `)
+
+  // Group fields by note sequence
+  const fieldsMap = new Map<number, WorkOrderNoteField[]>()
+  for (const field of fieldsResult.recordset) {
+    if (!fieldsMap.has(field.noteSequence)) {
+      fieldsMap.set(field.noteSequence, [])
+    }
+    fieldsMap.get(field.noteSequence)?.push({
+      noteTypeFieldId: field.noteTypeFieldId,
+      fieldLabel: field.fieldLabel,
+      fieldInputType: field.fieldInputType,
+      fieldValue: field.fieldValue
+    })
+  }
+
+  // Attach fields to notes
+  for (const note of notes) {
+    note.fields = fieldsMap.get(note.noteSequence) ?? []
+  }
+
+  return notes
 }
