@@ -61,7 +61,6 @@ export default async function getWorkOrderNotes(workOrderId) {
         ShiftLog.WorkOrderNoteFields wnf
       LEFT JOIN
         ShiftLog.NoteTypeFields ntf ON wnf.noteTypeFieldId = ntf.noteTypeFieldId
-          AND ntf.recordDelete_dateTime IS NULL
       WHERE
         wnf.workOrderId = @workOrderId
       ORDER BY
