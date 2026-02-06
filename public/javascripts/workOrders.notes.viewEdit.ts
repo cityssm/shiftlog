@@ -561,10 +561,20 @@ declare const bulmaJS: BulmaJS
             if (dataListKeys.size > 0) {
               const dataListPromises = Array.from(dataListKeys).map((key) =>
                 fetch(
-                  `${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`
+                  `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ dataListKey: key })
+                  }
                 )
                   .then((response) => response.json())
-                  .then((data) => ({ key, items: data as Array<{ dataListItem: string }> }))
+                  .then((data: { success: boolean; items: Array<{ dataListItem: string }> }) => ({
+                    key,
+                    items: data.items
+                  }))
               )
 
               Promise.all(dataListPromises)
@@ -596,10 +606,20 @@ declare const bulmaJS: BulmaJS
             if (dataListKeys.size > 0) {
               const dataListPromises = Array.from(dataListKeys).map((key) =>
                 fetch(
-                  `${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`
+                  `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ dataListKey: key })
+                  }
                 )
                   .then((response) => response.json())
-                  .then((data) => ({ key, items: data as Array<{ dataListItem: string }> }))
+                  .then((data: { success: boolean; items: Array<{ dataListItem: string }> }) => ({
+                    key,
+                    items: data.items
+                  }))
               )
 
               Promise.all(dataListPromises)
@@ -632,10 +652,20 @@ declare const bulmaJS: BulmaJS
           if (dataListKeys.size > 0) {
             const dataListPromises = Array.from(dataListKeys).map((key) =>
               fetch(
-                `${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`
+                `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ dataListKey: key })
+                }
               )
                 .then((response) => response.json())
-                .then((data) => ({ key, items: data as Array<{ dataListItem: string }> }))
+                .then((data: { success: boolean; items: Array<{ dataListItem: string }> }) => ({
+                  key,
+                  items: data.items
+                }))
             )
 
             Promise.all(dataListPromises)
@@ -708,10 +738,20 @@ declare const bulmaJS: BulmaJS
       if (dataListKeys.size > 0) {
         const dataListPromises = Array.from(dataListKeys).map((key) =>
           fetch(
-            `${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`
+            `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ dataListKey: key })
+            }
           )
             .then((response) => response.json())
-            .then((data) => ({ key, items: data as Array<{ dataListItem: string }> }))
+            .then((data: { success: boolean; items: Array<{ dataListItem: string }> }) => ({
+              key,
+              items: data.items
+            }))
         )
 
         Promise.all(dataListPromises)

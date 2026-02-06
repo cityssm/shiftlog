@@ -411,9 +411,18 @@
                         }
                         // Load data list items if needed
                         if (dataListKeys.size > 0) {
-                            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ dataListKey: key })
+                            })
                                 .then((response) => response.json())
-                                .then((data) => ({ key, items: data })));
+                                .then((data) => ({
+                                key,
+                                items: data.items
+                            })));
                             Promise.all(dataListPromises)
                                 .then((dataLists) => {
                                 const dataListMap = new Map();
@@ -442,9 +451,18 @@
                             }
                         }
                         if (dataListKeys.size > 0) {
-                            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ dataListKey: key })
+                            })
                                 .then((response) => response.json())
-                                .then((data) => ({ key, items: data })));
+                                .then((data) => ({
+                                key,
+                                items: data.items
+                            })));
                             Promise.all(dataListPromises)
                                 .then((dataLists) => {
                                 const dataListMap = new Map();
@@ -475,9 +493,18 @@
                         }
                     }
                     if (dataListKeys.size > 0) {
-                        const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                        const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ dataListKey: key })
+                        })
                             .then((response) => response.json())
-                            .then((data) => ({ key, items: data })));
+                            .then((data) => ({
+                            key,
+                            items: data.items
+                        })));
                         Promise.all(dataListPromises)
                             .then((dataLists) => {
                             const dataListMap = new Map();
@@ -534,9 +561,18 @@
             }
             // Load data list items if needed
             if (dataListKeys.size > 0) {
-                const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ dataListKey: key })
+                })
                     .then((response) => response.json())
-                    .then((data) => ({ key, items: data })));
+                    .then((data) => ({
+                    key,
+                    items: data.items
+                })));
                 Promise.all(dataListPromises)
                     .then((dataLists) => {
                     const dataListMap = new Map();
