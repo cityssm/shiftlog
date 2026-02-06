@@ -23,10 +23,9 @@ export default async function handler(request, response) {
     if (!wasRecovered) {
         const form = {
             ...request.body,
-            isSystemList: false,
-            userName
+            isSystemList: false
         };
-        success = await createDataList(form, form.userName);
+        success = await createDataList(form, userName);
     }
     let dataLists;
     if (success) {

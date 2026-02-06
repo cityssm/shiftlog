@@ -37,9 +37,11 @@ export default async function handler(
   if (!request.body.dataListKey.startsWith('user-')) {
     response.json({
       success: false,
+
       errorMessage:
         'Non-system data list keys must start with "user-" prefix.'
     })
+    
     return
   }
 
@@ -58,11 +60,10 @@ export default async function handler(
   if (!wasRecovered) {
     const form: CreateDataListForm = {
       ...request.body,
-      isSystemList: false,
-      userName
+      isSystemList: false
     }
 
-    success = await createDataList(form, form.userName)
+    success = await createDataList(form, userName)
   }
 
   let dataLists: DataListWithItems[] | undefined
