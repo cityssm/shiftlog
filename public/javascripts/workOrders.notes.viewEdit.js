@@ -359,8 +359,8 @@
                 text: 'Delete',
                 callbackFunction: () => {
                     cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`, {
-                        noteSequence,
-                        workOrderId
+                        workOrderId,
+                        noteSequence
                     }, (responseJSON) => {
                         if (responseJSON.success) {
                             loadNotes();

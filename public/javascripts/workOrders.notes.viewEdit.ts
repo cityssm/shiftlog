@@ -508,8 +508,8 @@ declare const bulmaJS: BulmaJS
           cityssm.postJSON(
             `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`,
             {
-              noteSequence,
-              workOrderId
+              workOrderId,
+              noteSequence
             },
             (responseJSON: DoDeleteWorkOrderNoteResponse) => {
               if (responseJSON.success) {
