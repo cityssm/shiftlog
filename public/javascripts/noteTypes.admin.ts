@@ -98,23 +98,24 @@ declare const exports: {
         summaryElement.className = 'panel-heading is-clickable'
 
         const availabilityBadges: string[] = []
+
         if (noteType.isAvailableWorkOrders) {
           availabilityBadges.push(
-            '<span class="tag is-info is-light">Work Orders</span>'
+            `<span class="tag is-info is-light">${cityssm.escapeHTML(shiftLog.workOrdersSectionName)}</span>`
           )
         }
         if (noteType.isAvailableShifts) {
           availabilityBadges.push(
-            '<span class="tag is-info is-light">Shifts</span>'
+            `<span class="tag is-info is-light">${cityssm.escapeHTML(shiftLog.shiftsSectionName)}</span>`
           )
         }
         if (noteType.isAvailableTimesheets) {
           availabilityBadges.push(
-            '<span class="tag is-info is-light">Timesheets</span>'
+            `<span class="tag is-info is-light">${cityssm.escapeHTML(shiftLog.timesheetsSectionName)}</span>`
           )
         }
 
-        summaryElement.innerHTML = `
+        summaryElement.innerHTML = /* html */ `
           <span class="icon-text">
             <span class="icon">
               <i class="fa-solid fa-chevron-right details-chevron"></i>
@@ -122,11 +123,14 @@ declare const exports: {
             <span class="has-text-weight-semibold mr-2">
               ${cityssm.escapeHTML(noteType.noteType)}
             </span>
-            <span class="tag is-rounded ${noteType.fields.length === 0 ? 'is-warning' : ''}">
-              ${noteType.fields.length} ${noteType.fields.length === 1 ? 'field' : 'fields'}
+            <span class="tags">
+              <span class="tag is-rounded ${noteType.fields.length === 0 ? 'is-warning' : ''}">
+                ${noteType.fields.length} ${noteType.fields.length === 1 ? 'field' : 'fields'}
+              </span>
+              ${availabilityBadges.length > 0 ? availabilityBadges.join(' ') : ''}
             </span>
-            ${availabilityBadges.length > 0 ? `<span class="ml-2">${availabilityBadges.join(' ')}</span>` : ''}
-          </span>`
+          </span>
+        `
 
         noteTypePanel.append(summaryElement)
 
@@ -191,7 +195,9 @@ declare const exports: {
           `
 
           for (const field of noteType.fields) {
-            const dividerStyle = field.hasDividerAbove ? ' style="border-top-width:5px"' : ''
+            const dividerStyle = field.hasDividerAbove
+              ? ' style="border-top-width:5px"'
+              : ''
             tableHTML += /* html */ `
               <tr data-note-type-field-id="${field.noteTypeFieldId}">
                 <td class="has-text-centered">
