@@ -594,7 +594,7 @@ declare const bulmaJS: BulmaJS
           } else {
             renderEditFieldsWithDataLists(note.fields, new Map(), fieldsContainer)
           }
-          }
+          
         } else {
           fieldsContainer.innerHTML = ''
         }
