@@ -45,6 +45,17 @@
           Data List Management
         </h1>
       </div>
+      <div class="column is-narrow">
+        <button
+          class="button is-success button--addDataList"
+          type="button"
+        >
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Create Data List</span>
+        </button>
+      </div>
     </div>
 
     <div class="message is-info">
@@ -54,7 +65,7 @@
     </div>
 
     <% for (const dataList of dataLists) { %>
-    <details class="panel mb-5 collapsable-panel" data-data-list-key="<%= dataList.dataListKey %>">
+    <details class="panel mb-5 collapsable-panel" data-data-list-key="<%= dataList.dataListKey %>" data-is-system-list="<%= dataList.isSystemList %>">
       <summary class="panel-heading is-clickable">
         <span class="icon-text">
           <span class="icon">
@@ -66,9 +77,38 @@
           <span class="tag is-rounded <%= dataList.items.length === 0 ? 'is-warning' : '' %>" id="itemCount--<%= dataList.dataListKey %>">
             <%= dataList.items.length %>
           </span>
+          <% if (!dataList.isSystemList) { %>
+          <span class="tag is-info is-light ml-2">Custom</span>
+          <% } %>
         </span>
       </summary>
-      <div class="panel-block is-justify-content-flex-end">
+      <div class="panel-block is-justify-content-space-between">
+        <div class="buttons are-small">
+          <% if (!dataList.isSystemList) { %>
+          <button
+            class="button is-info button--renameDataList" 
+            data-data-list-key="<%= dataList.dataListKey %>"
+            data-data-list-name="<%= dataList.dataListName %>"
+            type="button"
+          >
+            <span class="icon">
+              <i class="fa-solid fa-pencil"></i>
+            </span>
+            <span>Rename List</span>
+          </button>
+          <button
+            class="button is-danger button--deleteDataList" 
+            data-data-list-key="<%= dataList.dataListKey %>"
+            data-data-list-name="<%= dataList.dataListName %>"
+            type="button"
+          >
+            <span class="icon">
+              <i class="fa-solid fa-trash"></i>
+            </span>
+            <span>Delete List</span>
+          </button>
+          <% } %>
+        </div>
         <button
           class="button is-success is-small button--addItem" 
           data-data-list-key="<%= dataList.dataListKey %>"
@@ -79,7 +119,6 @@
           </span>
           <span>Add Item</span>
         </button>
-
       </div>
       <div class="panel-block p-0">
         <div class="table-container" style="width: 100%;">

@@ -1,0 +1,57 @@
+<div
+  class="modal"
+  id="modal--editDataList"
+  role="dialog"
+  aria-label="Edit Data List"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Rename Data List</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editDataList">
+        <input
+          id="editDataList--dataListKey"
+          name="dataListKey"
+          type="hidden"
+        />
+        <div class="field">
+          <label class="label" for="editDataList--dataListName">
+            Display Name
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="editDataList--dataListName"
+              name="dataListName"
+              type="text"
+              autofocus
+              required
+            />
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-success"
+          type="submit"
+          form="form--editDataList"
+        >
+          <span class="icon"><i class="fa-solid fa-save"></i></span>
+          <span>Update Name</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

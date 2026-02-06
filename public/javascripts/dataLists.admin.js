@@ -90,6 +90,243 @@
         // Re-initialize sortable
         initializeSortable(dataListKey);
     }
+    function renderAllDataLists(dataLists) {
+        // Update the global dataLists
+        exports.dataLists = dataLists;
+        // Clear and rebuild the entire list
+        const mainContainer = document.querySelector('.column > .columns')
+            ?.nextElementSibling?.nextElementSibling;
+        if (mainContainer === null || mainContainer === undefined) {
+            return;
+        }
+        // Find all detail panels
+        const existingPanels = mainContainer.querySelectorAll('details.panel');
+        const existingKeys = new Set();
+        for (const panel of existingPanels) {
+            const key = panel.dataset.dataListKey;
+            if (key !== undefined) {
+                existingKeys.add(key);
+            }
+        }
+        // Remove panels that no longer exist
+        for (const panel of existingPanels) {
+            const key = panel.dataset.dataListKey;
+            if (key !== undefined && !dataLists.some((dl) => dl.dataListKey === key)) {
+                panel.remove();
+            }
+        }
+        // Update or add panels
+        for (const dataList of dataLists) {
+            if (existingKeys.has(dataList.dataListKey)) {
+                // Update existing panel
+                renderDataListItems(dataList.dataListKey, dataList.items);
+                // Update the panel heading if needed
+                const panel = mainContainer.querySelector(
+                    `details[data-data-list-key="${dataList.dataListKey}"]`
+                );
+                if (panel !== null) {
+                    const nameElement = panel.querySelector('.has-text-weight-semibold');
+                    if (nameElement !== null) {
+                        nameElement.textContent = dataList.dataListName;
+                    }
+                }
+            } else {
+                // Add new panel - reload the page for simplicity
+                window.location.reload();
+                return;
+            }
+        }
+    }
+    function addDataList(clickEvent) {
+        clickEvent.preventDefault();
+        let closeModalFunction;
+        function doAddDataList(submitEvent) {
+            submitEvent.preventDefault();
+            const addForm = submitEvent.currentTarget;
+            const formData = new FormData(addForm);
+            const dataListKey = formData.get('dataListKey')?.trim();
+            const dataListName = formData.get('dataListName')?.trim();
+            if (dataListKey === '' || dataListName === '') {
+                bulmaJS.alert({
+                    contextualColorName: 'warning',
+                    title: 'Required Fields',
+                    message: 'Please fill in all required fields.'
+                });
+                return;
+            }
+            if (!dataListKey?.startsWith('user-')) {
+                bulmaJS.alert({
+                    contextualColorName: 'warning',
+                    title: 'Invalid Key',
+                    message: 'Data list key must start with "user-".'
+                });
+                return;
+            }
+            cityssm.postJSON(
+                `${shiftLog.urlPrefix}/admin/doAddDataList`,
+                addForm,
+                (responseJSON) => {
+                    if (responseJSON.success && responseJSON.dataLists !== undefined) {
+                        closeModalFunction();
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            title: 'Data List Created',
+                            message: 'The data list has been successfully created.',
+                            onconfirm() {
+                                // Reload the page to show the new list
+                                window.location.reload();
+                            }
+                        });
+                    } else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            title: 'Error Creating Data List',
+                            message: responseJSON.errorMessage ?? 'Please try again.'
+                        });
+                    }
+                }
+            );
+        }
+        cityssm.openHtmlModal('adminDataLists-addDataList', {
+            onshow(modalElement) {
+                // Attach form submit handler
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doAddDataList);
+            },
+            onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+                // Focus the key input
+                const keyInput = modalElement.querySelector(
+                    '#addDataList--dataListKey'
+                );
+                keyInput.focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function renameDataList(clickEvent) {
+        const buttonElement = clickEvent.currentTarget;
+        const dataListKey = buttonElement.dataset.dataListKey;
+        const dataListName = buttonElement.dataset.dataListName;
+        if (dataListKey === undefined || dataListName === undefined) {
+            return;
+        }
+        let closeModalFunction;
+        function doUpdateDataList(submitEvent) {
+            submitEvent.preventDefault();
+            const editForm = submitEvent.currentTarget;
+            const formData = new FormData(editForm);
+            const newDataListName = formData.get('dataListName')?.trim();
+            if (newDataListName === '') {
+                bulmaJS.alert({
+                    contextualColorName: 'warning',
+                    title: 'Name Required',
+                    message: 'Please enter a display name.'
+                });
+                return;
+            }
+            cityssm.postJSON(
+                `${shiftLog.urlPrefix}/admin/doUpdateDataList`,
+                editForm,
+                (responseJSON) => {
+                    if (responseJSON.success && responseJSON.dataLists !== undefined) {
+                        closeModalFunction();
+                        renderAllDataLists(responseJSON.dataLists);
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            title: 'Data List Renamed',
+                            message: 'The data list has been successfully renamed.'
+                        });
+                    } else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            title: 'Error Renaming Data List',
+                            message: responseJSON.errorMessage ?? 'Please try again.'
+                        });
+                    }
+                }
+            );
+        }
+        cityssm.openHtmlModal('adminDataLists-editDataList', {
+            onshow(modalElement) {
+                // Set the data list key
+                const dataListKeyInput = modalElement.querySelector(
+                    '#editDataList--dataListKey'
+                );
+                dataListKeyInput.value = dataListKey;
+                // Set the data list name
+                const dataListNameInput = modalElement.querySelector(
+                    '#editDataList--dataListName'
+                );
+                dataListNameInput.value = dataListName;
+                // Attach form submit handler
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doUpdateDataList);
+            },
+            onshown(modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
+                // Focus and select the input
+                const nameInput = modalElement.querySelector(
+                    '#editDataList--dataListName'
+                );
+                nameInput.focus();
+                nameInput.select();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function deleteDataList(clickEvent) {
+        const buttonElement = clickEvent.currentTarget;
+        const dataListKey = buttonElement.dataset.dataListKey;
+        const dataListName = buttonElement.dataset.dataListName;
+        if (dataListKey === undefined || dataListName === undefined) {
+            return;
+        }
+        bulmaJS.confirm({
+            contextualColorName: 'warning',
+            title: 'Delete Data List',
+            message: `Are you sure you want to delete "${dataListName}"? This will also delete all items in this list. This action cannot be undone.`,
+            okButton: {
+                contextualColorName: 'danger',
+                text: 'Delete Data List',
+                callbackFunction() {
+                    cityssm.postJSON(
+                        `${shiftLog.urlPrefix}/admin/doDeleteDataList`,
+                        {
+                            dataListKey
+                        },
+                        (responseJSON) => {
+                            if (responseJSON.success && responseJSON.dataLists !== undefined) {
+                                bulmaJS.alert({
+                                    contextualColorName: 'success',
+                                    title: 'Data List Deleted',
+                                    message: 'The data list has been successfully deleted.',
+                                    onconfirm() {
+                                        // Reload the page to remove the deleted list
+                                        window.location.reload();
+                                    }
+                                });
+                            } else {
+                                bulmaJS.alert({
+                                    contextualColorName: 'danger',
+                                    title: 'Error Deleting Data List',
+                                    message: responseJSON.errorMessage ?? 'Please try again.'
+                                });
+                            }
+                        }
+                    );
+                }
+            }
+        });
+    }
     function addDataListItem(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const dataListKey = buttonElement.dataset.dataListKey;
@@ -386,6 +623,21 @@
         initializeSortable(dataList.dataListKey);
         // Attach event listeners for this data list
         attachEventListeners(dataList.dataListKey);
+    }
+    // Add Data List button
+    const addDataListButton = document.querySelector('.button--addDataList');
+    if (addDataListButton !== null) {
+        addDataListButton.addEventListener('click', addDataList);
+    }
+    // Rename Data List buttons
+    const renameButtons = document.querySelectorAll('.button--renameDataList');
+    for (const button of renameButtons) {
+        button.addEventListener('click', renameDataList);
+    }
+    // Delete Data List buttons
+    const deleteDataListButtons = document.querySelectorAll('.button--deleteDataList');
+    for (const button of deleteDataListButtons) {
+        button.addEventListener('click', deleteDataList);
     }
     // Add item buttons
     const addButtons = document.querySelectorAll('.button--addItem');
