@@ -92,6 +92,29 @@ declare const bulmaJS: BulmaJS
           ? `<span class="tag is-info is-light">${cityssm.escapeHTML(note.noteType)}</span>`
           : ''
 
+      // Render field values if present
+      let fieldsHTML = ''
+      if (note.fields !== undefined && note.fields.length > 0) {
+        fieldsHTML = `
+          <div class="content mt-2">
+            <table class="table is-narrow is-size-7">
+              <tbody>
+                ${note.fields
+                  .map(
+                    (field) => `
+                  <tr>
+                    <th style="width: 35%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
+                    <td>${cityssm.escapeHTML(field.fieldValue)}</td>
+                  </tr>
+                `
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          </div>
+        `
+      }
+
       // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
       noteElement.innerHTML = /* html */ `
         <article class="media">
@@ -114,6 +137,7 @@ declare const bulmaJS: BulmaJS
                     : ''
                 }
               </p>
+              ${fieldsHTML}
             </div>
           </div>
           ${
@@ -260,10 +284,36 @@ declare const bulmaJS: BulmaJS
     function doUpdateNote(submitEvent: Event): void {
       submitEvent.preventDefault()
       const formElement = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(formElement)
+
+      // Extract field values and construct proper structure
+      const noteData: {
+        workOrderId: string
+        noteSequence: string
+        noteText: string
+        fields?: Record<string, string>
+      } = {
+        workOrderId: formData.get('workOrderId') as string,
+        noteSequence: formData.get('noteSequence') as string,
+        noteText: formData.get('noteText') as string
+      }
+
+      // Extract fields with pattern fields[noteTypeFieldId]
+      const fields: Record<string, string> = {}
+      for (const [key, value] of formData.entries()) {
+        const match = /^fields\[(\d+)\]$/.exec(key)
+        if (match !== null && typeof value === 'string') {
+          fields[match[1]] = value
+        }
+      }
+
+      if (Object.keys(fields).length > 0) {
+        noteData.fields = fields
+      }
 
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`,
-        formElement,
+        noteData,
         (responseJSON: DoUpdateWorkOrderNoteResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
@@ -296,6 +346,93 @@ declare const bulmaJS: BulmaJS
             '#editWorkOrderNote--noteText'
           ) as HTMLTextAreaElement
         ).value = note.noteText
+
+        // Show note type if present
+        const noteTypeContainer = modalElement.querySelector(
+          '#editWorkOrderNote--noteTypeContainer'
+        ) as HTMLElement
+        if (note.noteType !== null && note.noteType !== undefined) {
+          ;(
+            modalElement.querySelector(
+              '#editWorkOrderNote--noteType'
+            ) as HTMLElement
+          ).textContent = note.noteType
+          noteTypeContainer.style.display = 'block'
+        } else {
+          noteTypeContainer.style.display = 'none'
+        }
+
+        // Render fields if present
+        const fieldsContainer = modalElement.querySelector(
+          '#editWorkOrderNote--fieldsContainer'
+        ) as HTMLElement
+        if (note.fields !== undefined && note.fields.length > 0) {
+          let fieldsHTML = ''
+          for (const field of note.fields) {
+            const fieldName = `fields[${field.noteTypeFieldId}]`
+            
+            fieldsHTML += `<div class="field">`
+            fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
+                ${cityssm.escapeHTML(field.fieldLabel)}
+              </label>`
+
+            // Render appropriate input based on field type
+            switch (field.fieldInputType) {
+              case 'date': {
+                fieldsHTML += `
+                  <div class="control">
+                    <input class="input" type="date" 
+                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                      name="${fieldName}" 
+                      value="${cityssm.escapeHTML(field.fieldValue)}" />
+                  </div>
+                `
+                break
+              }
+              case 'number': {
+                fieldsHTML += `
+                  <div class="control">
+                    <input class="input" type="number" 
+                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                      name="${fieldName}" 
+                      value="${cityssm.escapeHTML(field.fieldValue)}" />
+                  </div>
+                `
+                break
+              }
+              case 'textbox': {
+                fieldsHTML += `
+                  <div class="control">
+                    <textarea class="textarea" rows="3"
+                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                      name="${fieldName}">${cityssm.escapeHTML(field.fieldValue)}</textarea>
+                  </div>
+                `
+                break
+              }
+              case 'select':
+              case 'text':
+              default: {
+                fieldsHTML += `
+                  <div class="control">
+                    <input class="input" type="text" 
+                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                      name="${fieldName}" 
+                      value="${cityssm.escapeHTML(field.fieldValue)}" />
+                  </div>
+                `
+                break
+              }
+            }
+
+            fieldsHTML += `</div>`
+          }
+          
+          // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
+          fieldsContainer.innerHTML = fieldsHTML
+        } else {
+          fieldsContainer.innerHTML = ''
+        }
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()

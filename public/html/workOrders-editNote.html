@@ -18,7 +18,15 @@
       <form id="form--editWorkOrderNote">
         <input id="editWorkOrderNote--workOrderId" name="workOrderId" type="hidden" />
         <input id="editWorkOrderNote--noteSequence" name="noteSequence" type="hidden" />
+        
+        <div id="editWorkOrderNote--noteTypeContainer" class="notification is-info is-light mb-3" style="display: none;">
+          <strong id="editWorkOrderNote--noteType"></strong>
+        </div>
+        
         <div class="field">
+          <label class="label" for="editWorkOrderNote--noteText">
+            Note Text
+          </label>
           <div class="control">
             <textarea
               class="textarea"
@@ -29,6 +37,8 @@
             ></textarea>
           </div>
         </div>
+        
+        <div id="editWorkOrderNote--fieldsContainer"></div>
       </form>
     </section>
     <div class="modal-card-foot is-justify-content-right">
