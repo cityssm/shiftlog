@@ -1,6 +1,7 @@
 import getDataLists from '../../database/app/getDataLists.js';
 import getNoteTypes from '../../database/noteTypes/getNoteTypes.js';
 import getUserGroups from '../../database/users/getUserGroups.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(_request, response) {
     const noteTypes = await getNoteTypes();
     const userGroups = await getUserGroups();
@@ -10,6 +11,9 @@ export default async function handler(_request, response) {
         section: 'admin',
         dataLists,
         noteTypes,
-        userGroups
+        shiftsSectionName: getConfigProperty('shifts.sectionName'),
+        timesheetsSectionName: getConfigProperty('timesheets.sectionName'),
+        userGroups,
+        workOrdersSectionName: getConfigProperty('workOrders.sectionName')
     });
 }

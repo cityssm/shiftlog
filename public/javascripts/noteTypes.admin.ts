@@ -57,6 +57,9 @@ declare const exports: {
   // Track Sortable instances
   const sortableInstances = new Map<number, SortableInstance>()
 
+  // Track current filter
+  let availabilityFilter = ''
+
   function renderNoteTypes(): void {
     // Store currently open panels before re-rendering
     const openDetails =
@@ -71,7 +74,24 @@ declare const exports: {
 
     noteTypesContainerElement.innerHTML = ''
 
-    if (noteTypes.length === 0) {
+    // Filter note types based on availability
+    const filteredNoteTypes = noteTypes.filter((noteType) => {
+      if (availabilityFilter === '') {
+        return true
+      }
+      if (availabilityFilter === 'workOrders') {
+        return noteType.isAvailableWorkOrders
+      }
+      if (availabilityFilter === 'shifts') {
+        return noteType.isAvailableShifts
+      }
+      if (availabilityFilter === 'timesheets') {
+        return noteType.isAvailableTimesheets
+      }
+      return true
+    })
+
+    if (filteredNoteTypes.length === 0) {
       const emptyMessage = document.createElement('div')
       emptyMessage.className = 'panel-block is-block'
       emptyMessage.innerHTML = /* html */ `
@@ -85,7 +105,7 @@ declare const exports: {
 
       noteTypesContainerElement.append(emptyMessage)
     } else {
-      for (const noteType of noteTypes) {
+      for (const noteType of filteredNoteTypes) {
         const noteTypePanel = document.createElement('details')
         noteTypePanel.className = 'panel mb-5 collapsable-panel'
         noteTypePanel.dataset.noteTypeId = noteType.noteTypeId.toString()
@@ -899,4 +919,12 @@ declare const exports: {
   document
     .querySelector('#button--addNoteType')
     ?.addEventListener('click', openAddNoteTypeModal)
+
+  // Availability filter
+  document
+    .querySelector('#filter--availability')
+    ?.addEventListener('change', (event) => {
+      availabilityFilter = (event.target as HTMLSelectElement).value
+      renderNoteTypes()
+    })
 })()
