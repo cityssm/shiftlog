@@ -6,14 +6,14 @@ export default async function handler(request, response) {
     if (success) {
         const noteTypes = await getNoteTypes();
         response.json({
-            success: true,
-            noteTypes
+            noteTypes,
+            success: true
         });
     }
     else {
         response.json({
-            success: false,
-            message: 'Field could not be deleted.'
+            message: 'Field could not be deleted.',
+            success: false
         });
     }
 }

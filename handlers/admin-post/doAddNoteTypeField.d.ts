@@ -1,20 +1,20 @@
 import type { Request, Response } from 'express';
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js';
 export type DoAddNoteTypeFieldResponse = {
-    success: false;
     message: string;
+    success: false;
 } | {
-    success: true;
     noteTypes: NoteTypeWithFields[];
+    success: true;
 };
 export default function handler(request: Request<unknown, unknown, {
-    noteTypeId?: string | number;
-    fieldLabel?: string;
-    fieldInputType?: 'text' | 'number' | 'date' | 'select' | 'textbox';
-    fieldHelpText?: string;
     dataListKey?: string;
-    fieldValueMin?: string | number;
-    fieldValueMax?: string | number;
-    fieldValueRequired?: string | boolean;
-    hasDividerAbove?: string | boolean;
+    fieldHelpText?: string;
+    fieldInputType?: 'date' | 'number' | 'select' | 'text' | 'textbox';
+    fieldLabel?: string;
+    fieldValueMax?: number | string;
+    fieldValueMin?: number | string;
+    fieldValueRequired?: boolean | string;
+    hasDividerAbove?: boolean | string;
+    noteTypeId?: number | string;
 }>, response: Response<DoAddNoteTypeFieldResponse>): Promise<void>;

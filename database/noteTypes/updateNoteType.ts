@@ -2,12 +2,12 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 interface UpdateNoteTypeForm {
-  noteTypeId: number
-  noteType: string
-  userGroupId?: number | null
-  isAvailableWorkOrders: boolean
   isAvailableShifts: boolean
   isAvailableTimesheets: boolean
+  isAvailableWorkOrders: boolean
+  noteType: string
+  noteTypeId: number
+  userGroupId?: number | null
 }
 
 export default async function updateNoteType(

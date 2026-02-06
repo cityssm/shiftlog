@@ -6,16 +6,16 @@ import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.j
 
 export type DoDeleteNoteTypeFieldResponse =
   | {
-      success: false
       message: string
+      success: false
     }
   | {
-      success: true
       noteTypes: NoteTypeWithFields[]
+      success: true
     }
 
 export default async function handler(
-  request: Request<unknown, unknown, { noteTypeFieldId?: string | number }>,
+  request: Request<unknown, unknown, { noteTypeFieldId?: number | string }>,
   response: Response<DoDeleteNoteTypeFieldResponse>
 ): Promise<void> {
   const noteTypeFieldId = Number.parseInt(
@@ -32,13 +32,13 @@ export default async function handler(
     const noteTypes = await getNoteTypes()
 
     response.json({
-      success: true,
-      noteTypes
+      noteTypes,
+      success: true
     })
   } else {
     response.json({
-      success: false,
-      message: 'Field could not be deleted.'
+      message: 'Field could not be deleted.',
+      success: false
     })
   }
 }

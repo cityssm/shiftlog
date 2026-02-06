@@ -1,17 +1,17 @@
 import type { Request, Response } from 'express'
 
-import updateNoteType from '../../database/noteTypes/updateNoteType.js'
 import getNoteTypes from '../../database/noteTypes/getNoteTypes.js'
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
+import updateNoteType from '../../database/noteTypes/updateNoteType.js'
 
 export type DoUpdateNoteTypeResponse =
   | {
-      success: false
       message: string
+      success: false
     }
   | {
-      success: true
       noteTypes: NoteTypeWithFields[]
+      success: true
     }
 
 export default async function handler(
@@ -19,12 +19,12 @@ export default async function handler(
     unknown,
     unknown,
     {
-      noteTypeId?: string | number
+      isAvailableShifts?: boolean | string
+      isAvailableTimesheets?: boolean | string
+      isAvailableWorkOrders?: boolean | string
       noteType?: string
-      userGroupId?: string | number
-      isAvailableWorkOrders?: string | boolean
-      isAvailableShifts?: string | boolean
-      isAvailableTimesheets?: string | boolean
+      noteTypeId?: number | string
+      userGroupId?: number | string
     }
   >,
   response: Response<DoUpdateNoteTypeResponse>
@@ -48,12 +48,12 @@ export default async function handler(
 
   const success = await updateNoteType(
     {
-      noteTypeId,
-      noteType,
-      userGroupId,
-      isAvailableWorkOrders,
       isAvailableShifts,
-      isAvailableTimesheets
+      isAvailableTimesheets,
+      isAvailableWorkOrders,
+      noteType,
+      noteTypeId,
+      userGroupId
     },
     request.session.user as User
   )
@@ -62,13 +62,13 @@ export default async function handler(
     const noteTypes = await getNoteTypes()
 
     response.json({
-      success: true,
-      noteTypes
+      noteTypes,
+      success: true
     })
   } else {
     response.json({
-      success: false,
-      message: 'Note type could not be updated.'
+      message: 'Note type could not be updated.',
+      success: false
     })
   }
 }

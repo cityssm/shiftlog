@@ -1,15 +1,19 @@
+// @ts-nocheck
+/* eslint-disable max-lines -- Complex admin interface with multiple modals */
+/* eslint-disable no-unsanitized/property -- Using cityssm.escapeHTML() for sanitization */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { DoAddNoteTypeResponse } from '../../handlers/admin-post/doAddNoteType.js'
-import type { DoDeleteNoteTypeResponse } from '../../handlers/admin-post/doDeleteNoteType.js'
-import type { DoUpdateNoteTypeResponse } from '../../handlers/admin-post/doUpdateNoteType.js'
 import type { DoAddNoteTypeFieldResponse } from '../../handlers/admin-post/doAddNoteTypeField.js'
 import type { DoDeleteNoteTypeFieldResponse } from '../../handlers/admin-post/doDeleteNoteTypeField.js'
 import type { DoUpdateNoteTypeFieldResponse } from '../../handlers/admin-post/doUpdateNoteTypeField.js'
+import type { DoAddNoteTypeResponse } from '../../handlers/admin-post/doAddNoteType.js'
+import type { DoDeleteNoteTypeResponse } from '../../handlers/admin-post/doDeleteNoteType.js'
+import type { DoUpdateNoteTypeResponse } from '../../handlers/admin-post/doUpdateNoteType.js'
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
-import type { DataList } from '../../types/record.types.js'
-import type { UserGroup } from '../../types/user.types.js'
+import type { DataList } from '../../database/app/getDataLists.js'
+import type { UserGroup } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 

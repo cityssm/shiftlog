@@ -1,17 +1,17 @@
 import type { Request, Response } from 'express';
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js';
 export type DoUpdateNoteTypeResponse = {
-    success: false;
     message: string;
+    success: false;
 } | {
-    success: true;
     noteTypes: NoteTypeWithFields[];
+    success: true;
 };
 export default function handler(request: Request<unknown, unknown, {
-    noteTypeId?: string | number;
+    isAvailableShifts?: boolean | string;
+    isAvailableTimesheets?: boolean | string;
+    isAvailableWorkOrders?: boolean | string;
     noteType?: string;
-    userGroupId?: string | number;
-    isAvailableWorkOrders?: string | boolean;
-    isAvailableShifts?: string | boolean;
-    isAvailableTimesheets?: string | boolean;
+    noteTypeId?: number | string;
+    userGroupId?: number | string;
 }>, response: Response<DoUpdateNoteTypeResponse>): Promise<void>;

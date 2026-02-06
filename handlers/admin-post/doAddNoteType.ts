@@ -6,12 +6,12 @@ import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.j
 
 export type DoAddNoteTypeResponse =
   | {
-      success: false
       message: string
+      success: false
     }
   | {
-      success: true
       noteTypes: NoteTypeWithFields[]
+      success: true
     }
 
 export default async function handler(
@@ -19,11 +19,11 @@ export default async function handler(
     unknown,
     unknown,
     {
+      isAvailableShifts?: boolean | string
+      isAvailableTimesheets?: boolean | string
+      isAvailableWorkOrders?: boolean | string
       noteType?: string
-      userGroupId?: string | number
-      isAvailableWorkOrders?: string | boolean
-      isAvailableShifts?: string | boolean
-      isAvailableTimesheets?: string | boolean
+      userGroupId?: number | string
     }
   >,
   response: Response<DoAddNoteTypeResponse>
@@ -46,11 +46,11 @@ export default async function handler(
 
   const success = await addNoteType(
     {
-      noteType,
-      userGroupId,
-      isAvailableWorkOrders,
       isAvailableShifts,
-      isAvailableTimesheets
+      isAvailableTimesheets,
+      isAvailableWorkOrders,
+      noteType,
+      userGroupId
     },
     request.session.user as User
   )
@@ -59,14 +59,14 @@ export default async function handler(
     const noteTypes = await getNoteTypes()
 
     response.json({
-      success: true,
-      noteTypes
+      noteTypes,
+      success: true
     })
   } else {
     response.json({
-      success: false,
       message:
-        'Note type could not be added. Note type name may already exist.'
+        'Note type could not be added. Note type name may already exist.',
+      success: false
     })
   }
 }

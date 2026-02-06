@@ -21,27 +21,27 @@ export default async function handler(request, response) {
     const hasDividerAbove = request.body.hasDividerAbove === true ||
         request.body.hasDividerAbove === '1';
     const success = await addNoteTypeField({
-        noteTypeId,
-        fieldLabel,
-        fieldInputType,
-        fieldHelpText,
         dataListKey,
-        fieldValueMin,
+        fieldHelpText,
+        fieldInputType,
+        fieldLabel,
         fieldValueMax,
+        fieldValueMin,
         fieldValueRequired,
-        hasDividerAbove
+        hasDividerAbove,
+        noteTypeId
     }, request.session.user);
     if (success) {
         const noteTypes = await getNoteTypes();
         response.json({
-            success: true,
-            noteTypes
+            noteTypes,
+            success: true
         });
     }
     else {
         response.json({
-            success: false,
-            message: 'Field could not be added.'
+            message: 'Field could not be added.',
+            success: false
         });
     }
 }

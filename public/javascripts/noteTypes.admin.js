@@ -1,27 +1,33 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function () {
-    var _a;
-    var shiftLog = exports.shiftLog;
-    var noteTypesContainerElement = document.querySelector('#container--noteTypes');
-    var noteTypes = exports.noteTypes;
-    var userGroups = exports.userGroups;
-    var dataLists = exports.dataLists;
+// @ts-nocheck
+/* eslint-disable max-lines -- Complex admin interface with multiple modals */
+/* eslint-disable no-unsanitized/property -- Using cityssm.escapeHTML() for sanitization */
+(() => {
+    const shiftLog = exports.shiftLog;
+    const noteTypesContainerElement = document.querySelector('#container--noteTypes');
+    let noteTypes = exports.noteTypes;
+    const userGroups = exports.userGroups;
+    const dataLists = exports.dataLists;
     function renderNoteTypes() {
-        var panelElement = document.createElement('div');
+        const panelElement = document.createElement('div');
         panelElement.className = 'panel';
         if (noteTypes.length === 0) {
-            panelElement.innerHTML = "<div class=\"panel-block\">\n        <div class=\"message is-info\">\n          <p class=\"message-body\">\n            <strong>No note types available.</strong><br />\n            Click \"Add Note Type\" to create your first note type.\n          </p>\n        </div>\n      </div>";
+            panelElement.innerHTML = `<div class="panel-block">
+        <div class="message is-info">
+          <p class="message-body">
+            <strong>No note types available.</strong><br />
+            Click "Add Note Type" to create your first note type.
+          </p>
+        </div>
+      </div>`;
         }
         else {
-            for (var _i = 0, noteTypes_1 = noteTypes; _i < noteTypes_1.length; _i++) {
-                var noteType = noteTypes_1[_i];
-                var noteTypePanel = document.createElement('details');
+            for (const noteType of noteTypes) {
+                const noteTypePanel = document.createElement('details');
                 noteTypePanel.className = 'panel mb-5 collapsable-panel';
                 noteTypePanel.dataset.noteTypeId = noteType.noteTypeId.toString();
-                var summaryElement = document.createElement('summary');
+                const summaryElement = document.createElement('summary');
                 summaryElement.className = 'panel-heading is-clickable';
-                var availabilityBadges = [];
+                const availabilityBadges = [];
                 if (noteType.isAvailableWorkOrders) {
                     availabilityBadges.push('<span class="tag is-info is-light">Work Orders</span>');
                 }
@@ -31,26 +37,94 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 if (noteType.isAvailableTimesheets) {
                     availabilityBadges.push('<span class="tag is-info is-light">Timesheets</span>');
                 }
-                summaryElement.innerHTML = "\n          <span class=\"icon-text\">\n            <span class=\"icon\">\n              <i class=\"fa-solid fa-chevron-right details-chevron\"></i>\n            </span>\n            <span class=\"has-text-weight-semibold mr-2\">\n              ".concat(cityssm.escapeHTML(noteType.noteType), "\n            </span>\n            <span class=\"tag is-rounded\">\n              ").concat(noteType.fields.length, " ").concat(noteType.fields.length === 1 ? 'field' : 'fields', "\n            </span>\n            ").concat(availabilityBadges.length > 0 ? "<span class=\"ml-2\">".concat(availabilityBadges.join(' '), "</span>") : '', "\n          </span>");
+                summaryElement.innerHTML = `
+          <span class="icon-text">
+            <span class="icon">
+              <i class="fa-solid fa-chevron-right details-chevron"></i>
+            </span>
+            <span class="has-text-weight-semibold mr-2">
+              ${cityssm.escapeHTML(noteType.noteType)}
+            </span>
+            <span class="tag is-rounded">
+              ${noteType.fields.length} ${noteType.fields.length === 1 ? 'field' : 'fields'}
+            </span>
+            ${availabilityBadges.length > 0 ? `<span class="ml-2">${availabilityBadges.join(' ')}</span>` : ''}
+          </span>`;
                 noteTypePanel.append(summaryElement);
                 // Action buttons panel
-                var actionBlock = document.createElement('div');
+                const actionBlock = document.createElement('div');
                 actionBlock.className = 'panel-block is-justify-content-space-between';
-                actionBlock.innerHTML = "\n          <div>\n            <button class=\"button is-small is-light button--editNoteType\" data-note-type-id=\"".concat(noteType.noteTypeId, "\" type=\"button\">\n              <span class=\"icon\"><i class=\"fa-solid fa-pencil\"></i></span>\n              <span>Edit Note Type</span>\n            </button>\n          </div>\n          <div>\n            <button class=\"button is-success is-small button--addField\" data-note-type-id=\"").concat(noteType.noteTypeId, "\" type=\"button\">\n              <span class=\"icon\"><i class=\"fa-solid fa-plus\"></i></span>\n              <span>Add Field</span>\n            </button>\n            <button class=\"button is-danger is-small button--deleteNoteType\" data-note-type-id=\"").concat(noteType.noteTypeId, "\" type=\"button\">\n              <span class=\"icon\"><i class=\"fa-solid fa-trash\"></i></span>\n              <span>Delete</span>\n            </button>\n          </div>");
+                actionBlock.innerHTML = `
+          <div>
+            <button class="button is-small is-light button--editNoteType" data-note-type-id="${noteType.noteTypeId}" type="button">
+              <span class="icon"><i class="fa-solid fa-pencil"></i></span>
+              <span>Edit Note Type</span>
+            </button>
+          </div>
+          <div>
+            <button class="button is-success is-small button--addField" data-note-type-id="${noteType.noteTypeId}" type="button">
+              <span class="icon"><i class="fa-solid fa-plus"></i></span>
+              <span>Add Field</span>
+            </button>
+            <button class="button is-danger is-small button--deleteNoteType" data-note-type-id="${noteType.noteTypeId}" type="button">
+              <span class="icon"><i class="fa-solid fa-trash"></i></span>
+              <span>Delete</span>
+            </button>
+          </div>`;
                 noteTypePanel.append(actionBlock);
                 // Fields table
-                var tableBlock = document.createElement('div');
+                const tableBlock = document.createElement('div');
                 tableBlock.className = 'panel-block p-0';
                 if (noteType.fields.length === 0) {
-                    tableBlock.innerHTML = "\n            <div class=\"box m-3\" style=\"width: 100%;\">\n              <p class=\"has-text-grey has-text-centered\">\n                No fields defined. Click \"Add Field\" to create fields for this note type.\n              </p>\n            </div>";
+                    tableBlock.innerHTML = `
+            <div class="box m-3" style="width: 100%;">
+              <p class="has-text-grey has-text-centered">
+                No fields defined. Click "Add Field" to create fields for this note type.
+              </p>
+            </div>`;
                 }
                 else {
-                    var tableHTML = "\n            <div class=\"table-container\" style=\"width: 100%;\">\n              <table class=\"table is-striped is-hoverable is-fullwidth mb-0\">\n                <thead>\n                  <tr>\n                    <th>Label</th>\n                    <th>Type</th>\n                    <th>Help Text</th>\n                    <th>Required</th>\n                    <th class=\"has-text-centered\" style=\"width: 150px;\">Actions</th>\n                  </tr>\n                </thead>\n                <tbody>";
-                    for (var _a = 0, _b = noteType.fields; _a < _b.length; _a++) {
-                        var field = _b[_a];
-                        tableHTML += "\n              <tr data-field-id=\"".concat(field.noteTypeFieldId, "\">\n                <td>").concat(cityssm.escapeHTML(field.fieldLabel), "</td>\n                <td><span class=\"tag\">").concat(cityssm.escapeHTML(field.fieldInputType), "</span></td>\n                <td class=\"is-size-7\">").concat(cityssm.escapeHTML(field.fieldHelpText), "</td>\n                <td class=\"has-text-centered\">\n                  ").concat(field.fieldValueRequired ? '<i class="fa-solid fa-check has-text-success"></i>' : '', "\n                </td>\n                <td class=\"has-text-centered\">\n                  <button class=\"button is-small is-light button--editField\" \n                    data-note-type-field-id=\"").concat(field.noteTypeFieldId, "\" \n                    data-note-type-id=\"").concat(noteType.noteTypeId, "\" \n                    type=\"button\">\n                    <span class=\"icon\"><i class=\"fa-solid fa-pencil\"></i></span>\n                  </button>\n                  <button class=\"button is-small is-danger button--deleteField\" \n                    data-note-type-field-id=\"").concat(field.noteTypeFieldId, "\" \n                    type=\"button\">\n                    <span class=\"icon\"><i class=\"fa-solid fa-trash\"></i></span>\n                  </button>\n                </td>\n              </tr>");
+                    let tableHTML = `
+            <div class="table-container" style="width: 100%;">
+              <table class="table is-striped is-hoverable is-fullwidth mb-0">
+                <thead>
+                  <tr>
+                    <th>Label</th>
+                    <th>Type</th>
+                    <th>Help Text</th>
+                    <th>Required</th>
+                    <th class="has-text-centered" style="width: 150px;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>`;
+                    for (const field of noteType.fields) {
+                        tableHTML += `
+              <tr data-field-id="${field.noteTypeFieldId}">
+                <td>${cityssm.escapeHTML(field.fieldLabel)}</td>
+                <td><span class="tag">${cityssm.escapeHTML(field.fieldInputType)}</span></td>
+                <td class="is-size-7">${cityssm.escapeHTML(field.fieldHelpText)}</td>
+                <td class="has-text-centered">
+                  ${field.fieldValueRequired ? '<i class="fa-solid fa-check has-text-success"></i>' : ''}
+                </td>
+                <td class="has-text-centered">
+                  <button class="button is-small is-light button--editField" 
+                    data-note-type-field-id="${field.noteTypeFieldId}" 
+                    data-note-type-id="${noteType.noteTypeId}" 
+                    type="button">
+                    <span class="icon"><i class="fa-solid fa-pencil"></i></span>
+                  </button>
+                  <button class="button is-small is-danger button--deleteField" 
+                    data-note-type-field-id="${field.noteTypeFieldId}" 
+                    type="button">
+                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                  </button>
+                </td>
+              </tr>`;
                     }
-                    tableHTML += "\n                </tbody>\n              </table>\n            </div>";
+                    tableHTML += `
+                </tbody>
+              </table>
+            </div>`;
                     tableBlock.innerHTML = tableHTML;
                 }
                 noteTypePanel.append(tableBlock);
@@ -64,54 +138,49 @@ Object.defineProperty(exports, "__esModule", { value: true });
     }
     function attachEventListeners() {
         // Edit Note Type buttons
-        var editButtons = noteTypesContainerElement.querySelectorAll('.button--editNoteType');
-        for (var _i = 0, editButtons_1 = editButtons; _i < editButtons_1.length; _i++) {
-            var button = editButtons_1[_i];
+        const editButtons = noteTypesContainerElement.querySelectorAll('.button--editNoteType');
+        for (const button of editButtons) {
             button.addEventListener('click', openEditNoteTypeModal);
         }
         // Delete Note Type buttons
-        var deleteButtons = noteTypesContainerElement.querySelectorAll('.button--deleteNoteType');
-        for (var _a = 0, deleteButtons_1 = deleteButtons; _a < deleteButtons_1.length; _a++) {
-            var button = deleteButtons_1[_a];
+        const deleteButtons = noteTypesContainerElement.querySelectorAll('.button--deleteNoteType');
+        for (const button of deleteButtons) {
             button.addEventListener('click', deleteNoteType);
         }
         // Add Field buttons
-        var addFieldButtons = noteTypesContainerElement.querySelectorAll('.button--addField');
-        for (var _b = 0, addFieldButtons_1 = addFieldButtons; _b < addFieldButtons_1.length; _b++) {
-            var button = addFieldButtons_1[_b];
+        const addFieldButtons = noteTypesContainerElement.querySelectorAll('.button--addField');
+        for (const button of addFieldButtons) {
             button.addEventListener('click', openAddFieldModal);
         }
         // Edit Field buttons
-        var editFieldButtons = noteTypesContainerElement.querySelectorAll('.button--editField');
-        for (var _c = 0, editFieldButtons_1 = editFieldButtons; _c < editFieldButtons_1.length; _c++) {
-            var button = editFieldButtons_1[_c];
+        const editFieldButtons = noteTypesContainerElement.querySelectorAll('.button--editField');
+        for (const button of editFieldButtons) {
             button.addEventListener('click', openEditFieldModal);
         }
         // Delete Field buttons
-        var deleteFieldButtons = noteTypesContainerElement.querySelectorAll('.button--deleteField');
-        for (var _d = 0, deleteFieldButtons_1 = deleteFieldButtons; _d < deleteFieldButtons_1.length; _d++) {
-            var button = deleteFieldButtons_1[_d];
+        const deleteFieldButtons = noteTypesContainerElement.querySelectorAll('.button--deleteField');
+        for (const button of deleteFieldButtons) {
             button.addEventListener('click', deleteField);
         }
     }
     function openAddNoteTypeModal() {
-        var addModalElement;
+        let addModalElement;
         function closeModal() {
             addModalElement.remove();
         }
-        var userGroupOptionsHTML = "<option value=\"\">(Any User Group)</option>" +
-            userGroups.map(function (group) { return "<option value=\"".concat(group.userGroupId, "\">").concat(cityssm.escapeHTML(group.userGroupName), "</option>"); }).join('');
+        const userGroupOptionsHTML = `<option value="">(Any User Group)</option>` +
+            userGroups.map((group) => `<option value="${group.userGroupId}">${cityssm.escapeHTML(group.userGroupName)}</option>`).join('');
         addModalElement = cityssm.openHtmlModal('add-noteType', {
-            onshow: function (modalElement) {
+            onshow: (modalElement) => {
                 ;
                 modalElement.querySelector('#noteTypeAdd--noteType').focus();
             },
-            onshown: function (_modalElement, closeModalFunction) {
-                var formElement = addModalElement.querySelector('form');
-                formElement.addEventListener('submit', function (formEvent) {
+            onshown: (_modalElement, closeModalFunction) => {
+                const formElement = addModalElement.querySelector('form');
+                formElement.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doAddNoteType"), formElement, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteType`, formElement, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             closeModalFunction();
@@ -131,35 +200,94 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 });
             }
         });
-        addModalElement.innerHTML = "\n      <form>\n        <div class=\"modal-card\">\n          <header class=\"modal-card-head\">\n            <p class=\"modal-card-title\">Add Note Type</p>\n            <button class=\"delete\" type=\"button\" aria-label=\"close\"></button>\n          </header>\n          <section class=\"modal-card-body\">\n            <div class=\"field\">\n              <label class=\"label\" for=\"noteTypeAdd--noteType\">\n                Note Type Name\n                <span class=\"has-text-danger\" title=\"Required\">*</span>\n              </label>\n              <div class=\"control\">\n                <input class=\"input\" id=\"noteTypeAdd--noteType\" name=\"noteType\" type=\"text\" required maxlength=\"100\" />\n              </div>\n            </div>\n\n            <div class=\"field\">\n              <label class=\"label\" for=\"noteTypeAdd--userGroupId\">User Group</label>\n              <div class=\"control\">\n                <div class=\"select is-fullwidth\">\n                  <select id=\"noteTypeAdd--userGroupId\" name=\"userGroupId\">\n                    ".concat(userGroupOptionsHTML, "\n                  </select>\n                </div>\n              </div>\n              <p class=\"help\">Restrict this note type to a specific user group.</p>\n            </div>\n\n            <div class=\"field\">\n              <label class=\"label\">Availability</label>\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"isAvailableWorkOrders\" value=\"1\" />\n                  Available for Work Orders\n                </label>\n              </div>\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"isAvailableShifts\" value=\"1\" />\n                  Available for Shifts\n                </label>\n              </div>\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"isAvailableTimesheets\" value=\"1\" />\n                  Available for Timesheets\n                </label>\n              </div>\n            </div>\n          </section>\n          <footer class=\"modal-card-foot is-justify-content-end\">\n            <button class=\"button is-success\" type=\"submit\">\n              <span class=\"icon\"><i class=\"fa-solid fa-save\"></i></span>\n              <span>Add Note Type</span>\n            </button>\n            <button class=\"button\" type=\"button\" data-close>Cancel</button>\n          </footer>\n        </div>\n      </form>");
+        addModalElement.innerHTML = `
+      <form>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Add Note Type</p>
+            <button class="delete" type="button" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="field">
+              <label class="label" for="noteTypeAdd--noteType">
+                Note Type Name
+                <span class="has-text-danger" title="Required">*</span>
+              </label>
+              <div class="control">
+                <input class="input" id="noteTypeAdd--noteType" name="noteType" type="text" required maxlength="100" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="noteTypeAdd--userGroupId">User Group</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="noteTypeAdd--userGroupId" name="userGroupId">
+                    ${userGroupOptionsHTML}
+                  </select>
+                </div>
+              </div>
+              <p class="help">Restrict this note type to a specific user group.</p>
+            </div>
+
+            <div class="field">
+              <label class="label">Availability</label>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="isAvailableWorkOrders" value="1" />
+                  Available for Work Orders
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="isAvailableShifts" value="1" />
+                  Available for Shifts
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="isAvailableTimesheets" value="1" />
+                  Available for Timesheets
+                </label>
+              </div>
+            </div>
+          </section>
+          <footer class="modal-card-foot is-justify-content-end">
+            <button class="button is-success" type="submit">
+              <span class="icon"><i class="fa-solid fa-save"></i></span>
+              <span>Add Note Type</span>
+            </button>
+            <button class="button" type="button" data-close>Cancel</button>
+          </footer>
+        </div>
+      </form>`;
     }
     function openEditNoteTypeModal(clickEvent) {
-        var _a;
-        var noteTypeId = Number.parseInt((_a = clickEvent.currentTarget.dataset.noteTypeId) !== null && _a !== void 0 ? _a : '', 10);
-        var noteType = noteTypes.find(function (nt) { return nt.noteTypeId === noteTypeId; });
+        const noteTypeId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeId ?? '', 10);
+        const noteType = noteTypes.find((nt) => nt.noteTypeId === noteTypeId);
         if (noteType === undefined) {
             return;
         }
-        var editModalElement;
+        let editModalElement;
         function closeModal() {
             editModalElement.remove();
         }
-        var userGroupOptionsHTML = "<option value=\"\">(Any User Group)</option>" +
-            userGroups.map(function (group) {
-                var selected = group.userGroupId === noteType.userGroupId ? ' selected' : '';
-                return "<option value=\"".concat(group.userGroupId, "\"").concat(selected, ">").concat(cityssm.escapeHTML(group.userGroupName), "</option>");
+        const userGroupOptionsHTML = `<option value="">(Any User Group)</option>` +
+            userGroups.map((group) => {
+                const selected = group.userGroupId === noteType.userGroupId ? ' selected' : '';
+                return `<option value="${group.userGroupId}"${selected}>${cityssm.escapeHTML(group.userGroupName)}</option>`;
             }).join('');
         editModalElement = cityssm.openHtmlModal('edit-noteType', {
-            onshow: function (modalElement) {
+            onshow: (modalElement) => {
                 ;
                 modalElement.querySelector('#noteTypeEdit--noteType').focus();
             },
-            onshown: function (_modalElement, closeModalFunction) {
-                var formElement = editModalElement.querySelector('form');
-                formElement.addEventListener('submit', function (formEvent) {
+            onshown: (_modalElement, closeModalFunction) => {
+                const formElement = editModalElement.querySelector('form');
+                formElement.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doUpdateNoteType"), formElement, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteType`, formElement, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             closeModalFunction();
@@ -179,24 +307,84 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 });
             }
         });
-        editModalElement.innerHTML = "\n      <form>\n        <input type=\"hidden\" name=\"noteTypeId\" value=\"".concat(noteType.noteTypeId, "\" />\n        <div class=\"modal-card\">\n          <header class=\"modal-card-head\">\n            <p class=\"modal-card-title\">Edit Note Type</p>\n            <button class=\"delete\" type=\"button\" aria-label=\"close\"></button>\n          </header>\n          <section class=\"modal-card-body\">\n            <div class=\"field\">\n              <label class=\"label\" for=\"noteTypeEdit--noteType\">\n                Note Type Name\n                <span class=\"has-text-danger\" title=\"Required\">*</span>\n              </label>\n              <div class=\"control\">\n                <input class=\"input\" id=\"noteTypeEdit--noteType\" name=\"noteType\" type=\"text\" required maxlength=\"100\" value=\"").concat(cityssm.escapeHTML(noteType.noteType), "\" />\n              </div>\n            </div>\n\n            <div class=\"field\">\n              <label class=\"label\" for=\"noteTypeEdit--userGroupId\">User Group</label>\n              <div class=\"control\">\n                <div class=\"select is-fullwidth\">\n                  <select id=\"noteTypeEdit--userGroupId\" name=\"userGroupId\">\n                    ").concat(userGroupOptionsHTML, "\n                  </select>\n                </div>\n              </div>\n              <p class=\"help\">Restrict this note type to a specific user group.</p>\n            </div>\n\n            <div class=\"field\">\n              <label class=\"label\">Availability</label>\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"isAvailableWorkOrders\" value=\"1\" ").concat(noteType.isAvailableWorkOrders ? 'checked' : '', " />\n                  Available for Work Orders\n                </label>\n              </div>\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"isAvailableShifts\" value=\"1\" ").concat(noteType.isAvailableShifts ? 'checked' : '', " />\n                  Available for Shifts\n                </label>\n              </div>\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"isAvailableTimesheets\" value=\"1\" ").concat(noteType.isAvailableTimesheets ? 'checked' : '', " />\n                  Available for Timesheets\n                </label>\n              </div>\n            </div>\n          </section>\n          <footer class=\"modal-card-foot is-justify-content-end\">\n            <button class=\"button is-success\" type=\"submit\">\n              <span class=\"icon\"><i class=\"fa-solid fa-save\"></i></span>\n              <span>Save Changes</span>\n            </button>\n            <button class=\"button\" type=\"button\" data-close>Cancel</button>\n          </footer>\n        </div>\n      </form>");
+        editModalElement.innerHTML = `
+      <form>
+        <input type="hidden" name="noteTypeId" value="${noteType.noteTypeId}" />
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Edit Note Type</p>
+            <button class="delete" type="button" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="field">
+              <label class="label" for="noteTypeEdit--noteType">
+                Note Type Name
+                <span class="has-text-danger" title="Required">*</span>
+              </label>
+              <div class="control">
+                <input class="input" id="noteTypeEdit--noteType" name="noteType" type="text" required maxlength="100" value="${cityssm.escapeHTML(noteType.noteType)}" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="noteTypeEdit--userGroupId">User Group</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="noteTypeEdit--userGroupId" name="userGroupId">
+                    ${userGroupOptionsHTML}
+                  </select>
+                </div>
+              </div>
+              <p class="help">Restrict this note type to a specific user group.</p>
+            </div>
+
+            <div class="field">
+              <label class="label">Availability</label>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="isAvailableWorkOrders" value="1" ${noteType.isAvailableWorkOrders ? 'checked' : ''} />
+                  Available for Work Orders
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="isAvailableShifts" value="1" ${noteType.isAvailableShifts ? 'checked' : ''} />
+                  Available for Shifts
+                </label>
+              </div>
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="isAvailableTimesheets" value="1" ${noteType.isAvailableTimesheets ? 'checked' : ''} />
+                  Available for Timesheets
+                </label>
+              </div>
+            </div>
+          </section>
+          <footer class="modal-card-foot is-justify-content-end">
+            <button class="button is-success" type="submit">
+              <span class="icon"><i class="fa-solid fa-save"></i></span>
+              <span>Save Changes</span>
+            </button>
+            <button class="button" type="button" data-close>Cancel</button>
+          </footer>
+        </div>
+      </form>`;
     }
     function deleteNoteType(clickEvent) {
-        var _a;
-        var noteTypeId = Number.parseInt((_a = clickEvent.currentTarget.dataset.noteTypeId) !== null && _a !== void 0 ? _a : '', 10);
-        var noteType = noteTypes.find(function (nt) { return nt.noteTypeId === noteTypeId; });
+        const noteTypeId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeId ?? '', 10);
+        const noteType = noteTypes.find((nt) => nt.noteTypeId === noteTypeId);
         if (noteType === undefined) {
             return;
         }
         bulmaJS.confirm({
             title: 'Delete Note Type',
-            message: "Are you sure you want to delete \"".concat(cityssm.escapeHTML(noteType.noteType), "\"?"),
+            message: `Are you sure you want to delete "${cityssm.escapeHTML(noteType.noteType)}"?`,
             contextualColorName: 'danger',
             okButton: {
                 text: 'Yes, Delete Note Type',
-                callbackFunction: function () {
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doDeleteNoteType"), { noteTypeId: noteTypeId }, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                callbackFunction: () => {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteType`, { noteTypeId }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             renderNoteTypes();
@@ -217,24 +405,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
         });
     }
     function openAddFieldModal(clickEvent) {
-        var _a;
-        var noteTypeId = Number.parseInt((_a = clickEvent.currentTarget.dataset.noteTypeId) !== null && _a !== void 0 ? _a : '', 10);
-        var addModalElement;
+        const noteTypeId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeId ?? '', 10);
+        let addModalElement;
         function closeModal() {
             addModalElement.remove();
         }
-        var dataListOptionsHTML = "<option value=\"\">(None)</option>" +
-            dataLists.map(function (list) { return "<option value=\"".concat(cityssm.escapeHTML(list.dataListKey), "\">").concat(cityssm.escapeHTML(list.dataListName), "</option>"); }).join('');
+        const dataListOptionsHTML = `<option value="">(None)</option>` +
+            dataLists.map((list) => `<option value="${cityssm.escapeHTML(list.dataListKey)}">${cityssm.escapeHTML(list.dataListName)}</option>`).join('');
         addModalElement = cityssm.openHtmlModal('add-field', {
-            onshow: function (modalElement) {
+            onshow: (modalElement) => {
                 ;
                 modalElement.querySelector('#fieldAdd--fieldLabel').focus();
                 // Handle field type changes
-                var fieldTypeSelect = modalElement.querySelector('#fieldAdd--fieldInputType');
-                var dataListField = modalElement.querySelector('#field--dataListKey');
-                var minMaxFields = modalElement.querySelector('#fields--minMax');
+                const fieldTypeSelect = modalElement.querySelector('#fieldAdd--fieldInputType');
+                const dataListField = modalElement.querySelector('#field--dataListKey');
+                const minMaxFields = modalElement.querySelector('#fields--minMax');
                 function updateFieldVisibility() {
-                    var fieldType = fieldTypeSelect.value;
+                    const fieldType = fieldTypeSelect.value;
                     // Show/hide dataListKey for text and select
                     if (fieldType === 'text' || fieldType === 'select') {
                         dataListField.classList.remove('is-hidden');
@@ -253,12 +440,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 fieldTypeSelect.addEventListener('change', updateFieldVisibility);
                 updateFieldVisibility();
             },
-            onshown: function (_modalElement, closeModalFunction) {
-                var formElement = addModalElement.querySelector('form');
-                formElement.addEventListener('submit', function (formEvent) {
+            onshown: (_modalElement, closeModalFunction) => {
+                const formElement = addModalElement.querySelector('form');
+                formElement.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doAddNoteTypeField"), formElement, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeField`, formElement, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             closeModalFunction();
@@ -278,49 +465,154 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 });
             }
         });
-        addModalElement.innerHTML = "\n      <form>\n        <input type=\"hidden\" name=\"noteTypeId\" value=\"".concat(noteTypeId, "\" />\n        <div class=\"modal-card\">\n          <header class=\"modal-card-head\">\n            <p class=\"modal-card-title\">Add Field</p>\n            <button class=\"delete\" type=\"button\" aria-label=\"close\"></button>\n          </header>\n          <section class=\"modal-card-body\">\n            <div class=\"field\">\n              <label class=\"label\" for=\"fieldAdd--fieldLabel\">\n                Field Label\n                <span class=\"has-text-danger\" title=\"Required\">*</span>\n              </label>\n              <div class=\"control\">\n                <input class=\"input\" id=\"fieldAdd--fieldLabel\" name=\"fieldLabel\" type=\"text\" required maxlength=\"100\" />\n              </div>\n            </div>\n\n            <div class=\"field\">\n              <label class=\"label\" for=\"fieldAdd--fieldInputType\">\n                Field Type\n                <span class=\"has-text-danger\" title=\"Required\">*</span>\n              </label>\n              <div class=\"control\">\n                <div class=\"select is-fullwidth\">\n                  <select id=\"fieldAdd--fieldInputType\" name=\"fieldInputType\" required>\n                    <option value=\"text\">Text (Single Line)</option>\n                    <option value=\"textbox\">Textbox (Multiple Lines)</option>\n                    <option value=\"number\">Number</option>\n                    <option value=\"date\">Date</option>\n                    <option value=\"select\">Select (Dropdown)</option>\n                  </select>\n                </div>\n              </div>\n            </div>\n\n            <div class=\"field\" id=\"field--dataListKey\">\n              <label class=\"label\" for=\"fieldAdd--dataListKey\">Data List</label>\n              <div class=\"control\">\n                <div class=\"select is-fullwidth\">\n                  <select id=\"fieldAdd--dataListKey\" name=\"dataListKey\">\n                    ").concat(dataListOptionsHTML, "\n                  </select>\n                </div>\n              </div>\n              <p class=\"help\">For text fields with autocomplete or select dropdowns.</p>\n            </div>\n\n            <div id=\"fields--minMax\">\n              <div class=\"columns\">\n                <div class=\"column\">\n                  <div class=\"field\">\n                    <label class=\"label\" for=\"fieldAdd--fieldValueMin\">Minimum Value</label>\n                    <div class=\"control\">\n                      <input class=\"input\" id=\"fieldAdd--fieldValueMin\" name=\"fieldValueMin\" type=\"number\" />\n                    </div>\n                    <p class=\"help\">For text: min length. For number: min value.</p>\n                  </div>\n                </div>\n                <div class=\"column\">\n                  <div class=\"field\">\n                    <label class=\"label\" for=\"fieldAdd--fieldValueMax\">Maximum Value</label>\n                    <div class=\"control\">\n                      <input class=\"input\" id=\"fieldAdd--fieldValueMax\" name=\"fieldValueMax\" type=\"number\" />\n                    </div>\n                    <p class=\"help\">For text: max length. For number: max value.</p>\n                  </div>\n                </div>\n              </div>\n            </div>\n\n            <div class=\"field\">\n              <label class=\"label\" for=\"fieldAdd--fieldHelpText\">Help Text</label>\n              <div class=\"control\">\n                <textarea class=\"textarea\" id=\"fieldAdd--fieldHelpText\" name=\"fieldHelpText\" maxlength=\"500\"></textarea>\n              </div>\n              <p class=\"help\">Optional text to help users understand this field.</p>\n            </div>\n\n            <div class=\"field\">\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"fieldValueRequired\" value=\"1\" />\n                  Required Field\n                </label>\n              </div>\n            </div>\n\n            <div class=\"field\">\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"hasDividerAbove\" value=\"1\" />\n                  Show Divider Above Field\n                </label>\n              </div>\n            </div>\n          </section>\n          <footer class=\"modal-card-foot is-justify-content-end\">\n            <button class=\"button is-success\" type=\"submit\">\n              <span class=\"icon\"><i class=\"fa-solid fa-save\"></i></span>\n              <span>Add Field</span>\n            </button>\n            <button class=\"button\" type=\"button\" data-close>Cancel</button>\n          </footer>\n        </div>\n      </form>");
+        addModalElement.innerHTML = `
+      <form>
+        <input type="hidden" name="noteTypeId" value="${noteTypeId}" />
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Add Field</p>
+            <button class="delete" type="button" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="field">
+              <label class="label" for="fieldAdd--fieldLabel">
+                Field Label
+                <span class="has-text-danger" title="Required">*</span>
+              </label>
+              <div class="control">
+                <input class="input" id="fieldAdd--fieldLabel" name="fieldLabel" type="text" required maxlength="100" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="fieldAdd--fieldInputType">
+                Field Type
+                <span class="has-text-danger" title="Required">*</span>
+              </label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="fieldAdd--fieldInputType" name="fieldInputType" required>
+                    <option value="text">Text (Single Line)</option>
+                    <option value="textbox">Textbox (Multiple Lines)</option>
+                    <option value="number">Number</option>
+                    <option value="date">Date</option>
+                    <option value="select">Select (Dropdown)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field" id="field--dataListKey">
+              <label class="label" for="fieldAdd--dataListKey">Data List</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="fieldAdd--dataListKey" name="dataListKey">
+                    ${dataListOptionsHTML}
+                  </select>
+                </div>
+              </div>
+              <p class="help">For text fields with autocomplete or select dropdowns.</p>
+            </div>
+
+            <div id="fields--minMax">
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label" for="fieldAdd--fieldValueMin">Minimum Value</label>
+                    <div class="control">
+                      <input class="input" id="fieldAdd--fieldValueMin" name="fieldValueMin" type="number" />
+                    </div>
+                    <p class="help">For text: min length. For number: min value.</p>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="field">
+                    <label class="label" for="fieldAdd--fieldValueMax">Maximum Value</label>
+                    <div class="control">
+                      <input class="input" id="fieldAdd--fieldValueMax" name="fieldValueMax" type="number" />
+                    </div>
+                    <p class="help">For text: max length. For number: max value.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="fieldAdd--fieldHelpText">Help Text</label>
+              <div class="control">
+                <textarea class="textarea" id="fieldAdd--fieldHelpText" name="fieldHelpText" maxlength="500"></textarea>
+              </div>
+              <p class="help">Optional text to help users understand this field.</p>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="fieldValueRequired" value="1" />
+                  Required Field
+                </label>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="hasDividerAbove" value="1" />
+                  Show Divider Above Field
+                </label>
+              </div>
+            </div>
+          </section>
+          <footer class="modal-card-foot is-justify-content-end">
+            <button class="button is-success" type="submit">
+              <span class="icon"><i class="fa-solid fa-save"></i></span>
+              <span>Add Field</span>
+            </button>
+            <button class="button" type="button" data-close>Cancel</button>
+          </footer>
+        </div>
+      </form>`;
     }
     function openEditFieldModal(clickEvent) {
-        var _a, _b, _c, _d;
-        var fieldId = Number.parseInt((_a = clickEvent.currentTarget.dataset.noteTypeFieldId) !== null && _a !== void 0 ? _a : '', 10);
-        var noteTypeId = Number.parseInt((_b = clickEvent.currentTarget.dataset.noteTypeId) !== null && _b !== void 0 ? _b : '', 10);
-        var noteType = noteTypes.find(function (nt) { return nt.noteTypeId === noteTypeId; });
+        const fieldId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeFieldId ?? '', 10);
+        const noteTypeId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeId ?? '', 10);
+        const noteType = noteTypes.find((nt) => nt.noteTypeId === noteTypeId);
         if (noteType === undefined) {
             return;
         }
-        var field = noteType.fields.find(function (f) { return f.noteTypeFieldId === fieldId; });
+        const field = noteType.fields.find((f) => f.noteTypeFieldId === fieldId);
         if (field === undefined) {
             return;
         }
-        var editModalElement;
+        let editModalElement;
         function closeModal() {
             editModalElement.remove();
         }
-        var dataListOptionsHTML = "<option value=\"\">(None)</option>" +
-            dataLists.map(function (list) {
-                var selected = list.dataListKey === field.dataListKey ? ' selected' : '';
-                return "<option value=\"".concat(cityssm.escapeHTML(list.dataListKey), "\"").concat(selected, ">").concat(cityssm.escapeHTML(list.dataListName), "</option>");
+        const dataListOptionsHTML = `<option value="">(None)</option>` +
+            dataLists.map((list) => {
+                const selected = list.dataListKey === field.dataListKey ? ' selected' : '';
+                return `<option value="${cityssm.escapeHTML(list.dataListKey)}"${selected}>${cityssm.escapeHTML(list.dataListName)}</option>`;
             }).join('');
-        var fieldTypeOptionsHTML = [
+        const fieldTypeOptionsHTML = [
             { value: 'text', label: 'Text (Single Line)' },
             { value: 'textbox', label: 'Textbox (Multiple Lines)' },
             { value: 'number', label: 'Number' },
             { value: 'date', label: 'Date' },
             { value: 'select', label: 'Select (Dropdown)' }
-        ].map(function (option) {
-            var selected = option.value === field.fieldInputType ? ' selected' : '';
-            return "<option value=\"".concat(option.value, "\"").concat(selected, ">").concat(option.label, "</option>");
+        ].map((option) => {
+            const selected = option.value === field.fieldInputType ? ' selected' : '';
+            return `<option value="${option.value}"${selected}>${option.label}</option>`;
         }).join('');
         editModalElement = cityssm.openHtmlModal('edit-field', {
-            onshow: function (modalElement) {
+            onshow: (modalElement) => {
                 ;
                 modalElement.querySelector('#fieldEdit--fieldLabel').focus();
                 // Handle field type changes
-                var fieldTypeSelect = modalElement.querySelector('#fieldEdit--fieldInputType');
-                var dataListField = modalElement.querySelector('#field--dataListKey');
-                var minMaxFields = modalElement.querySelector('#fields--minMax');
+                const fieldTypeSelect = modalElement.querySelector('#fieldEdit--fieldInputType');
+                const dataListField = modalElement.querySelector('#field--dataListKey');
+                const minMaxFields = modalElement.querySelector('#fields--minMax');
                 function updateFieldVisibility() {
-                    var fieldType = fieldTypeSelect.value;
+                    const fieldType = fieldTypeSelect.value;
                     // Show/hide dataListKey for text and select
                     if (fieldType === 'text' || fieldType === 'select') {
                         dataListField.classList.remove('is-hidden');
@@ -339,12 +631,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 fieldTypeSelect.addEventListener('change', updateFieldVisibility);
                 updateFieldVisibility();
             },
-            onshown: function (_modalElement, closeModalFunction) {
-                var formElement = editModalElement.querySelector('form');
-                formElement.addEventListener('submit', function (formEvent) {
+            onshown: (_modalElement, closeModalFunction) => {
+                const formElement = editModalElement.querySelector('form');
+                formElement.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doUpdateNoteTypeField"), formElement, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`, formElement, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             closeModalFunction();
@@ -364,20 +656,121 @@ Object.defineProperty(exports, "__esModule", { value: true });
                 });
             }
         });
-        editModalElement.innerHTML = "\n      <form>\n        <input type=\"hidden\" name=\"noteTypeFieldId\" value=\"".concat(field.noteTypeFieldId, "\" />\n        <div class=\"modal-card\">\n          <header class=\"modal-card-head\">\n            <p class=\"modal-card-title\">Edit Field</p>\n            <button class=\"delete\" type=\"button\" aria-label=\"close\"></button>\n          </header>\n          <section class=\"modal-card-body\">\n            <div class=\"field\">\n              <label class=\"label\" for=\"fieldEdit--fieldLabel\">\n                Field Label\n                <span class=\"has-text-danger\" title=\"Required\">*</span>\n              </label>\n              <div class=\"control\">\n                <input class=\"input\" id=\"fieldEdit--fieldLabel\" name=\"fieldLabel\" type=\"text\" required maxlength=\"100\" value=\"").concat(cityssm.escapeHTML(field.fieldLabel), "\" />\n              </div>\n            </div>\n\n            <div class=\"field\">\n              <label class=\"label\" for=\"fieldEdit--fieldInputType\">\n                Field Type\n                <span class=\"has-text-danger\" title=\"Required\">*</span>\n              </label>\n              <div class=\"control\">\n                <div class=\"select is-fullwidth\">\n                  <select id=\"fieldEdit--fieldInputType\" name=\"fieldInputType\" required>\n                    ").concat(fieldTypeOptionsHTML, "\n                  </select>\n                </div>\n              </div>\n            </div>\n\n            <div class=\"field\" id=\"field--dataListKey\">\n              <label class=\"label\" for=\"fieldEdit--dataListKey\">Data List</label>\n              <div class=\"control\">\n                <div class=\"select is-fullwidth\">\n                  <select id=\"fieldEdit--dataListKey\" name=\"dataListKey\">\n                    ").concat(dataListOptionsHTML, "\n                  </select>\n                </div>\n              </div>\n              <p class=\"help\">For text fields with autocomplete or select dropdowns.</p>\n            </div>\n\n            <div id=\"fields--minMax\">\n              <div class=\"columns\">\n                <div class=\"column\">\n                  <div class=\"field\">\n                    <label class=\"label\" for=\"fieldEdit--fieldValueMin\">Minimum Value</label>\n                    <div class=\"control\">\n                      <input class=\"input\" id=\"fieldEdit--fieldValueMin\" name=\"fieldValueMin\" type=\"number\" value=\"").concat((_c = field.fieldValueMin) !== null && _c !== void 0 ? _c : '', "\" />\n                    </div>\n                    <p class=\"help\">For text: min length. For number: min value.</p>\n                  </div>\n                </div>\n                <div class=\"column\">\n                  <div class=\"field\">\n                    <label class=\"label\" for=\"fieldEdit--fieldValueMax\">Maximum Value</label>\n                    <div class=\"control\">\n                      <input class=\"input\" id=\"fieldEdit--fieldValueMax\" name=\"fieldValueMax\" type=\"number\" value=\"").concat((_d = field.fieldValueMax) !== null && _d !== void 0 ? _d : '', "\" />\n                    </div>\n                    <p class=\"help\">For text: max length. For number: max value.</p>\n                  </div>\n                </div>\n              </div>\n            </div>\n\n            <div class=\"field\">\n              <label class=\"label\" for=\"fieldEdit--fieldHelpText\">Help Text</label>\n              <div class=\"control\">\n                <textarea class=\"textarea\" id=\"fieldEdit--fieldHelpText\" name=\"fieldHelpText\" maxlength=\"500\">").concat(cityssm.escapeHTML(field.fieldHelpText), "</textarea>\n              </div>\n              <p class=\"help\">Optional text to help users understand this field.</p>\n            </div>\n\n            <div class=\"field\">\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"fieldValueRequired\" value=\"1\" ").concat(field.fieldValueRequired ? 'checked' : '', " />\n                  Required Field\n                </label>\n              </div>\n            </div>\n\n            <div class=\"field\">\n              <div class=\"control\">\n                <label class=\"checkbox\">\n                  <input type=\"checkbox\" name=\"hasDividerAbove\" value=\"1\" ").concat(field.hasDividerAbove ? 'checked' : '', " />\n                  Show Divider Above Field\n                </label>\n              </div>\n            </div>\n          </section>\n          <footer class=\"modal-card-foot is-justify-content-end\">\n            <button class=\"button is-success\" type=\"submit\">\n              <span class=\"icon\"><i class=\"fa-solid fa-save\"></i></span>\n              <span>Save Changes</span>\n            </button>\n            <button class=\"button\" type=\"button\" data-close>Cancel</button>\n          </footer>\n        </div>\n      </form>");
+        editModalElement.innerHTML = `
+      <form>
+        <input type="hidden" name="noteTypeFieldId" value="${field.noteTypeFieldId}" />
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Edit Field</p>
+            <button class="delete" type="button" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="field">
+              <label class="label" for="fieldEdit--fieldLabel">
+                Field Label
+                <span class="has-text-danger" title="Required">*</span>
+              </label>
+              <div class="control">
+                <input class="input" id="fieldEdit--fieldLabel" name="fieldLabel" type="text" required maxlength="100" value="${cityssm.escapeHTML(field.fieldLabel)}" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="fieldEdit--fieldInputType">
+                Field Type
+                <span class="has-text-danger" title="Required">*</span>
+              </label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="fieldEdit--fieldInputType" name="fieldInputType" required>
+                    ${fieldTypeOptionsHTML}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field" id="field--dataListKey">
+              <label class="label" for="fieldEdit--dataListKey">Data List</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="fieldEdit--dataListKey" name="dataListKey">
+                    ${dataListOptionsHTML}
+                  </select>
+                </div>
+              </div>
+              <p class="help">For text fields with autocomplete or select dropdowns.</p>
+            </div>
+
+            <div id="fields--minMax">
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label" for="fieldEdit--fieldValueMin">Minimum Value</label>
+                    <div class="control">
+                      <input class="input" id="fieldEdit--fieldValueMin" name="fieldValueMin" type="number" value="${field.fieldValueMin ?? ''}" />
+                    </div>
+                    <p class="help">For text: min length. For number: min value.</p>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="field">
+                    <label class="label" for="fieldEdit--fieldValueMax">Maximum Value</label>
+                    <div class="control">
+                      <input class="input" id="fieldEdit--fieldValueMax" name="fieldValueMax" type="number" value="${field.fieldValueMax ?? ''}" />
+                    </div>
+                    <p class="help">For text: max length. For number: max value.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="fieldEdit--fieldHelpText">Help Text</label>
+              <div class="control">
+                <textarea class="textarea" id="fieldEdit--fieldHelpText" name="fieldHelpText" maxlength="500">${cityssm.escapeHTML(field.fieldHelpText)}</textarea>
+              </div>
+              <p class="help">Optional text to help users understand this field.</p>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="fieldValueRequired" value="1" ${field.fieldValueRequired ? 'checked' : ''} />
+                  Required Field
+                </label>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="hasDividerAbove" value="1" ${field.hasDividerAbove ? 'checked' : ''} />
+                  Show Divider Above Field
+                </label>
+              </div>
+            </div>
+          </section>
+          <footer class="modal-card-foot is-justify-content-end">
+            <button class="button is-success" type="submit">
+              <span class="icon"><i class="fa-solid fa-save"></i></span>
+              <span>Save Changes</span>
+            </button>
+            <button class="button" type="button" data-close>Cancel</button>
+          </footer>
+        </div>
+      </form>`;
     }
     function deleteField(clickEvent) {
-        var _a;
-        var fieldId = Number.parseInt((_a = clickEvent.currentTarget.dataset.noteTypeFieldId) !== null && _a !== void 0 ? _a : '', 10);
+        const fieldId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeFieldId ?? '', 10);
         bulmaJS.confirm({
             title: 'Delete Field',
             message: 'Are you sure you want to delete this field?',
             contextualColorName: 'danger',
             okButton: {
                 text: 'Yes, Delete Field',
-                callbackFunction: function () {
-                    cityssm.postJSON("".concat(shiftLog.urlPrefix, "/admin/doDeleteNoteTypeField"), { noteTypeFieldId: fieldId }, function (rawResponseJSON) {
-                        var responseJSON = rawResponseJSON;
+                callbackFunction: () => {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteTypeField`, { noteTypeFieldId: fieldId }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             renderNoteTypes();
@@ -400,5 +793,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
     // Initialize
     renderNoteTypes();
     // Add Note Type button
-    (_a = document.querySelector('#button--addNoteType')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', openAddNoteTypeModal);
+    document.querySelector('#button--addNoteType')?.addEventListener('click', openAddNoteTypeModal);
 })();
+export {};

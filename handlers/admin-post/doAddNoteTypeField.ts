@@ -6,12 +6,12 @@ import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.j
 
 export type DoAddNoteTypeFieldResponse =
   | {
-      success: false
       message: string
+      success: false
     }
   | {
-      success: true
       noteTypes: NoteTypeWithFields[]
+      success: true
     }
 
 export default async function handler(
@@ -19,15 +19,15 @@ export default async function handler(
     unknown,
     unknown,
     {
-      noteTypeId?: string | number
-      fieldLabel?: string
-      fieldInputType?: 'text' | 'number' | 'date' | 'select' | 'textbox'
-      fieldHelpText?: string
       dataListKey?: string
-      fieldValueMin?: string | number
-      fieldValueMax?: string | number
-      fieldValueRequired?: string | boolean
-      hasDividerAbove?: string | boolean
+      fieldHelpText?: string
+      fieldInputType?: 'date' | 'number' | 'select' | 'text' | 'textbox'
+      fieldLabel?: string
+      fieldValueMax?: number | string
+      fieldValueMin?: number | string
+      fieldValueRequired?: boolean | string
+      hasDividerAbove?: boolean | string
+      noteTypeId?: number | string
     }
   >,
   response: Response<DoAddNoteTypeFieldResponse>
@@ -59,15 +59,15 @@ export default async function handler(
 
   const success = await addNoteTypeField(
     {
-      noteTypeId,
-      fieldLabel,
-      fieldInputType,
-      fieldHelpText,
       dataListKey,
-      fieldValueMin,
+      fieldHelpText,
+      fieldInputType,
+      fieldLabel,
       fieldValueMax,
+      fieldValueMin,
       fieldValueRequired,
-      hasDividerAbove
+      hasDividerAbove,
+      noteTypeId
     },
     request.session.user as User
   )
@@ -76,13 +76,13 @@ export default async function handler(
     const noteTypes = await getNoteTypes()
 
     response.json({
-      success: true,
-      noteTypes
+      noteTypes,
+      success: true
     })
   } else {
     response.json({
-      success: false,
-      message: 'Field could not be added.'
+      message: 'Field could not be added.',
+      success: false
     })
   }
 }

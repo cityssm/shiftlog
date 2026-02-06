@@ -1,15 +1,15 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 interface UpdateNoteTypeFieldForm {
-  noteTypeFieldId: number
-  fieldLabel: string
-  fieldInputType: 'text' | 'number' | 'date' | 'select' | 'textbox'
-  fieldHelpText: string
   dataListKey?: string | null
-  fieldValueMin?: number | null
+  fieldHelpText: string
+  fieldInputType: 'date' | 'number' | 'select' | 'text' | 'textbox'
+  fieldLabel: string
   fieldValueMax?: number | null
+  fieldValueMin?: number | null
   fieldValueRequired: boolean
   hasDividerAbove: boolean
+  noteTypeFieldId: number
 }
 
 export default async function updateNoteTypeField(

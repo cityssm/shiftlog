@@ -1,5 +1,5 @@
-import updateNoteType from '../../database/noteTypes/updateNoteType.js';
 import getNoteTypes from '../../database/noteTypes/getNoteTypes.js';
+import updateNoteType from '../../database/noteTypes/updateNoteType.js';
 export default async function handler(request, response) {
     const noteTypeId = Number.parseInt(request.body.noteTypeId, 10);
     const noteType = request.body.noteType ?? '';
@@ -13,24 +13,24 @@ export default async function handler(request, response) {
     const isAvailableTimesheets = request.body.isAvailableTimesheets === true ||
         request.body.isAvailableTimesheets === '1';
     const success = await updateNoteType({
-        noteTypeId,
-        noteType,
-        userGroupId,
-        isAvailableWorkOrders,
         isAvailableShifts,
-        isAvailableTimesheets
+        isAvailableTimesheets,
+        isAvailableWorkOrders,
+        noteType,
+        noteTypeId,
+        userGroupId
     }, request.session.user);
     if (success) {
         const noteTypes = await getNoteTypes();
         response.json({
-            success: true,
-            noteTypes
+            noteTypes,
+            success: true
         });
     }
     else {
         response.json({
-            success: false,
-            message: 'Note type could not be updated.'
+            message: 'Note type could not be updated.',
+            success: false
         });
     }
 }

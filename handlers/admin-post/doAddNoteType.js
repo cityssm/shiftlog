@@ -12,23 +12,23 @@ export default async function handler(request, response) {
     const isAvailableTimesheets = request.body.isAvailableTimesheets === true ||
         request.body.isAvailableTimesheets === '1';
     const success = await addNoteType({
-        noteType,
-        userGroupId,
-        isAvailableWorkOrders,
         isAvailableShifts,
-        isAvailableTimesheets
+        isAvailableTimesheets,
+        isAvailableWorkOrders,
+        noteType,
+        userGroupId
     }, request.session.user);
     if (success) {
         const noteTypes = await getNoteTypes();
         response.json({
-            success: true,
-            noteTypes
+            noteTypes,
+            success: true
         });
     }
     else {
         response.json({
-            success: false,
-            message: 'Note type could not be added. Note type name may already exist.'
+            message: 'Note type could not be added. Note type name may already exist.',
+            success: false
         });
     }
 }

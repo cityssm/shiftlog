@@ -1,5 +1,5 @@
-import updateNoteTypeField from '../../database/noteTypes/updateNoteTypeField.js';
 import getNoteTypes from '../../database/noteTypes/getNoteTypes.js';
+import updateNoteTypeField from '../../database/noteTypes/updateNoteTypeField.js';
 export default async function handler(request, response) {
     const noteTypeFieldId = Number.parseInt(request.body.noteTypeFieldId, 10);
     const fieldLabel = request.body.fieldLabel ?? '';
@@ -21,27 +21,27 @@ export default async function handler(request, response) {
     const hasDividerAbove = request.body.hasDividerAbove === true ||
         request.body.hasDividerAbove === '1';
     const success = await updateNoteTypeField({
-        noteTypeFieldId,
-        fieldLabel,
-        fieldInputType,
-        fieldHelpText,
         dataListKey,
-        fieldValueMin,
+        fieldHelpText,
+        fieldInputType,
+        fieldLabel,
         fieldValueMax,
+        fieldValueMin,
         fieldValueRequired,
-        hasDividerAbove
+        hasDividerAbove,
+        noteTypeFieldId
     }, request.session.user);
     if (success) {
         const noteTypes = await getNoteTypes();
         response.json({
-            success: true,
-            noteTypes
+            noteTypes,
+            success: true
         });
     }
     else {
         response.json({
-            success: false,
-            message: 'Field could not be updated.'
+            message: 'Field could not be updated.',
+            success: false
         });
     }
 }

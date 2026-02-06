@@ -1,13 +1,13 @@
 interface AddNoteTypeFieldForm {
-    noteTypeId: number;
-    fieldLabel: string;
-    fieldInputType: 'text' | 'number' | 'date' | 'select' | 'textbox';
-    fieldHelpText: string;
     dataListKey?: string | null;
-    fieldValueMin?: number | null;
+    fieldHelpText: string;
+    fieldInputType: 'date' | 'number' | 'select' | 'text' | 'textbox';
+    fieldLabel: string;
     fieldValueMax?: number | null;
+    fieldValueMin?: number | null;
     fieldValueRequired: boolean;
     hasDividerAbove: boolean;
+    noteTypeId: number;
 }
 export default function addNoteTypeField(fieldFields: AddNoteTypeFieldForm, user: User): Promise<boolean>;
 export {};
