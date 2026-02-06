@@ -205,7 +205,7 @@ declare const exports: {
                     <i class="fa-solid fa-grip-vertical"></i>
                   </span>
                 </td>
-                <td${dividerStyle}>
+                <td ${dividerStyle}>
                   <span class="field-label">${cityssm.escapeHTML(field.fieldLabel)}</span>
                   ${field.fieldValueRequired ? '<span class="icon is-small has-text-success ml-1" title="Required"><i class="fa-solid fa-asterisk"></i></span>' : ''}
                 </td>
@@ -332,6 +332,8 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminNoteTypes-add', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
+
         formElement = modalElement.querySelector('form') as HTMLFormElement
 
         const userGroupSelect = formElement.querySelector(
@@ -408,6 +410,8 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminNoteTypes-edit', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
+
         formElement = modalElement.querySelector('form') as HTMLFormElement
         ;(
           formElement.querySelector(
@@ -461,6 +465,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -481,6 +486,7 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'danger',
       title: 'Delete Note Type',
+
       message: `Are you sure you want to delete "${cityssm.escapeHTML(noteType.noteType)}"?`,
 
       okButton: {
@@ -546,6 +552,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Field',
+              
               message: responseJSON.message
             })
           }

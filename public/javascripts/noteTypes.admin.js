@@ -139,7 +139,7 @@
                     <i class="fa-solid fa-grip-vertical"></i>
                   </span>
                 </td>
-                <td${dividerStyle}>
+                <td ${dividerStyle}>
                   <span class="field-label">${cityssm.escapeHTML(field.fieldLabel)}</span>
                   ${field.fieldValueRequired ? '<span class="icon is-small has-text-success ml-1" title="Required"><i class="fa-solid fa-asterisk"></i></span>' : ''}
                 </td>
@@ -238,6 +238,7 @@
         }
         cityssm.openHtmlModal('adminNoteTypes-add', {
             onshow(modalElement) {
+                shiftLog.populateSectionAliases(modalElement);
                 formElement = modalElement.querySelector('form');
                 const userGroupSelect = formElement.querySelector('#noteTypeAdd--userGroupId');
                 for (const group of userGroups) {
@@ -290,6 +291,7 @@
         }
         cityssm.openHtmlModal('adminNoteTypes-edit', {
             onshow(modalElement) {
+                shiftLog.populateSectionAliases(modalElement);
                 formElement = modalElement.querySelector('form');
                 formElement.querySelector('#noteTypeEdit--noteTypeId').value = noteType.noteTypeId.toString();
                 formElement.querySelector('#noteTypeEdit--noteType').value = noteType.noteType;

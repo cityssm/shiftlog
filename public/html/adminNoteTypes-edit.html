@@ -16,7 +16,7 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editNoteType">
-        <input type="hidden" name="noteTypeId" id="noteTypeEdit--noteTypeId" />
+        <input id="noteTypeEdit--noteTypeId" name="noteTypeId" type="hidden" />
         <div class="field">
           <label class="label" for="noteTypeEdit--noteType">
             Note Type Name
@@ -51,20 +51,38 @@
           <label class="label">Availability</label>
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="isAvailableWorkOrders" value="1" id="noteTypeEdit--isAvailableWorkOrders" />
-              Available for Work Orders
+              <input
+                id="noteTypeEdit--isAvailableWorkOrders"
+                name="isAvailableWorkOrders"
+                type="checkbox"
+                value="1"
+              />
+              Available for
+              <span data-section-alias="workOrdersSectionName">Work Orders</span>
             </label>
           </div>
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="isAvailableShifts" value="1" id="noteTypeEdit--isAvailableShifts" />
-              Available for Shifts
+              <input
+                id="noteTypeEdit--isAvailableShifts"
+                name="isAvailableShifts"
+                type="checkbox"
+                value="1"
+              />
+              Available for
+              <span data-section-alias="shiftsSectionName">Shifts</span>
             </label>
           </div>
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="isAvailableTimesheets" value="1" id="noteTypeEdit--isAvailableTimesheets" />
-              Available for Timesheets
+              <input
+                id="noteTypeEdit--isAvailableTimesheets"
+                name="isAvailableTimesheets"
+                type="checkbox"
+                value="1"
+              />
+              Available for
+              <span data-section-alias="timesheetsSectionName">Timesheets</span>
             </label>
           </div>
         </div>
@@ -87,16 +105,3 @@
     </div>
   </div>
 </div>
-<script>
-  (function () {
-    const selectElement = document.querySelector('#noteTypeEdit--userGroupId');
-    if (selectElement && window.exports && window.exports.userGroups) {
-      for (const userGroup of window.exports.userGroups) {
-        const optionElement = document.createElement('option');
-        optionElement.value = userGroup.userGroupId;
-        optionElement.textContent = userGroup.userGroupName;
-        selectElement.appendChild(optionElement);
-      }
-    }
-  })();
-</script>

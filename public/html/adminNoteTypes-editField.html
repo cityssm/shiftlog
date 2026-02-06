@@ -16,7 +16,7 @@
     </div>
     <section class="modal-card-body">
       <form id="form--editNoteTypeField">
-        <input type="hidden" name="noteTypeFieldId" id="fieldEdit--noteTypeFieldId" />
+        <input id="fieldEdit--noteTypeFieldId" name="noteTypeFieldId" type="hidden" />
         <div class="field">
           <label class="label" for="fieldEdit--fieldLabel">
             Field Label
@@ -42,7 +42,12 @@
           </label>
           <div class="control">
             <div class="select is-fullwidth">
-              <select id="fieldEdit--fieldInputType" name="fieldInputType" required disabled>
+              <select
+                id="fieldEdit--fieldInputType"
+                name="fieldInputType"
+                disabled
+                required
+              >
                 <option value="text">Text (Single Line)</option>
                 <option value="textbox">Textbox (Multiple Lines)</option>
                 <option value="number">Number</option>
@@ -115,7 +120,12 @@
         <div class="field">
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="fieldValueRequired" value="1" id="fieldEdit--fieldValueRequired" />
+              <input
+                id="fieldEdit--fieldValueRequired"
+                name="fieldValueRequired"
+                type="checkbox"
+                value="1"
+              />
               Required Field
             </label>
           </div>
@@ -124,7 +134,12 @@
         <div class="field">
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="hasDividerAbove" value="1" id="fieldEdit--hasDividerAbove" />
+              <input
+                id="fieldEdit--hasDividerAbove"
+                name="hasDividerAbove"
+                type="checkbox"
+                value="1"
+              />
               Show Divider Above Field
             </label>
           </div>
@@ -148,45 +163,3 @@
     </div>
   </div>
 </div>
-<script>
-  (function () {
-    // Populate data lists
-    const dataListSelect = document.querySelector('#fieldEdit--dataListKey');
-    if (dataListSelect && window.exports && window.exports.dataLists) {
-      for (const dataList of window.exports.dataLists) {
-        const optionElement = document.createElement('option');
-        optionElement.value = dataList.dataListKey;
-        optionElement.textContent = dataList.dataListName;
-        dataListSelect.appendChild(optionElement);
-      }
-    }
-
-    // Handle field type changes to show/hide appropriate fields
-    const fieldTypeSelect = document.querySelector('#fieldEdit--fieldInputType');
-    const dataListField = document.querySelector('#field--dataListKey');
-    const minMaxFields = document.querySelector('#fields--minMax');
-
-    function updateFieldVisibility() {
-      const fieldType = fieldTypeSelect.value;
-      
-      // Show/hide dataListKey for text and select
-      if (fieldType === 'text' || fieldType === 'select') {
-        dataListField.classList.remove('is-hidden');
-      } else {
-        dataListField.classList.add('is-hidden');
-      }
-
-      // Show/hide min/max for text and number
-      if (fieldType === 'text' || fieldType === 'number') {
-        minMaxFields.classList.remove('is-hidden');
-      } else {
-        minMaxFields.classList.add('is-hidden');
-      }
-    }
-
-    if (fieldTypeSelect) {
-      fieldTypeSelect.addEventListener('change', updateFieldVisibility);
-      updateFieldVisibility();
-    }
-  })();
-</script>

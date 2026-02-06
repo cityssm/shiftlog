@@ -50,20 +50,23 @@
           <label class="label">Availability</label>
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="isAvailableWorkOrders" value="1" />
-              Available for Work Orders
+              <input name="isAvailableWorkOrders" type="checkbox" value="1" />
+              Available for
+              <span data-section-alias="workOrdersSectionName">Work Orders</span>
             </label>
           </div>
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="isAvailableShifts" value="1" />
-              Available for Shifts
+              <input name="isAvailableShifts" type="checkbox" value="1" />
+              Available for
+              <span data-section-alias="shiftsSectionName">Shifts</span>
             </label>
           </div>
           <div class="control">
             <label class="checkbox">
-              <input type="checkbox" name="isAvailableTimesheets" value="1" />
-              Available for Timesheets
+              <input name="isAvailableTimesheets" type="checkbox" value="1" />
+              Available for
+              <span data-section-alias="timesheetsSectionName">Timesheets</span>
             </label>
           </div>
         </div>
@@ -86,16 +89,3 @@
     </div>
   </div>
 </div>
-<script>
-  (function () {
-    const selectElement = document.querySelector('#noteTypeAdd--userGroupId');
-    if (selectElement && window.exports && window.exports.userGroups) {
-      for (const userGroup of window.exports.userGroups) {
-        const optionElement = document.createElement('option');
-        optionElement.value = userGroup.userGroupId;
-        optionElement.textContent = userGroup.userGroupName;
-        selectElement.appendChild(optionElement);
-      }
-    }
-  })();
-</script>
