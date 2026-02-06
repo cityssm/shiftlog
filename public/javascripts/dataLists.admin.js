@@ -113,8 +113,6 @@
         }
         // Re-render all panels from scratch
         for (const dataList of dataLists) {
-            // Ensure items array exists
-            const items = dataList.items ?? [];
             const panelHtml = /* html */ `
         <details class="panel mb-5 collapsable-panel" data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}" data-is-system-list="${dataList.isSystemList}">
           <summary class="panel-heading is-clickable">
@@ -203,8 +201,8 @@
             const panelElement = tempDiv.firstElementChild;
             if (panelElement !== null) {
                 panelsContainer.append(panelElement);
-                // Render items for this list
-                renderDataListItems(dataList.dataListKey, items);
+                // Render items for this list (use items variable which has the default)
+                renderDataListItems(dataList.dataListKey, dataList.items);
                 // Initialize sortable for this list
                 initializeSortable(dataList.dataListKey);
             }
