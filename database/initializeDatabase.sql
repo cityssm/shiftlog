@@ -161,6 +161,7 @@ CREATE TABLE ShiftLog.NoteTypeFields (
   fieldValueMax INT,
   fieldValueRequired BIT NOT NULL DEFAULT 0,
   hasDividerAbove BIT NOT NULL DEFAULT 0,
+  orderNumber INT NOT NULL DEFAULT 0,
   recordCreate_userName VARCHAR(30) NOT NULL,
   recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
   recordUpdate_userName VARCHAR(30) NOT NULL,
