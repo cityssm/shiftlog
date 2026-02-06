@@ -36,18 +36,43 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getShiftLogConnectionPool = getShiftLogConnectionPool;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var config_helpers_js_1 = require("./config.helpers.js");
-function getShiftLogConnectionPool() {
+exports.default = updateNoteTypeField;
+var database_helpers_js_1 = require("../../helpers/database.helpers.js");
+function updateNoteTypeField(fieldFields, user) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+        var currentDate, pool, _a;
+        var _b, _c, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
+                case 0:
+                    currentDate = new Date();
+                    _e.label = 1;
                 case 1:
-                    pool = _a.sent();
-                    return [2 /*return*/, pool];
+                    _e.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];
+                case 2:
+                    pool = _e.sent();
+                    return [4 /*yield*/, pool
+                            .request()
+                            .input('noteTypeFieldId', fieldFields.noteTypeFieldId)
+                            .input('fieldLabel', fieldFields.fieldLabel)
+                            .input('fieldInputType', fieldFields.fieldInputType)
+                            .input('fieldHelpText', fieldFields.fieldHelpText)
+                            .input('dataListKey', (_b = fieldFields.dataListKey) !== null && _b !== void 0 ? _b : null)
+                            .input('fieldValueMin', (_c = fieldFields.fieldValueMin) !== null && _c !== void 0 ? _c : null)
+                            .input('fieldValueMax', (_d = fieldFields.fieldValueMax) !== null && _d !== void 0 ? _d : null)
+                            .input('fieldValueRequired', fieldFields.fieldValueRequired)
+                            .input('hasDividerAbove', fieldFields.hasDividerAbove)
+                            .input('recordUpdate_userName', user.userName)
+                            .input('recordUpdate_dateTime', currentDate)
+                            .query(/* sql */ "\n        UPDATE\n          ShiftLog.NoteTypeFields\n        SET\n          fieldLabel = @fieldLabel,\n          fieldInputType = @fieldInputType,\n          fieldHelpText = @fieldHelpText,\n          dataListKey = @dataListKey,\n          fieldValueMin = @fieldValueMin,\n          fieldValueMax = @fieldValueMax,\n          fieldValueRequired = @fieldValueRequired,\n          hasDividerAbove = @hasDividerAbove,\n          recordUpdate_userName = @recordUpdate_userName,\n          recordUpdate_dateTime = @recordUpdate_dateTime\n        WHERE\n          noteTypeFieldId = @noteTypeFieldId\n          AND recordDelete_dateTime IS NULL\n      ")];
+                case 3:
+                    _e.sent();
+                    return [2 /*return*/, true];
+                case 4:
+                    _a = _e.sent();
+                    return [2 /*return*/, false];
+                case 5: return [2 /*return*/];
             }
         });
     });

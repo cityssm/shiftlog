@@ -36,18 +36,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getShiftLogConnectionPool = getShiftLogConnectionPool;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var config_helpers_js_1 = require("./config.helpers.js");
-function getShiftLogConnectionPool() {
+exports.default = handler;
+var deleteNoteTypeField_js_1 = require("../../database/noteTypes/deleteNoteTypeField.js");
+var getNoteTypes_js_1 = require("../../database/noteTypes/getNoteTypes.js");
+function handler(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool;
+        var noteTypeFieldId, success, noteTypes;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+                case 0:
+                    noteTypeFieldId = Number.parseInt(request.body.noteTypeFieldId, 10);
+                    return [4 /*yield*/, (0, deleteNoteTypeField_js_1.default)(noteTypeFieldId, request.session.user)];
                 case 1:
-                    pool = _a.sent();
-                    return [2 /*return*/, pool];
+                    success = _a.sent();
+                    if (!success) return [3 /*break*/, 3];
+                    return [4 /*yield*/, (0, getNoteTypes_js_1.default)()];
+                case 2:
+                    noteTypes = _a.sent();
+                    response.json({
+                        success: true,
+                        noteTypes: noteTypes
+                    });
+                    return [3 /*break*/, 4];
+                case 3:
+                    response.json({
+                        success: false,
+                        message: 'Field could not be deleted.'
+                    });
+                    _a.label = 4;
+                case 4: return [2 /*return*/];
             }
         });
     });

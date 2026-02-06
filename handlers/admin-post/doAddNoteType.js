@@ -36,18 +36,51 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getShiftLogConnectionPool = getShiftLogConnectionPool;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var config_helpers_js_1 = require("./config.helpers.js");
-function getShiftLogConnectionPool() {
+exports.default = handler;
+var addNoteType_js_1 = require("../../database/noteTypes/addNoteType.js");
+var getNoteTypes_js_1 = require("../../database/noteTypes/getNoteTypes.js");
+function handler(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+        var noteType, userGroupId, isAvailableWorkOrders, isAvailableShifts, isAvailableTimesheets, success, noteTypes;
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    noteType = (_a = request.body.noteType) !== null && _a !== void 0 ? _a : '';
+                    userGroupId = request.body.userGroupId === '' || request.body.userGroupId === undefined
+                        ? null
+                        : Number.parseInt(request.body.userGroupId, 10);
+                    isAvailableWorkOrders = request.body.isAvailableWorkOrders === true ||
+                        request.body.isAvailableWorkOrders === '1';
+                    isAvailableShifts = request.body.isAvailableShifts === true ||
+                        request.body.isAvailableShifts === '1';
+                    isAvailableTimesheets = request.body.isAvailableTimesheets === true ||
+                        request.body.isAvailableTimesheets === '1';
+                    return [4 /*yield*/, (0, addNoteType_js_1.default)({
+                            noteType: noteType,
+                            userGroupId: userGroupId,
+                            isAvailableWorkOrders: isAvailableWorkOrders,
+                            isAvailableShifts: isAvailableShifts,
+                            isAvailableTimesheets: isAvailableTimesheets
+                        }, request.session.user)];
                 case 1:
-                    pool = _a.sent();
-                    return [2 /*return*/, pool];
+                    success = _b.sent();
+                    if (!success) return [3 /*break*/, 3];
+                    return [4 /*yield*/, (0, getNoteTypes_js_1.default)()];
+                case 2:
+                    noteTypes = _b.sent();
+                    response.json({
+                        success: true,
+                        noteTypes: noteTypes
+                    });
+                    return [3 /*break*/, 4];
+                case 3:
+                    response.json({
+                        success: false,
+                        message: 'Note type could not be added. Note type name may already exist.'
+                    });
+                    _b.label = 4;
+                case 4: return [2 /*return*/];
             }
         });
     });

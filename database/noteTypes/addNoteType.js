@@ -36,18 +36,43 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getShiftLogConnectionPool = getShiftLogConnectionPool;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var config_helpers_js_1 = require("./config.helpers.js");
-function getShiftLogConnectionPool() {
+exports.default = addNoteType;
+var config_helpers_js_1 = require("../../helpers/config.helpers.js");
+var database_helpers_js_1 = require("../../helpers/database.helpers.js");
+function addNoteType(noteTypeFields, user) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+        var currentDate, pool, _a;
+        var _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    currentDate = new Date();
+                    _c.label = 1;
                 case 1:
-                    pool = _a.sent();
-                    return [2 /*return*/, pool];
+                    _c.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];
+                case 2:
+                    pool = _c.sent();
+                    return [4 /*yield*/, pool
+                            .request()
+                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
+                            .input('noteType', noteTypeFields.noteType)
+                            .input('userGroupId', (_b = noteTypeFields.userGroupId) !== null && _b !== void 0 ? _b : null)
+                            .input('isAvailableWorkOrders', noteTypeFields.isAvailableWorkOrders)
+                            .input('isAvailableShifts', noteTypeFields.isAvailableShifts)
+                            .input('isAvailableTimesheets', noteTypeFields.isAvailableTimesheets)
+                            .input('recordCreate_userName', user.userName)
+                            .input('recordCreate_dateTime', currentDate)
+                            .input('recordUpdate_userName', user.userName)
+                            .input('recordUpdate_dateTime', currentDate)
+                            .query(/* sql */ "\n        INSERT INTO\n          ShiftLog.NoteTypes (\n            instance,\n            noteType,\n            userGroupId,\n            isAvailableWorkOrders,\n            isAvailableShifts,\n            isAvailableTimesheets,\n            recordCreate_userName,\n            recordCreate_dateTime,\n            recordUpdate_userName,\n            recordUpdate_dateTime\n          )\n        VALUES\n          (\n            @instance,\n            @noteType,\n            @userGroupId,\n            @isAvailableWorkOrders,\n            @isAvailableShifts,\n            @isAvailableTimesheets,\n            @recordCreate_userName,\n            @recordCreate_dateTime,\n            @recordUpdate_userName,\n            @recordUpdate_dateTime\n          )\n      ")];
+                case 3:
+                    _c.sent();
+                    return [2 /*return*/, true];
+                case 4:
+                    _a = _c.sent();
+                    return [2 /*return*/, false];
+                case 5: return [2 /*return*/];
             }
         });
     });

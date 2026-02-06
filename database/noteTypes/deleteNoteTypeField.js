@@ -36,18 +36,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getShiftLogConnectionPool = getShiftLogConnectionPool;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var config_helpers_js_1 = require("./config.helpers.js");
-function getShiftLogConnectionPool() {
+exports.default = deleteNoteTypeField;
+var database_helpers_js_1 = require("../../helpers/database.helpers.js");
+function deleteNoteTypeField(noteTypeFieldId, user) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+        var currentDate, pool, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    currentDate = new Date();
+                    _b.label = 1;
                 case 1:
-                    pool = _a.sent();
-                    return [2 /*return*/, pool];
+                    _b.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];
+                case 2:
+                    pool = _b.sent();
+                    return [4 /*yield*/, pool
+                            .request()
+                            .input('noteTypeFieldId', noteTypeFieldId)
+                            .input('recordDelete_userName', user.userName)
+                            .input('recordDelete_dateTime', currentDate)
+                            .query(/* sql */ "\n        UPDATE\n          ShiftLog.NoteTypeFields\n        SET\n          recordDelete_userName = @recordDelete_userName,\n          recordDelete_dateTime = @recordDelete_dateTime\n        WHERE\n          noteTypeFieldId = @noteTypeFieldId\n          AND recordDelete_dateTime IS NULL\n      ")];
+                case 3:
+                    _b.sent();
+                    return [2 /*return*/, true];
+                case 4:
+                    _a = _b.sent();
+                    return [2 /*return*/, false];
+                case 5: return [2 /*return*/];
             }
         });
     });

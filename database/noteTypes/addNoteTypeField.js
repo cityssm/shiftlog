@@ -36,24 +36,45 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = getUserGroups;
-var config_helpers_js_1 = require("../../helpers/config.helpers.js");
+exports.default = addNoteTypeField;
 var database_helpers_js_1 = require("../../helpers/database.helpers.js");
-function getUserGroups() {
+function addNoteTypeField(fieldFields, user) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool, result;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];
+        var currentDate, pool, _a;
+        var _b, _c, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
+                case 0:
+                    currentDate = new Date();
+                    _e.label = 1;
                 case 1:
-                    pool = _a.sent();
+                    _e.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];
+                case 2:
+                    pool = _e.sent();
                     return [4 /*yield*/, pool
                             .request()
-                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
-                            .query(/* sql */ "\n      SELECT\n        ug.userGroupId,\n        ug.userGroupName,\n        ug.recordCreate_userName,\n        ug.recordCreate_dateTime,\n        ug.recordUpdate_userName,\n        ug.recordUpdate_dateTime,\n        count(ugm.userName) AS memberCount\n      FROM\n        ShiftLog.UserGroups ug\n        LEFT JOIN ShiftLog.UserGroupMembers ugm ON ug.userGroupId = ugm.userGroupId\n      WHERE\n        ug.instance = @instance\n        AND ug.recordDelete_dateTime IS NULL\n      GROUP BY\n        ug.userGroupId,\n        ug.userGroupName,\n        ug.recordCreate_userName,\n        ug.recordCreate_dateTime,\n        ug.recordUpdate_userName,\n        ug.recordUpdate_dateTime\n      ORDER BY\n        ug.userGroupName\n    ")];
-                case 2:
-                    result = _a.sent();
-                    return [2 /*return*/, result.recordset];
+                            .input('noteTypeId', fieldFields.noteTypeId)
+                            .input('fieldLabel', fieldFields.fieldLabel)
+                            .input('fieldInputType', fieldFields.fieldInputType)
+                            .input('fieldHelpText', fieldFields.fieldHelpText)
+                            .input('dataListKey', (_b = fieldFields.dataListKey) !== null && _b !== void 0 ? _b : null)
+                            .input('fieldValueMin', (_c = fieldFields.fieldValueMin) !== null && _c !== void 0 ? _c : null)
+                            .input('fieldValueMax', (_d = fieldFields.fieldValueMax) !== null && _d !== void 0 ? _d : null)
+                            .input('fieldValueRequired', fieldFields.fieldValueRequired)
+                            .input('hasDividerAbove', fieldFields.hasDividerAbove)
+                            .input('recordCreate_userName', user.userName)
+                            .input('recordCreate_dateTime', currentDate)
+                            .input('recordUpdate_userName', user.userName)
+                            .input('recordUpdate_dateTime', currentDate)
+                            .query(/* sql */ "\n        INSERT INTO\n          ShiftLog.NoteTypeFields (\n            noteTypeId,\n            fieldLabel,\n            fieldInputType,\n            fieldHelpText,\n            dataListKey,\n            fieldValueMin,\n            fieldValueMax,\n            fieldValueRequired,\n            hasDividerAbove,\n            recordCreate_userName,\n            recordCreate_dateTime,\n            recordUpdate_userName,\n            recordUpdate_dateTime\n          )\n        VALUES\n          (\n            @noteTypeId,\n            @fieldLabel,\n            @fieldInputType,\n            @fieldHelpText,\n            @dataListKey,\n            @fieldValueMin,\n            @fieldValueMax,\n            @fieldValueRequired,\n            @hasDividerAbove,\n            @recordCreate_userName,\n            @recordCreate_dateTime,\n            @recordUpdate_userName,\n            @recordUpdate_dateTime\n          )\n      ")];
+                case 3:
+                    _e.sent();
+                    return [2 /*return*/, true];
+                case 4:
+                    _a = _e.sent();
+                    return [2 /*return*/, false];
+                case 5: return [2 /*return*/];
             }
         });
     });

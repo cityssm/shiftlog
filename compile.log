@@ -1,0 +1,637 @@
+app/app.ts(5,8): error TS2307: Cannot find module '@cityssm/express-abuse-points' or its corresponding type declarations.
+app/app.ts(10,8): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+app/app.ts(11,36): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+app/app.ts(12,25): error TS2307: Cannot find module 'compression' or its corresponding type declarations.
+app/app.ts(13,26): error TS2307: Cannot find module 'cookie-parser' or its corresponding type declarations.
+app/app.ts(14,28): error TS2307: Cannot find module 'csrf-csrf' or its corresponding type declarations.
+app/app.ts(15,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+app/app.ts(16,17): error TS2307: Cannot find module 'ejs' or its corresponding type declarations.
+app/app.ts(17,22): error TS2307: Cannot find module 'exit-hook' or its corresponding type declarations.
+app/app.ts(18,21): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+app/app.ts(19,23): error TS2307: Cannot find module 'express-rate-limit' or its corresponding type declarations.
+app/app.ts(20,21): error TS2307: Cannot find module 'express-session' or its corresponding type declarations.
+app/app.ts(21,45): error TS2307: Cannot find module 'http-errors' or its corresponding type declarations.
+app/app.ts(22,23): error TS2307: Cannot find module 'session-file-store' or its corresponding type declarations.
+app/app.ts(40,29): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+app/app.ts(192,39): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+app/app.ts(280,40): error TS2503: Cannot find namespace 'Express'.
+app/app.ts(432,48): error TS2307: Cannot find module '@cityssm/express-abuse-points' or its corresponding type declarations.
+app/appProcess.ts(1,18): error TS2307: Cannot find module 'node:http' or its corresponding type declarations.
+app/appProcess.ts(3,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+app/appProcess.ts(4,40): error TS2307: Cannot find module 'exit-hook' or its corresponding type declarations.
+app/appProcess.ts(12,36): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+app/appProcess.ts(61,1): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+cypress.config.ts(1,30): error TS2307: Cannot find module 'cypress' or its corresponding type declarations.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(19,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(20,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(23,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(26,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(31,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(34,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(37,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(40,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(43,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(44,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(47,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(50,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(54,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(57,9): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(63,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(66,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(69,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(72,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(73,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(76,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(78,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(81,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(82,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(85,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(86,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(89,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(95,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(98,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(101,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/dataLists.admin.cy.ts(104,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/employees.admin.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/01-admin/employees.admin.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/01-admin/employees.admin.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/employees.admin.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(19,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/employees.admin.cy.ts(21,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(24,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(31,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(32,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(33,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(36,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(39,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(42,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(45,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/employees.admin.cy.ts(47,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(53,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(58,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(63,9): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(67,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(70,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(73,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(76,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/employees.admin.cy.ts(78,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(83,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(84,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(85,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(87,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(88,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(90,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(93,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(100,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(103,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(106,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/employees.admin.cy.ts(109,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/equipment.admin.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/equipment.admin.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(19,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/equipment.admin.cy.ts(21,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(24,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(28,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(31,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(34,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(37,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(42,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/equipment.admin.cy.ts(44,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(50,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(54,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(57,9): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(63,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(66,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(69,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(74,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/equipment.admin.cy.ts(76,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(78,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(79,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(80,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(83,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(90,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(93,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(98,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/equipment.admin.cy.ts(101,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/locations.admin.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/locations.admin.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/01-admin/locations.admin.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/locations.admin.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/locations.admin.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/01-admin/locations.admin.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/locations.admin.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/locations.admin.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/settings.admin.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/settings.admin.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/01-admin/settings.admin.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/settings.admin.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/settings.admin.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/01-admin/settings.admin.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/settings.admin.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/settings.admin.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/userGroups.admin.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/userGroups.admin.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/01-admin/userGroups.admin.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/userGroups.admin.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/userGroups.admin.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/01-admin/userGroups.admin.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/userGroups.admin.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/userGroups.admin.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/users.admin.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/users.admin.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/01-admin/users.admin.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/users.admin.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/users.admin.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/01-admin/users.admin.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/users.admin.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/users.admin.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/workOrderTypes.admin.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/workOrderTypes.admin.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/01-admin/workOrderTypes.admin.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/workOrderTypes.admin.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/workOrderTypes.admin.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/01-admin/workOrderTypes.admin.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/01-admin/workOrderTypes.admin.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/01-admin/workOrderTypes.admin.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/dashboard.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/03-readOnly/dashboard.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/03-readOnly/dashboard.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/dashboard.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/dashboard.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/03-readOnly/dashboard.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/03-readOnly/dashboard.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/dashboard.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/reports.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/03-readOnly/reports.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/03-readOnly/reports.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/reports.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/reports.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/03-readOnly/reports.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/03-readOnly/reports.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/reports.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(4,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/03-readOnly/userSettings.cy.ts(5,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(9,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(12,3): error TS2304: Cannot find name 'afterEach'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(14,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/03-readOnly/userSettings.cy.ts(15,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(19,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/03-readOnly/userSettings.cy.ts(21,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(23,9): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(24,9): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(25,9): error TS2304: Cannot find name 'cy'.
+cypress/e2e/03-readOnly/userSettings.cy.ts(26,9): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/keepAlive.cy.ts(1,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/keepAlive.cy.ts(2,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/keepAlive.cy.ts(3,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/keepAlive.cy.ts(4,7): error TS2304: Cannot find name 'expect'.
+cypress/e2e/xx-other/loginPage.cy.ts(3,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/loginPage.cy.ts(4,3): error TS2304: Cannot find name 'beforeEach'.
+cypress/e2e/xx-other/loginPage.cy.ts(6,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/loginPage.cy.ts(7,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(8,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(11,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/loginPage.cy.ts(12,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(15,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/loginPage.cy.ts(16,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(19,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/loginPage.cy.ts(20,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(26,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/loginPage.cy.ts(27,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(32,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/loginPage.cy.ts(33,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(34,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(35,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(38,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+cypress/e2e/xx-other/loginPage.cy.ts(39,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(42,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(44,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(46,5): error TS2304: Cannot find name 'cy'.
+cypress/e2e/xx-other/loginPage.cy.ts(48,5): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(1,22): error TS2307: Cannot find module 'axe-core' or its corresponding type declarations.
+cypress/support/index.ts(5,3): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(9,3): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(17,3): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(18,3): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(20,3): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(22,3): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(25,3): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(36,5): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(38,7): error TS2304: Cannot find name 'cy'.
+cypress/support/index.ts(39,7): error TS2304: Cannot find name 'cy'.
+database/app/addDataListItem.ts(1,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+database/app/runConnectivityTest.ts(3,37): error TS2307: Cannot find module 'node:timers/promises' or its corresponding type declarations.
+database/app/runConnectivityTest.ts(5,56): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+database/app/runConnectivityTest.ts(6,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+database/cleanup/permanentlyDeleteRecords.ts(4,24): error TS2307: Cannot find module 'node:fs/promises' or its corresponding type declarations.
+database/cleanup/permanentlyDeleteRecords.ts(6,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+database/employees/addOrUpdateSyncedEmployee.ts(1,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+database/equipment/addOrUpdateSyncedEquipment.ts(1,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+database/locations/addOrUpdateSyncedLocation.ts(1,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+database/shifts/createShift.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/shifts/getAvailableCrews.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/shifts/getAvailableEmployees.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/shifts/getAvailableEquipment.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/shifts/getPreviousShifts.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/shifts/getShifts.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/shifts/getShiftsForBuilder.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/shifts/updateShift.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/timesheets/createTimesheet.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/timesheets/getTimesheets.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/timesheets/updateTimesheet.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/workOrders/createWorkOrder.ts(1,45): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+database/workOrders/getCalendarEvents.ts(1,28): error TS2307: Cannot find module '@cityssm/mssql-multi-pool' or its corresponding type declarations.
+database/workOrders/getWorkOrders.ts(1,28): error TS2307: Cannot find module '@cityssm/mssql-multi-pool' or its corresponding type declarations.
+database/workOrders/getWorkOrdersForPlanner.ts(1,28): error TS2307: Cannot find module '@cityssm/mssql-multi-pool' or its corresponding type declarations.
+database/workOrders/updateWorkOrder.ts(1,45): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+debug.config.ts(1,75): error TS2307: Cannot find module '@cityssm/avanti-api/debug' or its corresponding type declarations.
+debug.config.ts(2,74): error TS2307: Cannot find module '@cityssm/mssql-multi-pool/debug' or its corresponding type declarations.
+debug.config.ts(3,73): error TS2307: Cannot find module '@cityssm/scheduled-task/debug' or its corresponding type declarations.
+debug.config.ts(4,77): error TS2307: Cannot find module '@cityssm/worktech-api/debug' or its corresponding type declarations.
+eslint.config.ts(3,26): error TS2307: Cannot find module '@cspell/eslint-plugin' or its corresponding type declarations.
+eslint.config.ts(4,44): error TS2307: Cannot find module 'eslint-config-cityssm' or its corresponding type declarations.
+eslint.config.ts(5,29): error TS2307: Cannot find module 'eslint-config-cityssm/exports' or its corresponding type declarations.
+eslint.config.ts(6,39): error TS2307: Cannot find module 'eslint-plugin-no-unsanitized' or its corresponding type declarations.
+handlers/admin-get/apiAuditLogs.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/assignedTo.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/dataLists.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/employeeLists.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/employees.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/equipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/locations.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/noteTypes.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/notificationConfigurations.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/settings.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/tags.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/userGroups.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/users.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-get/workOrderTypes.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddAssignedToItem.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddDataListItem.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddEmployee.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddEmployeeList.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddEmployeeListMember.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddLocation.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddNoteType.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddNoteTypeField.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddNotificationConfiguration.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddTag.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddUser.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddUserGroup.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddUserGroupMember.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doAddWorkOrderType.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteAssignedToItem.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteDataListItem.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteEmployee.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteEmployeeList.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteEmployeeListMember.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteLocation.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteNoteType.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteNoteTypeField.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteNotificationConfiguration.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteTag.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteUser.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteUserGroup.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteUserGroupMember.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doDeleteWorkOrderType.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doGetApiAuditLogs.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doGetEmployeeList.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doGetNotificationConfigurations.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doGetOrphanedTags.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doGetUserGroup.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doReorderAssignedToItems.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doReorderDataListItems.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doReorderEmployeeListMembers.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doReorderWorkOrderTypes.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doResetUserApiKey.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doToggleNotificationConfigurationIsActive.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doToggleUserPermission.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateAssignedToItem.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateDataListItem.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateEmployee.ts(3,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateEmployeeList.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateEmployeeListMember.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateLocation.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateNoteType.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateNoteTypeField.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateNotificationConfiguration.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateSetting.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateTag.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateUser.ts(3,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateUserGroup.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateUserSettings.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/admin-post/doUpdateWorkOrderType.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/api-get/reportKey.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/api-get/reportKey.ts(2,23): error TS2307: Cannot find module 'papaparse' or its corresponding type declarations.
+handlers/api-get/workOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/api-get/workOrder.ts(2,39): error TS2307: Cannot find module 'ical-generator' or its corresponding type declarations.
+handlers/api-get/workOrderDigest.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/dashboard-get/dashboard.ts(1,30): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+handlers/dashboard-get/dashboard.ts(2,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/dashboard-get/reports.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/dashboard-get/userSettings.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/dashboard-post/doResetApiKey.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/dashboard-post/doUpdateEmployeeContact.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/dashboard-post/doUpdateUserSetting.ts(3,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/permissions.ts(1,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-get/builder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-get/crews.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-get/edit.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-get/new.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-get/print.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-get/recovery.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-get/search.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-get/view.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doAddCrew.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doAddCrewEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doAddCrewMember.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doAddShiftAdhocTask.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doAddShiftCrew.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doAddShiftEmployee.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doAddShiftEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doAddShiftWorkOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doCopyFromPreviousShift.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doCreateAdhocTask.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doCreateShift.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doCreateStandaloneAdhocTask.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteCrew.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteCrewEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteCrewMember.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteShift.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteShiftAdhocTask.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteShiftCrew.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteShiftEmployee.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteShiftEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doDeleteShiftWorkOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetAdhocTaskTypes.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetAvailableAdhocTasks.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetAvailableResources.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+handlers/shifts-post/doGetAvailableResources.ts(2,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetCrew.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetDeletedShifts.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetEligibleEmployeesForEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetPreviousShifts.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftAdhocTasks.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftCreationData.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftCrews.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftEmployees.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftTimesheets.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftWorkOrders.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftsForBuilder.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+handlers/shifts-post/doGetShiftsForBuilder.ts(2,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doRecoverShift.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doSearchShifts.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateAdhocTask.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateCrew.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateCrewEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateShift.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateShiftAdhocTaskNote.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateShiftCrewNote.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateShiftEmployee.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateShiftEmployeeNote.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateShiftEquipment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateShiftEquipmentNote.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/shifts-post/doUpdateShiftWorkOrderNote.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-get/edit.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-get/new.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-get/recovery.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-get/search.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-get/view.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doAddTimesheetColumn.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doAddTimesheetRow.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doCopyFromPreviousTimesheet.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doCopyFromShift.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doCreateTimesheet.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doDeleteTimesheetColumn.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doDeleteTimesheetRow.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doGetAvailableShifts.ts(1,33): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+handlers/timesheets-post/doGetAvailableShifts.ts(2,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doGetDeletedTimesheets.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doGetTimesheetCells.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doGetTimesheetColumns.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doGetTimesheetRowOptions.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doGetTimesheetRows.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doMarkEmployeesAsEntered.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doMarkEquipmentAsEntered.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doMarkTimesheetAsSubmitted.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doRecoverTimesheet.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doReorderTimesheetColumns.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doSearchTimesheets.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doUpdateTimesheet.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doUpdateTimesheetCell.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doUpdateTimesheetColumn.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/timesheets-post/doUpdateTimesheetRow.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/calendar.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/download.ts(1,16): error TS2307: Cannot find module 'node:fs' or its corresponding type declarations.
+handlers/workOrders-get/download.ts(2,18): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+handlers/workOrders-get/download.ts(4,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/edit.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/inline.ts(1,16): error TS2307: Cannot find module 'node:fs' or its corresponding type declarations.
+handlers/workOrders-get/inline.ts(2,18): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+handlers/workOrders-get/inline.ts(4,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/map.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/new.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/planner.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/print.ts(1,32): error TS2307: Cannot find module '@cityssm/jsbarcode-svg' or its corresponding type declarations.
+handlers/workOrders-get/print.ts(2,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/recovery.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/search.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-get/view.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doAddWorkOrderTag.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doCreateWorkOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doCreateWorkOrderCost.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doCreateWorkOrderMilestone.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doCreateWorkOrderNote.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doDeleteWorkOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doDeleteWorkOrderAttachment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doDeleteWorkOrderCost.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doDeleteWorkOrderMilestone.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doDeleteWorkOrderNote.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doDeleteWorkOrderTag.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetCalendarEvents.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetDeletedWorkOrders.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetLocationSuggestions.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetRequestorSuggestions.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetSuggestedTags.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetWorkOrderAttachments.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetWorkOrderCosts.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetWorkOrderMilestones.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetWorkOrderNotes.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetWorkOrderTags.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doGetWorkOrdersForPlanner.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doRecoverWorkOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doReopenWorkOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doSearchWorkOrders.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doSetWorkOrderAttachmentThumbnail.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doUpdateWorkOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doUpdateWorkOrderAttachment.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doUpdateWorkOrderCost.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doUpdateWorkOrderMilestone.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doUpdateWorkOrderMilestoneOrder.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doUpdateWorkOrderNote.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doUploadWorkOrderAttachment.ts(1,16): error TS2307: Cannot find module 'node:fs' or its corresponding type declarations.
+handlers/workOrders-post/doUploadWorkOrderAttachment.ts(2,18): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+handlers/workOrders-post/doUploadWorkOrderAttachment.ts(4,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+handlers/workOrders-post/doUploadWorkOrderAttachment.ts(5,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+handlers/workOrders-post/doUploadWorkOrderAttachment.ts(16,10): error TS2503: Cannot find namespace 'Express'.
+handlers/workOrders-post/doUploadWorkOrderAttachment.ts(68,31): error TS2339: Property 'body' does not exist on type 'MulterRequest'.
+handlers/workOrders-post/doUploadWorkOrderAttachment.ts(69,42): error TS2339: Property 'body' does not exist on type 'MulterRequest'.
+handlers/workOrders-post/doUploadWorkOrderAttachment.ts(108,15): error TS2339: Property 'session' does not exist on type 'MulterRequest'.
+helpers/api.helpers.ts(1,28): error TS2307: Cannot find module 'node:crypto' or its corresponding type declarations.
+helpers/application.helpers.ts(1,30): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+helpers/audit.helpers.ts(1,30): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+helpers/authentication.helpers.ts(7,8): error TS2307: Cannot find module '@cityssm/authentication-helper' or its corresponding type declarations.
+helpers/authentication.helpers.ts(8,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+helpers/cache.helpers.ts(1,21): error TS2307: Cannot find module 'node:cluster' or its corresponding type declarations.
+helpers/cache.helpers.ts(3,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+helpers/cache.helpers.ts(15,39): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/cache.helpers.ts(61,20): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/cache.helpers.ts(68,11): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/cache.helpers.ts(69,9): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/cache.helpers.ts(82,1): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/cache.helpers.ts(83,69): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/config.defaults.ts(6,8): error TS2307: Cannot find module '@cityssm/authentication-helper' or its corresponding type declarations.
+helpers/config.defaults.ts(7,45): error TS2307: Cannot find module '@cityssm/avanti-api' or its corresponding type declarations.
+helpers/config.defaults.ts(8,37): error TS2307: Cannot find module '@cityssm/ntfy-publish' or its corresponding type declarations.
+helpers/config.defaults.ts(9,31): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+helpers/config.defaults.ts(10,44): error TS2307: Cannot find module 'mssql' or its corresponding type declarations.
+helpers/config.helpers.ts(1,18): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+helpers/config.helpers.ts(2,46): error TS2307: Cannot find module 'node:url' or its corresponding type declarations.
+helpers/config.helpers.ts(4,30): error TS2307: Cannot find module '@cityssm/configurator' or its corresponding type declarations.
+helpers/config.helpers.ts(5,33): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+helpers/config.helpers.ts(6,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+helpers/config.helpers.ts(18,29): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/config.helpers.ts(23,3): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/config.helpers.ts(25,22): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/config.helpers.ts(27,3): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/config.helpers.ts(29,20): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/config.helpers.ts(35,3): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/database.helpers.ts(1,44): error TS2307: Cannot find module '@cityssm/mssql-multi-pool' or its corresponding type declarations.
+helpers/dateTime.helpers.ts(1,45): error TS2307: Cannot find module '@cityssm/utils-datetime' or its corresponding type declarations.
+helpers/notification.helpers.ts(1,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+helpers/notification.helpers.ts(7,64): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/notification.helpers.ts(13,7): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/notification.helpers.ts(21,16): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/notification.helpers.ts(30,3): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+helpers/settings.helpers.ts(1,29): error TS2307: Cannot find module 'node:crypto' or its corresponding type declarations.
+helpers/startup.helpers.ts(1,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+index.ts(1,38): error TS2307: Cannot find module 'node:cluster' or its corresponding type declarations.
+index.ts(2,16): error TS2307: Cannot find module 'node:os' or its corresponding type declarations.
+index.ts(3,18): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+index.ts(4,31): error TS2307: Cannot find module 'node:url' or its corresponding type declarations.
+index.ts(6,33): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+index.ts(7,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+index.ts(8,40): error TS2307: Cannot find module 'exit-hook' or its corresponding type declarations.
+index.ts(38,3): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+index.ts(40,27): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+index.ts(41,27): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+index.ts(154,5): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+prettier.config.ts(1,52): error TS2307: Cannot find module 'prettier-config-cityssm' or its corresponding type declarations.
+routes/admin.ts(1,24): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+routes/api.ts(1,45): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+routes/dashboard.ts(1,24): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+routes/login.ts(1,41): error TS2307: Cannot find module '@cityssm/express-abuse-points' or its corresponding type declarations.
+routes/login.ts(2,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+routes/login.ts(3,53): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+routes/login.ts(118,38): error TS2503: Cannot find namespace 'Express'.
+routes/login.ts(144,39): error TS2503: Cannot find namespace 'Express'.
+routes/shifts.ts(1,72): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+routes/timesheets.ts(1,72): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+routes/workOrders.ts(1,16): error TS2307: Cannot find module 'node:os' or its corresponding type declarations.
+routes/workOrders.ts(3,72): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+routes/workOrders.ts(4,20): error TS2307: Cannot find module 'multer' or its corresponding type declarations.
+tasks/databaseCleanup/task.ts(1,31): error TS2307: Cannot find module '@cityssm/scheduled-task' or its corresponding type declarations.
+tasks/databaseCleanup/task.ts(2,38): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+tasks/databaseCleanup/task.ts(3,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+tasks/employeeSync/avanti.employeeSync.ts(1,27): error TS2307: Cannot find module '@cityssm/avanti-api' or its corresponding type declarations.
+tasks/employeeSync/avanti.employeeSync.ts(2,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+tasks/employeeSync/pearl.employeeSync.ts(1,29): error TS2307: Cannot find module '@cityssm/worktech-api' or its corresponding type declarations.
+tasks/employeeSync/pearl.employeeSync.ts(2,31): error TS2307: Cannot find module 'parse-full-name' or its corresponding type declarations.
+tasks/employeeSync/task.ts(3,31): error TS2307: Cannot find module '@cityssm/scheduled-task' or its corresponding type declarations.
+tasks/employeeSync/task.ts(4,33): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+tasks/employeeSync/task.ts(5,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+tasks/employeeSync/task.ts(6,23): error TS2307: Cannot find module 'node-schedule' or its corresponding type declarations.
+tasks/equipmentSync/pearl.equipmentSync.ts(1,29): error TS2307: Cannot find module '@cityssm/worktech-api' or its corresponding type declarations.
+tasks/equipmentSync/task.ts(3,31): error TS2307: Cannot find module '@cityssm/scheduled-task' or its corresponding type declarations.
+tasks/equipmentSync/task.ts(4,33): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+tasks/equipmentSync/task.ts(5,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+tasks/equipmentSync/task.ts(6,23): error TS2307: Cannot find module 'node-schedule' or its corresponding type declarations.
+tasks/locationSync/arcgis.locationSync.ts(1,27): error TS2307: Cannot find module '@cityssm/esri-mapserver-layer-dl' or its corresponding type declarations.
+tasks/locationSync/task.ts(3,31): error TS2307: Cannot find module '@cityssm/scheduled-task' or its corresponding type declarations.
+tasks/locationSync/task.ts(4,31): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+tasks/locationSync/task.ts(5,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+tasks/notifications/protocols/email.protocol.ts(1,24): error TS2307: Cannot find module 'nodemailer' or its corresponding type declarations.
+tasks/notifications/protocols/msTeams.protocol.ts(1,39): error TS2307: Cannot find module '@cityssm/ms-teams-workflow-webhook' or its corresponding type declarations.
+tasks/notifications/protocols/msTeams.protocol.ts(2,33): error TS2307: Cannot find module '@cityssm/ms-teams-workflow-webhook/helpers' or its corresponding type declarations.
+tasks/notifications/protocols/ntfy.protocol.ts(4,8): error TS2307: Cannot find module '@cityssm/ntfy-publish' or its corresponding type declarations.
+tasks/notifications/task.ts(1,56): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+tasks/notifications/task.ts(2,35): error TS2307: Cannot find module '@cityssm/unique-timed-entry-queue' or its corresponding type declarations.
+tasks/notifications/task.ts(3,22): error TS2307: Cannot find module 'async-sema' or its corresponding type declarations.
+tasks/notifications/task.ts(4,19): error TS2307: Cannot find module 'debug' or its corresponding type declarations.
+tasks/notifications/task.ts(5,22): error TS2307: Cannot find module 'exit-hook' or its corresponding type declarations.
+tasks/notifications/task.ts(6,54): error TS2307: Cannot find module 'set-interval-async/fixed' or its corresponding type declarations.
+tasks/notifications/task.ts(165,1): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(1,41): error TS2307: Cannot find module 'node:child_process' or its corresponding type declarations.
+tasks/taskInitializer.ts(27,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(28,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(41,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(42,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(55,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(56,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(69,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(70,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(82,10): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+tasks/taskInitializer.ts(83,10): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+test/1.serverCypress.test.ts(3,20): error TS2307: Cannot find module 'node:assert' or its corresponding type declarations.
+test/1.serverCypress.test.ts(4,22): error TS2307: Cannot find module 'node:child_process' or its corresponding type declarations.
+test/1.serverCypress.test.ts(5,18): error TS2307: Cannot find module 'node:http' or its corresponding type declarations.
+test/1.serverCypress.test.ts(6,45): error TS2307: Cannot find module 'node:test' or its corresponding type declarations.
+test/1.serverCypress.test.ts(8,33): error TS2307: Cannot find module '@cityssm/to-millis' or its corresponding type declarations.
+test/1.serverCypress.test.ts(20,8): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+test/1.serverCypress.test.ts(21,45): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+test/1.serverCypress.test.ts(21,64): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+test/startup.helpers.test.ts(1,20): error TS2307: Cannot find module 'node:assert' or its corresponding type declarations.
+test/startup.helpers.test.ts(2,30): error TS2307: Cannot find module 'node:test' or its corresponding type declarations.
+test/version.test.ts(1,20): error TS2307: Cannot find module 'node:assert' or its corresponding type declarations.
+test/version.test.ts(2,16): error TS2307: Cannot find module 'node:fs' or its corresponding type declarations.
+test/version.test.ts(3,30): error TS2307: Cannot find module 'node:test' or its corresponding type declarations.
+types/config.types.ts(6,8): error TS2307: Cannot find module '@cityssm/authentication-helper' or its corresponding type declarations.
+types/config.types.ts(10,8): error TS2307: Cannot find module '@cityssm/avanti-api/types.js' or its corresponding type declarations.
+types/config.types.ts(14,8): error TS2307: Cannot find module '@cityssm/worktech-api' or its corresponding type declarations.
+types/config.types.ts(15,44): error TS2307: Cannot find module 'mssql' or its corresponding type declarations.
+types/user.types.ts(45,16): error TS2664: Invalid module name in augmentation, module 'express-session' cannot be found.
+windowsService-install.ts(3,25): error TS2307: Cannot find module 'node-windows' or its corresponding type declarations.
+windowsService-install.ts(10,29): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+windowsService-install.ts(15,3): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+windowsService-install.ts(16,7): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+windowsService-uninstall.ts(3,25): error TS2307: Cannot find module 'node-windows' or its corresponding type declarations.
+windowsService-uninstall.ts(10,29): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+windowsService-uninstall.ts(15,3): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+windowsService-uninstall.ts(16,7): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+windowsService.ts(1,18): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+windowsService.ts(3,36): error TS2307: Cannot find module 'node-windows' or its corresponding type declarations.

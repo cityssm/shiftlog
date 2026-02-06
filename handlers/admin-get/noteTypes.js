@@ -36,18 +36,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getShiftLogConnectionPool = getShiftLogConnectionPool;
-var mssql_multi_pool_1 = require("@cityssm/mssql-multi-pool");
-var config_helpers_js_1 = require("./config.helpers.js");
-function getShiftLogConnectionPool() {
+exports.default = handler;
+var getNoteTypes_js_1 = require("../../database/noteTypes/getNoteTypes.js");
+var getUserGroups_js_1 = require("../../database/users/getUserGroups.js");
+var getDataLists_js_1 = require("../../database/app/getDataLists.js");
+function handler(_request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var pool;
+        var noteTypes, userGroups, dataLists;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, mssql_multi_pool_1.default.connect((0, config_helpers_js_1.getConfigProperty)('connectors.shiftLog'))];
+                case 0: return [4 /*yield*/, (0, getNoteTypes_js_1.default)()];
                 case 1:
-                    pool = _a.sent();
-                    return [2 /*return*/, pool];
+                    noteTypes = _a.sent();
+                    return [4 /*yield*/, (0, getUserGroups_js_1.default)()];
+                case 2:
+                    userGroups = _a.sent();
+                    return [4 /*yield*/, (0, getDataLists_js_1.default)()];
+                case 3:
+                    dataLists = _a.sent();
+                    response.render('admin/noteTypes', {
+                        headTitle: 'Note Type Maintenance',
+                        section: 'admin',
+                        noteTypes: noteTypes,
+                        userGroups: userGroups,
+                        dataLists: dataLists
+                    });
+                    return [2 /*return*/];
             }
         });
     });

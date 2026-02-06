@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,24 +47,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = getUserGroups;
+exports.default = getNoteTypes;
 var config_helpers_js_1 = require("../../helpers/config.helpers.js");
 var database_helpers_js_1 = require("../../helpers/database.helpers.js");
-function getUserGroups() {
+function getNoteTypes() {
     return __awaiter(this, void 0, void 0, function () {
-        var pool, result;
+        var pool, noteTypesResult, noteTypes, fieldsResult, fields, noteTypesWithFields;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()];
+                case 0: return [4 /*yield*/, (0, database_helpers_js_1.getShiftLogConnectionPool)()
+                    // Get all note types
+                ];
                 case 1:
                     pool = _a.sent();
                     return [4 /*yield*/, pool
                             .request()
                             .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
-                            .query(/* sql */ "\n      SELECT\n        ug.userGroupId,\n        ug.userGroupName,\n        ug.recordCreate_userName,\n        ug.recordCreate_dateTime,\n        ug.recordUpdate_userName,\n        ug.recordUpdate_dateTime,\n        count(ugm.userName) AS memberCount\n      FROM\n        ShiftLog.UserGroups ug\n        LEFT JOIN ShiftLog.UserGroupMembers ugm ON ug.userGroupId = ugm.userGroupId\n      WHERE\n        ug.instance = @instance\n        AND ug.recordDelete_dateTime IS NULL\n      GROUP BY\n        ug.userGroupId,\n        ug.userGroupName,\n        ug.recordCreate_userName,\n        ug.recordCreate_dateTime,\n        ug.recordUpdate_userName,\n        ug.recordUpdate_dateTime\n      ORDER BY\n        ug.userGroupName\n    ")];
+                            .query(/* sql */ "\n      SELECT\n        nt.noteTypeId,\n        nt.noteType,\n        nt.userGroupId,\n        ug.userGroupName,\n        nt.isAvailableWorkOrders,\n        nt.isAvailableShifts,\n        nt.isAvailableTimesheets,\n        nt.recordCreate_userName,\n        nt.recordCreate_dateTime,\n        nt.recordUpdate_userName,\n        nt.recordUpdate_dateTime\n      FROM\n        ShiftLog.NoteTypes nt\n      LEFT JOIN\n        ShiftLog.UserGroups ug ON nt.userGroupId = ug.userGroupId\n      WHERE\n        nt.instance = @instance\n        AND nt.recordDelete_dateTime IS NULL\n      ORDER BY\n        nt.noteType\n    ")];
                 case 2:
-                    result = _a.sent();
-                    return [2 /*return*/, result.recordset];
+                    noteTypesResult = _a.sent();
+                    noteTypes = noteTypesResult.recordset;
+                    return [4 /*yield*/, pool
+                            .request()
+                            .input('instance', (0, config_helpers_js_1.getConfigProperty)('application.instance'))
+                            .query(/* sql */ "\n      SELECT\n        ntf.noteTypeFieldId,\n        ntf.noteTypeId,\n        ntf.fieldLabel,\n        ntf.fieldInputType,\n        ntf.fieldHelpText,\n        ntf.dataListKey,\n        ntf.fieldValueMin,\n        ntf.fieldValueMax,\n        ntf.fieldValueRequired,\n        ntf.hasDividerAbove,\n        ntf.recordCreate_userName,\n        ntf.recordCreate_dateTime,\n        ntf.recordUpdate_userName,\n        ntf.recordUpdate_dateTime\n      FROM\n        ShiftLog.NoteTypeFields ntf\n      INNER JOIN\n        ShiftLog.NoteTypes nt ON ntf.noteTypeId = nt.noteTypeId\n      WHERE\n        nt.instance = @instance\n        AND ntf.recordDelete_dateTime IS NULL\n      ORDER BY\n        ntf.noteTypeFieldId\n    ")];
+                case 3:
+                    fieldsResult = _a.sent();
+                    fields = fieldsResult.recordset;
+                    noteTypesWithFields = noteTypes.map(function (noteType) { return (__assign(__assign({}, noteType), { fields: fields.filter(function (field) { return field.noteTypeId === noteType.noteTypeId; }) })); });
+                    return [2 /*return*/, noteTypesWithFields];
             }
         });
     });
