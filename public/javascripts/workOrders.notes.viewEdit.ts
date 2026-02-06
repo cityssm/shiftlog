@@ -497,10 +497,40 @@ declare const bulmaJS: BulmaJS
     function doAddNote(submitEvent: Event): void {
       submitEvent.preventDefault()
       const formElement = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(formElement)
+
+      // Extract field values and construct proper structure
+      const noteData: {
+        workOrderId: string
+        noteTypeId?: string
+        noteText: string
+        fields?: Record<string, string>
+      } = {
+        workOrderId: formData.get('workOrderId') as string,
+        noteText: formData.get('noteText') as string
+      }
+
+      const noteTypeId = formData.get('noteTypeId') as string
+      if (noteTypeId !== null && noteTypeId !== '') {
+        noteData.noteTypeId = noteTypeId
+      }
+
+      // Extract fields with pattern fields[noteTypeFieldId]
+      const fields: Record<string, string> = {}
+      for (const [key, value] of formData.entries()) {
+        const match = /^fields\[(\d+)\]$/.exec(key)
+        if (match !== null && typeof value === 'string') {
+          fields[match[1]] = value
+        }
+      }
+
+      if (Object.keys(fields).length > 0) {
+        noteData.fields = fields
+      }
 
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`,
-        formElement,
+        noteData,
         (responseJSON: DoCreateWorkOrderNoteResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
