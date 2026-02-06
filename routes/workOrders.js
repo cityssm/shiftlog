@@ -26,6 +26,7 @@ import handler_doDeleteWorkOrderTag from '../handlers/workOrders-post/doDeleteWo
 import handler_doGetCalendarEvents from '../handlers/workOrders-post/doGetCalendarEvents.js';
 import handler_doGetDeletedWorkOrders from '../handlers/workOrders-post/doGetDeletedWorkOrders.js';
 import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js';
+import handler_doGetNoteTypes from '../handlers/workOrders-post/doGetNoteTypes.js';
 import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGetRequestorSuggestions.js';
 import handler_doGetSuggestedTags from '../handlers/workOrders-post/doGetSuggestedTags.js';
 import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGetWorkOrderAttachments.js';
@@ -95,6 +96,7 @@ router
     .post('/doDeleteWorkOrderCost', updateHandler, handler_doDeleteWorkOrderCost);
 router
     .post('/:workOrderId/doGetWorkOrderNotes', handler_doGetWorkOrderNotes)
+    .post('/doGetNoteTypes', handler_doGetNoteTypes)
     .post('/doCreateWorkOrderNote', updateHandler, handler_doCreateWorkOrderNote)
     .post('/doUpdateWorkOrderNote', updateHandler, handler_doUpdateWorkOrderNote)
     .post('/doDeleteWorkOrderNote', updateHandler, handler_doDeleteWorkOrderNote);

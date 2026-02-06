@@ -46,6 +46,7 @@ export default async function getNoteTypes() {
         ntf.fieldValueMax,
         ntf.fieldValueRequired,
         ntf.hasDividerAbove,
+        ntf.orderNumber,
         ntf.recordCreate_userName,
         ntf.recordCreate_dateTime,
         ntf.recordUpdate_userName,
@@ -58,7 +59,7 @@ export default async function getNoteTypes() {
         nt.instance = @instance
         AND ntf.recordDelete_dateTime IS NULL
       ORDER BY
-        ntf.noteTypeFieldId
+        ntf.orderNumber, ntf.noteTypeFieldId
     `);
     const fields = fieldsResult.recordset;
     // Group fields by noteTypeId

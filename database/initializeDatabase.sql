@@ -577,6 +577,32 @@ CREATE TABLE ShiftLog.ShiftEquipment (
   FOREIGN KEY (instance, employeeNumber) REFERENCES ShiftLog.Employees (instance, employeeNumber)
 )
 GO
+CREATE TABLE ShiftLog.ShiftNotes (
+  shiftId INT NOT NULL,
+  noteSequence INT NOT NULL,
+  noteTypeId INT,
+  noteText VARCHAR(max) NOT NULL,
+  recordCreate_userName VARCHAR(30) NOT NULL,
+  recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordUpdate_userName VARCHAR(30) NOT NULL,
+  recordUpdate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordDelete_userName VARCHAR(30),
+  recordDelete_dateTime datetime,
+  PRIMARY KEY (shiftId, noteSequence),
+  FOREIGN KEY (shiftId) REFERENCES ShiftLog.Shifts (shiftId),
+  FOREIGN KEY (noteTypeId) REFERENCES ShiftLog.NoteTypes (noteTypeId)
+)
+GO
+CREATE TABLE ShiftLog.ShiftNoteFields (
+  shiftId INT NOT NULL,
+  noteSequence INT NOT NULL,
+  noteTypeFieldId INT NOT NULL,
+  fieldValue NVARCHAR(max) NOT NULL,
+  PRIMARY KEY (shiftId, noteSequence, noteTypeFieldId),
+  FOREIGN KEY (shiftId, noteSequence) REFERENCES ShiftLog.ShiftNotes (shiftId, noteSequence),
+  FOREIGN KEY (noteTypeFieldId) REFERENCES ShiftLog.NoteTypeFields (noteTypeFieldId)
+)
+GO
 CREATE TABLE ShiftLog.ShiftWorkOrders (
   shiftId INT NOT NULL,
   workOrderId INT NOT NULL,

@@ -224,7 +224,19 @@
     <tbody>
       <% for (const note of notes) { %>
       <tr>
-        <td style="white-space: pre-wrap;"><%= note.noteText %></td>
+        <td>
+          <% if (note.noteType) { %><strong class="tag is-info is-light"><%= note.noteType %></strong><br /><% } %><span style="white-space: pre-wrap;"><%= note.noteText %></span><% if (note.fields && note.fields.length > 0) { %>
+          <div style="margin-top: 0.75rem;">
+            <table class="table is-narrow is-size-7" style="background-color: transparent;">
+              <tbody><% for (const field of note.fields) { %>
+                <tr>
+                  <th style="width: 35%; padding: 0.25rem 0.5rem;"><%= field.fieldLabel %></th>
+                  <td style="padding: 0.25rem 0.5rem;"><%= field.fieldValue %></td>
+                </tr><% } %>
+              </tbody>
+            </table>
+          </div><% } %>
+        </td>
         <td><%= note.recordCreate_userName %></td>
         <td>
           <%= dateTimeFunctions.dateToString(note.recordCreate_dateTime) %>

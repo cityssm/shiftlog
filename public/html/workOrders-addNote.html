@@ -21,7 +21,27 @@
     <section class="modal-card-body">
       <form id="form--addWorkOrderNote">
         <input id="addWorkOrderNote--workOrderId" name="workOrderId" type="hidden" />
+        
         <div class="field">
+          <label class="label" for="addWorkOrderNote--noteTypeId">
+            Note Type (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="addWorkOrderNote--noteTypeId" name="noteTypeId">
+                <option value="">(No Type - Standard Note)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            Select a note type to capture additional structured information.
+          </p>
+        </div>
+
+        <div class="field">
+          <label class="label" for="addWorkOrderNote--noteText">
+            Note Text
+          </label>
           <div class="control">
             <textarea
               class="textarea"
@@ -33,6 +53,8 @@
             ></textarea>
           </div>
         </div>
+
+        <div id="addWorkOrderNote--fieldsContainer"></div>
       </form>
     </section>
     <div class="modal-card-foot is-justify-content-right">

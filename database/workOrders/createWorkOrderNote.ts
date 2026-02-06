@@ -4,9 +4,10 @@ import { sendNotificationWorkerMessage } from '../../helpers/notification.helper
 import getWorkOrder from './getWorkOrder.js'
 
 export interface CreateWorkOrderNoteForm {
-  workOrderId: number | string
-  
+  fields?: Record<string, string>
   noteText: string
+  noteTypeId?: number | string
+  workOrderId: number | string
 }
 
 export default async function createWorkOrderNote(
@@ -36,10 +37,12 @@ export default async function createWorkOrderNote(
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
 
+  // Insert the note
   const result = await pool
     .request()
     .input('workOrderId', createWorkOrderNoteForm.workOrderId)
     .input('noteSequence', nextSequence)
+    .input('noteTypeId', createWorkOrderNoteForm.noteTypeId ?? null)
     .input('noteText', createWorkOrderNoteForm.noteText)
     .input('userName', userName)
     .query(/* sql */ `
@@ -47,6 +50,7 @@ export default async function createWorkOrderNote(
         ShiftLog.WorkOrderNotes (
           workOrderId,
           noteSequence,
+          noteTypeId,
           noteText,
           recordCreate_userName,
           recordUpdate_userName
@@ -55,6 +59,7 @@ export default async function createWorkOrderNote(
         (
           @workOrderId,
           @noteSequence,
+          @noteTypeId,
           @noteText,
           @userName,
           @userName
@@ -62,6 +67,42 @@ export default async function createWorkOrderNote(
     `)
 
   if (result.rowsAffected[0] > 0) {
+    // Insert field values if note type is set and fields are provided
+    if (
+      createWorkOrderNoteForm.noteTypeId !== undefined &&
+      createWorkOrderNoteForm.fields !== undefined
+    ) {
+      for (const [noteTypeFieldId, fieldValue] of Object.entries(
+        createWorkOrderNoteForm.fields
+      )) {
+        if (fieldValue !== undefined && fieldValue !== null && fieldValue !== '') {
+          // eslint-disable-next-line no-await-in-loop -- inserting field values sequentially
+          await pool
+            .request()
+            .input('workOrderId', createWorkOrderNoteForm.workOrderId)
+            .input('noteSequence', nextSequence)
+            .input('noteTypeFieldId', noteTypeFieldId)
+            .input('fieldValue', fieldValue)
+            .query(/* sql */ `
+              INSERT INTO
+                ShiftLog.WorkOrderNoteFields (
+                  workOrderId,
+                  noteSequence,
+                  noteTypeFieldId,
+                  fieldValue
+                )
+              VALUES
+                (
+                  @workOrderId,
+                  @noteSequence,
+                  @noteTypeFieldId,
+                  @fieldValue
+                )
+            `)
+        }
+      }
+    }
+
     // Send Notification
     sendNotificationWorkerMessage(
       'workOrder.update',

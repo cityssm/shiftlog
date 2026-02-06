@@ -125,6 +125,7 @@ export interface NoteTypeField extends BaseRecord {
     fieldValueMax?: number | null;
     fieldValueRequired: boolean;
     hasDividerAbove: boolean;
+    orderNumber: number;
 }
 export interface Crew extends BaseRecord {
     crewId: number;
