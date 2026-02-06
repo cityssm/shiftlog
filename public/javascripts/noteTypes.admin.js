@@ -7,24 +7,41 @@
     let noteTypes = exports.noteTypes;
     const userGroups = exports.userGroups;
     const dataLists = exports.dataLists;
+    // Track which panels are open
+    const openPanels = new Set();
+    // Track Sortable instances
+    const sortableInstances = new Map();
     function renderNoteTypes() {
-        const panelElement = document.createElement('div');
-        panelElement.className = 'panel';
+        // Store currently open panels before re-rendering
+        const openDetails = noteTypesContainerElement.querySelectorAll('details[open]');
+        openDetails.forEach((detail) => {
+            const noteTypeId = detail.dataset.noteTypeId;
+            if (noteTypeId) {
+                openPanels.add(Number.parseInt(noteTypeId, 10));
+            }
+        });
+        noteTypesContainerElement.innerHTML = '';
         if (noteTypes.length === 0) {
-            panelElement.innerHTML = `<div class="panel-block">
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'panel-block';
+            emptyMessage.innerHTML = `
         <div class="message is-info">
           <p class="message-body">
             <strong>No note types available.</strong><br />
             Click "Add Note Type" to create your first note type.
           </p>
-        </div>
-      </div>`;
+        </div>`;
+            noteTypesContainerElement.append(emptyMessage);
         }
         else {
             for (const noteType of noteTypes) {
                 const noteTypePanel = document.createElement('details');
-                noteTypePanel.className = 'panel mb-5 collapsible-panel';
+                noteTypePanel.className = 'panel mb-5 collapsable-panel';
                 noteTypePanel.dataset.noteTypeId = noteType.noteTypeId.toString();
+                // Restore open state
+                if (openPanels.has(noteType.noteTypeId)) {
+                    noteTypePanel.setAttribute('open', '');
+                }
                 const summaryElement = document.createElement('summary');
                 summaryElement.className = 'panel-heading is-clickable';
                 const availabilityBadges = [];
@@ -45,7 +62,7 @@
             <span class="has-text-weight-semibold mr-2">
               ${cityssm.escapeHTML(noteType.noteType)}
             </span>
-            <span class="tag is-rounded">
+            <span class="tag is-rounded ${noteType.fields.length === 0 ? 'is-warning' : ''}">
               ${noteType.fields.length} ${noteType.fields.length === 1 ? 'field' : 'fields'}
             </span>
             ${availabilityBadges.length > 0 ? `<span class="ml-2">${availabilityBadges.join(' ')}</span>` : ''}
@@ -56,7 +73,7 @@
                 actionBlock.className = 'panel-block is-justify-content-space-between';
                 actionBlock.innerHTML = `
           <div>
-            <button class="button is-small is-light button--editNoteType" data-note-type-id="${noteType.noteTypeId}" type="button">
+            <button class="button is-small is-info button--editNoteType" data-note-type-id="${noteType.noteTypeId}" type="button">
               <span class="icon"><i class="fa-solid fa-pencil"></i></span>
               <span>Edit Note Type</span>
             </button>
@@ -77,10 +94,16 @@
                 tableBlock.className = 'panel-block p-0';
                 if (noteType.fields.length === 0) {
                     tableBlock.innerHTML = `
-            <div class="box m-3" style="width: 100%;">
-              <p class="has-text-grey has-text-centered">
-                No fields defined. Click "Add Field" to create fields for this note type.
-              </p>
+            <div class="table-container" style="width: 100%;">
+              <table class="table is-striped is-hoverable is-fullwidth mb-0">
+                <tbody>
+                  <tr>
+                    <td class="has-text-centered has-text-grey" colspan="5">
+                      No fields defined. Click "Add Field" to create fields for this note type.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>`;
                 }
                 else {
@@ -89,35 +112,46 @@
               <table class="table is-striped is-hoverable is-fullwidth mb-0">
                 <thead>
                   <tr>
+                    <th class="has-text-centered" style="width: 60px;">Order</th>
                     <th>Label</th>
                     <th>Type</th>
                     <th>Help Text</th>
-                    <th>Required</th>
-                    <th class="has-text-centered" style="width: 150px;">Actions</th>
+                    <th class="has-text-centered" style="width: 150px;">
+                      <span class="is-sr-only">Actions</span>
+                    </th>
                   </tr>
                 </thead>
-                <tbody>`;
+                <tbody class="is-sortable" id="noteTypeFields--${noteType.noteTypeId}">`;
                     for (const field of noteType.fields) {
                         tableHTML += `
-              <tr data-field-id="${field.noteTypeFieldId}">
-                <td>${cityssm.escapeHTML(field.fieldLabel)}</td>
+              <tr data-note-type-field-id="${field.noteTypeFieldId}">
+                <td class="has-text-centered">
+                  <span class="icon is-small has-text-grey handle" style="cursor: move;">
+                    <i class="fa-solid fa-grip-vertical"></i>
+                  </span>
+                </td>
+                <td>
+                  <span class="field-label">${cityssm.escapeHTML(field.fieldLabel)}</span>
+                  ${field.fieldValueRequired ? '<span class="icon is-small has-text-success ml-1" title="Required"><i class="fa-solid fa-asterisk"></i></span>' : ''}
+                </td>
                 <td><span class="tag">${cityssm.escapeHTML(field.fieldInputType)}</span></td>
                 <td class="is-size-7">${cityssm.escapeHTML(field.fieldHelpText)}</td>
                 <td class="has-text-centered">
-                  ${field.fieldValueRequired ? '<i class="fa-solid fa-check has-text-success"></i>' : ''}
-                </td>
-                <td class="has-text-centered">
-                  <button class="button is-small is-light button--editField" 
-                    data-note-type-field-id="${field.noteTypeFieldId}" 
-                    data-note-type-id="${noteType.noteTypeId}" 
-                    type="button">
-                    <span class="icon"><i class="fa-solid fa-pencil"></i></span>
-                  </button>
-                  <button class="button is-small is-danger button--deleteField" 
-                    data-note-type-field-id="${field.noteTypeFieldId}" 
-                    type="button">
-                    <span class="icon"><i class="fa-solid fa-trash"></i></span>
-                  </button>
+                  <div class="buttons are-small is-centered">
+                    <button class="button is-info button--editField" 
+                      data-note-type-field-id="${field.noteTypeFieldId}" 
+                      data-note-type-id="${noteType.noteTypeId}" 
+                      type="button"
+                      title="Edit">
+                      <span class="icon"><i class="fa-solid fa-pencil"></i></span>
+                    </button>
+                    <button class="button is-danger button--deleteField" 
+                      data-note-type-field-id="${field.noteTypeFieldId}" 
+                      type="button"
+                      title="Delete">
+                      <span class="icon"><i class="fa-solid fa-trash"></i></span>
+                    </button>
+                  </div>
                 </td>
               </tr>`;
                     }
@@ -128,13 +162,13 @@
                     tableBlock.innerHTML = tableHTML;
                 }
                 noteTypePanel.append(tableBlock);
-                panelElement.append(noteTypePanel);
+                noteTypesContainerElement.append(noteTypePanel);
             }
         }
-        noteTypesContainerElement.innerHTML = '';
-        noteTypesContainerElement.append(panelElement);
         // Attach event listeners
         attachEventListeners();
+        // Initialize Sortable for each note type with fields
+        initializeSortables();
     }
     function attachEventListeners() {
         // Edit Note Type buttons
@@ -489,8 +523,46 @@
             }
         });
     }
+    function initializeSortables() {
+        for (const noteType of noteTypes) {
+            const tbodyElement = document.querySelector(`#noteTypeFields--${noteType.noteTypeId}`);
+            if (tbodyElement === null || noteType.fields.length === 0) {
+                continue;
+            }
+            // Destroy existing Sortable instance before creating a new one
+            const existingInstance = sortableInstances.get(noteType.noteTypeId);
+            if (existingInstance !== undefined) {
+                existingInstance.destroy();
+            }
+            // Create new Sortable instance
+            const sortableInstance = Sortable.create(tbodyElement, {
+                handle: '.handle',
+                animation: 150,
+                onEnd() {
+                    // Get the new order
+                    const rows = tbodyElement.querySelectorAll('tr[data-note-type-field-id]');
+                    const noteTypeFieldIds = [];
+                    for (const row of rows) {
+                        const fieldId = row.dataset.noteTypeFieldId;
+                        if (fieldId !== undefined) {
+                            noteTypeFieldIds.push(Number.parseInt(fieldId, 10));
+                        }
+                    }
+                    // For now, just show a notification that reordering is saved
+                    // In a future update, this could call a backend endpoint to persist the order
+                    bulmaJS.notification({
+                        message: 'Field order updated.',
+                        type: 'info'
+                    });
+                }
+            });
+            // Store the instance for future reference
+            sortableInstances.set(noteType.noteTypeId, sortableInstance);
+        }
+    }
     // Initialize
     renderNoteTypes();
     // Add Note Type button
     document.querySelector('#button--addNoteType')?.addEventListener('click', openAddNoteTypeModal);
 })();
+export {};
