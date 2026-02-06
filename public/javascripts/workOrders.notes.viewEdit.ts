@@ -559,7 +559,8 @@ declare const bulmaJS: BulmaJS
               fieldValueMin: fieldDef.fieldValueMin,
               fieldValueRequired: fieldDef.fieldValueRequired,
               hasDividerAbove: fieldDef.hasDividerAbove,
-              noteTypeFieldId: fieldDef.noteTypeFieldId
+              noteTypeFieldId: fieldDef.noteTypeFieldId,
+              orderNumber: fieldDef.orderNumber
             }))
 
             // Add any orphaned fields (fields in note data but not in note type definition)
@@ -580,7 +581,8 @@ declare const bulmaJS: BulmaJS
                     fieldValueMin: savedField.fieldValueMin,
                     fieldValueRequired: false, // Don't require deleted fields
                     hasDividerAbove: savedField.hasDividerAbove,
-                    noteTypeFieldId: savedField.noteTypeFieldId
+                    noteTypeFieldId: savedField.noteTypeFieldId,
+                    orderNumber: savedField.orderNumber
                   })
                 }
               }

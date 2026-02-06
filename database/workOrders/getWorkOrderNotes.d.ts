@@ -9,6 +9,7 @@ export interface WorkOrderNoteField {
     fieldValueRequired?: boolean;
     hasDividerAbove?: boolean;
     noteTypeFieldId: number;
+    orderNumber?: number | null;
 }
 export interface WorkOrderNote {
     fields?: WorkOrderNoteField[];
