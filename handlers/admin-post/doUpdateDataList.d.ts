@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import type { DataList } from '../../database/app/getDataLists.js';
-import type { UpdateDataListForm } from '../../database/app/updateDataList.js';
+import { type DataList } from '../../database/app/getDataLists.js';
+import { type UpdateDataListForm } from '../../database/app/updateDataList.js';
 export type DoUpdateDataListResponse = {
     success: boolean;
     errorMessage?: string;

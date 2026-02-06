@@ -11,12 +11,10 @@ export default async function handler(request, response) {
     if (success) {
         const lists = await getDataLists();
         // Get items for each data list
-        dataLists = await Promise.all(
-            lists.map(async (dataList) => ({
-                ...dataList,
-                items: await getDataListItemsAdmin(dataList.dataListKey)
-            }))
-        );
+        dataLists = await Promise.all(lists.map(async (dataList) => ({
+            ...dataList,
+            items: await getDataListItemsAdmin(dataList.dataListKey)
+        })));
     }
     response.json({
         success,

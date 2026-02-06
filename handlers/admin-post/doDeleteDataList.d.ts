@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import type { DeleteDataListForm } from '../../database/app/deleteDataList.js';
-import type { DataList } from '../../database/app/getDataLists.js';
+import { type DeleteDataListForm } from '../../database/app/deleteDataList.js';
+import { type DataList } from '../../database/app/getDataLists.js';
 export type DoDeleteDataListResponse = {
     success: boolean;
     errorMessage?: string;
