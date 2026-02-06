@@ -328,6 +328,132 @@ declare const bulmaJS: BulmaJS
       )
     }
 
+    function renderEditFieldsWithDataLists(
+      fields: WorkOrderNoteField[],
+      dataListMap: Map<string, Array<{ dataListItem: string }>>,
+      fieldsContainer: HTMLElement
+    ): void {
+      let fieldsHTML = ''
+      for (const field of fields) {
+        const fieldName = `fields[${field.noteTypeFieldId}]`
+        const requiredAttribute = field.fieldValueRequired === true ? 'required' : ''
+        const helpText = field.fieldHelpText !== undefined && field.fieldHelpText !== '' 
+          ? `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>` 
+          : ''
+        
+        fieldsHTML += `<div class="field">`
+        fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
+            ${cityssm.escapeHTML(field.fieldLabel)}
+            ${field.fieldValueRequired === true ? '<span class="has-text-danger">*</span>' : ''}
+          </label>`
+
+        // Render appropriate input based on field type
+        switch (field.fieldInputType) {
+          case 'date': {
+            fieldsHTML += `
+              <div class="control">
+                <input class="input" type="date" 
+                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}" 
+                  value="${cityssm.escapeHTML(field.fieldValue)}"
+                  ${requiredAttribute} />
+              </div>
+            `
+            break
+          }
+          case 'number': {
+            const minAttribute = field.fieldValueMin !== null && field.fieldValueMin !== undefined
+              ? `min="${field.fieldValueMin}"` : ''
+            const maxAttribute = field.fieldValueMax !== null && field.fieldValueMax !== undefined
+              ? `max="${field.fieldValueMax}"` : ''
+            fieldsHTML += `
+              <div class="control">
+                <input class="input" type="number" 
+                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}" 
+                  value="${cityssm.escapeHTML(field.fieldValue)}"
+                  ${minAttribute} ${maxAttribute} ${requiredAttribute} />
+              </div>
+            `
+            break
+          }
+          case 'select': {
+            // Populate select with data list items
+            const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+              ? dataListMap.get(field.dataListKey) ?? []
+              : []
+            
+            fieldsHTML += `
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    ${requiredAttribute}>
+                    <option value="">-- Select --</option>
+                    ${dataListItems.map((item) => {
+                      const selected = item.dataListItem === field.fieldValue ? 'selected' : ''
+                      return `<option value="${cityssm.escapeHTML(item.dataListItem)}" ${selected}>${cityssm.escapeHTML(item.dataListItem)}</option>`
+                    }).join('')}
+                  </select>
+                </div>
+              </div>
+            `
+            break
+          }
+          case 'text': {
+            // If field has a data list, add datalist element
+            const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+              ? dataListMap.get(field.dataListKey) ?? []
+              : []
+            
+            const dataListAttr = dataListItems.length > 0 
+              ? `list="datalist-edit-${field.noteTypeFieldId}"` 
+              : ''
+            
+            fieldsHTML += `
+              <div class="control">
+                <input class="input" type="text" 
+                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}" 
+                  value="${cityssm.escapeHTML(field.fieldValue)}"
+                  ${dataListAttr}
+                  ${requiredAttribute} />
+              </div>
+            `
+            
+            // Add datalist element if applicable
+            if (dataListItems.length > 0) {
+              fieldsHTML += `
+                <datalist id="datalist-edit-${field.noteTypeFieldId}">
+                  ${dataListItems.map((item) => 
+                    `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`
+                  ).join('')}
+                </datalist>
+              `
+            }
+            break
+          }
+          case 'textbox': {
+            fieldsHTML += `
+              <div class="control">
+                <textarea class="textarea" rows="3"
+                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}"
+                  ${requiredAttribute}>${cityssm.escapeHTML(field.fieldValue)}</textarea>
+              </div>
+            `
+            break
+          }
+        }
+
+        fieldsHTML += helpText
+        fieldsHTML += `</div>`
+      }
+      
+      // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
+      fieldsContainer.innerHTML = fieldsHTML
+    }
+
     cityssm.openHtmlModal('workOrders-editNote', {
       onshow(modalElement) {
         exports.shiftLog.setUnsavedChanges('modal')
@@ -366,70 +492,41 @@ declare const bulmaJS: BulmaJS
         const fieldsContainer = modalElement.querySelector(
           '#editWorkOrderNote--fieldsContainer'
         ) as HTMLElement
+        
         if (note.fields !== undefined && note.fields.length > 0) {
-          let fieldsHTML = ''
+          // Collect all unique data list keys
+          const dataListKeys = new Set<string>()
           for (const field of note.fields) {
-            const fieldName = `fields[${field.noteTypeFieldId}]`
-            
-            fieldsHTML += `<div class="field">`
-            fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
-                ${cityssm.escapeHTML(field.fieldLabel)}
-              </label>`
-
-            // Render appropriate input based on field type
-            switch (field.fieldInputType) {
-              case 'date': {
-                fieldsHTML += `
-                  <div class="control">
-                    <input class="input" type="date" 
-                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
-                      name="${fieldName}" 
-                      value="${cityssm.escapeHTML(field.fieldValue)}" />
-                  </div>
-                `
-                break
-              }
-              case 'number': {
-                fieldsHTML += `
-                  <div class="control">
-                    <input class="input" type="number" 
-                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
-                      name="${fieldName}" 
-                      value="${cityssm.escapeHTML(field.fieldValue)}" />
-                  </div>
-                `
-                break
-              }
-              case 'textbox': {
-                fieldsHTML += `
-                  <div class="control">
-                    <textarea class="textarea" rows="3"
-                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
-                      name="${fieldName}">${cityssm.escapeHTML(field.fieldValue)}</textarea>
-                  </div>
-                `
-                break
-              }
-              case 'select':
-              case 'text':
-              default: {
-                fieldsHTML += `
-                  <div class="control">
-                    <input class="input" type="text" 
-                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
-                      name="${fieldName}" 
-                      value="${cityssm.escapeHTML(field.fieldValue)}" />
-                  </div>
-                `
-                break
-              }
+            if (field.dataListKey !== null && field.dataListKey !== undefined) {
+              dataListKeys.add(field.dataListKey)
             }
-
-            fieldsHTML += `</div>`
           }
-          
-          // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
-          fieldsContainer.innerHTML = fieldsHTML
+
+          // Load data list items if needed
+          if (dataListKeys.size > 0) {
+            const dataListPromises = Array.from(dataListKeys).map((key) =>
+              fetch(
+                `${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`
+              )
+                .then((response) => response.json())
+                .then((data) => ({ key, items: data as Array<{ dataListItem: string }> }))
+            )
+
+            Promise.all(dataListPromises)
+              .then((dataLists) => {
+                const dataListMap = new Map<string, Array<{ dataListItem: string }>>()
+                for (const dl of dataLists) {
+                  dataListMap.set(dl.key, dl.items)
+                }
+                renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer)
+              })
+              .catch(() => {
+                // If data list loading fails, render without data lists
+                renderEditFieldsWithDataLists(note.fields ?? [], new Map(), fieldsContainer)
+              })
+          } else {
+            renderEditFieldsWithDataLists(note.fields, new Map(), fieldsContainer)
+          }
         } else {
           fieldsContainer.innerHTML = ''
         }

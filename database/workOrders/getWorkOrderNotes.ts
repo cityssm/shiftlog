@@ -2,9 +2,14 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface WorkOrderNoteField {
+  dataListKey?: string | null
+  fieldHelpText?: string
   fieldInputType: string
   fieldLabel: string
   fieldValue: string
+  fieldValueMax?: number | null
+  fieldValueMin?: number | null
+  fieldValueRequired?: boolean
   noteTypeFieldId: number
 }
 
@@ -80,6 +85,11 @@ export default async function getWorkOrderNotes(
         wnf.noteTypeFieldId,
         ntf.fieldLabel,
         ntf.fieldInputType,
+        ntf.fieldHelpText,
+        ntf.dataListKey,
+        ntf.fieldValueMin,
+        ntf.fieldValueMax,
+        ntf.fieldValueRequired,
         wnf.fieldValue
       FROM
         ShiftLog.WorkOrderNoteFields wnf
@@ -98,9 +108,14 @@ export default async function getWorkOrderNotes(
       fieldsMap.set(field.noteSequence, [])
     }
     fieldsMap.get(field.noteSequence)?.push({
+      dataListKey: field.dataListKey,
+      fieldHelpText: field.fieldHelpText,
       fieldInputType: field.fieldInputType,
       fieldLabel: field.fieldLabel,
       fieldValue: field.fieldValue,
+      fieldValueMax: field.fieldValueMax,
+      fieldValueMin: field.fieldValueMin,
+      fieldValueRequired: field.fieldValueRequired,
       noteTypeFieldId: field.noteTypeFieldId
     })
   }
