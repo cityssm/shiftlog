@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- Large file */
 (() => {
     const shiftLog = exports.shiftLog;
     // Track Sortable instances to prevent duplicates

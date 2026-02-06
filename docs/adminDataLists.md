@@ -11,10 +11,60 @@ to maintain consistency in data entry.
 
 ![Data Lists](./images/adminDataLists.png)
 
+## Types of Data Lists
+
+### System Lists
+
+System lists are pre-configured lists that are essential for the application's core functionality.
+These lists cannot be renamed or deleted and are identified by the application itself.
+
+Examples include:
+- Equipment Types
+- Work Order Priorities
+- Work Order Statuses
+- Shift Types
+- Timesheet Types
+
+### Non-System Lists (Custom Lists)
+
+Non-system lists are custom lists that administrators can create to meet specific organizational needs.
+These lists are identified by a `dataListKey` that starts with the "user-" prefix.
+
+Non-system lists can be:
+- Created with custom names
+- Renamed at any time
+- Deleted when no longer needed
+
 ## Managing Data Lists
 
 1. Navigate to **Administrator Tools** > **Data Lists**.
 2. Select the data list you want to manage from the available lists.
+
+## Creating a Non-System Data List
+
+1. Click the **Create Data List** button at the top of the page.
+2. Enter a unique **Data List Key** that starts with "user-" (e.g., "user-myCustomList").
+3. Enter a **Display Name** for the list (e.g., "My Custom List").
+4. Click **Create Data List**.
+
+⚠️ The Data List Key cannot be changed after creation.
+
+## Renaming a Non-System Data List
+
+1. Find the non-system list you want to rename (marked with a "Custom" tag).
+2. Click the **Rename List** button.
+3. Enter the new display name.
+4. Click **Update Name**.
+
+Note: Only non-system lists can be renamed. System lists maintain their original names.
+
+## Deleting a Non-System Data List
+
+1. Find the non-system list you want to delete (marked with a "Custom" tag).
+2. Click the **Delete List** button.
+3. Confirm the deletion.
+
+⚠️ Deleting a data list will also delete all items in that list. This action cannot be undone.
 
 ## Adding a Data List Item
 
