@@ -42,8 +42,9 @@ export default async function updateShiftNote(
         )
     `)
 
-  if (result.rowsAffected[0] > 0 && // Update field values if fields are provided
-    updateShiftNoteForm.fields !== undefined) {
+  if (result.rowsAffected[0] > 0) {
+    // Update field values if fields are provided
+    if (updateShiftNoteForm.fields !== undefined) {
       for (const [noteTypeFieldId, fieldValue] of Object.entries(
         updateShiftNoteForm.fields
       )) {
@@ -103,6 +104,7 @@ export default async function updateShiftNote(
         }
       }
     }
+  }
 
   return result.rowsAffected[0] > 0
 }
