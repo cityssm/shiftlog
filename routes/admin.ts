@@ -14,6 +14,7 @@ import handler_userGroups from '../handlers/admin-get/userGroups.js'
 import handler_users from '../handlers/admin-get/users.js'
 import handler_workOrderTypes from '../handlers/admin-get/workOrderTypes.js'
 import handler_doAddAssignedToItem from '../handlers/admin-post/doAddAssignedToItem.js'
+import handler_doAddDataList from '../handlers/admin-post/doAddDataList.js'
 import handler_doAddDataListItem from '../handlers/admin-post/doAddDataListItem.js'
 import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js'
 import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.js'
@@ -27,6 +28,7 @@ import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js'
 import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupMember.js'
 import handler_doAddWorkOrderType from '../handlers/admin-post/doAddWorkOrderType.js'
 import handler_doDeleteAssignedToItem from '../handlers/admin-post/doDeleteAssignedToItem.js'
+import handler_doDeleteDataList from '../handlers/admin-post/doDeleteDataList.js'
 import handler_doDeleteDataListItem from '../handlers/admin-post/doDeleteDataListItem.js'
 import handler_doDeleteEmployee from '../handlers/admin-post/doDeleteEmployee.js'
 import handler_doDeleteEmployeeList from '../handlers/admin-post/doDeleteEmployeeList.js'
@@ -52,6 +54,7 @@ import handler_doResetUserApiKey from '../handlers/admin-post/doResetUserApiKey.
 import handler_doToggleNotificationConfigurationIsActive from '../handlers/admin-post/doToggleNotificationConfigurationIsActive.js'
 import handler_doToggleUserPermission from '../handlers/admin-post/doToggleUserPermission.js'
 import handler_doUpdateAssignedToItem from '../handlers/admin-post/doUpdateAssignedToItem.js'
+import handler_doUpdateDataList from '../handlers/admin-post/doUpdateDataList.js'
 import handler_doUpdateDataListItem from '../handlers/admin-post/doUpdateDataListItem.js'
 import handler_doUpdateEmployee from '../handlers/admin-post/doUpdateEmployee.js'
 import handler_doUpdateEmployeeList from '../handlers/admin-post/doUpdateEmployeeList.js'
@@ -181,6 +184,9 @@ router
 
 router
   .get('/dataLists', handler_dataLists)
+  .post('/doAddDataList', handler_doAddDataList)
+  .post('/doUpdateDataList', handler_doUpdateDataList)
+  .post('/doDeleteDataList', handler_doDeleteDataList)
   .post('/doAddDataListItem', handler_doAddDataListItem)
   .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
   .post('/doDeleteDataListItem', handler_doDeleteDataListItem)

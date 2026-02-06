@@ -24,6 +24,7 @@ export default async function getDataLists(): Promise<DataList[]> {
         recordDelete_dateTime IS NULL
         AND instance = @instance
       ORDER BY
+        isSystemList ASC,
         dataListName
     `)
 

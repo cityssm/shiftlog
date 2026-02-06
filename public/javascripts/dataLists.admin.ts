@@ -3,9 +3,12 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddDataListResponse } from '../../handlers/admin-post/doAddDataList.js'
 import type { DoAddDataListItemResponse } from '../../handlers/admin-post/doAddDataListItem.js'
+import type { DoDeleteDataListResponse } from '../../handlers/admin-post/doDeleteDataList.js'
 import type { DoDeleteDataListItemResponse } from '../../handlers/admin-post/doDeleteDataListItem.js'
 import type { DoReorderDataListItemsResponse } from '../../handlers/admin-post/doReorderDataListItems.js'
+import type { DoUpdateDataListResponse } from '../../handlers/admin-post/doUpdateDataList.js'
 import type { DoUpdateDataListItemResponse } from '../../handlers/admin-post/doUpdateDataListItem.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -166,6 +169,398 @@ declare const exports: {
 
     // Re-initialize sortable
     initializeSortable(dataListKey)
+  }
+
+  function renderAllDataLists(dataLists: DataListWithItems[]): void {
+    // Update the global dataLists
+    exports.dataLists = dataLists
+
+    // Find the container that holds all the detail panels
+    const messageBlock = document.querySelector('.message.is-info')
+
+    if (messageBlock === null) {
+      // Fallback to page reload if we can't find the container
+      globalThis.location.reload()
+      return
+    }
+
+    // Get the parent that contains all the panels
+    const panelsContainer = messageBlock.parentElement
+
+    if (panelsContainer === null) {
+      globalThis.location.reload()
+      return
+    }
+
+    // Remove all existing panels
+    const existingPanels = panelsContainer.querySelectorAll('details.panel')
+    for (const panel of existingPanels) {
+      panel.remove()
+    }
+
+    // Re-render all panels from scratch
+    for (const dataList of dataLists) {
+      const panelHtml = /* html */ `
+        <details class="panel mb-5 collapsable-panel" data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}" data-is-system-list="${dataList.isSystemList}">
+          <summary class="panel-heading is-clickable">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fa-solid fa-chevron-right details-chevron"></i>
+              </span>
+              <span class="has-text-weight-semibold mr-2">
+                ${cityssm.escapeHTML(dataList.dataListName)}
+              </span>
+              <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
+                ${dataList.items.length}
+              </span>
+              ${dataList.isSystemList ? '' : '<span class="tag is-info is-light ml-2">Custom</span>'}
+            </span>
+          </summary>
+          <div class="panel-block is-block">
+            <div class="columns is-mobile">
+              ${
+                dataList.isSystemList
+                  ? ''
+                  : /* html */ `
+                    <div class="column is-narrow">
+                      <button
+                        class="button is-info is-small button--renameDataList" 
+                        data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                        data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                        type="button"
+                      >
+                        <span class="icon">
+                          <i class="fa-solid fa-pencil"></i>
+                        </span>
+                        <span>Rename List</span>
+                      </button>
+    
+                      <button
+                        class="button is-danger is-small button--deleteDataList" 
+                        data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                        data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                        type="button"
+                      >
+                        <span class="icon">
+                          <i class="fa-solid fa-trash"></i>
+                        </span>
+                        <span>Delete List</span>
+                      </button>
+                    </div>
+                  `
+              }
+              <div class="column has-text-right">
+                <button
+                  class="button is-success is-small button--addItem" 
+                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-plus"></i>
+                  </span>
+                  <span>Add Item</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="panel-block p-0">
+            <div class="table-container" style="width: 100%;">
+              <table class="table is-striped is-hoverable is-fullwidth mb-0">
+                <thead>
+                  <tr>
+                    <th class="has-text-centered" style="width: 60px;">Order</th>
+                    <th>Item</th>
+                    <th style="width: 180px;">User Group</th>
+                    <th>
+                      <span class="is-sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="is-sortable" id="dataListItems--${cityssm.escapeHTML(dataList.dataListKey)}">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+      `
+
+      const tempDiv = document.createElement('div')
+      // eslint-disable-next-line no-unsanitized/property
+      tempDiv.innerHTML = panelHtml
+      const panelElement = tempDiv.firstElementChild
+
+      if (panelElement !== null) {
+        panelsContainer.append(panelElement)
+
+        // Render items for this list (use items variable which has the default)
+        renderDataListItems(dataList.dataListKey, dataList.items)
+
+        // Initialize sortable for this list
+        initializeSortable(dataList.dataListKey)
+      }
+    }
+
+    // Re-attach all event listeners
+    attachAllEventListeners()
+  }
+
+  function attachAllEventListeners(): void {
+    // Add Data List button
+    const addDataListButton = document.querySelector('.button--addDataList')
+    if (addDataListButton !== null) {
+      addDataListButton.addEventListener('click', addDataList)
+    }
+
+    // Rename Data List buttons
+    const renameButtons = document.querySelectorAll('.button--renameDataList')
+    for (const button of renameButtons) {
+      button.addEventListener('click', renameDataList)
+    }
+
+    // Delete Data List buttons
+    const deleteDataListButtons = document.querySelectorAll(
+      '.button--deleteDataList'
+    )
+    for (const button of deleteDataListButtons) {
+      button.addEventListener('click', deleteDataList)
+    }
+
+    // Add item buttons
+    const addButtons = document.querySelectorAll('.button--addItem')
+    for (const button of addButtons) {
+      button.addEventListener('click', addDataListItem)
+    }
+
+    // Re-attach event listeners for each data list's items
+    for (const dataList of exports.dataLists) {
+      attachEventListeners(dataList.dataListKey)
+    }
+  }
+
+  function addDataList(clickEvent: Event): void {
+    clickEvent.preventDefault()
+
+    let closeModalFunction: () => void
+
+    function doAddDataList(submitEvent: Event): void {
+      submitEvent.preventDefault()
+
+      const addForm = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(addForm)
+
+      const dataListKeySuffix = (
+        formData.get('dataListKey') as string | null
+      )?.trim()
+      const dataListName = (
+        formData.get('dataListName') as string | null
+      )?.trim()
+
+      if (dataListKeySuffix === '' || dataListName === '') {
+        bulmaJS.alert({
+          contextualColorName: 'warning',
+          title: 'Required Fields',
+          message: 'Please fill in all required fields.'
+        })
+        return
+      }
+
+      // Prepend "user-" to the key
+      const dataListKey = `user-${dataListKeySuffix}`
+
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/admin/doAddDataList`,
+        {
+          dataListKey,
+          dataListName
+        },
+        (responseJSON: DoAddDataListResponse) => {
+          if (responseJSON.success && responseJSON.dataLists !== undefined) {
+            closeModalFunction()
+
+            // Render the updated list
+            renderAllDataLists(responseJSON.dataLists)
+
+            const message = responseJSON.wasRecovered
+              ? 'The previously deleted data list has been recovered.'
+              : 'The data list has been successfully created.'
+
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: responseJSON.wasRecovered
+                ? 'Data List Recovered'
+                : 'Data List Created',
+              message
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error Creating Data List',
+              message: responseJSON.errorMessage ?? 'Please try again.'
+            })
+          }
+        }
+      )
+    }
+
+    cityssm.openHtmlModal('adminDataLists-addDataList', {
+      onshow(modalElement) {
+        // Attach form submit handler
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', doAddDataList)
+      },
+      onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+
+        // Focus the key input
+        const keyInput = modalElement.querySelector(
+          '#addDataList--dataListKey'
+        ) as HTMLInputElement
+        keyInput.focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function renameDataList(clickEvent: Event): void {
+    const buttonElement = clickEvent.currentTarget as HTMLButtonElement
+    const dataListKey = buttonElement.dataset.dataListKey
+    const dataListName = buttonElement.dataset.dataListName
+
+    if (dataListKey === undefined || dataListName === undefined) {
+      return
+    }
+
+    let closeModalFunction: () => void
+
+    function doUpdateDataList(submitEvent: Event): void {
+      submitEvent.preventDefault()
+
+      const editForm = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(editForm)
+      const newDataListName = (
+        formData.get('dataListName') as string | null
+      )?.trim()
+
+      if (newDataListName === '') {
+        bulmaJS.alert({
+          contextualColorName: 'warning',
+          title: 'Name Required',
+          message: 'Please enter a display name.'
+        })
+        return
+      }
+
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/admin/doUpdateDataList`,
+        editForm,
+        (responseJSON: DoUpdateDataListResponse) => {
+          if (responseJSON.success && responseJSON.dataLists !== undefined) {
+            closeModalFunction()
+            renderAllDataLists(responseJSON.dataLists)
+
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'Data List Renamed',
+              message: 'The data list has been successfully renamed.'
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error Renaming Data List',
+              message: responseJSON.errorMessage ?? 'Please try again.'
+            })
+          }
+        }
+      )
+    }
+
+    cityssm.openHtmlModal('adminDataLists-editDataList', {
+      onshow(modalElement) {
+        // Set the data list key
+        const dataListKeyInput = modalElement.querySelector(
+          '#editDataList--dataListKey'
+        ) as HTMLInputElement
+        dataListKeyInput.value = dataListKey
+
+        // Set the data list name
+        const dataListNameInput = modalElement.querySelector(
+          '#editDataList--dataListName'
+        ) as HTMLInputElement
+        dataListNameInput.value = dataListName
+
+        // Attach form submit handler
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', doUpdateDataList)
+      },
+      onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+
+        // Focus and select the input
+        const nameInput = modalElement.querySelector(
+          '#editDataList--dataListName'
+        ) as HTMLInputElement
+        nameInput.focus()
+        nameInput.select()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function deleteDataList(clickEvent: Event): void {
+    const buttonElement = clickEvent.currentTarget as HTMLButtonElement
+    const dataListKey = buttonElement.dataset.dataListKey
+    const dataListName = buttonElement.dataset.dataListName
+
+    if (dataListKey === undefined || dataListName === undefined) {
+      return
+    }
+
+    bulmaJS.confirm({
+      contextualColorName: 'warning',
+      title: 'Delete Data List',
+      message: `Are you sure you want to delete "${dataListName}"? This will also delete all items in this list. This action cannot be undone.`,
+      okButton: {
+        contextualColorName: 'danger',
+        text: 'Delete Data List',
+        callbackFunction() {
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/admin/doDeleteDataList`,
+            {
+              dataListKey
+            },
+            (responseJSON: DoDeleteDataListResponse) => {
+              if (
+                responseJSON.success &&
+                responseJSON.dataLists !== undefined
+              ) {
+                // Render the updated list
+                renderAllDataLists(responseJSON.dataLists)
+
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  title: 'Data List Deleted',
+                  message: 'The data list has been successfully deleted.'
+                })
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  title: 'Error Deleting Data List',
+                  message: responseJSON.errorMessage ?? 'Please try again.'
+                })
+              }
+            }
+          )
+        }
+      }
+    })
   }
 
   function addDataListItem(clickEvent: Event): void {
@@ -594,17 +989,5 @@ declare const exports: {
     sortableInstances.set(dataListKey, sortableInstance)
   }
 
-  // Initialize sortable for each data list
-  for (const dataList of exports.dataLists) {
-    initializeSortable(dataList.dataListKey)
-
-    // Attach event listeners for this data list
-    attachEventListeners(dataList.dataListKey)
-  }
-
-  // Add item buttons
-  const addButtons = document.querySelectorAll('.button--addItem')
-  for (const button of addButtons) {
-    button.addEventListener('click', addDataListItem)
-  }
+  renderAllDataLists(exports.dataLists)
 })()

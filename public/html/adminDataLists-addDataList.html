@@ -1,0 +1,79 @@
+<div
+  class="modal"
+  id="modal--addDataList"
+  role="dialog"
+  aria-label="Add Data List"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Create New Data List</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addDataList">
+        <div class="field">
+          <label class="label" for="addDataList--dataListKey">
+            Data List Key
+          </label>
+          <div class="field has-addons">
+            <div class="control">
+              <a class="button is-static">user-</a>
+            </div>
+            <div class="control is-expanded">
+              <input
+                class="input"
+                id="addDataList--dataListKey"
+                name="dataListKey"
+                type="text"
+                pattern="[a-zA-Z0-9\-]+"
+                placeholder="myList"
+                autofocus
+                required
+              />
+            </div>
+          </div>
+          <p class="help">
+            Enter a unique identifier using letters, numbers, or hyphens. This cannot be changed later.
+          </p>
+        </div>
+        <div class="field">
+          <label class="label" for="addDataList--dataListName">
+            Display Name
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addDataList--dataListName"
+              name="dataListName"
+              type="text"
+              required
+            />
+          </div>
+          <p class="help">
+            The friendly name that will be displayed throughout the application.
+          </p>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-success"
+          type="submit"
+          form="form--addDataList"
+        >
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Create Data List</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>
