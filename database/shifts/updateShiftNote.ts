@@ -2,10 +2,10 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface UpdateShiftNoteForm {
-  shiftId: number | string
+  fields?: Record<string, string>
   noteSequence: number | string
   noteText: string
-  fields?: Record<string, string>
+  shiftId: number | string
 }
 
 export default async function updateShiftNote(
@@ -42,9 +42,8 @@ export default async function updateShiftNote(
         )
     `)
 
-  if (result.rowsAffected[0] > 0) {
-    // Update field values if fields are provided
-    if (updateShiftNoteForm.fields !== undefined) {
+  if (result.rowsAffected[0] > 0 && // Update field values if fields are provided
+    updateShiftNoteForm.fields !== undefined) {
       for (const [noteTypeFieldId, fieldValue] of Object.entries(
         updateShiftNoteForm.fields
       )) {
@@ -104,7 +103,6 @@ export default async function updateShiftNote(
         }
       }
     }
-  }
 
   return result.rowsAffected[0] > 0
 }

@@ -1,7 +1,7 @@
 export interface UpdateShiftNoteForm {
-    shiftId: number | string;
+    fields?: Record<string, string>;
     noteSequence: number | string;
     noteText: string;
-    fields?: Record<string, string>;
+    shiftId: number | string;
 }
 export default function updateShiftNote(updateShiftNoteForm: UpdateShiftNoteForm, userName: string): Promise<boolean>;

@@ -6,12 +6,12 @@ import createShiftNote, {
 
 export type DoCreateShiftNoteResponse =
   | {
-      success: false
       errorMessage: string
+      success: false
     }
   | {
-      success: true
       noteSequence: number
+      success: true
     }
 
 export default async function handler(
@@ -25,14 +25,14 @@ export default async function handler(
 
   if (noteSequence === undefined) {
     response.json({
-      success: false,
-      errorMessage: 'Shift not found.'
+      errorMessage: 'Shift not found.',
+      success: false
     })
     return
   }
 
   response.json({
-    success: true,
-    noteSequence
+    noteSequence,
+    success: true
   })
 }

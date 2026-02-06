@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import type { ShiftNote } from '../../database/shifts/getShiftNotes.js';
 export type DoGetShiftNotesResponse = {
-    success: true;
     notes: ShiftNote[];
+    success: true;
 };
 export default function handler(request: Request<{
     shiftId: string;

@@ -65,9 +65,8 @@ export default async function createShiftNote(
         )
     `)
 
-  if (result.rowsAffected[0] > 0) {
-    // Insert field values if note type is set and fields are provided
-    if (
+  if (result.rowsAffected[0] > 0 && // Insert field values if note type is set and fields are provided
+    
       createShiftNoteForm.noteTypeId !== undefined &&
       createShiftNoteForm.fields !== undefined
     ) {
@@ -101,7 +100,6 @@ export default async function createShiftNote(
         }
       }
     }
-  }
 
   return nextSequence
 }

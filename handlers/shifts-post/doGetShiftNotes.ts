@@ -5,8 +5,8 @@ import type { ShiftNote } from '../../database/shifts/getShiftNotes.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetShiftNotesResponse = {
-  success: true
   notes: ShiftNote[]
+  success: true
 }
 
 export default async function handler(
@@ -16,7 +16,7 @@ export default async function handler(
   const notes = await getShiftNotes(request.params.shiftId)
 
   response.json({
-    success: true,
-    notes
+    notes,
+    success: true
   })
 }
