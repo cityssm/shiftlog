@@ -549,11 +549,28 @@
                             noteTypeFieldIds.push(Number.parseInt(fieldId, 10));
                         }
                     }
-                    // For now, just show a notification that reordering is saved
-                    // In a future update, this could call a backend endpoint to persist the order
-                    bulmaJS.alert({
-                        contextualColorName: 'info',
-                        message: 'Field order updated.'
+                    // Save the new order to the database
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderNoteTypeFields`, {
+                        noteTypeId: noteType.noteTypeId,
+                        noteTypeFieldIds
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success && responseJSON.noteTypes !== undefined) {
+                            noteTypes = responseJSON.noteTypes;
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Field order saved successfully.'
+                            });
+                        }
+                        else {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                title: 'Error Saving Field Order',
+                                message: 'An error occurred while saving the field order. Please try again.'
+                            });
+                            // Refresh to restore original order
+                            renderNoteTypes();
+                        }
                     });
                 }
             });

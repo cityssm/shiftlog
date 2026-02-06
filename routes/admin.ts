@@ -54,6 +54,7 @@ import handler_doGetUserGroup from '../handlers/admin-post/doGetUserGroup.js'
 import handler_doReorderAssignedToItems from '../handlers/admin-post/doReorderAssignedToItems.js'
 import handler_doReorderDataListItems from '../handlers/admin-post/doReorderDataListItems.js'
 import handler_doReorderEmployeeListMembers from '../handlers/admin-post/doReorderEmployeeListMembers.js'
+import handler_doReorderNoteTypeFields from '../handlers/admin-post/doReorderNoteTypeFields.js'
 import handler_doReorderWorkOrderTypes from '../handlers/admin-post/doReorderWorkOrderTypes.js'
 import handler_doResetUserApiKey from '../handlers/admin-post/doResetUserApiKey.js'
 import handler_doToggleNotificationConfigurationIsActive from '../handlers/admin-post/doToggleNotificationConfigurationIsActive.js'
@@ -197,6 +198,7 @@ router
   .post('/doAddNoteTypeField', handler_doAddNoteTypeField)
   .post('/doUpdateNoteTypeField', handler_doUpdateNoteTypeField)
   .post('/doDeleteNoteTypeField', handler_doDeleteNoteTypeField)
+  .post('/doReorderNoteTypeFields', handler_doReorderNoteTypeFields)
 
 /*
  * Data List Management
