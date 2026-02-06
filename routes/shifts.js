@@ -18,6 +18,7 @@ import handler_doAddShiftWorkOrder from '../handlers/shifts-post/doAddShiftWorkO
 import handler_doCopyFromPreviousShift from '../handlers/shifts-post/doCopyFromPreviousShift.js';
 import handler_doCreateAdhocTask from '../handlers/shifts-post/doCreateAdhocTask.js';
 import handler_doCreateShift from '../handlers/shifts-post/doCreateShift.js';
+import handler_doCreateShiftNote from '../handlers/shifts-post/doCreateShiftNote.js';
 import handler_doCreateStandaloneAdhocTask from '../handlers/shifts-post/doCreateStandaloneAdhocTask.js';
 import handler_doDeleteCrew from '../handlers/shifts-post/doDeleteCrew.js';
 import handler_doDeleteCrewEquipment from '../handlers/shifts-post/doDeleteCrewEquipment.js';
@@ -27,6 +28,7 @@ import handler_doDeleteShiftAdhocTask from '../handlers/shifts-post/doDeleteShif
 import handler_doDeleteShiftCrew from '../handlers/shifts-post/doDeleteShiftCrew.js';
 import handler_doDeleteShiftEmployee from '../handlers/shifts-post/doDeleteShiftEmployee.js';
 import handler_doDeleteShiftEquipment from '../handlers/shifts-post/doDeleteShiftEquipment.js';
+import handler_doDeleteShiftNote from '../handlers/shifts-post/doDeleteShiftNote.js';
 import handler_doDeleteShiftWorkOrder from '../handlers/shifts-post/doDeleteShiftWorkOrder.js';
 import handler_doGetAdhocTaskTypes from '../handlers/shifts-post/doGetAdhocTaskTypes.js';
 import handler_doGetAvailableAdhocTasks from '../handlers/shifts-post/doGetAvailableAdhocTasks.js';
@@ -35,12 +37,14 @@ import handler_doGetAvailableResources from '../handlers/shifts-post/doGetAvaila
 import handler_doGetCrew from '../handlers/shifts-post/doGetCrew.js';
 import handler_doGetDeletedShifts from '../handlers/shifts-post/doGetDeletedShifts.js';
 import handler_doGetEligibleEmployeesForEquipment from '../handlers/shifts-post/doGetEligibleEmployeesForEquipment.js';
+import handler_doGetNoteTypes from '../handlers/shifts-post/doGetNoteTypes.js';
 import handler_doGetPreviousShifts from '../handlers/shifts-post/doGetPreviousShifts.js';
 import handler_doGetShiftAdhocTasks from '../handlers/shifts-post/doGetShiftAdhocTasks.js';
 import handler_doGetShiftCreationData from '../handlers/shifts-post/doGetShiftCreationData.js';
 import handler_doGetShiftCrews from '../handlers/shifts-post/doGetShiftCrews.js';
 import handler_doGetShiftEmployees from '../handlers/shifts-post/doGetShiftEmployees.js';
 import handler_doGetShiftEquipment from '../handlers/shifts-post/doGetShiftEquipment.js';
+import handler_doGetShiftNotes from '../handlers/shifts-post/doGetShiftNotes.js';
 import handler_doGetShiftsForBuilder from '../handlers/shifts-post/doGetShiftsForBuilder.js';
 import handler_doGetShiftTimesheets from '../handlers/shifts-post/doGetShiftTimesheets.js';
 import handler_doGetShiftWorkOrders from '../handlers/shifts-post/doGetShiftWorkOrders.js';
@@ -56,6 +60,7 @@ import handler_doUpdateShiftEmployee from '../handlers/shifts-post/doUpdateShift
 import handler_doUpdateShiftEmployeeNote from '../handlers/shifts-post/doUpdateShiftEmployeeNote.js';
 import handler_doUpdateShiftEquipment from '../handlers/shifts-post/doUpdateShiftEquipment.js';
 import handler_doUpdateShiftEquipmentNote from '../handlers/shifts-post/doUpdateShiftEquipmentNote.js';
+import handler_doUpdateShiftNote from '../handlers/shifts-post/doUpdateShiftNote.js';
 import handler_doUpdateShiftWorkOrderNote from '../handlers/shifts-post/doUpdateShiftWorkOrderNote.js';
 function updateHandler(request, response, next) {
     if (request.session.user?.userProperties.shifts.canUpdate ?? false) {
@@ -87,12 +92,20 @@ router
     .get('/:shiftId/edit', updateHandler, handler_edit)
     .post('/doUpdateShift', updateHandler, handler_doUpdateShift)
     .post('/doDeleteShift', updateHandler, handler_doDeleteShift);
+// Shift notes endpoints
+router
+    .post('/:shiftId/doGetShiftNotes', handler_doGetShiftNotes)
+    .post('/doGetNoteTypes', handler_doGetNoteTypes)
+    .post('/doCreateShiftNote', updateHandler, handler_doCreateShiftNote)
+    .post('/doUpdateShiftNote', updateHandler, handler_doUpdateShiftNote)
+    .post('/doDeleteShiftNote', updateHandler, handler_doDeleteShiftNote);
 // Shift crews, employees, and equipment endpoints
 router
     .post('/doGetShiftCrews', handler_doGetShiftCrews)
     .post('/doGetShiftEmployees', handler_doGetShiftEmployees)
     .post('/doGetShiftEquipment', handler_doGetShiftEquipment)
     .post('/doGetShiftTimesheets', handler_doGetShiftTimesheets);
+// Ignoring eslint-plugin-no-secrets false positive
 router.post(
 // eslint-disable-next-line no-secrets/no-secrets
 '/doGetAvailableCrewsEmployeesEquipment', handler_doGetAvailableCrewsEmployeesEquipment);

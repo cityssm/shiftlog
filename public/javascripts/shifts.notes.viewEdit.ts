@@ -5,15 +5,15 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
 import type {
-  WorkOrderNote,
-  WorkOrderNoteField
-} from '../../database/workOrders/getWorkOrderNotes.js'
+  ShiftNote,
+  ShiftNoteField
+} from '../../database/shifts/getShiftNotes.js'
 import type { DoGetDataListItemsResponse } from '../../handlers/dashboard-post/doGetDataListItems.js'
-import type { DoCreateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doCreateWorkOrderNote.js'
-import type { DoDeleteWorkOrderNoteResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderNote.js'
-import type { DoGetNoteTypesResponse } from '../../handlers/workOrders-post/doGetNoteTypes.js'
-import type { DoGetWorkOrderNotesResponse } from '../../handlers/workOrders-post/doGetWorkOrderNotes.js'
-import type { DoUpdateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderNote.js'
+import type { DoCreateShiftNoteResponse } from '../../handlers/shifts-post/doCreateShiftNote.js'
+import type { DoDeleteShiftNoteResponse } from '../../handlers/shifts-post/doDeleteShiftNote.js'
+import type { DoGetNoteTypesResponse } from '../../handlers/shifts-post/doGetNoteTypes.js'
+import type { DoGetShiftNotesResponse } from '../../handlers/shifts-post/doGetShiftNotes.js'
+import type { DoUpdateShiftNoteResponse } from '../../handlers/shifts-post/doUpdateShiftNote.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -26,16 +26,16 @@ declare const exports: {
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
 ;(() => {
-  const workOrderFormElement = document.querySelector(
-    '#form--workOrder'
+  const shiftFormElement = document.querySelector(
+    '#form--shift'
   ) as HTMLFormElement | null
 
-  const workOrderId =
-    workOrderFormElement === null
+  const shiftId =
+    shiftFormElement === null
       ? ''
       : (
-          workOrderFormElement.querySelector(
-            '#workOrder--workOrderId'
+          shiftFormElement.querySelector(
+            '#shift--shiftId'
           ) as HTMLInputElement
         ).value
 
@@ -99,11 +99,17 @@ declare const bulmaJS: BulmaJS
     }
   }
 
-  function renderNotes(notes: WorkOrderNote[]): void {
+  function renderNotes(notes: ShiftNote[]): void {
     // Update notes count
     const notesCountElement = document.querySelector('#notesCount')
     if (notesCountElement !== null) {
       notesCountElement.textContent = notes.length.toString()
+    }
+
+    // Show/hide notes icon indicator
+    const hasNotesIconElement = document.querySelector('#icon--hasNotes')
+    if (hasNotesIconElement !== null) {
+      hasNotesIconElement.classList.toggle('is-hidden', notes.length === 0)
     }
 
     if (notes.length === 0) {
@@ -123,7 +129,7 @@ declare const bulmaJS: BulmaJS
 
       const canEdit =
         exports.isEdit &&
-        (exports.shiftLog.userCanManageWorkOrders ||
+        (exports.shiftLog.isAdmin ||
           note.recordCreate_userName === exports.shiftLog.userName)
 
       const truncatedText = truncateText(note.noteText, 200)
@@ -245,17 +251,17 @@ declare const bulmaJS: BulmaJS
     }
   }
 
-  function showFullNoteModal(note: WorkOrderNote): void {
-    cityssm.openHtmlModal('workOrders-viewNote', {
+  function showFullNoteModal(note: ShiftNote): void {
+    cityssm.openHtmlModal('shifts-viewNote', {
       onshow(modalElement) {
         ;(
           modalElement.querySelector(
-            '#viewWorkOrderNote--userName'
+            '#viewShiftNote--userName'
           ) as HTMLElement
         ).textContent = note.recordCreate_userName
         ;(
           modalElement.querySelector(
-            '#viewWorkOrderNote--dateTime'
+            '#viewShiftNote--dateTime'
           ) as HTMLElement
         ).textContent = cityssm.dateToString(
           new Date(note.recordCreate_dateTime)
@@ -263,13 +269,13 @@ declare const bulmaJS: BulmaJS
 
         // Show note type if present
         const noteTypeContainer = modalElement.querySelector(
-          '#viewWorkOrderNote--noteTypeContainer'
+          '#viewShiftNote--noteTypeContainer'
         ) as HTMLElement
 
         if (note.noteType !== null && note.noteType !== undefined) {
           ;(
             modalElement.querySelector(
-              '#viewWorkOrderNote--noteType'
+              '#viewShiftNote--noteType'
             ) as HTMLElement
           ).textContent = note.noteType
 
@@ -280,13 +286,13 @@ declare const bulmaJS: BulmaJS
 
         ;(
           modalElement.querySelector(
-            '#viewWorkOrderNote--noteText'
+            '#viewShiftNote--noteText'
           ) as HTMLElement
         ).textContent = note.noteText
 
         // Render fields if present
         const fieldsContainer = modalElement.querySelector(
-          '#viewWorkOrderNote--fieldsContainer'
+          '#viewShiftNote--fieldsContainer'
         ) as HTMLElement
         fieldsContainer.innerHTML = ''
         if (note.fields !== undefined && note.fields.length > 0) {
@@ -322,7 +328,7 @@ declare const bulmaJS: BulmaJS
     })
   }
 
-  function showEditNoteModal(note: WorkOrderNote): void {
+  function showEditNoteModal(note: ShiftNote): void {
     let closeModalFunction: () => void
 
     function doUpdateNote(submitEvent: Event): void {
@@ -332,12 +338,12 @@ declare const bulmaJS: BulmaJS
 
       // Extract field values and construct proper structure
       const noteData: {
-        workOrderId: string
+        shiftId: string
         noteSequence: string
         noteText: string
         fields?: Record<string, string>
       } = {
-        workOrderId: formData.get('workOrderId') as string,
+        shiftId: formData.get('shiftId') as string,
         noteSequence: formData.get('noteSequence') as string,
         noteText: formData.get('noteText') as string
       }
@@ -356,9 +362,9 @@ declare const bulmaJS: BulmaJS
       }
 
       cityssm.postJSON(
-        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`,
+        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doUpdateShiftNote`,
         noteData,
-        (responseJSON: DoUpdateWorkOrderNoteResponse) => {
+        (responseJSON: DoUpdateShiftNoteResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
             loadNotes()
@@ -373,7 +379,7 @@ declare const bulmaJS: BulmaJS
     }
 
     function renderEditFieldsWithDataLists(
-      fields: WorkOrderNoteField[],
+      fields: ShiftNoteField[],
       dataListMap: Map<string, Array<{ dataListItem: string }>>,
       fieldsContainer: HTMLElement
     ): void {
@@ -393,7 +399,7 @@ declare const bulmaJS: BulmaJS
             : ''
 
         fieldsHTML += `<div class="field">`
-        fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
+        fieldsHTML += `<label class="label" for="editShiftNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
             ${field.fieldValueRequired === true ? '<span class="has-text-danger">*</span>' : ''}
           </label>`
@@ -404,7 +410,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="date" 
-                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="editShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   value="${cityssm.escapeHTML(field.fieldValue)}"
                   ${requiredAttribute} />
@@ -424,7 +430,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
-                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="editShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   value="${cityssm.escapeHTML(field.fieldValue)}"
                   ${minAttribute} ${maxAttribute} ${requiredAttribute} />
@@ -442,7 +448,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  <select id="editShiftNote--field-${field.noteTypeFieldId}"
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
@@ -476,7 +482,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
-                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="editShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   value="${cityssm.escapeHTML(field.fieldValue)}"
                   ${dataListAttribute}
@@ -503,7 +509,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <textarea class="textarea" rows="3"
-                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="editShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}"
                   ${requiredAttribute}>${cityssm.escapeHTML(field.fieldValue)}</textarea>
               </div>
@@ -520,35 +526,35 @@ declare const bulmaJS: BulmaJS
       fieldsContainer.innerHTML = fieldsHTML
     }
 
-    cityssm.openHtmlModal('workOrders-editNote', {
+    cityssm.openHtmlModal('shifts-editNote', {
       onshow(modalElement) {
         exports.shiftLog.setUnsavedChanges('modal')
         ;(
           modalElement.querySelector(
-            '#editWorkOrderNote--workOrderId'
+            '#editShiftNote--shiftId'
           ) as HTMLInputElement
-        ).value = workOrderId
+        ).value = shiftId
         ;(
           modalElement.querySelector(
-            '#editWorkOrderNote--noteSequence'
+            '#editShiftNote--noteSequence'
           ) as HTMLInputElement
         ).value = note.noteSequence.toString()
         ;(
           modalElement.querySelector(
-            '#editWorkOrderNote--noteText'
+            '#editShiftNote--noteText'
           ) as HTMLTextAreaElement
         ).value = note.noteText
 
         if (note.noteType !== null && note.noteType !== undefined) {
           ;(
             modalElement.querySelector(
-              '#editWorkOrderNote--noteType'
+              '#editShiftNote--noteType'
             ) as HTMLElement
           ).textContent = `"${note.noteType}"`
         }
         // Render fields if present
         const fieldsContainer = modalElement.querySelector(
-          '#editWorkOrderNote--fieldsContainer'
+          '#editShiftNote--fieldsContainer'
         ) as HTMLElement
 
         // If note has a note type, get all fields from the note type definition
@@ -567,7 +573,7 @@ declare const bulmaJS: BulmaJS
             }
 
             // Merge all fields from note type with saved values
-            const allFields: WorkOrderNoteField[] = noteType.fields.map(
+            const allFields: ShiftNoteField[] = noteType.fields.map(
               (fieldDefinition) => ({
                 dataListKey: fieldDefinition.dataListKey,
                 fieldHelpText: fieldDefinition.fieldHelpText,
@@ -699,7 +705,7 @@ declare const bulmaJS: BulmaJS
 
     function renderNoteTypeFields(selectedNoteTypeId: string): void {
       const fieldsContainer = document.querySelector(
-        '#addWorkOrderNote--fieldsContainer'
+        '#addShiftNote--fieldsContainer'
       ) as HTMLElement
 
       if (selectedNoteTypeId === '') {
@@ -756,7 +762,7 @@ declare const bulmaJS: BulmaJS
             : `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`
 
         fieldsHTML += `<div class="field">`
-        fieldsHTML += `<label class="label" for="addWorkOrderNote--field-${field.noteTypeFieldId}">
+        fieldsHTML += `<label class="label" for="addShiftNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
             ${field.fieldValueRequired ? '<span class="has-text-danger">*</span>' : ''}
           </label>`
@@ -766,7 +772,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="date" 
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="addShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   ${requiredAttribute} />
               </div>
@@ -781,7 +787,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="addShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   ${minAttribute} ${maxAttribute} ${requiredAttribute} />
               </div>
@@ -798,7 +804,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  <select id="addShiftNote--field-${field.noteTypeFieldId}"
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
@@ -829,7 +835,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="addShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   ${dataListAttribute}
                   ${requiredAttribute} />
@@ -855,7 +861,7 @@ declare const bulmaJS: BulmaJS
             fieldsHTML += `
               <div class="control">
                 <textarea class="textarea" rows="3"
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="addShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   ${requiredAttribute}></textarea>
               </div>
@@ -879,12 +885,12 @@ declare const bulmaJS: BulmaJS
 
       // Extract field values and construct proper structure
       const noteData: {
-        workOrderId: string
+        shiftId: string
         noteTypeId?: string
         noteText: string
         fields?: Record<string, string>
       } = {
-        workOrderId: formData.get('workOrderId') as string,
+        shiftId: formData.get('shiftId') as string,
         noteText: formData.get('noteText') as string
       }
 
@@ -907,9 +913,9 @@ declare const bulmaJS: BulmaJS
       }
 
       cityssm.postJSON(
-        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`,
+        `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doCreateShiftNote`,
         noteData,
-        (responseJSON: DoCreateWorkOrderNoteResponse) => {
+        (responseJSON: DoCreateShiftNoteResponse) => {
           if (responseJSON.success) {
             closeModalFunction()
             formElement.reset()
@@ -924,19 +930,19 @@ declare const bulmaJS: BulmaJS
       )
     }
 
-    cityssm.openHtmlModal('workOrders-addNote', {
+    cityssm.openHtmlModal('shifts-addNote', {
       onshow(modalElement) {
         exports.shiftLog.populateSectionAliases(modalElement)
         exports.shiftLog.setUnsavedChanges('modal')
         ;(
           modalElement.querySelector(
-            '#addWorkOrderNote--workOrderId'
+            '#addShiftNote--shiftId'
           ) as HTMLInputElement
-        ).value = workOrderId
+        ).value = shiftId
 
         // Populate note types dropdown
         const noteTypeSelect = modalElement.querySelector(
-          '#addWorkOrderNote--noteTypeId'
+          '#addShiftNote--noteTypeId'
         ) as HTMLSelectElement
         for (const noteType of noteTypes) {
           const option = document.createElement('option')
@@ -959,7 +965,7 @@ declare const bulmaJS: BulmaJS
           ?.addEventListener('submit', doAddNote)
         ;(
           modalElement.querySelector(
-            '#addWorkOrderNote--noteText'
+            '#addShiftNote--noteText'
           ) as HTMLTextAreaElement
         ).focus()
       },
@@ -982,12 +988,12 @@ declare const bulmaJS: BulmaJS
 
         callbackFunction: () => {
           cityssm.postJSON(
-            `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`,
+            `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doDeleteShiftNote`,
             {
-              workOrderId,
+              shiftId,
               noteSequence
             },
-            (responseJSON: DoDeleteWorkOrderNoteResponse) => {
+            (responseJSON: DoDeleteShiftNoteResponse) => {
               if (responseJSON.success) {
                 loadNotes()
               } else {
@@ -1005,9 +1011,9 @@ declare const bulmaJS: BulmaJS
 
   function loadNotes(): void {
     cityssm.postJSON(
-      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`,
+      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId}/doGetShiftNotes`,
       {},
-      (responseJSON: DoGetWorkOrderNotesResponse) => {
+      (responseJSON: DoGetShiftNotesResponse) => {
         renderNotes(responseJSON.notes)
       }
     )
@@ -1015,7 +1021,7 @@ declare const bulmaJS: BulmaJS
 
   function loadNoteTypes(): void {
     cityssm.postJSON(
-      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doGetNoteTypes`,
+      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doGetNoteTypes`,
       {},
       (rawResponseJSON) => {
         const responseJSON =

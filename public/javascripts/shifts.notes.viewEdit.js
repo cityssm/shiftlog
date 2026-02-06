@@ -1,9 +1,9 @@
 /* eslint-disable max-lines -- complex client-side module with note type field handling */
 (() => {
-    const workOrderFormElement = document.querySelector('#form--workOrder');
-    const workOrderId = workOrderFormElement === null
+    const shiftFormElement = document.querySelector('#form--shift');
+    const shiftId = shiftFormElement === null
         ? ''
-        : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
+        : shiftFormElement.querySelector('#shift--shiftId').value;
     /*
      * Notes functionality
      */
@@ -50,6 +50,11 @@
         if (notesCountElement !== null) {
             notesCountElement.textContent = notes.length.toString();
         }
+        // Show/hide notes icon indicator
+        const hasNotesIconElement = document.querySelector('#icon--hasNotes');
+        if (hasNotesIconElement !== null) {
+            hasNotesIconElement.classList.toggle('is-hidden', notes.length === 0);
+        }
         if (notes.length === 0) {
             notesContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
@@ -63,7 +68,7 @@
             const noteElement = document.createElement('div');
             noteElement.className = 'box';
             const canEdit = exports.isEdit &&
-                (exports.shiftLog.userCanManageWorkOrders ||
+                (exports.shiftLog.isAdmin ||
                     note.recordCreate_userName === exports.shiftLog.userName);
             const truncatedText = truncateText(note.noteText, 200);
             const needsExpand = note.noteText.length > 200;
@@ -162,25 +167,25 @@
         }
     }
     function showFullNoteModal(note) {
-        cityssm.openHtmlModal('workOrders-viewNote', {
+        cityssm.openHtmlModal('shifts-viewNote', {
             onshow(modalElement) {
                 ;
-                modalElement.querySelector('#viewWorkOrderNote--userName').textContent = note.recordCreate_userName;
-                modalElement.querySelector('#viewWorkOrderNote--dateTime').textContent = cityssm.dateToString(new Date(note.recordCreate_dateTime));
+                modalElement.querySelector('#viewShiftNote--userName').textContent = note.recordCreate_userName;
+                modalElement.querySelector('#viewShiftNote--dateTime').textContent = cityssm.dateToString(new Date(note.recordCreate_dateTime));
                 // Show note type if present
-                const noteTypeContainer = modalElement.querySelector('#viewWorkOrderNote--noteTypeContainer');
+                const noteTypeContainer = modalElement.querySelector('#viewShiftNote--noteTypeContainer');
                 if (note.noteType !== null && note.noteType !== undefined) {
                     ;
-                    modalElement.querySelector('#viewWorkOrderNote--noteType').textContent = note.noteType;
+                    modalElement.querySelector('#viewShiftNote--noteType').textContent = note.noteType;
                     noteTypeContainer.style.display = 'block';
                 }
                 else {
                     noteTypeContainer.style.display = 'none';
                 }
                 ;
-                modalElement.querySelector('#viewWorkOrderNote--noteText').textContent = note.noteText;
+                modalElement.querySelector('#viewShiftNote--noteText').textContent = note.noteText;
                 // Render fields if present
-                const fieldsContainer = modalElement.querySelector('#viewWorkOrderNote--fieldsContainer');
+                const fieldsContainer = modalElement.querySelector('#viewShiftNote--fieldsContainer');
                 fieldsContainer.innerHTML = '';
                 if (note.fields !== undefined && note.fields.length > 0) {
                     // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
@@ -219,7 +224,7 @@
             const formData = new FormData(formElement);
             // Extract field values and construct proper structure
             const noteData = {
-                workOrderId: formData.get('workOrderId'),
+                shiftId: formData.get('shiftId'),
                 noteSequence: formData.get('noteSequence'),
                 noteText: formData.get('noteText')
             };
@@ -234,7 +239,7 @@
             if (Object.keys(fields).length > 0) {
                 noteData.fields = fields;
             }
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`, noteData, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doUpdateShiftNote`, noteData, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     loadNotes();
@@ -260,7 +265,7 @@
                     ? `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`
                     : '';
                 fieldsHTML += `<div class="field">`;
-                fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
+                fieldsHTML += `<label class="label" for="editShiftNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
             ${field.fieldValueRequired === true ? '<span class="has-text-danger">*</span>' : ''}
           </label>`;
@@ -270,7 +275,7 @@
                         fieldsHTML += `
               <div class="control">
                 <input class="input" type="date" 
-                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="editShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   value="${cityssm.escapeHTML(field.fieldValue)}"
                   ${requiredAttribute} />
@@ -288,7 +293,7 @@
                         fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
-                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="editShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   value="${cityssm.escapeHTML(field.fieldValue)}"
                   ${minAttribute} ${maxAttribute} ${requiredAttribute} />
@@ -304,7 +309,7 @@
                         fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  <select id="editShiftNote--field-${field.noteTypeFieldId}"
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
@@ -333,7 +338,7 @@
                         fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
-                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="editShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   value="${cityssm.escapeHTML(field.fieldValue)}"
                   ${dataListAttribute}
@@ -356,7 +361,7 @@
                         fieldsHTML += `
               <div class="control">
                 <textarea class="textarea" rows="3"
-                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="editShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}"
                   ${requiredAttribute}>${cityssm.escapeHTML(field.fieldValue)}</textarea>
               </div>
@@ -370,18 +375,18 @@
             // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
             fieldsContainer.innerHTML = fieldsHTML;
         }
-        cityssm.openHtmlModal('workOrders-editNote', {
+        cityssm.openHtmlModal('shifts-editNote', {
             onshow(modalElement) {
                 exports.shiftLog.setUnsavedChanges('modal');
-                modalElement.querySelector('#editWorkOrderNote--workOrderId').value = workOrderId;
-                modalElement.querySelector('#editWorkOrderNote--noteSequence').value = note.noteSequence.toString();
-                modalElement.querySelector('#editWorkOrderNote--noteText').value = note.noteText;
+                modalElement.querySelector('#editShiftNote--shiftId').value = shiftId;
+                modalElement.querySelector('#editShiftNote--noteSequence').value = note.noteSequence.toString();
+                modalElement.querySelector('#editShiftNote--noteText').value = note.noteText;
                 if (note.noteType !== null && note.noteType !== undefined) {
                     ;
-                    modalElement.querySelector('#editWorkOrderNote--noteType').textContent = `"${note.noteType}"`;
+                    modalElement.querySelector('#editShiftNote--noteType').textContent = `"${note.noteType}"`;
                 }
                 // Render fields if present
-                const fieldsContainer = modalElement.querySelector('#editWorkOrderNote--fieldsContainer');
+                const fieldsContainer = modalElement.querySelector('#editShiftNote--fieldsContainer');
                 // If note has a note type, get all fields from the note type definition
                 if (note.noteTypeId !== null && note.noteTypeId !== undefined) {
                     const noteType = noteTypes.find((nt) => nt.noteTypeId === note.noteTypeId);
@@ -498,7 +503,7 @@
         event?.preventDefault();
         let closeModalFunction;
         function renderNoteTypeFields(selectedNoteTypeId) {
-            const fieldsContainer = document.querySelector('#addWorkOrderNote--fieldsContainer');
+            const fieldsContainer = document.querySelector('#addShiftNote--fieldsContainer');
             if (selectedNoteTypeId === '') {
                 fieldsContainer.innerHTML = '';
                 return;
@@ -533,7 +538,7 @@
                     ? ''
                     : `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`;
                 fieldsHTML += `<div class="field">`;
-                fieldsHTML += `<label class="label" for="addWorkOrderNote--field-${field.noteTypeFieldId}">
+                fieldsHTML += `<label class="label" for="addShiftNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
             ${field.fieldValueRequired ? '<span class="has-text-danger">*</span>' : ''}
           </label>`;
@@ -542,7 +547,7 @@
                         fieldsHTML += `
               <div class="control">
                 <input class="input" type="date" 
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="addShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   ${requiredAttribute} />
               </div>
@@ -555,7 +560,7 @@
                         fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="addShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   ${minAttribute} ${maxAttribute} ${requiredAttribute} />
               </div>
@@ -570,7 +575,7 @@
                         fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  <select id="addShiftNote--field-${field.noteTypeFieldId}"
                     name="${fieldName}" 
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
@@ -594,7 +599,7 @@
                         fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="addShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   ${dataListAttribute}
                   ${requiredAttribute} />
@@ -616,7 +621,7 @@
                         fieldsHTML += `
               <div class="control">
                 <textarea class="textarea" rows="3"
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  id="addShiftNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
                   ${requiredAttribute}></textarea>
               </div>
@@ -636,7 +641,7 @@
             const formData = new FormData(formElement);
             // Extract field values and construct proper structure
             const noteData = {
-                workOrderId: formData.get('workOrderId'),
+                shiftId: formData.get('shiftId'),
                 noteText: formData.get('noteText')
             };
             const noteTypeId = formData.get('noteTypeId');
@@ -654,7 +659,7 @@
             if (Object.keys(fields).length > 0) {
                 noteData.fields = fields;
             }
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`, noteData, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doCreateShiftNote`, noteData, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
                     formElement.reset();
@@ -668,13 +673,13 @@
                 }
             });
         }
-        cityssm.openHtmlModal('workOrders-addNote', {
+        cityssm.openHtmlModal('shifts-addNote', {
             onshow(modalElement) {
                 exports.shiftLog.populateSectionAliases(modalElement);
                 exports.shiftLog.setUnsavedChanges('modal');
-                modalElement.querySelector('#addWorkOrderNote--workOrderId').value = workOrderId;
+                modalElement.querySelector('#addShiftNote--shiftId').value = shiftId;
                 // Populate note types dropdown
-                const noteTypeSelect = modalElement.querySelector('#addWorkOrderNote--noteTypeId');
+                const noteTypeSelect = modalElement.querySelector('#addShiftNote--noteTypeId');
                 for (const noteType of noteTypes) {
                     const option = document.createElement('option');
                     option.value = noteType.noteTypeId.toString();
@@ -692,7 +697,7 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddNote);
-                modalElement.querySelector('#addWorkOrderNote--noteText').focus();
+                modalElement.querySelector('#addShiftNote--noteText').focus();
             },
             onremoved() {
                 exports.shiftLog.clearUnsavedChanges('modal');
@@ -708,8 +713,8 @@
             okButton: {
                 text: 'Delete',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`, {
-                        workOrderId,
+                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doDeleteShiftNote`, {
+                        shiftId,
                         noteSequence
                     }, (responseJSON) => {
                         if (responseJSON.success) {
@@ -727,12 +732,12 @@
         });
     }
     function loadNotes() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`, {}, (responseJSON) => {
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId}/doGetShiftNotes`, {}, (responseJSON) => {
             renderNotes(responseJSON.notes);
         });
     }
     function loadNoteTypes() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doGetNoteTypes`, {}, (rawResponseJSON) => {
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doGetNoteTypes`, {}, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             noteTypes = responseJSON.noteTypes;
         });

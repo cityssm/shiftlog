@@ -367,6 +367,11 @@
                 <span class="icon"><i class="fa-solid fa-note-sticky"></i></span>
               </div>
               <div class="column is-hidden-touch">Notes</div>
+              <div class="column is-narrow is-hidden-touch">
+                <span class="icon has-text-success ml-2 is-hidden" id="icon--hasNotes">
+                  <i class="fa-solid fa-circle"></i>
+                </span>
+              </div>
             </div>
           </a>
         </li> 
@@ -418,6 +423,7 @@
 
 <% if (!isCreate) { %>
 <script>
+  exports.isEdit = <%= isEdit %>;
   exports.shiftCrews = <%- JSON.stringify(shiftCrews) %>;
   exports.shiftEmployees = <%- JSON.stringify(shiftEmployees) %>;  
   exports.shiftEquipment = <%- JSON.stringify(shiftEquipment) %>;
@@ -425,6 +431,7 @@
   exports.shiftAdhocTasks = <%- JSON.stringify(shiftAdhocTasks) %>;
 </script>
 <script src="<%= urlPrefix %>/javascripts/shifts.employees.js"></script>
+<script src="<%= urlPrefix %>/javascripts/shifts.notes.viewEdit.js"></script>
 <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
 <script src="<%= urlPrefix %>/javascripts/shifts.workOrders.js"></script>
 <% } %>

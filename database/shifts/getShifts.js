@@ -119,6 +119,15 @@ export default async function getShifts(filters, options, user) {
             SELECT
               count(*)
             FROM
+              ShiftLog.ShiftNotes sn
+            WHERE
+              sn.shiftId = s.shiftId
+              AND sn.recordDelete_dateTime IS NULL
+          ) AS notesCount,
+          (
+            SELECT
+              count(*)
+            FROM
               ShiftLog.Timesheets t
             WHERE
               t.shiftId = s.shiftId
