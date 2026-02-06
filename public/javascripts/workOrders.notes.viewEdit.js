@@ -226,7 +226,7 @@
             // Extract fields with pattern fields[noteTypeFieldId]
             const fields = {};
             for (const [key, value] of formData.entries()) {
-                const match = /^fields\[\d+\]$/v.exec(key);
+                const match = /^fields\[(\d+)\]$/v.exec(key);
                 if (match !== null && typeof value === 'string') {
                     fields[match[1]] = value;
                 }
@@ -646,7 +646,7 @@
             // Extract fields with pattern fields[noteTypeFieldId]
             const fields = {};
             for (const [key, value] of formData.entries()) {
-                const match = /^fields\[\d+\]$/v.exec(key);
+                const match = /^fields\[(\d+)\]$/v.exec(key);
                 if (match !== null && typeof value === 'string') {
                     fields[match[1]] = value;
                 }

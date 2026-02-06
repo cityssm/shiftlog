@@ -345,7 +345,7 @@ declare const bulmaJS: BulmaJS
       // Extract fields with pattern fields[noteTypeFieldId]
       const fields: Record<string, string> = {}
       for (const [key, value] of formData.entries()) {
-        const match = /^fields\[\d+\]$/v.exec(key)
+        const match = /^fields\[(\d+)\]$/v.exec(key)
         if (match !== null && typeof value === 'string') {
           fields[match[1]] = value
         }
@@ -896,7 +896,7 @@ declare const bulmaJS: BulmaJS
       // Extract fields with pattern fields[noteTypeFieldId]
       const fields: Record<string, string> = {}
       for (const [key, value] of formData.entries()) {
-        const match = /^fields\[\d+\]$/v.exec(key)
+        const match = /^fields\[(\d+)\]$/v.exec(key)
         if (match !== null && typeof value === 'string') {
           fields[match[1]] = value
         }
