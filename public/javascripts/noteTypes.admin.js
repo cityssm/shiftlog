@@ -164,103 +164,50 @@
         }
     }
     function openAddNoteTypeModal() {
-        let addModalElement;
-        function closeModal() {
-            addModalElement.remove();
+        let formElement;
+        let closeModalFunction;
+        function doAdd(submitEvent) {
+            submitEvent.preventDefault();
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteType`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    noteTypes = responseJSON.noteTypes;
+                    closeModalFunction();
+                    renderNoteTypes();
+                    bulmaJS.notification({
+                        message: 'Note type added successfully.',
+                        type: 'success'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        title: 'Error Adding Note Type',
+                        message: responseJSON.message
+                    });
+                }
+            });
         }
-        const userGroupOptionsHTML = `<option value="">(Any User Group)</option>` +
-            userGroups.map((group) => `<option value="${group.userGroupId}">${cityssm.escapeHTML(group.userGroupName)}</option>`).join('');
-        addModalElement = cityssm.openHtmlModal('add-noteType', {
-            onshow: (modalElement) => {
-                ;
+        cityssm.openHtmlModal('adminNoteTypes-add', {
+            onshow(modalElement) {
+                formElement = modalElement.querySelector('form');
+                const userGroupSelect = formElement.querySelector('#noteTypeAdd--userGroupId');
+                for (const group of userGroups) {
+                    const option = document.createElement('option');
+                    option.value = group.userGroupId.toString();
+                    option.textContent = group.userGroupName;
+                    userGroupSelect.append(option);
+                }
+                formElement.addEventListener('submit', doAdd);
+            },
+            onshown(modalElement, _closeModalFunction) {
+                closeModalFunction = _closeModalFunction;
+                bulmaJS.toggleHtmlClipped();
                 modalElement.querySelector('#noteTypeAdd--noteType').focus();
             },
-            onshown: (_modalElement, closeModalFunction) => {
-                const formElement = addModalElement.querySelector('form');
-                formElement.addEventListener('submit', (formEvent) => {
-                    formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteType`, formElement, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            noteTypes = responseJSON.noteTypes;
-                            closeModalFunction();
-                            renderNoteTypes();
-                            bulmaJS.notification({
-                                message: 'Note type added successfully.',
-                                type: 'success'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                title: 'Error Adding Note Type',
-                                message: responseJSON.message
-                            });
-                        }
-                    });
-                });
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
-        addModalElement.innerHTML = `
-      <form>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Add Note Type</p>
-            <button class="delete" type="button" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <div class="field">
-              <label class="label" for="noteTypeAdd--noteType">
-                Note Type Name
-                <span class="has-text-danger" title="Required">*</span>
-              </label>
-              <div class="control">
-                <input class="input" id="noteTypeAdd--noteType" name="noteType" type="text" required maxlength="100" />
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="label" for="noteTypeAdd--userGroupId">User Group</label>
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select id="noteTypeAdd--userGroupId" name="userGroupId">
-                    ${userGroupOptionsHTML}
-                  </select>
-                </div>
-              </div>
-              <p class="help">Restrict this note type to a specific user group.</p>
-            </div>
-
-            <div class="field">
-              <label class="label">Availability</label>
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="isAvailableWorkOrders" value="1" />
-                  Available for Work Orders
-                </label>
-              </div>
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="isAvailableShifts" value="1" />
-                  Available for Shifts
-                </label>
-              </div>
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="isAvailableTimesheets" value="1" />
-                  Available for Timesheets
-                </label>
-              </div>
-            </div>
-          </section>
-          <footer class="modal-card-foot is-justify-content-end">
-            <button class="button is-success" type="submit">
-              <span class="icon"><i class="fa-solid fa-save"></i></span>
-              <span>Add Note Type</span>
-            </button>
-            <button class="button" type="button" data-close>Cancel</button>
-          </footer>
-        </div>
-      </form>`;
     }
     function openEditNoteTypeModal(clickEvent) {
         const noteTypeId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeId ?? '', 10);
@@ -268,107 +215,59 @@
         if (noteType === undefined) {
             return;
         }
-        let editModalElement;
-        function closeModal() {
-            editModalElement.remove();
+        let formElement;
+        let closeModalFunction;
+        function doUpdate(submitEvent) {
+            submitEvent.preventDefault();
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteType`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    noteTypes = responseJSON.noteTypes;
+                    closeModalFunction();
+                    renderNoteTypes();
+                    bulmaJS.notification({
+                        message: 'Note type updated successfully.',
+                        type: 'success'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        title: 'Error Updating Note Type',
+                        message: responseJSON.message
+                    });
+                }
+            });
         }
-        const userGroupOptionsHTML = `<option value="">(Any User Group)</option>` +
-            userGroups.map((group) => {
-                const selected = group.userGroupId === noteType.userGroupId ? ' selected' : '';
-                return `<option value="${group.userGroupId}"${selected}>${cityssm.escapeHTML(group.userGroupName)}</option>`;
-            }).join('');
-        editModalElement = cityssm.openHtmlModal('edit-noteType', {
-            onshow: (modalElement) => {
+        cityssm.openHtmlModal('adminNoteTypes-edit', {
+            onshow(modalElement) {
+                formElement = modalElement.querySelector('form');
+                formElement.querySelector('#noteTypeEdit--noteTypeId').value = noteType.noteTypeId.toString();
+                formElement.querySelector('#noteTypeEdit--noteType').value = noteType.noteType;
+                const userGroupSelect = formElement.querySelector('#noteTypeEdit--userGroupId');
+                for (const group of userGroups) {
+                    const option = document.createElement('option');
+                    option.value = group.userGroupId.toString();
+                    option.textContent = group.userGroupName;
+                    if (group.userGroupId === noteType.userGroupId) {
+                        option.selected = true;
+                    }
+                    userGroupSelect.append(option);
+                }
                 ;
+                formElement.querySelector('input[name="isAvailableWorkOrders"]').checked = noteType.isAvailableWorkOrders;
+                formElement.querySelector('input[name="isAvailableShifts"]').checked = noteType.isAvailableShifts;
+                formElement.querySelector('input[name="isAvailableTimesheets"]').checked = noteType.isAvailableTimesheets;
+                formElement.addEventListener('submit', doUpdate);
+            },
+            onshown(modalElement, _closeModalFunction) {
+                closeModalFunction = _closeModalFunction;
+                bulmaJS.toggleHtmlClipped();
                 modalElement.querySelector('#noteTypeEdit--noteType').focus();
             },
-            onshown: (_modalElement, closeModalFunction) => {
-                const formElement = editModalElement.querySelector('form');
-                formElement.addEventListener('submit', (formEvent) => {
-                    formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteType`, formElement, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            noteTypes = responseJSON.noteTypes;
-                            closeModalFunction();
-                            renderNoteTypes();
-                            bulmaJS.notification({
-                                message: 'Note type updated successfully.',
-                                type: 'success'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                title: 'Error Updating Note Type',
-                                message: responseJSON.message
-                            });
-                        }
-                    });
-                });
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
-        editModalElement.innerHTML = `
-      <form>
-        <input type="hidden" name="noteTypeId" value="${noteType.noteTypeId}" />
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Edit Note Type</p>
-            <button class="delete" type="button" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <div class="field">
-              <label class="label" for="noteTypeEdit--noteType">
-                Note Type Name
-                <span class="has-text-danger" title="Required">*</span>
-              </label>
-              <div class="control">
-                <input class="input" id="noteTypeEdit--noteType" name="noteType" type="text" required maxlength="100" value="${cityssm.escapeHTML(noteType.noteType)}" />
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="label" for="noteTypeEdit--userGroupId">User Group</label>
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select id="noteTypeEdit--userGroupId" name="userGroupId">
-                    ${userGroupOptionsHTML}
-                  </select>
-                </div>
-              </div>
-              <p class="help">Restrict this note type to a specific user group.</p>
-            </div>
-
-            <div class="field">
-              <label class="label">Availability</label>
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="isAvailableWorkOrders" value="1" ${noteType.isAvailableWorkOrders ? 'checked' : ''} />
-                  Available for Work Orders
-                </label>
-              </div>
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="isAvailableShifts" value="1" ${noteType.isAvailableShifts ? 'checked' : ''} />
-                  Available for Shifts
-                </label>
-              </div>
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="isAvailableTimesheets" value="1" ${noteType.isAvailableTimesheets ? 'checked' : ''} />
-                  Available for Timesheets
-                </label>
-              </div>
-            </div>
-          </section>
-          <footer class="modal-card-foot is-justify-content-end">
-            <button class="button is-success" type="submit">
-              <span class="icon"><i class="fa-solid fa-save"></i></span>
-              <span>Save Changes</span>
-            </button>
-            <button class="button" type="button" data-close>Cancel</button>
-          </footer>
-        </div>
-      </form>`;
     }
     function deleteNoteType(clickEvent) {
         const noteTypeId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeId ?? '', 10);
@@ -406,30 +305,51 @@
     }
     function openAddFieldModal(clickEvent) {
         const noteTypeId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeId ?? '', 10);
-        let addModalElement;
-        function closeModal() {
-            addModalElement.remove();
+        let formElement;
+        let closeModalFunction;
+        function doAdd(submitEvent) {
+            submitEvent.preventDefault();
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeField`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    noteTypes = responseJSON.noteTypes;
+                    closeModalFunction();
+                    renderNoteTypes();
+                    bulmaJS.notification({
+                        message: 'Field added successfully.',
+                        type: 'success'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        title: 'Error Adding Field',
+                        message: responseJSON.message
+                    });
+                }
+            });
         }
-        const dataListOptionsHTML = `<option value="">(None)</option>` +
-            dataLists.map((list) => `<option value="${cityssm.escapeHTML(list.dataListKey)}">${cityssm.escapeHTML(list.dataListName)}</option>`).join('');
-        addModalElement = cityssm.openHtmlModal('add-field', {
-            onshow: (modalElement) => {
-                ;
-                modalElement.querySelector('#fieldAdd--fieldLabel').focus();
-                // Handle field type changes
-                const fieldTypeSelect = modalElement.querySelector('#fieldAdd--fieldInputType');
-                const dataListField = modalElement.querySelector('#field--dataListKey');
-                const minMaxFields = modalElement.querySelector('#fields--minMax');
+        cityssm.openHtmlModal('adminNoteTypes-addField', {
+            onshow(modalElement) {
+                formElement = modalElement.querySelector('form');
+                formElement.querySelector('#fieldAdd--noteTypeId').value = noteTypeId.toString();
+                const dataListSelect = formElement.querySelector('#fieldAdd--dataListKey');
+                for (const list of dataLists) {
+                    const option = document.createElement('option');
+                    option.value = list.dataListKey;
+                    option.textContent = list.dataListName;
+                    dataListSelect.append(option);
+                }
+                const fieldTypeSelect = formElement.querySelector('#fieldAdd--fieldInputType');
+                const dataListField = formElement.querySelector('#field--dataListKey');
+                const minMaxFields = formElement.querySelector('#fields--minMax');
                 function updateFieldVisibility() {
                     const fieldType = fieldTypeSelect.value;
-                    // Show/hide dataListKey for text and select
                     if (fieldType === 'text' || fieldType === 'select') {
                         dataListField.classList.remove('is-hidden');
                     }
                     else {
                         dataListField.classList.add('is-hidden');
                     }
-                    // Show/hide min/max for text and number
                     if (fieldType === 'text' || fieldType === 'number') {
                         minMaxFields.classList.remove('is-hidden');
                     }
@@ -439,139 +359,17 @@
                 }
                 fieldTypeSelect.addEventListener('change', updateFieldVisibility);
                 updateFieldVisibility();
+                formElement.addEventListener('submit', doAdd);
             },
-            onshown: (_modalElement, closeModalFunction) => {
-                const formElement = addModalElement.querySelector('form');
-                formElement.addEventListener('submit', (formEvent) => {
-                    formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeField`, formElement, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            noteTypes = responseJSON.noteTypes;
-                            closeModalFunction();
-                            renderNoteTypes();
-                            bulmaJS.notification({
-                                message: 'Field added successfully.',
-                                type: 'success'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                title: 'Error Adding Field',
-                                message: responseJSON.message
-                            });
-                        }
-                    });
-                });
+            onshown(modalElement, _closeModalFunction) {
+                closeModalFunction = _closeModalFunction;
+                bulmaJS.toggleHtmlClipped();
+                modalElement.querySelector('#fieldAdd--fieldLabel').focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
-        addModalElement.innerHTML = `
-      <form>
-        <input type="hidden" name="noteTypeId" value="${noteTypeId}" />
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Add Field</p>
-            <button class="delete" type="button" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <div class="field">
-              <label class="label" for="fieldAdd--fieldLabel">
-                Field Label
-                <span class="has-text-danger" title="Required">*</span>
-              </label>
-              <div class="control">
-                <input class="input" id="fieldAdd--fieldLabel" name="fieldLabel" type="text" required maxlength="100" />
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="label" for="fieldAdd--fieldInputType">
-                Field Type
-                <span class="has-text-danger" title="Required">*</span>
-              </label>
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select id="fieldAdd--fieldInputType" name="fieldInputType" required>
-                    <option value="text">Text (Single Line)</option>
-                    <option value="textbox">Textbox (Multiple Lines)</option>
-                    <option value="number">Number</option>
-                    <option value="date">Date</option>
-                    <option value="select">Select (Dropdown)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="field" id="field--dataListKey">
-              <label class="label" for="fieldAdd--dataListKey">Data List</label>
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select id="fieldAdd--dataListKey" name="dataListKey">
-                    ${dataListOptionsHTML}
-                  </select>
-                </div>
-              </div>
-              <p class="help">For text fields with autocomplete or select dropdowns.</p>
-            </div>
-
-            <div id="fields--minMax">
-              <div class="columns">
-                <div class="column">
-                  <div class="field">
-                    <label class="label" for="fieldAdd--fieldValueMin">Minimum Value</label>
-                    <div class="control">
-                      <input class="input" id="fieldAdd--fieldValueMin" name="fieldValueMin" type="number" />
-                    </div>
-                    <p class="help">For text: min length. For number: min value.</p>
-                  </div>
-                </div>
-                <div class="column">
-                  <div class="field">
-                    <label class="label" for="fieldAdd--fieldValueMax">Maximum Value</label>
-                    <div class="control">
-                      <input class="input" id="fieldAdd--fieldValueMax" name="fieldValueMax" type="number" />
-                    </div>
-                    <p class="help">For text: max length. For number: max value.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="label" for="fieldAdd--fieldHelpText">Help Text</label>
-              <div class="control">
-                <textarea class="textarea" id="fieldAdd--fieldHelpText" name="fieldHelpText" maxlength="500"></textarea>
-              </div>
-              <p class="help">Optional text to help users understand this field.</p>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="fieldValueRequired" value="1" />
-                  Required Field
-                </label>
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="hasDividerAbove" value="1" />
-                  Show Divider Above Field
-                </label>
-              </div>
-            </div>
-          </section>
-          <footer class="modal-card-foot is-justify-content-end">
-            <button class="button is-success" type="submit">
-              <span class="icon"><i class="fa-solid fa-save"></i></span>
-              <span>Add Field</span>
-            </button>
-            <button class="button" type="button" data-close>Cancel</button>
-          </footer>
-        </div>
-      </form>`;
     }
     function openEditFieldModal(clickEvent) {
         const fieldId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeFieldId ?? '', 10);
@@ -584,43 +382,62 @@
         if (field === undefined) {
             return;
         }
-        let editModalElement;
-        function closeModal() {
-            editModalElement.remove();
+        let formElement;
+        let closeModalFunction;
+        function doUpdate(submitEvent) {
+            submitEvent.preventDefault();
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                if (responseJSON.success) {
+                    noteTypes = responseJSON.noteTypes;
+                    closeModalFunction();
+                    renderNoteTypes();
+                    bulmaJS.notification({
+                        message: 'Field updated successfully.',
+                        type: 'success'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        title: 'Error Updating Field',
+                        message: responseJSON.message
+                    });
+                }
+            });
         }
-        const dataListOptionsHTML = `<option value="">(None)</option>` +
-            dataLists.map((list) => {
-                const selected = list.dataListKey === field.dataListKey ? ' selected' : '';
-                return `<option value="${cityssm.escapeHTML(list.dataListKey)}"${selected}>${cityssm.escapeHTML(list.dataListName)}</option>`;
-            }).join('');
-        const fieldTypeOptionsHTML = [
-            { value: 'text', label: 'Text (Single Line)' },
-            { value: 'textbox', label: 'Textbox (Multiple Lines)' },
-            { value: 'number', label: 'Number' },
-            { value: 'date', label: 'Date' },
-            { value: 'select', label: 'Select (Dropdown)' }
-        ].map((option) => {
-            const selected = option.value === field.fieldInputType ? ' selected' : '';
-            return `<option value="${option.value}"${selected}>${option.label}</option>`;
-        }).join('');
-        editModalElement = cityssm.openHtmlModal('edit-field', {
-            onshow: (modalElement) => {
+        cityssm.openHtmlModal('adminNoteTypes-editField', {
+            onshow(modalElement) {
+                formElement = modalElement.querySelector('form');
+                formElement.querySelector('#fieldEdit--noteTypeFieldId').value = field.noteTypeFieldId.toString();
+                formElement.querySelector('#fieldEdit--fieldLabel').value = field.fieldLabel;
+                const fieldTypeSelect = formElement.querySelector('#fieldEdit--fieldInputType');
+                fieldTypeSelect.value = field.fieldInputType;
+                const dataListSelect = formElement.querySelector('#fieldEdit--dataListKey');
+                for (const list of dataLists) {
+                    const option = document.createElement('option');
+                    option.value = list.dataListKey;
+                    option.textContent = list.dataListName;
+                    if (list.dataListKey === field.dataListKey) {
+                        option.selected = true;
+                    }
+                    dataListSelect.append(option);
+                }
                 ;
-                modalElement.querySelector('#fieldEdit--fieldLabel').focus();
-                // Handle field type changes
-                const fieldTypeSelect = modalElement.querySelector('#fieldEdit--fieldInputType');
-                const dataListField = modalElement.querySelector('#field--dataListKey');
-                const minMaxFields = modalElement.querySelector('#fields--minMax');
+                formElement.querySelector('#fieldEdit--fieldValueMin').value = field.fieldValueMin?.toString() ?? '';
+                formElement.querySelector('#fieldEdit--fieldValueMax').value = field.fieldValueMax?.toString() ?? '';
+                formElement.querySelector('#fieldEdit--fieldHelpText').value = field.fieldHelpText;
+                formElement.querySelector('input[name="fieldValueRequired"]').checked = field.fieldValueRequired;
+                formElement.querySelector('input[name="hasDividerAbove"]').checked = field.hasDividerAbove;
+                const dataListField = formElement.querySelector('#field--dataListKey');
+                const minMaxFields = formElement.querySelector('#fields--minMax');
                 function updateFieldVisibility() {
                     const fieldType = fieldTypeSelect.value;
-                    // Show/hide dataListKey for text and select
                     if (fieldType === 'text' || fieldType === 'select') {
                         dataListField.classList.remove('is-hidden');
                     }
                     else {
                         dataListField.classList.add('is-hidden');
                     }
-                    // Show/hide min/max for text and number
                     if (fieldType === 'text' || fieldType === 'number') {
                         minMaxFields.classList.remove('is-hidden');
                     }
@@ -630,135 +447,17 @@
                 }
                 fieldTypeSelect.addEventListener('change', updateFieldVisibility);
                 updateFieldVisibility();
+                formElement.addEventListener('submit', doUpdate);
             },
-            onshown: (_modalElement, closeModalFunction) => {
-                const formElement = editModalElement.querySelector('form');
-                formElement.addEventListener('submit', (formEvent) => {
-                    formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`, formElement, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success) {
-                            noteTypes = responseJSON.noteTypes;
-                            closeModalFunction();
-                            renderNoteTypes();
-                            bulmaJS.notification({
-                                message: 'Field updated successfully.',
-                                type: 'success'
-                            });
-                        }
-                        else {
-                            bulmaJS.alert({
-                                title: 'Error Updating Field',
-                                message: responseJSON.message
-                            });
-                        }
-                    });
-                });
+            onshown(modalElement, _closeModalFunction) {
+                closeModalFunction = _closeModalFunction;
+                bulmaJS.toggleHtmlClipped();
+                modalElement.querySelector('#fieldEdit--fieldLabel').focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
             }
         });
-        editModalElement.innerHTML = `
-      <form>
-        <input type="hidden" name="noteTypeFieldId" value="${field.noteTypeFieldId}" />
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Edit Field</p>
-            <button class="delete" type="button" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <div class="field">
-              <label class="label" for="fieldEdit--fieldLabel">
-                Field Label
-                <span class="has-text-danger" title="Required">*</span>
-              </label>
-              <div class="control">
-                <input class="input" id="fieldEdit--fieldLabel" name="fieldLabel" type="text" required maxlength="100" value="${cityssm.escapeHTML(field.fieldLabel)}" />
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="label" for="fieldEdit--fieldInputType">
-                Field Type
-                <span class="has-text-danger" title="Required">*</span>
-              </label>
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select id="fieldEdit--fieldInputType" name="fieldInputType" required>
-                    ${fieldTypeOptionsHTML}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="field" id="field--dataListKey">
-              <label class="label" for="fieldEdit--dataListKey">Data List</label>
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select id="fieldEdit--dataListKey" name="dataListKey">
-                    ${dataListOptionsHTML}
-                  </select>
-                </div>
-              </div>
-              <p class="help">For text fields with autocomplete or select dropdowns.</p>
-            </div>
-
-            <div id="fields--minMax">
-              <div class="columns">
-                <div class="column">
-                  <div class="field">
-                    <label class="label" for="fieldEdit--fieldValueMin">Minimum Value</label>
-                    <div class="control">
-                      <input class="input" id="fieldEdit--fieldValueMin" name="fieldValueMin" type="number" value="${field.fieldValueMin ?? ''}" />
-                    </div>
-                    <p class="help">For text: min length. For number: min value.</p>
-                  </div>
-                </div>
-                <div class="column">
-                  <div class="field">
-                    <label class="label" for="fieldEdit--fieldValueMax">Maximum Value</label>
-                    <div class="control">
-                      <input class="input" id="fieldEdit--fieldValueMax" name="fieldValueMax" type="number" value="${field.fieldValueMax ?? ''}" />
-                    </div>
-                    <p class="help">For text: max length. For number: max value.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="label" for="fieldEdit--fieldHelpText">Help Text</label>
-              <div class="control">
-                <textarea class="textarea" id="fieldEdit--fieldHelpText" name="fieldHelpText" maxlength="500">${cityssm.escapeHTML(field.fieldHelpText)}</textarea>
-              </div>
-              <p class="help">Optional text to help users understand this field.</p>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="fieldValueRequired" value="1" ${field.fieldValueRequired ? 'checked' : ''} />
-                  Required Field
-                </label>
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="hasDividerAbove" value="1" ${field.hasDividerAbove ? 'checked' : ''} />
-                  Show Divider Above Field
-                </label>
-              </div>
-            </div>
-          </section>
-          <footer class="modal-card-foot is-justify-content-end">
-            <button class="button is-success" type="submit">
-              <span class="icon"><i class="fa-solid fa-save"></i></span>
-              <span>Save Changes</span>
-            </button>
-            <button class="button" type="button" data-close>Cancel</button>
-          </footer>
-        </div>
-      </form>`;
     }
     function deleteField(clickEvent) {
         const fieldId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeFieldId ?? '', 10);
@@ -795,3 +494,4 @@
     // Add Note Type button
     document.querySelector('#button--addNoteType')?.addEventListener('click', openAddNoteTypeModal);
 })();
+export {};
