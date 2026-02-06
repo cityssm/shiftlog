@@ -210,31 +210,19 @@ declare const exports: {
               <span class="has-text-weight-semibold mr-2">
                 ${cityssm.escapeHTML(dataList.dataListName)}
               </span>
-              <span class="tag is-rounded ${items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
-                ${items.length}
+              <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
+                ${dataList.items.length}
               </span>
               ${dataList.isSystemList ? '' : '<span class="tag is-info is-light ml-2">Custom</span>'}
             </span>
           </summary>
-          <div class="panel-block">
-            <div class="field is-grouped is-grouped-multiline" style="width: 100%;">
-              <div class="control">
-                <button
-                  class="button is-success is-small button--addItem" 
-                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
-                  type="button"
-                >
-                  <span class="icon">
-                    <i class="fa-solid fa-plus"></i>
-                  </span>
-                  <span>Add Item</span>
-                </button>
-              </div>
+          <div class="panel-block is-block">
+            <div class="columns is-mobile">
               ${
                 dataList.isSystemList
                   ? ''
                   : /* html */ `
-                    <div class="control">
+                    <div class="column is-narrow">
                       <button
                         class="button is-info is-small button--renameDataList" 
                         data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
@@ -246,8 +234,7 @@ declare const exports: {
                         </span>
                         <span>Rename List</span>
                       </button>
-                    </div>
-                    <div class="control">
+    
                       <button
                         class="button is-danger is-small button--deleteDataList" 
                         data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
@@ -262,6 +249,18 @@ declare const exports: {
                     </div>
                   `
               }
+              <div class="column has-text-right">
+                <button
+                  class="button is-success is-small button--addItem" 
+                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-plus"></i>
+                  </span>
+                  <span>Add Item</span>
+                </button>
+              </div>
             </div>
           </div>
           <div class="panel-block p-0">
@@ -990,11 +989,5 @@ declare const exports: {
     sortableInstances.set(dataListKey, sortableInstance)
   }
 
-  // Initialize sortable for each data list
-  for (const dataList of exports.dataLists) {
-    initializeSortable(dataList.dataListKey)
-  }
-
-  // Attach all event listeners
-  attachAllEventListeners()
+  renderAllDataLists(exports.dataLists)
 })()
