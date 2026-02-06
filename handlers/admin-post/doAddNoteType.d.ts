@@ -4,6 +4,7 @@ export type DoAddNoteTypeResponse = {
     message: string;
     success: false;
 } | {
+    message?: undefined;
     noteTypes: NoteTypeWithFields[];
     success: true;
 };

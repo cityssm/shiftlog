@@ -118,7 +118,7 @@
                     <th>Label</th>
                     <th>Type</th>
                     <th>Help Text</th>
-                    <th class="has-text-centered" style="width: 150px;">
+                    <th class="has-text-right" style="width: 150px;">
                       <span class="is-sr-only">Actions</span>
                     </th>
                   </tr>
@@ -126,6 +126,7 @@
                 <tbody class="is-sortable" id="noteTypeFields--${noteType.noteTypeId}">
           `;
                     for (const field of noteType.fields) {
+                        const dividerStyle = field.hasDividerAbove ? ' style="border-top-width:5px"' : '';
                         tableHTML += /* html */ `
               <tr data-note-type-field-id="${field.noteTypeFieldId}">
                 <td class="has-text-centered">
@@ -133,14 +134,14 @@
                     <i class="fa-solid fa-grip-vertical"></i>
                   </span>
                 </td>
-                <td>
+                <td${dividerStyle}>
                   <span class="field-label">${cityssm.escapeHTML(field.fieldLabel)}</span>
                   ${field.fieldValueRequired ? '<span class="icon is-small has-text-success ml-1" title="Required"><i class="fa-solid fa-asterisk"></i></span>' : ''}
                 </td>
                 <td><span class="tag">${cityssm.escapeHTML(field.fieldInputType)}</span></td>
                 <td class="is-size-7">${cityssm.escapeHTML(field.fieldHelpText)}</td>
-                <td class="has-text-centered">
-                  <div class="buttons are-small is-centered">
+                <td class="has-text-right">
+                  <div class="buttons are-small is-right">
                     <button
                       class="button is-info button--editField"
                       data-note-type-field-id="${field.noteTypeFieldId}"
@@ -468,13 +469,10 @@
                 formElement.querySelector('input[name="hasDividerAbove"]').checked = field.hasDividerAbove;
                 const dataListField = formElement.querySelector('#field--dataListKey');
                 const minMaxFields = formElement.querySelector('#fields--minMax');
-                function updateFieldVisibility() {
-                    const fieldType = fieldTypeSelect.value;
-                    dataListField.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'select'));
-                    minMaxFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
-                }
-                fieldTypeSelect.addEventListener('change', updateFieldVisibility);
-                updateFieldVisibility();
+                // Update field visibility based on the current field type (since it can't be changed)
+                const fieldType = fieldTypeSelect.value;
+                dataListField.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'select'));
+                minMaxFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
                 formElement.addEventListener('submit', doUpdate);
             },
             onshown(modalElement, _closeModalFunction) {
@@ -563,3 +561,4 @@
         .querySelector('#button--addNoteType')
         ?.addEventListener('click', openAddNoteTypeModal);
 })();
+export {};
