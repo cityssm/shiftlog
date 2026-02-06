@@ -249,6 +249,7 @@ declare const exports: {
         return
       }
 
+      // Server will validate the "user-" prefix, but we check here for immediate feedback
       if (!dataListKey?.startsWith('user-')) {
         bulmaJS.alert({
           contextualColorName: 'warning',

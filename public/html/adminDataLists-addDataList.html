@@ -26,14 +26,14 @@
               id="addDataList--dataListKey"
               name="dataListKey"
               type="text"
-              pattern="user-[a-zA-Z0-9]+"
+              pattern="user-[a-zA-Z0-9\-]+"
               placeholder="user-myList"
               autofocus
               required
             />
           </div>
           <p class="help">
-            Must start with "user-" prefix and contain only letters and numbers. This cannot be changed later.
+            Must start with "user-" prefix followed by at least one letter, number, or hyphen. This cannot be changed later.
           </p>
         </div>
         <div class="field">
