@@ -141,6 +141,29 @@ export interface Tag extends BaseRecord {
   tagTextColor: string
 }
 
+export interface NoteType extends BaseRecord {
+  noteTypeId: number
+  noteType: string
+  userGroupId?: number | null
+  userGroupName?: string | null
+  isAvailableWorkOrders: boolean
+  isAvailableShifts: boolean
+  isAvailableTimesheets: boolean
+}
+
+export interface NoteTypeField extends BaseRecord {
+  noteTypeFieldId: number
+  noteTypeId: number
+  fieldLabel: string
+  fieldInputType: 'text' | 'number' | 'date' | 'select' | 'textbox'
+  fieldHelpText: string
+  dataListKey?: string | null
+  fieldValueMin?: number | null
+  fieldValueMax?: number | null
+  fieldValueRequired: boolean
+  hasDividerAbove: boolean
+}
+
 export interface Crew extends BaseRecord {
   crewId: number
   crewName: string
