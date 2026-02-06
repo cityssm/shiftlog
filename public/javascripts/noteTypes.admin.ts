@@ -52,7 +52,7 @@ declare const exports: {
     } else {
       for (const noteType of noteTypes) {
         const noteTypePanel = document.createElement('details')
-        noteTypePanel.className = 'panel mb-5 collapsable-panel'
+        noteTypePanel.className = 'panel mb-5 collapsible-panel'
         noteTypePanel.dataset.noteTypeId = noteType.noteTypeId.toString()
 
         const summaryElement = document.createElement('summary')
