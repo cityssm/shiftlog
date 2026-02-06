@@ -19,6 +19,31 @@
         }
         return `${text.slice(0, maxLength)}…`;
     }
+    /**
+     * Helper function to load multiple data lists using cityssm.postJSON
+     * Calls the callback with a Map of data list items when all are loaded
+     */
+    function loadDataLists(dataListKeys, callback) {
+        if (dataListKeys.size === 0) {
+            callback(new Map());
+            return;
+        }
+        const dataListMap = new Map();
+        let loadedCount = 0;
+        const totalCount = dataListKeys.size;
+        for (const key of dataListKeys) {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, { dataListKey: key }, (responseJSON) => {
+                if (responseJSON.success && responseJSON.items !== undefined) {
+                    dataListMap.set(key, responseJSON.items);
+                }
+                loadedCount += 1;
+                // When all data lists are loaded, call the callback
+                if (loadedCount === totalCount) {
+                    callback(dataListMap);
+                }
+            });
+        }
+    }
     function renderNotes(notes) {
         // Update notes count
         const notesCountElement = document.querySelector('#notesCount');
@@ -410,35 +435,9 @@
                             }
                         }
                         // Load data list items if needed
-                        if (dataListKeys.size > 0) {
-                            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ dataListKey: key })
-                            })
-                                .then((response) => response.json())
-                                .then((data) => ({
-                                key,
-                                items: data.items
-                            })));
-                            Promise.all(dataListPromises)
-                                .then((dataLists) => {
-                                const dataListMap = new Map();
-                                for (const dl of dataLists) {
-                                    dataListMap.set(dl.key, dl.items);
-                                }
-                                renderEditFieldsWithDataLists(allFields, dataListMap, fieldsContainer);
-                            })
-                                .catch(() => {
-                                // If data list loading fails, render without data lists
-                                renderEditFieldsWithDataLists(allFields, new Map(), fieldsContainer);
-                            });
-                        }
-                        else {
-                            renderEditFieldsWithDataLists(allFields, new Map(), fieldsContainer);
-                        }
+                        loadDataLists(dataListKeys, (dataListMap) => {
+                            renderEditFieldsWithDataLists(allFields, dataListMap, fieldsContainer);
+                        });
                     }
                     else if (note.fields !== undefined && note.fields.length > 0) {
                         // Note type found but has no fields, yet note has field data
@@ -450,34 +449,9 @@
                                 dataListKeys.add(field.dataListKey);
                             }
                         }
-                        if (dataListKeys.size > 0) {
-                            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ dataListKey: key })
-                            })
-                                .then((response) => response.json())
-                                .then((data) => ({
-                                key,
-                                items: data.items
-                            })));
-                            Promise.all(dataListPromises)
-                                .then((dataLists) => {
-                                const dataListMap = new Map();
-                                for (const dl of dataLists) {
-                                    dataListMap.set(dl.key, dl.items);
-                                }
-                                renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer);
-                            })
-                                .catch(() => {
-                                renderEditFieldsWithDataLists(note.fields ?? [], new Map(), fieldsContainer);
-                            });
-                        }
-                        else {
-                            renderEditFieldsWithDataLists(note.fields, new Map(), fieldsContainer);
-                        }
+                        loadDataLists(dataListKeys, (dataListMap) => {
+                            renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer);
+                        });
                     }
                     else {
                         fieldsContainer.innerHTML = '';
@@ -492,34 +466,9 @@
                             dataListKeys.add(field.dataListKey);
                         }
                     }
-                    if (dataListKeys.size > 0) {
-                        const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ dataListKey: key })
-                        })
-                            .then((response) => response.json())
-                            .then((data) => ({
-                            key,
-                            items: data.items
-                        })));
-                        Promise.all(dataListPromises)
-                            .then((dataLists) => {
-                            const dataListMap = new Map();
-                            for (const dl of dataLists) {
-                                dataListMap.set(dl.key, dl.items);
-                            }
-                            renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer);
-                        })
-                            .catch(() => {
-                            renderEditFieldsWithDataLists(note.fields ?? [], new Map(), fieldsContainer);
-                        });
-                    }
-                    else {
-                        renderEditFieldsWithDataLists(note.fields, new Map(), fieldsContainer);
-                    }
+                    loadDataLists(dataListKeys, (dataListMap) => {
+                        renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer);
+                    });
                 }
                 else {
                     fieldsContainer.innerHTML = '';
@@ -560,35 +509,9 @@
                 }
             }
             // Load data list items if needed
-            if (dataListKeys.size > 0) {
-                const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ dataListKey: key })
-                })
-                    .then((response) => response.json())
-                    .then((data) => ({
-                    key,
-                    items: data.items
-                })));
-                Promise.all(dataListPromises)
-                    .then((dataLists) => {
-                    const dataListMap = new Map();
-                    for (const dl of dataLists) {
-                        dataListMap.set(dl.key, dl.items);
-                    }
-                    renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer);
-                })
-                    .catch(() => {
-                    // If data list loading fails, render without data lists
-                    renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer);
-                });
-            }
-            else {
-                renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer);
-            }
+            loadDataLists(dataListKeys, (dataListMap) => {
+                renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer);
+            });
         }
         function renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer) {
             let fieldsHTML = '';
