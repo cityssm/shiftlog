@@ -175,54 +175,160 @@ declare const exports: {
     // Update the global dataLists
     exports.dataLists = dataLists
 
-    // Clear and rebuild the entire list
-    const mainContainer = document.querySelector('.column > .columns')
-      ?.nextElementSibling?.nextElementSibling
-
-    if (mainContainer === null || mainContainer === undefined) {
+    // Find the container that holds all the detail panels
+    const messageBlock = document.querySelector('.message.is-info')
+    
+    if (messageBlock === null) {
+      // Fallback to page reload if we can't find the container
+      window.location.reload()
       return
     }
 
-    // Find all detail panels
-    const existingPanels = mainContainer.querySelectorAll('details.panel')
-    const existingKeys = new Set<string>()
+    // Get the parent that contains all the panels
+    const panelsContainer = messageBlock.parentElement
 
-    for (const panel of existingPanels) {
-      const key = (panel as HTMLElement).dataset.dataListKey
-      if (key !== undefined) {
-        existingKeys.add(key)
-      }
+    if (panelsContainer === null) {
+      window.location.reload()
+      return
     }
 
-    // Remove panels that no longer exist
+    // Remove all existing panels
+    const existingPanels = panelsContainer.querySelectorAll('details.panel')
     for (const panel of existingPanels) {
-      const key = (panel as HTMLElement).dataset.dataListKey
-      if (key !== undefined && !dataLists.some((dl) => dl.dataListKey === key)) {
-        panel.remove()
-      }
+      panel.remove()
     }
 
-    // Update or add panels
+    // Re-render all panels from scratch
     for (const dataList of dataLists) {
-      if (existingKeys.has(dataList.dataListKey)) {
-        // Update existing panel
+      const panelHtml = /* html */ `
+        <details class="panel mb-5 collapsable-panel" data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}" data-is-system-list="${dataList.isSystemList}">
+          <summary class="panel-heading is-clickable">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fa-solid fa-chevron-right details-chevron"></i>
+              </span>
+              <span class="has-text-weight-semibold mr-2">
+                ${cityssm.escapeHTML(dataList.dataListName)}
+              </span>
+              <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
+                ${dataList.items.length}
+              </span>
+              ${!dataList.isSystemList ? '<span class="tag is-info is-light ml-2">Custom</span>' : ''}
+            </span>
+          </summary>
+          <div class="panel-block">
+            <div class="field is-grouped is-grouped-multiline" style="width: 100%;">
+              <div class="control">
+                <button
+                  class="button is-success is-small button--addItem" 
+                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-plus"></i>
+                  </span>
+                  <span>Add Item</span>
+                </button>
+              </div>
+              ${!dataList.isSystemList ? `
+              <div class="control">
+                <button
+                  class="button is-info is-small button--renameDataList" 
+                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                  data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-pencil"></i>
+                  </span>
+                  <span>Rename List</span>
+                </button>
+              </div>
+              <div class="control">
+                <button
+                  class="button is-danger is-small button--deleteDataList" 
+                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                  data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-trash"></i>
+                  </span>
+                  <span>Delete List</span>
+                </button>
+              </div>
+              ` : ''}
+            </div>
+          </div>
+          <div class="panel-block p-0">
+            <div class="table-container" style="width: 100%;">
+              <table class="table is-striped is-hoverable is-fullwidth mb-0">
+                <thead>
+                  <tr>
+                    <th class="has-text-centered" style="width: 60px;">Order</th>
+                    <th>Item</th>
+                    <th style="width: 180px;">User Group</th>
+                    <th>
+                      <span class="is-sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="is-sortable" id="dataListItems--${cityssm.escapeHTML(dataList.dataListKey)}">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+      `
+      
+      const tempDiv = document.createElement('div')
+      // eslint-disable-next-line no-unsanitized/property
+      tempDiv.innerHTML = panelHtml
+      const panelElement = tempDiv.firstElementChild
+      
+      if (panelElement !== null) {
+        panelsContainer.append(panelElement)
+        
+        // Render items for this list
         renderDataListItems(dataList.dataListKey, dataList.items)
-
-        // Update the panel heading if needed
-        const panel = mainContainer.querySelector(
-          `details[data-data-list-key="${dataList.dataListKey}"]`
-        )
-        if (panel !== null) {
-          const nameElement = panel.querySelector('.has-text-weight-semibold')
-          if (nameElement !== null) {
-            nameElement.textContent = dataList.dataListName
-          }
-        }
-      } else {
-        // Add new panel - reload the page for simplicity
-        window.location.reload()
-        return
+        
+        // Initialize sortable for this list
+        initializeSortable(dataList.dataListKey)
       }
+    }
+
+    // Re-attach all event listeners
+    attachAllEventListeners()
+  }
+
+  function attachAllEventListeners(): void {
+    // Add Data List button
+    const addDataListButton = document.querySelector('.button--addDataList')
+    if (addDataListButton !== null) {
+      addDataListButton.addEventListener('click', addDataList)
+    }
+
+    // Rename Data List buttons
+    const renameButtons = document.querySelectorAll('.button--renameDataList')
+    for (const button of renameButtons) {
+      button.addEventListener('click', renameDataList)
+    }
+
+    // Delete Data List buttons
+    const deleteDataListButtons = document.querySelectorAll('.button--deleteDataList')
+    for (const button of deleteDataListButtons) {
+      button.addEventListener('click', deleteDataList)
+    }
+
+    // Add item buttons
+    const addButtons = document.querySelectorAll('.button--addItem')
+    for (const button of addButtons) {
+      button.addEventListener('click', addDataListItem)
+    }
+
+    // Re-attach event listeners for each data list's items
+    for (const dataList of exports.dataLists) {
+      attachEventListeners(dataList.dataListKey)
     }
   }
 
@@ -262,6 +368,9 @@ declare const exports: {
           if (responseJSON.success && responseJSON.dataLists !== undefined) {
             closeModalFunction()
 
+            // Render the updated list
+            renderAllDataLists(responseJSON.dataLists)
+
             const message = responseJSON.wasRecovered
               ? 'The previously deleted data list has been recovered.'
               : 'The data list has been successfully created.'
@@ -269,11 +378,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: responseJSON.wasRecovered ? 'Data List Recovered' : 'Data List Created',
-              message,
-              onconfirm() {
-                // Reload the page to show the new list
-                window.location.reload()
-              }
+              message
             })
           } else {
             bulmaJS.alert({
@@ -422,14 +527,13 @@ declare const exports: {
             },
             (responseJSON: DoDeleteDataListResponse) => {
               if (responseJSON.success && responseJSON.dataLists !== undefined) {
+                // Render the updated list
+                renderAllDataLists(responseJSON.dataLists)
+
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Data List Deleted',
-                  message: 'The data list has been successfully deleted.',
-                  onconfirm() {
-                    // Reload the page to remove the deleted list
-                    window.location.reload()
-                  }
+                  message: 'The data list has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
@@ -874,32 +978,8 @@ declare const exports: {
   // Initialize sortable for each data list
   for (const dataList of exports.dataLists) {
     initializeSortable(dataList.dataListKey)
-
-    // Attach event listeners for this data list
-    attachEventListeners(dataList.dataListKey)
   }
 
-  // Add Data List button
-  const addDataListButton = document.querySelector('.button--addDataList')
-  if (addDataListButton !== null) {
-    addDataListButton.addEventListener('click', addDataList)
-  }
-
-  // Rename Data List buttons
-  const renameButtons = document.querySelectorAll('.button--renameDataList')
-  for (const button of renameButtons) {
-    button.addEventListener('click', renameDataList)
-  }
-
-  // Delete Data List buttons
-  const deleteDataListButtons = document.querySelectorAll('.button--deleteDataList')
-  for (const button of deleteDataListButtons) {
-    button.addEventListener('click', deleteDataList)
-  }
-
-  // Add item buttons
-  const addButtons = document.querySelectorAll('.button--addItem')
-  for (const button of addButtons) {
-    button.addEventListener('click', addDataListItem)
-  }
+  // Attach all event listeners
+  attachAllEventListeners()
 })()

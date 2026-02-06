@@ -1,21 +1,33 @@
+/* eslint-disable max-lines -- Large file */
+
 (() => {
     const shiftLog = exports.shiftLog;
+
     // Track Sortable instances to prevent duplicates
     const sortableInstances = new Map();
+
     function updateItemCount(dataListKey, count) {
         const countElement = document.querySelector(`#itemCount--${dataListKey}`);
+
         if (countElement !== null) {
             countElement.textContent = count.toString();
+
             countElement.classList.toggle('is-warning', count === 0);
         }
     }
+
     function renderDataListItems(dataListKey, items) {
-        const tbodyElement = document.querySelector(`#dataListItems--${dataListKey}`);
+        const tbodyElement = document.querySelector(
+            `#dataListItems--${dataListKey}`
+        );
+
         if (tbodyElement === null) {
             return;
         }
+
         // Update the item count tag
         updateItemCount(dataListKey, items.length);
+
         if (items.length === 0) {
             tbodyElement.innerHTML = /* html */ `
         <tr>
@@ -26,17 +38,22 @@
       `;
             return;
         }
+
         // Clear existing items
         tbodyElement.innerHTML = '';
+
         for (const item of items) {
             const userGroup = item.userGroupId
                 ? exports.userGroups.find((ug) => ug.userGroupId === item.userGroupId)
                 : null;
+
             const userGroupDisplay = userGroup
                 ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
                 : '<span class="has-text-grey-light">-</span>';
+
             const tableRowElement = document.createElement('tr');
             tableRowElement.dataset.dataListItemId = item.dataListItemId.toString();
+
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ `
         <td class="has-text-centered">
@@ -82,69 +99,192 @@
           </div>
         </td>
       `;
+
             tbodyElement.append(tableRowElement);
         }
+
         // Re-attach event listeners
         attachEventListeners(dataListKey);
+
         // Re-initialize sortable
         initializeSortable(dataListKey);
     }
+
     function renderAllDataLists(dataLists) {
         // Update the global dataLists
         exports.dataLists = dataLists;
-        // Clear and rebuild the entire list
-        const mainContainer = document.querySelector('.column > .columns')
-            ?.nextElementSibling?.nextElementSibling;
-        if (mainContainer === null || mainContainer === undefined) {
+
+        // Find the container that holds all the detail panels
+        const messageBlock = document.querySelector('.message.is-info');
+
+        if (messageBlock === null) {
+            // Fallback to page reload if we can't find the container
+            window.location.reload();
             return;
         }
-        // Find all detail panels
-        const existingPanels = mainContainer.querySelectorAll('details.panel');
-        const existingKeys = new Set();
-        for (const panel of existingPanels) {
-            const key = panel.dataset.dataListKey;
-            if (key !== undefined) {
-                existingKeys.add(key);
-            }
+
+        // Get the parent that contains all the panels
+        const panelsContainer = messageBlock.parentElement;
+
+        if (panelsContainer === null) {
+            window.location.reload();
+            return;
         }
-        // Remove panels that no longer exist
+
+        // Remove all existing panels
+        const existingPanels = panelsContainer.querySelectorAll('details.panel');
         for (const panel of existingPanels) {
-            const key = panel.dataset.dataListKey;
-            if (key !== undefined && !dataLists.some((dl) => dl.dataListKey === key)) {
-                panel.remove();
-            }
+            panel.remove();
         }
-        // Update or add panels
+
+        // Re-render all panels from scratch
         for (const dataList of dataLists) {
-            if (existingKeys.has(dataList.dataListKey)) {
-                // Update existing panel
+            const panelHtml = /* html */ `
+        <details class="panel mb-5 collapsable-panel" data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}" data-is-system-list="${dataList.isSystemList}">
+          <summary class="panel-heading is-clickable">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fa-solid fa-chevron-right details-chevron"></i>
+              </span>
+              <span class="has-text-weight-semibold mr-2">
+                ${cityssm.escapeHTML(dataList.dataListName)}
+              </span>
+              <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
+                ${dataList.items.length}
+              </span>
+              ${!dataList.isSystemList ? '<span class="tag is-info is-light ml-2">Custom</span>' : ''}
+            </span>
+          </summary>
+          <div class="panel-block">
+            <div class="field is-grouped is-grouped-multiline" style="width: 100%;">
+              <div class="control">
+                <button
+                  class="button is-success is-small button--addItem" 
+                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-plus"></i>
+                  </span>
+                  <span>Add Item</span>
+                </button>
+              </div>
+              ${!dataList.isSystemList ? `
+              <div class="control">
+                <button
+                  class="button is-info is-small button--renameDataList" 
+                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                  data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-pencil"></i>
+                  </span>
+                  <span>Rename List</span>
+                </button>
+              </div>
+              <div class="control">
+                <button
+                  class="button is-danger is-small button--deleteDataList" 
+                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                  data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                  type="button"
+                >
+                  <span class="icon">
+                    <i class="fa-solid fa-trash"></i>
+                  </span>
+                  <span>Delete List</span>
+                </button>
+              </div>
+              ` : ''}
+            </div>
+          </div>
+          <div class="panel-block p-0">
+            <div class="table-container" style="width: 100%;">
+              <table class="table is-striped is-hoverable is-fullwidth mb-0">
+                <thead>
+                  <tr>
+                    <th class="has-text-centered" style="width: 60px;">Order</th>
+                    <th>Item</th>
+                    <th style="width: 180px;">User Group</th>
+                    <th>
+                      <span class="is-sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="is-sortable" id="dataListItems--${cityssm.escapeHTML(dataList.dataListKey)}">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+      `;
+
+            const tempDiv = document.createElement('div');
+            // eslint-disable-next-line no-unsanitized/property
+            tempDiv.innerHTML = panelHtml;
+            const panelElement = tempDiv.firstElementChild;
+
+            if (panelElement !== null) {
+                panelsContainer.append(panelElement);
+
+                // Render items for this list
                 renderDataListItems(dataList.dataListKey, dataList.items);
-                // Update the panel heading if needed
-                const panel = mainContainer.querySelector(
-                    `details[data-data-list-key="${dataList.dataListKey}"]`
-                );
-                if (panel !== null) {
-                    const nameElement = panel.querySelector('.has-text-weight-semibold');
-                    if (nameElement !== null) {
-                        nameElement.textContent = dataList.dataListName;
-                    }
-                }
-            } else {
-                // Add new panel - reload the page for simplicity
-                window.location.reload();
-                return;
+
+                // Initialize sortable for this list
+                initializeSortable(dataList.dataListKey);
             }
+        }
+
+        // Re-attach all event listeners
+        attachAllEventListeners();
+    }
+
+    function attachAllEventListeners() {
+        // Add Data List button
+        const addDataListButton = document.querySelector('.button--addDataList');
+        if (addDataListButton !== null) {
+            addDataListButton.addEventListener('click', addDataList);
+        }
+
+        // Rename Data List buttons
+        const renameButtons = document.querySelectorAll('.button--renameDataList');
+        for (const button of renameButtons) {
+            button.addEventListener('click', renameDataList);
+        }
+
+        // Delete Data List buttons
+        const deleteDataListButtons = document.querySelectorAll('.button--deleteDataList');
+        for (const button of deleteDataListButtons) {
+            button.addEventListener('click', deleteDataList);
+        }
+
+        // Add item buttons
+        const addButtons = document.querySelectorAll('.button--addItem');
+        for (const button of addButtons) {
+            button.addEventListener('click', addDataListItem);
+        }
+
+        // Re-attach event listeners for each data list's items
+        for (const dataList of exports.dataLists) {
+            attachEventListeners(dataList.dataListKey);
         }
     }
+
     function addDataList(clickEvent) {
         clickEvent.preventDefault();
+
         let closeModalFunction;
+
         function doAddDataList(submitEvent) {
             submitEvent.preventDefault();
+
             const addForm = submitEvent.currentTarget;
             const formData = new FormData(addForm);
-            const dataListKeySuffix = (formData.get('dataListKey'))?.trim();
-            const dataListName = (formData.get('dataListName'))?.trim();
+
+            const dataListKeySuffix = formData.get('dataListKey')?.trim();
+            const dataListName = formData.get('dataListName')?.trim();
+
             if (dataListKeySuffix === '' || dataListName === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
@@ -153,8 +293,10 @@
                 });
                 return;
             }
+
             // Prepend "user-" to the key
             const dataListKey = `user-${dataListKeySuffix}`;
+
             cityssm.postJSON(
                 `${shiftLog.urlPrefix}/admin/doAddDataList`,
                 {
@@ -164,17 +306,18 @@
                 (responseJSON) => {
                     if (responseJSON.success && responseJSON.dataLists !== undefined) {
                         closeModalFunction();
+
+                        // Render the updated list
+                        renderAllDataLists(responseJSON.dataLists);
+
                         const message = responseJSON.wasRecovered
                             ? 'The previously deleted data list has been recovered.'
                             : 'The data list has been successfully created.';
+
                         bulmaJS.alert({
                             contextualColorName: 'success',
                             title: responseJSON.wasRecovered ? 'Data List Recovered' : 'Data List Created',
-                            message,
-                            onconfirm() {
-                                // Reload the page to show the new list
-                                window.location.reload();
-                            }
+                            message
                         });
                     } else {
                         bulmaJS.alert({
@@ -186,6 +329,7 @@
                 }
             );
         }
+
         cityssm.openHtmlModal('adminDataLists-addDataList', {
             onshow(modalElement) {
                 // Attach form submit handler
@@ -196,6 +340,7 @@
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+
                 // Focus the key input
                 const keyInput = modalElement.querySelector(
                     '#addDataList--dataListKey'
@@ -207,19 +352,25 @@
             }
         });
     }
+
     function renameDataList(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const dataListKey = buttonElement.dataset.dataListKey;
         const dataListName = buttonElement.dataset.dataListName;
+
         if (dataListKey === undefined || dataListName === undefined) {
             return;
         }
+
         let closeModalFunction;
+
         function doUpdateDataList(submitEvent) {
             submitEvent.preventDefault();
+
             const editForm = submitEvent.currentTarget;
             const formData = new FormData(editForm);
             const newDataListName = formData.get('dataListName')?.trim();
+
             if (newDataListName === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
@@ -228,6 +379,7 @@
                 });
                 return;
             }
+
             cityssm.postJSON(
                 `${shiftLog.urlPrefix}/admin/doUpdateDataList`,
                 editForm,
@@ -235,6 +387,7 @@
                     if (responseJSON.success && responseJSON.dataLists !== undefined) {
                         closeModalFunction();
                         renderAllDataLists(responseJSON.dataLists);
+
                         bulmaJS.alert({
                             contextualColorName: 'success',
                             title: 'Data List Renamed',
@@ -250,6 +403,7 @@
                 }
             );
         }
+
         cityssm.openHtmlModal('adminDataLists-editDataList', {
             onshow(modalElement) {
                 // Set the data list key
@@ -257,11 +411,13 @@
                     '#editDataList--dataListKey'
                 );
                 dataListKeyInput.value = dataListKey;
+
                 // Set the data list name
                 const dataListNameInput = modalElement.querySelector(
                     '#editDataList--dataListName'
                 );
                 dataListNameInput.value = dataListName;
+
                 // Attach form submit handler
                 modalElement
                     .querySelector('form')
@@ -270,6 +426,7 @@
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+
                 // Focus and select the input
                 const nameInput = modalElement.querySelector(
                     '#editDataList--dataListName'
@@ -282,13 +439,16 @@
             }
         });
     }
+
     function deleteDataList(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const dataListKey = buttonElement.dataset.dataListKey;
         const dataListName = buttonElement.dataset.dataListName;
+
         if (dataListKey === undefined || dataListName === undefined) {
             return;
         }
+
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Delete Data List',
@@ -304,14 +464,13 @@
                         },
                         (responseJSON) => {
                             if (responseJSON.success && responseJSON.dataLists !== undefined) {
+                                // Render the updated list
+                                renderAllDataLists(responseJSON.dataLists);
+
                                 bulmaJS.alert({
                                     contextualColorName: 'success',
                                     title: 'Data List Deleted',
-                                    message: 'The data list has been successfully deleted.',
-                                    onconfirm() {
-                                        // Reload the page to remove the deleted list
-                                        window.location.reload();
-                                    }
+                                    message: 'The data list has been successfully deleted.'
                                 });
                             } else {
                                 bulmaJS.alert({
@@ -326,22 +485,33 @@
             }
         });
     }
+
     function addDataListItem(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const dataListKey = buttonElement.dataset.dataListKey;
+
         if (dataListKey === undefined) {
             return;
         }
-        const dataList = exports.dataLists.find((dl) => dl.dataListKey === dataListKey);
+
+        const dataList = exports.dataLists.find(
+            (dl) => dl.dataListKey === dataListKey
+        );
+
         if (dataList === undefined) {
             return;
         }
+
         let closeModalFunction;
+
         function doAddDataListItem(submitEvent) {
             submitEvent.preventDefault();
+
             const addForm = submitEvent.currentTarget;
             const formData = new FormData(addForm);
+
             const dataListItemToAdd = formData.get('dataListItem')?.trim();
+
             if (dataListItemToAdd === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
@@ -350,48 +520,72 @@
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (responseJSON) => {
-                if (responseJSON.success && responseJSON.items !== undefined) {
-                    closeModalFunction();
-                    // Open the details panel if it's closed
-                    const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
-                    if (detailsElement !== null && !detailsElement.open) {
-                        detailsElement.open = true;
+
+            cityssm.postJSON(
+                `${shiftLog.urlPrefix}/admin/doAddDataListItem`,
+                addForm,
+                (responseJSON) => {
+                    if (responseJSON.success && responseJSON.items !== undefined) {
+                        closeModalFunction();
+
+                        // Open the details panel if it's closed
+                        const detailsElement = document.querySelector(
+                            `details[data-data-list-key="${dataListKey}"]`
+                        );
+
+                        if (detailsElement !== null && !detailsElement.open) {
+                            detailsElement.open = true;
+                        }
+
+                        renderDataListItems(dataListKey, responseJSON.items);
+
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            title: 'Item Added',
+
+                            message: 'The item has been successfully added.'
+                        });
+                    } else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            title: 'Error Adding Item',
+
+                            message: 'Please try again.'
+                        });
                     }
-                    renderDataListItems(dataListKey, responseJSON.items);
-                    bulmaJS.alert({
-                        contextualColorName: 'success',
-                        title: 'Item Added',
-                        message: 'The item has been successfully added.'
-                    });
                 }
-                else {
-                    bulmaJS.alert({
-                        contextualColorName: 'danger',
-                        title: 'Error Adding Item',
-                        message: 'Please try again.'
-                    });
-                }
-            });
+            );
         }
+
         cityssm.openHtmlModal('adminDataLists-addItem', {
             onshow(modalElement) {
                 // Set the modal title
-                const titleElement = modalElement.querySelector('#addDataListItem--title');
+                const titleElement = modalElement.querySelector(
+                    '#addDataListItem--title'
+                );
                 titleElement.textContent = `Add ${dataList.dataListName} Item`;
+
                 // Set the data list key
-                const dataListKeyInput = modalElement.querySelector('#addDataListItem--dataListKey');
+                const dataListKeyInput = modalElement.querySelector(
+                    '#addDataListItem--dataListKey'
+                );
                 dataListKeyInput.value = dataListKey;
+
                 // Populate user group options
-                const userGroupSelect = modalElement.querySelector('#addDataListItem--userGroupId');
+                const userGroupSelect = modalElement.querySelector(
+                    '#addDataListItem--userGroupId'
+                );
+
                 userGroupSelect.innerHTML =
                     '<option value="">None (Available to All)</option>';
+
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
                     option.value = userGroup.userGroupId.toString();
                     option.textContent = userGroup.userGroupName;
                     userGroupSelect.append(option);
                 }
+
                 // Attach form submit handler
                 modalElement
                     .querySelector('form')
@@ -400,36 +594,52 @@
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+
                 // Focus the item name input
-                const itemInput = modalElement.querySelector('#addDataListItem--dataListItem');
+                const itemInput = modalElement.querySelector(
+                    '#addDataListItem--dataListItem'
+                );
                 itemInput.focus();
             },
+
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
             }
         });
     }
+
     function editDataListItem(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const dataListKey = buttonElement.dataset.dataListKey;
         const dataListItemId = buttonElement.dataset.dataListItemId;
         const dataListItem = buttonElement.dataset.dataListItem;
         const userGroupId = buttonElement.dataset.userGroupId;
-        if (dataListKey === undefined ||
+
+        if (
+            dataListKey === undefined ||
             dataListItemId === undefined ||
-            dataListItem === undefined) {
+            dataListItem === undefined
+        ) {
             return;
         }
-        const dataList = exports.dataLists.find((dl) => dl.dataListKey === dataListKey);
+
+        const dataList = exports.dataLists.find(
+            (dl) => dl.dataListKey === dataListKey
+        );
+
         if (dataList === undefined) {
             return;
         }
+
         let closeModalFunction;
+
         function doUpdateDataListItem(submitEvent) {
             submitEvent.preventDefault();
+
             const editForm = submitEvent.currentTarget;
             const formData = new FormData(editForm);
             const dataListItem = formData.get('dataListItem')?.trim();
+
             if (dataListItem === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
@@ -438,52 +648,81 @@
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (responseJSON) => {
-                if (responseJSON.success && responseJSON.items !== undefined) {
-                    closeModalFunction();
-                    renderDataListItems(dataListKey, responseJSON.items);
-                    bulmaJS.alert({
-                        contextualColorName: 'success',
-                        title: 'Item Updated',
-                        message: 'The item has been successfully updated.'
-                    });
+
+            cityssm.postJSON(
+                `${shiftLog.urlPrefix}/admin/doUpdateDataListItem`,
+                editForm,
+                (responseJSON) => {
+                    if (responseJSON.success && responseJSON.items !== undefined) {
+                        closeModalFunction();
+                        renderDataListItems(dataListKey, responseJSON.items);
+
+                        bulmaJS.alert({
+                            contextualColorName: 'success',
+                            title: 'Item Updated',
+
+                            message: 'The item has been successfully updated.'
+                        });
+                    } else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            title: 'Error Updating Item',
+
+                            message: 'Please try again.'
+                        });
+                    }
                 }
-                else {
-                    bulmaJS.alert({
-                        contextualColorName: 'danger',
-                        title: 'Error Updating Item',
-                        message: 'Please try again.'
-                    });
-                }
-            });
+            );
         }
+
         cityssm.openHtmlModal('adminDataLists-editItem', {
             onshow(modalElement) {
                 // Set the modal title
-                const titleElement = modalElement.querySelector('#editDataListItem--title');
+                const titleElement = modalElement.querySelector(
+                    '#editDataListItem--title'
+                );
                 titleElement.textContent = `Edit ${dataList.dataListName} Item`;
+
                 // Set the hidden fields
-                const dataListKeyInput = modalElement.querySelector('#editDataListItem--dataListKey');
+                const dataListKeyInput = modalElement.querySelector(
+                    '#editDataListItem--dataListKey'
+                );
                 dataListKeyInput.value = dataListKey;
-                const dataListItemIdInput = modalElement.querySelector('#editDataListItem--dataListItemId');
+
+                const dataListItemIdInput = modalElement.querySelector(
+                    '#editDataListItem--dataListItemId'
+                );
                 dataListItemIdInput.value = dataListItemId;
+
                 // Set the item name
-                const dataListItemInput = modalElement.querySelector('#editDataListItem--dataListItem');
+                const dataListItemInput = modalElement.querySelector(
+                    '#editDataListItem--dataListItem'
+                );
                 dataListItemInput.value = dataListItem;
+
                 // Populate user group options
-                const userGroupSelect = modalElement.querySelector('#editDataListItem--userGroupId');
+                const userGroupSelect = modalElement.querySelector(
+                    '#editDataListItem--userGroupId'
+                );
+
                 userGroupSelect.innerHTML =
                     '<option value="">None (Available to All)</option>';
+
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
                     option.value = userGroup.userGroupId.toString();
                     option.textContent = userGroup.userGroupName;
-                    if (userGroupId &&
-                        Number.parseInt(userGroupId, 10) === userGroup.userGroupId) {
+
+                    if (
+                        userGroupId &&
+                        Number.parseInt(userGroupId, 10) === userGroup.userGroupId
+                    ) {
                         option.selected = true;
                     }
+
                     userGroupSelect.append(option);
                 }
+
                 // Attach form submit handler
                 modalElement
                     .querySelector('form')
@@ -492,30 +731,43 @@
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+
                 // Focus and select the input
-                const itemInput = modalElement.querySelector('#editDataListItem--dataListItem');
+                const itemInput = modalElement.querySelector(
+                    '#editDataListItem--dataListItem'
+                );
                 itemInput.focus();
                 itemInput.select();
             },
+
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
             }
         });
     }
+
     function deleteDataListItem(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const dataListKey = buttonElement.dataset.dataListKey;
         const dataListItemId = buttonElement.dataset.dataListItemId;
         const dataListItem = buttonElement.dataset.dataListItem;
-        if (dataListKey === undefined ||
+
+        if (
+            dataListKey === undefined ||
             dataListItemId === undefined ||
-            dataListItem === undefined) {
+            dataListItem === undefined
+        ) {
             return;
         }
-        const dataList = exports.dataLists.find((dl) => dl.dataListKey === dataListKey);
+
+        const dataList = exports.dataLists.find(
+            (dl) => dl.dataListKey === dataListKey
+        );
+
         if (dataList === undefined) {
             return;
         }
+
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: `Delete ${dataList.dataListName} Item`,
@@ -523,124 +775,141 @@
             okButton: {
                 contextualColorName: 'danger',
                 text: 'Delete Item',
+
                 callbackFunction() {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataListItem`, {
-                        dataListKey,
-                        dataListItemId: Number.parseInt(dataListItemId, 10)
-                    }, (responseJSON) => {
-                        if (responseJSON.success && responseJSON.items !== undefined) {
-                            renderDataListItems(dataListKey, responseJSON.items);
-                            bulmaJS.alert({
-                                contextualColorName: 'success',
-                                title: 'Item Deleted',
-                                message: 'The item has been successfully deleted.'
-                            });
+                    cityssm.postJSON(
+                        `${shiftLog.urlPrefix}/admin/doDeleteDataListItem`,
+                        {
+                            dataListKey,
+                            dataListItemId: Number.parseInt(dataListItemId, 10)
+                        },
+                        (responseJSON) => {
+                            if (responseJSON.success && responseJSON.items !== undefined) {
+                                renderDataListItems(dataListKey, responseJSON.items);
+
+                                bulmaJS.alert({
+                                    contextualColorName: 'success',
+                                    title: 'Item Deleted',
+
+                                    message: 'The item has been successfully deleted.'
+                                });
+                            } else {
+                                bulmaJS.alert({
+                                    contextualColorName: 'danger',
+                                    title: 'Error Deleting Item',
+
+                                    message: 'Please try again.'
+                                });
+                            }
                         }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                title: 'Error Deleting Item',
-                                message: 'Please try again.'
-                            });
-                        }
-                    });
+                    );
                 }
             }
         });
     }
+
     function attachEventListeners(dataListKey) {
-        const section = document.querySelector(`[data-data-list-key="${dataListKey}"]`);
+        const section = document.querySelector(
+            `[data-data-list-key="${dataListKey}"]`
+        );
+
         if (section === null) {
             return;
         }
+
         // Edit buttons
         const editButtons = section.querySelectorAll('.button--editItem');
         for (const button of editButtons) {
             button.addEventListener('click', editDataListItem);
         }
+
         // Delete buttons
         const deleteButtons = section.querySelectorAll('.button--deleteItem');
         for (const button of deleteButtons) {
             button.addEventListener('click', deleteDataListItem);
         }
     }
+
     function initializeSortable(dataListKey) {
-        const tbodyElement = document.querySelector(`#dataListItems--${dataListKey}`);
+        const tbodyElement = document.querySelector(
+            `#dataListItems--${dataListKey}`
+        );
+
         if (tbodyElement === null) {
             return;
         }
+
         // Check if the tbody has any sortable items (rows with data-data-list-item-id)
-        const hasItems = tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0;
+        const hasItems =
+            tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0;
+
         if (!hasItems) {
             // Destroy existing instance if no items
             const existingInstance = sortableInstances.get(dataListKey);
+
             if (existingInstance !== undefined) {
                 existingInstance.destroy();
                 sortableInstances.delete(dataListKey);
             }
+
             return;
         }
+
         // Destroy existing Sortable instance before creating a new one
         const existingInstance = sortableInstances.get(dataListKey);
         if (existingInstance !== undefined) {
             existingInstance.destroy();
         }
+
         // Create new Sortable instance
         const sortableInstance = Sortable.create(tbodyElement, {
             handle: '.handle',
             animation: 150,
             onEnd() {
                 // Get the new order
-                const rows = tbodyElement.querySelectorAll('tr[data-data-list-item-id]');
+                const rows = tbodyElement.querySelectorAll(
+                    'tr[data-data-list-item-id]'
+                );
+
                 const dataListItemIds = [];
+
                 for (const row of rows) {
                     const dataListItemId = row.dataset.dataListItemId;
                     if (dataListItemId !== undefined) {
                         dataListItemIds.push(Number.parseInt(dataListItemId, 10));
                     }
                 }
+
                 // Send to server
-                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderDataListItems`, {
-                    dataListKey,
-                    dataListItemIds
-                }, (responseJSON) => {
-                    if (!responseJSON.success) {
-                        bulmaJS.alert({
-                            contextualColorName: 'danger',
-                            title: 'Error Reordering Items',
-                            message: 'Please refresh the page and try again.'
-                        });
+                cityssm.postJSON(
+                    `${shiftLog.urlPrefix}/admin/doReorderDataListItems`,
+                    {
+                        dataListKey,
+                        dataListItemIds
+                    },
+                    (responseJSON) => {
+                        if (!responseJSON.success) {
+                            bulmaJS.alert({
+                                contextualColorName: 'danger',
+                                title: 'Error Reordering Items',
+
+                                message: 'Please refresh the page and try again.'
+                            });
+                        }
                     }
-                });
+                );
             }
         });
+
         // Store the instance for future reference
         sortableInstances.set(dataListKey, sortableInstance);
     }
+
     // Initialize sortable for each data list
     for (const dataList of exports.dataLists) {
         initializeSortable(dataList.dataListKey);
-        // Attach event listeners for this data list
-        attachEventListeners(dataList.dataListKey);
     }
-    // Add Data List button
-    const addDataListButton = document.querySelector('.button--addDataList');
-    if (addDataListButton !== null) {
-        addDataListButton.addEventListener('click', addDataList);
-    }
-    // Rename Data List buttons
-    const renameButtons = document.querySelectorAll('.button--renameDataList');
-    for (const button of renameButtons) {
-        button.addEventListener('click', renameDataList);
-    }
-    // Delete Data List buttons
-    const deleteDataListButtons = document.querySelectorAll('.button--deleteDataList');
-    for (const button of deleteDataListButtons) {
-        button.addEventListener('click', deleteDataList);
-    }
-    // Add item buttons
-    const addButtons = document.querySelectorAll('.button--addItem');
-    for (const button of addButtons) {
-        button.addEventListener('click', addDataListItem);
-    }
+
+    // Attach all event listeners
+    attachAllEventListeners();
 })();
