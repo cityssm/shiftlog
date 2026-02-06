@@ -131,6 +131,46 @@ CREATE TABLE ShiftLog.DataListItems (
 )
 GO
 --
+-- NOTE TYPES
+--
+CREATE TABLE ShiftLog.NoteTypes (
+  noteTypeId INT PRIMARY KEY identity(1, 1),
+  instance VARCHAR(20) NOT NULL,
+  noteType VARCHAR(100) NOT NULL,
+  userGroupId INT,
+  isAvailableWorkOrders BIT NOT NULL DEFAULT 0,
+  isAvailableShifts BIT NOT NULL DEFAULT 0,
+  isAvailableTimesheets BIT NOT NULL DEFAULT 0,
+  recordCreate_userName VARCHAR(30) NOT NULL,
+  recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordUpdate_userName VARCHAR(30) NOT NULL,
+  recordUpdate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordDelete_userName VARCHAR(30),
+  recordDelete_dateTime datetime,
+  FOREIGN KEY (userGroupId) REFERENCES ShiftLog.UserGroups (userGroupId)
+)
+GO
+CREATE TABLE ShiftLog.NoteTypeFields (
+  noteTypeFieldId INT PRIMARY KEY identity(1, 1),
+  noteTypeId INT NOT NULL,
+  fieldLabel VARCHAR(100) NOT NULL,
+  fieldInputType VARCHAR(20) NOT NULL,
+  fieldHelpText NVARCHAR(500) NOT NULL,
+  dataListKey VARCHAR(20),
+  fieldValueMin INT,
+  fieldValueMax INT,
+  fieldValueRequired BIT NOT NULL DEFAULT 0,
+  hasDividerAbove BIT NOT NULL DEFAULT 0,
+  recordCreate_userName VARCHAR(30) NOT NULL,
+  recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordUpdate_userName VARCHAR(30) NOT NULL,
+  recordUpdate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordDelete_userName VARCHAR(30),
+  recordDelete_dateTime datetime,
+  FOREIGN KEY (noteTypeId) REFERENCES ShiftLog.NoteTypes (noteTypeId)
+)
+GO
+--
 -- TAGS
 --
 CREATE TABLE ShiftLog.Tags (
