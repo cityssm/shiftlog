@@ -50,6 +50,11 @@
         if (notesCountElement !== null) {
             notesCountElement.textContent = notes.length.toString();
         }
+        // Show/hide notes icon indicator
+        const hasNotesIconElement = document.querySelector('#icon--hasNotes');
+        if (hasNotesIconElement !== null) {
+            hasNotesIconElement.classList.toggle('is-hidden', notes.length === 0);
+        }
         if (notes.length === 0) {
             notesContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
