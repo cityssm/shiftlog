@@ -4,10 +4,10 @@ import { sendNotificationWorkerMessage } from '../../helpers/notification.helper
 import getWorkOrder from './getWorkOrder.js'
 
 export interface CreateWorkOrderNoteForm {
-  workOrderId: number | string
-  noteTypeId?: number | string
-  noteText: string
   fields?: Record<string, string>
+  noteText: string
+  noteTypeId?: number | string
+  workOrderId: number | string
 }
 
 export default async function createWorkOrderNote(
@@ -75,7 +75,8 @@ export default async function createWorkOrderNote(
       for (const [noteTypeFieldId, fieldValue] of Object.entries(
         createWorkOrderNoteForm.fields
       )) {
-        if (fieldValue !== undefined && fieldValue !== '') {
+        if (fieldValue !== '') {
+          // eslint-disable-next-line no-await-in-loop -- inserting field values sequentially
           await pool
             .request()
             .input('workOrderId', createWorkOrderNoteForm.workOrderId)

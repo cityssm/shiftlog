@@ -67,10 +67,10 @@ export default async function getWorkOrderNotes(workOrderId) {
             fieldsMap.set(field.noteSequence, []);
         }
         fieldsMap.get(field.noteSequence)?.push({
-            fieldInputType: field.fieldInputType,
+            noteTypeFieldId: field.noteTypeFieldId,
             fieldLabel: field.fieldLabel,
-            fieldValue: field.fieldValue,
-            noteTypeFieldId: field.noteTypeFieldId
+            fieldInputType: field.fieldInputType,
+            fieldValue: field.fieldValue
         });
     }
     // Attach fields to notes

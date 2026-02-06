@@ -2,25 +2,25 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface WorkOrderNoteField {
-  noteTypeFieldId: number
-  fieldLabel: string
   fieldInputType: string
+  fieldLabel: string
   fieldValue: string
+  noteTypeFieldId: number
 }
 
 export interface WorkOrderNote {
-  workOrderId: number
-  noteSequence: number
-  noteTypeId?: number | null
-  noteType?: string | null
-  noteText: string
   fields?: WorkOrderNoteField[]
+  noteSequence: number
+  noteText: string
+  noteType?: string | null
+  noteTypeId?: number | null
   recordCreate_dateTime: Date
   recordCreate_userName: string
-  recordUpdate_dateTime: Date
-  recordUpdate_userName: string
   recordDelete_dateTime?: Date | null
   recordDelete_userName?: string | null
+  recordUpdate_dateTime: Date
+  recordUpdate_userName: string
+  workOrderId: number
 }
 
 export default async function getWorkOrderNotes(
@@ -98,10 +98,10 @@ export default async function getWorkOrderNotes(
       fieldsMap.set(field.noteSequence, [])
     }
     fieldsMap.get(field.noteSequence)?.push({
-      noteTypeFieldId: field.noteTypeFieldId,
-      fieldLabel: field.fieldLabel,
       fieldInputType: field.fieldInputType,
-      fieldValue: field.fieldValue
+      fieldLabel: field.fieldLabel,
+      fieldValue: field.fieldValue,
+      noteTypeFieldId: field.noteTypeFieldId
     })
   }
 

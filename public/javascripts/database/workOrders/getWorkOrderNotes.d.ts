@@ -1,21 +1,21 @@
 export interface WorkOrderNoteField {
-    fieldInputType: string;
-    fieldLabel: string;
-    fieldValue: string;
     noteTypeFieldId: number;
+    fieldLabel: string;
+    fieldInputType: string;
+    fieldValue: string;
 }
 export interface WorkOrderNote {
-    fields?: WorkOrderNoteField[];
+    workOrderId: number;
     noteSequence: number;
-    noteText: string;
-    noteType?: string | null;
     noteTypeId?: number | null;
+    noteType?: string | null;
+    noteText: string;
+    fields?: WorkOrderNoteField[];
     recordCreate_dateTime: Date;
     recordCreate_userName: string;
-    recordDelete_dateTime?: Date | null;
-    recordDelete_userName?: string | null;
     recordUpdate_dateTime: Date;
     recordUpdate_userName: string;
-    workOrderId: number;
+    recordDelete_dateTime?: Date | null;
+    recordDelete_userName?: string | null;
 }
 export default function getWorkOrderNotes(workOrderId: number | string): Promise<WorkOrderNote[]>;

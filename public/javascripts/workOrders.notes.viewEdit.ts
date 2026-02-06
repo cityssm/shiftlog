@@ -1,12 +1,14 @@
+/* eslint-disable max-lines -- complex client-side module with note type field handling */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { WorkOrderNote } from '../../database/workOrders/getWorkOrderNotes.js'
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
+import type { WorkOrderNote } from '../../database/workOrders/getWorkOrderNotes.js'
 import type { DoCreateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doCreateWorkOrderNote.js'
 import type { DoDeleteWorkOrderNoteResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderNote.js'
-import type { DoGetWorkOrderNotesResponse } from '../../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import type { DoGetNoteTypesResponse } from '../../handlers/workOrders-post/doGetNoteTypes.js'
+import type { DoGetWorkOrderNotesResponse } from '../../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import type { DoUpdateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderNote.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -43,7 +45,7 @@ declare const bulmaJS: BulmaJS
     '#container--notes'
   ) as HTMLElement
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- defensive check for null
   if (notesContainerElement === null) {
     return
   }
@@ -90,7 +92,7 @@ declare const bulmaJS: BulmaJS
           ? `<span class="tag is-info is-light">${cityssm.escapeHTML(note.noteType)}</span>`
           : ''
 
-      // eslint-disable-next-line no-unsanitized/property
+      // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
       noteElement.innerHTML = /* html */ `
         <article class="media">
           <div class="media-content">
@@ -108,12 +110,6 @@ declare const bulmaJS: BulmaJS
                 <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
                 ${
                   needsExpand
-                    ? `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>`
-                    : ''
-                }
-              </p>
-            </div>
-          </div>
                     ? `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>`
                     : ''
                 }
@@ -226,14 +222,15 @@ declare const bulmaJS: BulmaJS
         ) as HTMLElement
         fieldsContainer.innerHTML = ''
         if (note.fields !== undefined && note.fields.length > 0) {
-          fieldsContainer.innerHTML = /* html */ `
+          // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
+          fieldsContainer.innerHTML = `
             <div class="content mt-4">
               <h6 class="title is-6">Additional Information</h6>
               <table class="table is-fullwidth is-striped">
                 <tbody>
                   ${note.fields
                     .map(
-                      (field) => /* html */ `
+                      (field) => `
                     <tr>
                       <th style="width: 40%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
                       <td>${cityssm.escapeHTML(field.fieldValue)}</td>
@@ -342,76 +339,54 @@ declare const bulmaJS: BulmaJS
       let fieldsHTML = ''
       for (const field of selectedNoteType.fields) {
         if (field.hasDividerAbove) {
-          fieldsHTML += /* html */ `<hr class="mt-4 mb-4" />`
+          fieldsHTML += `<hr class="mt-4 mb-4" />`
         }
 
         const fieldName = `fields[${field.noteTypeFieldId}]`
-        const requiredAttr = field.fieldValueRequired ? 'required' : ''
-        const helpText = field.fieldHelpText !== '' 
-          ? /* html */ `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>` 
-          : ''
+        const requiredAttribute = field.fieldValueRequired ? 'required' : ''
+        const helpText = field.fieldHelpText === '' 
+          ? '' 
+          : `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`
 
-        fieldsHTML += /* html */ `<div class="field">`
-        fieldsHTML += /* html */ `<label class="label" for="addWorkOrderNote--field-${field.noteTypeFieldId}">
+        fieldsHTML += `<div class="field">`
+        fieldsHTML += `<label class="label" for="addWorkOrderNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
             ${field.fieldValueRequired ? '<span class="has-text-danger">*</span>' : ''}
           </label>`
 
         switch (field.fieldInputType) {
-          case 'text': {
-            fieldsHTML += /* html */ `
+          case 'date': {
+            fieldsHTML += `
               <div class="control">
-                <input class="input" type="text" 
+                <input class="input" type="date" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
-                  ${requiredAttr} />
+                  ${requiredAttribute} />
               </div>
             `
             break
           }
           case 'number': {
-            const minAttr = field.fieldValueMin !== null ? `min="${field.fieldValueMin}"` : ''
-            const maxAttr = field.fieldValueMax !== null ? `max="${field.fieldValueMax}"` : ''
-            fieldsHTML += /* html */ `
+            const minAttribute = field.fieldValueMin === null ? '' : `min="${field.fieldValueMin}"`
+            const maxAttribute = field.fieldValueMax === null ? '' : `max="${field.fieldValueMax}"`
+            fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
                   name="${fieldName}" 
-                  ${minAttr} ${maxAttr} ${requiredAttr} />
-              </div>
-            `
-            break
-          }
-          case 'date': {
-            fieldsHTML += /* html */ `
-              <div class="control">
-                <input class="input" type="date" 
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
-                  ${requiredAttr} />
-              </div>
-            `
-            break
-          }
-          case 'textbox': {
-            fieldsHTML += /* html */ `
-              <div class="control">
-                <textarea class="textarea" rows="3"
-                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
-                  ${requiredAttr}></textarea>
+                  ${minAttribute} ${maxAttribute} ${requiredAttribute} />
               </div>
             `
             break
           }
           case 'select': {
-            // TODO: Implement select with data list
-            fieldsHTML += /* html */ `
+            // Select fields with data list are not yet fully implemented
+            fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
                   <select id="addWorkOrderNote--field-${field.noteTypeFieldId}"
                     name="${fieldName}" 
-                    ${requiredAttr}>
+                    ${requiredAttribute}>
                     <option value="">-- Select --</option>
                   </select>
                 </div>
@@ -419,12 +394,35 @@ declare const bulmaJS: BulmaJS
             `
             break
           }
+          case 'text': {
+            fieldsHTML += `
+              <div class="control">
+                <input class="input" type="text" 
+                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}" 
+                  ${requiredAttribute} />
+              </div>
+            `
+            break
+          }
+          case 'textbox': {
+            fieldsHTML += `
+              <div class="control">
+                <textarea class="textarea" rows="3"
+                  id="addWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}" 
+                  ${requiredAttribute}></textarea>
+              </div>
+            `
+            break
+          }
         }
 
         fieldsHTML += helpText
-        fieldsHTML += /* html */ `</div>`
+        fieldsHTML += `</div>`
       }
 
+      // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
       fieldsContainer.innerHTML = fieldsHTML
     }
 
@@ -510,8 +508,8 @@ declare const bulmaJS: BulmaJS
           cityssm.postJSON(
             `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`,
             {
-              workOrderId,
-              noteSequence
+              noteSequence,
+              workOrderId
             },
             (responseJSON: DoDeleteWorkOrderNoteResponse) => {
               if (responseJSON.success) {
@@ -543,7 +541,9 @@ declare const bulmaJS: BulmaJS
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doGetNoteTypes`,
       {},
-      (responseJSON: DoGetNoteTypesResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON =
+          rawResponseJSON as unknown as DoGetNoteTypesResponse
         noteTypes = responseJSON.noteTypes
       }
     )
