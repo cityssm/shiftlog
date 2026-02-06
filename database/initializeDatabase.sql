@@ -79,7 +79,7 @@ CREATE TABLE ShiftLog.ApiAuditLog (
   instance VARCHAR(20) NOT NULL,
   userName VARCHAR(30),
   apiKey VARCHAR(100),
-  ENDPOINT VARCHAR(2000) NOT NULL,
+  [endpoint] VARCHAR(2000) NOT NULL,
   requestMethod VARCHAR(10) NOT NULL,
   isValidApiKey BIT NOT NULL,
   requestTime datetime NOT NULL DEFAULT getdate(),
