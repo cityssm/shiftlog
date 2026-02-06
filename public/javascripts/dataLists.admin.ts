@@ -177,10 +177,10 @@ declare const exports: {
 
     // Find the container that holds all the detail panels
     const messageBlock = document.querySelector('.message.is-info')
-    
+
     if (messageBlock === null) {
       // Fallback to page reload if we can't find the container
-      window.location.reload()
+      globalThis.location.reload()
       return
     }
 
@@ -188,7 +188,7 @@ declare const exports: {
     const panelsContainer = messageBlock.parentElement
 
     if (panelsContainer === null) {
-      window.location.reload()
+      globalThis.location.reload()
       return
     }
 
@@ -213,7 +213,7 @@ declare const exports: {
               <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
                 ${dataList.items.length}
               </span>
-              ${!dataList.isSystemList ? '<span class="tag is-info is-light ml-2">Custom</span>' : ''}
+              ${dataList.isSystemList ? '' : '<span class="tag is-info is-light ml-2">Custom</span>'}
             </span>
           </summary>
           <div class="panel-block">
@@ -230,34 +230,38 @@ declare const exports: {
                   <span>Add Item</span>
                 </button>
               </div>
-              ${!dataList.isSystemList ? `
-              <div class="control">
-                <button
-                  class="button is-info is-small button--renameDataList" 
-                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
-                  data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
-                  type="button"
-                >
-                  <span class="icon">
-                    <i class="fa-solid fa-pencil"></i>
-                  </span>
-                  <span>Rename List</span>
-                </button>
-              </div>
-              <div class="control">
-                <button
-                  class="button is-danger is-small button--deleteDataList" 
-                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
-                  data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
-                  type="button"
-                >
-                  <span class="icon">
-                    <i class="fa-solid fa-trash"></i>
-                  </span>
-                  <span>Delete List</span>
-                </button>
-              </div>
-              ` : ''}
+              ${
+                dataList.isSystemList
+                  ? ''
+                  : /* html */ `
+                    <div class="control">
+                      <button
+                        class="button is-info is-small button--renameDataList" 
+                        data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                        data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                        type="button"
+                      >
+                        <span class="icon">
+                          <i class="fa-solid fa-pencil"></i>
+                        </span>
+                        <span>Rename List</span>
+                      </button>
+                    </div>
+                    <div class="control">
+                      <button
+                        class="button is-danger is-small button--deleteDataList" 
+                        data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                        data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                        type="button"
+                      >
+                        <span class="icon">
+                          <i class="fa-solid fa-trash"></i>
+                        </span>
+                        <span>Delete List</span>
+                      </button>
+                    </div>
+                  `
+              }
             </div>
           </div>
           <div class="panel-block p-0">
@@ -280,18 +284,18 @@ declare const exports: {
           </div>
         </details>
       `
-      
+
       const tempDiv = document.createElement('div')
       // eslint-disable-next-line no-unsanitized/property
       tempDiv.innerHTML = panelHtml
       const panelElement = tempDiv.firstElementChild
-      
+
       if (panelElement !== null) {
         panelsContainer.append(panelElement)
-        
+
         // Render items for this list
         renderDataListItems(dataList.dataListKey, dataList.items)
-        
+
         // Initialize sortable for this list
         initializeSortable(dataList.dataListKey)
       }
@@ -315,7 +319,9 @@ declare const exports: {
     }
 
     // Delete Data List buttons
-    const deleteDataListButtons = document.querySelectorAll('.button--deleteDataList')
+    const deleteDataListButtons = document.querySelectorAll(
+      '.button--deleteDataList'
+    )
     for (const button of deleteDataListButtons) {
       button.addEventListener('click', deleteDataList)
     }
@@ -343,8 +349,12 @@ declare const exports: {
       const addForm = submitEvent.currentTarget as HTMLFormElement
       const formData = new FormData(addForm)
 
-      const dataListKeySuffix = (formData.get('dataListKey') as string | null)?.trim()
-      const dataListName = (formData.get('dataListName') as string | null)?.trim()
+      const dataListKeySuffix = (
+        formData.get('dataListKey') as string | null
+      )?.trim()
+      const dataListName = (
+        formData.get('dataListName') as string | null
+      )?.trim()
 
       if (dataListKeySuffix === '' || dataListName === '') {
         bulmaJS.alert({
@@ -377,7 +387,9 @@ declare const exports: {
 
             bulmaJS.alert({
               contextualColorName: 'success',
-              title: responseJSON.wasRecovered ? 'Data List Recovered' : 'Data List Created',
+              title: responseJSON.wasRecovered
+                ? 'Data List Recovered'
+                : 'Data List Created',
               message
             })
           } else {
@@ -526,7 +538,10 @@ declare const exports: {
               dataListKey
             },
             (responseJSON: DoDeleteDataListResponse) => {
-              if (responseJSON.success && responseJSON.dataLists !== undefined) {
+              if (
+                responseJSON.success &&
+                responseJSON.dataLists !== undefined
+              ) {
                 // Render the updated list
                 renderAllDataLists(responseJSON.dataLists)
 

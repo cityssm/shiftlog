@@ -97,13 +97,13 @@
         const messageBlock = document.querySelector('.message.is-info');
         if (messageBlock === null) {
             // Fallback to page reload if we can't find the container
-            window.location.reload();
+            globalThis.location.reload();
             return;
         }
         // Get the parent that contains all the panels
         const panelsContainer = messageBlock.parentElement;
         if (panelsContainer === null) {
-            window.location.reload();
+            globalThis.location.reload();
             return;
         }
         // Remove all existing panels
@@ -126,7 +126,7 @@
               <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
                 ${dataList.items.length}
               </span>
-              ${!dataList.isSystemList ? '<span class="tag is-info is-light ml-2">Custom</span>' : ''}
+              ${dataList.isSystemList ? '' : '<span class="tag is-info is-light ml-2">Custom</span>'}
             </span>
           </summary>
           <div class="panel-block">
@@ -143,34 +143,36 @@
                   <span>Add Item</span>
                 </button>
               </div>
-              ${!dataList.isSystemList ? `
-              <div class="control">
-                <button
-                  class="button is-info is-small button--renameDataList" 
-                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
-                  data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
-                  type="button"
-                >
-                  <span class="icon">
-                    <i class="fa-solid fa-pencil"></i>
-                  </span>
-                  <span>Rename List</span>
-                </button>
-              </div>
-              <div class="control">
-                <button
-                  class="button is-danger is-small button--deleteDataList" 
-                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
-                  data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
-                  type="button"
-                >
-                  <span class="icon">
-                    <i class="fa-solid fa-trash"></i>
-                  </span>
-                  <span>Delete List</span>
-                </button>
-              </div>
-              ` : ''}
+              ${dataList.isSystemList
+                ? ''
+                : /* html */ `
+                    <div class="control">
+                      <button
+                        class="button is-info is-small button--renameDataList" 
+                        data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                        data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                        type="button"
+                      >
+                        <span class="icon">
+                          <i class="fa-solid fa-pencil"></i>
+                        </span>
+                        <span>Rename List</span>
+                      </button>
+                    </div>
+                    <div class="control">
+                      <button
+                        class="button is-danger is-small button--deleteDataList" 
+                        data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                        data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
+                        type="button"
+                      >
+                        <span class="icon">
+                          <i class="fa-solid fa-trash"></i>
+                        </span>
+                        <span>Delete List</span>
+                      </button>
+                    </div>
+                  `}
             </div>
           </div>
           <div class="panel-block p-0">
@@ -266,7 +268,9 @@
                         : 'The data list has been successfully created.';
                     bulmaJS.alert({
                         contextualColorName: 'success',
-                        title: responseJSON.wasRecovered ? 'Data List Recovered' : 'Data List Created',
+                        title: responseJSON.wasRecovered
+                            ? 'Data List Recovered'
+                            : 'Data List Created',
                         message
                     });
                 }
@@ -382,7 +386,8 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataList`, {
                         dataListKey
                     }, (responseJSON) => {
-                        if (responseJSON.success && responseJSON.dataLists !== undefined) {
+                        if (responseJSON.success &&
+                            responseJSON.dataLists !== undefined) {
                             // Render the updated list
                             renderAllDataLists(responseJSON.dataLists);
                             bulmaJS.alert({
