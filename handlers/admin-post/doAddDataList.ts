@@ -3,6 +3,7 @@ import type { Request, Response } from 'express'
 import createDataList, {
   type CreateDataListForm
 } from '../../database/app/createDataList.js'
+import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
 import getDataLists, { type DataList } from '../../database/app/getDataLists.js'
 import recoverDataList from '../../database/app/recoverDataList.js'
 
@@ -10,8 +11,18 @@ import recoverDataList from '../../database/app/recoverDataList.js'
 export type DoAddDataListResponse = {
   success: boolean
   errorMessage?: string
-  dataLists?: DataList[]
+  dataLists?: DataListWithItems[]
   wasRecovered?: boolean
+}
+
+interface DataListWithItems extends DataList {
+  items: Array<{
+    dataListItemId: number
+    dataListKey: string
+    dataListItem: string
+    orderNumber: number
+    userGroupId: number | null
+  }>
 }
 
 export default async function handler(
@@ -54,10 +65,18 @@ export default async function handler(
     success = await createDataList(form, form.userName)
   }
 
-  let dataLists: DataList[] | undefined
+  let dataLists: DataListWithItems[] | undefined
 
   if (success) {
-    dataLists = await getDataLists()
+    const lists = await getDataLists()
+    
+    // Get items for each data list
+    dataLists = await Promise.all(
+      lists.map(async (dataList) => ({
+        ...dataList,
+        items: await getDataListItemsAdmin(dataList.dataListKey)
+      }))
+    )
   }
 
   response.json({

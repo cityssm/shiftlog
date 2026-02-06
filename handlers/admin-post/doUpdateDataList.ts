@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express'
 
+import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
 import getDataLists, { type DataList } from '../../database/app/getDataLists.js'
 import updateDataList, {
   type UpdateDataListForm
@@ -9,7 +10,17 @@ import updateDataList, {
 export type DoUpdateDataListResponse = {
   success: boolean
   errorMessage?: string
-  dataLists?: DataList[]
+  dataLists?: DataListWithItems[]
+}
+
+interface DataListWithItems extends DataList {
+  items: Array<{
+    dataListItemId: number
+    dataListKey: string
+    dataListItem: string
+    orderNumber: number
+    userGroupId: number | null
+  }>
 }
 
 export default async function handler(
@@ -23,10 +34,18 @@ export default async function handler(
 
   const success = await updateDataList(form)
 
-  let dataLists: DataList[] | undefined
+  let dataLists: DataListWithItems[] | undefined
 
   if (success) {
-    dataLists = await getDataLists()
+    const lists = await getDataLists()
+    
+    // Get items for each data list
+    dataLists = await Promise.all(
+      lists.map(async (dataList) => ({
+        ...dataList,
+        items: await getDataListItemsAdmin(dataList.dataListKey)
+      }))
+    )
   }
 
   response.json({

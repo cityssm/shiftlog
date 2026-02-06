@@ -1,4 +1,5 @@
 import createDataList from '../../database/app/createDataList.js';
+import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js';
 import getDataLists from '../../database/app/getDataLists.js';
 import recoverDataList from '../../database/app/recoverDataList.js';
 export default async function handler(request, response) {
@@ -29,7 +30,14 @@ export default async function handler(request, response) {
     }
     let dataLists;
     if (success) {
-        dataLists = await getDataLists();
+        const lists = await getDataLists();
+        // Get items for each data list
+        dataLists = await Promise.all(
+            lists.map(async (dataList) => ({
+                ...dataList,
+                items: await getDataListItemsAdmin(dataList.dataListKey)
+            }))
+        );
     }
     response.json({
         success,
