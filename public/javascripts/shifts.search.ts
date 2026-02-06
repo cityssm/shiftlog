@@ -108,6 +108,15 @@ declare const exports: {
           `
           : ''
 
+      const notesIconHTML =
+        (shift.notesCount ?? 0) > 0
+          ? /* html */ `
+            <span class="icon" title="${shift.notesCount} note(s)">
+              <i class="fa-solid fa-note-sticky"></i>
+            </span>
+          `
+          : ''
+
       const timesheetsIconHTML =
         (shift.timesheetsCount ?? 0) > 0
           ? /* html */ `
@@ -141,6 +150,7 @@ declare const exports: {
           ${crewsIconHTML}
           ${employeesIconHTML}
           ${equipmentIconHTML}
+          ${notesIconHTML}
           ${timesheetsIconHTML}
         </td>
         <td class="is-hidden-print">

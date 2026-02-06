@@ -238,6 +238,7 @@ export interface Shift extends BaseRecord {
   crewsCount?: number
   employeesCount?: number
   equipmentCount?: number
+  notesCount?: number
   timesheetsCount?: number
   workOrdersCount?: number
 }
