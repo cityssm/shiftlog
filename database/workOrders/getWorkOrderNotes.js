@@ -50,6 +50,12 @@ export default async function getWorkOrderNotes(workOrderId) {
         wnf.noteTypeFieldId,
         ntf.fieldLabel,
         ntf.fieldInputType,
+        ntf.fieldHelpText,
+        ntf.dataListKey,
+        ntf.fieldValueMin,
+        ntf.fieldValueMax,
+        ntf.fieldValueRequired,
+        ntf.hasDividerAbove,
         wnf.fieldValue
       FROM
         ShiftLog.WorkOrderNoteFields wnf
@@ -67,9 +73,15 @@ export default async function getWorkOrderNotes(workOrderId) {
             fieldsMap.set(field.noteSequence, []);
         }
         fieldsMap.get(field.noteSequence)?.push({
+            dataListKey: field.dataListKey,
+            fieldHelpText: field.fieldHelpText,
             fieldInputType: field.fieldInputType,
             fieldLabel: field.fieldLabel,
             fieldValue: field.fieldValue,
+            fieldValueMax: field.fieldValueMax,
+            fieldValueMin: field.fieldValueMin,
+            fieldValueRequired: field.fieldValueRequired,
+            hasDividerAbove: field.hasDividerAbove,
             noteTypeFieldId: field.noteTypeFieldId
         });
     }

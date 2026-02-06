@@ -1,7 +1,13 @@
 export interface WorkOrderNoteField {
+    dataListKey?: string | null;
+    fieldHelpText?: string;
     fieldInputType: string;
     fieldLabel: string;
     fieldValue: string;
+    fieldValueMax?: number | null;
+    fieldValueMin?: number | null;
+    fieldValueRequired?: boolean;
+    hasDividerAbove?: boolean;
     noteTypeFieldId: number;
 }
 export interface WorkOrderNote {

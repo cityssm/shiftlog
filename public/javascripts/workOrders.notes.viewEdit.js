@@ -222,6 +222,121 @@
                 }
             });
         }
+        function renderEditFieldsWithDataLists(fields, dataListMap, fieldsContainer) {
+            let fieldsHTML = '';
+            for (const field of fields) {
+                // Render divider if field has one
+                if (field.hasDividerAbove === true) {
+                    fieldsHTML += `<hr class="mt-4 mb-4" />`;
+                }
+                const fieldName = `fields[${field.noteTypeFieldId}]`;
+                const requiredAttribute = field.fieldValueRequired === true ? 'required' : '';
+                const helpText = field.fieldHelpText !== undefined && field.fieldHelpText !== ''
+                    ? `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`
+                    : '';
+                fieldsHTML += `<div class="field">`;
+                fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
+            ${cityssm.escapeHTML(field.fieldLabel)}
+            ${field.fieldValueRequired === true ? '<span class="has-text-danger">*</span>' : ''}
+          </label>`;
+                // Render appropriate input based on field type
+                switch (field.fieldInputType) {
+                    case 'date': {
+                        fieldsHTML += `
+              <div class="control">
+                <input class="input" type="date" 
+                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}" 
+                  value="${cityssm.escapeHTML(field.fieldValue)}"
+                  ${requiredAttribute} />
+              </div>
+            `;
+                        break;
+                    }
+                    case 'number': {
+                        const minAttribute = field.fieldValueMin !== null && field.fieldValueMin !== undefined
+                            ? `min="${field.fieldValueMin}"` : '';
+                        const maxAttribute = field.fieldValueMax !== null && field.fieldValueMax !== undefined
+                            ? `max="${field.fieldValueMax}"` : '';
+                        fieldsHTML += `
+              <div class="control">
+                <input class="input" type="number" 
+                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}" 
+                  value="${cityssm.escapeHTML(field.fieldValue)}"
+                  ${minAttribute} ${maxAttribute} ${requiredAttribute} />
+              </div>
+            `;
+                        break;
+                    }
+                    case 'select': {
+                        // Populate select with data list items
+                        const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+                            ? dataListMap.get(field.dataListKey) ?? []
+                            : [];
+                        fieldsHTML += `
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    ${requiredAttribute}>
+                    <option value="">-- Select --</option>
+                    ${dataListItems.map((item) => {
+                            const selected = item.dataListItem === field.fieldValue ? 'selected' : '';
+                            return `<option value="${cityssm.escapeHTML(item.dataListItem)}" ${selected}>${cityssm.escapeHTML(item.dataListItem)}</option>`;
+                        }).join('')}
+                  </select>
+                </div>
+              </div>
+            `;
+                        break;
+                    }
+                    case 'text': {
+                        // If field has a data list, add datalist element
+                        const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+                            ? dataListMap.get(field.dataListKey) ?? []
+                            : [];
+                        const dataListAttr = dataListItems.length > 0
+                            ? `list="datalist-edit-${field.noteTypeFieldId}"`
+                            : '';
+                        fieldsHTML += `
+              <div class="control">
+                <input class="input" type="text" 
+                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}" 
+                  value="${cityssm.escapeHTML(field.fieldValue)}"
+                  ${dataListAttr}
+                  ${requiredAttribute} />
+              </div>
+            `;
+                        // Add datalist element if applicable
+                        if (dataListItems.length > 0) {
+                            fieldsHTML += `
+                <datalist id="datalist-edit-${field.noteTypeFieldId}">
+                  ${dataListItems.map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`).join('')}
+                </datalist>
+              `;
+                        }
+                        break;
+                    }
+                    case 'textbox': {
+                        fieldsHTML += `
+              <div class="control">
+                <textarea class="textarea" rows="3"
+                  id="editWorkOrderNote--field-${field.noteTypeFieldId}"
+                  name="${fieldName}"
+                  ${requiredAttribute}>${cityssm.escapeHTML(field.fieldValue)}</textarea>
+              </div>
+            `;
+                        break;
+                    }
+                }
+                fieldsHTML += helpText;
+                fieldsHTML += `</div>`;
+            }
+            // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
+            fieldsContainer.innerHTML = fieldsHTML;
+        }
         cityssm.openHtmlModal('workOrders-editNote', {
             onshow(modalElement) {
                 exports.shiftLog.setUnsavedChanges('modal');
@@ -240,146 +355,170 @@
                 }
                 // Render fields if present
                 const fieldsContainer = modalElement.querySelector('#editWorkOrderNote--fieldsContainer');
-                if (note.fields !== undefined && note.fields.length > 0) {
-                    let fieldsHTML = '';
-                    for (const field of note.fields) {
-                        const fieldName = `fields[${field.noteTypeFieldId}]`;
-                        fieldsHTML += `<div class="field">`;
-                        fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
-                ${cityssm.escapeHTML(field.fieldLabel)}
-              </label>`;
-                        // Render appropriate input based on field type
-                        switch (field.fieldInputType) {
-                            case 'date': {
-                                fieldsHTML += `
-                  <div class="control">
-                    <input class="input" type="date" 
-                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
-                      name="${fieldName}" 
-                      value="${cityssm.escapeHTML(field.fieldValue)}" />
-                  </div>
-                `;
-                                break;
-                            }
-                            case 'number': {
-                                fieldsHTML += `
-                  <div class="control">
-                    <input class="input" type="number" 
-                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
-                      name="${fieldName}" 
-                      value="${cityssm.escapeHTML(field.fieldValue)}" />
-                  </div>
-                `;
-                                break;
-                            }
-                            case 'textbox': {
-                                fieldsHTML += `
-                  <div class="control">
-                    <textarea class="textarea" rows="3"
-                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
-                      name="${fieldName}">${cityssm.escapeHTML(field.fieldValue)}</textarea>
-                  </div>
-                `;
-                                break;
-                            }
-                            case 'select':
-                            case 'text':
-                            default: {
-                                fieldsHTML += `
-                  <div class="control">
-                    <input class="input" type="text" 
-                      id="editWorkOrderNote--field-${field.noteTypeFieldId}"
-                      name="${fieldName}" 
-                      value="${cityssm.escapeHTML(field.fieldValue)}" />
-                  </div>
-                `;
-                                break;
+                // If note has a note type, get all fields from the note type definition
+                if (note.noteTypeId !== null && note.noteTypeId !== undefined) {
+                    const noteType = noteTypes.find((nt) => nt.noteTypeId === note.noteTypeId);
+                    if (noteType !== undefined && noteType.fields.length > 0) {
+                        // Create a map of saved field values by noteTypeFieldId
+                        const savedFieldValues = new Map();
+                        if (note.fields !== undefined) {
+                            for (const field of note.fields) {
+                                savedFieldValues.set(field.noteTypeFieldId, field.fieldValue);
                             }
                         }
-                        fieldsHTML += `</div>`;
+                        // Merge all fields from note type with saved values
+                        const allFields = noteType.fields.map((fieldDef) => ({
+                            dataListKey: fieldDef.dataListKey,
+                            fieldHelpText: fieldDef.fieldHelpText,
+                            fieldInputType: fieldDef.fieldInputType,
+                            fieldLabel: fieldDef.fieldLabel,
+                            fieldValue: savedFieldValues.get(fieldDef.noteTypeFieldId) ?? '',
+                            fieldValueMax: fieldDef.fieldValueMax,
+                            fieldValueMin: fieldDef.fieldValueMin,
+                            fieldValueRequired: fieldDef.fieldValueRequired,
+                            hasDividerAbove: fieldDef.hasDividerAbove,
+                            noteTypeFieldId: fieldDef.noteTypeFieldId
+                        }));
+                        // Collect all unique data list keys
+                        const dataListKeys = new Set();
+                        for (const field of allFields) {
+                            if (field.dataListKey !== null && field.dataListKey !== undefined) {
+                                dataListKeys.add(field.dataListKey);
+                            }
+                        }
+                        // Load data list items if needed
+                        if (dataListKeys.size > 0) {
+                            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                                .then((response) => response.json())
+                                .then((data) => ({ key, items: data })));
+                            Promise.all(dataListPromises)
+                                .then((dataLists) => {
+                                const dataListMap = new Map();
+                                for (const dl of dataLists) {
+                                    dataListMap.set(dl.key, dl.items);
+                                }
+                                renderEditFieldsWithDataLists(allFields, dataListMap, fieldsContainer);
+                            })
+                                .catch(() => {
+                                // If data list loading fails, render without data lists
+                                renderEditFieldsWithDataLists(allFields, new Map(), fieldsContainer);
+                            });
+                        }
+                        else {
+                            renderEditFieldsWithDataLists(allFields, new Map(), fieldsContainer);
+                        }
                     }
-                    // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
-                    fieldsContainer.innerHTML = fieldsHTML;
+                    else {
+                        fieldsContainer.innerHTML = '';
+                    }
                 }
-                else {
-                    fieldsContainer.innerHTML = '';
+                else if (note.fields !== undefined && note.fields.length > 0) {
+                    // Fallback: If no note type found but fields exist, use saved fields only
+                    // This handles cases where note type might have been deleted
+                    const dataListKeys = new Set();
+                    for (const field of note.fields) {
+                        if (field.dataListKey !== null && field.dataListKey !== undefined) {
+                            dataListKeys.add(field.dataListKey);
+                        }
+                    }
+                    if (dataListKeys.size > 0) {
+                        const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                            .then((response) => response.json())
+                            .then((data) => ({ key, items: data })));
+                        Promise.all(dataListPromises)
+                            .then((dataLists) => {
+                            const dataListMap = new Map();
+                            for (const dl of dataLists) {
+                                dataListMap.set(dl.key, dl.items);
+                            }
+                            renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer);
+                        })
+                            .catch(() => {
+                            renderEditFieldsWithDataLists(note.fields ?? [], new Map(), fieldsContainer);
+                        });
+                    }
+                    else {
+                        renderEditFieldsWithDataLists(note.fields, new Map(), fieldsContainer);
+                    }
                 }
-            },
-            onshown(modalElement, _closeModalFunction) {
-                bulmaJS.toggleHtmlClipped();
-                closeModalFunction = _closeModalFunction;
-                modalElement
-                    .querySelector('form')
-                    ?.addEventListener('submit', doUpdateNote);
-            },
-            onremoved() {
-                exports.shiftLog.clearUnsavedChanges('modal');
-                bulmaJS.toggleHtmlClipped();
+            }, else: {
+                fieldsContainer, : .innerHTML = ''
             }
+        }, onshown(modalElement, _closeModalFunction), {
+            bulmaJS, : .toggleHtmlClipped(),
+            closeModalFunction = _closeModalFunction,
+            modalElement,
+            : 
+                .querySelector('form')
+                ?.addEventListener('submit', doUpdateNote)
+        }, onremoved(), {
+            exports, : .shiftLog.clearUnsavedChanges('modal'),
+            bulmaJS, : .toggleHtmlClipped()
         });
     }
-    function showAddNoteModal(event) {
-        event?.preventDefault();
-        let closeModalFunction;
-        function renderNoteTypeFields(selectedNoteTypeId) {
-            const fieldsContainer = document.querySelector('#addWorkOrderNote--fieldsContainer');
-            if (selectedNoteTypeId === '') {
-                fieldsContainer.innerHTML = '';
-                return;
-            }
-            const selectedNoteType = noteTypes.find((nt) => nt.noteTypeId.toString() === selectedNoteTypeId);
-            if (selectedNoteType === undefined || selectedNoteType.fields.length === 0) {
-                fieldsContainer.innerHTML = '';
-                return;
-            }
-            // Collect all unique data list keys
-            const dataListKeys = new Set();
-            for (const field of selectedNoteType.fields) {
-                if (field.dataListKey !== null && field.dataListKey !== undefined) {
-                    dataListKeys.add(field.dataListKey);
-                }
-            }
-            // Load data list items if needed
-            if (dataListKeys.size > 0) {
-                const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
-                    .then((response) => response.json())
-                    .then((data) => ({ key, items: data })));
-                Promise.all(dataListPromises)
-                    .then((dataLists) => {
-                    const dataListMap = new Map();
-                    for (const dl of dataLists) {
-                        dataListMap.set(dl.key, dl.items);
-                    }
-                    renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer);
-                })
-                    .catch(() => {
-                    // If data list loading fails, render without data lists
-                    renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer);
-                });
-            }
-            else {
-                renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer);
+});
+function showAddNoteModal(event) {
+    event?.preventDefault();
+    let closeModalFunction;
+    function renderNoteTypeFields(selectedNoteTypeId) {
+        const fieldsContainer = document.querySelector('#addWorkOrderNote--fieldsContainer');
+        if (selectedNoteTypeId === '') {
+            fieldsContainer.innerHTML = '';
+            return;
+        }
+        const selectedNoteType = noteTypes.find((nt) => nt.noteTypeId.toString() === selectedNoteTypeId);
+        if (selectedNoteType === undefined || selectedNoteType.fields.length === 0) {
+            fieldsContainer.innerHTML = '';
+            return;
+        }
+        // Collect all unique data list keys
+        const dataListKeys = new Set();
+        for (const field of selectedNoteType.fields) {
+            if (field.dataListKey !== null && field.dataListKey !== undefined) {
+                dataListKeys.add(field.dataListKey);
             }
         }
-        function renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer) {
-            let fieldsHTML = '';
-            for (const field of selectedNoteType.fields) {
-                if (field.hasDividerAbove) {
-                    fieldsHTML += `<hr class="mt-4 mb-4" />`;
+        // Load data list items if needed
+        if (dataListKeys.size > 0) {
+            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                .then((response) => response.json())
+                .then((data) => ({ key, items: data })));
+            Promise.all(dataListPromises)
+                .then((dataLists) => {
+                const dataListMap = new Map();
+                for (const dl of dataLists) {
+                    dataListMap.set(dl.key, dl.items);
                 }
-                const fieldName = `fields[${field.noteTypeFieldId}]`;
-                const requiredAttribute = field.fieldValueRequired ? 'required' : '';
-                const helpText = field.fieldHelpText === ''
-                    ? ''
-                    : `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`;
-                fieldsHTML += `<div class="field">`;
-                fieldsHTML += `<label class="label" for="addWorkOrderNote--field-${field.noteTypeFieldId}">
+                renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer);
+            })
+                .catch(() => {
+                // If data list loading fails, render without data lists
+                renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer);
+            });
+        }
+        else {
+            renderFieldsWithDataLists(selectedNoteType, new Map(), fieldsContainer);
+        }
+    }
+    function renderFieldsWithDataLists(selectedNoteType, dataListMap, fieldsContainer) {
+        let fieldsHTML = '';
+        for (const field of selectedNoteType.fields) {
+            if (field.hasDividerAbove) {
+                fieldsHTML += `<hr class="mt-4 mb-4" />`;
+            }
+            const fieldName = `fields[${field.noteTypeFieldId}]`;
+            const requiredAttribute = field.fieldValueRequired ? 'required' : '';
+            const helpText = field.fieldHelpText === ''
+                ? ''
+                : `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`;
+            fieldsHTML += `<div class="field">`;
+            fieldsHTML += `<label class="label" for="addWorkOrderNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
             ${field.fieldValueRequired ? '<span class="has-text-danger">*</span>' : ''}
           </label>`;
-                switch (field.fieldInputType) {
-                    case 'date': {
-                        fieldsHTML += `
+            switch (field.fieldInputType) {
+                case 'date': {
+                    fieldsHTML += `
               <div class="control">
                 <input class="input" type="date" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
@@ -387,12 +526,12 @@
                   ${requiredAttribute} />
               </div>
             `;
-                        break;
-                    }
-                    case 'number': {
-                        const minAttribute = field.fieldValueMin === null ? '' : `min="${field.fieldValueMin}"`;
-                        const maxAttribute = field.fieldValueMax === null ? '' : `max="${field.fieldValueMax}"`;
-                        fieldsHTML += `
+                    break;
+                }
+                case 'number': {
+                    const minAttribute = field.fieldValueMin === null ? '' : `min="${field.fieldValueMin}"`;
+                    const maxAttribute = field.fieldValueMax === null ? '' : `max="${field.fieldValueMax}"`;
+                    fieldsHTML += `
               <div class="control">
                 <input class="input" type="number" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
@@ -400,14 +539,14 @@
                   ${minAttribute} ${maxAttribute} ${requiredAttribute} />
               </div>
             `;
-                        break;
-                    }
-                    case 'select': {
-                        // Populate select with data list items
-                        const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-                            ? dataListMap.get(field.dataListKey) ?? []
-                            : [];
-                        fieldsHTML += `
+                    break;
+                }
+                case 'select': {
+                    // Populate select with data list items
+                    const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+                        ? dataListMap.get(field.dataListKey) ?? []
+                        : [];
+                    fieldsHTML += `
               <div class="control">
                 <div class="select is-fullwidth">
                   <select id="addWorkOrderNote--field-${field.noteTypeFieldId}"
@@ -419,17 +558,17 @@
                 </div>
               </div>
             `;
-                        break;
-                    }
-                    case 'text': {
-                        // If field has a data list, add datalist element
-                        const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
-                            ? dataListMap.get(field.dataListKey) ?? []
-                            : [];
-                        const dataListAttr = dataListItems.length > 0
-                            ? `list="datalist-${field.noteTypeFieldId}"`
-                            : '';
-                        fieldsHTML += `
+                    break;
+                }
+                case 'text': {
+                    // If field has a data list, add datalist element
+                    const dataListItems = field.dataListKey !== null && field.dataListKey !== undefined
+                        ? dataListMap.get(field.dataListKey) ?? []
+                        : [];
+                    const dataListAttr = dataListItems.length > 0
+                        ? `list="datalist-${field.noteTypeFieldId}"`
+                        : '';
+                    fieldsHTML += `
               <div class="control">
                 <input class="input" type="text" 
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
@@ -438,18 +577,18 @@
                   ${requiredAttribute} />
               </div>
             `;
-                        // Add datalist element if applicable
-                        if (dataListItems.length > 0) {
-                            fieldsHTML += `
+                    // Add datalist element if applicable
+                    if (dataListItems.length > 0) {
+                        fieldsHTML += `
                 <datalist id="datalist-${field.noteTypeFieldId}">
                   ${dataListItems.map((item) => `<option value="${cityssm.escapeHTML(item.dataListItem)}"></option>`).join('')}
                 </datalist>
               `;
-                        }
-                        break;
                     }
-                    case 'textbox': {
-                        fieldsHTML += `
+                    break;
+                }
+                case 'textbox': {
+                    fieldsHTML += `
               <div class="control">
                 <textarea class="textarea" rows="3"
                   id="addWorkOrderNote--field-${field.noteTypeFieldId}"
@@ -457,127 +596,127 @@
                   ${requiredAttribute}></textarea>
               </div>
             `;
-                        break;
-                    }
+                    break;
                 }
-                fieldsHTML += helpText;
-                fieldsHTML += `</div>`;
             }
-            // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
-            fieldsContainer.innerHTML = fieldsHTML;
+            fieldsHTML += helpText;
+            fieldsHTML += `</div>`;
         }
-        function doAddNote(submitEvent) {
-            submitEvent.preventDefault();
-            const formElement = submitEvent.currentTarget;
-            const formData = new FormData(formElement);
-            // Extract field values and construct proper structure
-            const noteData = {
-                workOrderId: formData.get('workOrderId'),
-                noteText: formData.get('noteText')
-            };
-            const noteTypeId = formData.get('noteTypeId');
-            if (noteTypeId !== null && noteTypeId !== '') {
-                noteData.noteTypeId = noteTypeId;
-            }
-            // Extract fields with pattern fields[noteTypeFieldId]
-            const fields = {};
-            for (const [key, value] of formData.entries()) {
-                const match = /^fields\[(\d+)\]$/.exec(key);
-                if (match !== null && typeof value === 'string') {
-                    fields[match[1]] = value;
-                }
-            }
-            if (Object.keys(fields).length > 0) {
-                noteData.fields = fields;
-            }
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`, noteData, (responseJSON) => {
-                if (responseJSON.success) {
-                    closeModalFunction();
-                    formElement.reset();
-                    loadNotes();
-                }
-                else {
-                    bulmaJS.alert({
-                        contextualColorName: 'danger',
-                        message: 'Failed to add note.'
-                    });
-                }
-            });
+        // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
+        fieldsContainer.innerHTML = fieldsHTML;
+    }
+    function doAddNote(submitEvent) {
+        submitEvent.preventDefault();
+        const formElement = submitEvent.currentTarget;
+        const formData = new FormData(formElement);
+        // Extract field values and construct proper structure
+        const noteData = {
+            workOrderId: formData.get('workOrderId'),
+            noteText: formData.get('noteText')
+        };
+        const noteTypeId = formData.get('noteTypeId');
+        if (noteTypeId !== null && noteTypeId !== '') {
+            noteData.noteTypeId = noteTypeId;
         }
-        cityssm.openHtmlModal('workOrders-addNote', {
-            onshow(modalElement) {
-                exports.shiftLog.populateSectionAliases(modalElement);
-                exports.shiftLog.setUnsavedChanges('modal');
-                modalElement.querySelector('#addWorkOrderNote--workOrderId').value = workOrderId;
-                // Populate note types dropdown
-                const noteTypeSelect = modalElement.querySelector('#addWorkOrderNote--noteTypeId');
-                for (const noteType of noteTypes) {
-                    const option = document.createElement('option');
-                    option.value = noteType.noteTypeId.toString();
-                    option.textContent = noteType.noteType;
-                    noteTypeSelect.append(option);
-                }
-                // Add event listener for note type change
-                noteTypeSelect.addEventListener('change', () => {
-                    renderNoteTypeFields(noteTypeSelect.value);
+        // Extract fields with pattern fields[noteTypeFieldId]
+        const fields = {};
+        for (const [key, value] of formData.entries()) {
+            const match = /^fields\[(\d+)\]$/.exec(key);
+            if (match !== null && typeof value === 'string') {
+                fields[match[1]] = value;
+            }
+        }
+        if (Object.keys(fields).length > 0) {
+            noteData.fields = fields;
+        }
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`, noteData, (responseJSON) => {
+            if (responseJSON.success) {
+                closeModalFunction();
+                formElement.reset();
+                loadNotes();
+            }
+            else {
+                bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: 'Failed to add note.'
                 });
-            },
-            onshown(modalElement, _closeModalFunction) {
-                bulmaJS.toggleHtmlClipped();
-                closeModalFunction = _closeModalFunction;
-                modalElement
-                    .querySelector('form')
-                    ?.addEventListener('submit', doAddNote);
-                modalElement.querySelector('#addWorkOrderNote--noteText').focus();
-            },
-            onremoved() {
-                exports.shiftLog.clearUnsavedChanges('modal');
-                bulmaJS.toggleHtmlClipped();
             }
         });
     }
-    function deleteNote(noteSequence) {
-        bulmaJS.confirm({
-            contextualColorName: 'danger',
-            title: 'Delete Note',
-            message: 'Are you sure you want to delete this note?',
-            okButton: {
-                text: 'Delete',
-                callbackFunction: () => {
-                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`, {
-                        workOrderId,
-                        noteSequence
-                    }, (responseJSON) => {
-                        if (responseJSON.success) {
-                            loadNotes();
-                        }
-                        else {
-                            bulmaJS.alert({
-                                contextualColorName: 'danger',
-                                message: 'Failed to delete note.'
-                            });
-                        }
-                    });
-                }
+    cityssm.openHtmlModal('workOrders-addNote', {
+        onshow(modalElement) {
+            exports.shiftLog.populateSectionAliases(modalElement);
+            exports.shiftLog.setUnsavedChanges('modal');
+            modalElement.querySelector('#addWorkOrderNote--workOrderId').value = workOrderId;
+            // Populate note types dropdown
+            const noteTypeSelect = modalElement.querySelector('#addWorkOrderNote--noteTypeId');
+            for (const noteType of noteTypes) {
+                const option = document.createElement('option');
+                option.value = noteType.noteTypeId.toString();
+                option.textContent = noteType.noteType;
+                noteTypeSelect.append(option);
             }
-        });
-    }
-    function loadNotes() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`, {}, (responseJSON) => {
-            renderNotes(responseJSON.notes);
-        });
-    }
-    function loadNoteTypes() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doGetNoteTypes`, {}, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            noteTypes = responseJSON.noteTypes;
-        });
-    }
-    // Add note button
-    document
-        .querySelector('#button--addNote')
-        ?.addEventListener('click', showAddNoteModal);
-    // Load note types and notes initially
-    loadNoteTypes();
-    loadNotes();
-})();
+            // Add event listener for note type change
+            noteTypeSelect.addEventListener('change', () => {
+                renderNoteTypeFields(noteTypeSelect.value);
+            });
+        },
+        onshown(modalElement, _closeModalFunction) {
+            bulmaJS.toggleHtmlClipped();
+            closeModalFunction = _closeModalFunction;
+            modalElement
+                .querySelector('form')
+                ?.addEventListener('submit', doAddNote);
+            modalElement.querySelector('#addWorkOrderNote--noteText').focus();
+        },
+        onremoved() {
+            exports.shiftLog.clearUnsavedChanges('modal');
+            bulmaJS.toggleHtmlClipped();
+        }
+    });
+}
+function deleteNote(noteSequence) {
+    bulmaJS.confirm({
+        contextualColorName: 'danger',
+        title: 'Delete Note',
+        message: 'Are you sure you want to delete this note?',
+        okButton: {
+            text: 'Delete',
+            callbackFunction: () => {
+                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`, {
+                    workOrderId,
+                    noteSequence
+                }, (responseJSON) => {
+                    if (responseJSON.success) {
+                        loadNotes();
+                    }
+                    else {
+                        bulmaJS.alert({
+                            contextualColorName: 'danger',
+                            message: 'Failed to delete note.'
+                        });
+                    }
+                });
+            }
+        }
+    });
+}
+function loadNotes() {
+    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`, {}, (responseJSON) => {
+        renderNotes(responseJSON.notes);
+    });
+}
+function loadNoteTypes() {
+    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doGetNoteTypes`, {}, (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON;
+        noteTypes = responseJSON.noteTypes;
+    });
+}
+// Add note button
+document
+    .querySelector('#button--addNote')
+    ?.addEventListener('click', showAddNoteModal);
+// Load note types and notes initially
+loadNoteTypes();
+loadNotes();
+();
