@@ -379,6 +379,29 @@
                             hasDividerAbove: fieldDef.hasDividerAbove,
                             noteTypeFieldId: fieldDef.noteTypeFieldId
                         }));
+                        // Add any orphaned fields (fields in note data but not in note type definition)
+                        // This handles fields that have been deleted from the note type but still have values
+                        if (note.fields !== undefined) {
+                            const noteTypeFieldIds = new Set(noteType.fields.map(f => f.noteTypeFieldId));
+                            for (const savedField of note.fields) {
+                                if (!noteTypeFieldIds.has(savedField.noteTypeFieldId)) {
+                                    // This field has been deleted from the note type, but has a value
+                                    // Add it with a special indicator
+                                    allFields.push({
+                                        dataListKey: savedField.dataListKey,
+                                        fieldHelpText: savedField.fieldHelpText ?? 'This field has been deleted from the note type.',
+                                        fieldInputType: savedField.fieldInputType,
+                                        fieldLabel: savedField.fieldLabel,
+                                        fieldValue: savedField.fieldValue,
+                                        fieldValueMax: savedField.fieldValueMax,
+                                        fieldValueMin: savedField.fieldValueMin,
+                                        fieldValueRequired: false, // Don't require deleted fields
+                                        hasDividerAbove: savedField.hasDividerAbove,
+                                        noteTypeFieldId: savedField.noteTypeFieldId
+                                    });
+                                }
+                            }
+                        }
                         // Collect all unique data list keys
                         const dataListKeys = new Set();
                         for (const field of allFields) {
@@ -406,6 +429,36 @@
                         }
                         else {
                             renderEditFieldsWithDataLists(allFields, new Map(), fieldsContainer);
+                        }
+                    }
+                    else if (note.fields !== undefined && note.fields.length > 0) {
+                        // Note type found but has no fields, yet note has field data
+                        // This can happen if all fields were deleted from the note type
+                        // Show the orphaned fields from the note
+                        const dataListKeys = new Set();
+                        for (const field of note.fields) {
+                            if (field.dataListKey !== null && field.dataListKey !== undefined) {
+                                dataListKeys.add(field.dataListKey);
+                            }
+                        }
+                        if (dataListKeys.size > 0) {
+                            const dataListPromises = Array.from(dataListKeys).map((key) => fetch(`${exports.shiftLog.urlPrefix}/api/${exports.shiftLog.apiKey}/dataListItems/${key}`)
+                                .then((response) => response.json())
+                                .then((data) => ({ key, items: data })));
+                            Promise.all(dataListPromises)
+                                .then((dataLists) => {
+                                const dataListMap = new Map();
+                                for (const dl of dataLists) {
+                                    dataListMap.set(dl.key, dl.items);
+                                }
+                                renderEditFieldsWithDataLists(note.fields ?? [], dataListMap, fieldsContainer);
+                            })
+                                .catch(() => {
+                                renderEditFieldsWithDataLists(note.fields ?? [], new Map(), fieldsContainer);
+                            });
+                        }
+                        else {
+                            renderEditFieldsWithDataLists(note.fields, new Map(), fieldsContainer);
                         }
                     }
                     else {

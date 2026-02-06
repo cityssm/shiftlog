@@ -48,23 +48,24 @@ export default async function getWorkOrderNotes(workOrderId) {
       SELECT
         wnf.noteSequence,
         wnf.noteTypeFieldId,
-        ntf.fieldLabel,
-        ntf.fieldInputType,
+        COALESCE(ntf.fieldLabel, 'Deleted Field') as fieldLabel,
+        COALESCE(ntf.fieldInputType, 'text') as fieldInputType,
         ntf.fieldHelpText,
         ntf.dataListKey,
         ntf.fieldValueMin,
         ntf.fieldValueMax,
-        ntf.fieldValueRequired,
-        ntf.hasDividerAbove,
+        COALESCE(ntf.fieldValueRequired, 0) as fieldValueRequired,
+        COALESCE(ntf.hasDividerAbove, 0) as hasDividerAbove,
         wnf.fieldValue
       FROM
         ShiftLog.WorkOrderNoteFields wnf
-      INNER JOIN
+      LEFT JOIN
         ShiftLog.NoteTypeFields ntf ON wnf.noteTypeFieldId = ntf.noteTypeFieldId
+          AND ntf.recordDelete_dateTime IS NULL
       WHERE
         wnf.workOrderId = @workOrderId
       ORDER BY
-        ntf.orderNumber
+        COALESCE(ntf.orderNumber, 999999), wnf.noteTypeFieldId
     `);
     // Group fields by note sequence
     const fieldsMap = new Map();
