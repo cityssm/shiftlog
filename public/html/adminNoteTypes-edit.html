@@ -1,0 +1,102 @@
+<div
+  class="modal"
+  id="modal--editNoteType"
+  role="dialog"
+  aria-label="Edit Note Type"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Edit Note Type</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--editNoteType">
+        <input type="hidden" name="noteTypeId" id="noteTypeEdit--noteTypeId" />
+        <div class="field">
+          <label class="label" for="noteTypeEdit--noteType">
+            Note Type Name
+            <span class="has-text-danger" title="Required">*</span>
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="noteTypeEdit--noteType"
+              name="noteType"
+              type="text"
+              maxlength="100"
+              autofocus
+              required
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="noteTypeEdit--userGroupId">User Group</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="noteTypeEdit--userGroupId" name="userGroupId">
+                <option value="">(Any User Group)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">Restrict this note type to a specific user group.</p>
+        </div>
+
+        <div class="field">
+          <label class="label">Availability</label>
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="isAvailableWorkOrders" value="1" id="noteTypeEdit--isAvailableWorkOrders" />
+              Available for Work Orders
+            </label>
+          </div>
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="isAvailableShifts" value="1" id="noteTypeEdit--isAvailableShifts" />
+              Available for Shifts
+            </label>
+          </div>
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="isAvailableTimesheets" value="1" id="noteTypeEdit--isAvailableTimesheets" />
+              Available for Timesheets
+            </label>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-success"
+          type="submit"
+          form="form--editNoteType"
+        >
+          <span class="icon"><i class="fa-solid fa-save"></i></span>
+          <span>Save Changes</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    const selectElement = document.querySelector('#noteTypeEdit--userGroupId');
+    if (selectElement && window.exports && window.exports.userGroups) {
+      for (const userGroup of window.exports.userGroups) {
+        const optionElement = document.createElement('option');
+        optionElement.value = userGroup.userGroupId;
+        optionElement.textContent = userGroup.userGroupName;
+        selectElement.appendChild(optionElement);
+      }
+    }
+  })();
+</script>

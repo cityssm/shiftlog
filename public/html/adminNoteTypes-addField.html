@@ -1,0 +1,191 @@
+<div
+  class="modal"
+  id="modal--addNoteTypeField"
+  role="dialog"
+  aria-label="Add Field"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Field</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addNoteTypeField">
+        <input type="hidden" name="noteTypeId" id="fieldAdd--noteTypeId" />
+        <div class="field">
+          <label class="label" for="fieldAdd--fieldLabel">
+            Field Label
+            <span class="has-text-danger" title="Required">*</span>
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="fieldAdd--fieldLabel"
+              name="fieldLabel"
+              type="text"
+              maxlength="100"
+              autofocus
+              required
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="fieldAdd--fieldInputType">
+            Field Type
+            <span class="has-text-danger" title="Required">*</span>
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="fieldAdd--fieldInputType" name="fieldInputType" required>
+                <option value="text">Text (Single Line)</option>
+                <option value="textbox">Textbox (Multiple Lines)</option>
+                <option value="number">Number</option>
+                <option value="date">Date</option>
+                <option value="select">Select (Dropdown)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" id="field--dataListKey">
+          <label class="label" for="fieldAdd--dataListKey">Data List</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="fieldAdd--dataListKey" name="dataListKey">
+                <option value="">(None)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">For text fields with autocomplete or select dropdowns.</p>
+        </div>
+
+        <div id="fields--minMax">
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label" for="fieldAdd--fieldValueMin">Minimum Value</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="fieldAdd--fieldValueMin"
+                    name="fieldValueMin"
+                    type="number"
+                  />
+                </div>
+                <p class="help">For text: min length. For number: min value.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="fieldAdd--fieldValueMax">Maximum Value</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="fieldAdd--fieldValueMax"
+                    name="fieldValueMax"
+                    type="number"
+                  />
+                </div>
+                <p class="help">For text: max length. For number: max value.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="fieldAdd--fieldHelpText">Help Text</label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="fieldAdd--fieldHelpText"
+              name="fieldHelpText"
+              maxlength="500"
+            ></textarea>
+          </div>
+          <p class="help">Optional text to help users understand this field.</p>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="fieldValueRequired" value="1" />
+              Required Field
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="hasDividerAbove" value="1" />
+              Show Divider Above Field
+            </label>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-success"
+          type="submit"
+          form="form--addNoteTypeField"
+        >
+          <span class="icon"><i class="fa-solid fa-save"></i></span>
+          <span>Add Field</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    // Populate data lists
+    const dataListSelect = document.querySelector('#fieldAdd--dataListKey');
+    if (dataListSelect && window.exports && window.exports.dataLists) {
+      for (const dataList of window.exports.dataLists) {
+        const optionElement = document.createElement('option');
+        optionElement.value = dataList.dataListKey;
+        optionElement.textContent = dataList.dataListName;
+        dataListSelect.appendChild(optionElement);
+      }
+    }
+
+    // Handle field type changes to show/hide appropriate fields
+    const fieldTypeSelect = document.querySelector('#fieldAdd--fieldInputType');
+    const dataListField = document.querySelector('#field--dataListKey');
+    const minMaxFields = document.querySelector('#fields--minMax');
+
+    function updateFieldVisibility() {
+      const fieldType = fieldTypeSelect.value;
+      
+      // Show/hide dataListKey for text and select
+      if (fieldType === 'text' || fieldType === 'select') {
+        dataListField.classList.remove('is-hidden');
+      } else {
+        dataListField.classList.add('is-hidden');
+      }
+
+      // Show/hide min/max for text and number
+      if (fieldType === 'text' || fieldType === 'number') {
+        minMaxFields.classList.remove('is-hidden');
+      } else {
+        minMaxFields.classList.add('is-hidden');
+      }
+    }
+
+    if (fieldTypeSelect) {
+      fieldTypeSelect.addEventListener('change', updateFieldVisibility);
+      updateFieldVisibility();
+    }
+  })();
+</script>
