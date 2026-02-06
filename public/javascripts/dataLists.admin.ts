@@ -200,6 +200,9 @@ declare const exports: {
 
     // Re-render all panels from scratch
     for (const dataList of dataLists) {
+      // Ensure items array exists
+      const items = dataList.items ?? []
+      
       const panelHtml = /* html */ `
         <details class="panel mb-5 collapsable-panel" data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}" data-is-system-list="${dataList.isSystemList}">
           <summary class="panel-heading is-clickable">
@@ -210,8 +213,8 @@ declare const exports: {
               <span class="has-text-weight-semibold mr-2">
                 ${cityssm.escapeHTML(dataList.dataListName)}
               </span>
-              <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
-                ${dataList.items.length}
+              <span class="tag is-rounded ${items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
+                ${items.length}
               </span>
               ${!dataList.isSystemList ? '<span class="tag is-info is-light ml-2">Custom</span>' : ''}
             </span>
@@ -289,8 +292,8 @@ declare const exports: {
       if (panelElement !== null) {
         panelsContainer.append(panelElement)
         
-        // Render items for this list
-        renderDataListItems(dataList.dataListKey, dataList.items)
+        // Render items for this list (use items variable which has the default)
+        renderDataListItems(dataList.dataListKey, items)
         
         // Initialize sortable for this list
         initializeSortable(dataList.dataListKey)
