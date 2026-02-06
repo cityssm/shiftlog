@@ -565,4 +565,3 @@
     // Add Note Type button
     document.querySelector('#button--addNoteType')?.addEventListener('click', openAddNoteTypeModal);
 })();
-export {};
