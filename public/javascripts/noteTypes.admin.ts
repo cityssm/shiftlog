@@ -1,18 +1,17 @@
-// @ts-nocheck
 /* eslint-disable max-lines -- Complex admin interface with multiple modals */
 /* eslint-disable no-unsanitized/property -- Using cityssm.escapeHTML() for sanitization */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { DoAddNoteTypeFieldResponse } from '../../handlers/admin-post/doAddNoteTypeField.js'
-import type { DoDeleteNoteTypeFieldResponse } from '../../handlers/admin-post/doDeleteNoteTypeField.js'
-import type { DoUpdateNoteTypeFieldResponse } from '../../handlers/admin-post/doUpdateNoteTypeField.js'
-import type { DoAddNoteTypeResponse } from '../../handlers/admin-post/doAddNoteType.js'
-import type { DoDeleteNoteTypeResponse } from '../../handlers/admin-post/doDeleteNoteType.js'
-import type { DoUpdateNoteTypeResponse } from '../../handlers/admin-post/doUpdateNoteType.js'
-import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
 import type { DataList } from '../../database/app/getDataLists.js'
+import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
+import type { DoAddNoteTypeResponse } from '../../handlers/admin-post/doAddNoteType.js'
+import type { DoAddNoteTypeFieldResponse } from '../../handlers/admin-post/doAddNoteTypeField.js'
+import type { DoDeleteNoteTypeResponse } from '../../handlers/admin-post/doDeleteNoteType.js'
+import type { DoDeleteNoteTypeFieldResponse } from '../../handlers/admin-post/doDeleteNoteTypeField.js'
+import type { DoUpdateNoteTypeResponse } from '../../handlers/admin-post/doUpdateNoteType.js'
+import type { DoUpdateNoteTypeFieldResponse } from '../../handlers/admin-post/doUpdateNoteTypeField.js'
 import type { UserGroup } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -50,42 +49,46 @@ declare const exports: {
   let noteTypes = exports.noteTypes
   const userGroups = exports.userGroups
   const dataLists = exports.dataLists
-  
+
   // Track which panels are open
   const openPanels = new Set<number>()
-  
+
   // Track Sortable instances
   const sortableInstances = new Map<number, SortableInstance>()
 
   function renderNoteTypes(): void {
     // Store currently open panels before re-rendering
-    const openDetails = noteTypesContainerElement.querySelectorAll('details[open]')
-    openDetails.forEach((detail) => {
+    const openDetails =
+      noteTypesContainerElement.querySelectorAll('details[open]')
+
+    for (const detail of openDetails) {
       const noteTypeId = (detail as HTMLElement).dataset.noteTypeId
       if (noteTypeId) {
         openPanels.add(Number.parseInt(noteTypeId, 10))
       }
-    })
+    }
 
     noteTypesContainerElement.innerHTML = ''
 
     if (noteTypes.length === 0) {
       const emptyMessage = document.createElement('div')
-      emptyMessage.className = 'panel-block'
-      emptyMessage.innerHTML = `
+      emptyMessage.className = 'panel-block is-block'
+      emptyMessage.innerHTML = /* html */ `
         <div class="message is-info">
           <p class="message-body">
             <strong>No note types available.</strong><br />
             Click "Add Note Type" to create your first note type.
           </p>
-        </div>`
+        </div>
+      `
+
       noteTypesContainerElement.append(emptyMessage)
     } else {
       for (const noteType of noteTypes) {
         const noteTypePanel = document.createElement('details')
         noteTypePanel.className = 'panel mb-5 collapsable-panel'
         noteTypePanel.dataset.noteTypeId = noteType.noteTypeId.toString()
-        
+
         // Restore open state
         if (openPanels.has(noteType.noteTypeId)) {
           noteTypePanel.setAttribute('open', '')
@@ -96,13 +99,19 @@ declare const exports: {
 
         const availabilityBadges: string[] = []
         if (noteType.isAvailableWorkOrders) {
-          availabilityBadges.push('<span class="tag is-info is-light">Work Orders</span>')
+          availabilityBadges.push(
+            '<span class="tag is-info is-light">Work Orders</span>'
+          )
         }
         if (noteType.isAvailableShifts) {
-          availabilityBadges.push('<span class="tag is-info is-light">Shifts</span>')
+          availabilityBadges.push(
+            '<span class="tag is-info is-light">Shifts</span>'
+          )
         }
         if (noteType.isAvailableTimesheets) {
-          availabilityBadges.push('<span class="tag is-info is-light">Timesheets</span>')
+          availabilityBadges.push(
+            '<span class="tag is-info is-light">Timesheets</span>'
+          )
         }
 
         summaryElement.innerHTML = `
@@ -124,7 +133,7 @@ declare const exports: {
         // Action buttons panel
         const actionBlock = document.createElement('div')
         actionBlock.className = 'panel-block is-justify-content-space-between'
-        actionBlock.innerHTML = `
+        actionBlock.innerHTML = /* html */ `
           <div>
             <button class="button is-small is-info button--editNoteType" data-note-type-id="${noteType.noteTypeId}" type="button">
               <span class="icon"><i class="fa-solid fa-pencil"></i></span>
@@ -140,7 +149,8 @@ declare const exports: {
               <span class="icon"><i class="fa-solid fa-trash"></i></span>
               <span>Delete</span>
             </button>
-          </div>`
+          </div>
+        `
 
         noteTypePanel.append(actionBlock)
 
@@ -149,7 +159,7 @@ declare const exports: {
         tableBlock.className = 'panel-block p-0'
 
         if (noteType.fields.length === 0) {
-          tableBlock.innerHTML = `
+          tableBlock.innerHTML = /* html */ `
             <div class="table-container" style="width: 100%;">
               <table class="table is-striped is-hoverable is-fullwidth mb-0">
                 <tbody>
@@ -160,9 +170,10 @@ declare const exports: {
                   </tr>
                 </tbody>
               </table>
-            </div>`
+            </div>
+          `
         } else {
-          let tableHTML = `
+          let tableHTML = /* html */ `
             <div class="table-container" style="width: 100%;">
               <table class="table is-striped is-hoverable is-fullwidth mb-0">
                 <thead>
@@ -176,10 +187,11 @@ declare const exports: {
                     </th>
                   </tr>
                 </thead>
-                <tbody class="is-sortable" id="noteTypeFields--${noteType.noteTypeId}">`
+                <tbody class="is-sortable" id="noteTypeFields--${noteType.noteTypeId}">
+          `
 
           for (const field of noteType.fields) {
-            tableHTML += `
+            tableHTML += /* html */ `
               <tr data-note-type-field-id="${field.noteTypeFieldId}">
                 <td class="has-text-centered">
                   <span class="icon is-small has-text-grey handle" style="cursor: move;">
@@ -194,22 +206,27 @@ declare const exports: {
                 <td class="is-size-7">${cityssm.escapeHTML(field.fieldHelpText)}</td>
                 <td class="has-text-centered">
                   <div class="buttons are-small is-centered">
-                    <button class="button is-info button--editField" 
-                      data-note-type-field-id="${field.noteTypeFieldId}" 
-                      data-note-type-id="${noteType.noteTypeId}" 
+                    <button
+                      class="button is-info button--editField"
+                      data-note-type-field-id="${field.noteTypeFieldId}"
+                      data-note-type-id="${noteType.noteTypeId}"
                       type="button"
-                      title="Edit">
+                      title="Edit"
+                    >
                       <span class="icon"><i class="fa-solid fa-pencil"></i></span>
                     </button>
-                    <button class="button is-danger button--deleteField" 
-                      data-note-type-field-id="${field.noteTypeFieldId}" 
+                    <button
+                      class="button is-danger button--deleteField"
+                      data-note-type-field-id="${field.noteTypeFieldId}"
                       type="button"
-                      title="Delete">
+                      title="Delete"
+                    >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
                     </button>
                   </div>
                 </td>
-              </tr>`
+              </tr>
+            `
           }
 
           tableHTML += `
@@ -227,38 +244,46 @@ declare const exports: {
 
     // Attach event listeners
     attachEventListeners()
-    
+
     // Initialize Sortable for each note type with fields
     initializeSortables()
   }
 
   function attachEventListeners(): void {
     // Edit Note Type buttons
-    const editButtons = noteTypesContainerElement.querySelectorAll('.button--editNoteType')
+    const editButtons = noteTypesContainerElement.querySelectorAll(
+      '.button--editNoteType'
+    )
     for (const button of editButtons) {
       button.addEventListener('click', openEditNoteTypeModal)
     }
 
     // Delete Note Type buttons
-    const deleteButtons = noteTypesContainerElement.querySelectorAll('.button--deleteNoteType')
+    const deleteButtons = noteTypesContainerElement.querySelectorAll(
+      '.button--deleteNoteType'
+    )
     for (const button of deleteButtons) {
       button.addEventListener('click', deleteNoteType)
     }
 
     // Add Field buttons
-    const addFieldButtons = noteTypesContainerElement.querySelectorAll('.button--addField')
+    const addFieldButtons =
+      noteTypesContainerElement.querySelectorAll('.button--addField')
     for (const button of addFieldButtons) {
       button.addEventListener('click', openAddFieldModal)
     }
 
     // Edit Field buttons
-    const editFieldButtons = noteTypesContainerElement.querySelectorAll('.button--editField')
+    const editFieldButtons =
+      noteTypesContainerElement.querySelectorAll('.button--editField')
     for (const button of editFieldButtons) {
       button.addEventListener('click', openEditFieldModal)
     }
 
     // Delete Field buttons
-    const deleteFieldButtons = noteTypesContainerElement.querySelectorAll('.button--deleteField')
+    const deleteFieldButtons = noteTypesContainerElement.querySelectorAll(
+      '.button--deleteField'
+    )
     for (const button of deleteFieldButtons) {
       button.addEventListener('click', deleteField)
     }
@@ -281,13 +306,16 @@ declare const exports: {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
             renderNoteTypes()
-            bulmaJS.notification({
-              message: 'Note type added successfully.',
-              type: 'success'
+
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Note type added successfully.'
             })
           } else {
             bulmaJS.alert({
+              contextualColorName: 'danger',
               title: 'Error Adding Note Type',
+
               message: responseJSON.message
             })
           }
@@ -321,6 +349,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -354,13 +383,15 @@ declare const exports: {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
             renderNoteTypes()
-            bulmaJS.notification({
-              message: 'Note type updated successfully.',
-              type: 'success'
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Note type updated successfully.'
             })
           } else {
             bulmaJS.alert({
+              contextualColorName: 'danger',
               title: 'Error Updating Note Type',
+
               message: responseJSON.message
             })
           }
@@ -441,11 +472,13 @@ declare const exports: {
     }
 
     bulmaJS.confirm({
+      contextualColorName: 'danger',
       title: 'Delete Note Type',
       message: `Are you sure you want to delete "${cityssm.escapeHTML(noteType.noteType)}"?`,
-      contextualColorName: 'danger',
+
       okButton: {
         text: 'Yes, Delete Note Type',
+
         callbackFunction: () => {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteNoteType`,
@@ -456,13 +489,15 @@ declare const exports: {
               if (responseJSON.success) {
                 noteTypes = responseJSON.noteTypes
                 renderNoteTypes()
-                bulmaJS.notification({
-                  message: 'Note type deleted successfully.',
-                  type: 'success'
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Note type deleted successfully.'
                 })
               } else {
                 bulmaJS.alert({
+                  contextualColorName: 'danger',
                   title: 'Error Deleting Note Type',
+
                   message: responseJSON.message
                 })
               }
@@ -495,12 +530,14 @@ declare const exports: {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
             renderNoteTypes()
-            bulmaJS.notification({
-              message: 'Field added successfully.',
-              type: 'success'
+
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Field added successfully.'
             })
           } else {
             bulmaJS.alert({
+              contextualColorName: 'danger',
               title: 'Error Adding Field',
               message: responseJSON.message
             })
@@ -513,9 +550,7 @@ declare const exports: {
       onshow(modalElement) {
         formElement = modalElement.querySelector('form') as HTMLFormElement
         ;(
-          formElement.querySelector(
-            '#fieldAdd--noteTypeId'
-          ) as HTMLInputElement
+          formElement.querySelector('#fieldAdd--noteTypeId') as HTMLInputElement
         ).value = noteTypeId.toString()
 
         const dataListSelect = formElement.querySelector(
@@ -542,17 +577,15 @@ declare const exports: {
         function updateFieldVisibility(): void {
           const fieldType = fieldTypeSelect.value
 
-          if (fieldType === 'text' || fieldType === 'select') {
-            dataListField.classList.remove('is-hidden')
-          } else {
-            dataListField.classList.add('is-hidden')
-          }
+          dataListField.classList.toggle(
+            'is-hidden',
+            !(fieldType === 'text' || fieldType === 'select')
+          )
 
-          if (fieldType === 'text' || fieldType === 'number') {
-            minMaxFields.classList.remove('is-hidden')
-          } else {
-            minMaxFields.classList.add('is-hidden')
-          }
+          minMaxFields.classList.toggle(
+            'is-hidden',
+            !(fieldType === 'text' || fieldType === 'number')
+          )
         }
 
         fieldTypeSelect.addEventListener('change', updateFieldVisibility)
@@ -569,6 +602,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -577,7 +611,8 @@ declare const exports: {
 
   function openEditFieldModal(clickEvent: Event): void {
     const fieldId = Number.parseInt(
-      (clickEvent.currentTarget as HTMLButtonElement).dataset.noteTypeFieldId ?? '',
+      (clickEvent.currentTarget as HTMLButtonElement).dataset.noteTypeFieldId ??
+        '',
       10
     )
     const noteTypeId = Number.parseInt(
@@ -611,13 +646,16 @@ declare const exports: {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
             renderNoteTypes()
-            bulmaJS.notification({
-              message: 'Field updated successfully.',
-              type: 'success'
+
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              message: 'Field updated successfully.'
             })
           } else {
             bulmaJS.alert({
+              contextualColorName: 'danger',
               title: 'Error Updating Field',
+
               message: responseJSON.message
             })
           }
@@ -694,17 +732,15 @@ declare const exports: {
         function updateFieldVisibility(): void {
           const fieldType = fieldTypeSelect.value
 
-          if (fieldType === 'text' || fieldType === 'select') {
-            dataListField.classList.remove('is-hidden')
-          } else {
-            dataListField.classList.add('is-hidden')
-          }
+          dataListField.classList.toggle(
+            'is-hidden',
+            !(fieldType === 'text' || fieldType === 'select')
+          )
 
-          if (fieldType === 'text' || fieldType === 'number') {
-            minMaxFields.classList.remove('is-hidden')
-          } else {
-            minMaxFields.classList.add('is-hidden')
-          }
+          minMaxFields.classList.toggle(
+            'is-hidden',
+            !(fieldType === 'text' || fieldType === 'number')
+          )
         }
 
         fieldTypeSelect.addEventListener('change', updateFieldVisibility)
@@ -721,6 +757,7 @@ declare const exports: {
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -729,33 +766,39 @@ declare const exports: {
 
   function deleteField(clickEvent: Event): void {
     const fieldId = Number.parseInt(
-      (clickEvent.currentTarget as HTMLButtonElement).dataset.noteTypeFieldId ?? '',
+      (clickEvent.currentTarget as HTMLButtonElement).dataset.noteTypeFieldId ??
+        '',
       10
     )
 
     bulmaJS.confirm({
-      title: 'Delete Field',
-      message: 'Are you sure you want to delete this field?',
       contextualColorName: 'danger',
+      title: 'Delete Field',
+
+      message: 'Are you sure you want to delete this field?',
       okButton: {
         text: 'Yes, Delete Field',
+
         callbackFunction: () => {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteNoteTypeField`,
             { noteTypeFieldId: fieldId },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteNoteTypeFieldResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteNoteTypeFieldResponse
 
               if (responseJSON.success) {
                 noteTypes = responseJSON.noteTypes
                 renderNoteTypes()
-                bulmaJS.notification({
-                  message: 'Field deleted successfully.',
-                  type: 'success'
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  message: 'Field deleted successfully.'
                 })
               } else {
                 bulmaJS.alert({
+                  contextualColorName: 'danger',
                   title: 'Error Deleting Field',
+
                   message: responseJSON.message
                 })
               }
@@ -803,9 +846,9 @@ declare const exports: {
 
           // For now, just show a notification that reordering is saved
           // In a future update, this could call a backend endpoint to persist the order
-          bulmaJS.notification({
-            message: 'Field order updated.',
-            type: 'info'
+          bulmaJS.alert({
+            contextualColorName: 'info',
+            message: 'Field order updated.'
           })
         }
       })
@@ -819,5 +862,7 @@ declare const exports: {
   renderNoteTypes()
 
   // Add Note Type button
-  document.querySelector('#button--addNoteType')?.addEventListener('click', openAddNoteTypeModal)
+  document
+    .querySelector('#button--addNoteType')
+    ?.addEventListener('click', openAddNoteTypeModal)
 })()

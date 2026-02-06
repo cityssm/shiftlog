@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable max-lines -- Complex admin interface with multiple modals */
 /* eslint-disable no-unsanitized/property -- Using cityssm.escapeHTML() for sanitization */
 (() => {
@@ -14,23 +13,24 @@
     function renderNoteTypes() {
         // Store currently open panels before re-rendering
         const openDetails = noteTypesContainerElement.querySelectorAll('details[open]');
-        openDetails.forEach((detail) => {
+        for (const detail of openDetails) {
             const noteTypeId = detail.dataset.noteTypeId;
             if (noteTypeId) {
                 openPanels.add(Number.parseInt(noteTypeId, 10));
             }
-        });
+        }
         noteTypesContainerElement.innerHTML = '';
         if (noteTypes.length === 0) {
             const emptyMessage = document.createElement('div');
-            emptyMessage.className = 'panel-block';
-            emptyMessage.innerHTML = `
+            emptyMessage.className = 'panel-block is-block';
+            emptyMessage.innerHTML = /* html */ `
         <div class="message is-info">
           <p class="message-body">
             <strong>No note types available.</strong><br />
             Click "Add Note Type" to create your first note type.
           </p>
-        </div>`;
+        </div>
+      `;
             noteTypesContainerElement.append(emptyMessage);
         }
         else {
@@ -71,7 +71,7 @@
                 // Action buttons panel
                 const actionBlock = document.createElement('div');
                 actionBlock.className = 'panel-block is-justify-content-space-between';
-                actionBlock.innerHTML = `
+                actionBlock.innerHTML = /* html */ `
           <div>
             <button class="button is-small is-info button--editNoteType" data-note-type-id="${noteType.noteTypeId}" type="button">
               <span class="icon"><i class="fa-solid fa-pencil"></i></span>
@@ -87,13 +87,14 @@
               <span class="icon"><i class="fa-solid fa-trash"></i></span>
               <span>Delete</span>
             </button>
-          </div>`;
+          </div>
+        `;
                 noteTypePanel.append(actionBlock);
                 // Fields table
                 const tableBlock = document.createElement('div');
                 tableBlock.className = 'panel-block p-0';
                 if (noteType.fields.length === 0) {
-                    tableBlock.innerHTML = `
+                    tableBlock.innerHTML = /* html */ `
             <div class="table-container" style="width: 100%;">
               <table class="table is-striped is-hoverable is-fullwidth mb-0">
                 <tbody>
@@ -104,10 +105,11 @@
                   </tr>
                 </tbody>
               </table>
-            </div>`;
+            </div>
+          `;
                 }
                 else {
-                    let tableHTML = `
+                    let tableHTML = /* html */ `
             <div class="table-container" style="width: 100%;">
               <table class="table is-striped is-hoverable is-fullwidth mb-0">
                 <thead>
@@ -121,9 +123,10 @@
                     </th>
                   </tr>
                 </thead>
-                <tbody class="is-sortable" id="noteTypeFields--${noteType.noteTypeId}">`;
+                <tbody class="is-sortable" id="noteTypeFields--${noteType.noteTypeId}">
+          `;
                     for (const field of noteType.fields) {
-                        tableHTML += `
+                        tableHTML += /* html */ `
               <tr data-note-type-field-id="${field.noteTypeFieldId}">
                 <td class="has-text-centered">
                   <span class="icon is-small has-text-grey handle" style="cursor: move;">
@@ -138,22 +141,27 @@
                 <td class="is-size-7">${cityssm.escapeHTML(field.fieldHelpText)}</td>
                 <td class="has-text-centered">
                   <div class="buttons are-small is-centered">
-                    <button class="button is-info button--editField" 
-                      data-note-type-field-id="${field.noteTypeFieldId}" 
-                      data-note-type-id="${noteType.noteTypeId}" 
+                    <button
+                      class="button is-info button--editField"
+                      data-note-type-field-id="${field.noteTypeFieldId}"
+                      data-note-type-id="${noteType.noteTypeId}"
                       type="button"
-                      title="Edit">
+                      title="Edit"
+                    >
                       <span class="icon"><i class="fa-solid fa-pencil"></i></span>
                     </button>
-                    <button class="button is-danger button--deleteField" 
-                      data-note-type-field-id="${field.noteTypeFieldId}" 
+                    <button
+                      class="button is-danger button--deleteField"
+                      data-note-type-field-id="${field.noteTypeFieldId}"
                       type="button"
-                      title="Delete">
+                      title="Delete"
+                    >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
                     </button>
                   </div>
                 </td>
-              </tr>`;
+              </tr>
+            `;
                     }
                     tableHTML += `
                 </tbody>
@@ -208,13 +216,14 @@
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
                     renderNoteTypes();
-                    bulmaJS.notification({
-                        message: 'Note type added successfully.',
-                        type: 'success'
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Note type added successfully.'
                     });
                 }
                 else {
                     bulmaJS.alert({
+                        contextualColorName: 'danger',
                         title: 'Error Adding Note Type',
                         message: responseJSON.message
                     });
@@ -259,13 +268,14 @@
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
                     renderNoteTypes();
-                    bulmaJS.notification({
-                        message: 'Note type updated successfully.',
-                        type: 'success'
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Note type updated successfully.'
                     });
                 }
                 else {
                     bulmaJS.alert({
+                        contextualColorName: 'danger',
                         title: 'Error Updating Note Type',
                         message: responseJSON.message
                     });
@@ -310,9 +320,9 @@
             return;
         }
         bulmaJS.confirm({
+            contextualColorName: 'danger',
             title: 'Delete Note Type',
             message: `Are you sure you want to delete "${cityssm.escapeHTML(noteType.noteType)}"?`,
-            contextualColorName: 'danger',
             okButton: {
                 text: 'Yes, Delete Note Type',
                 callbackFunction: () => {
@@ -321,13 +331,14 @@
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             renderNoteTypes();
-                            bulmaJS.notification({
-                                message: 'Note type deleted successfully.',
-                                type: 'success'
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Note type deleted successfully.'
                             });
                         }
                         else {
                             bulmaJS.alert({
+                                contextualColorName: 'danger',
                                 title: 'Error Deleting Note Type',
                                 message: responseJSON.message
                             });
@@ -349,13 +360,14 @@
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
                     renderNoteTypes();
-                    bulmaJS.notification({
-                        message: 'Field added successfully.',
-                        type: 'success'
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Field added successfully.'
                     });
                 }
                 else {
                     bulmaJS.alert({
+                        contextualColorName: 'danger',
                         title: 'Error Adding Field',
                         message: responseJSON.message
                     });
@@ -378,18 +390,8 @@
                 const minMaxFields = formElement.querySelector('#fields--minMax');
                 function updateFieldVisibility() {
                     const fieldType = fieldTypeSelect.value;
-                    if (fieldType === 'text' || fieldType === 'select') {
-                        dataListField.classList.remove('is-hidden');
-                    }
-                    else {
-                        dataListField.classList.add('is-hidden');
-                    }
-                    if (fieldType === 'text' || fieldType === 'number') {
-                        minMaxFields.classList.remove('is-hidden');
-                    }
-                    else {
-                        minMaxFields.classList.add('is-hidden');
-                    }
+                    dataListField.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'select'));
+                    minMaxFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
                 }
                 fieldTypeSelect.addEventListener('change', updateFieldVisibility);
                 updateFieldVisibility();
@@ -406,7 +408,8 @@
         });
     }
     function openEditFieldModal(clickEvent) {
-        const fieldId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeFieldId ?? '', 10);
+        const fieldId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeFieldId ??
+            '', 10);
         const noteTypeId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeId ?? '', 10);
         const noteType = noteTypes.find((nt) => nt.noteTypeId === noteTypeId);
         if (noteType === undefined) {
@@ -426,13 +429,14 @@
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
                     renderNoteTypes();
-                    bulmaJS.notification({
-                        message: 'Field updated successfully.',
-                        type: 'success'
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Field updated successfully.'
                     });
                 }
                 else {
                     bulmaJS.alert({
+                        contextualColorName: 'danger',
                         title: 'Error Updating Field',
                         message: responseJSON.message
                     });
@@ -466,18 +470,8 @@
                 const minMaxFields = formElement.querySelector('#fields--minMax');
                 function updateFieldVisibility() {
                     const fieldType = fieldTypeSelect.value;
-                    if (fieldType === 'text' || fieldType === 'select') {
-                        dataListField.classList.remove('is-hidden');
-                    }
-                    else {
-                        dataListField.classList.add('is-hidden');
-                    }
-                    if (fieldType === 'text' || fieldType === 'number') {
-                        minMaxFields.classList.remove('is-hidden');
-                    }
-                    else {
-                        minMaxFields.classList.add('is-hidden');
-                    }
+                    dataListField.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'select'));
+                    minMaxFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
                 }
                 fieldTypeSelect.addEventListener('change', updateFieldVisibility);
                 updateFieldVisibility();
@@ -494,11 +488,12 @@
         });
     }
     function deleteField(clickEvent) {
-        const fieldId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeFieldId ?? '', 10);
+        const fieldId = Number.parseInt(clickEvent.currentTarget.dataset.noteTypeFieldId ??
+            '', 10);
         bulmaJS.confirm({
+            contextualColorName: 'danger',
             title: 'Delete Field',
             message: 'Are you sure you want to delete this field?',
-            contextualColorName: 'danger',
             okButton: {
                 text: 'Yes, Delete Field',
                 callbackFunction: () => {
@@ -507,13 +502,14 @@
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             renderNoteTypes();
-                            bulmaJS.notification({
-                                message: 'Field deleted successfully.',
-                                type: 'success'
+                            bulmaJS.alert({
+                                contextualColorName: 'success',
+                                message: 'Field deleted successfully.'
                             });
                         }
                         else {
                             bulmaJS.alert({
+                                contextualColorName: 'danger',
                                 title: 'Error Deleting Field',
                                 message: responseJSON.message
                             });
@@ -550,9 +546,9 @@
                     }
                     // For now, just show a notification that reordering is saved
                     // In a future update, this could call a backend endpoint to persist the order
-                    bulmaJS.notification({
-                        message: 'Field order updated.',
-                        type: 'info'
+                    bulmaJS.alert({
+                        contextualColorName: 'info',
+                        message: 'Field order updated.'
                     });
                 }
             });
@@ -563,5 +559,7 @@
     // Initialize
     renderNoteTypes();
     // Add Note Type button
-    document.querySelector('#button--addNoteType')?.addEventListener('click', openAddNoteTypeModal);
+    document
+        .querySelector('#button--addNoteType')
+        ?.addEventListener('click', openAddNoteTypeModal);
 })();
