@@ -31,8 +31,8 @@
         <h1 class="title is-1">Note Type Maintenance</h1>
       </div>
       <div class="column is-narrow">
-        <div class="field has-addons">
-          <div class="control">
+        <div class="field">
+          <div class="control has-icons-left">
             <span class="select">
               <select id="filter--availability" aria-label="Filter by Availability">
                 <option value="">All</option>
@@ -40,6 +40,9 @@
                 <option value="shifts"><%= shiftsSectionName %></option>
                 <option value="timesheets"><%= timesheetsSectionName %></option>
               </select>
+            </span>
+            <span class="icon is-small is-left">
+              <i class="fa-solid fa-filter"></i>
             </span>
           </div>
         </div>
