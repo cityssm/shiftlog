@@ -234,8 +234,7 @@
         let closeModalFunction;
         function doAdd(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteType`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteType`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
@@ -287,8 +286,7 @@
         let closeModalFunction;
         function doUpdate(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteType`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteType`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
@@ -352,8 +350,7 @@
             okButton: {
                 text: 'Yes, Delete Note Type',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteType`, { noteTypeId }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteType`, { noteTypeId }, (responseJSON) => {
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             renderNoteTypes();
@@ -380,8 +377,7 @@
         let closeModalFunction;
         function doAdd(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeField`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeField`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
@@ -453,8 +449,7 @@
         let closeModalFunction;
         function doUpdate(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`, formElement, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`, formElement, (responseJSON) => {
                 if (responseJSON.success) {
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
@@ -530,8 +525,7 @@
             okButton: {
                 text: 'Yes, Delete Field',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteTypeField`, { noteTypeFieldId: fieldId }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteTypeField`, { noteTypeFieldId: fieldId }, (responseJSON) => {
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             renderNoteTypes();
@@ -694,10 +688,9 @@
                 `;
                             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeFromTemplate`, {
                                 templateId
-                            }, (rawResponseJSON) => {
-                                const responseJSON = rawResponseJSON;
-                                if (responseJSON.success) {
-                                    noteTypes = responseJSON.noteTypes;
+                            }, (addResponseJSON) => {
+                                if (addResponseJSON.success) {
+                                    noteTypes = addResponseJSON.noteTypes;
                                     closeModalFunction();
                                     renderNoteTypes();
                                     bulmaJS.alert({
@@ -709,7 +702,7 @@
                                     bulmaJS.alert({
                                         contextualColorName: 'danger',
                                         title: 'Error Creating Note Type',
-                                        message: responseJSON.message
+                                        message: addResponseJSON.message
                                     });
                                     // Re-enable button
                                     clickedButton.disabled = false;

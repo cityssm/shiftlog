@@ -39,9 +39,11 @@ declare const Sortable: {
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
   noteTypes: NoteTypeWithFields[]
-  userGroups: UserGroup[]
+
   dataLists: DataList[]
+  userGroups: UserGroup[]
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -329,9 +331,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddNoteType`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddNoteTypeResponse
-
+        (responseJSON: DoAddNoteTypeResponse) => {
           if (responseJSON.success) {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
@@ -408,9 +408,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateNoteType`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateNoteTypeResponse
-
+        (responseJSON: DoUpdateNoteTypeResponse) => {
           if (responseJSON.success) {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
@@ -519,9 +517,7 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteNoteType`,
             { noteTypeId },
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteNoteTypeResponse
-
+            (responseJSON: DoDeleteNoteTypeResponse) => {
               if (responseJSON.success) {
                 noteTypes = responseJSON.noteTypes
                 renderNoteTypes()
@@ -559,9 +555,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddNoteTypeField`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoAddNoteTypeFieldResponse
-
+        (responseJSON: DoAddNoteTypeFieldResponse) => {
           if (responseJSON.success) {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
@@ -675,9 +669,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`,
         formElement,
-        (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateNoteTypeFieldResponse
-
+        (responseJSON: DoUpdateNoteTypeFieldResponse) => {
           if (responseJSON.success) {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
@@ -824,10 +816,7 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteNoteTypeField`,
             { noteTypeFieldId: fieldId },
-            (rawResponseJSON) => {
-              const responseJSON =
-                rawResponseJSON as DoDeleteNoteTypeFieldResponse
-
+            (responseJSON: DoDeleteNoteTypeFieldResponse) => {
               if (responseJSON.success) {
                 noteTypes = responseJSON.noteTypes
                 renderNoteTypes()
@@ -870,7 +859,7 @@ declare const exports: {
       const sortableInstance = Sortable.create(tbodyElement, {
         handle: '.handle',
         animation: 150,
-        
+
         // eslint-disable-next-line @typescript-eslint/no-loop-func
         onEnd() {
           // Get the new order
@@ -908,6 +897,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Saving Field Order',
+
                   message:
                     'An error occurred while saving the field order. Please try again.'
                 })
@@ -1030,12 +1020,9 @@ declare const exports: {
                   {
                     templateId
                   },
-                  (rawResponseJSON) => {
-                    const responseJSON =
-                      rawResponseJSON as DoAddNoteTypeFromTemplateResponse
-
-                    if (responseJSON.success) {
-                      noteTypes = responseJSON.noteTypes
+                  (addResponseJSON: DoAddNoteTypeFromTemplateResponse) => {
+                    if (addResponseJSON.success) {
+                      noteTypes = addResponseJSON.noteTypes
                       closeModalFunction()
                       renderNoteTypes()
 
@@ -1049,7 +1036,7 @@ declare const exports: {
                         contextualColorName: 'danger',
                         title: 'Error Creating Note Type',
 
-                        message: responseJSON.message
+                        message: addResponseJSON.message
                       })
 
                       // Re-enable button

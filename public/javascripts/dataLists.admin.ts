@@ -433,12 +433,14 @@ declare const exports: {
               title: responseJSON.wasRecovered
                 ? 'Data List Recovered'
                 : 'Data List Created',
+
               message
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Creating Data List',
+
               message: responseJSON.errorMessage ?? 'Please try again.'
             })
           }
@@ -463,6 +465,7 @@ declare const exports: {
         ) as HTMLInputElement
         keyInput.focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -509,12 +512,14 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Data List Renamed',
+
               message: 'The data list has been successfully renamed.'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Renaming Data List',
+
               message: responseJSON.errorMessage ?? 'Please try again.'
             })
           }
@@ -552,6 +557,7 @@ declare const exports: {
         nameInput.focus()
         nameInput.select()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -817,6 +823,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Items',
+              
               message: 'Please try again.'
             })
           }

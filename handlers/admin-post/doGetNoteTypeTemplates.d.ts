@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { NoteTypeTemplate } from '../../types/noteTypeTemplates.types.js';
+import type { NoteTypeTemplate } from '../../types/application.types.js';
 export type DoGetNoteTypeTemplatesResponse = {
     templates: NoteTypeTemplate[];
 };
