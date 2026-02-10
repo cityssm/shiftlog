@@ -1,7 +1,7 @@
 import addDataListItem from '../../database/app/addDataListItem.js';
 import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js';
 export default async function handler(request, response) {
-    const { dataListKey, dataListItems, userGroupId } = request.body;
+    const { dataListItems, dataListKey, userGroupId } = request.body;
     const userName = request.session.user?.userName ?? '';
     const itemsToAdd = dataListItems
         .split('\n')
@@ -11,24 +11,24 @@ export default async function handler(request, response) {
     let skippedCount = 0;
     for (const dataListItem of itemsToAdd) {
         const form = {
-            dataListKey,
             dataListItem,
+            dataListKey,
             userGroupId,
             userName
         };
         const success = await addDataListItem(form);
         if (success) {
-            addedCount++;
+            addedCount += 1;
         }
         else {
-            skippedCount++;
+            skippedCount += 1;
         }
     }
     const items = await getDataListItemsAdmin(dataListKey);
     response.json({
-        success: true,
-        items,
         addedCount,
-        skippedCount
+        items,
+        skippedCount,
+        success: true
     });
 }
