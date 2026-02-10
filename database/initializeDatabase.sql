@@ -155,6 +155,8 @@ CREATE TABLE ShiftLog.NoteTypeFields (
   noteTypeId INT NOT NULL,
   fieldLabel VARCHAR(100) NOT NULL,
   fieldInputType VARCHAR(20) NOT NULL,
+  fieldUnitPrefix VARCHAR(20) NOT NULL DEFAULT '',
+  fieldUnitSuffix VARCHAR(20) NOT NULL DEFAULT '',
   fieldHelpText NVARCHAR(500) NOT NULL,
   dataListKey VARCHAR(20),
   fieldValueMin INT,
