@@ -769,4 +769,3 @@
         renderNoteTypes();
     });
 })();
-export {};
