@@ -1,4 +1,4 @@
-import type { NoteTypeTemplate } from '../../types/noteTypeTemplates.types.js'
+import type { NoteTypeTemplate } from '../types/noteTypeTemplates.types.js'
 
 /**
  * Available note type templates for creating predefined note types
