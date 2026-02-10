@@ -22,6 +22,7 @@ import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.
 import handler_doAddEmployeeListMember from '../handlers/admin-post/doAddEmployeeListMember.js'
 import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js'
 import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js'
+import handler_doAddMultipleDataListItems from '../handlers/admin-post/doAddMultipleDataListItems.js'
 import handler_doAddNoteType from '../handlers/admin-post/doAddNoteType.js'
 import handler_doAddNoteTypeField from '../handlers/admin-post/doAddNoteTypeField.js'
 import handler_doAddNotificationConfiguration from '../handlers/admin-post/doAddNotificationConfiguration.js'
@@ -210,6 +211,7 @@ router
   .post('/doUpdateDataList', handler_doUpdateDataList)
   .post('/doDeleteDataList', handler_doDeleteDataList)
   .post('/doAddDataListItem', handler_doAddDataListItem)
+  .post('/doAddMultipleDataListItems', handler_doAddMultipleDataListItems)
   .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
   .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
   .post('/doReorderDataListItems', handler_doReorderDataListItems)
