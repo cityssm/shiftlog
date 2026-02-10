@@ -40,6 +40,8 @@ export default async function getNoteTypes() {
         ntf.noteTypeId,
         ntf.fieldLabel,
         ntf.fieldInputType,
+        ntf.fieldUnitPrefix,
+        ntf.fieldUnitSuffix,
         ntf.fieldHelpText,
         ntf.dataListKey,
         ntf.fieldValueMin,
