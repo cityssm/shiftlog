@@ -667,6 +667,8 @@ declare const bulmaJS: BulmaJS
                 fieldHelpText: fieldDefinition.fieldHelpText,
                 fieldInputType: fieldDefinition.fieldInputType,
                 fieldLabel: fieldDefinition.fieldLabel,
+                fieldUnitPrefix: fieldDefinition.fieldUnitPrefix,
+                fieldUnitSuffix: fieldDefinition.fieldUnitSuffix,
                 fieldValue:
                   savedFieldValues.get(fieldDefinition.noteTypeFieldId) ?? '',
                 fieldValueMax: fieldDefinition.fieldValueMax,
@@ -695,6 +697,8 @@ declare const bulmaJS: BulmaJS
                       'This field has been deleted from the note type.',
                     fieldInputType: savedField.fieldInputType,
                     fieldLabel: savedField.fieldLabel,
+                    fieldUnitPrefix: savedField.fieldUnitPrefix,
+                    fieldUnitSuffix: savedField.fieldUnitSuffix,
                     fieldValue: savedField.fieldValue,
                     fieldValueMax: savedField.fieldValueMax,
                     fieldValueMin: savedField.fieldValueMin,
