@@ -8,6 +8,8 @@ export default async function updateNoteTypeField(fieldFields, user) {
             .input('noteTypeFieldId', fieldFields.noteTypeFieldId)
             .input('fieldLabel', fieldFields.fieldLabel)
             .input('fieldInputType', fieldFields.fieldInputType)
+            .input('fieldUnitPrefix', fieldFields.fieldUnitPrefix)
+            .input('fieldUnitSuffix', fieldFields.fieldUnitSuffix)
             .input('fieldHelpText', fieldFields.fieldHelpText)
             .input('dataListKey', fieldFields.dataListKey ?? null)
             .input('fieldValueMin', fieldFields.fieldValueMin ?? null)
@@ -22,6 +24,8 @@ export default async function updateNoteTypeField(fieldFields, user) {
         SET
           fieldLabel = @fieldLabel,
           fieldInputType = @fieldInputType,
+          fieldUnitPrefix = @fieldUnitPrefix,
+          fieldUnitSuffix = @fieldUnitSuffix,
           fieldHelpText = @fieldHelpText,
           dataListKey = @dataListKey,
           fieldValueMin = @fieldValueMin,

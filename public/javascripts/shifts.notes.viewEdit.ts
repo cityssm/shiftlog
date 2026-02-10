@@ -149,12 +149,20 @@ declare const bulmaJS: BulmaJS
               <tbody>
                 ${note.fields
                   .map(
-                    (field) => `
+                    (field) => {
+                      const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== '' 
+                        ? cityssm.escapeHTML(field.fieldUnitPrefix) + ' '
+                        : ''
+                      const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
+                        ? ' ' + cityssm.escapeHTML(field.fieldUnitSuffix)
+                        : ''
+                      return `
                   <tr>
                     <th style="width: 35%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
-                    <td>${cityssm.escapeHTML(field.fieldValue)}</td>
+                    <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
                   </tr>
                 `
+                    }
                   )
                   .join('')}
               </tbody>
@@ -304,12 +312,20 @@ declare const bulmaJS: BulmaJS
                 <tbody>
                   ${note.fields
                     .map(
-                      (field) => `
+                      (field) => {
+                        const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== '' 
+                          ? cityssm.escapeHTML(field.fieldUnitPrefix) + ' '
+                          : ''
+                        const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
+                          ? ' ' + cityssm.escapeHTML(field.fieldUnitSuffix)
+                          : ''
+                        return `
                     <tr>
                       <th style="width: 40%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
-                      <td>${cityssm.escapeHTML(field.fieldValue)}</td>
+                      <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
                     </tr>
                   `
+                      }
                     )
                     .join('')}
                 </tbody>
@@ -427,15 +443,51 @@ declare const bulmaJS: BulmaJS
               field.fieldValueMax !== null && field.fieldValueMax !== undefined
                 ? `max="${field.fieldValueMax}"`
                 : ''
-            fieldsHTML += `
-              <div class="control">
-                <input class="input" type="number" 
-                  id="editShiftNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
-                  value="${cityssm.escapeHTML(field.fieldValue)}"
-                  ${minAttribute} ${maxAttribute} ${requiredAttribute} />
-              </div>
-            `
+            
+            const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== ''
+            const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== ''
+            
+            if (hasPrefix || hasSuffix) {
+              fieldsHTML += `<div class="field has-addons">`
+              
+              if (hasPrefix) {
+                fieldsHTML += `
+                  <div class="control">
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix)}</span>
+                  </div>
+                `
+              }
+              
+              fieldsHTML += `
+                <div class="control is-expanded">
+                  <input class="input" type="number" 
+                    id="editShiftNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    value="${cityssm.escapeHTML(field.fieldValue)}"
+                    ${minAttribute} ${maxAttribute} ${requiredAttribute} />
+                </div>
+              `
+              
+              if (hasSuffix) {
+                fieldsHTML += `
+                  <div class="control">
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix)}</span>
+                  </div>
+                `
+              }
+              
+              fieldsHTML += `</div>`
+            } else {
+              fieldsHTML += `
+                <div class="control">
+                  <input class="input" type="number" 
+                    id="editShiftNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    value="${cityssm.escapeHTML(field.fieldValue)}"
+                    ${minAttribute} ${maxAttribute} ${requiredAttribute} />
+                </div>
+              `
+            }
             break
           }
           case 'select': {
@@ -479,16 +531,52 @@ declare const bulmaJS: BulmaJS
                 ? `list="datalist-edit-${field.noteTypeFieldId}"`
                 : ''
 
-            fieldsHTML += `
-              <div class="control">
-                <input class="input" type="text" 
-                  id="editShiftNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
-                  value="${cityssm.escapeHTML(field.fieldValue)}"
-                  ${dataListAttribute}
-                  ${requiredAttribute} />
-              </div>
-            `
+            const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== ''
+            const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== ''
+            
+            if (hasPrefix || hasSuffix) {
+              fieldsHTML += `<div class="field has-addons">`
+              
+              if (hasPrefix) {
+                fieldsHTML += `
+                  <div class="control">
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix)}</span>
+                  </div>
+                `
+              }
+              
+              fieldsHTML += `
+                <div class="control is-expanded">
+                  <input class="input" type="text" 
+                    id="editShiftNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    value="${cityssm.escapeHTML(field.fieldValue)}"
+                    ${dataListAttribute}
+                    ${requiredAttribute} />
+                </div>
+              `
+              
+              if (hasSuffix) {
+                fieldsHTML += `
+                  <div class="control">
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix)}</span>
+                  </div>
+                `
+              }
+              
+              fieldsHTML += `</div>`
+            } else {
+              fieldsHTML += `
+                <div class="control">
+                  <input class="input" type="text" 
+                    id="editShiftNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    value="${cityssm.escapeHTML(field.fieldValue)}"
+                    ${dataListAttribute}
+                    ${requiredAttribute} />
+                </div>
+              `
+            }
 
             // Add datalist element if applicable
             if (dataListItems.length > 0) {
@@ -579,6 +667,8 @@ declare const bulmaJS: BulmaJS
                 fieldHelpText: fieldDefinition.fieldHelpText,
                 fieldInputType: fieldDefinition.fieldInputType,
                 fieldLabel: fieldDefinition.fieldLabel,
+                fieldUnitPrefix: fieldDefinition.fieldUnitPrefix,
+                fieldUnitSuffix: fieldDefinition.fieldUnitSuffix,
                 fieldValue:
                   savedFieldValues.get(fieldDefinition.noteTypeFieldId) ?? '',
                 fieldValueMax: fieldDefinition.fieldValueMax,
@@ -607,6 +697,8 @@ declare const bulmaJS: BulmaJS
                       'This field has been deleted from the note type.',
                     fieldInputType: savedField.fieldInputType,
                     fieldLabel: savedField.fieldLabel,
+                    fieldUnitPrefix: savedField.fieldUnitPrefix,
+                    fieldUnitSuffix: savedField.fieldUnitSuffix,
                     fieldValue: savedField.fieldValue,
                     fieldValueMax: savedField.fieldValueMax,
                     fieldValueMin: savedField.fieldValueMin,
@@ -784,14 +876,49 @@ declare const bulmaJS: BulmaJS
               field.fieldValueMin === null ? '' : `min="${field.fieldValueMin}"`
             const maxAttribute =
               field.fieldValueMax === null ? '' : `max="${field.fieldValueMax}"`
-            fieldsHTML += `
-              <div class="control">
-                <input class="input" type="number" 
-                  id="addShiftNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
-                  ${minAttribute} ${maxAttribute} ${requiredAttribute} />
-              </div>
-            `
+            
+            const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== ''
+            const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== ''
+            
+            if (hasPrefix || hasSuffix) {
+              fieldsHTML += `<div class="field has-addons">`
+              
+              if (hasPrefix) {
+                fieldsHTML += `
+                  <div class="control">
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix)}</span>
+                  </div>
+                `
+              }
+              
+              fieldsHTML += `
+                <div class="control is-expanded">
+                  <input class="input" type="number" 
+                    id="addShiftNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    ${minAttribute} ${maxAttribute} ${requiredAttribute} />
+                </div>
+              `
+              
+              if (hasSuffix) {
+                fieldsHTML += `
+                  <div class="control">
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix)}</span>
+                  </div>
+                `
+              }
+              
+              fieldsHTML += `</div>`
+            } else {
+              fieldsHTML += `
+                <div class="control">
+                  <input class="input" type="number" 
+                    id="addShiftNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    ${minAttribute} ${maxAttribute} ${requiredAttribute} />
+                </div>
+              `
+            }
             break
           }
           case 'select': {
@@ -832,15 +959,50 @@ declare const bulmaJS: BulmaJS
                 ? `list="datalist-${field.noteTypeFieldId}"`
                 : ''
 
-            fieldsHTML += `
-              <div class="control">
-                <input class="input" type="text" 
-                  id="addShiftNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
-                  ${dataListAttribute}
-                  ${requiredAttribute} />
-              </div>
-            `
+            const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== ''
+            const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== ''
+            
+            if (hasPrefix || hasSuffix) {
+              fieldsHTML += `<div class="field has-addons">`
+              
+              if (hasPrefix) {
+                fieldsHTML += `
+                  <div class="control">
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix)}</span>
+                  </div>
+                `
+              }
+              
+              fieldsHTML += `
+                <div class="control is-expanded">
+                  <input class="input" type="text" 
+                    id="addShiftNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    ${dataListAttribute}
+                    ${requiredAttribute} />
+                </div>
+              `
+              
+              if (hasSuffix) {
+                fieldsHTML += `
+                  <div class="control">
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix)}</span>
+                  </div>
+                `
+              }
+              
+              fieldsHTML += `</div>`
+            } else {
+              fieldsHTML += `
+                <div class="control">
+                  <input class="input" type="text" 
+                    id="addShiftNote--field-${field.noteTypeFieldId}"
+                    name="${fieldName}" 
+                    ${dataListAttribute}
+                    ${requiredAttribute} />
+                </div>
+              `
+            }
 
             // Add datalist element if applicable
             if (dataListItems.length > 0) {

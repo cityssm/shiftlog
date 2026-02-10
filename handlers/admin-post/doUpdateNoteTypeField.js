@@ -4,6 +4,8 @@ export default async function handler(request, response) {
     const noteTypeFieldId = Number.parseInt(request.body.noteTypeFieldId, 10);
     const fieldLabel = request.body.fieldLabel ?? '';
     const fieldInputType = request.body.fieldInputType ?? 'text';
+    const fieldUnitPrefix = request.body.fieldUnitPrefix ?? '';
+    const fieldUnitSuffix = request.body.fieldUnitSuffix ?? '';
     const fieldHelpText = request.body.fieldHelpText ?? '';
     const dataListKey = request.body.dataListKey === '' || request.body.dataListKey === undefined
         ? null
@@ -25,6 +27,8 @@ export default async function handler(request, response) {
         fieldHelpText,
         fieldInputType,
         fieldLabel,
+        fieldUnitPrefix,
+        fieldUnitSuffix,
         fieldValueMax,
         fieldValueMin,
         fieldValueRequired,

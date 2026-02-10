@@ -608,19 +608,18 @@ declare const exports: {
         const minMaxFields = formElement.querySelector(
           '#fields--minMax'
         ) as HTMLDivElement
+        const unitPrefixSuffixFields = formElement.querySelector(
+          '#fields--unitPrefixSuffix'
+        ) as HTMLDivElement
 
         function updateFieldVisibility(): void {
           const fieldType = fieldTypeSelect.value
+          const isTextOrSelect = fieldType === 'text' || fieldType === 'select'
+          const isTextOrNumber = fieldType === 'text' || fieldType === 'number'
 
-          dataListField.classList.toggle(
-            'is-hidden',
-            !(fieldType === 'text' || fieldType === 'select')
-          )
-
-          minMaxFields.classList.toggle(
-            'is-hidden',
-            !(fieldType === 'text' || fieldType === 'number')
-          )
+          dataListField.classList.toggle('is-hidden', !isTextOrSelect)
+          minMaxFields.classList.toggle('is-hidden', !isTextOrNumber)
+          unitPrefixSuffixFields.classList.toggle('is-hidden', !isTextOrNumber)
         }
 
         fieldTypeSelect.addEventListener('change', updateFieldVisibility)
@@ -743,6 +742,16 @@ declare const exports: {
         ).value = field.fieldValueMax?.toString() ?? ''
         ;(
           formElement.querySelector(
+            '#fieldEdit--fieldUnitPrefix'
+          ) as HTMLInputElement
+        ).value = field.fieldUnitPrefix
+        ;(
+          formElement.querySelector(
+            '#fieldEdit--fieldUnitSuffix'
+          ) as HTMLInputElement
+        ).value = field.fieldUnitSuffix
+        ;(
+          formElement.querySelector(
             '#fieldEdit--fieldHelpText'
           ) as HTMLTextAreaElement
         ).value = field.fieldHelpText
@@ -763,19 +772,18 @@ declare const exports: {
         const minMaxFields = formElement.querySelector(
           '#fields--minMax'
         ) as HTMLDivElement
+        const unitPrefixSuffixFields = formElement.querySelector(
+          '#fields--unitPrefixSuffix'
+        ) as HTMLDivElement
 
         // Update field visibility based on the current field type (since it can't be changed)
         const fieldType = fieldTypeSelect.value
+        const isTextOrSelect = fieldType === 'text' || fieldType === 'select'
+        const isTextOrNumber = fieldType === 'text' || fieldType === 'number'
 
-        dataListField.classList.toggle(
-          'is-hidden',
-          !(fieldType === 'text' || fieldType === 'select')
-        )
-
-        minMaxFields.classList.toggle(
-          'is-hidden',
-          !(fieldType === 'text' || fieldType === 'number')
-        )
+        dataListField.classList.toggle('is-hidden', !isTextOrSelect)
+        minMaxFields.classList.toggle('is-hidden', !isTextOrNumber)
+        unitPrefixSuffixFields.classList.toggle('is-hidden', !isTextOrNumber)
 
         formElement.addEventListener('submit', doUpdate)
       },
