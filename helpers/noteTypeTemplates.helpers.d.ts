@@ -1,4 +1,4 @@
-import type { NoteTypeTemplate } from '../types/noteTypeTemplates.types.js';
+import type { NoteTypeTemplate } from '../types/application.types.js';
 /**
  * Get all available note type templates
  */

@@ -1,61 +1,24 @@
-import type { NoteTypeTemplate } from '../types/noteTypeTemplates.types.js'
+import type { NoteTypeTemplate } from '../types/application.types.js'
 
 /**
  * Available note type templates for creating predefined note types
  */
 const noteTypeTemplates: NoteTypeTemplate[] = [
   {
-    templateId: 'inspection-general',
-    templateName: 'General Inspection',
-    templateDescription:
-      'Basic inspection form with pass/fail result and comments',
-    noteType: {
-      noteType: 'General Inspection',
-      userGroupId: null,
-      isAvailableWorkOrders: true,
-      isAvailableShifts: true,
-      isAvailableTimesheets: false
-    },
-    fields: [
-      {
-        fieldLabel: 'Inspection Result',
-        fieldInputType: 'select',
-        fieldUnitPrefix: '',
-        fieldUnitSuffix: '',
-        fieldHelpText: 'Overall inspection result',
-        dataListKey: 'inspectionResults',
-        fieldValueMin: null,
-        fieldValueMax: null,
-        fieldValueRequired: true,
-        hasDividerAbove: false,
-        orderNumber: 0
-      },
-      {
-        fieldLabel: 'Inspector Comments',
-        fieldInputType: 'textbox',
-        fieldUnitPrefix: '',
-        fieldUnitSuffix: '',
-        fieldHelpText: 'Additional notes or observations',
-        dataListKey: null,
-        fieldValueMin: null,
-        fieldValueMax: null,
-        fieldValueRequired: false,
-        hasDividerAbove: false,
-        orderNumber: 1
-      }
-    ]
-  },
-  {
     templateId: 'equipment-hours',
     templateName: 'Equipment Hours',
+
     templateDescription: 'Track equipment hours and meter readings',
+
     noteType: {
       noteType: 'Equipment Hours',
       userGroupId: null,
-      isAvailableWorkOrders: false,
+
       isAvailableShifts: true,
-      isAvailableTimesheets: false
+      isAvailableTimesheets: false,
+      isAvailableWorkOrders: false
     },
+
     fields: [
       {
         fieldLabel: 'Start Hours',
@@ -101,14 +64,18 @@ const noteTypeTemplates: NoteTypeTemplate[] = [
   {
     templateId: 'material-quantity',
     templateName: 'Material Quantity',
+
     templateDescription: 'Record material quantities used',
+
     noteType: {
       noteType: 'Material Quantity',
       userGroupId: null,
-      isAvailableWorkOrders: true,
+
       isAvailableShifts: true,
-      isAvailableTimesheets: false
+      isAvailableTimesheets: false,
+      isAvailableWorkOrders: true
     },
+
     fields: [
       {
         fieldLabel: 'Material Type',
@@ -148,33 +115,24 @@ const noteTypeTemplates: NoteTypeTemplate[] = [
         fieldValueRequired: false,
         hasDividerAbove: false,
         orderNumber: 2
-      },
-      {
-        fieldLabel: 'Notes',
-        fieldInputType: 'textbox',
-        fieldUnitPrefix: '',
-        fieldUnitSuffix: '',
-        fieldHelpText: 'Additional information',
-        dataListKey: null,
-        fieldValueMin: null,
-        fieldValueMax: null,
-        fieldValueRequired: false,
-        hasDividerAbove: true,
-        orderNumber: 3
       }
     ]
   },
   {
     templateId: 'weather-conditions',
     templateName: 'Weather Conditions',
+
     templateDescription: 'Document weather conditions during work',
+
     noteType: {
       noteType: 'Weather Conditions',
       userGroupId: null,
-      isAvailableWorkOrders: false,
+
       isAvailableShifts: true,
-      isAvailableTimesheets: false
+      isAvailableTimesheets: false,
+      isAvailableWorkOrders: false
     },
+
     fields: [
       {
         fieldLabel: 'Temperature',
@@ -191,11 +149,11 @@ const noteTypeTemplates: NoteTypeTemplate[] = [
       },
       {
         fieldLabel: 'Conditions',
-        fieldInputType: 'select',
+        fieldInputType: 'text',
         fieldUnitPrefix: '',
         fieldUnitSuffix: '',
         fieldHelpText: 'General weather conditions',
-        dataListKey: 'weatherConditions',
+        dataListKey: null,
         fieldValueMin: null,
         fieldValueMax: null,
         fieldValueRequired: false,
@@ -204,11 +162,11 @@ const noteTypeTemplates: NoteTypeTemplate[] = [
       },
       {
         fieldLabel: 'Precipitation',
-        fieldInputType: 'select',
+        fieldInputType: 'text',
         fieldUnitPrefix: '',
         fieldUnitSuffix: '',
         fieldHelpText: 'Type of precipitation',
-        dataListKey: 'precipitationTypes',
+        dataListKey: null,
         fieldValueMin: null,
         fieldValueMax: null,
         fieldValueRequired: false,
@@ -227,19 +185,6 @@ const noteTypeTemplates: NoteTypeTemplate[] = [
         fieldValueRequired: false,
         hasDividerAbove: true,
         orderNumber: 3
-      },
-      {
-        fieldLabel: 'Comments',
-        fieldInputType: 'textbox',
-        fieldUnitPrefix: '',
-        fieldUnitSuffix: '',
-        fieldHelpText: 'Additional weather-related notes',
-        dataListKey: null,
-        fieldValueMin: null,
-        fieldValueMax: null,
-        fieldValueRequired: false,
-        hasDividerAbove: false,
-        orderNumber: 4
       }
     ]
   }
