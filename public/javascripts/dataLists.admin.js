@@ -160,43 +160,47 @@
                       </button>
                     </div>
                   `}
-              <div class="column has-text-right">
-                <div class="buttons has-addons is-right">
-                  <button
-                    class="button is-success is-small button--addItem" 
-                    data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
-                    type="button"
-                  >
-                    <span class="icon">
-                      <i class="fa-solid fa-plus"></i>
-                    </span>
-                    <span>Add Item</span>
-                  </button>
-                  <div class="dropdown is-hoverable is-right">
-                    <div class="dropdown-trigger">
-                      <button
-                        class="button is-success is-small"
-                        aria-haspopup="true"
-                        aria-controls="dropdown-menu-${cityssm.escapeHTML(dataList.dataListKey)}"
-                        type="button"
-                      >
-                        <span class="icon is-small">
-                          <i class="fa-solid fa-angle-down" aria-hidden="true"></i>
-                        </span>
-                      </button>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu-${cityssm.escapeHTML(dataList.dataListKey)}" role="menu">
-                      <div class="dropdown-content">
-                        <a
-                          href="#"
-                          class="dropdown-item button--addMultipleItems"
-                          data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+              <div class="column">
+                <div class="field has-addons is-justify-content-flex-end">
+                  <div class="control">
+                    <button
+                      class="button is-success is-small button--addItem" 
+                      data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                      type="button"
+                    >
+                      <span class="icon">
+                        <i class="fa-solid fa-plus"></i>
+                      </span>
+                      <span>Add Item</span>
+                    </button>
+                  </div>
+                  <div class="control">
+                    <div class="dropdown is-right">
+                      <div class="dropdown-trigger">
+                        <button
+                          class="button is-success is-small"
+                          type="button"
+                          aria-haspopup="true"
+                          aria-controls="dropdown-menu-${cityssm.escapeHTML(dataList.dataListKey)}"
                         >
-                          <span class="icon">
-                            <i class="fa-solid fa-plus"></i>
+                          <span class="icon is-small">
+                            <i class="fa-solid fa-angle-down" aria-hidden="true"></i>
                           </span>
-                          <span>Add Multiple Items</span>
-                        </a>
+                        </button>
+                      </div>
+                      <div class="dropdown-menu" id="dropdown-menu-${cityssm.escapeHTML(dataList.dataListKey)}" role="menu">
+                        <div class="dropdown-content">
+                          <a
+                            class="dropdown-item button--addMultipleItems"
+                            data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                            href="#"
+                          >
+                            <span class="icon">
+                              <i class="fa-solid fa-plus"></i>
+                            </span>
+                            <span>Add Multiple Items</span>
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -237,6 +241,7 @@
             }
         }
         // Re-attach all event listeners
+        bulmaJS.init(panelsContainer); // Re-initialize dropdowns for new content
         attachAllEventListeners();
     }
     function attachAllEventListeners() {
@@ -414,7 +419,6 @@
             title: 'Delete Data List',
             message: `Are you sure you want to delete "${dataListName}"? This will also delete all items in this list. This action cannot be undone.`,
             okButton: {
-                contextualColorName: 'danger',
                 text: 'Delete Data List',
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataList`, {
@@ -574,7 +578,8 @@
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Items Added',
-                        message
+                        message,
+                        messageIsHtml: true
                     });
                 }
                 else {
@@ -608,12 +613,13 @@
                 modalElement
                     .querySelector('#form--addMultipleDataListItems')
                     ?.addEventListener('submit', doAddMultipleDataListItems);
-                closeModalFunction = () => {
-                    bulmaJS.dismissModal(modalElement);
-                };
                 // Focus the textarea
                 const textareaInput = modalElement.querySelector('#addMultipleDataListItems--dataListItems');
                 textareaInput.focus();
+            },
+            onshown(_modalElement, closeFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = closeFunction;
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
@@ -732,7 +738,6 @@
             title: `Delete ${dataList.dataListName} Item`,
             message: `Are you sure you want to delete "${dataListItem}"? This action cannot be undone.`,
             okButton: {
-                contextualColorName: 'danger',
                 text: 'Delete Item',
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataListItem`, {
