@@ -161,16 +161,46 @@
                     </div>
                   `}
               <div class="column has-text-right">
-                <button
-                  class="button is-success is-small button--addItem" 
-                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
-                  type="button"
-                >
-                  <span class="icon">
-                    <i class="fa-solid fa-plus"></i>
-                  </span>
-                  <span>Add Item</span>
-                </button>
+                <div class="buttons has-addons is-right">
+                  <button
+                    class="button is-success is-small button--addItem" 
+                    data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                    type="button"
+                  >
+                    <span class="icon">
+                      <i class="fa-solid fa-plus"></i>
+                    </span>
+                    <span>Add Item</span>
+                  </button>
+                  <div class="dropdown is-hoverable is-right">
+                    <div class="dropdown-trigger">
+                      <button
+                        class="button is-success is-small"
+                        aria-haspopup="true"
+                        aria-controls="dropdown-menu-${cityssm.escapeHTML(dataList.dataListKey)}"
+                        type="button"
+                      >
+                        <span class="icon is-small">
+                          <i class="fa-solid fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu-${cityssm.escapeHTML(dataList.dataListKey)}" role="menu">
+                      <div class="dropdown-content">
+                        <a
+                          href="#"
+                          class="dropdown-item button--addMultipleItems"
+                          data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                        >
+                          <span class="icon">
+                            <i class="fa-solid fa-plus"></i>
+                          </span>
+                          <span>Add Multiple Items</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -229,6 +259,11 @@
         const addButtons = document.querySelectorAll('.button--addItem');
         for (const button of addButtons) {
             button.addEventListener('click', addDataListItem);
+        }
+        // Add multiple items buttons
+        const addMultipleButtons = document.querySelectorAll('.button--addMultipleItems');
+        for (const button of addMultipleButtons) {
+            button.addEventListener('click', addMultipleDataListItems);
         }
         // Re-attach event listeners for each data list's items
         for (const dataList of exports.dataLists) {
@@ -484,6 +519,101 @@
                 // Focus the item name input
                 const itemInput = modalElement.querySelector('#addDataListItem--dataListItem');
                 itemInput.focus();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function addMultipleDataListItems(clickEvent) {
+        clickEvent.preventDefault();
+        const buttonElement = clickEvent.currentTarget;
+        const dataListKey = buttonElement.dataset.dataListKey;
+        if (dataListKey === undefined) {
+            return;
+        }
+        const dataList = exports.dataLists.find((dl) => dl.dataListKey === dataListKey);
+        if (dataList === undefined) {
+            return;
+        }
+        let closeModalFunction;
+        function doAddMultipleDataListItems(submitEvent) {
+            submitEvent.preventDefault();
+            const addForm = submitEvent.currentTarget;
+            const formData = new FormData(addForm);
+            const dataListItemsToAdd = formData.get('dataListItems')?.trim();
+            if (dataListItemsToAdd === '') {
+                bulmaJS.alert({
+                    contextualColorName: 'warning',
+                    title: 'Items Required',
+                    message: 'Please enter at least one item name.'
+                });
+                return;
+            }
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddMultipleDataListItems`, addForm, (responseJSON) => {
+                if (responseJSON.success && responseJSON.items !== undefined) {
+                    closeModalFunction();
+                    // Open the details panel if it's closed
+                    const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
+                    if (detailsElement !== null && !detailsElement.open) {
+                        detailsElement.open = true;
+                    }
+                    renderDataListItems(dataListKey, responseJSON.items);
+                    const addedCount = responseJSON.addedCount ?? 0;
+                    const skippedCount = responseJSON.skippedCount ?? 0;
+                    let message = '';
+                    if (addedCount > 0) {
+                        message += `${addedCount} item${addedCount === 1 ? '' : 's'} successfully added.`;
+                    }
+                    if (skippedCount > 0) {
+                        if (message !== '') {
+                            message += '<br>';
+                        }
+                        message += `${skippedCount} item${skippedCount === 1 ? '' : 's'} skipped (already exists).`;
+                    }
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        title: 'Items Added',
+                        message
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Adding Items',
+                        message: 'Please try again.'
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('adminDataLists-addMultipleItems', {
+            onshow(modalElement) {
+                // Set the modal title
+                const titleElement = modalElement.querySelector('#addMultipleDataListItems--title');
+                titleElement.textContent = `Add Multiple ${dataList.dataListName} Items`;
+                // Set the data list key
+                const dataListKeyInput = modalElement.querySelector('#addMultipleDataListItems--dataListKey');
+                dataListKeyInput.value = dataListKey;
+                // Populate user group options
+                const userGroupSelect = modalElement.querySelector('#addMultipleDataListItems--userGroupId');
+                userGroupSelect.innerHTML =
+                    '<option value="">None (Available to All)</option>';
+                for (const userGroup of exports.userGroups) {
+                    const option = document.createElement('option');
+                    option.value = userGroup.userGroupId.toString();
+                    option.textContent = userGroup.userGroupName;
+                    userGroupSelect.append(option);
+                }
+                // Attach form submit handler
+                modalElement
+                    .querySelector('#form--addMultipleDataListItems')
+                    ?.addEventListener('submit', doAddMultipleDataListItems);
+                closeModalFunction = () => {
+                    bulmaJS.dismissModal(modalElement);
+                };
+                // Focus the textarea
+                const textareaInput = modalElement.querySelector('#addMultipleDataListItems--dataListItems');
+                textareaInput.focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();

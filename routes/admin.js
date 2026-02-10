@@ -16,6 +16,7 @@ import handler_workOrderTypes from '../handlers/admin-get/workOrderTypes.js';
 import handler_doAddAssignedToItem from '../handlers/admin-post/doAddAssignedToItem.js';
 import handler_doAddDataList from '../handlers/admin-post/doAddDataList.js';
 import handler_doAddDataListItem from '../handlers/admin-post/doAddDataListItem.js';
+import handler_doAddMultipleDataListItems from '../handlers/admin-post/doAddMultipleDataListItems.js';
 import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js';
 import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.js';
 import handler_doAddEmployeeListMember from '../handlers/admin-post/doAddEmployeeListMember.js';
@@ -173,6 +174,7 @@ router
     .post('/doUpdateDataList', handler_doUpdateDataList)
     .post('/doDeleteDataList', handler_doDeleteDataList)
     .post('/doAddDataListItem', handler_doAddDataListItem)
+    .post('/doAddMultipleDataListItems', handler_doAddMultipleDataListItems)
     .post('/doUpdateDataListItem', handler_doUpdateDataListItem)
     .post('/doDeleteDataListItem', handler_doDeleteDataListItem)
     .post('/doReorderDataListItems', handler_doReorderDataListItems);
