@@ -498,7 +498,7 @@
             onshow(modalElement) {
                 // Set the modal title
                 const titleElement = modalElement.querySelector('#addDataListItem--title');
-                titleElement.textContent = `Add ${dataList.dataListName} Item`;
+                titleElement.textContent = `Add "${dataList.dataListName}" Item`;
                 // Set the data list key
                 const dataListKeyInput = modalElement.querySelector('#addDataListItem--dataListKey');
                 dataListKeyInput.value = dataListKey;
@@ -678,7 +678,7 @@
             onshow(modalElement) {
                 // Set the modal title
                 const titleElement = modalElement.querySelector('#editDataListItem--title');
-                titleElement.textContent = `Edit ${dataList.dataListName} Item`;
+                titleElement.textContent = `Edit "${dataList.dataListName}" Item`;
                 // Set the hidden fields
                 const dataListKeyInput = modalElement.querySelector('#editDataListItem--dataListKey');
                 dataListKeyInput.value = dataListKey;
@@ -735,7 +735,7 @@
         }
         bulmaJS.confirm({
             contextualColorName: 'warning',
-            title: `Delete ${dataList.dataListName} Item`,
+            title: `Delete "${dataList.dataListName}" Item`,
             message: `Are you sure you want to delete "${dataListItem}"? This action cannot be undone.`,
             okButton: {
                 text: 'Delete Item',
