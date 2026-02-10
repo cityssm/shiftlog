@@ -874,4 +874,3 @@
     loadNoteTypes();
     loadNotes();
 })();
-export {};

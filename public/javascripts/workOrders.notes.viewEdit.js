@@ -869,4 +869,3 @@
     loadNoteTypes();
     loadNotes();
 })();
-export {};
