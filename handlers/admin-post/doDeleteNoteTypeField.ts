@@ -10,7 +10,6 @@ export type DoDeleteNoteTypeFieldResponse =
       success: false
     }
   | {
-      message?: undefined
       noteTypes: NoteTypeWithFields[]
       success: true
     }

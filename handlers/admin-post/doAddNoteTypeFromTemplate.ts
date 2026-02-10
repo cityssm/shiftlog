@@ -12,7 +12,6 @@ export type DoAddNoteTypeFromTemplateResponse =
       success: false
     }
   | {
-      message?: undefined
       noteTypes: NoteTypeWithFields[]
       success: true
     }

@@ -61,16 +61,3 @@
     </div>
   </div>
 </div>
-<script>
-  (function () {
-    const selectElement = document.querySelector('#employeeListEdit--userGroupId');
-    if (selectElement && window.exports && window.exports.userGroups) {
-      for (const userGroup of window.exports.userGroups) {
-        const optionElement = document.createElement('option');
-        optionElement.value = userGroup.userGroupId;
-        optionElement.textContent = userGroup.userGroupName;
-        selectElement.appendChild(optionElement);
-      }
-    }
-  })();
-</script>

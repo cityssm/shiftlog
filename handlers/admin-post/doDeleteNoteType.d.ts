@@ -4,7 +4,6 @@ export type DoDeleteNoteTypeResponse = {
     message: string;
     success: false;
 } | {
-    message?: undefined;
     noteTypes: NoteTypeWithFields[];
     success: true;
 };

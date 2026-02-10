@@ -4,7 +4,6 @@ export type DoUpdateNoteTypeResponse = {
     message: string;
     success: false;
 } | {
-    message?: undefined;
     noteTypes: NoteTypeWithFields[];
     success: true;
 };
