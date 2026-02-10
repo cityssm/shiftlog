@@ -25,17 +25,17 @@ declare const Sortable: {
   create: (
     element: HTMLElement,
     options: {
-      handle: string
       animation: number
+      handle: string
       onEnd: () => void
     }
   ) => SortableInstance
 }
 
 interface DataListItemWithDetails {
+  dataListItem: string
   dataListItemId: number
   dataListKey: string
-  dataListItem: string
   orderNumber: number
   userGroupId: number | null
 }
@@ -48,9 +48,9 @@ interface DataListWithItems {
 }
 
 interface UserGroup {
+  memberCount?: number
   userGroupId: number
   userGroupName: string
-  memberCount?: number
 }
 
 declare const exports: {
@@ -402,8 +402,8 @@ declare const exports: {
       if (dataListKeySuffix === '' || dataListName === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
-          title: 'Required Fields',
-          message: 'Please fill in all required fields.'
+          message: 'Please fill in all required fields.',
+          title: 'Required Fields'
         })
         return
       }
@@ -430,16 +430,16 @@ declare const exports: {
 
             bulmaJS.alert({
               contextualColorName: 'success',
+              message,
               title: responseJSON.wasRecovered
                 ? 'Data List Recovered'
-                : 'Data List Created',
-              message
+                : 'Data List Created'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              title: 'Error Creating Data List',
-              message: responseJSON.errorMessage ?? 'Please try again.'
+              message: responseJSON.errorMessage ?? 'Please try again.',
+              title: 'Error Creating Data List'
             })
           }
         }
@@ -447,6 +447,9 @@ declare const exports: {
     }
 
     cityssm.openHtmlModal('adminDataLists-addDataList', {
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      },
       onshow(modalElement) {
         // Attach form submit handler
         modalElement
@@ -462,9 +465,6 @@ declare const exports: {
           '#addDataList--dataListKey'
         ) as HTMLInputElement
         keyInput.focus()
-      },
-      onremoved() {
-        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -492,8 +492,8 @@ declare const exports: {
       if (newDataListName === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
-          title: 'Name Required',
-          message: 'Please enter a display name.'
+          message: 'Please enter a display name.',
+          title: 'Name Required'
         })
         return
       }
@@ -508,14 +508,14 @@ declare const exports: {
 
             bulmaJS.alert({
               contextualColorName: 'success',
-              title: 'Data List Renamed',
-              message: 'The data list has been successfully renamed.'
+              message: 'The data list has been successfully renamed.',
+              title: 'Data List Renamed'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              title: 'Error Renaming Data List',
-              message: responseJSON.errorMessage ?? 'Please try again.'
+              message: responseJSON.errorMessage ?? 'Please try again.',
+              title: 'Error Renaming Data List'
             })
           }
         }
@@ -523,6 +523,9 @@ declare const exports: {
     }
 
     cityssm.openHtmlModal('adminDataLists-editDataList', {
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      },
       onshow(modalElement) {
         // Set the data list key
         const dataListKeyInput = modalElement.querySelector(
@@ -551,9 +554,6 @@ declare const exports: {
         ) as HTMLInputElement
         nameInput.focus()
         nameInput.select()
-      },
-      onremoved() {
-        bulmaJS.toggleHtmlClipped()
       }
     })
   }
@@ -569,11 +569,8 @@ declare const exports: {
 
     bulmaJS.confirm({
       contextualColorName: 'warning',
-      title: 'Delete Data List',
       message: `Are you sure you want to delete "${dataListName}"? This will also delete all items in this list. This action cannot be undone.`,
       okButton: {
-        contextualColorName: 'danger',
-        text: 'Delete Data List',
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteDataList`,
@@ -590,20 +587,23 @@ declare const exports: {
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
-                  title: 'Data List Deleted',
-                  message: 'The data list has been successfully deleted.'
+                  message: 'The data list has been successfully deleted.',
+                  title: 'Data List Deleted'
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Deleting Data List',
-                  message: responseJSON.errorMessage ?? 'Please try again.'
+                  message: responseJSON.errorMessage ?? 'Please try again.',
+                  title: 'Error Deleting Data List'
                 })
               }
             }
           )
-        }
-      }
+        },
+        contextualColorName: 'danger',
+        text: 'Delete Data List'
+      },
+      title: 'Delete Data List'
     })
   }
 
@@ -799,8 +799,8 @@ declare const exports: {
       if (dataListItemsToAdd === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
-          title: 'Items Required',
-          message: 'Please enter at least one item.'
+          message: 'Please enter at least one item.',
+          title: 'Items Required'
         })
         return
       }
@@ -826,7 +826,7 @@ declare const exports: {
             const addedCount = responseJSON.addedCount ?? 0
             const skippedCount = responseJSON.skippedCount ?? 0
 
-            let message = ''
+            let message: string
             if (addedCount > 0 && skippedCount > 0) {
               message = `${addedCount} item(s) were successfully added. ${skippedCount} item(s) were skipped because they already exist.`
             } else if (addedCount > 0) {
@@ -837,14 +837,14 @@ declare const exports: {
 
             bulmaJS.alert({
               contextualColorName: 'success',
-              title: 'Items Processed',
-              message
+              message,
+              title: 'Items Processed'
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              title: 'Error Adding Items',
-              message: 'Please try again.'
+              message: 'Please try again.',
+              title: 'Error Adding Items'
             })
           }
         }
@@ -1078,8 +1078,8 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteDataListItem`,
             {
-              dataListKey,
-              dataListItemId: Number.parseInt(dataListItemId, 10)
+              dataListItemId: Number.parseInt(dataListItemId, 10),
+              dataListKey
             },
             (responseJSON: DoDeleteDataListItemResponse) => {
               if (responseJSON.success && responseJSON.items !== undefined) {
@@ -1161,8 +1161,8 @@ declare const exports: {
 
     // Create new Sortable instance
     const sortableInstance = Sortable.create(tbodyElement, {
-      handle: '.handle',
       animation: 150,
+      handle: '.handle',
       onEnd() {
         // Get the new order
         const rows = tbodyElement.querySelectorAll(
@@ -1182,8 +1182,8 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doReorderDataListItems`,
           {
-            dataListKey,
-            dataListItemIds
+            dataListItemIds,
+            dataListKey
           },
           (responseJSON: DoReorderDataListItemsResponse) => {
             if (!responseJSON.success) {

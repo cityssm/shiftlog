@@ -8,24 +8,24 @@ import getDataListItemsAdmin, {
 } from '../../database/app/getDataListItemsAdmin.js'
 
 export interface AddMultipleDataListItemsForm {
-  dataListKey: string
   dataListItems: string
+  dataListKey: string
   userGroupId?: number | string | null
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddMultipleDataListItemsResponse = {
-  success: boolean
   addedCount?: number
-  skippedCount?: number
   items?: DataListItemWithDetails[]
+  skippedCount?: number
+  success: boolean
 }
 
 export default async function handler(
   request: Request<unknown, unknown, AddMultipleDataListItemsForm>,
   response: Response<DoAddMultipleDataListItemsResponse>
 ): Promise<void> {
-  const { dataListKey, dataListItems, userGroupId } = request.body
+  const { dataListItems, dataListKey, userGroupId } = request.body
   const userName = request.session.user?.userName ?? ''
 
   // Split the items by newline and filter out empty lines
@@ -40,12 +40,13 @@ export default async function handler(
   // Process each item
   for (const itemLine of itemLines) {
     const form: AddDataListItemForm = {
-      dataListKey,
       dataListItem: itemLine,
+      dataListKey,
       userGroupId,
       userName
     }
 
+    // eslint-disable-next-line no-await-in-loop -- Need to process items sequentially to maintain order
     const success = await addDataListItem(form)
 
     if (success) {
@@ -59,9 +60,9 @@ export default async function handler(
   const items = await getDataListItemsAdmin(dataListKey)
 
   response.json({
-    success: true,
     addedCount,
+    items,
     skippedCount,
-    items
+    success: true
   })
 }
