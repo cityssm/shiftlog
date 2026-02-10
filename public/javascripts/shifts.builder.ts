@@ -604,7 +604,7 @@ declare const exports: {
       lockIcon.innerHTML = isLocked
         ? '<i class="fa-solid fa-lock has-text-danger"></i>'
         : '<i class="fa-solid fa-lock-open has-text-success"></i>'
-        
+
       lockButton.append(lockIcon)
 
       lockButton.addEventListener('click', () => {
@@ -904,7 +904,7 @@ declare const exports: {
     // Render equipment
     const equipmentList = document.querySelector(
       '#available--equipment .available-resources-list'
-    ) as HTMLElement
+    ) as HTMLElement | null
 
     if (equipmentList !== null) {
       equipmentList.textContent = ''
@@ -2191,9 +2191,11 @@ declare const exports: {
                 if (totalEmployees === 0) {
                   bulmaJS.alert({
                     contextualColorName: 'success',
+                    title: 'Crew Moved',
+
                     message: 'Crew has been moved to the new shift.',
-                    title: 'Crew Moved'
                   })
+                  
                   loadShifts()
                 } else {
                   // Delete and add each employee
@@ -3650,8 +3652,9 @@ declare const exports: {
             // Initialize date picker
             const dueDateInput = modalElement.querySelector(
               '#createAdhocTask--taskDueDateTimeString'
-            ) as HTMLInputElement
-            if (dueDateInput && typeof flatpickr !== 'undefined') {
+            ) as HTMLInputElement | null
+
+            if (dueDateInput && flatpickr !== undefined) {
               flatpickr(dueDateInput, {
                 allowInput: true,
                 enableTime: true,
@@ -3662,7 +3665,7 @@ declare const exports: {
             }
 
             // Initialize maps if Leaflet is available
-            if (typeof L !== 'undefined') {
+            if (L !== undefined) {
               const initMap = (
                 mapId: string,
                 latInput: HTMLInputElement | null,
@@ -3707,6 +3710,7 @@ declare const exports: {
                   '#createAdhocTask--locationLongitude'
                 ) as HTMLInputElement
               )
+
               initMap(
                 'map--createAdhocTask--fromLocation',
                 modalElement.querySelector(
@@ -3716,6 +3720,7 @@ declare const exports: {
                   '#createAdhocTask--fromLocationLongitude'
                 ) as HTMLInputElement
               )
+
               initMap(
                 'map--createAdhocTask--toLocation',
                 modalElement.querySelector(
@@ -3966,11 +3971,11 @@ declare const exports: {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
         // Focus the crew dropdown
-        const crewSelect = modalElement.querySelector(
-          '[name="crewId"]'
-        ) as HTMLSelectElement
-        crewSelect?.focus()
+        ;(
+          modalElement.querySelector('[name="crewId"]') as HTMLSelectElement
+        ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -4020,7 +4025,9 @@ declare const exports: {
         const employeeSelect = formElement.querySelector(
           '[name="employeeNumber"]'
         ) as HTMLSelectElement
+
         employeeSelect.innerHTML = '<option value="">(None)</option>'
+
         for (const employee of shiftEmployees) {
           const option = document.createElement('option')
           option.value = employee.employeeNumber
@@ -4079,6 +4086,7 @@ declare const exports: {
                           'Employee assignment updated but failed to update note.',
                         title: 'Partial Update'
                       })
+
                       closeModalFunction()
                       loadShifts()
                     }
@@ -4100,11 +4108,13 @@ declare const exports: {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
         // Focus the employee dropdown
-        const employeeSelect = modalElement.querySelector(
-          '[name="employeeNumber"]'
-        ) as HTMLSelectElement
-        employeeSelect?.focus()
+        ;(
+          modalElement.querySelector(
+            '[name="employeeNumber"]'
+          ) as HTMLSelectElement
+        ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -4174,11 +4184,13 @@ declare const exports: {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
         // Focus the textarea
-        const textarea = modalElement.querySelector(
-          '[name="shiftWorkOrderNote"]'
-        ) as HTMLTextAreaElement
-        textarea?.focus()
+        ;(
+          modalElement.querySelector(
+            '[name="shiftWorkOrderNote"]'
+          ) as HTMLTextAreaElement
+        ).focus()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
