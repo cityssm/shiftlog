@@ -33,11 +33,8 @@ declare const bulmaJS: BulmaJS
   const shiftId =
     shiftFormElement === null
       ? ''
-      : (
-          shiftFormElement.querySelector(
-            '#shift--shiftId'
-          ) as HTMLInputElement
-        ).value
+      : (shiftFormElement.querySelector('#shift--shiftId') as HTMLInputElement)
+          .value
 
   /*
    * Notes functionality
@@ -148,22 +145,22 @@ declare const bulmaJS: BulmaJS
             <table class="table is-narrow is-size-7">
               <tbody>
                 ${note.fields
-                  .map(
-                    (field) => {
-                      const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== '' 
-                        ? cityssm.escapeHTML(field.fieldUnitPrefix) + ' '
+                  .map((field) => {
+                    const prefix =
+                      field.fieldUnitPrefix && field.fieldUnitPrefix !== ''
+                        ? `${cityssm.escapeHTML(field.fieldUnitPrefix)} `
                         : ''
-                      const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
-                        ? ' ' + cityssm.escapeHTML(field.fieldUnitSuffix)
+                    const suffix =
+                      field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
+                        ? ` ${cityssm.escapeHTML(field.fieldUnitSuffix)}`
                         : ''
-                      return `
+                    return `
                   <tr>
                     <th style="width: 35%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
                     <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
                   </tr>
                 `
-                    }
-                  )
+                  })
                   .join('')}
               </tbody>
             </table>
@@ -263,14 +260,10 @@ declare const bulmaJS: BulmaJS
     cityssm.openHtmlModal('shifts-viewNote', {
       onshow(modalElement) {
         ;(
-          modalElement.querySelector(
-            '#viewShiftNote--userName'
-          ) as HTMLElement
+          modalElement.querySelector('#viewShiftNote--userName') as HTMLElement
         ).textContent = note.recordCreate_userName
         ;(
-          modalElement.querySelector(
-            '#viewShiftNote--dateTime'
-          ) as HTMLElement
+          modalElement.querySelector('#viewShiftNote--dateTime') as HTMLElement
         ).textContent = cityssm.dateToString(
           new Date(note.recordCreate_dateTime)
         )
@@ -293,9 +286,7 @@ declare const bulmaJS: BulmaJS
         }
 
         ;(
-          modalElement.querySelector(
-            '#viewShiftNote--noteText'
-          ) as HTMLElement
+          modalElement.querySelector('#viewShiftNote--noteText') as HTMLElement
         ).textContent = note.noteText
 
         // Render fields if present
@@ -311,22 +302,22 @@ declare const bulmaJS: BulmaJS
               <table class="table is-fullwidth is-striped">
                 <tbody>
                   ${note.fields
-                    .map(
-                      (field) => {
-                        const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== '' 
-                          ? cityssm.escapeHTML(field.fieldUnitPrefix) + ' '
+                    .map((field) => {
+                      const prefix =
+                        field.fieldUnitPrefix && field.fieldUnitPrefix !== ''
+                          ? `${cityssm.escapeHTML(field.fieldUnitPrefix)} `
                           : ''
-                        const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
-                          ? ' ' + cityssm.escapeHTML(field.fieldUnitSuffix)
+                      const suffix =
+                        field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
+                          ? ` ${cityssm.escapeHTML(field.fieldUnitSuffix)}`
                           : ''
-                        return `
+                      return `
                     <tr>
                       <th style="width: 40%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
                       <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
                     </tr>
                   `
-                      }
-                    )
+                    })
                     .join('')}
                 </tbody>
               </table>
@@ -443,21 +434,25 @@ declare const bulmaJS: BulmaJS
               field.fieldValueMax !== null && field.fieldValueMax !== undefined
                 ? `max="${field.fieldValueMax}"`
                 : ''
-            
-            const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== ''
-            const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== ''
-            
+
+            const hasPrefix =
+              field.fieldUnitPrefix !== undefined &&
+              field.fieldUnitPrefix !== ''
+            const hasSuffix =
+              field.fieldUnitSuffix !== undefined &&
+              field.fieldUnitSuffix !== ''
+
             if (hasPrefix || hasSuffix) {
               fieldsHTML += '<div class="field has-addons">'
-              
+
               if (hasPrefix) {
                 fieldsHTML += `
                   <div class="control">
-                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix)}</span>
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix ?? '')}</span>
                   </div>
                 `
               }
-              
+
               fieldsHTML += `
                 <div class="control is-expanded">
                   <input class="input" type="number" 
@@ -467,16 +462,16 @@ declare const bulmaJS: BulmaJS
                     ${minAttribute} ${maxAttribute} ${requiredAttribute} />
                 </div>
               `
-              
+
               if (hasSuffix) {
                 fieldsHTML += `
                   <div class="control">
-                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix)}</span>
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix ?? '')}</span>
                   </div>
                 `
               }
-              
-              fieldsHTML += "</div>"
+
+              fieldsHTML += '</div>'
             } else {
               fieldsHTML += `
                 <div class="control">
@@ -531,20 +526,24 @@ declare const bulmaJS: BulmaJS
                 ? `list="datalist-edit-${field.noteTypeFieldId}"`
                 : ''
 
-            const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== ''
-            const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== ''
-            
+            const hasPrefix =
+              field.fieldUnitPrefix !== undefined &&
+              field.fieldUnitPrefix !== ''
+            const hasSuffix =
+              field.fieldUnitSuffix !== undefined &&
+              field.fieldUnitSuffix !== ''
+
             if (hasPrefix || hasSuffix) {
               fieldsHTML += '<div class="field has-addons">'
-              
+
               if (hasPrefix) {
                 fieldsHTML += `
                   <div class="control">
-                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix)}</span>
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix ?? '')}</span>
                   </div>
                 `
               }
-              
+
               fieldsHTML += `
                 <div class="control is-expanded">
                   <input class="input" type="text" 
@@ -555,16 +554,16 @@ declare const bulmaJS: BulmaJS
                     ${requiredAttribute} />
                 </div>
               `
-              
+
               if (hasSuffix) {
                 fieldsHTML += `
                   <div class="control">
-                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix)}</span>
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix ?? '')}</span>
                   </div>
                 `
               }
-              
-              fieldsHTML += "</div>"
+
+              fieldsHTML += '</div>'
             } else {
               fieldsHTML += `
                 <div class="control">
@@ -607,7 +606,7 @@ declare const bulmaJS: BulmaJS
         }
 
         fieldsHTML += helpText
-        fieldsHTML += "</div>"
+        fieldsHTML += '</div>'
       }
 
       // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
@@ -876,13 +875,13 @@ declare const bulmaJS: BulmaJS
               field.fieldValueMin === null ? '' : `min="${field.fieldValueMin}"`
             const maxAttribute =
               field.fieldValueMax === null ? '' : `max="${field.fieldValueMax}"`
-            
-            const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== ''
-            const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== ''
-            
+
+            const hasPrefix = field.fieldUnitPrefix !== ''
+            const hasSuffix = field.fieldUnitSuffix !== ''
+
             if (hasPrefix || hasSuffix) {
               fieldsHTML += '<div class="field has-addons">'
-              
+
               if (hasPrefix) {
                 fieldsHTML += `
                   <div class="control">
@@ -890,7 +889,7 @@ declare const bulmaJS: BulmaJS
                   </div>
                 `
               }
-              
+
               fieldsHTML += `
                 <div class="control is-expanded">
                   <input class="input" type="number" 
@@ -899,7 +898,7 @@ declare const bulmaJS: BulmaJS
                     ${minAttribute} ${maxAttribute} ${requiredAttribute} />
                 </div>
               `
-              
+
               if (hasSuffix) {
                 fieldsHTML += `
                   <div class="control">
@@ -907,8 +906,8 @@ declare const bulmaJS: BulmaJS
                   </div>
                 `
               }
-              
-              fieldsHTML += "</div>"
+
+              fieldsHTML += '</div>'
             } else {
               fieldsHTML += `
                 <div class="control">
@@ -959,12 +958,12 @@ declare const bulmaJS: BulmaJS
                 ? `list="datalist-${field.noteTypeFieldId}"`
                 : ''
 
-            const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== ''
-            const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== ''
-            
+            const hasPrefix = field.fieldUnitPrefix !== ''
+            const hasSuffix = field.fieldUnitSuffix !== ''
+
             if (hasPrefix || hasSuffix) {
               fieldsHTML += '<div class="field has-addons">'
-              
+
               if (hasPrefix) {
                 fieldsHTML += `
                   <div class="control">
@@ -972,7 +971,7 @@ declare const bulmaJS: BulmaJS
                   </div>
                 `
               }
-              
+
               fieldsHTML += `
                 <div class="control is-expanded">
                   <input class="input" type="text" 
@@ -982,7 +981,7 @@ declare const bulmaJS: BulmaJS
                     ${requiredAttribute} />
                 </div>
               `
-              
+
               if (hasSuffix) {
                 fieldsHTML += `
                   <div class="control">
@@ -990,8 +989,8 @@ declare const bulmaJS: BulmaJS
                   </div>
                 `
               }
-              
-              fieldsHTML += "</div>"
+
+              fieldsHTML += '</div>'
             } else {
               fieldsHTML += `
                 <div class="control">
@@ -1033,7 +1032,7 @@ declare const bulmaJS: BulmaJS
         }
 
         fieldsHTML += helpText
-        fieldsHTML += "</div>"
+        fieldsHTML += '</div>'
       }
 
       // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML

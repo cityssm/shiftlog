@@ -3,7 +3,8 @@
     const shiftFormElement = document.querySelector('#form--shift');
     const shiftId = shiftFormElement === null
         ? ''
-        : shiftFormElement.querySelector('#shift--shiftId').value;
+        : shiftFormElement.querySelector('#shift--shiftId')
+            .value;
     /*
      * Notes functionality
      */
@@ -85,10 +86,10 @@
                 ${note.fields
                     .map((field) => {
                     const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== ''
-                        ? cityssm.escapeHTML(field.fieldUnitPrefix) + ' '
+                        ? `${cityssm.escapeHTML(field.fieldUnitPrefix)} `
                         : '';
                     const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
-                        ? ' ' + cityssm.escapeHTML(field.fieldUnitSuffix)
+                        ? ` ${cityssm.escapeHTML(field.fieldUnitSuffix)}`
                         : '';
                     return `
                   <tr>
@@ -205,10 +206,10 @@
                   ${note.fields
                         .map((field) => {
                         const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== ''
-                            ? cityssm.escapeHTML(field.fieldUnitPrefix) + ' '
+                            ? `${cityssm.escapeHTML(field.fieldUnitPrefix)} `
                             : '';
                         const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
-                            ? ' ' + cityssm.escapeHTML(field.fieldUnitSuffix)
+                            ? ` ${cityssm.escapeHTML(field.fieldUnitSuffix)}`
                             : '';
                         return `
                     <tr>
@@ -306,14 +307,16 @@
                         const maxAttribute = field.fieldValueMax !== null && field.fieldValueMax !== undefined
                             ? `max="${field.fieldValueMax}"`
                             : '';
-                        const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== '';
-                        const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== '';
+                        const hasPrefix = field.fieldUnitPrefix !== undefined &&
+                            field.fieldUnitPrefix !== '';
+                        const hasSuffix = field.fieldUnitSuffix !== undefined &&
+                            field.fieldUnitSuffix !== '';
                         if (hasPrefix || hasSuffix) {
                             fieldsHTML += '<div class="field has-addons">';
                             if (hasPrefix) {
                                 fieldsHTML += `
                   <div class="control">
-                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix)}</span>
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix ?? '')}</span>
                   </div>
                 `;
                             }
@@ -329,11 +332,11 @@
                             if (hasSuffix) {
                                 fieldsHTML += `
                   <div class="control">
-                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix)}</span>
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix ?? '')}</span>
                   </div>
                 `;
                             }
-                            fieldsHTML += "</div>";
+                            fieldsHTML += '</div>';
                         }
                         else {
                             fieldsHTML += `
@@ -382,14 +385,16 @@
                         const dataListAttribute = dataListItems.length > 0
                             ? `list="datalist-edit-${field.noteTypeFieldId}"`
                             : '';
-                        const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== '';
-                        const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== '';
+                        const hasPrefix = field.fieldUnitPrefix !== undefined &&
+                            field.fieldUnitPrefix !== '';
+                        const hasSuffix = field.fieldUnitSuffix !== undefined &&
+                            field.fieldUnitSuffix !== '';
                         if (hasPrefix || hasSuffix) {
                             fieldsHTML += '<div class="field has-addons">';
                             if (hasPrefix) {
                                 fieldsHTML += `
                   <div class="control">
-                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix)}</span>
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitPrefix ?? '')}</span>
                   </div>
                 `;
                             }
@@ -406,11 +411,11 @@
                             if (hasSuffix) {
                                 fieldsHTML += `
                   <div class="control">
-                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix)}</span>
+                    <span class="button is-static">${cityssm.escapeHTML(field.fieldUnitSuffix ?? '')}</span>
                   </div>
                 `;
                             }
-                            fieldsHTML += "</div>";
+                            fieldsHTML += '</div>';
                         }
                         else {
                             fieldsHTML += `
@@ -449,7 +454,7 @@
                     }
                 }
                 fieldsHTML += helpText;
-                fieldsHTML += "</div>";
+                fieldsHTML += '</div>';
             }
             // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
             fieldsContainer.innerHTML = fieldsHTML;
@@ -640,8 +645,8 @@
                     case 'number': {
                         const minAttribute = field.fieldValueMin === null ? '' : `min="${field.fieldValueMin}"`;
                         const maxAttribute = field.fieldValueMax === null ? '' : `max="${field.fieldValueMax}"`;
-                        const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== '';
-                        const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== '';
+                        const hasPrefix = field.fieldUnitPrefix !== '';
+                        const hasSuffix = field.fieldUnitSuffix !== '';
                         if (hasPrefix || hasSuffix) {
                             fieldsHTML += '<div class="field has-addons">';
                             if (hasPrefix) {
@@ -666,7 +671,7 @@
                   </div>
                 `;
                             }
-                            fieldsHTML += "</div>";
+                            fieldsHTML += '</div>';
                         }
                         else {
                             fieldsHTML += `
@@ -709,8 +714,8 @@
                         const dataListAttribute = dataListItems.length > 0
                             ? `list="datalist-${field.noteTypeFieldId}"`
                             : '';
-                        const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== '';
-                        const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== '';
+                        const hasPrefix = field.fieldUnitPrefix !== '';
+                        const hasSuffix = field.fieldUnitSuffix !== '';
                         if (hasPrefix || hasSuffix) {
                             fieldsHTML += '<div class="field has-addons">';
                             if (hasPrefix) {
@@ -736,7 +741,7 @@
                   </div>
                 `;
                             }
-                            fieldsHTML += "</div>";
+                            fieldsHTML += '</div>';
                         }
                         else {
                             fieldsHTML += `
@@ -774,7 +779,7 @@
                     }
                 }
                 fieldsHTML += helpText;
-                fieldsHTML += "</div>";
+                fieldsHTML += '</div>';
             }
             // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
             fieldsContainer.innerHTML = fieldsHTML;
