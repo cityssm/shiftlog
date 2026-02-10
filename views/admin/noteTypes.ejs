@@ -48,34 +48,38 @@
         </div>
       </div>
       <div class="column is-narrow">
-        <div class="buttons has-addons">
-          <button class="button is-success" id="button--addNoteType" type="button">
-            <span class="icon">
-              <i class="fa-solid fa-plus"></i>
-            </span>
-            <span>Add Note Type</span>
-          </button>
-          <div class="dropdown is-right" id="dropdown--addNoteType">
-            <div class="dropdown-trigger">
-              <button
-                class="button is-success"
-                type="button"
-                aria-haspopup="true"
-                aria-controls="dropdown-menu--addNoteType"
-              >
-                <span class="icon is-small">
-                  <i class="fa-solid fa-angle-down"></i>
-                </span>
-              </button>
-            </div>
-            <div class="dropdown-menu" id="dropdown-menu--addNoteType" role="menu">
-              <div class="dropdown-content">
-                <a href="#" class="dropdown-item" id="button--addNoteTypeFromTemplate">
-                  <span class="icon">
-                    <i class="fa-solid fa-file-import"></i>
+        <div class="field has-addons">
+          <div class="control">
+            <button class="button is-success" id="button--addNoteType" type="button">
+              <span class="icon">
+                <i class="fa-solid fa-plus"></i>
+              </span>
+              <span>Add Note Type</span>
+            </button>
+          </div>
+          <div class="control">
+            <div class="dropdown is-right" id="dropdown--addNoteType">
+              <div class="dropdown-trigger">
+                <button
+                  class="button is-success"
+                  type="button"
+                  aria-haspopup="true"
+                  aria-controls="dropdown-menu--addNoteType"
+                >
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-angle-down"></i>
                   </span>
-                  <span>Create from Template</span>
-                </a>
+                </button>
+              </div>
+              <div class="dropdown-menu" id="dropdown-menu--addNoteType" role="menu">
+                <div class="dropdown-content">
+                  <a class="dropdown-item" id="button--addNoteTypeFromTemplate" href="#">
+                    <span class="icon">
+                      <i class="fa-solid fa-file-import"></i>
+                    </span>
+                    <span>Create from Template</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
