@@ -690,7 +690,7 @@ declare const exports: {
         const titleElement = modalElement.querySelector(
           '#addDataListItem--title'
         ) as HTMLElement
-        titleElement.textContent = `Add ${dataList.dataListName} Item`
+        titleElement.textContent = `Add "${dataList.dataListName}" Item`
 
         // Set the data list key
         const dataListKeyInput = modalElement.querySelector(
@@ -951,7 +951,7 @@ declare const exports: {
         const titleElement = modalElement.querySelector(
           '#editDataListItem--title'
         ) as HTMLElement
-        titleElement.textContent = `Edit ${dataList.dataListName} Item`
+        titleElement.textContent = `Edit "${dataList.dataListName}" Item`
 
         // Set the hidden fields
         const dataListKeyInput = modalElement.querySelector(
@@ -1040,7 +1040,7 @@ declare const exports: {
 
     bulmaJS.confirm({
       contextualColorName: 'warning',
-      title: `Delete ${dataList.dataListName} Item`,
+      title: `Delete "${dataList.dataListName}" Item`,
 
       message: `Are you sure you want to delete "${dataListItem}"? This action cannot be undone.`,
       okButton: {
