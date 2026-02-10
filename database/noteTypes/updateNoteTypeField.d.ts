@@ -3,6 +3,8 @@ interface UpdateNoteTypeFieldForm {
     fieldHelpText: string;
     fieldInputType: 'date' | 'number' | 'select' | 'text' | 'textbox';
     fieldLabel: string;
+    fieldUnitPrefix: string;
+    fieldUnitSuffix: string;
     fieldValueMax?: number | null;
     fieldValueMin?: number | null;
     fieldValueRequired: boolean;

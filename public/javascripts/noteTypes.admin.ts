@@ -608,6 +608,9 @@ declare const exports: {
         const minMaxFields = formElement.querySelector(
           '#fields--minMax'
         ) as HTMLDivElement
+        const unitPrefixSuffixFields = formElement.querySelector(
+          '#fields--unitPrefixSuffix'
+        ) as HTMLDivElement
 
         function updateFieldVisibility(): void {
           const fieldType = fieldTypeSelect.value
@@ -618,6 +621,11 @@ declare const exports: {
           )
 
           minMaxFields.classList.toggle(
+            'is-hidden',
+            !(fieldType === 'text' || fieldType === 'number')
+          )
+
+          unitPrefixSuffixFields.classList.toggle(
             'is-hidden',
             !(fieldType === 'text' || fieldType === 'number')
           )
@@ -743,6 +751,16 @@ declare const exports: {
         ).value = field.fieldValueMax?.toString() ?? ''
         ;(
           formElement.querySelector(
+            '#fieldEdit--fieldUnitPrefix'
+          ) as HTMLInputElement
+        ).value = field.fieldUnitPrefix
+        ;(
+          formElement.querySelector(
+            '#fieldEdit--fieldUnitSuffix'
+          ) as HTMLInputElement
+        ).value = field.fieldUnitSuffix
+        ;(
+          formElement.querySelector(
             '#fieldEdit--fieldHelpText'
           ) as HTMLTextAreaElement
         ).value = field.fieldHelpText
@@ -763,6 +781,9 @@ declare const exports: {
         const minMaxFields = formElement.querySelector(
           '#fields--minMax'
         ) as HTMLDivElement
+        const unitPrefixSuffixFields = formElement.querySelector(
+          '#fields--unitPrefixSuffix'
+        ) as HTMLDivElement
 
         // Update field visibility based on the current field type (since it can't be changed)
         const fieldType = fieldTypeSelect.value
@@ -773,6 +794,11 @@ declare const exports: {
         )
 
         minMaxFields.classList.toggle(
+          'is-hidden',
+          !(fieldType === 'text' || fieldType === 'number')
+        )
+
+        unitPrefixSuffixFields.classList.toggle(
           'is-hidden',
           !(fieldType === 'text' || fieldType === 'number')
         )
