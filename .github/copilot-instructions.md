@@ -239,6 +239,7 @@ cityssm.postJSON(
 
 ## Notes for AI Assistants
 
+- Use new PRs when starting new requests to ensure the latest code is available
 - This project uses TypeScript but commits both source (`.ts`) and compiled (`.js`, `.d.ts`) files
 - Always update all three file types when making changes
 - Use ES Module syntax exclusively (no CommonJS)
