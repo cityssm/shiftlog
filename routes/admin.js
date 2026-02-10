@@ -24,6 +24,7 @@ import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js';
 import handler_doAddMultipleDataListItems from '../handlers/admin-post/doAddMultipleDataListItems.js';
 import handler_doAddNoteType from '../handlers/admin-post/doAddNoteType.js';
 import handler_doAddNoteTypeField from '../handlers/admin-post/doAddNoteTypeField.js';
+import handler_doAddNoteTypeFromTemplate from '../handlers/admin-post/doAddNoteTypeFromTemplate.js';
 import handler_doAddNotificationConfiguration from '../handlers/admin-post/doAddNotificationConfiguration.js';
 import handler_doAddTag from '../handlers/admin-post/doAddTag.js';
 import handler_doAddUser from '../handlers/admin-post/doAddUser.js';
@@ -48,6 +49,7 @@ import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUser
 import handler_doDeleteWorkOrderType from '../handlers/admin-post/doDeleteWorkOrderType.js';
 import handler_doGetApiAuditLogs from '../handlers/admin-post/doGetApiAuditLogs.js';
 import handler_doGetEmployeeList from '../handlers/admin-post/doGetEmployeeList.js';
+import handler_doGetNoteTypeTemplates from '../handlers/admin-post/doGetNoteTypeTemplates.js';
 import handler_doGetNotificationConfigurations from '../handlers/admin-post/doGetNotificationConfigurations.js';
 import handler_doGetOrphanedTags from '../handlers/admin-post/doGetOrphanedTags.js';
 import handler_doGetUserGroup from '../handlers/admin-post/doGetUserGroup.js';
@@ -158,7 +160,9 @@ router
  */
 router
     .get('/noteTypes', handler_noteTypes)
+    .post('/doGetNoteTypeTemplates', handler_doGetNoteTypeTemplates)
     .post('/doAddNoteType', handler_doAddNoteType)
+    .post('/doAddNoteTypeFromTemplate', handler_doAddNoteTypeFromTemplate)
     .post('/doUpdateNoteType', handler_doUpdateNoteType)
     .post('/doDeleteNoteType', handler_doDeleteNoteType)
     .post('/doAddNoteTypeField', handler_doAddNoteTypeField)

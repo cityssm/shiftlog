@@ -8,8 +8,10 @@ import type { DataList } from '../../database/app/getDataLists.js'
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
 import type { DoAddNoteTypeResponse } from '../../handlers/admin-post/doAddNoteType.js'
 import type { DoAddNoteTypeFieldResponse } from '../../handlers/admin-post/doAddNoteTypeField.js'
+import type { DoAddNoteTypeFromTemplateResponse } from '../../handlers/admin-post/doAddNoteTypeFromTemplate.js'
 import type { DoDeleteNoteTypeResponse } from '../../handlers/admin-post/doDeleteNoteType.js'
 import type { DoDeleteNoteTypeFieldResponse } from '../../handlers/admin-post/doDeleteNoteTypeField.js'
+import type { DoGetNoteTypeTemplatesResponse } from '../../handlers/admin-post/doGetNoteTypeTemplates.js'
 import type { DoReorderNoteTypeFieldsResponse } from '../../handlers/admin-post/doReorderNoteTypeFields.js'
 import type { DoUpdateNoteTypeResponse } from '../../handlers/admin-post/doUpdateNoteType.js'
 import type { DoUpdateNoteTypeFieldResponse } from '../../handlers/admin-post/doUpdateNoteTypeField.js'
@@ -920,6 +922,161 @@ declare const exports: {
     }
   }
 
+  function openSelectTemplateModal(): void {
+    let closeModalFunction: () => void
+
+    cityssm.openHtmlModal('adminNoteTypes-selectTemplate', {
+      onshow(modalElement) {
+        const templatesContainer = modalElement.querySelector(
+          '#container--noteTypeTemplates'
+        ) as HTMLDivElement
+
+        templatesContainer.innerHTML = /* html */ `
+          <div class="has-text-centered">
+            <span class="icon is-large">
+              <i class="fa-solid fa-spinner fa-pulse fa-3x"></i>
+            </span>
+            <p class="mt-2">Loading templates...</p>
+          </div>
+        `
+
+        // Fetch templates
+        cityssm.postJSON(
+          `${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`,
+          {},
+          (rawResponseJSON) => {
+            const responseJSON =
+              rawResponseJSON as DoGetNoteTypeTemplatesResponse
+
+            if (responseJSON.templates.length === 0) {
+              templatesContainer.innerHTML = /* html */ `
+                <div class="message is-info">
+                  <p class="message-body">
+                    No templates are currently available.
+                  </p>
+                </div>
+              `
+              return
+            }
+
+            // Render template cards
+            templatesContainer.innerHTML = ''
+
+            for (const template of responseJSON.templates) {
+              const templateCard = document.createElement('div')
+              templateCard.className = 'box mb-3'
+              templateCard.innerHTML = /* html */ `
+                <article class="media">
+                  <div class="media-left">
+                    <span class="icon is-large has-text-info">
+                      <i class="fa-solid fa-file-lines fa-2x"></i>
+                    </span>
+                  </div>
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong>${cityssm.escapeHTML(template.templateName)}</strong>
+                        <br />
+                        ${cityssm.escapeHTML(template.templateDescription)}
+                        <br />
+                        <small class="has-text-grey">
+                          ${template.fields.length} field${template.fields.length !== 1 ? 's' : ''}
+                        </small>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="media-right">
+                    <button
+                      class="button is-success button--useTemplate"
+                      data-template-id="${template.templateId}"
+                      type="button"
+                    >
+                      <span class="icon">
+                        <i class="fa-solid fa-plus"></i>
+                      </span>
+                      <span>Use Template</span>
+                    </button>
+                  </div>
+                </article>
+              `
+              templatesContainer.append(templateCard)
+            }
+
+            // Attach event listeners to template buttons
+            const useTemplateButtons = templatesContainer.querySelectorAll(
+              '.button--useTemplate'
+            )
+            for (const button of useTemplateButtons) {
+              button.addEventListener('click', (event) => {
+                const templateId = (event.currentTarget as HTMLButtonElement)
+                  .dataset.templateId
+
+                if (!templateId) {
+                  return
+                }
+
+                // Disable button and show loading state
+                const clickedButton = event.currentTarget as HTMLButtonElement
+                clickedButton.disabled = true
+                clickedButton.innerHTML = /* html */ `
+                  <span class="icon">
+                    <i class="fa-solid fa-spinner fa-pulse"></i>
+                  </span>
+                  <span>Creating...</span>
+                `
+
+                cityssm.postJSON(
+                  `${shiftLog.urlPrefix}/admin/doAddNoteTypeFromTemplate`,
+                  {
+                    templateId
+                  },
+                  (rawResponseJSON) => {
+                    const responseJSON =
+                      rawResponseJSON as DoAddNoteTypeFromTemplateResponse
+
+                    if (responseJSON.success) {
+                      noteTypes = responseJSON.noteTypes
+                      closeModalFunction()
+                      renderNoteTypes()
+
+                      bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message:
+                          'Note type created from template successfully. You can now customize it as needed.'
+                      })
+                    } else {
+                      bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        title: 'Error Creating Note Type',
+                        message: responseJSON.message
+                      })
+
+                      // Re-enable button
+                      clickedButton.disabled = false
+                      clickedButton.innerHTML = /* html */ `
+                        <span class="icon">
+                          <i class="fa-solid fa-plus"></i>
+                        </span>
+                        <span>Use Template</span>
+                      `
+                    }
+                  }
+                )
+              })
+            }
+          }
+        )
+      },
+      onshown(_modalElement, _closeModalFunction) {
+        closeModalFunction = _closeModalFunction
+        bulmaJS.toggleHtmlClipped()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
   // Initialize
   renderNoteTypes()
 
@@ -927,6 +1084,31 @@ declare const exports: {
   document
     .querySelector('#button--addNoteType')
     ?.addEventListener('click', openAddNoteTypeModal)
+
+  // Add Note Type from Template button
+  document
+    .querySelector('#button--addNoteTypeFromTemplate')
+    ?.addEventListener('click', (event) => {
+      event.preventDefault()
+      // Close dropdown
+      document.querySelector('#dropdown--addNoteType')?.classList.remove('is-active')
+      openSelectTemplateModal()
+    })
+
+  // Toggle dropdown
+  document
+    .querySelector('#dropdown--addNoteType .dropdown-trigger button')
+    ?.addEventListener('click', () => {
+      document.querySelector('#dropdown--addNoteType')?.classList.toggle('is-active')
+    })
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (event) => {
+    const dropdown = document.querySelector('#dropdown--addNoteType')
+    if (dropdown && !dropdown.contains(event.target as Node)) {
+      dropdown.classList.remove('is-active')
+    }
+  })
 
   // Availability filter
   document
