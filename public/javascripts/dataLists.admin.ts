@@ -5,6 +5,7 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddDataListResponse } from '../../handlers/admin-post/doAddDataList.js'
 import type { DoAddDataListItemResponse } from '../../handlers/admin-post/doAddDataListItem.js'
+import type { DoAddMultipleDataListItemsResponse } from '../../handlers/admin-post/doAddMultipleDataListItems.js'
 import type { DoDeleteDataListResponse } from '../../handlers/admin-post/doDeleteDataList.js'
 import type { DoDeleteDataListItemResponse } from '../../handlers/admin-post/doDeleteDataListItem.js'
 import type { DoReorderDataListItemsResponse } from '../../handlers/admin-post/doReorderDataListItems.js'
@@ -249,17 +250,51 @@ declare const exports: {
                     </div>
                   `
               }
-              <div class="column has-text-right">
-                <button
-                  class="button is-success is-small button--addItem" 
-                  data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
-                  type="button"
-                >
-                  <span class="icon">
-                    <i class="fa-solid fa-plus"></i>
-                  </span>
-                  <span>Add Item</span>
-                </button>
+              <div class="column">
+                <div class="field has-addons is-justify-content-flex-end">
+                  <div class="control">
+                    <button
+                      class="button is-success is-small button--addItem" 
+                      data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                      type="button"
+                    >
+                      <span class="icon">
+                        <i class="fa-solid fa-plus"></i>
+                      </span>
+                      <span>Add Item</span>
+                    </button>
+                  </div>
+                  <div class="control">
+                    <div class="dropdown is-right">
+                      <div class="dropdown-trigger">
+                        <button
+                          class="button is-success is-small"
+                          type="button"
+                          aria-haspopup="true"
+                          aria-controls="dropdown-menu-${cityssm.escapeHTML(dataList.dataListKey)}"
+                        >
+                          <span class="icon is-small">
+                            <i class="fa-solid fa-angle-down" aria-hidden="true"></i>
+                          </span>
+                        </button>
+                      </div>
+                      <div class="dropdown-menu" id="dropdown-menu-${cityssm.escapeHTML(dataList.dataListKey)}" role="menu">
+                        <div class="dropdown-content">
+                          <a
+                            class="dropdown-item button--addMultipleItems"
+                            data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
+                            href="#"
+                          >
+                            <span class="icon">
+                              <i class="fa-solid fa-plus"></i>
+                            </span>
+                            <span>Add Multiple Items</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -301,6 +336,7 @@ declare const exports: {
     }
 
     // Re-attach all event listeners
+    bulmaJS.init(panelsContainer) // Re-initialize dropdowns for new content
     attachAllEventListeners()
   }
 
@@ -329,6 +365,14 @@ declare const exports: {
     const addButtons = document.querySelectorAll('.button--addItem')
     for (const button of addButtons) {
       button.addEventListener('click', addDataListItem)
+    }
+
+    // Add multiple items buttons
+    const addMultipleButtons = document.querySelectorAll(
+      '.button--addMultipleItems'
+    )
+    for (const button of addMultipleButtons) {
+      button.addEventListener('click', addMultipleDataListItems)
     }
 
     // Re-attach event listeners for each data list's items
@@ -526,10 +570,11 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'warning',
       title: 'Delete Data List',
+
       message: `Are you sure you want to delete "${dataListName}"? This will also delete all items in this list. This action cannot be undone.`,
       okButton: {
-        contextualColorName: 'danger',
         text: 'Delete Data List',
+
         callbackFunction() {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteDataList`,
@@ -547,12 +592,14 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Data List Deleted',
+
                   message: 'The data list has been successfully deleted.'
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Deleting Data List',
+                  
                   message: responseJSON.errorMessage ?? 'Please try again.'
                 })
               }
@@ -680,6 +727,146 @@ declare const exports: {
           '#addDataListItem--dataListItem'
         ) as HTMLInputElement
         itemInput.focus()
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function addMultipleDataListItems(clickEvent: Event): void {
+    clickEvent.preventDefault()
+
+    const buttonElement = clickEvent.currentTarget as HTMLAnchorElement
+    const dataListKey = buttonElement.dataset.dataListKey
+
+    if (dataListKey === undefined) {
+      return
+    }
+
+    const dataList = exports.dataLists.find(
+      (dl) => dl.dataListKey === dataListKey
+    )
+
+    if (dataList === undefined) {
+      return
+    }
+
+    let closeModalFunction: () => void
+
+    function doAddMultipleDataListItems(submitEvent: Event): void {
+      submitEvent.preventDefault()
+
+      const addForm = submitEvent.currentTarget as HTMLFormElement
+      const formData = new FormData(addForm)
+
+      const dataListItemsToAdd = (
+        formData.get('dataListItems') as string | null
+      )?.trim()
+
+      if (dataListItemsToAdd === '') {
+        bulmaJS.alert({
+          contextualColorName: 'warning',
+          title: 'Items Required',
+          message: 'Please enter at least one item name.'
+        })
+        return
+      }
+
+      cityssm.postJSON(
+        `${shiftLog.urlPrefix}/admin/doAddMultipleDataListItems`,
+        addForm,
+        (responseJSON: DoAddMultipleDataListItemsResponse) => {
+          if (responseJSON.success && responseJSON.items !== undefined) {
+            closeModalFunction()
+
+            // Open the details panel if it's closed
+            const detailsElement = document.querySelector(
+              `details[data-data-list-key="${dataListKey}"]`
+            ) as HTMLDetailsElement | null
+
+            if (detailsElement !== null && !detailsElement.open) {
+              detailsElement.open = true
+            }
+
+            renderDataListItems(dataListKey as string, responseJSON.items)
+
+            const addedCount = responseJSON.addedCount ?? 0
+            const skippedCount = responseJSON.skippedCount ?? 0
+
+            let message = ''
+            if (addedCount > 0) {
+              message += `${addedCount} item${addedCount === 1 ? '' : 's'} successfully added.`
+            }
+            if (skippedCount > 0) {
+              if (message !== '') {
+                message += '<br>'
+              }
+              message += `${skippedCount} item${skippedCount === 1 ? '' : 's'} skipped (already exists).`
+            }
+
+            bulmaJS.alert({
+              contextualColorName: 'success',
+              title: 'Items Added',
+
+              message,
+              messageIsHtml: true
+            })
+          } else {
+            bulmaJS.alert({
+              contextualColorName: 'danger',
+              title: 'Error Adding Items',
+              message: 'Please try again.'
+            })
+          }
+        }
+      )
+    }
+
+    cityssm.openHtmlModal('adminDataLists-addMultipleItems', {
+      onshow(modalElement) {
+        // Set the modal title
+        const titleElement = modalElement.querySelector(
+          '#addMultipleDataListItems--title'
+        ) as HTMLElement
+        titleElement.textContent = `Add Multiple ${dataList.dataListName} Items`
+
+        // Set the data list key
+        const dataListKeyInput = modalElement.querySelector(
+          '#addMultipleDataListItems--dataListKey'
+        ) as HTMLInputElement
+        dataListKeyInput.value = dataListKey
+
+        // Populate user group options
+        const userGroupSelect = modalElement.querySelector(
+          '#addMultipleDataListItems--userGroupId'
+        ) as HTMLSelectElement
+
+        userGroupSelect.innerHTML =
+          '<option value="">None (Available to All)</option>'
+
+        for (const userGroup of exports.userGroups) {
+          const option = document.createElement('option')
+          option.value = userGroup.userGroupId.toString()
+          option.textContent = userGroup.userGroupName
+          userGroupSelect.append(option)
+        }
+
+        // Attach form submit handler
+        modalElement
+          .querySelector('#form--addMultipleDataListItems')
+          ?.addEventListener('submit', doAddMultipleDataListItems)
+
+        // Focus the textarea
+        const textareaInput = modalElement.querySelector(
+          '#addMultipleDataListItems--dataListItems'
+        ) as HTMLTextAreaElement
+        textareaInput.focus()
+      },
+      onshown(_modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
       },
 
       onremoved() {
@@ -857,7 +1044,6 @@ declare const exports: {
 
       message: `Are you sure you want to delete "${dataListItem}"? This action cannot be undone.`,
       okButton: {
-        contextualColorName: 'danger',
         text: 'Delete Item',
 
         callbackFunction() {
