@@ -228,10 +228,13 @@
           <% if (note.noteType) { %><strong class="tag is-info is-light"><%= note.noteType %></strong><br /><% } %><span style="white-space: pre-wrap;"><%= note.noteText %></span><% if (note.fields && note.fields.length > 0) { %>
           <div style="margin-top: 0.75rem;">
             <table class="table is-narrow is-size-7" style="background-color: transparent;">
-              <tbody><% for (const field of note.fields) { %>
+              <tbody><% for (const field of note.fields) { 
+                const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== '' ? field.fieldUnitPrefix + ' ' : '';
+                const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== '' ? ' ' + field.fieldUnitSuffix : '';
+              %>
                 <tr>
                   <th style="width: 35%; padding: 0.25rem 0.5rem;"><%= field.fieldLabel %></th>
-                  <td style="padding: 0.25rem 0.5rem;"><%= field.fieldValue %></td>
+                  <td style="padding: 0.25rem 0.5rem;"><%= prefix %><%= field.fieldValue %><%= suffix %></td>
                 </tr><% } %>
               </tbody>
             </table>

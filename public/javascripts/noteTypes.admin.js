@@ -414,10 +414,14 @@
                 const fieldTypeSelect = formElement.querySelector('#fieldAdd--fieldInputType');
                 const dataListField = formElement.querySelector('#field--dataListKey');
                 const minMaxFields = formElement.querySelector('#fields--minMax');
+                const unitPrefixSuffixFields = formElement.querySelector('#fields--unitPrefixSuffix');
                 function updateFieldVisibility() {
                     const fieldType = fieldTypeSelect.value;
-                    dataListField.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'select'));
-                    minMaxFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
+                    const isTextOrSelect = fieldType === 'text' || fieldType === 'select';
+                    const isTextOrNumber = fieldType === 'text' || fieldType === 'number';
+                    dataListField.classList.toggle('is-hidden', !isTextOrSelect);
+                    minMaxFields.classList.toggle('is-hidden', !isTextOrNumber);
+                    unitPrefixSuffixFields.classList.toggle('is-hidden', !isTextOrNumber);
                 }
                 fieldTypeSelect.addEventListener('change', updateFieldVisibility);
                 updateFieldVisibility();
@@ -489,15 +493,21 @@
                 ;
                 formElement.querySelector('#fieldEdit--fieldValueMin').value = field.fieldValueMin?.toString() ?? '';
                 formElement.querySelector('#fieldEdit--fieldValueMax').value = field.fieldValueMax?.toString() ?? '';
+                formElement.querySelector('#fieldEdit--fieldUnitPrefix').value = field.fieldUnitPrefix;
+                formElement.querySelector('#fieldEdit--fieldUnitSuffix').value = field.fieldUnitSuffix;
                 formElement.querySelector('#fieldEdit--fieldHelpText').value = field.fieldHelpText;
                 formElement.querySelector('input[name="fieldValueRequired"]').checked = field.fieldValueRequired;
                 formElement.querySelector('input[name="hasDividerAbove"]').checked = field.hasDividerAbove;
                 const dataListField = formElement.querySelector('#field--dataListKey');
                 const minMaxFields = formElement.querySelector('#fields--minMax');
+                const unitPrefixSuffixFields = formElement.querySelector('#fields--unitPrefixSuffix');
                 // Update field visibility based on the current field type (since it can't be changed)
                 const fieldType = fieldTypeSelect.value;
-                dataListField.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'select'));
-                minMaxFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
+                const isTextOrSelect = fieldType === 'text' || fieldType === 'select';
+                const isTextOrNumber = fieldType === 'text' || fieldType === 'number';
+                dataListField.classList.toggle('is-hidden', !isTextOrSelect);
+                minMaxFields.classList.toggle('is-hidden', !isTextOrNumber);
+                unitPrefixSuffixFields.classList.toggle('is-hidden', !isTextOrNumber);
                 formElement.addEventListener('submit', doUpdate);
             },
             onshown(modalElement, _closeModalFunction) {

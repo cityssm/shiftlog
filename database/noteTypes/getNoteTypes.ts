@@ -49,6 +49,8 @@ export default async function getNoteTypes(): Promise<NoteTypeWithFields[]> {
         ntf.noteTypeId,
         ntf.fieldLabel,
         ntf.fieldInputType,
+        ntf.fieldUnitPrefix,
+        ntf.fieldUnitSuffix,
         ntf.fieldHelpText,
         ntf.dataListKey,
         ntf.fieldValueMin,

@@ -5,6 +5,8 @@ interface UpdateNoteTypeFieldForm {
   fieldHelpText: string
   fieldInputType: 'date' | 'number' | 'select' | 'text' | 'textbox'
   fieldLabel: string
+  fieldUnitPrefix: string
+  fieldUnitSuffix: string
   fieldValueMax?: number | null
   fieldValueMin?: number | null
   fieldValueRequired: boolean
@@ -26,6 +28,8 @@ export default async function updateNoteTypeField(
       .input('noteTypeFieldId', fieldFields.noteTypeFieldId)
       .input('fieldLabel', fieldFields.fieldLabel)
       .input('fieldInputType', fieldFields.fieldInputType)
+      .input('fieldUnitPrefix', fieldFields.fieldUnitPrefix)
+      .input('fieldUnitSuffix', fieldFields.fieldUnitSuffix)
       .input('fieldHelpText', fieldFields.fieldHelpText)
       .input('dataListKey', fieldFields.dataListKey ?? null)
       .input('fieldValueMin', fieldFields.fieldValueMin ?? null)
@@ -40,6 +44,8 @@ export default async function updateNoteTypeField(
         SET
           fieldLabel = @fieldLabel,
           fieldInputType = @fieldInputType,
+          fieldUnitPrefix = @fieldUnitPrefix,
+          fieldUnitSuffix = @fieldUnitSuffix,
           fieldHelpText = @fieldHelpText,
           dataListKey = @dataListKey,
           fieldValueMin = @fieldValueMin,

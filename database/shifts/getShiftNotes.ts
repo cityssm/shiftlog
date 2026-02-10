@@ -6,6 +6,8 @@ export interface ShiftNoteField {
   fieldHelpText?: string
   fieldInputType: string
   fieldLabel: string
+  fieldUnitPrefix?: string
+  fieldUnitSuffix?: string
   fieldValue: string
   fieldValueMax?: number | null
   fieldValueMin?: number | null
@@ -87,6 +89,8 @@ export default async function getShiftNotes(
         snf.noteTypeFieldId,
         COALESCE(ntf.fieldLabel, 'Deleted Field') as fieldLabel,
         COALESCE(ntf.fieldInputType, 'text') as fieldInputType,
+        COALESCE(ntf.fieldUnitPrefix, '') as fieldUnitPrefix,
+        COALESCE(ntf.fieldUnitSuffix, '') as fieldUnitSuffix,
         ntf.fieldHelpText,
         ntf.dataListKey,
         ntf.fieldValueMin,
@@ -116,6 +120,8 @@ export default async function getShiftNotes(
       fieldHelpText: field.fieldHelpText,
       fieldInputType: field.fieldInputType,
       fieldLabel: field.fieldLabel,
+      fieldUnitPrefix: field.fieldUnitPrefix,
+      fieldUnitSuffix: field.fieldUnitSuffix,
       fieldValue: field.fieldValue,
       fieldValueMax: field.fieldValueMax,
       fieldValueMin: field.fieldValueMin,

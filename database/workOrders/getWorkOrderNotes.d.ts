@@ -3,6 +3,8 @@ export interface WorkOrderNoteField {
     fieldHelpText?: string;
     fieldInputType: string;
     fieldLabel: string;
+    fieldUnitPrefix?: string;
+    fieldUnitSuffix?: string;
     fieldValue: string;
     fieldValueMax?: number | null;
     fieldValueMin?: number | null;
