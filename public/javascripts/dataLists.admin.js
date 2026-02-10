@@ -594,11 +594,16 @@
                     renderDataListItems(dataListKey, responseJSON.items);
                     const addedCount = responseJSON.addedCount ?? 0;
                     const skippedCount = responseJSON.skippedCount ?? 0;
-                    const message = addedCount > 0 && skippedCount > 0
-                        ? `${addedCount} item(s) were successfully added. ${skippedCount} item(s) were skipped because they already exist.`
-                        : addedCount > 0
-                            ? `${addedCount} item(s) were successfully added.`
-                            : `All ${skippedCount} item(s) were skipped because they already exist.`;
+                    let message;
+                    if (addedCount > 0 && skippedCount > 0) {
+                        message = `${addedCount} item(s) were successfully added. ${skippedCount} item(s) were skipped because they already exist.`;
+                    }
+                    else if (addedCount > 0) {
+                        message = `${addedCount} item(s) were successfully added.`;
+                    }
+                    else {
+                        message = `All ${skippedCount} item(s) were skipped because they already exist.`;
+                    }
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         message,
