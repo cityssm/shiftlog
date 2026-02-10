@@ -3,7 +3,8 @@ import type { Request, Response } from 'express'
 import { getNoteTypeTemplates } from '../../helpers/noteTypeTemplates.helpers.js'
 import type { NoteTypeTemplate } from '../../types/noteTypeTemplates.types.js'
 
-export interface DoGetNoteTypeTemplatesResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export type DoGetNoteTypeTemplatesResponse = {
   templates: NoteTypeTemplate[]
 }
 

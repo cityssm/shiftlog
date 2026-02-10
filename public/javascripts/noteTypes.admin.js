@@ -567,6 +567,7 @@
             const sortableInstance = Sortable.create(tbodyElement, {
                 handle: '.handle',
                 animation: 150,
+                // eslint-disable-next-line @typescript-eslint/no-loop-func
                 onEnd() {
                     // Get the new order
                     const rows = tbodyElement.querySelectorAll('tr[data-note-type-field-id]');
@@ -581,9 +582,9 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderNoteTypeFields`, {
                         noteTypeId: noteType.noteTypeId,
                         noteTypeFieldIds
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success && responseJSON.noteTypes !== undefined) {
+                    }, (responseJSON) => {
+                        if (responseJSON.success &&
+                            responseJSON.noteTypes !== undefined) {
                             noteTypes = responseJSON.noteTypes;
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -620,8 +621,7 @@
           </div>
         `;
                 // Fetch templates
-                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`, {}, (rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`, {}, (responseJSON) => {
                     if (responseJSON.templates.length === 0) {
                         templatesContainer.innerHTML = /* html */ `
                 <div class="message is-info">
@@ -676,6 +676,7 @@
                     // Attach event listeners to template buttons
                     const useTemplateButtons = templatesContainer.querySelectorAll('.button--useTemplate');
                     for (const button of useTemplateButtons) {
+                        // eslint-disable-next-line @typescript-eslint/no-loop-func
                         button.addEventListener('click', (event) => {
                             const templateId = event.currentTarget
                                 .dataset.templateId;
@@ -744,22 +745,7 @@
         .querySelector('#button--addNoteTypeFromTemplate')
         ?.addEventListener('click', (event) => {
         event.preventDefault();
-        // Close dropdown
-        document.querySelector('#dropdown--addNoteType')?.classList.remove('is-active');
         openSelectTemplateModal();
-    });
-    // Toggle dropdown
-    document
-        .querySelector('#dropdown--addNoteType .dropdown-trigger button')
-        ?.addEventListener('click', () => {
-        document.querySelector('#dropdown--addNoteType')?.classList.toggle('is-active');
-    });
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (event) => {
-        const dropdown = document.querySelector('#dropdown--addNoteType');
-        if (dropdown && !dropdown.contains(event.target)) {
-            dropdown.classList.remove('is-active');
-        }
     });
     // Availability filter
     document

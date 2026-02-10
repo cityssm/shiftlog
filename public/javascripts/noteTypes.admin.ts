@@ -575,7 +575,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Field',
-              
+
               message: responseJSON.message
             })
           }
@@ -870,6 +870,8 @@ declare const exports: {
       const sortableInstance = Sortable.create(tbodyElement, {
         handle: '.handle',
         animation: 150,
+        
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
         onEnd() {
           // Get the new order
           const rows = tbodyElement.querySelectorAll(
@@ -892,11 +894,11 @@ declare const exports: {
               noteTypeId: noteType.noteTypeId,
               noteTypeFieldIds
             },
-            (rawResponseJSON) => {
-              const responseJSON =
-                rawResponseJSON as DoReorderNoteTypeFieldsResponse
-
-              if (responseJSON.success && responseJSON.noteTypes !== undefined) {
+            (responseJSON: DoReorderNoteTypeFieldsResponse) => {
+              if (
+                responseJSON.success &&
+                responseJSON.noteTypes !== undefined
+              ) {
                 noteTypes = responseJSON.noteTypes
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -944,10 +946,7 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`,
           {},
-          (rawResponseJSON) => {
-            const responseJSON =
-              rawResponseJSON as DoGetNoteTypeTemplatesResponse
-
+          (responseJSON: DoGetNoteTypeTemplatesResponse) => {
             if (responseJSON.templates.length === 0) {
               templatesContainer.innerHTML = /* html */ `
                 <div class="message is-info">
@@ -1007,6 +1006,7 @@ declare const exports: {
               '.button--useTemplate'
             )
             for (const button of useTemplateButtons) {
+              // eslint-disable-next-line @typescript-eslint/no-loop-func
               button.addEventListener('click', (event) => {
                 const templateId = (event.currentTarget as HTMLButtonElement)
                   .dataset.templateId
@@ -1048,6 +1048,7 @@ declare const exports: {
                       bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Creating Note Type',
+
                         message: responseJSON.message
                       })
 
@@ -1071,6 +1072,7 @@ declare const exports: {
         closeModalFunction = _closeModalFunction
         bulmaJS.toggleHtmlClipped()
       },
+
       onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
@@ -1090,25 +1092,8 @@ declare const exports: {
     .querySelector('#button--addNoteTypeFromTemplate')
     ?.addEventListener('click', (event) => {
       event.preventDefault()
-      // Close dropdown
-      document.querySelector('#dropdown--addNoteType')?.classList.remove('is-active')
       openSelectTemplateModal()
     })
-
-  // Toggle dropdown
-  document
-    .querySelector('#dropdown--addNoteType .dropdown-trigger button')
-    ?.addEventListener('click', () => {
-      document.querySelector('#dropdown--addNoteType')?.classList.toggle('is-active')
-    })
-
-  // Close dropdown when clicking outside
-  document.addEventListener('click', (event) => {
-    const dropdown = document.querySelector('#dropdown--addNoteType')
-    if (dropdown && !dropdown.contains(event.target as Node)) {
-      dropdown.classList.remove('is-active')
-    }
-  })
 
   // Availability filter
   document
