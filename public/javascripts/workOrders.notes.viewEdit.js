@@ -268,14 +268,14 @@
             for (const field of fields) {
                 // Render divider if field has one
                 if (field.hasDividerAbove === true) {
-                    fieldsHTML += `<hr class="mt-4 mb-4" />`;
+                    fieldsHTML += '<hr class="mt-4 mb-4" />';
                 }
                 const fieldName = `fields[${field.noteTypeFieldId}]`;
                 const requiredAttribute = field.fieldValueRequired === true ? 'required' : '';
                 const helpText = field.fieldHelpText !== undefined && field.fieldHelpText !== ''
                     ? `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`
                     : '';
-                fieldsHTML += `<div class="field">`;
+                fieldsHTML += '<div class="field">';
                 fieldsHTML += `<label class="label" for="editWorkOrderNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
             ${field.fieldValueRequired === true ? '<span class="has-text-danger">*</span>' : ''}
@@ -304,7 +304,7 @@
                         const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== '';
                         const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== '';
                         if (hasPrefix || hasSuffix) {
-                            fieldsHTML += `<div class="field has-addons">`;
+                            fieldsHTML += '<div class="field has-addons">';
                             if (hasPrefix) {
                                 fieldsHTML += `
                   <div class="control">
@@ -328,7 +328,7 @@
                   </div>
                 `;
                             }
-                            fieldsHTML += `</div>`;
+                            fieldsHTML += "</div>";
                         }
                         else {
                             fieldsHTML += `
@@ -380,7 +380,7 @@
                         const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== '';
                         const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== '';
                         if (hasPrefix || hasSuffix) {
-                            fieldsHTML += `<div class="field has-addons">`;
+                            fieldsHTML += '<div class="field has-addons">';
                             if (hasPrefix) {
                                 fieldsHTML += `
                   <div class="control">
@@ -405,7 +405,7 @@
                   </div>
                 `;
                             }
-                            fieldsHTML += `</div>`;
+                            fieldsHTML += "</div>";
                         }
                         else {
                             fieldsHTML += `
@@ -444,7 +444,7 @@
                     }
                 }
                 fieldsHTML += helpText;
-                fieldsHTML += `</div>`;
+                fieldsHTML += "</div>";
             }
             // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
             fieldsContainer.innerHTML = fieldsHTML;
@@ -608,14 +608,14 @@
             let fieldsHTML = '';
             for (const field of selectedNoteType.fields) {
                 if (field.hasDividerAbove) {
-                    fieldsHTML += `<hr class="mt-4 mb-4" />`;
+                    fieldsHTML += '<hr class="mt-4 mb-4" />';
                 }
                 const fieldName = `fields[${field.noteTypeFieldId}]`;
                 const requiredAttribute = field.fieldValueRequired ? 'required' : '';
                 const helpText = field.fieldHelpText === ''
                     ? ''
                     : `<p class="help">${cityssm.escapeHTML(field.fieldHelpText)}</p>`;
-                fieldsHTML += `<div class="field">`;
+                fieldsHTML += '<div class="field">';
                 fieldsHTML += `<label class="label" for="addWorkOrderNote--field-${field.noteTypeFieldId}">
             ${cityssm.escapeHTML(field.fieldLabel)}
             ${field.fieldValueRequired ? '<span class="has-text-danger">*</span>' : ''}
@@ -638,7 +638,7 @@
                         const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== '';
                         const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== '';
                         if (hasPrefix || hasSuffix) {
-                            fieldsHTML += `<div class="field has-addons">`;
+                            fieldsHTML += '<div class="field has-addons">';
                             if (hasPrefix) {
                                 fieldsHTML += `
                   <div class="control">
@@ -661,7 +661,7 @@
                   </div>
                 `;
                             }
-                            fieldsHTML += `</div>`;
+                            fieldsHTML += "</div>";
                         }
                         else {
                             fieldsHTML += `
@@ -707,7 +707,7 @@
                         const hasPrefix = field.fieldUnitPrefix !== undefined && field.fieldUnitPrefix !== '';
                         const hasSuffix = field.fieldUnitSuffix !== undefined && field.fieldUnitSuffix !== '';
                         if (hasPrefix || hasSuffix) {
-                            fieldsHTML += `<div class="field has-addons">`;
+                            fieldsHTML += '<div class="field has-addons">';
                             if (hasPrefix) {
                                 fieldsHTML += `
                   <div class="control">
@@ -731,7 +731,7 @@
                   </div>
                 `;
                             }
-                            fieldsHTML += `</div>`;
+                            fieldsHTML += "</div>";
                         }
                         else {
                             fieldsHTML += `
@@ -769,7 +769,7 @@
                     }
                 }
                 fieldsHTML += helpText;
-                fieldsHTML += `</div>`;
+                fieldsHTML += "</div>";
             }
             // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
             fieldsContainer.innerHTML = fieldsHTML;
