@@ -567,6 +567,7 @@
             const sortableInstance = Sortable.create(tbodyElement, {
                 handle: '.handle',
                 animation: 150,
+                // eslint-disable-next-line @typescript-eslint/no-loop-func
                 onEnd() {
                     // Get the new order
                     const rows = tbodyElement.querySelectorAll('tr[data-note-type-field-id]');
@@ -581,9 +582,9 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderNoteTypeFields`, {
                         noteTypeId: noteType.noteTypeId,
                         noteTypeFieldIds
-                    }, (rawResponseJSON) => {
-                        const responseJSON = rawResponseJSON;
-                        if (responseJSON.success && responseJSON.noteTypes !== undefined) {
+                    }, (responseJSON) => {
+                        if (responseJSON.success &&
+                            responseJSON.noteTypes !== undefined) {
                             noteTypes = responseJSON.noteTypes;
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -606,12 +607,146 @@
             sortableInstances.set(noteType.noteTypeId, sortableInstance);
         }
     }
+    function openSelectTemplateModal() {
+        let closeModalFunction;
+        cityssm.openHtmlModal('adminNoteTypes-selectTemplate', {
+            onshow(modalElement) {
+                const templatesContainer = modalElement.querySelector('#container--noteTypeTemplates');
+                templatesContainer.innerHTML = /* html */ `
+          <div class="has-text-centered">
+            <span class="icon is-large">
+              <i class="fa-solid fa-spinner fa-pulse fa-3x"></i>
+            </span>
+            <p class="mt-2">Loading templates...</p>
+          </div>
+        `;
+                // Fetch templates
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`, {}, (responseJSON) => {
+                    if (responseJSON.templates.length === 0) {
+                        templatesContainer.innerHTML = /* html */ `
+                <div class="message is-info">
+                  <p class="message-body">
+                    No templates are currently available.
+                  </p>
+                </div>
+              `;
+                        return;
+                    }
+                    // Render template cards
+                    templatesContainer.innerHTML = '';
+                    for (const template of responseJSON.templates) {
+                        const templateCard = document.createElement('div');
+                        templateCard.className = 'box mb-3';
+                        templateCard.innerHTML = /* html */ `
+                <article class="media">
+                  <div class="media-left">
+                    <span class="icon is-large has-text-info">
+                      <i class="fa-solid fa-file-lines fa-2x"></i>
+                    </span>
+                  </div>
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong>${cityssm.escapeHTML(template.templateName)}</strong>
+                        <br />
+                        ${cityssm.escapeHTML(template.templateDescription)}
+                        <br />
+                        <small class="has-text-grey">
+                          ${template.fields.length} field${template.fields.length !== 1 ? 's' : ''}
+                        </small>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="media-right">
+                    <button
+                      class="button is-success button--useTemplate"
+                      data-template-id="${template.templateId}"
+                      type="button"
+                    >
+                      <span class="icon">
+                        <i class="fa-solid fa-plus"></i>
+                      </span>
+                      <span>Use Template</span>
+                    </button>
+                  </div>
+                </article>
+              `;
+                        templatesContainer.append(templateCard);
+                    }
+                    // Attach event listeners to template buttons
+                    const useTemplateButtons = templatesContainer.querySelectorAll('.button--useTemplate');
+                    for (const button of useTemplateButtons) {
+                        // eslint-disable-next-line @typescript-eslint/no-loop-func
+                        button.addEventListener('click', (event) => {
+                            const templateId = event.currentTarget
+                                .dataset.templateId;
+                            if (!templateId) {
+                                return;
+                            }
+                            // Disable button and show loading state
+                            const clickedButton = event.currentTarget;
+                            clickedButton.disabled = true;
+                            clickedButton.innerHTML = /* html */ `
+                  <span class="icon">
+                    <i class="fa-solid fa-spinner fa-pulse"></i>
+                  </span>
+                  <span>Creating...</span>
+                `;
+                            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeFromTemplate`, {
+                                templateId
+                            }, (rawResponseJSON) => {
+                                const responseJSON = rawResponseJSON;
+                                if (responseJSON.success) {
+                                    noteTypes = responseJSON.noteTypes;
+                                    closeModalFunction();
+                                    renderNoteTypes();
+                                    bulmaJS.alert({
+                                        contextualColorName: 'success',
+                                        message: 'Note type created from template successfully. You can now customize it as needed.'
+                                    });
+                                }
+                                else {
+                                    bulmaJS.alert({
+                                        contextualColorName: 'danger',
+                                        title: 'Error Creating Note Type',
+                                        message: responseJSON.message
+                                    });
+                                    // Re-enable button
+                                    clickedButton.disabled = false;
+                                    clickedButton.innerHTML = /* html */ `
+                        <span class="icon">
+                          <i class="fa-solid fa-plus"></i>
+                        </span>
+                        <span>Use Template</span>
+                      `;
+                                }
+                            });
+                        });
+                    }
+                });
+            },
+            onshown(_modalElement, _closeModalFunction) {
+                closeModalFunction = _closeModalFunction;
+                bulmaJS.toggleHtmlClipped();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
     // Initialize
     renderNoteTypes();
     // Add Note Type button
     document
         .querySelector('#button--addNoteType')
         ?.addEventListener('click', openAddNoteTypeModal);
+    // Add Note Type from Template button
+    document
+        .querySelector('#button--addNoteTypeFromTemplate')
+        ?.addEventListener('click', (event) => {
+        event.preventDefault();
+        openSelectTemplateModal();
+    });
     // Availability filter
     document
         .querySelector('#filter--availability')
