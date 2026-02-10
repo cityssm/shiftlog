@@ -417,9 +417,11 @@
                 const unitPrefixSuffixFields = formElement.querySelector('#fields--unitPrefixSuffix');
                 function updateFieldVisibility() {
                     const fieldType = fieldTypeSelect.value;
-                    dataListField.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'select'));
-                    minMaxFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
-                    unitPrefixSuffixFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
+                    const isTextOrSelect = fieldType === 'text' || fieldType === 'select';
+                    const isTextOrNumber = fieldType === 'text' || fieldType === 'number';
+                    dataListField.classList.toggle('is-hidden', !isTextOrSelect);
+                    minMaxFields.classList.toggle('is-hidden', !isTextOrNumber);
+                    unitPrefixSuffixFields.classList.toggle('is-hidden', !isTextOrNumber);
                 }
                 fieldTypeSelect.addEventListener('change', updateFieldVisibility);
                 updateFieldVisibility();
@@ -501,9 +503,11 @@
                 const unitPrefixSuffixFields = formElement.querySelector('#fields--unitPrefixSuffix');
                 // Update field visibility based on the current field type (since it can't be changed)
                 const fieldType = fieldTypeSelect.value;
-                dataListField.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'select'));
-                minMaxFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
-                unitPrefixSuffixFields.classList.toggle('is-hidden', !(fieldType === 'text' || fieldType === 'number'));
+                const isTextOrSelect = fieldType === 'text' || fieldType === 'select';
+                const isTextOrNumber = fieldType === 'text' || fieldType === 'number';
+                dataListField.classList.toggle('is-hidden', !isTextOrSelect);
+                minMaxFields.classList.toggle('is-hidden', !isTextOrNumber);
+                unitPrefixSuffixFields.classList.toggle('is-hidden', !isTextOrNumber);
                 formElement.addEventListener('submit', doUpdate);
             },
             onshown(modalElement, _closeModalFunction) {
