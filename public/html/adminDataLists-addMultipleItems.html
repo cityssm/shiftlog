@@ -1,0 +1,81 @@
+<div
+  class="modal"
+  id="modal--addMultipleDataListItems"
+  role="dialog"
+  aria-label="Add Multiple Data List Items"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title" id="addMultipleDataListItems--title">
+        Add Multiple Items
+      </p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addMultipleDataListItems">
+        <input
+          id="addMultipleDataListItems--dataListKey"
+          name="dataListKey"
+          type="hidden"
+        />
+        <div class="field">
+          <label class="label" for="addMultipleDataListItems--dataListItems">
+            Item Names (One Per Line)
+          </label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="addMultipleDataListItems--dataListItems"
+              name="dataListItems"
+              rows="10"
+              autofocus
+              required
+              placeholder="Enter each item on a new line&#10;Example Item 1&#10;Example Item 2&#10;Example Item 3"
+            ></textarea>
+          </div>
+          <p class="help">
+            Enter one item per line. Items that already exist in the list will be skipped.
+          </p>
+        </div>
+        <div class="field">
+          <label class="label" for="addMultipleDataListItems--userGroupId">
+            User Group (Optional)
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="addMultipleDataListItems--userGroupId"
+                name="userGroupId"
+              >
+                <option value="">None (Available to All)</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            If specified, all new items will be restricted to members of the selected user group.
+          </p>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button
+          class="button is-success"
+          type="submit"
+          form="form--addMultipleDataListItems"
+        >
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Add Items</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>
