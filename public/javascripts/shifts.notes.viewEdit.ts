@@ -149,12 +149,20 @@ declare const bulmaJS: BulmaJS
               <tbody>
                 ${note.fields
                   .map(
-                    (field) => `
+                    (field) => {
+                      const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== '' 
+                        ? cityssm.escapeHTML(field.fieldUnitPrefix) + ' '
+                        : ''
+                      const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
+                        ? ' ' + cityssm.escapeHTML(field.fieldUnitSuffix)
+                        : ''
+                      return `
                   <tr>
                     <th style="width: 35%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
-                    <td>${cityssm.escapeHTML(field.fieldValue)}</td>
+                    <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
                   </tr>
                 `
+                    }
                   )
                   .join('')}
               </tbody>
@@ -304,12 +312,20 @@ declare const bulmaJS: BulmaJS
                 <tbody>
                   ${note.fields
                     .map(
-                      (field) => `
+                      (field) => {
+                        const prefix = field.fieldUnitPrefix && field.fieldUnitPrefix !== '' 
+                          ? cityssm.escapeHTML(field.fieldUnitPrefix) + ' '
+                          : ''
+                        const suffix = field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
+                          ? ' ' + cityssm.escapeHTML(field.fieldUnitSuffix)
+                          : ''
+                        return `
                     <tr>
                       <th style="width: 40%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
-                      <td>${cityssm.escapeHTML(field.fieldValue)}</td>
+                      <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
                     </tr>
                   `
+                      }
                     )
                     .join('')}
                 </tbody>
