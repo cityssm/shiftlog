@@ -13,6 +13,8 @@ export default function handler(request: Request<unknown, unknown, {
     fieldHelpText?: string;
     fieldInputType?: 'date' | 'number' | 'select' | 'text' | 'textbox';
     fieldLabel?: string;
+    fieldUnitPrefix?: string;
+    fieldUnitSuffix?: string;
     fieldValueMax?: number | string;
     fieldValueMin?: number | string;
     fieldValueRequired?: boolean | string;

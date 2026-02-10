@@ -1605,8 +1605,8 @@
                         if (totalEmployees === 0) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
+                                title: 'Crew Moved',
                                 message: 'Crew has been moved to the new shift.',
-                                title: 'Crew Moved'
                             });
                             loadShifts();
                         }
@@ -2641,7 +2641,7 @@
                     const formElement = modalElement.querySelector('form');
                     // Initialize date picker
                     const dueDateInput = modalElement.querySelector('#createAdhocTask--taskDueDateTimeString');
-                    if (dueDateInput && typeof flatpickr !== 'undefined') {
+                    if (dueDateInput && flatpickr !== undefined) {
                         flatpickr(dueDateInput, {
                             allowInput: true,
                             enableTime: true,
@@ -2651,7 +2651,7 @@
                         });
                     }
                     // Initialize maps if Leaflet is available
-                    if (typeof L !== 'undefined') {
+                    if (L !== undefined) {
                         const initMap = (mapId, latInput, lngInput) => {
                             const mapElement = modalElement.querySelector(`#${mapId}`);
                             if (!mapElement)
@@ -2829,9 +2829,7 @@
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
-                // Focus the crew dropdown
-                const crewSelect = modalElement.querySelector('[name="crewId"]');
-                crewSelect?.focus();
+                modalElement.querySelector('[name="crewId"]').focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
@@ -2912,9 +2910,7 @@
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
-                // Focus the employee dropdown
-                const employeeSelect = modalElement.querySelector('[name="employeeNumber"]');
-                employeeSelect?.focus();
+                modalElement.querySelector('[name="employeeNumber"]').focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();
@@ -2955,9 +2951,7 @@
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
-                // Focus the textarea
-                const textarea = modalElement.querySelector('[name="shiftWorkOrderNote"]');
-                textarea?.focus();
+                modalElement.querySelector('[name="shiftWorkOrderNote"]').focus();
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();

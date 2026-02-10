@@ -24,6 +24,8 @@ export default async function handler(
       fieldHelpText?: string
       fieldInputType?: 'date' | 'number' | 'select' | 'text' | 'textbox'
       fieldLabel?: string
+      fieldUnitPrefix?: string
+      fieldUnitSuffix?: string
       fieldValueMax?: number | string
       fieldValueMin?: number | string
       fieldValueRequired?: boolean | string
@@ -39,6 +41,8 @@ export default async function handler(
   )
   const fieldLabel = request.body.fieldLabel ?? ''
   const fieldInputType = request.body.fieldInputType ?? 'text'
+  const fieldUnitPrefix = request.body.fieldUnitPrefix ?? ''
+  const fieldUnitSuffix = request.body.fieldUnitSuffix ?? ''
   const fieldHelpText = request.body.fieldHelpText ?? ''
   const dataListKey =
     request.body.dataListKey === '' || request.body.dataListKey === undefined
@@ -67,6 +71,8 @@ export default async function handler(
       fieldHelpText,
       fieldInputType,
       fieldLabel,
+      fieldUnitPrefix,
+      fieldUnitSuffix,
       fieldValueMax,
       fieldValueMin,
       fieldValueRequired,

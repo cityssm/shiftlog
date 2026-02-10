@@ -119,6 +119,8 @@ export interface NoteTypeField extends BaseRecord {
     noteTypeId: number;
     fieldLabel: string;
     fieldInputType: 'text' | 'number' | 'date' | 'select' | 'textbox';
+    fieldUnitPrefix: string;
+    fieldUnitSuffix: string;
     fieldHelpText: string;
     dataListKey?: string | null;
     fieldValueMin?: number | null;

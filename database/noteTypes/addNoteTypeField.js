@@ -8,6 +8,8 @@ export default async function addNoteTypeField(fieldFields, user) {
             .input('noteTypeId', fieldFields.noteTypeId)
             .input('fieldLabel', fieldFields.fieldLabel)
             .input('fieldInputType', fieldFields.fieldInputType)
+            .input('fieldUnitPrefix', fieldFields.fieldUnitPrefix)
+            .input('fieldUnitSuffix', fieldFields.fieldUnitSuffix)
             .input('fieldHelpText', fieldFields.fieldHelpText)
             .input('dataListKey', fieldFields.dataListKey ?? null)
             .input('fieldValueMin', fieldFields.fieldValueMin ?? null)
@@ -24,6 +26,8 @@ export default async function addNoteTypeField(fieldFields, user) {
             noteTypeId,
             fieldLabel,
             fieldInputType,
+            fieldUnitPrefix,
+            fieldUnitSuffix,
             fieldHelpText,
             dataListKey,
             fieldValueMin,
@@ -40,6 +44,8 @@ export default async function addNoteTypeField(fieldFields, user) {
             @noteTypeId,
             @fieldLabel,
             @fieldInputType,
+            @fieldUnitPrefix,
+            @fieldUnitSuffix,
             @fieldHelpText,
             @dataListKey,
             @fieldValueMin,
