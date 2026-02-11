@@ -75,7 +75,11 @@ export default async function createWorkOrderNote(
       for (const [noteTypeFieldId, fieldValue] of Object.entries(
         createWorkOrderNoteForm.fields
       )) {
-        if (fieldValue !== undefined && fieldValue !== null && fieldValue !== '') {
+        if (
+          fieldValue !== undefined &&
+          fieldValue !== null &&
+          fieldValue !== ''
+        ) {
           // eslint-disable-next-line no-await-in-loop -- inserting field values sequentially
           await pool
             .request()

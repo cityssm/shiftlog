@@ -15,7 +15,7 @@ config.shifts = {
 config.workOrders = {
   isEnabled: true,
   router: 'requests',
-  
+
   sectionName: 'Service Requests',
   sectionNameSingular: 'Service Request',
 

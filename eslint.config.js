@@ -73,7 +73,7 @@ export const config = defineConfig(configWebApp, {
                 }
             }
         ],
-        "unicorn/no-null": "off"
+        'unicorn/no-null': 'off'
     }
 });
 export default config;

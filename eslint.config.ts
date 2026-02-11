@@ -43,10 +43,10 @@ export const config = defineConfig(configWebApp, {
             'javascripts',
             'radiusless',
             'rowspan',
-            
+
             // SQL
             'datediff',
-            
+
             // Shift Log
             'maint',
             'shiftlog',
@@ -87,7 +87,7 @@ export const config = defineConfig(configWebApp, {
       }
     ],
 
-    "unicorn/no-null": "off"
+    'unicorn/no-null': 'off'
   }
 })
 

@@ -6,7 +6,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 export interface GetCalendarEventsFilters {
   month: number
   year: number
-  
+
   assignedToId?: number
 
   showCloseDates: boolean

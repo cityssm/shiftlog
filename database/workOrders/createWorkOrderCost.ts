@@ -5,7 +5,7 @@ import getWorkOrder from './getWorkOrder.js'
 
 export interface CreateWorkOrderCostForm {
   workOrderId: number | string
-  
+
   costAmount: number | string
   costDescription: string
 }

@@ -34,33 +34,34 @@ ShiftLog is a lightweight and flexible work management system built with Node.js
 
 ### Coding Conventions
 
-1. **Imports**: Use ES Module syntax (`import`/`export`) with `.js` extensions for local files
+1.  **Imports**: Use ES Module syntax (`import`/`export`) with `.js` extensions for local files
 
-   ```typescript
-   import { something } from './helpers/something.js'
-   ```
+    ```typescript
+    import { something } from './helpers/something.js'
+    ```
 
-2. **File Naming**: Use camelCase for files, with `.helpers.ts` suffix for helper modules
-   - Examples: `settings.helpers.ts`, `database.helpers.ts`, `config.helpers.ts`
+2.  **File Naming**: Use camelCase for files, with `.helpers.ts` suffix for helper modules
+    - Examples: `settings.helpers.ts`, `database.helpers.ts`, `config.helpers.ts`
 
-3. **No Magic Numbers**: Use the `@typescript-eslint/no-magic-numbers` rule; define constants for numeric values
+3.  **No Magic Numbers**: Use the `@typescript-eslint/no-magic-numbers` rule; define constants for numeric values
 
-4. **Escaping and Sanitization**:
-   - Use `cityssm.escapeHTML()` for user-generated content in templates
-   - Use approved sanitization methods: `cityssm.dateToString`, `cityssm.escapeHTML`
-   - URL builders are considered safe: `buildShiftURL`, `buildWorkOrderURL`, `buildTimesheetURL`
+4.  **Escaping and Sanitization**:
+    - Use `cityssm.escapeHTML()` for user-generated content in templates
+    - Use approved sanitization methods: `cityssm.dateToString`, `cityssm.escapeHTML`
+    - URL builders are considered safe: `buildShiftURL`, `buildWorkOrderURL`, `buildTimesheetURL`
 
-5. **Debug Logging**: Use `debug` package with namespace pattern:
+5.  **Debug Logging**: Use `debug` package with namespace pattern:
 
-   ```typescript
-   import Debug from 'debug'
-   import { DEBUG_NAMESPACE } from './debug.config.js'
-   const debug = Debug(`${DEBUG_NAMESPACE}:module-name`)
-   ```
+    ```typescript
+    import Debug from 'debug'
+    import { DEBUG_NAMESPACE } from './debug.config.js'
+    const debug = Debug(`${DEBUG_NAMESPACE}:module-name`)
+    ```
 
-6. **Async/Await**: Prefer `async/await` over Promise chains
+6.  **Async/Await**: Prefer `async/await` over Promise chains
 
-7. **Comments**: Only add comments when necessary to explain complex logic; code should be self-documenting
+7.  **Comments**: Only add comments when necessary to explain complex logic;
+    code should be self-documenting
 
 ## Project Structure
 

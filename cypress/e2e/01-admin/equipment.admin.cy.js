@@ -25,9 +25,7 @@ describe('Admin - Equipment Maintenance', () => {
         // Wait for AJAX response
         cy.wait(ajaxDelayMillis);
         // Verify the equipment appears in the container
-        cy.get('#container--equipment')
-            .contains(testEquipment)
-            .should('exist');
+        cy.get('#container--equipment').contains(testEquipment).should('exist');
     });
     it.skip('Can update equipment', () => {
         // Find the first edit button and click it
@@ -51,9 +49,7 @@ describe('Admin - Equipment Maintenance', () => {
         // Wait for AJAX response
         cy.wait(ajaxDelayMillis);
         // Verify the updated equipment appears
-        cy.get('#container--equipment')
-            .contains(updatedText)
-            .should('exist');
+        cy.get('#container--equipment').contains(updatedText).should('exist');
     });
     it.skip('Can delete equipment', () => {
         // First, add equipment to delete
@@ -71,14 +67,10 @@ describe('Admin - Equipment Maintenance', () => {
         // Wait for confirmation modal
         cy.wait(200);
         // Confirm deletion
-        cy.get('.modal.is-active')
-            .contains('button', 'Delete Equipment')
-            .click();
+        cy.get('.modal.is-active').contains('button', 'Delete Equipment').click();
         // Wait for AJAX response
         cy.wait(ajaxDelayMillis);
         // Verify the equipment is removed
-        cy.get('#container--equipment')
-            .contains(testEquipment)
-            .should('not.exist');
+        cy.get('#container--equipment').contains(testEquipment).should('not.exist');
     });
 });

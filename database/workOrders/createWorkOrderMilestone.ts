@@ -5,9 +5,9 @@ import getWorkOrder from './getWorkOrder.js'
 
 export interface CreateWorkOrderMilestoneForm {
   workOrderId: number | string
-  
+
   milestoneTitle: string
-  
+
   milestoneDescription?: string
 
   milestoneCompleteDateTimeString?: string

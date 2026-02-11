@@ -13,6 +13,7 @@ insert_final_newline = true
 
 [*.md]
 insert_final_newline = true
+indent_size = unset
 trim_trailing_whitespace = false
 
 [*.{bat,cmd,ps1}]

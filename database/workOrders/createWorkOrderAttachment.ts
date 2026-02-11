@@ -5,7 +5,7 @@ import getWorkOrder from './getWorkOrder.js'
 
 export interface CreateWorkOrderAttachmentForm {
   workOrderId: number | string
-  
+
   attachmentFileName: string
   attachmentFileType: string
   attachmentFileSizeInBytes: number
