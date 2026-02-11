@@ -178,7 +178,7 @@
                 title="Change Crew"
               >
                 <i class="fa-solid fa-users-gear"></i>
-              </button> 
+              </button>
               <button
                 class="button is-small is-light is-warning button--editEmployeeNote"
                 data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
@@ -186,7 +186,7 @@
                 title="Edit Note"
               >
                 <i class="fa-solid fa-edit"></i>
-              </button> 
+              </button>
               <button
                 class="button is-small is-light is-danger button--deleteEmployee"
                 data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"

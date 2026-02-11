@@ -3,6 +3,23 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddShiftCrewResponse } from '../../handlers/shifts-post/doAddShiftCrew.js'
+import type { DoAddShiftEmployeeResponse } from '../../handlers/shifts-post/doAddShiftEmployee.js'
+import type { DoAddShiftEquipmentResponse } from '../../handlers/shifts-post/doAddShiftEquipment.js'
+import type { DoCopyFromPreviousShiftResponse } from '../../handlers/shifts-post/doCopyFromPreviousShift.js'
+import type { DoDeleteShiftCrewResponse } from '../../handlers/shifts-post/doDeleteShiftCrew.js'
+import type { DoDeleteShiftEmployeeResponse } from '../../handlers/shifts-post/doDeleteShiftEmployee.js'
+import type { DoDeleteShiftEquipmentResponse } from '../../handlers/shifts-post/doDeleteShiftEquipment.js'
+import type { DoGetAvailableCrewsEmployeesEquipmentResponse } from '../../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js'
+import type { DoGetPreviousShiftsResponse } from '../../handlers/shifts-post/doGetPreviousShifts.js'
+import type { DoGetShiftCrewsResponse } from '../../handlers/shifts-post/doGetShiftCrews.js'
+import type { DoGetShiftEmployeesResponse } from '../../handlers/shifts-post/doGetShiftEmployees.js'
+import type { DoGetShiftEquipmentResponse } from '../../handlers/shifts-post/doGetShiftEquipment.js'
+import type { DoUpdateShiftCrewNoteResponse } from '../../handlers/shifts-post/doUpdateShiftCrewNote.js'
+import type { DoUpdateShiftEmployeeResponse } from '../../handlers/shifts-post/doUpdateShiftEmployee.js'
+import type { DoUpdateShiftEmployeeNoteResponse } from '../../handlers/shifts-post/doUpdateShiftEmployeeNote.js'
+import type { DoUpdateShiftEquipmentResponse } from '../../handlers/shifts-post/doUpdateShiftEquipment.js'
+import type { DoUpdateShiftEquipmentNoteResponse } from '../../handlers/shifts-post/doUpdateShiftEquipmentNote.js'
 import type {
   Crew,
   Employee,
@@ -11,24 +28,6 @@ import type {
   ShiftEmployee,
   ShiftEquipment
 } from '../../types/record.types.js'
-
-import type { DoGetShiftCrewsResponse } from '../../handlers/shifts-post/doGetShiftCrews.js'
-import type { DoGetShiftEmployeesResponse } from '../../handlers/shifts-post/doGetShiftEmployees.js'
-import type { DoGetShiftEquipmentResponse } from '../../handlers/shifts-post/doGetShiftEquipment.js'
-import type { DoGetAvailableCrewsEmployeesEquipmentResponse } from '../../handlers/shifts-post/doGetAvailableCrewsEmployeesEquipment.js'
-import type { DoAddShiftCrewResponse } from '../../handlers/shifts-post/doAddShiftCrew.js'
-import type { DoAddShiftEmployeeResponse } from '../../handlers/shifts-post/doAddShiftEmployee.js'
-import type { DoAddShiftEquipmentResponse } from '../../handlers/shifts-post/doAddShiftEquipment.js'
-import type { DoUpdateShiftCrewNoteResponse } from '../../handlers/shifts-post/doUpdateShiftCrewNote.js'
-import type { DoUpdateShiftEmployeeResponse } from '../../handlers/shifts-post/doUpdateShiftEmployee.js'
-import type { DoUpdateShiftEmployeeNoteResponse } from '../../handlers/shifts-post/doUpdateShiftEmployeeNote.js'
-import type { DoUpdateShiftEquipmentResponse } from '../../handlers/shifts-post/doUpdateShiftEquipment.js'
-import type { DoUpdateShiftEquipmentNoteResponse } from '../../handlers/shifts-post/doUpdateShiftEquipmentNote.js'
-import type { DoDeleteShiftCrewResponse } from '../../handlers/shifts-post/doDeleteShiftCrew.js'
-import type { DoDeleteShiftEmployeeResponse } from '../../handlers/shifts-post/doDeleteShiftEmployee.js'
-import type { DoDeleteShiftEquipmentResponse } from '../../handlers/shifts-post/doDeleteShiftEquipment.js'
-import type { DoCopyFromPreviousShiftResponse } from '../../handlers/shifts-post/doCopyFromPreviousShift.js'
-import type { DoGetPreviousShiftsResponse } from '../../handlers/shifts-post/doGetPreviousShifts.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -290,7 +289,7 @@ declare const exports: {
                 title="Change Crew"
               >
                 <i class="fa-solid fa-users-gear"></i>
-              </button> 
+              </button>
               <button
                 class="button is-small is-light is-warning button--editEmployeeNote"
                 data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
@@ -298,7 +297,7 @@ declare const exports: {
                 title="Edit Note"
               >
                 <i class="fa-solid fa-edit"></i>
-              </button> 
+              </button>
               <button
                 class="button is-small is-light is-danger button--deleteEmployee"
                 data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
