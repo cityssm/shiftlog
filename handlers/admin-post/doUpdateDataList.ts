@@ -38,7 +38,7 @@ export default async function handler(
 
   if (success) {
     const lists = await getDataLists()
-    
+
     // Get items for each data list
     dataLists = await Promise.all(
       lists.map(async (dataList) => ({

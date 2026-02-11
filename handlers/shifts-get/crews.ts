@@ -17,7 +17,7 @@ export default async function handler(
   response.render('shifts/crews', {
     headTitle: 'Crew Maintenance',
     section: 'shifts',
-    
+
     crews,
     employees,
     equipment,

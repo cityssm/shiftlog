@@ -232,8 +232,15 @@ export default async function getCalendarEvents(
           AND m.milestoneDueDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
           undefined
             ? ''
-            : `and (m.assignedToId = @assignedToId
-                   or (m.assignedToId is null and w.assignedToId = @assignedToId))`} ${userGroupWhereClause}
+            : /* sql */ `
+                AND (
+                  m.assignedToId = @assignedToId
+                  OR (
+                    m.assignedToId IS NULL
+                    AND w.assignedToId = @assignedToId
+                  )
+                )
+              `} ${userGroupWhereClause}
       `)
     }
 
@@ -267,8 +274,12 @@ export default async function getCalendarEvents(
           AND m.milestoneCompleteDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
           undefined
             ? ''
-            : `and (m.assignedToId = @assignedToId
-                   or (m.assignedToId is null and w.assignedToId = @assignedToId))`} ${userGroupWhereClause}
+            : /* sql */ `
+                OR (
+                  m.assignedToId IS NULL
+                  AND w.assignedToId = @assignedToId
+                )
+              `} ${userGroupWhereClause}
       `)
     }
 

@@ -54,7 +54,8 @@ export function clearCaches() {
     debug('Caches cleared');
 }
 process.on('message', (message) => {
-    if (message.messageType === 'clearCache' && message.sourcePid !== process.pid) {
+    if (message.messageType === 'clearCache' &&
+        message.sourcePid !== process.pid) {
         debug(`Clearing cache: ${message.tableName}`);
         clearCacheByTableName(message.tableName, false);
     }

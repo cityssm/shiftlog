@@ -17,8 +17,9 @@ interface LogApiRequestOptions {
 export async function logApiRequest(
   options: LogApiRequestOptions
 ): Promise<void> {
-  const { errorMessage, isValidApiKey, request, responseStatus, userName } = options
-  
+  const { errorMessage, isValidApiKey, request, responseStatus, userName } =
+    options
+
   const apiKey = request.params.apiKey
   const endpoint = request.originalUrl
   const requestMethod = request.method

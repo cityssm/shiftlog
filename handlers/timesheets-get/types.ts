@@ -1,9 +1,13 @@
-import type { DataListItem, Employee, Timesheet } from '../../types/record.types.js'
+import type {
+  DataListItem,
+  Employee,
+  Timesheet
+} from '../../types/record.types.js'
 
 export interface TimesheetEditResponse {
   headTitle: string
-  section: 'timesheets',
-  
+  section: 'timesheets'
+
   isCreate: boolean
   isEdit: boolean
 

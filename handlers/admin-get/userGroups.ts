@@ -13,7 +13,7 @@ export default async function handler(
   response.render('admin/userGroups', {
     headTitle: 'User Group Management',
     section: 'admin',
-    
+
     userGroups,
     users
   })

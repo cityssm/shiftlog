@@ -26,7 +26,7 @@ export default async function handler(
       message: 'User name is required',
       success: false
     })
-    
+
     return
   }
 

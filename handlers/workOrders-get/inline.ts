@@ -43,7 +43,7 @@ export default async function handler(
   response.setHeader('Cache-Control', 'private, max-age=3600')
 
   const fileStream = fs.createReadStream(filePath)
-  
+
   fileStream.on('error', () => {
     if (!response.headersSent) {
       response.status(500).send('Error reading file')

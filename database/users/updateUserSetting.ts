@@ -78,7 +78,7 @@ export async function updateApiKeyUserSetting(
   }
 
   const apiKey = generateApiKey(userName)
-  
+
   await updateUserSetting(userName, 'apiKey', apiKey)
   clearCacheByTableName('UserSettings')
 

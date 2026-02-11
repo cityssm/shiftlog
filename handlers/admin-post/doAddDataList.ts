@@ -38,10 +38,9 @@ export default async function handler(
     response.json({
       success: false,
 
-      errorMessage:
-        'Non-system data list keys must start with "user-" prefix.'
+      errorMessage: 'Non-system data list keys must start with "user-" prefix.'
     })
-    
+
     return
   }
 
@@ -70,7 +69,7 @@ export default async function handler(
 
   if (success) {
     const lists = await getDataLists()
-    
+
     // Get items for each data list
     dataLists = await Promise.all(
       lists.map(async (dataList) => ({

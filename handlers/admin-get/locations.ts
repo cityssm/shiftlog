@@ -8,12 +8,14 @@ export default async function handler(
   response: Response
 ): Promise<void> {
   const locations = await getLocations()
-  const defaultCityProvince = await getCachedSettingValue('locations.defaultCityProvince')
+  const defaultCityProvince = await getCachedSettingValue(
+    'locations.defaultCityProvince'
+  )
 
   response.render('admin/locations', {
     headTitle: 'Location Maintenance',
     section: 'admin',
-    
+
     locations,
     defaultCityProvince
   })

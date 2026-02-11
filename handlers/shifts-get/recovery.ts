@@ -9,7 +9,7 @@ export default function handler(
   response.render('shifts/recovery', {
     headTitle: `${getConfigProperty('shifts.sectionName')} - Record Recovery`,
     section: 'shifts',
-    
+
     error: request.query.error ?? ''
   })
 }

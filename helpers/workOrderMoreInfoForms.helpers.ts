@@ -12,7 +12,7 @@ export const availableWorkOrderMoreInfoForms: Record<
 
     formFields: {
       moreInfo_accessibility_barrierType: 'Barrier Type',
-      
+
       moreInfo_accessibility_assistiveTechnologyUsed:
         'Assistive Technology Used',
 

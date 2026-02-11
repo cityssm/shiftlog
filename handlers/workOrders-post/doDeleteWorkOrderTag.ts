@@ -31,7 +31,7 @@ export default async function handler(
 
   if (success) {
     const tags = await getWorkOrderTags(request.body.workOrderId)
-    
+
     response.json({
       success: true,
       tags

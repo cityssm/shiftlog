@@ -13,7 +13,7 @@ export default async function handler(
   response.render('admin/assignedTo', {
     headTitle: 'Assigned To Management',
     section: 'admin',
-    
+
     assignedToList,
     userGroups
   })

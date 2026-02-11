@@ -80,9 +80,12 @@ export function clearCaches(): void {
 }
 
 process.on('message', (message: WorkerMessage) => {
-  if (message.messageType === 'clearCache' && message.sourcePid !== process.pid) {
+  if (
+    message.messageType === 'clearCache' &&
+    message.sourcePid !== process.pid
+  ) {
     debug(`Clearing cache: ${(message as ClearCacheWorkerMessage).tableName}`)
-    
+
     clearCacheByTableName(
       (message as ClearCacheWorkerMessage).tableName as CacheTableNames,
       false

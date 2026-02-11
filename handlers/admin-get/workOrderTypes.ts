@@ -15,7 +15,7 @@ export default async function handler(
   response.render('admin/workOrderTypes', {
     headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} Type Maintenance`,
     section: 'admin',
-    
+
     availableWorkOrderMoreInfoForms,
     userGroups,
     workOrderTypes

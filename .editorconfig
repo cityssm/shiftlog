@@ -20,5 +20,5 @@ trim_trailing_whitespace = false
 end_of_line = crlf
 
 # Compiled JavaScript files should not be edited directly, so we unset the indent_size for them.
-[*.js]
+[*.{js,txt}]
 indent_size = unset
