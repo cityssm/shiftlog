@@ -19,14 +19,13 @@ declare const exports: {
     ) as HTMLAnchorElement | null
 
     if (editButtonLink !== null) {
-      const menuTabLinks =
-        shiftTabsContainerElement.querySelectorAll('.menu a')
+      const menuTabLinks = shiftTabsContainerElement.querySelectorAll('.menu a')
 
       // Set initial hash on Edit button based on currently active tab
       const activeTabLink = shiftTabsContainerElement.querySelector(
         '.menu a.is-active'
       ) as HTMLAnchorElement | null
-      
+
       if (activeTabLink !== null) {
         const tabHash = activeTabLink.getAttribute('href') ?? ''
         const baseHref = editButtonLink.href.split('#')[0]

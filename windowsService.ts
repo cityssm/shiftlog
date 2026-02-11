@@ -17,7 +17,7 @@ export function getServiceConfig(configFilePath?: string): ServiceConfig {
 
     description:
       'A work management system with work order recording, shift activity logging, and timesheet tracking.',
-      
+
     script: path.join(_dirname, 'index.js')
   }
 

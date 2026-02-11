@@ -5,7 +5,7 @@ declare global {
     employeeNumber: string
     firstName: string
     lastName: string
-    
+
     userProperties: UserProperties
     userSettings: Partial<Record<UserSettingKey, string>>
   }

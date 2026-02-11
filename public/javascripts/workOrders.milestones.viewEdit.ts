@@ -22,7 +22,7 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 
   isEdit: boolean
-  
+
   assignedToOptions: AssignedToOption[]
   workOrderAssignedToId: number | null
   workOrderOpenDateTime: string

@@ -366,8 +366,8 @@
             for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
                 paginationHTML += /* html */ `
           <li>
-            <a class="pagination-link ${pageNumber === currentPage ? 'is-current' : ''}" 
-              data-page="${pageNumber}" 
+            <a class="pagination-link ${pageNumber === currentPage ? 'is-current' : ''}"
+              data-page="${pageNumber}"
               aria-label="Page ${pageNumber}"
             >
               ${pageNumber}

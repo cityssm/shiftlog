@@ -19,7 +19,9 @@
      */
     const gridContainer = document.querySelector('#timesheet-grid-container');
     const timesheetIdInput = document.querySelector('#timesheet--timesheetId');
-    if (gridContainer !== null && timesheetIdInput !== null && timesheetIdInput.value !== '') {
+    if (gridContainer !== null &&
+        timesheetIdInput !== null &&
+        timesheetIdInput.value !== '') {
         const timesheetId = Number.parseInt(timesheetIdInput.value, 10);
         const grid = new exports.TimesheetGrid(gridContainer, {
             timesheetId,
@@ -39,7 +41,9 @@
         }
         if (hideEmptyColumnsCheckbox !== null) {
             hideEmptyColumnsCheckbox.addEventListener('change', () => {
-                grid.setDisplayOptions({ hideEmptyColumns: hideEmptyColumnsCheckbox.checked });
+                grid.setDisplayOptions({
+                    hideEmptyColumns: hideEmptyColumnsCheckbox.checked
+                });
             });
         }
         if (filterRowsInput !== null) {

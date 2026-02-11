@@ -59,7 +59,7 @@ export const sendWorkOrderCreateEmailNotification: NotificationFunction =
           View ${getConfigProperty('workOrders.sectionNameSingular')}
         </a>
       `,
-      
+
       subject: `New ${workOrder.workOrderType}: ${workOrder.workOrderNumber}`
     })
 

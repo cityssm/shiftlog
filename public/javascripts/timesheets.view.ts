@@ -2,18 +2,24 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
-  TimesheetGrid: new (containerElement: HTMLElement, config: {
-    timesheetId: number
-    isEditable: boolean
-    hideEmptyRows: boolean
-    hideEmptyColumns: boolean
-    filterRows: string
-  }) => {
+  TimesheetGrid: new (
+    containerElement: HTMLElement,
+    config: {
+      timesheetId: number
+      isEditable: boolean
+      hideEmptyRows: boolean
+      hideEmptyColumns: boolean
+      filterRows: string
+    }
+  ) => {
     init(): Promise<void>
-    setDisplayOptions(options: { hideEmptyRows?: boolean; hideEmptyColumns?: boolean; filterRows?: string }): void
+    setDisplayOptions(options: {
+      hideEmptyRows?: boolean
+      hideEmptyColumns?: boolean
+      filterRows?: string
+    }): void
   }
 }
-
 ;(() => {
   /*
    * Make form read only
@@ -43,12 +49,20 @@ declare const exports: {
    * Initialize timesheet grid (view-only mode)
    */
 
-  const gridContainer = document.querySelector('#timesheet-grid-container') as HTMLElement | null
-  const timesheetIdInput = document.querySelector('#timesheet--timesheetId') as HTMLInputElement | null
+  const gridContainer = document.querySelector(
+    '#timesheet-grid-container'
+  ) as HTMLElement | null
+  const timesheetIdInput = document.querySelector(
+    '#timesheet--timesheetId'
+  ) as HTMLInputElement | null
 
-  if (gridContainer !== null && timesheetIdInput !== null && timesheetIdInput.value !== '') {
+  if (
+    gridContainer !== null &&
+    timesheetIdInput !== null &&
+    timesheetIdInput.value !== ''
+  ) {
     const timesheetId = Number.parseInt(timesheetIdInput.value, 10)
-    
+
     const grid = new exports.TimesheetGrid(gridContainer, {
       timesheetId,
       isEditable: false,
@@ -58,9 +72,15 @@ declare const exports: {
     })
 
     // Display options
-    const hideEmptyRowsCheckbox = document.querySelector('#display--hideEmptyRows') as HTMLInputElement | null
-    const hideEmptyColumnsCheckbox = document.querySelector('#display--hideEmptyColumns') as HTMLInputElement | null
-    const filterRowsInput = document.querySelector('#display--filterRows') as HTMLInputElement | null
+    const hideEmptyRowsCheckbox = document.querySelector(
+      '#display--hideEmptyRows'
+    ) as HTMLInputElement | null
+    const hideEmptyColumnsCheckbox = document.querySelector(
+      '#display--hideEmptyColumns'
+    ) as HTMLInputElement | null
+    const filterRowsInput = document.querySelector(
+      '#display--filterRows'
+    ) as HTMLInputElement | null
 
     if (hideEmptyRowsCheckbox !== null) {
       hideEmptyRowsCheckbox.addEventListener('change', () => {
@@ -70,7 +90,9 @@ declare const exports: {
 
     if (hideEmptyColumnsCheckbox !== null) {
       hideEmptyColumnsCheckbox.addEventListener('change', () => {
-        grid.setDisplayOptions({ hideEmptyColumns: hideEmptyColumnsCheckbox.checked })
+        grid.setDisplayOptions({
+          hideEmptyColumns: hideEmptyColumnsCheckbox.checked
+        })
       })
     }
 

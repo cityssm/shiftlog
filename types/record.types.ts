@@ -431,7 +431,7 @@ export interface WorkOrder extends BaseRecord {
   thumbnailAttachmentId?: number | null
 
   notesCount?: number
-  
+
   costsCount?: number
   costsTotal?: number
 

@@ -62,7 +62,6 @@ export const sendWorkOrderUpdateMsTeamsNotification: NotificationFunction =
     notificationConfiguration: NotificationConfiguration,
     workOrderId: number | string
   ): Promise<NotificationFunctionResult | undefined> => {
-    
     const workOrderToSend = await getWorkOrderToSend(
       workOrderId,
       notificationConfiguration

@@ -34,7 +34,7 @@ declare const bulmaJS: BulmaJS
       const activeTabLink = workOrderTabsContainerElement.querySelector(
         '.menu a.is-active'
       ) as HTMLAnchorElement | null
-      
+
       if (activeTabLink !== null) {
         const tabHash = activeTabLink.getAttribute('href') ?? ''
         const baseHref = editButtonLink.href.split('#')[0]
@@ -86,7 +86,7 @@ declare const bulmaJS: BulmaJS
                   bulmaJS.alert({
                     contextualColorName: 'danger',
                     title: 'Reopen Error',
-                    
+
                     message: responseJSON.errorMessage
                   })
                 }

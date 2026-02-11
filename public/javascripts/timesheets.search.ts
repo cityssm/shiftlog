@@ -92,7 +92,7 @@ declare const exports: {
         totalCount: data.totalCount,
         currentPageOrOffset: data.offset,
         itemsPerPageOrLimit: data.limit,
-        
+
         clickHandler: (pageNumber) => {
           offsetElement.value = ((pageNumber - 1) * data.limit).toString()
           doSearch()

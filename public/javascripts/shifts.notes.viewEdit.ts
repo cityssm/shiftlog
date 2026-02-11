@@ -416,9 +416,9 @@ declare const bulmaJS: BulmaJS
           case 'date': {
             fieldsHTML += `
               <div class="control">
-                <input class="input" type="date" 
+                <input class="input" type="date"
                   id="editShiftNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
+                  name="${fieldName}"
                   value="${cityssm.escapeHTML(field.fieldValue)}"
                   ${requiredAttribute} />
               </div>
@@ -455,9 +455,9 @@ declare const bulmaJS: BulmaJS
 
               fieldsHTML += `
                 <div class="control is-expanded">
-                  <input class="input" type="number" 
+                  <input class="input" type="number"
                     id="editShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     value="${cityssm.escapeHTML(field.fieldValue)}"
                     ${minAttribute} ${maxAttribute} ${requiredAttribute} />
                 </div>
@@ -475,9 +475,9 @@ declare const bulmaJS: BulmaJS
             } else {
               fieldsHTML += `
                 <div class="control">
-                  <input class="input" type="number" 
+                  <input class="input" type="number"
                     id="editShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     value="${cityssm.escapeHTML(field.fieldValue)}"
                     ${minAttribute} ${maxAttribute} ${requiredAttribute} />
                 </div>
@@ -496,7 +496,7 @@ declare const bulmaJS: BulmaJS
               <div class="control">
                 <div class="select is-fullwidth">
                   <select id="editShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
                     ${dataListItems
@@ -546,9 +546,9 @@ declare const bulmaJS: BulmaJS
 
               fieldsHTML += `
                 <div class="control is-expanded">
-                  <input class="input" type="text" 
+                  <input class="input" type="text"
                     id="editShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     value="${cityssm.escapeHTML(field.fieldValue)}"
                     ${dataListAttribute}
                     ${requiredAttribute} />
@@ -567,9 +567,9 @@ declare const bulmaJS: BulmaJS
             } else {
               fieldsHTML += `
                 <div class="control">
-                  <input class="input" type="text" 
+                  <input class="input" type="text"
                     id="editShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     value="${cityssm.escapeHTML(field.fieldValue)}"
                     ${dataListAttribute}
                     ${requiredAttribute} />
@@ -862,9 +862,9 @@ declare const bulmaJS: BulmaJS
           case 'date': {
             fieldsHTML += `
               <div class="control">
-                <input class="input" type="date" 
+                <input class="input" type="date"
                   id="addShiftNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
+                  name="${fieldName}"
                   ${requiredAttribute} />
               </div>
             `
@@ -892,9 +892,9 @@ declare const bulmaJS: BulmaJS
 
               fieldsHTML += `
                 <div class="control is-expanded">
-                  <input class="input" type="number" 
+                  <input class="input" type="number"
                     id="addShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     ${minAttribute} ${maxAttribute} ${requiredAttribute} />
                 </div>
               `
@@ -911,9 +911,9 @@ declare const bulmaJS: BulmaJS
             } else {
               fieldsHTML += `
                 <div class="control">
-                  <input class="input" type="number" 
+                  <input class="input" type="number"
                     id="addShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     ${minAttribute} ${maxAttribute} ${requiredAttribute} />
                 </div>
               `
@@ -931,7 +931,7 @@ declare const bulmaJS: BulmaJS
               <div class="control">
                 <div class="select is-fullwidth">
                   <select id="addShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     ${requiredAttribute}>
                     <option value="">-- Select --</option>
                     ${dataListItems
@@ -974,9 +974,9 @@ declare const bulmaJS: BulmaJS
 
               fieldsHTML += `
                 <div class="control is-expanded">
-                  <input class="input" type="text" 
+                  <input class="input" type="text"
                     id="addShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     ${dataListAttribute}
                     ${requiredAttribute} />
                 </div>
@@ -994,9 +994,9 @@ declare const bulmaJS: BulmaJS
             } else {
               fieldsHTML += `
                 <div class="control">
-                  <input class="input" type="text" 
+                  <input class="input" type="text"
                     id="addShiftNote--field-${field.noteTypeFieldId}"
-                    name="${fieldName}" 
+                    name="${fieldName}"
                     ${dataListAttribute}
                     ${requiredAttribute} />
                 </div>
@@ -1023,7 +1023,7 @@ declare const bulmaJS: BulmaJS
               <div class="control">
                 <textarea class="textarea" rows="3"
                   id="addShiftNote--field-${field.noteTypeFieldId}"
-                  name="${fieldName}" 
+                  name="${fieldName}"
                   ${requiredAttribute}></textarea>
               </div>
             `

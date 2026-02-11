@@ -290,8 +290,8 @@ declare const exports: {
         <td>${cityssm.escapeHTML(equipment.userGroupName ?? '')}</td>
         <td class="has-text-right">
           <div class="buttons is-right">
-            <button class="button is-small is-info edit-equipment" 
-              data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}" 
+            <button class="button is-small is-info edit-equipment"
+              data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}"
               type="button"
             >
               <span class="icon is-small">
@@ -299,8 +299,8 @@ declare const exports: {
               </span>
               <span>Edit</span>
             </button>
-            <button class="button is-small is-danger delete-equipment" 
-              data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}" 
+            <button class="button is-small is-danger delete-equipment"
+              data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}"
               type="button"
             >
               <span class="icon is-small">
@@ -478,7 +478,7 @@ declare const exports: {
   /*
    * Filter equipment with debouncing
    */
-  
+
   const filterInput = document.querySelector(
     '#filter--equipment'
   ) as HTMLInputElement | null

@@ -1606,7 +1606,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Crew Moved',
-                                message: 'Crew has been moved to the new shift.',
+                                message: 'Crew has been moved to the new shift.'
                             });
                             loadShifts();
                         }

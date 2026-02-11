@@ -225,7 +225,7 @@ declare const exports: {
                   : /* html */ `
                     <div class="column is-narrow">
                       <button
-                        class="button is-info is-small button--renameDataList" 
+                        class="button is-info is-small button--renameDataList"
                         data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
                         data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
                         type="button"
@@ -235,9 +235,9 @@ declare const exports: {
                         </span>
                         <span>Rename List</span>
                       </button>
-    
+
                       <button
-                        class="button is-danger is-small button--deleteDataList" 
+                        class="button is-danger is-small button--deleteDataList"
                         data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
                         data-data-list-name="${cityssm.escapeHTML(dataList.dataListName)}"
                         type="button"
@@ -254,7 +254,7 @@ declare const exports: {
                 <div class="field has-addons is-justify-content-flex-end">
                   <div class="control">
                     <button
-                      class="button is-success is-small button--addItem" 
+                      class="button is-success is-small button--addItem"
                       data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}"
                       type="button"
                     >
@@ -605,7 +605,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Deleting Data List',
-                  
+
                   message: responseJSON.errorMessage ?? 'Please try again.'
                 })
               }
@@ -823,7 +823,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Adding Items',
-              
+
               message: 'Please try again.'
             })
           }

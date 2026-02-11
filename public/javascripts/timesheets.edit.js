@@ -11,7 +11,9 @@
     const timesheetDateElement = formElement.querySelector('#timesheet--timesheetDateString');
     const shiftIdElement = formElement.querySelector('#timesheet--shiftId');
     function loadAvailableShifts() {
-        if (supervisorElement === null || timesheetDateElement === null || shiftIdElement === null) {
+        if (supervisorElement === null ||
+            timesheetDateElement === null ||
+            shiftIdElement === null) {
             return;
         }
         const supervisorEmployeeNumber = supervisorElement.value;
@@ -108,12 +110,16 @@
             const filterRowsInput = document.querySelector('#display--filterRows');
             if (hideEmptyRowsCheckbox !== null) {
                 hideEmptyRowsCheckbox.addEventListener('change', () => {
-                    grid.setDisplayOptions({ hideEmptyRows: hideEmptyRowsCheckbox.checked });
+                    grid.setDisplayOptions({
+                        hideEmptyRows: hideEmptyRowsCheckbox.checked
+                    });
                 });
             }
             if (hideEmptyColumnsCheckbox !== null) {
                 hideEmptyColumnsCheckbox.addEventListener('change', () => {
-                    grid.setDisplayOptions({ hideEmptyColumns: hideEmptyColumnsCheckbox.checked });
+                    grid.setDisplayOptions({
+                        hideEmptyColumns: hideEmptyColumnsCheckbox.checked
+                    });
                 });
             }
             if (filterRowsInput !== null) {
@@ -199,7 +205,9 @@
                             shiftDateString
                         }, (response) => {
                             loadingNotice.classList.add('is-hidden');
-                            if (response.success && response.shifts !== undefined && response.shifts.length > 0) {
+                            if (response.success &&
+                                response.shifts !== undefined &&
+                                response.shifts.length > 0) {
                                 listContainer.classList.remove('is-hidden');
                                 for (const shift of response.shifts) {
                                     const shiftElement = document.createElement('div');
@@ -242,7 +250,9 @@
                             }
                         });
                         // Handle form submission
-                        modalElement.querySelector('#form--copyFromShift')?.addEventListener('submit', (formEvent) => {
+                        modalElement
+                            .querySelector('#form--copyFromShift')
+                            ?.addEventListener('submit', (formEvent) => {
                             formEvent.preventDefault();
                             if (selectedShiftId === null) {
                                 return;
@@ -328,7 +338,9 @@
                         }
                         let selectedTimesheetId = null;
                         // Search form submission
-                        modalElement.querySelector('#form--searchTimesheets')?.addEventListener('submit', (formEvent) => {
+                        modalElement
+                            .querySelector('#form--searchTimesheets')
+                            ?.addEventListener('submit', (formEvent) => {
                             formEvent.preventDefault();
                             const searchForm = formEvent.currentTarget;
                             const searchData = new FormData(searchForm);
@@ -343,7 +355,9 @@
                                 offset: 0
                             }, (response) => {
                                 searchResultsContainer.classList.remove('is-hidden');
-                                if (response.success && response.timesheets !== undefined && response.timesheets.length > 0) {
+                                if (response.success &&
+                                    response.timesheets !== undefined &&
+                                    response.timesheets.length > 0) {
                                     // Filter out the current timesheet
                                     const filteredTimesheets = response.timesheets.filter((t) => t.timesheetId.toString() !== timesheetId);
                                     if (filteredTimesheets.length === 0) {
@@ -354,13 +368,16 @@
                                     for (const timesheet of filteredTimesheets) {
                                         const timesheetElement = document.createElement('div');
                                         timesheetElement.className = 'box is-clickable mb-2';
-                                        timesheetElement.dataset.timesheetId = timesheet.timesheetId.toString();
+                                        timesheetElement.dataset.timesheetId =
+                                            timesheet.timesheetId.toString();
                                         const dateString = new Date(timesheet.timesheetDate).toLocaleDateString();
                                         const supervisorLastName = timesheet.supervisorLastName ?? '';
                                         const supervisorFirstName = timesheet.supervisorFirstName ?? '';
                                         const supervisorName = supervisorLastName && supervisorFirstName
                                             ? `${supervisorLastName}, ${supervisorFirstName}`
-                                            : supervisorLastName || supervisorFirstName || '(Unknown)';
+                                            : supervisorLastName ||
+                                                supervisorFirstName ||
+                                                '(Unknown)';
                                         timesheetElement.innerHTML = `
                         <div class="columns is-mobile is-vcentered">
                           <div class="column">
@@ -381,7 +398,9 @@
                       `;
                                         timesheetElement.addEventListener('click', () => {
                                             // Deselect all
-                                            listContainer.querySelectorAll('.box').forEach((box) => {
+                                            listContainer
+                                                .querySelectorAll('.box')
+                                                .forEach((box) => {
                                                 box.classList.remove('has-background-success-light');
                                                 box.querySelector('[data-timesheet-check]')?.classList.add('is-hidden');
                                             });
@@ -401,7 +420,9 @@
                             });
                         });
                         // Handle copy form submission
-                        modalElement.querySelector('#form--copyFromPreviousTimesheet')?.addEventListener('submit', (formEvent) => {
+                        modalElement
+                            .querySelector('#form--copyFromPreviousTimesheet')
+                            ?.addEventListener('submit', (formEvent) => {
                             formEvent.preventDefault();
                             if (selectedTimesheetId === null) {
                                 return;
