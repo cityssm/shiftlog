@@ -299,4 +299,3 @@
     toggleMonthFilter();
     loadData();
 })();
-export {};
