@@ -289,6 +289,35 @@
                 initializeMap('map--createAdhocTask--location', modalElement.querySelector('#createAdhocTask--locationLatitude'), modalElement.querySelector('#createAdhocTask--locationLongitude'));
                 initializeMap('map--createAdhocTask--fromLocation', modalElement.querySelector('#createAdhocTask--fromLocationLatitude'), modalElement.querySelector('#createAdhocTask--fromLocationLongitude'));
                 initializeMap('map--createAdhocTask--toLocation', modalElement.querySelector('#createAdhocTask--toLocationLatitude'), modalElement.querySelector('#createAdhocTask--toLocationLongitude'));
+                // Setup toggle handlers for collapsible location sections
+                const fromLocationToggle = modalElement.querySelector('#toggle--createAdhocTask--fromLocation');
+                const fromLocationContainer = modalElement.querySelector('#container--createAdhocTask--fromLocation');
+                fromLocationToggle.addEventListener('click', () => {
+                    fromLocationContainer.classList.toggle('is-hidden');
+                    const icon = fromLocationToggle.querySelector('i');
+                    if (icon !== null) {
+                        if (fromLocationContainer.classList.contains('is-hidden')) {
+                            icon.className = 'fa-solid fa-chevron-right';
+                        }
+                        else {
+                            icon.className = 'fa-solid fa-chevron-down';
+                        }
+                    }
+                });
+                const toLocationToggle = modalElement.querySelector('#toggle--createAdhocTask--toLocation');
+                const toLocationContainer = modalElement.querySelector('#container--createAdhocTask--toLocation');
+                toLocationToggle.addEventListener('click', () => {
+                    toLocationContainer.classList.toggle('is-hidden');
+                    const icon = toLocationToggle.querySelector('i');
+                    if (icon !== null) {
+                        if (toLocationContainer.classList.contains('is-hidden')) {
+                            icon.className = 'fa-solid fa-chevron-right';
+                        }
+                        else {
+                            icon.className = 'fa-solid fa-chevron-down';
+                        }
+                    }
+                });
                 modalElement.querySelector('#createAdhocTask--adhocTaskTypeDataListItemId').focus();
             },
             onremoved() {
