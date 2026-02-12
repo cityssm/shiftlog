@@ -425,7 +425,10 @@ interface WorkOrderAccomplishmentData {
 
     // Fit map to bounds
     if (bounds.length > 0) {
-      hotZonesMap.fitBounds(bounds)
+      hotZonesMap.fitBounds(bounds, {
+        padding: [50, 50],
+        maxZoom: 15
+      })
     }
   }
 
