@@ -61,18 +61,12 @@ interface WorkOrderAccomplishmentData {
   const currentMonth = exports.currentMonth
 
   // Elements
-  const filterTypeElement = document.querySelector(
-    '#filter--filterType'
-  ) as HTMLSelectElement
   const yearElement = document.querySelector(
     '#filter--year'
   ) as HTMLInputElement
   const monthElement = document.querySelector(
     '#filter--month'
   ) as HTMLSelectElement
-  const monthFilterContainer = document.querySelector(
-    '#container--monthFilter'
-  ) as HTMLElement
   const refreshButton = document.querySelector(
     '#button--refresh'
   ) as HTMLButtonElement
@@ -95,15 +89,6 @@ interface WorkOrderAccomplishmentData {
   let tagCloudChart: any
   let hotZonesMap: L.Map | undefined
   let hotZonesLayer: L.LayerGroup | undefined
-
-  // Toggle month filter visibility
-  function toggleMonthFilter(): void {
-    const filterType = filterTypeElement.value
-    const shouldHide = filterType !== 'month'
-    monthFilterContainer.classList.toggle('is-hidden', shouldHide)
-  }
-
-  filterTypeElement.addEventListener('change', toggleMonthFilter)
 
   // Initialize charts
   function initializeCharts(): void {
@@ -377,7 +362,6 @@ interface WorkOrderAccomplishmentData {
     loadingContainer.style.display = 'block'
     dashboardContainer.style.display = 'none'
 
-    const filterType = filterTypeElement.value as 'month' | 'year'
     const year = yearElement.value
     const month = monthElement.value
 
@@ -385,8 +369,7 @@ interface WorkOrderAccomplishmentData {
       // eslint-disable-next-line no-secrets/no-secrets -- route name, not a secret
       `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrderAccomplishmentData`,
       {
-        filterType,
-        month: filterType === 'month' ? month : undefined,
+        month,
         year
       },
       (rawResponseJSON) => {
@@ -428,6 +411,5 @@ interface WorkOrderAccomplishmentData {
 
   // Initialize
   initializeCharts()
-  toggleMonthFilter()
   loadData()
 })()

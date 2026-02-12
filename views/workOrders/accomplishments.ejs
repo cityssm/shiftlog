@@ -41,31 +41,19 @@
       <div class="columns">
         <div class="column is-narrow">
           <div class="field">
-            <label class="label" for="filter--filterType">Period Type</label>
-            <div class="control">
-              <div class="select">
-                <select id="filter--filterType">
-                  <option value="month" selected>Month</option>
-                  <option value="year">Year</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="column is-narrow">
-          <div class="field">
             <label class="label" for="filter--year">Year</label>
             <div class="control">
               <input class="input" type="number" id="filter--year" value="<%= currentYear %>" min="2000" max="2100" />
             </div>
           </div>
         </div>
-        <div class="column is-narrow" id="container--monthFilter">
+        <div class="column is-narrow">
           <div class="field">
             <label class="label" for="filter--month">Month</label>
             <div class="control">
               <div class="select">
                 <select id="filter--month">
+                  <option value="0">All</option>
                   <option value="1">January</option>
                   <option value="2">February</option>
                   <option value="3">March</option>
