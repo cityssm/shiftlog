@@ -384,7 +384,7 @@ details.collapsable-panel[open] .details-chevron {
  * Map grayscale filter
  */
 
-.map-gray .leaflet-map-pane > .leaflet-pane:not(.leaflet-marker-pane) {
+.map-gray .leaflet-map-pane > .leaflet-pane:not(.leaflet-overlay-pane) {
   -webkit-filter: grayscale(100%);
   filter: grayscale(100%);
 }
