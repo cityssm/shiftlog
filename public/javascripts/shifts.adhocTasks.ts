@@ -764,8 +764,8 @@ declare const exports: {
             address1 !== '' ||
             address2 !== '' ||
             cityProvince !== '' ||
-            latitude !== null ||
-            longitude !== null
+            latitude != null ||
+            longitude != null
           )
         }
 
