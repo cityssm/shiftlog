@@ -289,6 +289,17 @@
                 initializeMap('map--createAdhocTask--location', modalElement.querySelector('#createAdhocTask--locationLatitude'), modalElement.querySelector('#createAdhocTask--locationLongitude'));
                 initializeMap('map--createAdhocTask--fromLocation', modalElement.querySelector('#createAdhocTask--fromLocationLatitude'), modalElement.querySelector('#createAdhocTask--fromLocationLongitude'));
                 initializeMap('map--createAdhocTask--toLocation', modalElement.querySelector('#createAdhocTask--toLocationLatitude'), modalElement.querySelector('#createAdhocTask--toLocationLongitude'));
+                // Setup toggle handlers for collapsible location sections
+                function setupLocationToggle(toggleSelector, containerSelector) {
+                    const toggleButton = modalElement.querySelector(toggleSelector);
+                    const container = modalElement.querySelector(containerSelector);
+                    toggleButton.addEventListener('click', () => {
+                        container.classList.toggle('is-hidden');
+                        toggleButton.classList.toggle('is-expanded');
+                    });
+                }
+                setupLocationToggle('#toggle--createAdhocTask--fromLocation', '#container--createAdhocTask--fromLocation');
+                setupLocationToggle('#toggle--createAdhocTask--toLocation', '#container--createAdhocTask--toLocation');
                 modalElement.querySelector('#createAdhocTask--adhocTaskTypeDataListItemId').focus();
             },
             onremoved() {
@@ -372,6 +383,37 @@
                 initializeMap('map--editAdhocTask--location', modalElement.querySelector('input[name="locationLatitude"]'), modalElement.querySelector('input[name="locationLongitude"]'), task.locationLatitude, task.locationLongitude);
                 initializeMap('map--editAdhocTask--fromLocation', modalElement.querySelector('input[name="fromLocationLatitude"]'), modalElement.querySelector('input[name="fromLocationLongitude"]'), task.fromLocationLatitude, task.fromLocationLongitude);
                 initializeMap('map--editAdhocTask--toLocation', modalElement.querySelector('input[name="toLocationLatitude"]'), modalElement.querySelector('input[name="toLocationLongitude"]'), task.toLocationLatitude, task.toLocationLongitude);
+                // Setup toggle handlers for collapsible location sections
+                function setupEditLocationToggle(toggleSelector, containerSelector) {
+                    const toggleButton = modalElement.querySelector(toggleSelector);
+                    const container = modalElement.querySelector(containerSelector);
+                    toggleButton.addEventListener('click', () => {
+                        container.classList.toggle('is-hidden');
+                        toggleButton.classList.toggle('is-expanded');
+                    });
+                }
+                function hasLocationData(address1, address2, cityProvince, latitude, longitude) {
+                    return (address1 !== '' ||
+                        address2 !== '' ||
+                        cityProvince !== '' ||
+                        latitude != null ||
+                        longitude != null);
+                }
+                setupEditLocationToggle('#toggle--editAdhocTask--fromLocation', '#container--editAdhocTask--fromLocation');
+                setupEditLocationToggle('#toggle--editAdhocTask--toLocation', '#container--editAdhocTask--toLocation');
+                // Check if from/to locations have values and show sections if they do
+                const fromLocationContainer = modalElement.querySelector('#container--editAdhocTask--fromLocation');
+                const fromLocationToggle = modalElement.querySelector('#toggle--editAdhocTask--fromLocation');
+                if (hasLocationData(task.fromLocationAddress1, task.fromLocationAddress2, task.fromLocationCityProvince, task.fromLocationLatitude, task.fromLocationLongitude)) {
+                    fromLocationContainer.classList.remove('is-hidden');
+                    fromLocationToggle.classList.add('is-expanded');
+                }
+                const toLocationContainer = modalElement.querySelector('#container--editAdhocTask--toLocation');
+                const toLocationToggle = modalElement.querySelector('#toggle--editAdhocTask--toLocation');
+                if (hasLocationData(task.toLocationAddress1, task.toLocationAddress2, task.toLocationCityProvince, task.toLocationLatitude, task.toLocationLongitude)) {
+                    toLocationContainer.classList.remove('is-hidden');
+                    toLocationToggle.classList.add('is-expanded');
+                }
             },
             onremoved() {
                 bulmaJS.toggleHtmlClipped();

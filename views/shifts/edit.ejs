@@ -383,6 +383,11 @@
                 <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i></span>
               </div>
               <div class="column is-hidden-touch"><%= configFunctions.getConfigProperty('timesheets.sectionName') %></div>
+              <div class="column is-narrow is-hidden-touch">
+                <span class="icon has-text-success ml-2 is-hidden" id="icon--hasTimesheets">
+                  <i class="fa-solid fa-circle"></i>
+                </span>
+              </div>
             </div>
           </a>
         </li>
@@ -441,6 +446,7 @@
 ;(function() {
   const shiftId = '<%= shift.shiftId %>';
   const urlPrefix = '<%= urlPrefix %>/<%= configFunctions.getConfigProperty("shifts.router") %>';
+  const isEdit = <%= isEdit %>;
   
   function loadShiftTimesheets() {
     const container = document.querySelector('#container--shiftTimesheets');
@@ -453,6 +459,12 @@
         const response = rawResponseJSON;
         
         if (response.success && response.timesheets) {
+          // Update the indicator icon
+          const indicatorIcon = document.querySelector('#icon--hasTimesheets');
+          if (indicatorIcon && response.timesheets.length > 0) {
+            indicatorIcon.classList.remove('is-hidden');
+          }
+          
           if (response.timesheets.length === 0) {
             container.innerHTML = '<p class="has-text-centered has-text-grey"><span class="icon is-large"><i class="fa-solid fa-3x <%= configFunctions.getConfigProperty("timesheets.iconClass") %>"></i></span><br />No related timesheets found.</p>';
             return;
@@ -493,11 +505,21 @@
     );
   }
   
-  // Load timesheets when the tab is shown
+  // Load timesheets immediately if in edit mode
+  if (isEdit) {
+    loadShiftTimesheets();
+  }
+  
+  // Also load timesheets when the tab is clicked (for view mode only)
+  // Use a flag to prevent re-loading after initial load
+  let timesheetsLoaded = isEdit;
   const timesheetsTabLink = document.querySelector('a[href="#tab--timesheets"]');
   if (timesheetsTabLink) {
     timesheetsTabLink.addEventListener('click', function() {
-      loadShiftTimesheets();
+      if (!timesheetsLoaded) {
+        loadShiftTimesheets();
+        timesheetsLoaded = true;
+      }
     });
   }
 })();

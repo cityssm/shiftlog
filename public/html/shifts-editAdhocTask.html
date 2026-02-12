@@ -135,12 +135,22 @@
           <p class="help">Click on the map to set location coordinates</p>
         </div>
 
-        <h3 class="subtitle is-5 mt-4">From Location (Optional)</h3>
-        
-        <div class="field">
-          <label class="label" for="editAdhocTask--fromLocationAddress1">
-            Address Line 1
-          </label>
+        <button
+          class="button is-light is-fullwidth is-justify-content-flex-start mb-2 toggle-button"
+          id="toggle--editAdhocTask--fromLocation"
+          type="button"
+        >
+          <span class="icon is-small toggle-chevron">
+            <i class="fa-solid fa-chevron-right"></i>
+          </span>
+          <span>From Location (Optional)</span>
+        </button>
+
+        <div class="is-hidden mt-2" id="container--editAdhocTask--fromLocation">
+          <div class="field">
+            <label class="label" for="editAdhocTask--fromLocationAddress1">
+              From Address Line 1
+            </label>
           <div class="control">
             <input
               class="input"
@@ -152,10 +162,10 @@
           </div>
         </div>
 
-        <div class="field">
-          <label class="label" for="editAdhocTask--fromLocationAddress2">
-            Address Line 2
-          </label>
+          <div class="field">
+            <label class="label" for="editAdhocTask--fromLocationAddress2">
+              From Address Line 2
+            </label>
           <div class="control">
             <input
               class="input"
@@ -222,14 +232,25 @@
           <label class="label">From Location Map</label>
           <div id="map--editAdhocTask--fromLocation" style="height: 300px;"></div>
           <p class="help">Click on the map to set from location coordinates</p>
+          </div>
         </div>
 
-        <h3 class="subtitle is-5 mt-4">To Location (Optional)</h3>
-        
-        <div class="field">
-          <label class="label" for="editAdhocTask--toLocationAddress1">
-            Address Line 1
-          </label>
+        <button
+          class="button is-light is-fullwidth is-justify-content-flex-start mb-2 toggle-button"
+          id="toggle--editAdhocTask--toLocation"
+          type="button"
+        >
+          <span class="icon is-small toggle-chevron">
+            <i class="fa-solid fa-chevron-right"></i>
+          </span>
+          <span>To Location (Optional)</span>
+        </button>
+
+        <div class="is-hidden mt-2" id="container--editAdhocTask--toLocation">
+          <div class="field">
+            <label class="label" for="editAdhocTask--toLocationAddress1">
+              To Address Line 1
+            </label>
           <div class="control">
             <input
               class="input"
@@ -241,10 +262,10 @@
           </div>
         </div>
 
-        <div class="field">
-          <label class="label" for="editAdhocTask--toLocationAddress2">
-            Address Line 2
-          </label>
+          <div class="field">
+            <label class="label" for="editAdhocTask--toLocationAddress2">
+              To Address Line 2
+            </label>
           <div class="control">
             <input
               class="input"
@@ -311,6 +332,8 @@
           <label class="label">To Location Map</label>
           <div id="map--editAdhocTask--toLocation" style="height: 300px;"></div>
           <p class="help">Click on the map to set to location coordinates</p>
+        </div>
+
         </div>
 
         <div class="field">

@@ -134,182 +134,205 @@
           <p class="help">Click on the map to set location coordinates</p>
         </div>
 
-        <h3 class="subtitle is-5 mt-4">From Location (Optional)</h3>
-        
-        <div class="field">
-          <label class="label" for="createAdhocTask--fromLocationAddress1">
-            Address Line 1
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="createAdhocTask--fromLocationAddress1"
-              name="fromLocationAddress1"
-              type="text"
-              maxlength="100"
-            />
-          </div>
-        </div>
+        <button
+          class="button is-light is-fullwidth is-justify-content-flex-start mb-2 toggle-button"
+          id="toggle--createAdhocTask--fromLocation"
+          type="button"
+        >
+          <span class="icon is-small toggle-chevron">
+            <i class="fa-solid fa-chevron-right"></i>
+          </span>
+          <span>From Location (Optional)</span>
+        </button>
 
-        <div class="field">
-          <label class="label" for="createAdhocTask--fromLocationAddress2">
-            Address Line 2
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="createAdhocTask--fromLocationAddress2"
-              name="fromLocationAddress2"
-              type="text"
-              maxlength="100"
-            />
+        <div class="is-hidden mt-2" id="container--createAdhocTask--fromLocation">
+          <div class="field">
+            <label class="label" for="createAdhocTask--fromLocationAddress1">
+              From Address Line 1
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="createAdhocTask--fromLocationAddress1"
+                name="fromLocationAddress1"
+                type="text"
+                maxlength="100"
+              />
+            </div>
           </div>
-        </div>
 
-        <div class="columns">
-          <div class="column">
-            <div class="field">
-              <label class="label" for="createAdhocTask--fromLocationCityProvince">
-                City/Province
-              </label>
-              <div class="control">
-                <input
-                  class="input"
-                  id="createAdhocTask--fromLocationCityProvince"
-                  name="fromLocationCityProvince"
-                  type="text"
-                  maxlength="50"
-                />
+          <div class="field">
+            <label class="label" for="createAdhocTask--fromLocationAddress2">
+              From Address Line 2
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="createAdhocTask--fromLocationAddress2"
+                name="fromLocationAddress2"
+                type="text"
+                maxlength="100"
+              />
+            </div>
+          </div>
+
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label" for="createAdhocTask--fromLocationCityProvince">
+                  City/Province
+                </label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="createAdhocTask--fromLocationCityProvince"
+                    name="fromLocationCityProvince"
+                    type="text"
+                    maxlength="50"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="createAdhocTask--fromLocationLatitude">
+                  Latitude
+                </label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="createAdhocTask--fromLocationLatitude"
+                    name="fromLocationLatitude"
+                    type="number"
+                    step="0.0000001"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="createAdhocTask--fromLocationLongitude">
+                  Longitude
+                </label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="createAdhocTask--fromLocationLongitude"
+                    name="fromLocationLongitude"
+                    type="number"
+                    step="0.0000001"
+                  />
+                </div>
               </div>
             </div>
           </div>
-          <div class="column">
-            <div class="field">
-              <label class="label" for="createAdhocTask--fromLocationLatitude">
-                Latitude
-              </label>
-              <div class="control">
-                <input
-                  class="input"
-                  id="createAdhocTask--fromLocationLatitude"
-                  name="fromLocationLatitude"
-                  type="number"
-                  step="0.0000001"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <div class="field">
-              <label class="label" for="createAdhocTask--fromLocationLongitude">
-                Longitude
-              </label>
-              <div class="control">
-                <input
-                  class="input"
-                  id="createAdhocTask--fromLocationLongitude"
-                  name="fromLocationLongitude"
-                  type="number"
-                  step="0.0000001"
-                />
-              </div>
-            </div>
+
+          <div class="field">
+            <label class="label">From Location Map</label>
+            <div id="map--createAdhocTask--fromLocation" style="height: 300px;"></div>
+            <p class="help">Click on the map to set from location coordinates</p>
           </div>
         </div>
 
-        <div class="field">
-          <label class="label">From Location Map</label>
-          <div id="map--createAdhocTask--fromLocation" style="height: 300px;"></div>
-          <p class="help">Click on the map to set from location coordinates</p>
-        </div>
+        <button
+          class="button is-light is-fullwidth is-justify-content-flex-start mb-2 toggle-button"
+          id="toggle--createAdhocTask--toLocation"
+          type="button"
+        >
+          <span class="icon is-small toggle-chevron">
+            <i class="fa-solid fa-chevron-right"></i>
+          </span>
+          <span>To Location (Optional)</span>
+        </button>
 
-        <h3 class="subtitle is-5 mt-4">To Location (Optional)</h3>
-        
-        <div class="field">
-          <label class="label" for="createAdhocTask--toLocationAddress1">
-            Address Line 1
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="createAdhocTask--toLocationAddress1"
-              name="toLocationAddress1"
-              type="text"
-              maxlength="100"
-            />
+        <div class="is-hidden mt-2" id="container--createAdhocTask--toLocation">
+          <div class="field">
+            <label class="label" for="createAdhocTask--toLocationAddress1">
+              To Address Line 1
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="createAdhocTask--toLocationAddress1"
+                name="toLocationAddress1"
+                type="text"
+                maxlength="100"
+              />
+            </div>
           </div>
-        </div>
 
-        <div class="field">
-          <label class="label" for="createAdhocTask--toLocationAddress2">
-            Address Line 2
-          </label>
-          <div class="control">
-            <input
-              class="input"
-              id="createAdhocTask--toLocationAddress2"
-              name="toLocationAddress2"
-              type="text"
-              maxlength="100"
-            />
+          <div class="field">
+            <label class="label" for="createAdhocTask--toLocationAddress2">
+              To Address Line 2
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="createAdhocTask--toLocationAddress2"
+                name="toLocationAddress2"
+                type="text"
+                maxlength="100"
+              />
+            </div>
           </div>
-        </div>
 
-        <div class="columns">
-          <div class="column">
-            <div class="field">
-              <label class="label" for="createAdhocTask--toLocationCityProvince">
-                City/Province
-              </label>
-              <div class="control">
-                <input
-                  class="input"
-                  id="createAdhocTask--toLocationCityProvince"
-                  name="toLocationCityProvince"
-                  type="text"
-                  maxlength="50"
-                />
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label" for="createAdhocTask--toLocationCityProvince">
+                  City/Province
+                </label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="createAdhocTask--toLocationCityProvince"
+                    name="toLocationCityProvince"
+                    type="text"
+                    maxlength="50"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="createAdhocTask--toLocationLatitude">
+                  Latitude
+                </label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="createAdhocTask--toLocationLatitude"
+                    name="toLocationLatitude"
+                    type="number"
+                    step="0.0000001"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="createAdhocTask--toLocationLongitude">
+                  Longitude
+                </label>
+                <div class="control">
+                  <input
+                    class="input"
+                    id="createAdhocTask--toLocationLongitude"
+                    name="toLocationLongitude"
+                    type="number"
+                    step="0.0000001"
+                  />
+                </div>
               </div>
             </div>
           </div>
-          <div class="column">
-            <div class="field">
-              <label class="label" for="createAdhocTask--toLocationLatitude">
-                Latitude
-              </label>
-              <div class="control">
-                <input
-                  class="input"
-                  id="createAdhocTask--toLocationLatitude"
-                  name="toLocationLatitude"
-                  type="number"
-                  step="0.0000001"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <div class="field">
-              <label class="label" for="createAdhocTask--toLocationLongitude">
-                Longitude
-              </label>
-              <div class="control">
-                <input
-                  class="input"
-                  id="createAdhocTask--toLocationLongitude"
-                  name="toLocationLongitude"
-                  type="number"
-                  step="0.0000001"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="field">
-          <label class="label">To Location Map</label>
-          <div id="map--createAdhocTask--toLocation" style="height: 300px;"></div>
-          <p class="help">Click on the map to set to location coordinates</p>
+          <div class="field">
+            <label class="label">To Location Map</label>
+            <div id="map--createAdhocTask--toLocation" style="height: 300px;"></div>
+            <p class="help">Click on the map to set to location coordinates</p>
+          </div>
+
         </div>
 
         <div class="field">

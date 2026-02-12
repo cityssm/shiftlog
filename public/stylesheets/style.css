@@ -241,6 +241,18 @@ details.collapsable-panel[open] .details-chevron {
 }
 
 /*
+ * Collapsable toggle buttons (for modals)
+ */
+
+.toggle-button.is-expanded .toggle-chevron {
+  transform: rotate(90deg);
+}
+
+.toggle-button .toggle-chevron {
+  transition: transform 0.2s ease;
+}
+
+/*
  * Form elements
  */
 
