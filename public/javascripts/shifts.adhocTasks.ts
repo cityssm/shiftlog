@@ -461,6 +461,45 @@ declare const exports: {
           ) as HTMLInputElement
         )
 
+        // Setup toggle handlers for collapsible location sections
+        const fromLocationToggle = modalElement.querySelector(
+          '#toggle--createAdhocTask--fromLocation'
+        ) as HTMLButtonElement
+        const fromLocationContainer = modalElement.querySelector(
+          '#container--createAdhocTask--fromLocation'
+        ) as HTMLElement
+
+        fromLocationToggle.addEventListener('click', () => {
+          fromLocationContainer.classList.toggle('is-hidden')
+          const icon = fromLocationToggle.querySelector('i')
+          if (icon !== null) {
+            if (fromLocationContainer.classList.contains('is-hidden')) {
+              icon.className = 'fa-solid fa-chevron-right'
+            } else {
+              icon.className = 'fa-solid fa-chevron-down'
+            }
+          }
+        })
+
+        const toLocationToggle = modalElement.querySelector(
+          '#toggle--createAdhocTask--toLocation'
+        ) as HTMLButtonElement
+        const toLocationContainer = modalElement.querySelector(
+          '#container--createAdhocTask--toLocation'
+        ) as HTMLElement
+
+        toLocationToggle.addEventListener('click', () => {
+          toLocationContainer.classList.toggle('is-hidden')
+          const icon = toLocationToggle.querySelector('i')
+          if (icon !== null) {
+            if (toLocationContainer.classList.contains('is-hidden')) {
+              icon.className = 'fa-solid fa-chevron-right'
+            } else {
+              icon.className = 'fa-solid fa-chevron-down'
+            }
+          }
+        })
+
         // Focus on task type
         ;(
           modalElement.querySelector(

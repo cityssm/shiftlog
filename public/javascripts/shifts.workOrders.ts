@@ -318,32 +318,14 @@ declare const exports: {
     let closeModalFunction: () => void
     let modalElement: HTMLElement
 
-    function doSearch(formEvent: Event): void {
-      formEvent.preventDefault()
-
-      const searchForm = formEvent.currentTarget as HTMLFormElement
-
-      const searchString = (
-        searchForm.querySelector(
-          '#addWorkOrder--searchString'
-        ) as HTMLInputElement
-      ).value.trim()
-
-      if (searchString.length < 2) {
-        bulmaJS.alert({
-          contextualColorName: 'warning',
-          message: 'Please enter at least 2 characters to search.'
-        })
-        return
-      }
-
+    function performSearch(searchString: string, limit: number = 20): void {
       const resultsContainer = modalElement.querySelector(
         '#addWorkOrder--results'
       ) as HTMLElement
 
       resultsContainer.innerHTML = /* html */ `
         <div class="message is-info">
-          <div class="message-body">Searching...</div>
+          <div class="message-body">${searchString ? 'Searching...' : 'Loading recent work orders...'}</div>
         </div>
       `
 
@@ -352,14 +334,14 @@ declare const exports: {
         {
           searchString,
           openClosedFilter: 'open',
-          limit: 20,
+          limit,
           offset: 0
         },
         (responseJSON: DoSearchWorkOrdersResponse) => {
           if (!responseJSON.success || responseJSON.workOrders.length === 0) {
             resultsContainer.innerHTML = /* html */ `
               <div class="message is-warning">
-                <div class="message-body">No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found matching your search.</div>
+                <div class="message-body">No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found${searchString ? ' matching your search' : ''}.</div>
               </div>
             `
             return
@@ -408,14 +390,14 @@ declare const exports: {
 
           resultsContainer.replaceChildren(tableElement)
 
-          if (responseJSON.totalCount > 20) {
+          if (responseJSON.totalCount > limit) {
             const messageElement = document.createElement('div')
             messageElement.className = 'message is-info mt-2'
 
             messageElement.innerHTML = /* html */ `
               <div class="message-body">
-                Showing 20 of ${cityssm.escapeHTML(responseJSON.totalCount.toString())} results.
-                Refine your search to see more specific results.
+                Showing ${limit} of ${cityssm.escapeHTML(responseJSON.totalCount.toString())} results.
+                ${searchString ? 'Refine your search to see more specific results.' : 'Use the search box to find specific work orders.'}
               </div>
             `
 
@@ -445,6 +427,28 @@ declare const exports: {
           }
         }
       )
+    }
+
+    function doSearch(formEvent: Event): void {
+      formEvent.preventDefault()
+
+      const searchForm = formEvent.currentTarget as HTMLFormElement
+
+      const searchString = (
+        searchForm.querySelector(
+          '#addWorkOrder--searchString'
+        ) as HTMLInputElement
+      ).value.trim()
+
+      if (searchString.length < 2) {
+        bulmaJS.alert({
+          contextualColorName: 'warning',
+          message: 'Please enter at least 2 characters to search.'
+        })
+        return
+      }
+
+      performSearch(searchString, 20)
     }
 
     function selectWorkOrder(workOrder: WorkOrder): void {
@@ -551,6 +555,9 @@ declare const exports: {
         ) as HTMLFormElement
 
         addForm.addEventListener('submit', doAdd)
+
+        // Load 10 most recent open work orders by default
+        performSearch('', 10)
 
         // Focus on search input
         ;(

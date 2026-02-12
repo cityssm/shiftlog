@@ -134,7 +134,20 @@
           <p class="help">Click on the map to set location coordinates</p>
         </div>
 
-        <h3 class="subtitle is-5 mt-4">From Location (Optional)</h3>
+        <div class="mt-4">
+          <button
+            class="button is-small is-light"
+            id="toggle--createAdhocTask--fromLocation"
+            type="button"
+          >
+            <span class="icon is-small">
+              <i class="fa-solid fa-chevron-right"></i>
+            </span>
+            <span>From Location (Optional)</span>
+          </button>
+        </div>
+
+        <div id="container--createAdhocTask--fromLocation" class="is-hidden mt-2">
         
         <div class="field">
           <label class="label" for="createAdhocTask--fromLocationAddress1">
@@ -223,7 +236,22 @@
           <p class="help">Click on the map to set from location coordinates</p>
         </div>
 
-        <h3 class="subtitle is-5 mt-4">To Location (Optional)</h3>
+        </div>
+
+        <div class="mt-4">
+          <button
+            class="button is-small is-light"
+            id="toggle--createAdhocTask--toLocation"
+            type="button"
+          >
+            <span class="icon is-small">
+              <i class="fa-solid fa-chevron-right"></i>
+            </span>
+            <span>To Location (Optional)</span>
+          </button>
+        </div>
+
+        <div id="container--createAdhocTask--toLocation" class="is-hidden mt-2">
         
         <div class="field">
           <label class="label" for="createAdhocTask--toLocationAddress1">
@@ -310,6 +338,8 @@
           <label class="label">To Location Map</label>
           <div id="map--createAdhocTask--toLocation" style="height: 300px;"></div>
           <p class="help">Click on the map to set to location coordinates</p>
+        </div>
+
         </div>
 
         <div class="field">
