@@ -114,10 +114,10 @@ interface WorkOrderAccomplishmentData {
         13
       )
 
-      // Use greyscale tiles so the heat map colors are more visible
-      new L.TileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      // Use OpenStreetMap tiles with CSS grayscale filter
+      new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
-          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © <a href="https://carto.com/attributions">CARTO</a>'
+          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(hotZonesMap)
 
       // Note: Heat layer will be initialized lazily when data is available
