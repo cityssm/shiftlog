@@ -103,20 +103,8 @@ interface WorkOrderAccomplishmentData {
 
   // Initialize charts
   function initializeCharts(): void {
-    const timeSeriesElement = document.querySelector('#chart--timeSeries')
-    if (timeSeriesElement !== null) {
-      timeSeriesChart = echarts.init(timeSeriesElement as HTMLElement)
-    }
-
-    const byAssignedToElement = document.querySelector('#chart--byAssignedTo')
-    if (byAssignedToElement !== null) {
-      byAssignedToChart = echarts.init(byAssignedToElement as HTMLElement)
-    }
-
-    const tagCloudElement = document.querySelector('#chart--tagCloud')
-    if (tagCloudElement !== null) {
-      tagCloudChart = echarts.init(tagCloudElement as HTMLElement)
-    }
+    // Note: ECharts will be initialized lazily when data is available
+    // to avoid initialization on hidden containers with 0 dimensions
 
     // Initialize Leaflet map
     const mapElement = document.querySelector('#map--hotZones')
@@ -153,8 +141,14 @@ interface WorkOrderAccomplishmentData {
   function updateTimeSeriesChart(
     timeSeries: WorkOrderTimeSeriesData[]
   ): void {
+    // Lazily initialize chart on first use
     if (timeSeriesChart === undefined) {
-      return
+      const timeSeriesElement = document.querySelector('#chart--timeSeries')
+      if (timeSeriesElement !== null) {
+        timeSeriesChart = echarts.init(timeSeriesElement as HTMLElement)
+      } else {
+        return
+      }
     }
 
     // Check if there's any data
@@ -212,8 +206,14 @@ interface WorkOrderAccomplishmentData {
   function updateByAssignedToChart(
     byAssignedTo: WorkOrderByAssignedTo[]
   ): void {
+    // Lazily initialize chart on first use
     if (byAssignedToChart === undefined) {
-      return
+      const byAssignedToElement = document.querySelector('#chart--byAssignedTo')
+      if (byAssignedToElement !== null) {
+        byAssignedToChart = echarts.init(byAssignedToElement as HTMLElement)
+      } else {
+        return
+      }
     }
 
     // Check if there's any data
@@ -278,8 +278,14 @@ interface WorkOrderAccomplishmentData {
 
   // Update tag cloud chart
   function updateTagCloudChart(tags: WorkOrderTagStatistic[]): void {
+    // Lazily initialize chart on first use
     if (tagCloudChart === undefined) {
-      return
+      const tagCloudElement = document.querySelector('#chart--tagCloud')
+      if (tagCloudElement !== null) {
+        tagCloudChart = echarts.init(tagCloudElement as HTMLElement)
+      } else {
+        return
+      }
     }
 
     // Check if there's any data
@@ -461,22 +467,11 @@ interface WorkOrderAccomplishmentData {
           // Update KPIs
           updateKPIs(data.stats)
 
-          // Update charts
+          // Update charts (lazy initialization happens here)
           updateTimeSeriesChart(data.timeSeries)
           updateByAssignedToChart(data.byAssignedTo)
           updateTagCloudChart(data.tags)
           updateHotZonesMap(data.hotZones)
-
-          // Resize charts after container is visible
-          if (timeSeriesChart !== undefined) {
-            timeSeriesChart.resize()
-          }
-          if (byAssignedToChart !== undefined) {
-            byAssignedToChart.resize()
-          }
-          if (tagCloudChart !== undefined) {
-            tagCloudChart.resize()
-          }
         } else {
           bulmaJS.alert({
             contextualColorName: 'danger',
