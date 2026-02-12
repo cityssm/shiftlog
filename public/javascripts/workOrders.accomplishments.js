@@ -297,4 +297,3 @@
     initializeCharts();
     loadData();
 })();
-export {};
