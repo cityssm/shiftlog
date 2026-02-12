@@ -727,6 +727,86 @@ declare const exports: {
           task.toLocationLatitude,
           task.toLocationLongitude
         )
+
+        // Setup toggle handlers for collapsible location sections
+        function setupEditLocationToggle(
+          toggleSelector: string,
+          containerSelector: string
+        ): void {
+          const toggleButton = modalElement.querySelector(
+            toggleSelector
+          ) as HTMLButtonElement
+          const container = modalElement.querySelector(
+            containerSelector
+          ) as HTMLElement
+
+          toggleButton.addEventListener('click', () => {
+            container.classList.toggle('is-hidden')
+            const icon = toggleButton.querySelector('i')
+            if (icon !== null) {
+              if (container.classList.contains('is-hidden')) {
+                icon.className = 'fa-solid fa-chevron-right'
+              } else {
+                icon.className = 'fa-solid fa-chevron-down'
+              }
+            }
+          })
+        }
+
+        setupEditLocationToggle(
+          '#toggle--editAdhocTask--fromLocation',
+          '#container--editAdhocTask--fromLocation'
+        )
+
+        setupEditLocationToggle(
+          '#toggle--editAdhocTask--toLocation',
+          '#container--editAdhocTask--toLocation'
+        )
+
+        // Check if from/to locations have values and show sections if they do
+        const fromLocationContainer = modalElement.querySelector(
+          '#container--editAdhocTask--fromLocation'
+        ) as HTMLElement
+        const fromLocationToggle = modalElement.querySelector(
+          '#toggle--editAdhocTask--fromLocation'
+        ) as HTMLButtonElement
+
+        const hasFromLocationData =
+          task.fromLocationAddress1 !== '' ||
+          task.fromLocationAddress2 !== '' ||
+          task.fromLocationCityProvince !== '' ||
+          task.fromLocationLatitude !== null ||
+          task.fromLocationLongitude !== null
+
+        if (hasFromLocationData) {
+          fromLocationContainer.classList.remove('is-hidden')
+          const icon = fromLocationToggle.querySelector('i')
+          if (icon !== null) {
+            icon.className = 'fa-solid fa-chevron-down'
+          }
+        }
+
+        const toLocationContainer = modalElement.querySelector(
+          '#container--editAdhocTask--toLocation'
+        ) as HTMLElement
+        const toLocationToggle = modalElement.querySelector(
+          '#toggle--editAdhocTask--toLocation'
+        ) as HTMLButtonElement
+
+        const hasToLocationData =
+          task.toLocationAddress1 !== '' ||
+          task.toLocationAddress2 !== '' ||
+          task.toLocationCityProvince !== '' ||
+          task.toLocationLatitude !== null ||
+          task.toLocationLongitude !== null
+
+        if (hasToLocationData) {
+          toLocationContainer.classList.remove('is-hidden')
+          const icon = toLocationToggle.querySelector('i')
+          if (icon !== null) {
+            icon.className = 'fa-solid fa-chevron-down'
+          }
+        }
       },
 
       onremoved() {

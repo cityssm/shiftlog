@@ -34,7 +34,7 @@ export declare const configDefaultValues: {
     'reverseProxy.urlPrefix': string;
     'session.cookieName': string;
     'session.doKeepAlive': boolean;
-    'session.maxAgeMillis': number;
+    'session.maxAgeMillis': any;
     'session.secret': string;
     'connectors.shiftLog': MSSQLConfig;
     'connectors.avanti': AvantiApiConfiguration | undefined;
@@ -42,7 +42,7 @@ export declare const configDefaultValues: {
         serverUrl?: string;
         defaultTopic: string;
     } | undefined;
-    'connectors.ntfy.serverUrl': string;
+    'connectors.ntfy.serverUrl': any;
     'connectors.pearl': MSSQLConfig | undefined;
     'connectors.email': ConfigEmail | undefined;
     'shifts.isEnabled': boolean;
