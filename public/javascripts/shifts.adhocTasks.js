@@ -295,15 +295,7 @@
                     const container = modalElement.querySelector(containerSelector);
                     toggleButton.addEventListener('click', () => {
                         container.classList.toggle('is-hidden');
-                        const icon = toggleButton.querySelector('i');
-                        if (icon !== null) {
-                            if (container.classList.contains('is-hidden')) {
-                                icon.className = 'fa-solid fa-chevron-right';
-                            }
-                            else {
-                                icon.className = 'fa-solid fa-chevron-down';
-                            }
-                        }
+                        toggleButton.classList.toggle('is-expanded');
                     });
                 }
                 setupLocationToggle('#toggle--createAdhocTask--fromLocation', '#container--createAdhocTask--fromLocation');
@@ -397,15 +389,7 @@
                     const container = modalElement.querySelector(containerSelector);
                     toggleButton.addEventListener('click', () => {
                         container.classList.toggle('is-hidden');
-                        const icon = toggleButton.querySelector('i');
-                        if (icon !== null) {
-                            if (container.classList.contains('is-hidden')) {
-                                icon.className = 'fa-solid fa-chevron-right';
-                            }
-                            else {
-                                icon.className = 'fa-solid fa-chevron-down';
-                            }
-                        }
+                        toggleButton.classList.toggle('is-expanded');
                     });
                 }
                 function hasLocationData(address1, address2, cityProvince, latitude, longitude) {
@@ -422,19 +406,13 @@
                 const fromLocationToggle = modalElement.querySelector('#toggle--editAdhocTask--fromLocation');
                 if (hasLocationData(task.fromLocationAddress1, task.fromLocationAddress2, task.fromLocationCityProvince, task.fromLocationLatitude, task.fromLocationLongitude)) {
                     fromLocationContainer.classList.remove('is-hidden');
-                    const icon = fromLocationToggle.querySelector('i');
-                    if (icon !== null) {
-                        icon.className = 'fa-solid fa-chevron-down';
-                    }
+                    fromLocationToggle.classList.add('is-expanded');
                 }
                 const toLocationContainer = modalElement.querySelector('#container--editAdhocTask--toLocation');
                 const toLocationToggle = modalElement.querySelector('#toggle--editAdhocTask--toLocation');
                 if (hasLocationData(task.toLocationAddress1, task.toLocationAddress2, task.toLocationCityProvince, task.toLocationLatitude, task.toLocationLongitude)) {
                     toLocationContainer.classList.remove('is-hidden');
-                    const icon = toLocationToggle.querySelector('i');
-                    if (icon !== null) {
-                        icon.className = 'fa-solid fa-chevron-down';
-                    }
+                    toLocationToggle.classList.add('is-expanded');
                 }
             },
             onremoved() {
