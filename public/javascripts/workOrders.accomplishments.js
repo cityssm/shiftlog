@@ -1,0 +1,362 @@
+;
+(() => {
+    const shiftLog = exports.shiftLog;
+    const currentMonth = exports.currentMonth;
+    // Elements
+    const yearElement = document.querySelector('#filter--year');
+    const monthElement = document.querySelector('#filter--month');
+    const refreshButton = document.querySelector('#button--refresh');
+    const loadingContainer = document.querySelector('#container--loading');
+    const dashboardContainer = document.querySelector('#container--dashboard');
+    // Set initial month
+    monthElement.value = currentMonth.toString();
+    // Chart instances
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let timeSeriesChart;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let byAssignedToChart;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let tagCloudChart;
+    let hotZonesMap;
+    let hotZonesLayer;
+    // Initialize charts
+    function initializeCharts() {
+        // Note: ECharts will be initialized lazily when data is available
+        // to avoid initialization on hidden containers with 0 dimensions
+        // Initialize Leaflet map
+        const mapElement = document.querySelector('#map--hotZones');
+        if (mapElement !== null) {
+            hotZonesMap = new L.Map('map--hotZones').setView([shiftLog.defaultLatitude, shiftLog.defaultLongitude], 13);
+            // Use OpenStreetMap tiles with CSS grayscale filter
+            new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(hotZonesMap);
+            // Note: Heat layer will be initialized lazily when data is available
+            // to avoid simpleheat getImageData() errors on hidden containers
+        }
+    }
+    // Update KPIs
+    function updateKPIs(stats) {
+        const totalOpened = stats.totalOpen + stats.totalClosed;
+        document.querySelector('#kpi--totalOpened').textContent =
+            totalOpened.toString();
+        document.querySelector('#kpi--totalClosed').textContent =
+            stats.totalClosed.toString();
+        document.querySelector('#kpi--completionRate').textContent = `${stats.percentClosed.toFixed(1)}%`;
+    }
+    // Update time series chart
+    function updateTimeSeriesChart(timeSeries) {
+        // Lazily initialize chart on first use
+        if (timeSeriesChart === undefined) {
+            const timeSeriesElement = document.querySelector('#chart--timeSeries');
+            if (timeSeriesElement !== null) {
+                timeSeriesChart = echarts.init(timeSeriesElement);
+            }
+            else {
+                return;
+            }
+        }
+        // Check if there's any data
+        if (timeSeries.length === 0 || timeSeries.every(item => item.openWorkOrdersCount === 0)) {
+            // Clear the chart completely before showing no-data message
+            timeSeriesChart.clear();
+            timeSeriesChart.setOption({
+                title: {
+                    text: 'No data available',
+                    left: 'center',
+                    top: 'middle',
+                    textStyle: {
+                        color: '#999',
+                        fontSize: 16
+                    }
+                }
+            });
+            return;
+        }
+        const categories = timeSeries.map((item) => item.periodLabel);
+        const openData = timeSeries.map((item) => item.openWorkOrdersCount);
+        timeSeriesChart.setOption({
+            title: { show: false },
+            legend: {
+                data: ['Open Work Orders']
+            },
+            series: [
+                {
+                    data: openData,
+                    itemStyle: { color: '#48c774' },
+                    name: 'Open Work Orders',
+                    smooth: true,
+                    type: 'line'
+                }
+            ],
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                data: categories,
+                show: true,
+                type: 'category'
+            },
+            yAxis: {
+                minInterval: 1,
+                show: true,
+                type: 'value'
+            }
+        });
+    }
+    // Update by assigned to chart
+    function updateByAssignedToChart(byAssignedTo) {
+        // Lazily initialize chart on first use
+        if (byAssignedToChart === undefined) {
+            const byAssignedToElement = document.querySelector('#chart--byAssignedTo');
+            if (byAssignedToElement !== null) {
+                byAssignedToChart = echarts.init(byAssignedToElement);
+            }
+            else {
+                return;
+            }
+        }
+        // Check if there's any data
+        if (byAssignedTo.length === 0) {
+            // Clear the chart completely before showing no-data message
+            byAssignedToChart.clear();
+            byAssignedToChart.setOption({
+                title: {
+                    text: 'No data available',
+                    left: 'center',
+                    top: 'middle',
+                    textStyle: {
+                        color: '#999',
+                        fontSize: 16
+                    }
+                }
+            });
+            return;
+        }
+        const categories = byAssignedTo.map((item) => item.assignedToName);
+        const openedData = byAssignedTo.map((item) => item.openedCount);
+        const closedData = byAssignedTo.map((item) => item.closedCount);
+        byAssignedToChart.setOption({
+            title: { show: false },
+            legend: {
+                data: ['Opened', 'Closed']
+            },
+            series: [
+                {
+                    data: openedData,
+                    itemStyle: { color: '#48c774' },
+                    name: 'Opened',
+                    type: 'bar'
+                },
+                {
+                    data: closedData,
+                    itemStyle: { color: '#3298dc' },
+                    name: 'Closed',
+                    type: 'bar'
+                }
+            ],
+            tooltip: {
+                axisPointer: {
+                    type: 'shadow'
+                },
+                trigger: 'axis'
+            },
+            xAxis: {
+                minInterval: 1,
+                show: true,
+                type: 'value'
+            },
+            yAxis: {
+                data: categories,
+                show: true,
+                type: 'category'
+            }
+        });
+    }
+    // Update tag cloud chart
+    function updateTagCloudChart(tags) {
+        // Lazily initialize chart on first use
+        if (tagCloudChart === undefined) {
+            const tagCloudElement = document.querySelector('#chart--tagCloud');
+            if (tagCloudElement !== null) {
+                tagCloudChart = echarts.init(tagCloudElement);
+            }
+            else {
+                return;
+            }
+        }
+        // Check if there's any data
+        if (tags.length === 0) {
+            // Clear the chart completely before showing no-data message
+            tagCloudChart.clear();
+            tagCloudChart.setOption({
+                title: {
+                    text: 'No data available',
+                    left: 'center',
+                    top: 'middle',
+                    textStyle: {
+                        color: '#999',
+                        fontSize: 16
+                    }
+                }
+            });
+            return;
+        }
+        // Use top 20 tags for better visualization
+        const topTags = tags.slice(0, 20);
+        const tagNames = topTags.map((tag) => tag.tagName);
+        const tagCounts = topTags.map((tag) => tag.count);
+        tagCloudChart.setOption({
+            title: { show: false },
+            series: [
+                {
+                    data: tagCounts,
+                    itemStyle: {
+                        color: function (parameters) {
+                            const colors = [
+                                '#48c774',
+                                '#3298dc',
+                                '#ffdd57',
+                                '#f14668',
+                                '#00d1b2',
+                                '#485fc7',
+                                '#b86bff',
+                                '#ff6b9d'
+                            ];
+                            return colors[parameters.dataIndex % colors.length];
+                        }
+                    },
+                    name: 'Count',
+                    type: 'bar'
+                }
+            ],
+            tooltip: {
+                axisPointer: {
+                    type: 'shadow'
+                },
+                trigger: 'axis'
+            },
+            xAxis: {
+                minInterval: 1,
+                show: true,
+                type: 'value'
+            },
+            yAxis: {
+                axisLabel: {
+                    interval: 0,
+                    overflow: 'truncate',
+                    width: 120
+                },
+                data: tagNames,
+                show: true,
+                type: 'category'
+            }
+        });
+    }
+    // Update hot zones map
+    function updateHotZonesMap(hotZones) {
+        if (hotZonesMap === undefined) {
+            return;
+        }
+        // Lazily initialize heat layer when first needed (after container is visible)
+        if (hotZonesLayer === undefined) {
+            hotZonesLayer = L.heatLayer([], {
+                radius: 25,
+                blur: 15,
+                maxZoom: 17,
+                max: 1.0,
+                gradient: {
+                    0.0: '#48c774', // Green for low
+                    0.5: '#ffdd57', // Yellow for medium
+                    1.0: '#f14668' // Red for high
+                }
+            }).addTo(hotZonesMap);
+        }
+        if (hotZones.length === 0) {
+            // Clear heat layer and show "No data available" message on the map
+            hotZonesLayer.setLatLngs([]);
+            const mapContainer = document.querySelector('#map--hotZones');
+            if (mapContainer !== null) {
+                const existingMessage = mapContainer.querySelector('.no-data-message');
+                if (existingMessage === null) {
+                    const noDataDiv = document.createElement('div');
+                    noDataDiv.className = 'no-data-message';
+                    noDataDiv.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #999; font-size: 16px;';
+                    noDataDiv.textContent = 'No data available';
+                    mapContainer.appendChild(noDataDiv);
+                }
+            }
+            return;
+        }
+        // Remove "No data available" message if it exists
+        const mapContainer = document.querySelector('#map--hotZones');
+        if (mapContainer !== null) {
+            const existingMessage = mapContainer.querySelector('.no-data-message');
+            if (existingMessage !== null) {
+                existingMessage.remove();
+            }
+        }
+        const bounds = [];
+        // First pass: collect counts to find max
+        const maxCount = Math.max(...hotZones.map((hz) => hz.count));
+        // Second pass: prepare heat layer data with normalized intensity
+        const heatData = hotZones.map((hotZone) => {
+            const lat = hotZone.latitude;
+            const lng = hotZone.longitude;
+            const intensity = hotZone.count / maxCount; // Normalize intensity between 0 and 1
+            bounds.push([lat, lng]);
+            return [lat, lng, intensity];
+        });
+        // Update heat layer with new data
+        hotZonesLayer.setLatLngs(heatData);
+        // Fit map to bounds
+        if (bounds.length > 0) {
+            hotZonesMap.fitBounds(bounds, {
+                padding: [50, 50],
+                maxZoom: 15
+            });
+        }
+    }
+    // Load data
+    function loadData() {
+        loadingContainer.style.display = 'block';
+        dashboardContainer.style.display = 'none';
+        const year = yearElement.value;
+        const month = monthElement.value;
+        cityssm.postJSON(
+        // eslint-disable-next-line no-secrets/no-secrets -- route name, not a secret
+        `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrderAccomplishmentData`, {
+            month,
+            year
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            if (responseJSON.success && responseJSON.data !== undefined) {
+                const data = responseJSON.data;
+                // Show dashboard and hide loading BEFORE updating charts
+                // This ensures lazy-loaded components (like heat layer) initialize with visible containers
+                loadingContainer.style.display = 'none';
+                dashboardContainer.style.display = 'block';
+                // Update KPIs
+                updateKPIs(data.stats);
+                // Update charts (lazy initialization happens here)
+                updateTimeSeriesChart(data.timeSeries);
+                updateByAssignedToChart(data.byAssignedTo);
+                updateTagCloudChart(data.tags);
+                updateHotZonesMap(data.hotZones);
+            }
+            else {
+                bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: responseJSON.errorMessage ?? 'Failed to load accomplishment data',
+                    title: 'Error'
+                });
+                loadingContainer.style.display = 'none';
+            }
+        });
+    }
+    // Event listeners
+    refreshButton.addEventListener('click', loadData);
+    // Initialize
+    initializeCharts();
+    loadData();
+})();

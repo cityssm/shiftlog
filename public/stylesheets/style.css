@@ -379,3 +379,12 @@ details.collapsable-panel[open] .details-chevron {
     max-width: 60px;
   }
 }
+
+/*
+ * Map grayscale filter
+ */
+
+.map-gray .leaflet-map-pane > .leaflet-pane:not(.leaflet-overlay-pane) {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}

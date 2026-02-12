@@ -1,0 +1,201 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <nav class="breadcrumb is-hidden-print">
+      <ul>
+        <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+        <li>
+          <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
+            <span class="icon is-small">
+              <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+            </span>
+            <span><%= configFunctions.getConfigProperty('workOrders.sectionName') %></span>
+          </a>
+        </li>
+        <li class="is-active">
+          <a href="#" aria-current="page">
+            <span>Accomplishments</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="is-clearfix">
+      <h1 class="title is-1 is-pulled-left">
+        <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Accomplishments
+      </h1>
+      <div class="buttons is-pulled-right is-hidden-print">
+        <button class="button is-light" type="button" onclick="window.print()">
+          <span class="icon"><i class="fa-solid fa-print"></i></span>
+          <span>Print</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="box is-hidden-print">
+      <div class="columns">
+        <div class="column is-narrow">
+          <div class="field">
+            <label class="label" for="filter--year">Year</label>
+            <div class="control">
+              <input class="input" type="number" id="filter--year" value="<%= currentYear %>" min="2000" max="2100" />
+            </div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="field">
+            <label class="label" for="filter--month">Month</label>
+            <div class="control">
+              <div class="select">
+                <select id="filter--month">
+                  <option value="0">All</option>
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="field">
+            <label class="label">&nbsp;</label>
+            <div class="control">
+              <button class="button is-primary" type="button" id="button--refresh">
+                <span class="icon"><i class="fa-solid fa-sync"></i></span>
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="box has-text-centered" id="container--loading">
+      <div class="block">
+        <span class="icon is-large">
+          <i class="fa-solid fa-3x fa-spinner fa-pulse"></i>
+        </span>
+      </div>
+      <p>Loading accomplishment data...</p>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div id="container--dashboard" style="display: none;">
+      <!-- KPI Cards -->
+      <div class="columns">
+        <div class="column">
+          <div class="box has-background-success-light">
+            <div class="level is-mobile">
+              <div class="level-item">
+                <div>
+                  <p class="heading">Total Opened</p>
+                  <p class="title is-3" id="kpi--totalOpened">-</p>
+                </div>
+              </div>
+              <div class="level-item">
+                <span class="icon is-large has-text-success">
+                  <i class="fa-solid fa-3x fa-folder-open"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-info-light">
+            <div class="level is-mobile">
+              <div class="level-item">
+                <div>
+                  <p class="heading">Total Closed</p>
+                  <p class="title is-3" id="kpi--totalClosed">-</p>
+                </div>
+              </div>
+              <div class="level-item">
+                <span class="icon is-large has-text-info">
+                  <i class="fa-solid fa-3x fa-check-circle"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-primary-light">
+            <div class="level is-mobile">
+              <div class="level-item">
+                <div>
+                  <p class="heading">Completion Rate</p>
+                  <p class="title is-3" id="kpi--completionRate">-%</p>
+                </div>
+              </div>
+              <div class="level-item">
+                <span class="icon is-large has-text-primary">
+                  <i class="fa-solid fa-3x fa-chart-line"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 1 -->
+      <div class="columns">
+        <div class="column is-7">
+          <div class="box">
+            <h2 class="title is-4">Work Orders Over Time</h2>
+            <div id="chart--timeSeries" style="height: 400px;"></div>
+          </div>
+        </div>
+        <div class="column is-5">
+          <div class="box">
+            <h2 class="title is-4">By Assigned To (Top 10)</h2>
+            <div id="chart--byAssignedTo" style="height: 400px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 2 -->
+      <div class="columns">
+        <div class="column is-6">
+          <div class="box">
+            <h2 class="title is-4">Tag Usage (Top 20)</h2>
+            <div id="chart--tagCloud" style="height: 400px;"></div>
+          </div>
+        </div>
+        <div class="column is-6">
+          <div class="box">
+            <h2 class="title is-4">Work Order Hot Zones</h2>
+            <div id="map--hotZones" class="map-gray" style="height: 400px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script>
+  (() => {
+    exports.currentYear = <%= currentYear %>;
+    exports.currentMonth = <%= currentMonth %>;
+  })();
+</script>
+
+<script src="<%= urlPrefix %>/javascripts/workOrders.accomplishments.js"></script>
+
+<%- await include('../_footerB'); -%>

@@ -98,6 +98,24 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
         </div>
       </a>
     </li>
+    <li>
+      <a
+        class="<%= headTitle === 'Work Order Accomplishments' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/<%= workOrdersRouter %>/accomplishments"
+        title="<%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Accomplishments"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon is-small">
+              <i class="fa-solid fa-chart-line"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Accomplishments
+          </div>
+        </div>
+      </a>
+    </li>
   </ul>
   <p class="menu-label is-hidden-touch">Tools</p>
   <ul class="menu-list">
