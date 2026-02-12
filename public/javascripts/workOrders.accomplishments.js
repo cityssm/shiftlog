@@ -1,7 +1,6 @@
 ;
 (() => {
     const shiftLog = exports.shiftLog;
-    const currentYear = exports.currentYear;
     const currentMonth = exports.currentMonth;
     // Elements
     const filterTypeElement = document.querySelector('#filter--filterType');
@@ -14,20 +13,19 @@
     // Set initial month
     monthElement.value = currentMonth.toString();
     // Chart instances
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let timeSeriesChart;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let byAssignedToChart;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tagCloudChart;
     let hotZonesMap;
     let hotZonesLayer;
     // Toggle month filter visibility
     function toggleMonthFilter() {
         const filterType = filterTypeElement.value;
-        if (filterType === 'month') {
-            monthFilterContainer.classList.remove('is-hidden');
-        }
-        else {
-            monthFilterContainer.classList.add('is-hidden');
-        }
+        const shouldHide = filterType !== 'month';
+        monthFilterContainer.classList.toggle('is-hidden', shouldHide);
     }
     filterTypeElement.addEventListener('change', toggleMonthFilter);
     // Initialize charts
@@ -74,36 +72,36 @@
         const openData = timeSeries.map((item) => item.openCount);
         const closedData = timeSeries.map((item) => item.closedCount);
         timeSeriesChart.setOption({
-            tooltip: {
-                trigger: 'axis'
-            },
             legend: {
                 data: ['Open', 'Closed']
             },
-            xAxis: {
-                type: 'category',
-                data: categories
-            },
-            yAxis: {
-                type: 'value',
-                minInterval: 1
-            },
             series: [
                 {
-                    name: 'Open',
-                    type: 'line',
                     data: openData,
+                    itemStyle: { color: '#48c774' },
+                    name: 'Open',
                     smooth: true,
-                    itemStyle: { color: '#48c774' }
+                    type: 'line'
                 },
                 {
-                    name: 'Closed',
-                    type: 'line',
                     data: closedData,
+                    itemStyle: { color: '#3298dc' },
+                    name: 'Closed',
                     smooth: true,
-                    itemStyle: { color: '#3298dc' }
+                    type: 'line'
                 }
-            ]
+            ],
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                data: categories,
+                type: 'category'
+            },
+            yAxis: {
+                minInterval: 1,
+                type: 'value'
+            }
         });
     }
     // Update by assigned to chart
@@ -115,37 +113,37 @@
         const openedData = byAssignedTo.map((item) => item.openedCount);
         const closedData = byAssignedTo.map((item) => item.closedCount);
         byAssignedToChart.setOption({
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
             legend: {
                 data: ['Opened', 'Closed']
             },
-            xAxis: {
-                type: 'value',
-                minInterval: 1
-            },
-            yAxis: {
-                type: 'category',
-                data: categories
-            },
             series: [
                 {
-                    name: 'Opened',
-                    type: 'bar',
                     data: openedData,
-                    itemStyle: { color: '#48c774' }
+                    itemStyle: { color: '#48c774' },
+                    name: 'Opened',
+                    type: 'bar'
                 },
                 {
-                    name: 'Closed',
-                    type: 'bar',
                     data: closedData,
-                    itemStyle: { color: '#3298dc' }
+                    itemStyle: { color: '#3298dc' },
+                    name: 'Closed',
+                    type: 'bar'
                 }
-            ]
+            ],
+            tooltip: {
+                axisPointer: {
+                    type: 'shadow'
+                },
+                trigger: 'axis'
+            },
+            xAxis: {
+                minInterval: 1,
+                type: 'value'
+            },
+            yAxis: {
+                data: categories,
+                type: 'category'
+            }
         });
     }
     // Update tag cloud chart
@@ -153,57 +151,52 @@
         if (tagCloudChart === undefined) {
             return;
         }
-        const wordCloudData = tags.map((tag) => ({
-            name: tag.tagName,
-            value: tag.count
-        }));
+        // Use top 20 tags for better visualization
+        const topTags = tags.slice(0, 20);
+        const tagNames = topTags.map((tag) => tag.tagName);
+        const tagCounts = topTags.map((tag) => tag.count);
         tagCloudChart.setOption({
-            tooltip: {
-                trigger: 'item',
-                formatter: '{b}: {c}'
-            },
             series: [
                 {
-                    type: 'wordCloud',
-                    shape: 'circle',
-                    keepAspect: false,
-                    left: 'center',
-                    top: 'center',
-                    width: '100%',
-                    height: '100%',
-                    right: null,
-                    bottom: null,
-                    sizeRange: [12, 48],
-                    rotationRange: [0, 0],
-                    rotationStep: 0,
-                    gridSize: 8,
-                    drawOutOfBound: false,
-                    layoutAnimation: true,
-                    textStyle: {
-                        fontFamily: 'sans-serif',
-                        fontWeight: 'bold',
-                        color: function () {
+                    data: tagCounts,
+                    itemStyle: {
+                        color: function (parameters) {
                             const colors = [
                                 '#48c774',
                                 '#3298dc',
                                 '#ffdd57',
                                 '#f14668',
                                 '#00d1b2',
-                                '#485fc7'
+                                '#485fc7',
+                                '#b86bff',
+                                '#ff6b9d'
                             ];
-                            return colors[Math.floor(Math.random() * colors.length)];
+                            return colors[parameters.dataIndex % colors.length];
                         }
                     },
-                    emphasis: {
-                        focus: 'self',
-                        textStyle: {
-                            textShadowBlur: 10,
-                            textShadowColor: '#333'
-                        }
-                    },
-                    data: wordCloudData
+                    name: 'Count',
+                    type: 'bar'
                 }
-            ]
+            ],
+            tooltip: {
+                axisPointer: {
+                    type: 'shadow'
+                },
+                trigger: 'axis'
+            },
+            xAxis: {
+                minInterval: 1,
+                type: 'value'
+            },
+            yAxis: {
+                axisLabel: {
+                    interval: 0,
+                    overflow: 'truncate',
+                    width: 120
+                },
+                data: tagNames,
+                type: 'category'
+            }
         });
     }
     // Update hot zones map
@@ -217,22 +210,27 @@
             return;
         }
         const bounds = [];
+        const markerBaseSize = 20;
+        const markerSizeMultiplier = 5;
+        const highIntensityThreshold = 0.66;
+        const mediumIntensityThreshold = 0.33;
         // Custom icons based on intensity
         const getMarkerIcon = (count) => {
             const maxCount = Math.max(...hotZones.map((hz) => hz.count));
             const intensity = count / maxCount;
             let color = '#48c774'; // Green for low
-            if (intensity > 0.66) {
+            if (intensity > highIntensityThreshold) {
                 color = '#f14668'; // Red for high
             }
-            else if (intensity > 0.33) {
+            else if (intensity > mediumIntensityThreshold) {
                 color = '#ffdd57'; // Yellow for medium
             }
+            const size = markerBaseSize + count * markerSizeMultiplier;
             return new L.DivIcon({
-                html: `<div style="background-color: ${color}; width: ${20 + count * 5}px; height: ${20 + count * 5}px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; font-size: 12px;">${count}</div>`,
                 className: '',
-                iconSize: [20 + count * 5, 20 + count * 5],
-                iconAnchor: [(20 + count * 5) / 2, (20 + count * 5) / 2]
+                html: `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; font-size: 12px;">${count}</div>`,
+                iconAnchor: [size / 2, size / 2],
+                iconSize: [size, size]
             });
         };
         for (const hotZone of hotZones) {
@@ -264,10 +262,12 @@
         const filterType = filterTypeElement.value;
         const year = yearElement.value;
         const month = monthElement.value;
-        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrderAccomplishmentData`, {
+        cityssm.postJSON(
+        // eslint-disable-next-line no-secrets/no-secrets -- route name, not a secret
+        `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrderAccomplishmentData`, {
             filterType,
-            year,
-            month: filterType === 'month' ? month : undefined
+            month: filterType === 'month' ? month : undefined,
+            year
         }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success && responseJSON.data !== undefined) {
@@ -283,7 +283,11 @@
                 dashboardContainer.style.display = 'block';
             }
             else {
-                cityssm.alertModal('Error', responseJSON.errorMessage ?? 'Failed to load accomplishment data', 'OK', 'danger');
+                bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    message: responseJSON.errorMessage ?? 'Failed to load accomplishment data',
+                    title: 'Error'
+                });
                 loadingContainer.style.display = 'none';
             }
         });
