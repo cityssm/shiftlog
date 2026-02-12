@@ -1,6 +1,6 @@
 import getWorkOrderAccomplishmentStats from '../../database/workOrders/getWorkOrderAccomplishmentStats.js';
 export default async function handler(request, response) {
-    const { filterType, year, month } = request.body;
+    const { filterType, month, year } = request.body;
     try {
         const yearNumber = Number.parseInt(year, 10);
         let startDate;
@@ -17,14 +17,14 @@ export default async function handler(request, response) {
         }
         const data = await getWorkOrderAccomplishmentStats(startDate, endDate, filterType, request.session.user);
         response.json({
-            success: true,
-            data
+            data,
+            success: true
         });
     }
-    catch (error) {
+    catch {
         response.json({
-            success: false,
-            errorMessage: 'Error fetching accomplishment data'
+            errorMessage: 'Error fetching accomplishment data',
+            success: false
         });
     }
 }

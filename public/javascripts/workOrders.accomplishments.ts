@@ -11,54 +11,53 @@ declare const L: typeof Leaflet
 declare const echarts: any
 
 declare const exports: {
-  shiftLog: ShiftLogGlobal
-  currentYear: number
   currentMonth: number
+  currentYear: number
+  shiftLog: ShiftLogGlobal
 }
 
 interface WorkOrderAccomplishmentStats {
-  totalOpen: number
-  totalClosed: number
-  totalOverdue: number
   percentClosed: number
+  totalClosed: number
+  totalOpen: number
+  totalOverdue: number
 }
 
 interface WorkOrderTimeSeriesData {
-  periodLabel: string
-  openCount: number
   closedCount: number
+  openCount: number
+  periodLabel: string
 }
 
 interface WorkOrderByAssignedTo {
   assignedToName: string
-  openedCount: number
   closedCount: number
+  openedCount: number
 }
 
 interface WorkOrderTagStatistic {
-  tagName: string
   count: number
+  tagName: string
 }
 
 interface WorkOrderHotZone {
+  closedCount: number
+  count: number
   latitude: number
   longitude: number
-  count: number
   openCount: number
-  closedCount: number
 }
 
 interface WorkOrderAccomplishmentData {
-  stats: WorkOrderAccomplishmentStats
-  timeSeries: WorkOrderTimeSeriesData[]
   byAssignedTo: WorkOrderByAssignedTo[]
-  tags: WorkOrderTagStatistic[]
   hotZones: WorkOrderHotZone[]
+  stats: WorkOrderAccomplishmentStats
+  tags: WorkOrderTagStatistic[]
+  timeSeries: WorkOrderTimeSeriesData[]
 }
 
 ;(() => {
   const shiftLog = exports.shiftLog
-  const currentYear = exports.currentYear
   const currentMonth = exports.currentMonth
 
   // Elements
@@ -100,11 +99,8 @@ interface WorkOrderAccomplishmentData {
   // Toggle month filter visibility
   function toggleMonthFilter(): void {
     const filterType = filterTypeElement.value
-    if (filterType === 'month') {
-      monthFilterContainer.classList.remove('is-hidden')
-    } else {
-      monthFilterContainer.classList.add('is-hidden')
-    }
+    const shouldHide = filterType !== 'month'
+    monthFilterContainer.classList.toggle('is-hidden', shouldHide)
   }
 
   filterTypeElement.addEventListener('change', toggleMonthFilter)
@@ -171,36 +167,36 @@ interface WorkOrderAccomplishmentData {
     const closedData = timeSeries.map((item) => item.closedCount)
 
     timeSeriesChart.setOption({
-      tooltip: {
-        trigger: 'axis'
-      },
       legend: {
         data: ['Open', 'Closed']
       },
-      xAxis: {
-        type: 'category',
-        data: categories
-      },
-      yAxis: {
-        type: 'value',
-        minInterval: 1
-      },
       series: [
         {
-          name: 'Open',
-          type: 'line',
           data: openData,
+          itemStyle: { color: '#48c774' },
+          name: 'Open',
           smooth: true,
-          itemStyle: { color: '#48c774' }
+          type: 'line'
         },
         {
-          name: 'Closed',
-          type: 'line',
           data: closedData,
+          itemStyle: { color: '#3298dc' },
+          name: 'Closed',
           smooth: true,
-          itemStyle: { color: '#3298dc' }
+          type: 'line'
         }
-      ]
+      ],
+      tooltip: {
+        trigger: 'axis'
+      },
+      xAxis: {
+        data: categories,
+        type: 'category'
+      },
+      yAxis: {
+        minInterval: 1,
+        type: 'value'
+      }
     })
   }
 
@@ -217,37 +213,37 @@ interface WorkOrderAccomplishmentData {
     const closedData = byAssignedTo.map((item) => item.closedCount)
 
     byAssignedToChart.setOption({
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
-        }
-      },
       legend: {
         data: ['Opened', 'Closed']
       },
-      xAxis: {
-        type: 'value',
-        minInterval: 1
-      },
-      yAxis: {
-        type: 'category',
-        data: categories
-      },
       series: [
         {
-          name: 'Opened',
-          type: 'bar',
           data: openedData,
-          itemStyle: { color: '#48c774' }
+          itemStyle: { color: '#48c774' },
+          name: 'Opened',
+          type: 'bar'
         },
         {
-          name: 'Closed',
-          type: 'bar',
           data: closedData,
-          itemStyle: { color: '#3298dc' }
+          itemStyle: { color: '#3298dc' },
+          name: 'Closed',
+          type: 'bar'
         }
-      ]
+      ],
+      tooltip: {
+        axisPointer: {
+          type: 'shadow'
+        },
+        trigger: 'axis'
+      },
+      xAxis: {
+        minInterval: 1,
+        type: 'value'
+      },
+      yAxis: {
+        data: categories,
+        type: 'category'
+      }
     })
   }
 
@@ -263,32 +259,11 @@ interface WorkOrderAccomplishmentData {
     const tagCounts = topTags.map((tag) => tag.count)
 
     tagCloudChart.setOption({
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
-        }
-      },
-      xAxis: {
-        type: 'value',
-        minInterval: 1
-      },
-      yAxis: {
-        type: 'category',
-        data: tagNames,
-        axisLabel: {
-          interval: 0,
-          overflow: 'truncate',
-          width: 120
-        }
-      },
       series: [
         {
-          name: 'Count',
-          type: 'bar',
           data: tagCounts,
           itemStyle: {
-            color: function (params: { dataIndex: number }): string {
+            color: function (parameters: { dataIndex: number }): string {
               const colors = [
                 '#48c774',
                 '#3298dc',
@@ -299,11 +274,32 @@ interface WorkOrderAccomplishmentData {
                 '#b86bff',
                 '#ff6b9d'
               ]
-              return colors[params.dataIndex % colors.length]
+              return colors[parameters.dataIndex % colors.length]
             }
-          }
+          },
+          name: 'Count',
+          type: 'bar'
         }
-      ]
+      ],
+      tooltip: {
+        axisPointer: {
+          type: 'shadow'
+        },
+        trigger: 'axis'
+      },
+      xAxis: {
+        minInterval: 1,
+        type: 'value'
+      },
+      yAxis: {
+        axisLabel: {
+          interval: 0,
+          overflow: 'truncate',
+          width: 120
+        },
+        data: tagNames,
+        type: 'category'
+      }
     })
   }
 
@@ -322,23 +318,30 @@ interface WorkOrderAccomplishmentData {
 
     const bounds: L.LatLngTuple[] = []
 
+    const markerBaseSize = 20
+    const markerSizeMultiplier = 5
+    const highIntensityThreshold = 0.66
+    const mediumIntensityThreshold = 0.33
+
     // Custom icons based on intensity
     const getMarkerIcon = (count: number): L.DivIcon => {
       const maxCount = Math.max(...hotZones.map((hz) => hz.count))
       const intensity = count / maxCount
 
       let color = '#48c774' // Green for low
-      if (intensity > 0.66) {
+      if (intensity > highIntensityThreshold) {
         color = '#f14668' // Red for high
-      } else if (intensity > 0.33) {
+      } else if (intensity > mediumIntensityThreshold) {
         color = '#ffdd57' // Yellow for medium
       }
 
+      const size = markerBaseSize + count * markerSizeMultiplier
+
       return new L.DivIcon({
-        html: `<div style="background-color: ${color}; width: ${20 + count * 5}px; height: ${20 + count * 5}px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; font-size: 12px;">${count}</div>`,
         className: '',
-        iconSize: [20 + count * 5, 20 + count * 5],
-        iconAnchor: [(20 + count * 5) / 2, (20 + count * 5) / 2]
+        html: `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; font-size: 12px;">${count}</div>`,
+        iconAnchor: [size / 2, size / 2],
+        iconSize: [size, size]
       })
     }
 
@@ -379,17 +382,18 @@ interface WorkOrderAccomplishmentData {
     const month = monthElement.value
 
     cityssm.postJSON(
+      // eslint-disable-next-line no-secrets/no-secrets -- route name, not a secret
       `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrderAccomplishmentData`,
       {
         filterType,
-        year,
-        month: filterType === 'month' ? month : undefined
+        month: filterType === 'month' ? month : undefined,
+        year
       },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
-          success: boolean
           data?: WorkOrderAccomplishmentData
           errorMessage?: string
+          success: boolean
         }
 
         if (responseJSON.success && responseJSON.data !== undefined) {
@@ -408,10 +412,10 @@ interface WorkOrderAccomplishmentData {
           dashboardContainer.style.display = 'block'
         } else {
           bulmaJS.alert({
-            title: 'Error',
+            contextualColorName: 'danger',
             message:
               responseJSON.errorMessage ?? 'Failed to load accomplishment data',
-            contextualColorName: 'danger'
+            title: 'Error'
           })
           loadingContainer.style.display = 'none'
         }

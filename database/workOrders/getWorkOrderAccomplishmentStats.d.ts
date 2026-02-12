@@ -1,36 +1,36 @@
 export interface WorkOrderAccomplishmentStats {
-    totalOpen: number;
-    totalClosed: number;
-    totalOverdue: number;
     percentClosed: number;
+    totalClosed: number;
+    totalOpen: number;
+    totalOverdue: number;
 }
 export interface WorkOrderTimeSeriesData {
-    periodLabel: string;
-    openCount: number;
     closedCount: number;
+    openCount: number;
+    periodLabel: string;
 }
 export interface WorkOrderByAssignedTo {
     assignedToName: string;
-    openedCount: number;
     closedCount: number;
+    openedCount: number;
 }
 export interface WorkOrderTagStatistic {
-    tagName: string;
     count: number;
+    tagName: string;
 }
 export interface WorkOrderHotZone {
+    closedCount: number;
+    count: number;
     latitude: number;
     longitude: number;
-    count: number;
     openCount: number;
-    closedCount: number;
 }
 export interface WorkOrderAccomplishmentData {
-    stats: WorkOrderAccomplishmentStats;
-    timeSeries: WorkOrderTimeSeriesData[];
     byAssignedTo: WorkOrderByAssignedTo[];
-    tags: WorkOrderTagStatistic[];
     hotZones: WorkOrderHotZone[];
+    stats: WorkOrderAccomplishmentStats;
+    tags: WorkOrderTagStatistic[];
+    timeSeries: WorkOrderTimeSeriesData[];
 }
 /**
  * Get work order accomplishment statistics for a date range

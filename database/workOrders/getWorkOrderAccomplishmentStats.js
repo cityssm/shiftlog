@@ -61,7 +61,8 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
   `);
     const stats = statsResult.recordset[0];
     const total = stats.totalOpen + stats.totalClosed;
-    const percentClosed = total > 0 ? (stats.totalClosed / total) * 100 : 0;
+    const hundredPercent = 100;
+    const percentClosed = total > 0 ? (stats.totalClosed / total) * hundredPercent : 0;
     // 2. Get time series data (grouped by month or year)
     const timeSeriesRequest = pool.request();
     timeSeriesRequest
@@ -119,8 +120,8 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
   `);
     const byAssignedTo = byAssignedToResult.recordset.map((row) => ({
         assignedToName: row.assignedToName ?? '(Unassigned)',
-        openedCount: row.openedCount,
-        closedCount: row.closedCount
+        closedCount: row.closedCount,
+        openedCount: row.openedCount
     }));
     // 4. Get tag statistics
     const tagsRequest = pool.request();
@@ -184,13 +185,13 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
   `);
     const hotZones = hotZonesResult.recordset;
     return {
+        byAssignedTo,
+        hotZones,
         stats: {
             ...stats,
             percentClosed
         },
-        timeSeries,
-        byAssignedTo,
         tags,
-        hotZones
+        timeSeries
     };
 }

@@ -4,43 +4,43 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface WorkOrderAccomplishmentStats {
-  totalOpen: number
-  totalClosed: number
-  totalOverdue: number
   percentClosed: number
+  totalClosed: number
+  totalOpen: number
+  totalOverdue: number
 }
 
 export interface WorkOrderTimeSeriesData {
-  periodLabel: string
-  openCount: number
   closedCount: number
+  openCount: number
+  periodLabel: string
 }
 
 export interface WorkOrderByAssignedTo {
   assignedToName: string
-  openedCount: number
   closedCount: number
+  openedCount: number
 }
 
 export interface WorkOrderTagStatistic {
-  tagName: string
   count: number
+  tagName: string
 }
 
 export interface WorkOrderHotZone {
+  closedCount: number
+  count: number
   latitude: number
   longitude: number
-  count: number
   openCount: number
-  closedCount: number
 }
 
 export interface WorkOrderAccomplishmentData {
-  stats: WorkOrderAccomplishmentStats
-  timeSeries: WorkOrderTimeSeriesData[]
   byAssignedTo: WorkOrderByAssignedTo[]
-  tags: WorkOrderTagStatistic[]
   hotZones: WorkOrderHotZone[]
+  stats: WorkOrderAccomplishmentStats
+  tags: WorkOrderTagStatistic[]
+  timeSeries: WorkOrderTimeSeriesData[]
 }
 
 /**
@@ -89,8 +89,8 @@ export default async function getWorkOrderAccomplishmentStats(
     .input('userName', user?.userName)
 
   const statsResult = await statsRequest.query<{
-    totalOpen: number
     totalClosed: number
+    totalOpen: number
     totalOverdue: number
   }>(/* sql */ `
     SELECT
@@ -117,7 +117,8 @@ export default async function getWorkOrderAccomplishmentStats(
 
   const stats = statsResult.recordset[0]
   const total = stats.totalOpen + stats.totalClosed
-  const percentClosed = total > 0 ? (stats.totalClosed / total) * 100 : 0
+  const hundredPercent = 100
+  const percentClosed = total > 0 ? (stats.totalClosed / total) * hundredPercent : 0
 
   // 2. Get time series data (grouped by month or year)
   const timeSeriesRequest = pool.request()
@@ -131,9 +132,9 @@ export default async function getWorkOrderAccomplishmentStats(
     filterType === 'month' ? "FORMAT(w.workOrderOpenDateTime, 'yyyy-MM')" : 'YEAR(w.workOrderOpenDateTime)'
 
   const timeSeriesResult = await timeSeriesRequest.query<{
-    periodLabel: string
-    openCount: number
     closedCount: number
+    openCount: number
+    periodLabel: string
   }>(/* sql */ `
     SELECT
       ${dateGroupFormat} AS periodLabel,
@@ -166,8 +167,8 @@ export default async function getWorkOrderAccomplishmentStats(
 
   const byAssignedToResult = await byAssignedToRequest.query<{
     assignedToName: string | null
-    openedCount: number
     closedCount: number
+    openedCount: number
   }>(/* sql */ `
     SELECT TOP 10
       COALESCE(assignedTo.assignedToName, '(Unassigned)') AS assignedToName,
@@ -191,8 +192,8 @@ export default async function getWorkOrderAccomplishmentStats(
 
   const byAssignedTo = byAssignedToResult.recordset.map((row) => ({
     assignedToName: row.assignedToName ?? '(Unassigned)',
-    openedCount: row.openedCount,
-    closedCount: row.closedCount
+    closedCount: row.closedCount,
+    openedCount: row.openedCount
   }))
 
   // 4. Get tag statistics
@@ -204,8 +205,8 @@ export default async function getWorkOrderAccomplishmentStats(
     .input('userName', user?.userName)
 
   const tagsResult = await tagsRequest.query<{
-    tagName: string
     count: number
+    tagName: string
   }>(/* sql */ `
     SELECT TOP 50
       wot.tagName,
@@ -237,11 +238,11 @@ export default async function getWorkOrderAccomplishmentStats(
     .input('userName', user?.userName)
 
   const hotZonesResult = await hotZonesRequest.query<{
+    closedCount: number
+    count: number
     latitude: number
     longitude: number
-    count: number
     openCount: number
-    closedCount: number
   }>(/* sql */ `
     SELECT
       w.locationLatitude AS latitude,
@@ -272,13 +273,13 @@ export default async function getWorkOrderAccomplishmentStats(
   const hotZones = hotZonesResult.recordset
 
   return {
+    byAssignedTo,
+    hotZones,
     stats: {
       ...stats,
       percentClosed
     },
-    timeSeries,
-    byAssignedTo,
     tags,
-    hotZones
+    timeSeries
   }
 }

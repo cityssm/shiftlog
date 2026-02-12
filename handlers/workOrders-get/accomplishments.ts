@@ -10,9 +10,9 @@ export default function handler(
   const currentMonth = now.getMonth() + 1
 
   response.render('workOrders/accomplishments', {
-    headTitle: 'Work Order Accomplishments',
-    section: 'workOrders',
+    currentMonth,
     currentYear,
-    currentMonth
+    headTitle: 'Work Order Accomplishments',
+    section: 'workOrders'
   })
 }

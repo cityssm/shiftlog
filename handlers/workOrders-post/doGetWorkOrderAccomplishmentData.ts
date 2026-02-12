@@ -4,15 +4,15 @@ import getWorkOrderAccomplishmentStats from '../../database/workOrders/getWorkOr
 
 interface RequestBody {
   filterType: 'month' | 'year'
-  year: string
   month?: string
+  year: string
 }
 
 export default async function handler(
   request: Request<unknown, unknown, RequestBody>,
   response: Response
 ): Promise<void> {
-  const { filterType, year, month } = request.body
+  const { filterType, month, year } = request.body
 
   try {
     const yearNumber = Number.parseInt(year, 10)
@@ -38,13 +38,13 @@ export default async function handler(
     )
 
     response.json({
-      success: true,
-      data
+      data,
+      success: true
     })
-  } catch (error) {
+  } catch {
     response.json({
-      success: false,
-      errorMessage: 'Error fetching accomplishment data'
+      errorMessage: 'Error fetching accomplishment data',
+      success: false
     })
   }
 }
