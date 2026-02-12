@@ -453,6 +453,11 @@ interface WorkOrderAccomplishmentData {
         if (responseJSON.success && responseJSON.data !== undefined) {
           const data = responseJSON.data
 
+          // Show dashboard and hide loading BEFORE updating charts
+          // This ensures lazy-loaded components (like heat layer) initialize with visible containers
+          loadingContainer.style.display = 'none'
+          dashboardContainer.style.display = 'block'
+
           // Update KPIs
           updateKPIs(data.stats)
 
@@ -461,9 +466,6 @@ interface WorkOrderAccomplishmentData {
           updateByAssignedToChart(data.byAssignedTo)
           updateTagCloudChart(data.tags)
           updateHotZonesMap(data.hotZones)
-
-          loadingContainer.style.display = 'none'
-          dashboardContainer.style.display = 'block'
 
           // Resize charts after container is visible
           if (timeSeriesChart !== undefined) {
