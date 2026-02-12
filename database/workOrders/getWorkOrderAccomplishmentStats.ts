@@ -134,7 +134,9 @@ export default async function getWorkOrderAccomplishmentStats(
     .input('userName', user?.userName)
 
   const dateGroupFormat =
-    filterType === 'month' ? "FORMAT(w.workOrderOpenDateTime, 'yyyy-MM')" : 'YEAR(w.workOrderOpenDateTime)'
+    filterType === 'month'
+      ? "FORMAT(COALESCE(w.workOrderOpenDateTime, w.workOrderCloseDateTime), 'yyyy-MM')"
+      : 'YEAR(COALESCE(w.workOrderOpenDateTime, w.workOrderCloseDateTime))'
 
   const timeSeriesResult = await timeSeriesRequest.query<{
     closedCount: number
