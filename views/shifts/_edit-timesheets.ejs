@@ -1,21 +1,30 @@
 <div class="columns">
   <div class="column">
-    <h3 class="title is-4">Related <%= configFunctions.getConfigProperty('timesheets.sectionName') %></h3>
+    <h3 class="title is-4">
+      Related <%= configFunctions.getConfigProperty('timesheets.sectionName') %>
+    </h3>
   </div>
   <% if (isEdit && user.userProperties.timesheets.canUpdate) { %>
   <div class="column is-narrow">
-    <a class="button is-small is-success" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new?shiftId=<%= shift.shiftId %>">
+    <a
+      class="button is-small is-success"
+      href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new?shiftId=<%= shift.shiftId %>"
+    >
       <span class="icon"><i class="fa-solid fa-plus"></i></span>
-      <span>Create <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> from this <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
+      <span>
+        Create <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %>
+        from this <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %>
+      </span>
     </a>
   </div>
   <% } %>
 </div>
 
-
 <div id="container--shiftTimesheets">
   <p class="has-text-centered has-text-grey">
-    <span class="icon is-large"><i class="fa-solid fa-3x <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i></span><br />
-    Related timesheets will appear here.
+    <span class="icon is-large">
+      <i class="fa-solid fa-3x <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
+    </span><br />
+    Related <%= configFunctions.getConfigProperty('timesheets.sectionName').toLowerCase() %> will appear here.
   </p>
 </div>

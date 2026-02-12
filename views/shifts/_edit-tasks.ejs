@@ -42,7 +42,9 @@
       </a>
     </li>
     <% } %>
-    <li<%= configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView ? '' : ' class="is-active"' %>>
+    <li
+      class="<%= configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView ? '' : ' is-active' %>"
+    >
       <a href="#tab-content--adhocTasks">
         <span class="icon is-small"><i class="fa-solid fa-tasks"></i></span>
         <span>Ad Hoc Tasks</span>

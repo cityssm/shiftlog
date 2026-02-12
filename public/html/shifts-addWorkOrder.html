@@ -2,7 +2,12 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <header class="modal-card-head">
-      <p class="modal-card-title">Add Work Order to Shift</p>
+      <p class="modal-card-title">
+        Add
+        <span data-section-alias="workOrdersSectionNameSingular">Work Order</span>
+        to
+        <span data-section-alias="shiftsSectionNameSingular">Shift</span>
+      </p>
       <button
         class="delete is-close-modal-button"
         type="button"
@@ -18,7 +23,7 @@
               id="addWorkOrder--searchString"
               name="searchString"
               type="text"
-              placeholder="Search by work order number, requestor, or details..."
+              placeholder="Search by number, requestor, or details..."
             />
           </div>
           <div class="control">
@@ -45,7 +50,10 @@
         />
 
         <div class="field">
-          <label class="label">Selected Work Order</label>
+          <label class="label">
+            Selected
+            <span data-section-alias="workOrdersSectionNameSingular">Work Order</span>
+          </label>
           <div class="box">
             <div id="addWorkOrder--selectedWorkOrder"></div>
           </div>
@@ -76,7 +84,9 @@
         form="addWorkOrder--form"
       >
         <span class="icon is-small"><i class="fa-solid fa-plus"></i></span>
-        <span>Add Work Order</span>
+        <span>
+          Add <span data-section-alias="workOrdersSectionNameSingular">Work Order</span>
+        </span>
       </button>
     </footer>
   </div>

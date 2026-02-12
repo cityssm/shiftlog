@@ -329,7 +329,7 @@ declare const exports: {
       resultsContainer.innerHTML = /* html */ `
         <div class="message is-info">
           <div class="message-body">
-            ${searchString.length > 0 ? 'Searching...' : 'Loading recent work orders...'}
+            ${searchString.length > 0 ? 'Searching...' : 'Loading recent records...'}
           </div>
         </div>
       `
@@ -407,7 +407,7 @@ declare const exports: {
             messageElement.innerHTML = /* html */ `
               <div class="message-body">
                 Showing ${limit} of ${cityssm.escapeHTML(responseJSON.totalCount.toString())} results.
-                ${searchString.length > 0 ? 'Refine your search to see more specific results.' : 'Use the search box to find specific work orders.'}
+                ${searchString.length > 0 ? 'Refine your search to see more specific results.' : 'Use the search box to find specific records.'}
               </div>
             `
 
@@ -491,13 +491,16 @@ declare const exports: {
 
       selectedWorkOrderDiv.innerHTML = /* html */ `
         <p class="mb-2">
-          <strong>Work Order #${cityssm.escapeHTML(workOrder.workOrderNumber)}</strong>
+          <strong>
+            ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)}
+            #${cityssm.escapeHTML(workOrder.workOrderNumber)}
+          </strong>
         </p>
         <p class="mb-2">
           <strong>Type:</strong> ${cityssm.escapeHTML(workOrder.workOrderType ?? '')}
         </p>
         <p class="mb-2">
-          <strong>Requestor:</strong> ${cityssm.escapeHTML(workOrder.requestorName ?? '')}
+          <strong>Requestor:</strong> ${cityssm.escapeHTML(workOrder.requestorName)}
         </p>
         <p>
           <strong>Details:</strong> ${cityssm.escapeHTML(workOrder.workOrderDetails)}
@@ -533,7 +536,8 @@ declare const exports: {
 
             bulmaJS.alert({
               contextualColorName: 'danger',
-              title: 'Error Adding Work Order',
+              title: `Error Adding ${shiftLog.workOrdersSectionNameSingular}`,
+
               message: errorMessage
             })
           }
@@ -549,6 +553,8 @@ declare const exports: {
             'input[name="shiftId"]'
           ) as HTMLInputElement
         ).value = shiftId
+
+        exports.shiftLog.populateSectionAliases(modalElement)
       },
       onshown(modalElementParameter, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -684,9 +690,9 @@ declare const exports: {
 
     bulmaJS.confirm({
       contextualColorName: 'warning',
-      title: 'Remove Work Order from Shift',
+      title: `Remove ${shiftLog.workOrdersSectionNameSingular} from ${shiftLog.shiftsSectionNameSingular}`,
 
-      message: `Are you sure you want to remove Work Order #${workOrder.workOrderNumber} from this shift?`,
+      message: `Are you sure you want to remove ${shiftLog.workOrdersSectionNameSingular} #${workOrder.workOrderNumber} from this ${shiftLog.shiftsSectionNameSingular.toLowerCase()}?`,
       okButton: {
         text: 'Remove',
 
@@ -708,7 +714,7 @@ declare const exports: {
 
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Removing Work Order',
+                  title: `Error Removing ${shiftLog.workOrdersSectionNameSingular}`,
 
                   message: errorMessage
                 })
@@ -738,7 +744,7 @@ declare const exports: {
 
     bulmaJS.confirm({
       contextualColorName: 'success',
-      title: 'Complete Milestone',
+      title: `Complete ${shiftLog.workOrdersSectionNameSingular} Milestone`,
 
       message: `Mark milestone "${milestone.milestoneTitle}" as complete?`,
       okButton: {
@@ -767,7 +773,7 @@ declare const exports: {
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Completing Milestone',
+                  title: `Error Completing ${shiftLog.workOrdersSectionNameSingular} Milestone`,
 
                   message: 'An unknown error occurred.'
                 })
