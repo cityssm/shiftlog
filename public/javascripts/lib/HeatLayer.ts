@@ -5,10 +5,10 @@
 */
 
 import type Leaflet from 'leaflet'
-import type simpleheat from 'simpleheat'
+import type Simpleheat from 'simpleheat'
 
 declare const L: typeof Leaflet
-declare const simpleheat: typeof simpleheat
+declare const simpleheat: typeof Simpleheat
 
 L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
   // options: {

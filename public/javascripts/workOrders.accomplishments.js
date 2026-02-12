@@ -40,18 +40,8 @@
             new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(hotZonesMap);
-            // Initialize heat layer (will be populated with data later)
-            hotZonesLayer = L.heatLayer([], {
-                radius: 25,
-                blur: 15,
-                maxZoom: 17,
-                max: 1.0,
-                gradient: {
-                    0.0: '#48c774', // Green for low
-                    0.5: '#ffdd57', // Yellow for medium
-                    1.0: '#f14668' // Red for high
-                }
-            }).addTo(hotZonesMap);
+            // Note: Heat layer will be initialized lazily when data is available
+            // to avoid simpleheat getImageData() errors on hidden containers
         }
     }
     // Update KPIs
@@ -253,8 +243,22 @@
     }
     // Update hot zones map
     function updateHotZonesMap(hotZones) {
-        if (hotZonesMap === undefined || hotZonesLayer === undefined) {
+        if (hotZonesMap === undefined) {
             return;
+        }
+        // Lazily initialize heat layer when first needed (after container is visible)
+        if (hotZonesLayer === undefined) {
+            hotZonesLayer = L.heatLayer([], {
+                radius: 25,
+                blur: 15,
+                maxZoom: 17,
+                max: 1.0,
+                gradient: {
+                    0.0: '#48c774', // Green for low
+                    0.5: '#ffdd57', // Yellow for medium
+                    1.0: '#f14668' // Red for high
+                }
+            }).addTo(hotZonesMap);
         }
         if (hotZones.length === 0) {
             // Clear heat layer and show "No data available" message on the map
