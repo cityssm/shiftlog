@@ -1,6 +1,7 @@
 import os from 'node:os';
 import { Router } from 'express';
 import multer from 'multer';
+import handler_accomplishments from '../handlers/workOrders-get/accomplishments.js';
 import handler_calendar from '../handlers/workOrders-get/calendar.js';
 import handler_download from '../handlers/workOrders-get/download.js';
 import handler_edit from '../handlers/workOrders-get/edit.js';
@@ -26,6 +27,7 @@ import handler_doDeleteWorkOrderTag from '../handlers/workOrders-post/doDeleteWo
 import handler_doGetCalendarEvents from '../handlers/workOrders-post/doGetCalendarEvents.js';
 import handler_doGetDeletedWorkOrders from '../handlers/workOrders-post/doGetDeletedWorkOrders.js';
 import handler_doGetLocationSuggestions from '../handlers/workOrders-post/doGetLocationSuggestions.js';
+import handler_doGetWorkOrderAccomplishmentData from '../handlers/workOrders-post/doGetWorkOrderAccomplishmentData.js';
 import handler_doGetNoteTypes from '../handlers/workOrders-post/doGetNoteTypes.js';
 import handler_doGetRequestorSuggestions from '../handlers/workOrders-post/doGetRequestorSuggestions.js';
 import handler_doGetSuggestedTags from '../handlers/workOrders-post/doGetSuggestedTags.js';
@@ -72,12 +74,14 @@ function manageHandler(request, response, next) {
 export const router = Router();
 router
     .get('/', handler_search)
+    .get('/accomplishments', handler_accomplishments)
     .get('/calendar', handler_calendar)
     .get('/map', handler_map)
     .get('/planner', handler_planner)
     .post('/doSearchWorkOrders', handler_doSearchWorkOrders)
     .post('/doGetCalendarEvents', handler_doGetCalendarEvents)
-    .post('/doGetWorkOrdersForPlanner', handler_doGetWorkOrdersForPlanner);
+    .post('/doGetWorkOrdersForPlanner', handler_doGetWorkOrdersForPlanner)
+    .post('/doGetWorkOrderAccomplishmentData', handler_doGetWorkOrderAccomplishmentData);
 router
     .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)
     .post('/doGetLocationSuggestions', handler_doGetLocationSuggestions);
