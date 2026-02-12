@@ -753,6 +753,22 @@ declare const exports: {
           })
         }
 
+        function hasLocationData(
+          address1: string,
+          address2: string,
+          cityProvince: string,
+          latitude: number | null,
+          longitude: number | null
+        ): boolean {
+          return (
+            address1 !== '' ||
+            address2 !== '' ||
+            cityProvince !== '' ||
+            latitude !== null ||
+            longitude !== null
+          )
+        }
+
         setupEditLocationToggle(
           '#toggle--editAdhocTask--fromLocation',
           '#container--editAdhocTask--fromLocation'
@@ -771,14 +787,15 @@ declare const exports: {
           '#toggle--editAdhocTask--fromLocation'
         ) as HTMLButtonElement
 
-        const hasFromLocationData =
-          task.fromLocationAddress1 !== '' ||
-          task.fromLocationAddress2 !== '' ||
-          task.fromLocationCityProvince !== '' ||
-          task.fromLocationLatitude !== null ||
-          task.fromLocationLongitude !== null
-
-        if (hasFromLocationData) {
+        if (
+          hasLocationData(
+            task.fromLocationAddress1,
+            task.fromLocationAddress2,
+            task.fromLocationCityProvince,
+            task.fromLocationLatitude,
+            task.fromLocationLongitude
+          )
+        ) {
           fromLocationContainer.classList.remove('is-hidden')
           const icon = fromLocationToggle.querySelector('i')
           if (icon !== null) {
@@ -793,14 +810,15 @@ declare const exports: {
           '#toggle--editAdhocTask--toLocation'
         ) as HTMLButtonElement
 
-        const hasToLocationData =
-          task.toLocationAddress1 !== '' ||
-          task.toLocationAddress2 !== '' ||
-          task.toLocationCityProvince !== '' ||
-          task.toLocationLatitude !== null ||
-          task.toLocationLongitude !== null
-
-        if (hasToLocationData) {
+        if (
+          hasLocationData(
+            task.toLocationAddress1,
+            task.toLocationAddress2,
+            task.toLocationCityProvince,
+            task.toLocationLatitude,
+            task.toLocationLongitude
+          )
+        ) {
           toLocationContainer.classList.remove('is-hidden')
           const icon = toLocationToggle.querySelector('i')
           if (icon !== null) {
