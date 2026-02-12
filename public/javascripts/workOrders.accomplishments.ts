@@ -145,6 +145,8 @@ interface WorkOrderAccomplishmentData {
 
     // Check if there's any data
     if (timeSeries.length === 0 || timeSeries.every(item => item.openWorkOrdersCount === 0)) {
+      // Clear the chart completely before showing no-data message
+      timeSeriesChart.clear()
       timeSeriesChart.setOption({
         title: {
           text: 'No data available',
@@ -154,10 +156,7 @@ interface WorkOrderAccomplishmentData {
             color: '#999',
             fontSize: 16
           }
-        },
-        xAxis: { show: false },
-        yAxis: { show: false },
-        series: []
+        }
       })
       return
     }
@@ -205,6 +204,8 @@ interface WorkOrderAccomplishmentData {
 
     // Check if there's any data
     if (byAssignedTo.length === 0) {
+      // Clear the chart completely before showing no-data message
+      byAssignedToChart.clear()
       byAssignedToChart.setOption({
         title: {
           text: 'No data available',
@@ -214,10 +215,7 @@ interface WorkOrderAccomplishmentData {
             color: '#999',
             fontSize: 16
           }
-        },
-        xAxis: { show: false },
-        yAxis: { show: false },
-        series: []
+        }
       })
       return
     }
@@ -272,6 +270,8 @@ interface WorkOrderAccomplishmentData {
 
     // Check if there's any data
     if (tags.length === 0) {
+      // Clear the chart completely before showing no-data message
+      tagCloudChart.clear()
       tagCloudChart.setOption({
         title: {
           text: 'No data available',
@@ -281,10 +281,7 @@ interface WorkOrderAccomplishmentData {
             color: '#999',
             fontSize: 16
           }
-        },
-        xAxis: { show: false },
-        yAxis: { show: false },
-        series: []
+        }
       })
       return
     }
