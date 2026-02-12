@@ -397,10 +397,10 @@ interface WorkOrderAccomplishmentData {
 
     const bounds: L.LatLngTuple[] = []
     
-    // Find max count for intensity calculation
+    // First pass: collect counts to find max
     const maxCount = Math.max(...hotZones.map((hz) => hz.count))
     
-    // Prepare heat layer data: [lat, lng, intensity]
+    // Second pass: prepare heat layer data with normalized intensity
     const heatData: Array<[number, number, number]> = hotZones.map((hotZone) => {
       const lat = hotZone.latitude
       const lng = hotZone.longitude
