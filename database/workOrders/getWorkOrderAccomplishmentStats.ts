@@ -160,12 +160,7 @@ export default async function getWorkOrderAccomplishmentStats(
         AND w.workOrderOpenDateTime <= db.bucketDate
         AND (w.workOrderCloseDateTime IS NULL OR w.workOrderCloseDateTime > db.bucketDate)
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
-    WHERE
-      w.workOrderId IS NULL
-      OR wType.userGroupId IS NULL
-      ${user ? `OR wType.userGroupId IN (
-          SELECT userGroupId FROM ShiftLog.UserGroupMembers WHERE userName = @userName
-        )` : ''}
+        ${userGroupFilter}
     GROUP BY
       db.bucketDate
     ORDER BY
