@@ -24,8 +24,7 @@ interface WorkOrderAccomplishmentStats {
 }
 
 interface WorkOrderTimeSeriesData {
-  closedCount: number
-  openCount: number
+  openWorkOrdersCount: number
   periodLabel: string
 }
 
@@ -148,25 +147,17 @@ interface WorkOrderAccomplishmentData {
     }
 
     const categories = timeSeries.map((item) => item.periodLabel)
-    const openData = timeSeries.map((item) => item.openCount)
-    const closedData = timeSeries.map((item) => item.closedCount)
+    const openData = timeSeries.map((item) => item.openWorkOrdersCount)
 
     timeSeriesChart.setOption({
       legend: {
-        data: ['Open', 'Closed']
+        data: ['Open Work Orders']
       },
       series: [
         {
           data: openData,
           itemStyle: { color: '#48c774' },
-          name: 'Open',
-          smooth: true,
-          type: 'line'
-        },
-        {
-          data: closedData,
-          itemStyle: { color: '#3298dc' },
-          name: 'Closed',
+          name: 'Open Work Orders',
           smooth: true,
           type: 'line'
         }

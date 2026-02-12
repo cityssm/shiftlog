@@ -11,8 +11,7 @@ export interface WorkOrderAccomplishmentStats {
 }
 
 export interface WorkOrderTimeSeriesData {
-  closedCount: number
-  openCount: number
+  openWorkOrdersCount: number
   periodLabel: string
 }
 
@@ -125,7 +124,7 @@ export default async function getWorkOrderAccomplishmentStats(
   const hundredPercent = 100
   const percentClosed = total > 0 ? (totalClosed / total) * hundredPercent : 0
 
-  // 2. Get time series data (grouped by month or year)
+  // 2. Get time series data (count of open work orders at each time bucket)
   const timeSeriesRequest = pool.request()
   timeSeriesRequest
     .input('instance', instance)
@@ -133,35 +132,55 @@ export default async function getWorkOrderAccomplishmentStats(
     .input('endDate', endDateString)
     .input('userName', user?.userName)
 
-  const dateGroupFormat =
-    filterType === 'month'
-      ? "FORMAT(COALESCE(w.workOrderOpenDateTime, w.workOrderCloseDateTime), 'yyyy-MM')"
-      : 'YEAR(COALESCE(w.workOrderOpenDateTime, w.workOrderCloseDateTime))'
-
+  // Generate time buckets and count open work orders at each point
+  // For month: daily buckets, For year: monthly buckets
   const timeSeriesResult = await timeSeriesRequest.query<{
-    closedCount: number
-    openCount: number
+    openWorkOrdersCount: number
     periodLabel: string
   }>(/* sql */ `
+    WITH DateBuckets AS (
+      SELECT 
+        ${filterType === 'month'
+          ? /* sql */ `
+            CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
+          FROM master..spt_values
+          WHERE type = 'P'
+            AND DATEADD(day, number, @startDate) <= @endDate
+          `
+          : /* sql */ `
+            DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
+                          ((MONTH(@startDate) + number - 1) % 12) + 1, 
+                          1) AS bucketDate
+          FROM master..spt_values
+          WHERE type = 'P'
+            AND DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
+                              ((MONTH(@startDate) + number - 1) % 12) + 1, 
+                              1) <= @endDate
+          `}
+    )
     SELECT
-      ${dateGroupFormat} AS periodLabel,
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NULL THEN 1 ELSE 0 END) AS openCount,
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END) AS closedCount
+      ${filterType === 'month'
+        ? "FORMAT(db.bucketDate, 'yyyy-MM-dd')"
+        : "FORMAT(db.bucketDate, 'yyyy-MM')"} AS periodLabel,
+      COUNT(w.workOrderId) AS openWorkOrdersCount
     FROM
-      ShiftLog.WorkOrders w
+      DateBuckets db
+      LEFT JOIN ShiftLog.WorkOrders w ON 
+        w.instance = @instance
+        AND w.recordDelete_dateTime IS NULL
+        AND w.workOrderOpenDateTime <= db.bucketDate
+        AND (w.workOrderCloseDateTime IS NULL OR w.workOrderCloseDateTime > db.bucketDate)
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
     WHERE
-      w.instance = @instance
-      AND w.recordDelete_dateTime IS NULL
-      AND (
-        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
-        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
-      )
-      ${userGroupFilter}
+      w.workOrderId IS NULL
+      OR wType.userGroupId IS NULL
+      ${user ? `OR wType.userGroupId IN (
+          SELECT userGroupId FROM ShiftLog.UserGroupMembers WHERE userName = @userName
+        )` : ''}
     GROUP BY
-      ${dateGroupFormat}
+      db.bucketDate
     ORDER BY
-      periodLabel
+      db.bucketDate
   `)
 
   const timeSeries = timeSeriesResult.recordset
