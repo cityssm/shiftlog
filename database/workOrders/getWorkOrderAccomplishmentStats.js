@@ -40,15 +40,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     const statsResult = await statsRequest.query(/* sql */ `
     SELECT
       COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NULL THEN 1 ELSE 0 END), 0) AS totalOpen,
-      COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END), 0) AS totalClosed,
-      COALESCE(SUM(
-        CASE
-          WHEN w.workOrderCloseDateTime IS NULL
-          AND w.workOrderDueDateTime IS NOT NULL
-          AND w.workOrderDueDateTime < GETDATE() THEN 1
-          ELSE 0
-        END
-      ), 0) AS totalOverdue
+      COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END), 0) AS totalClosed
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
@@ -64,40 +56,57 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     const stats = statsResult.recordset[0];
     const totalOpen = stats.totalOpen;
     const totalClosed = stats.totalClosed;
-    const totalOverdue = stats.totalOverdue;
     const total = totalOpen + totalClosed;
     const hundredPercent = 100;
     const percentClosed = total > 0 ? (totalClosed / total) * hundredPercent : 0;
-    // 2. Get time series data (grouped by month or year)
+    // 2. Get time series data (count of open work orders at each time bucket)
     const timeSeriesRequest = pool.request();
     timeSeriesRequest
         .input('instance', instance)
         .input('startDate', startDateString)
         .input('endDate', endDateString)
         .input('userName', user?.userName);
-    const dateGroupFormat = filterType === 'month'
-        ? "FORMAT(COALESCE(w.workOrderOpenDateTime, w.workOrderCloseDateTime), 'yyyy-MM')"
-        : 'YEAR(COALESCE(w.workOrderOpenDateTime, w.workOrderCloseDateTime))';
+    // Generate time buckets and count open work orders at each point
+    // For month: daily buckets, For year: monthly buckets
     const timeSeriesResult = await timeSeriesRequest.query(/* sql */ `
+    WITH DateBuckets AS (
+      SELECT 
+        ${filterType === 'month'
+        ? /* sql */ `
+            CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
+          FROM master..spt_values
+          WHERE type = 'P'
+            AND DATEADD(day, number, @startDate) <= @endDate
+          `
+        : /* sql */ `
+            DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
+                          ((MONTH(@startDate) + number - 1) % 12) + 1, 
+                          1) AS bucketDate
+          FROM master..spt_values
+          WHERE type = 'P'
+            AND DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
+                              ((MONTH(@startDate) + number - 1) % 12) + 1, 
+                              1) <= @endDate
+          `}
+    )
     SELECT
-      ${dateGroupFormat} AS periodLabel,
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NULL THEN 1 ELSE 0 END) AS openCount,
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END) AS closedCount
+      ${filterType === 'month'
+        ? "FORMAT(db.bucketDate, 'yyyy-MM-dd')"
+        : "FORMAT(db.bucketDate, 'yyyy-MM')"} AS periodLabel,
+      COUNT(w.workOrderId) AS openWorkOrdersCount
     FROM
-      ShiftLog.WorkOrders w
+      DateBuckets db
+      LEFT JOIN ShiftLog.WorkOrders w ON 
+        w.instance = @instance
+        AND w.recordDelete_dateTime IS NULL
+        AND w.workOrderOpenDateTime <= db.bucketDate
+        AND (w.workOrderCloseDateTime IS NULL OR w.workOrderCloseDateTime > db.bucketDate)
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
-    WHERE
-      w.instance = @instance
-      AND w.recordDelete_dateTime IS NULL
-      AND (
-        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
-        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
-      )
-      ${userGroupFilter}
+        ${userGroupFilter}
     GROUP BY
-      ${dateGroupFormat}
+      db.bucketDate
     ORDER BY
-      periodLabel
+      db.bucketDate
   `);
     const timeSeries = timeSeriesResult.recordset;
     // 3. Get work orders by assigned to
@@ -205,8 +214,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         stats: {
             percentClosed,
             totalClosed,
-            totalOpen,
-            totalOverdue
+            totalOpen
         },
         tags,
         timeSeries

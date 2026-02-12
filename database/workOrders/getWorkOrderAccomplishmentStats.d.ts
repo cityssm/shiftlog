@@ -2,11 +2,9 @@ export interface WorkOrderAccomplishmentStats {
     percentClosed: number;
     totalClosed: number;
     totalOpen: number;
-    totalOverdue: number;
 }
 export interface WorkOrderTimeSeriesData {
-    closedCount: number;
-    openCount: number;
+    openWorkOrdersCount: number;
     periodLabel: string;
 }
 export interface WorkOrderByAssignedTo {
