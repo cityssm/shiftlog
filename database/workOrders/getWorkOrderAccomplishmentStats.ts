@@ -94,16 +94,16 @@ export default async function getWorkOrderAccomplishmentStats(
     totalOverdue: number
   }>(/* sql */ `
     SELECT
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NULL THEN 1 ELSE 0 END) AS totalOpen,
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END) AS totalClosed,
-      SUM(
+      COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NULL THEN 1 ELSE 0 END), 0) AS totalOpen,
+      COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END), 0) AS totalClosed,
+      COALESCE(SUM(
         CASE
           WHEN w.workOrderCloseDateTime IS NULL
           AND w.workOrderDueDateTime IS NOT NULL
           AND w.workOrderDueDateTime < GETDATE() THEN 1
           ELSE 0
         END
-      ) AS totalOverdue
+      ), 0) AS totalOverdue
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
@@ -116,9 +116,12 @@ export default async function getWorkOrderAccomplishmentStats(
   `)
 
   const stats = statsResult.recordset[0]
-  const total = stats.totalOpen + stats.totalClosed
+  const totalOpen = stats.totalOpen
+  const totalClosed = stats.totalClosed
+  const totalOverdue = stats.totalOverdue
+  const total = totalOpen + totalClosed
   const hundredPercent = 100
-  const percentClosed = total > 0 ? (stats.totalClosed / total) * hundredPercent : 0
+  const percentClosed = total > 0 ? (totalClosed / total) * hundredPercent : 0
 
   // 2. Get time series data (grouped by month or year)
   const timeSeriesRequest = pool.request()
@@ -276,8 +279,10 @@ export default async function getWorkOrderAccomplishmentStats(
     byAssignedTo,
     hotZones,
     stats: {
-      ...stats,
-      percentClosed
+      percentClosed,
+      totalClosed,
+      totalOpen,
+      totalOverdue
     },
     tags,
     timeSeries
