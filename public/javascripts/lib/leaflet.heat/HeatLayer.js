@@ -32,7 +32,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
     redraw: function () {
         if (this._heat && !this._frame && !this._map._animating) {
-            this._frame = L.Util.requestAnimFrame(this._redraw, this);
+            this._frame = window.requestAnimationFrame(this._redraw.bind(this));
         }
         return this;
     },
@@ -140,9 +140,9 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
                 }
             }
         }
-        for (i = 0, len = grid.length; i < len; i++) {
+        for (i = 0, len = grid.length; i < len; i += 1) {
             if (grid[i]) {
-                for (j = 0, len2 = grid[i].length; j < len2; j++) {
+                for (j = 0, len2 = grid[i].length; j < len2; j += 1) {
                     cell = grid[i][j];
                     if (cell) {
                         data.push([
@@ -156,7 +156,6 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         }
         // console.timeEnd('process');
         // console.time('draw ' + data.length);
-        console.log(data);
         this._heat.data(data).draw(this.options.minOpacity);
         // console.timeEnd('draw ' + data.length);
         this._frame = null;

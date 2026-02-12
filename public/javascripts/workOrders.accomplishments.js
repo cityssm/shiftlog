@@ -21,18 +21,8 @@
     let hotZonesLayer;
     // Initialize charts
     function initializeCharts() {
-        const timeSeriesElement = document.querySelector('#chart--timeSeries');
-        if (timeSeriesElement !== null) {
-            timeSeriesChart = echarts.init(timeSeriesElement);
-        }
-        const byAssignedToElement = document.querySelector('#chart--byAssignedTo');
-        if (byAssignedToElement !== null) {
-            byAssignedToChart = echarts.init(byAssignedToElement);
-        }
-        const tagCloudElement = document.querySelector('#chart--tagCloud');
-        if (tagCloudElement !== null) {
-            tagCloudChart = echarts.init(tagCloudElement);
-        }
+        // Note: ECharts will be initialized lazily when data is available
+        // to avoid initialization on hidden containers with 0 dimensions
         // Initialize Leaflet map
         const mapElement = document.querySelector('#map--hotZones');
         if (mapElement !== null) {
@@ -55,8 +45,15 @@
     }
     // Update time series chart
     function updateTimeSeriesChart(timeSeries) {
+        // Lazily initialize chart on first use
         if (timeSeriesChart === undefined) {
-            return;
+            const timeSeriesElement = document.querySelector('#chart--timeSeries');
+            if (timeSeriesElement !== null) {
+                timeSeriesChart = echarts.init(timeSeriesElement);
+            }
+            else {
+                return;
+            }
         }
         // Check if there's any data
         if (timeSeries.length === 0 || timeSeries.every(item => item.openWorkOrdersCount === 0)) {
@@ -108,8 +105,15 @@
     }
     // Update by assigned to chart
     function updateByAssignedToChart(byAssignedTo) {
+        // Lazily initialize chart on first use
         if (byAssignedToChart === undefined) {
-            return;
+            const byAssignedToElement = document.querySelector('#chart--byAssignedTo');
+            if (byAssignedToElement !== null) {
+                byAssignedToChart = echarts.init(byAssignedToElement);
+            }
+            else {
+                return;
+            }
         }
         // Check if there's any data
         if (byAssignedTo.length === 0) {
@@ -170,8 +174,15 @@
     }
     // Update tag cloud chart
     function updateTagCloudChart(tags) {
+        // Lazily initialize chart on first use
         if (tagCloudChart === undefined) {
-            return;
+            const tagCloudElement = document.querySelector('#chart--tagCloud');
+            if (tagCloudElement !== null) {
+                tagCloudChart = echarts.init(tagCloudElement);
+            }
+            else {
+                return;
+            }
         }
         // Check if there's any data
         if (tags.length === 0) {
@@ -326,21 +337,11 @@
                 dashboardContainer.style.display = 'block';
                 // Update KPIs
                 updateKPIs(data.stats);
-                // Update charts
+                // Update charts (lazy initialization happens here)
                 updateTimeSeriesChart(data.timeSeries);
                 updateByAssignedToChart(data.byAssignedTo);
                 updateTagCloudChart(data.tags);
                 updateHotZonesMap(data.hotZones);
-                // Resize charts after container is visible
-                if (timeSeriesChart !== undefined) {
-                    timeSeriesChart.resize();
-                }
-                if (byAssignedToChart !== undefined) {
-                    byAssignedToChart.resize();
-                }
-                if (tagCloudChart !== undefined) {
-                    tagCloudChart.resize();
-                }
             }
             else {
                 bulmaJS.alert({
