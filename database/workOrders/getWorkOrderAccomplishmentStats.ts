@@ -7,7 +7,6 @@ export interface WorkOrderAccomplishmentStats {
   percentClosed: number
   totalClosed: number
   totalOpen: number
-  totalOverdue: number
 }
 
 export interface WorkOrderTimeSeriesData {
@@ -90,19 +89,10 @@ export default async function getWorkOrderAccomplishmentStats(
   const statsResult = await statsRequest.query<{
     totalClosed: number
     totalOpen: number
-    totalOverdue: number
   }>(/* sql */ `
     SELECT
       COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NULL THEN 1 ELSE 0 END), 0) AS totalOpen,
-      COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END), 0) AS totalClosed,
-      COALESCE(SUM(
-        CASE
-          WHEN w.workOrderCloseDateTime IS NULL
-          AND w.workOrderDueDateTime IS NOT NULL
-          AND w.workOrderDueDateTime < GETDATE() THEN 1
-          ELSE 0
-        END
-      ), 0) AS totalOverdue
+      COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END), 0) AS totalClosed
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
@@ -119,7 +109,6 @@ export default async function getWorkOrderAccomplishmentStats(
   const stats = statsResult.recordset[0]
   const totalOpen = stats.totalOpen
   const totalClosed = stats.totalClosed
-  const totalOverdue = stats.totalOverdue
   const total = totalOpen + totalClosed
   const hundredPercent = 100
   const percentClosed = total > 0 ? (totalClosed / total) * hundredPercent : 0
@@ -312,8 +301,7 @@ export default async function getWorkOrderAccomplishmentStats(
     stats: {
       percentClosed,
       totalClosed,
-      totalOpen,
-      totalOverdue
+      totalOpen
     },
     tags,
     timeSeries

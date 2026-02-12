@@ -20,7 +20,6 @@ interface WorkOrderAccomplishmentStats {
   percentClosed: number
   totalClosed: number
   totalOpen: number
-  totalOverdue: number
 }
 
 interface WorkOrderTimeSeriesData {
@@ -131,8 +130,6 @@ interface WorkOrderAccomplishmentData {
       totalOpened.toString()
     document.querySelector('#kpi--totalClosed')!.textContent =
       stats.totalClosed.toString()
-    document.querySelector('#kpi--totalOverdue')!.textContent =
-      stats.totalOverdue.toString()
     document.querySelector(
       '#kpi--completionRate'
     )!.textContent = `${stats.percentClosed.toFixed(1)}%`
@@ -146,10 +143,30 @@ interface WorkOrderAccomplishmentData {
       return
     }
 
+    // Check if there's any data
+    if (timeSeries.length === 0 || timeSeries.every(item => item.openWorkOrdersCount === 0)) {
+      timeSeriesChart.setOption({
+        title: {
+          text: 'No data available',
+          left: 'center',
+          top: 'middle',
+          textStyle: {
+            color: '#999',
+            fontSize: 16
+          }
+        },
+        xAxis: { show: false },
+        yAxis: { show: false },
+        series: []
+      })
+      return
+    }
+
     const categories = timeSeries.map((item) => item.periodLabel)
     const openData = timeSeries.map((item) => item.openWorkOrdersCount)
 
     timeSeriesChart.setOption({
+      title: { show: false },
       legend: {
         data: ['Open Work Orders']
       },
@@ -167,10 +184,12 @@ interface WorkOrderAccomplishmentData {
       },
       xAxis: {
         data: categories,
+        show: true,
         type: 'category'
       },
       yAxis: {
         minInterval: 1,
+        show: true,
         type: 'value'
       }
     })
@@ -184,11 +203,31 @@ interface WorkOrderAccomplishmentData {
       return
     }
 
+    // Check if there's any data
+    if (byAssignedTo.length === 0) {
+      byAssignedToChart.setOption({
+        title: {
+          text: 'No data available',
+          left: 'center',
+          top: 'middle',
+          textStyle: {
+            color: '#999',
+            fontSize: 16
+          }
+        },
+        xAxis: { show: false },
+        yAxis: { show: false },
+        series: []
+      })
+      return
+    }
+
     const categories = byAssignedTo.map((item) => item.assignedToName)
     const openedData = byAssignedTo.map((item) => item.openedCount)
     const closedData = byAssignedTo.map((item) => item.closedCount)
 
     byAssignedToChart.setOption({
+      title: { show: false },
       legend: {
         data: ['Opened', 'Closed']
       },
@@ -214,10 +253,12 @@ interface WorkOrderAccomplishmentData {
       },
       xAxis: {
         minInterval: 1,
+        show: true,
         type: 'value'
       },
       yAxis: {
         data: categories,
+        show: true,
         type: 'category'
       }
     })
@@ -229,12 +270,32 @@ interface WorkOrderAccomplishmentData {
       return
     }
 
+    // Check if there's any data
+    if (tags.length === 0) {
+      tagCloudChart.setOption({
+        title: {
+          text: 'No data available',
+          left: 'center',
+          top: 'middle',
+          textStyle: {
+            color: '#999',
+            fontSize: 16
+          }
+        },
+        xAxis: { show: false },
+        yAxis: { show: false },
+        series: []
+      })
+      return
+    }
+
     // Use top 20 tags for better visualization
     const topTags = tags.slice(0, 20)
     const tagNames = topTags.map((tag) => tag.tagName)
     const tagCounts = topTags.map((tag) => tag.count)
 
     tagCloudChart.setOption({
+      title: { show: false },
       series: [
         {
           data: tagCounts,
@@ -265,6 +326,7 @@ interface WorkOrderAccomplishmentData {
       },
       xAxis: {
         minInterval: 1,
+        show: true,
         type: 'value'
       },
       yAxis: {
@@ -274,6 +336,7 @@ interface WorkOrderAccomplishmentData {
           width: 120
         },
         data: tagNames,
+        show: true,
         type: 'category'
       }
     })
@@ -289,7 +352,28 @@ interface WorkOrderAccomplishmentData {
     hotZonesLayer.clearLayers()
 
     if (hotZones.length === 0) {
+      // Show "No data available" message on the map
+      const mapContainer = document.querySelector('#map--hotZones')
+      if (mapContainer !== null) {
+        const existingMessage = mapContainer.querySelector('.no-data-message')
+        if (existingMessage === null) {
+          const noDataDiv = document.createElement('div')
+          noDataDiv.className = 'no-data-message'
+          noDataDiv.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #999; font-size: 16px;'
+          noDataDiv.textContent = 'No data available'
+          mapContainer.appendChild(noDataDiv)
+        }
+      }
       return
+    }
+
+    // Remove "No data available" message if it exists
+    const mapContainer = document.querySelector('#map--hotZones')
+    if (mapContainer !== null) {
+      const existingMessage = mapContainer.querySelector('.no-data-message')
+      if (existingMessage !== null) {
+        existingMessage.remove()
+      }
     }
 
     const bounds: L.LatLngTuple[] = []
