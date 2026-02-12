@@ -169,7 +169,9 @@ declare const exports: {
     if (allMilestones.length === 0) {
       containerElement.innerHTML = /* html */ `
         <div class="message">
-          <div class="message-body">No milestones on related ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())}.</div>
+          <div class="message-body">
+            No milestones on related ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())}.
+          </div>
         </div>
       `
       return
@@ -182,7 +184,7 @@ declare const exports: {
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} #</th>
+          <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} #</th>
           <th>Title</th>
           <th>Description</th>
           <th>Due Date</th>
