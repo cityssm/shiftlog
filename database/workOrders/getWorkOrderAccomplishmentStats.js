@@ -75,7 +75,9 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         .input('startDate', startDateString)
         .input('endDate', endDateString)
         .input('userName', user?.userName);
-    const dateGroupFormat = filterType === 'month' ? "FORMAT(w.workOrderOpenDateTime, 'yyyy-MM')" : 'YEAR(w.workOrderOpenDateTime)';
+    const dateGroupFormat = filterType === 'month'
+        ? "FORMAT(COALESCE(w.workOrderOpenDateTime, w.workOrderCloseDateTime), 'yyyy-MM')"
+        : 'YEAR(COALESCE(w.workOrderOpenDateTime, w.workOrderCloseDateTime))';
     const timeSeriesResult = await timeSeriesRequest.query(/* sql */ `
     SELECT
       ${dateGroupFormat} AS periodLabel,
