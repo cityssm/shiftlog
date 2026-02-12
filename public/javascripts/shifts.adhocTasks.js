@@ -408,17 +408,19 @@
                         }
                     });
                 }
+                function hasLocationData(address1, address2, cityProvince, latitude, longitude) {
+                    return (address1 !== '' ||
+                        address2 !== '' ||
+                        cityProvince !== '' ||
+                        latitude !== null ||
+                        longitude !== null);
+                }
                 setupEditLocationToggle('#toggle--editAdhocTask--fromLocation', '#container--editAdhocTask--fromLocation');
                 setupEditLocationToggle('#toggle--editAdhocTask--toLocation', '#container--editAdhocTask--toLocation');
                 // Check if from/to locations have values and show sections if they do
                 const fromLocationContainer = modalElement.querySelector('#container--editAdhocTask--fromLocation');
                 const fromLocationToggle = modalElement.querySelector('#toggle--editAdhocTask--fromLocation');
-                const hasFromLocationData = task.fromLocationAddress1 !== '' ||
-                    task.fromLocationAddress2 !== '' ||
-                    task.fromLocationCityProvince !== '' ||
-                    task.fromLocationLatitude !== null ||
-                    task.fromLocationLongitude !== null;
-                if (hasFromLocationData) {
+                if (hasLocationData(task.fromLocationAddress1, task.fromLocationAddress2, task.fromLocationCityProvince, task.fromLocationLatitude, task.fromLocationLongitude)) {
                     fromLocationContainer.classList.remove('is-hidden');
                     const icon = fromLocationToggle.querySelector('i');
                     if (icon !== null) {
@@ -427,12 +429,7 @@
                 }
                 const toLocationContainer = modalElement.querySelector('#container--editAdhocTask--toLocation');
                 const toLocationToggle = modalElement.querySelector('#toggle--editAdhocTask--toLocation');
-                const hasToLocationData = task.toLocationAddress1 !== '' ||
-                    task.toLocationAddress2 !== '' ||
-                    task.toLocationCityProvince !== '' ||
-                    task.toLocationLatitude !== null ||
-                    task.toLocationLongitude !== null;
-                if (hasToLocationData) {
+                if (hasLocationData(task.toLocationAddress1, task.toLocationAddress2, task.toLocationCityProvince, task.toLocationLatitude, task.toLocationLongitude)) {
                     toLocationContainer.classList.remove('is-hidden');
                     const icon = toLocationToggle.querySelector('i');
                     if (icon !== null) {

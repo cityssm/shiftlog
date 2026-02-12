@@ -757,8 +757,8 @@ declare const exports: {
           address1: string,
           address2: string,
           cityProvince: string,
-          latitude: number | null,
-          longitude: number | null
+          latitude: number | null | undefined,
+          longitude: number | null | undefined
         ): boolean {
           return (
             address1 !== '' ||
