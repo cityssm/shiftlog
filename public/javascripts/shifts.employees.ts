@@ -568,6 +568,11 @@ declare const exports: {
       },
       onshown(modalElement) {
         bulmaJS.toggleHtmlClipped()
+        ;(
+          modalElement.querySelector(
+            'select[name="crewId"]'
+          ) as HTMLSelectElement
+        ).focus()
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doAdd)
@@ -663,6 +668,11 @@ declare const exports: {
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = _closeModalFunction
+        ;(
+          modalElement.querySelector(
+            'select[name="employeeNumber"]'
+          ) as HTMLSelectElement
+        ).focus()
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doAdd)
@@ -760,6 +770,11 @@ declare const exports: {
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = _closeModalFunction
+        ;(
+          modalElement.querySelector(
+            'select[name="equipmentNumber"]'
+          ) as HTMLSelectElement
+        ).focus()
 
         formElement = modalElement.querySelector('form') as HTMLFormElement
         formElement.addEventListener('submit', doAdd)
