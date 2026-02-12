@@ -1008,9 +1008,11 @@ declare const exports: {
   function renderAvailableAdhocTasks(
     adhocTasks: Array<{
       adhocTaskId: number
-      adhocTaskTypeDataListItemId: number
       adhocTaskTypeDataListItem?: string
+      adhocTaskTypeDataListItemId: number
+
       taskDescription: string
+
       locationAddress1: string
       locationAddress2: string
       locationCityProvince: string
@@ -1211,6 +1213,7 @@ declare const exports: {
     const fromAvailable = target.dataset.fromAvailable === 'true'
 
     const shiftCard = target.closest('[data-shift-id]') as HTMLElement
+
     const fromShiftId = fromAvailable
       ? 0
       : Number.parseInt(shiftCard?.dataset.shiftId ?? '0', 10)
@@ -3503,7 +3506,7 @@ declare const exports: {
   function setupResourceFilter(): void {
     const filterInput = document.querySelector(
       '#availableResources--filter'
-    ) as HTMLInputElement
+    ) as HTMLInputElement | null
 
     if (filterInput === null) return
 
