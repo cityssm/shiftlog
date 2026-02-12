@@ -3,10 +3,8 @@
     const shiftLog = exports.shiftLog;
     const currentMonth = exports.currentMonth;
     // Elements
-    const filterTypeElement = document.querySelector('#filter--filterType');
     const yearElement = document.querySelector('#filter--year');
     const monthElement = document.querySelector('#filter--month');
-    const monthFilterContainer = document.querySelector('#container--monthFilter');
     const refreshButton = document.querySelector('#button--refresh');
     const loadingContainer = document.querySelector('#container--loading');
     const dashboardContainer = document.querySelector('#container--dashboard');
@@ -21,13 +19,6 @@
     let tagCloudChart;
     let hotZonesMap;
     let hotZonesLayer;
-    // Toggle month filter visibility
-    function toggleMonthFilter() {
-        const filterType = filterTypeElement.value;
-        const shouldHide = filterType !== 'month';
-        monthFilterContainer.classList.toggle('is-hidden', shouldHide);
-    }
-    filterTypeElement.addEventListener('change', toggleMonthFilter);
     // Initialize charts
     function initializeCharts() {
         const timeSeriesElement = document.querySelector('#chart--timeSeries');
@@ -259,14 +250,12 @@
     function loadData() {
         loadingContainer.style.display = 'block';
         dashboardContainer.style.display = 'none';
-        const filterType = filterTypeElement.value;
         const year = yearElement.value;
         const month = monthElement.value;
         cityssm.postJSON(
         // eslint-disable-next-line no-secrets/no-secrets -- route name, not a secret
         `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrderAccomplishmentData`, {
-            filterType,
-            month: filterType === 'month' ? month : undefined,
+            month,
             year
         }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
@@ -296,6 +285,5 @@
     refreshButton.addEventListener('click', loadData);
     // Initialize
     initializeCharts();
-    toggleMonthFilter();
     loadData();
 })();

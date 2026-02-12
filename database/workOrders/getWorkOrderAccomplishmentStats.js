@@ -55,8 +55,10 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
-      AND w.workOrderOpenDateTime >= @startDate
-      AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+      AND (
+        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
+        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
+      )
       ${userGroupFilter}
   `);
     const stats = statsResult.recordset[0];
@@ -85,8 +87,10 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
-      AND w.workOrderOpenDateTime >= @startDate
-      AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+      AND (
+        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
+        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
+      )
       ${userGroupFilter}
     GROUP BY
       ${dateGroupFormat}
@@ -113,8 +117,10 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
-      AND w.workOrderOpenDateTime >= @startDate
-      AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+      AND (
+        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
+        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
+      )
       ${userGroupFilter}
     GROUP BY
       assignedTo.assignedToName
@@ -144,8 +150,10 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
-      AND w.workOrderOpenDateTime >= @startDate
-      AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+      AND (
+        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
+        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
+      )
       ${userGroupFilter}
     GROUP BY
       wot.tagName
@@ -173,8 +181,10 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
-      AND w.workOrderOpenDateTime >= @startDate
-      AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+      AND (
+        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
+        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
+      )
       AND w.locationLatitude IS NOT NULL
       AND w.locationLongitude IS NOT NULL
       ${userGroupFilter}
