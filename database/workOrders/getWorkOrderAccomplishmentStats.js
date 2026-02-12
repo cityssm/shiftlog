@@ -67,7 +67,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         .input('endDate', endDateString)
         .input('userName', user?.userName);
     // Generate time buckets and count open work orders at each point
-    // For month: daily buckets, For year: monthly buckets
+    // For month: daily buckets, For year: monthly buckets (using last day of month)
     const timeSeriesResult = await timeSeriesRequest.query(/* sql */ `
     WITH DateBuckets AS (
       SELECT 
@@ -79,14 +79,14 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
             AND DATEADD(day, number, @startDate) <= @endDate
           `
         : /* sql */ `
-            DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
-                          ((MONTH(@startDate) + number - 1) % 12) + 1, 
-                          1) AS bucketDate
+            EOMONTH(DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
+                                   ((MONTH(@startDate) + number - 1) % 12) + 1, 
+                                   1)) AS bucketDate
           FROM master..spt_values
           WHERE type = 'P'
-            AND DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
-                              ((MONTH(@startDate) + number - 1) % 12) + 1, 
-                              1) <= @endDate
+            AND EOMONTH(DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
+                                       ((MONTH(@startDate) + number - 1) % 12) + 1, 
+                                       1)) <= @endDate
           `}
     )
     SELECT
