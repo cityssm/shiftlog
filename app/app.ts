@@ -170,6 +170,7 @@ app
   )
   .use(`${urlPrefix}/lib/echarts`, express.static('node_modules/echarts/dist'))
   .use(`${urlPrefix}/lib/leaflet`, express.static('node_modules/leaflet/dist'))
+  .use(`${urlPrefix}/lib/leaflet.heat`, express.static('node_modules/leaflet.heat/dist'))
   .use(`${urlPrefix}/lib/sortablejs`, express.static('node_modules/sortablejs'))
 
 /*
