@@ -270,6 +270,16 @@
                 updateHotZonesMap(data.hotZones);
                 loadingContainer.style.display = 'none';
                 dashboardContainer.style.display = 'block';
+                // Resize charts after container is visible
+                if (timeSeriesChart !== undefined) {
+                    timeSeriesChart.resize();
+                }
+                if (byAssignedToChart !== undefined) {
+                    byAssignedToChart.resize();
+                }
+                if (tagCloudChart !== undefined) {
+                    tagCloudChart.resize();
+                }
             }
             else {
                 bulmaJS.alert({
@@ -287,3 +297,4 @@
     initializeCharts();
     loadData();
 })();
+export {};
