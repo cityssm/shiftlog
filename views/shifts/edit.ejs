@@ -505,16 +505,21 @@
     );
   }
   
-  // Load timesheets immediately if in edit mode, otherwise wait for tab click
+  // Load timesheets immediately if in edit mode
   if (isEdit) {
     loadShiftTimesheets();
   }
   
-  // Also load timesheets when the tab is clicked (for view mode or re-loading)
+  // Also load timesheets when the tab is clicked (for view mode only)
+  // Use a flag to prevent re-loading after initial load
+  let timesheetsLoaded = isEdit;
   const timesheetsTabLink = document.querySelector('a[href="#tab--timesheets"]');
   if (timesheetsTabLink) {
     timesheetsTabLink.addEventListener('click', function() {
-      loadShiftTimesheets();
+      if (!timesheetsLoaded) {
+        loadShiftTimesheets();
+        timesheetsLoaded = true;
+      }
     });
   }
 })();
