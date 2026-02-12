@@ -412,8 +412,8 @@
                     return (address1 !== '' ||
                         address2 !== '' ||
                         cityProvince !== '' ||
-                        latitude !== null ||
-                        longitude !== null);
+                        latitude != null ||
+                        longitude != null);
                 }
                 setupEditLocationToggle('#toggle--editAdhocTask--fromLocation', '#container--editAdhocTask--fromLocation');
                 setupEditLocationToggle('#toggle--editAdhocTask--toLocation', '#container--editAdhocTask--toLocation');
