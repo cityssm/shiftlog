@@ -16,7 +16,7 @@ export default async function handler(
   try {
     const yearNumber = Number.parseInt(year, 10)
     const monthNumber = Number.parseInt(month, 10)
-    
+
     let startDate: Date
     let endDate: Date
     let filterType: 'month' | 'year'

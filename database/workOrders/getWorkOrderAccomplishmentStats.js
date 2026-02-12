@@ -39,8 +39,24 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         .input('userName', user?.userName);
     const statsResult = await statsRequest.query(/* sql */ `
     SELECT
-      COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NULL THEN 1 ELSE 0 END), 0) AS totalOpen,
-      COALESCE(SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END), 0) AS totalClosed
+      COALESCE(
+        SUM(
+          CASE
+            WHEN w.workOrderCloseDateTime IS NULL THEN 1
+            ELSE 0
+          END
+        ),
+        0
+      ) AS totalOpen,
+      COALESCE(
+        SUM(
+          CASE
+            WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1
+            ELSE 0
+          END
+        ),
+        0
+      ) AS totalClosed
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
@@ -48,10 +64,15 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
       AND (
-        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
-        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
-      )
-      ${userGroupFilter}
+        (
+          w.workOrderOpenDateTime >= @startDate
+          AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+        )
+        OR (
+          w.workOrderCloseDateTime >= @startDate
+          AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate)
+        )
+      ) ${userGroupFilter}
   `);
     const stats = statsResult.recordset[0];
     const totalOpen = stats.totalOpen;
@@ -69,26 +90,39 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     // Generate time buckets and count open work orders at each point
     // For month: daily buckets, For year: monthly buckets (using last day of month)
     const timeSeriesResult = await timeSeriesRequest.query(/* sql */ `
-    WITH DateBuckets AS (
-      SELECT 
-        ${filterType === 'month'
+    WITH
+      DateBuckets AS (
+        SELECT
+          ${filterType === 'month'
         ? /* sql */ `
-            CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
-          FROM master..spt_values
-          WHERE type = 'P'
-            AND DATEADD(day, number, @startDate) <= @endDate
-          `
+              CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
+              FROM
+                master..spt_values
+              WHERE
+              TYPE = 'P'
+              AND DATEADD(day, number, @startDate) <= @endDate
+            `
         : /* sql */ `
-            EOMONTH(DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
-                                   ((MONTH(@startDate) + number - 1) % 12) + 1, 
-                                   1)) AS bucketDate
-          FROM master..spt_values
-          WHERE type = 'P'
-            AND EOMONTH(DATEFROMPARTS(YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12, 
-                                       ((MONTH(@startDate) + number - 1) % 12) + 1, 
-                                       1)) <= @endDate
-          `}
-    )
+              EOMONTH(
+                DATEFROMPARTS(
+                  YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12,
+                  ((MONTH(@startDate) + number - 1) % 12) + 1,
+                  1
+                )
+              ) AS bucketDate
+              FROM
+                master..spt_values
+              WHERE
+              TYPE = 'P'
+              AND EOMONTH(
+                DATEFROMPARTS(
+                  YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12,
+                  ((MONTH(@startDate) + number - 1) % 12) + 1,
+                  1
+                )
+              ) <= @endDate
+            `}
+      )
     SELECT
       ${filterType === 'month'
         ? "FORMAT(db.bucketDate, 'yyyy-MM-dd')"
@@ -96,13 +130,14 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       COUNT(w.workOrderId) AS openWorkOrdersCount
     FROM
       DateBuckets db
-      LEFT JOIN ShiftLog.WorkOrders w ON 
-        w.instance = @instance
-        AND w.recordDelete_dateTime IS NULL
-        AND w.workOrderOpenDateTime <= db.bucketDate
-        AND (w.workOrderCloseDateTime IS NULL OR w.workOrderCloseDateTime > db.bucketDate)
-      LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
-        ${userGroupFilter}
+      LEFT JOIN ShiftLog.WorkOrders w ON w.instance = @instance
+      AND w.recordDelete_dateTime IS NULL
+      AND w.workOrderOpenDateTime <= db.bucketDate
+      AND (
+        w.workOrderCloseDateTime IS NULL
+        OR w.workOrderCloseDateTime > db.bucketDate
+      )
+      LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId ${userGroupFilter}
     GROUP BY
       db.bucketDate
     ORDER BY
@@ -117,10 +152,15 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         .input('endDate', endDateString)
         .input('userName', user?.userName);
     const byAssignedToResult = await byAssignedToRequest.query(/* sql */ `
-    SELECT TOP 10
-      COALESCE(assignedTo.assignedToName, '(Unassigned)') AS assignedToName,
+    SELECT
+      TOP 10 COALESCE(assignedTo.assignedToName, '(Unassigned)') AS assignedToName,
       COUNT(*) AS openedCount,
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END) AS closedCount
+      SUM(
+        CASE
+          WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1
+          ELSE 0
+        END
+      ) AS closedCount
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
@@ -129,10 +169,15 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
       AND (
-        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
-        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
-      )
-      ${userGroupFilter}
+        (
+          w.workOrderOpenDateTime >= @startDate
+          AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+        )
+        OR (
+          w.workOrderCloseDateTime >= @startDate
+          AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate)
+        )
+      ) ${userGroupFilter}
     GROUP BY
       assignedTo.assignedToName
     ORDER BY
@@ -151,8 +196,8 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         .input('endDate', endDateString)
         .input('userName', user?.userName);
     const tagsResult = await tagsRequest.query(/* sql */ `
-    SELECT TOP 50
-      wot.tagName,
+    SELECT
+      TOP 50 wot.tagName,
       COUNT(*) AS count
     FROM
       ShiftLog.WorkOrderTags wot
@@ -162,10 +207,15 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
       AND (
-        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
-        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
-      )
-      ${userGroupFilter}
+        (
+          w.workOrderOpenDateTime >= @startDate
+          AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+        )
+        OR (
+          w.workOrderCloseDateTime >= @startDate
+          AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate)
+        )
+      ) ${userGroupFilter}
     GROUP BY
       wot.tagName
     ORDER BY
@@ -184,8 +234,18 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       w.locationLatitude AS latitude,
       w.locationLongitude AS longitude,
       COUNT(*) AS count,
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NULL THEN 1 ELSE 0 END) AS openCount,
-      SUM(CASE WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1 ELSE 0 END) AS closedCount
+      SUM(
+        CASE
+          WHEN w.workOrderCloseDateTime IS NULL THEN 1
+          ELSE 0
+        END
+      ) AS openCount,
+      SUM(
+        CASE
+          WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1
+          ELSE 0
+        END
+      ) AS closedCount
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
@@ -193,12 +253,17 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
       AND (
-        (w.workOrderOpenDateTime >= @startDate AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate))
-        OR (w.workOrderCloseDateTime >= @startDate AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate))
+        (
+          w.workOrderOpenDateTime >= @startDate
+          AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
+        )
+        OR (
+          w.workOrderCloseDateTime >= @startDate
+          AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate)
+        )
       )
       AND w.locationLatitude IS NOT NULL
-      AND w.locationLongitude IS NOT NULL
-      ${userGroupFilter}
+      AND w.locationLongitude IS NOT NULL ${userGroupFilter}
     GROUP BY
       w.locationLatitude,
       w.locationLongitude

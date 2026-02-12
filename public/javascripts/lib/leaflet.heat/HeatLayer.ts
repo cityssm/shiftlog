@@ -1,8 +1,8 @@
 /*
- (c) 2014, Vladimir Agafonkin
- Leaflet.heat, a tiny and fast heatmap plugin for Leaflet.
- https://github.com/Leaflet/Leaflet.heat
-*/
+ * (c) 2014, Vladimir Agafonkin
+ * Leaflet.heat, a tiny and fast heatmap plugin for Leaflet.
+ * https://github.com/Leaflet/Leaflet.heat
+ */
 
 import type Leaflet from 'leaflet'
 import type Simpleheat from 'simpleheat'

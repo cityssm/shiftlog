@@ -1,8 +1,8 @@
 /*
- (c) 2014, Vladimir Agafonkin
- Leaflet.heat, a tiny and fast heatmap plugin for Leaflet.
- https://github.com/Leaflet/Leaflet.heat
-*/
+ * (c) 2014, Vladimir Agafonkin
+ * Leaflet.heat, a tiny and fast heatmap plugin for Leaflet.
+ * https://github.com/Leaflet/Leaflet.heat
+ */
 L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     // options: {
     //     minOpacity: 0.05,
