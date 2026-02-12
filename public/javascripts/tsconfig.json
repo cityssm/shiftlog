@@ -14,5 +14,5 @@
   },
   "compileOnSave": true,
   "buildOnSave": true,
-  "include": ["./*"]
+  "include": ["./*", "./**/*"]
 }

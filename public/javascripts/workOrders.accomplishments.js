@@ -40,7 +40,18 @@
             new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(hotZonesMap);
-            hotZonesLayer = new L.LayerGroup().addTo(hotZonesMap);
+            // Initialize heat layer (will be populated with data later)
+            hotZonesLayer = L.heatLayer([], {
+                radius: 25,
+                blur: 15,
+                maxZoom: 17,
+                max: 1.0,
+                gradient: {
+                    0.0: '#48c774', // Green for low
+                    0.5: '#ffdd57', // Yellow for medium
+                    1.0: '#f14668' // Red for high
+                }
+            }).addTo(hotZonesMap);
         }
     }
     // Update KPIs
@@ -245,10 +256,9 @@
         if (hotZonesMap === undefined || hotZonesLayer === undefined) {
             return;
         }
-        // Clear existing markers
-        hotZonesLayer.clearLayers();
         if (hotZones.length === 0) {
-            // Show "No data available" message on the map
+            // Clear heat layer and show "No data available" message on the map
+            hotZonesLayer.setLatLngs([]);
             const mapContainer = document.querySelector('#map--hotZones');
             if (mapContainer !== null) {
                 const existingMessage = mapContainer.querySelector('.no-data-message');
@@ -271,46 +281,18 @@
             }
         }
         const bounds = [];
-        const markerBaseSize = 20;
-        const markerSizeMultiplier = 5;
-        const highIntensityThreshold = 0.66;
-        const mediumIntensityThreshold = 0.33;
-        // Custom icons based on intensity
-        const getMarkerIcon = (count) => {
-            const maxCount = Math.max(...hotZones.map((hz) => hz.count));
-            const intensity = count / maxCount;
-            let color = '#48c774'; // Green for low
-            if (intensity > highIntensityThreshold) {
-                color = '#f14668'; // Red for high
-            }
-            else if (intensity > mediumIntensityThreshold) {
-                color = '#ffdd57'; // Yellow for medium
-            }
-            const size = markerBaseSize + count * markerSizeMultiplier;
-            return new L.DivIcon({
-                className: '',
-                html: `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; font-size: 12px;">${count}</div>`,
-                iconAnchor: [size / 2, size / 2],
-                iconSize: [size, size]
-            });
-        };
-        for (const hotZone of hotZones) {
+        // First pass: collect counts to find max
+        const maxCount = Math.max(...hotZones.map((hz) => hz.count));
+        // Second pass: prepare heat layer data with normalized intensity
+        const heatData = hotZones.map((hotZone) => {
             const lat = hotZone.latitude;
             const lng = hotZone.longitude;
-            const marker = new L.Marker([lat, lng], {
-                icon: getMarkerIcon(hotZone.count)
-            });
-            const popupContent = `
-        <div>
-          <strong>${hotZone.count} ${cityssm.escapeHTML(hotZone.count === 1 ? shiftLog.workOrdersSectionNameSingular : shiftLog.workOrdersSectionName)}</strong><br/>
-          Open: ${hotZone.openCount}<br/>
-          Closed: ${hotZone.closedCount}
-        </div>
-      `;
-            marker.bindPopup(popupContent);
-            hotZonesLayer.addLayer(marker);
+            const intensity = hotZone.count / maxCount; // Normalize intensity between 0 and 1
             bounds.push([lat, lng]);
-        }
+            return [lat, lng, intensity];
+        });
+        // Update heat layer with new data
+        hotZonesLayer.setLatLngs(heatData);
         // Fit map to bounds
         if (bounds.length > 0) {
             hotZonesMap.fitBounds(bounds, {
