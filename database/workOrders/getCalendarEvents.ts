@@ -16,6 +16,8 @@ export interface GetCalendarEventsFilters {
   showOpenDates: boolean
 }
 
+type DateTimeField = Date | string | null
+
 export interface WorkOrderCalendarEvent {
   eventDate: Date | string
   eventType:
@@ -34,10 +36,10 @@ export interface WorkOrderCalendarEvent {
   milestoneId?: number | null
   milestoneTitle?: string | null
 
-  milestoneCompleteDateTime?: Date | string | null
-  milestoneDueDateTime?: Date | string | null
-  workOrderCloseDateTime?: Date | string | null
-  workOrderDueDateTime?: Date | string | null
+  milestoneCompleteDateTime?: DateTimeField
+  milestoneDueDateTime?: DateTimeField
+  workOrderCloseDateTime?: DateTimeField
+  workOrderDueDateTime?: DateTimeField
 }
 
 /**

@@ -8,6 +8,7 @@ export interface GetCalendarEventsFilters {
     showMilestoneDueDates: boolean;
     showOpenDates: boolean;
 }
+type DateTimeField = Date | string | null;
 export interface WorkOrderCalendarEvent {
     eventDate: Date | string;
     eventType: 'milestoneComplete' | 'milestoneDue' | 'workOrderClose' | 'workOrderDue' | 'workOrderOpen';
@@ -18,10 +19,10 @@ export interface WorkOrderCalendarEvent {
     assignedToId?: number | null;
     milestoneId?: number | null;
     milestoneTitle?: string | null;
-    milestoneCompleteDateTime?: Date | string | null;
-    milestoneDueDateTime?: Date | string | null;
-    workOrderCloseDateTime?: Date | string | null;
-    workOrderDueDateTime?: Date | string | null;
+    milestoneCompleteDateTime?: DateTimeField;
+    milestoneDueDateTime?: DateTimeField;
+    workOrderCloseDateTime?: DateTimeField;
+    workOrderDueDateTime?: DateTimeField;
 }
 /**
  * Retrieves calendar events for work orders and milestones within a specified month.
@@ -31,3 +32,4 @@ export interface WorkOrderCalendarEvent {
  * @returns Array of calendar events matching the specified filters
  */
 export default function getCalendarEvents(filters: GetCalendarEventsFilters, user?: User): Promise<WorkOrderCalendarEvent[]>;
+export {};
