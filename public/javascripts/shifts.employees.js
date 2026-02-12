@@ -382,6 +382,7 @@
             },
             onshown(modalElement) {
                 bulmaJS.toggleHtmlClipped();
+                modalElement.querySelector('select[name="crewId"]').focus();
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doAdd);
             },
@@ -447,6 +448,7 @@
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = _closeModalFunction;
+                modalElement.querySelector('select[name="employeeNumber"]').focus();
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doAdd);
             },
@@ -514,6 +516,7 @@
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = _closeModalFunction;
+                modalElement.querySelector('select[name="equipmentNumber"]').focus();
                 formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doAdd);
             },
