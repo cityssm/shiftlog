@@ -475,14 +475,7 @@ declare const exports: {
 
           toggleButton.addEventListener('click', () => {
             container.classList.toggle('is-hidden')
-            const icon = toggleButton.querySelector('i')
-            if (icon !== null) {
-              if (container.classList.contains('is-hidden')) {
-                icon.className = 'fa-solid fa-chevron-right'
-              } else {
-                icon.className = 'fa-solid fa-chevron-down'
-              }
-            }
+            toggleButton.classList.toggle('is-expanded')
           })
         }
 
@@ -742,14 +735,7 @@ declare const exports: {
 
           toggleButton.addEventListener('click', () => {
             container.classList.toggle('is-hidden')
-            const icon = toggleButton.querySelector('i')
-            if (icon !== null) {
-              if (container.classList.contains('is-hidden')) {
-                icon.className = 'fa-solid fa-chevron-right'
-              } else {
-                icon.className = 'fa-solid fa-chevron-down'
-              }
-            }
+            toggleButton.classList.toggle('is-expanded')
           })
         }
 
@@ -797,10 +783,7 @@ declare const exports: {
           )
         ) {
           fromLocationContainer.classList.remove('is-hidden')
-          const icon = fromLocationToggle.querySelector('i')
-          if (icon !== null) {
-            icon.className = 'fa-solid fa-chevron-down'
-          }
+          fromLocationToggle.classList.add('is-expanded')
         }
 
         const toLocationContainer = modalElement.querySelector(
@@ -820,10 +803,7 @@ declare const exports: {
           )
         ) {
           toLocationContainer.classList.remove('is-hidden')
-          const icon = toLocationToggle.querySelector('i')
-          if (icon !== null) {
-            icon.className = 'fa-solid fa-chevron-down'
-          }
+          toLocationToggle.classList.add('is-expanded')
         }
       },
 
