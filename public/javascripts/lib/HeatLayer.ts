@@ -134,32 +134,31 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
 
   _redraw: function () {
-    var data = [],
-      r = this._heat._r,
-      size = this._map.getSize(),
-      bounds = new L.Bounds(new L.Point([-r, -r]), size.add([r, r])),
-      max = this.options.max === undefined ? 1 : this.options.max,
-      maxZoom =
-        this.options.maxZoom === undefined
-          ? this._map.getMaxZoom()
-          : this.options.maxZoom,
-      v =
-        1 /
-        Math.pow(2, Math.max(0, Math.min(maxZoom - this._map.getZoom(), 12))),
-      cellSize = r / 2,
-      grid = [],
-      panePos = this._map._getMapPanePos(),
-      offsetX = panePos.x % cellSize,
-      offsetY = panePos.y % cellSize,
-      i,
-      len,
-      p,
-      cell,
-      x,
-      y,
-      j,
-      len2,
-      k
+    var data = []
+    var r = this._heat._r
+    var size = this._map.getSize()
+    var bounds = new L.Bounds(new L.Point([-r, -r]), size.add([r, r]))
+    var max = this.options.max === undefined ? 1 : this.options.max
+    var maxZoom =
+      this.options.maxZoom === undefined
+        ? this._map.getMaxZoom()
+        : this.options.maxZoom
+    var v =
+      1 / Math.pow(2, Math.max(0, Math.min(maxZoom - this._map.getZoom(), 12)))
+    var cellSize = r / 2
+    var grid = []
+    var panePos = this._map._getMapPanePos()
+    var offsetX = panePos.x % cellSize
+    var offsetY = panePos.y % cellSize
+    var i
+    var len
+    var p
+    var cell
+    var x
+    var y
+    var j
+    var len2
+    var k
 
     // console.time('process');
     for (i = 0, len = this._latlngs.length; i < len; i++) {
@@ -206,6 +205,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     // console.timeEnd('process');
 
     // console.time('draw ' + data.length);
+    console.log(data)
     this._heat.data(data).draw(this.options.minOpacity)
     // console.timeEnd('draw ' + data.length);
 
