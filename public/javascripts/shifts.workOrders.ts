@@ -323,9 +323,12 @@ declare const exports: {
         '#addWorkOrder--results'
       ) as HTMLElement
 
+      // eslint-disable-next-line no-unsanitized/property
       resultsContainer.innerHTML = /* html */ `
         <div class="message is-info">
-          <div class="message-body">${searchString ? 'Searching...' : 'Loading recent work orders...'}</div>
+          <div class="message-body">
+            ${searchString.length > 0 ? 'Searching...' : 'Loading recent work orders...'}
+          </div>
         </div>
       `
 
@@ -339,9 +342,13 @@ declare const exports: {
         },
         (responseJSON: DoSearchWorkOrdersResponse) => {
           if (!responseJSON.success || responseJSON.workOrders.length === 0) {
+            // eslint-disable-next-line no-unsanitized/property
             resultsContainer.innerHTML = /* html */ `
               <div class="message is-warning">
-                <div class="message-body">No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found${searchString ? ' matching your search' : ''}.</div>
+                <div class="message-body">
+                  No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found
+                  ${searchString.length > 0 ? ' matching your search' : ''}.
+                </div>
               </div>
             `
             return
@@ -354,7 +361,7 @@ declare const exports: {
           tableElement.innerHTML = /* html */ `
             <thead>
               <tr>
-                <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionName)} #</th>
+                <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} #</th>
                 <th>Type</th>
                 <th>Requestor</th>
                 <th>Details</th>
@@ -394,10 +401,11 @@ declare const exports: {
             const messageElement = document.createElement('div')
             messageElement.className = 'message is-info mt-2'
 
+            // eslint-disable-next-line no-unsanitized/property
             messageElement.innerHTML = /* html */ `
               <div class="message-body">
                 Showing ${limit} of ${cityssm.escapeHTML(responseJSON.totalCount.toString())} results.
-                ${searchString ? 'Refine your search to see more specific results.' : 'Use the search box to find specific work orders.'}
+                ${searchString.length > 0 ? 'Refine your search to see more specific results.' : 'Use the search box to find specific work orders.'}
               </div>
             `
 
