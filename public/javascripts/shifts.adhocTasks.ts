@@ -462,43 +462,39 @@ declare const exports: {
         )
 
         // Setup toggle handlers for collapsible location sections
-        const fromLocationToggle = modalElement.querySelector(
-          '#toggle--createAdhocTask--fromLocation'
-        ) as HTMLButtonElement
-        const fromLocationContainer = modalElement.querySelector(
+        function setupLocationToggle(
+          toggleSelector: string,
+          containerSelector: string
+        ): void {
+          const toggleButton = modalElement.querySelector(
+            toggleSelector
+          ) as HTMLButtonElement
+          const container = modalElement.querySelector(
+            containerSelector
+          ) as HTMLElement
+
+          toggleButton.addEventListener('click', () => {
+            container.classList.toggle('is-hidden')
+            const icon = toggleButton.querySelector('i')
+            if (icon !== null) {
+              if (container.classList.contains('is-hidden')) {
+                icon.className = 'fa-solid fa-chevron-right'
+              } else {
+                icon.className = 'fa-solid fa-chevron-down'
+              }
+            }
+          })
+        }
+
+        setupLocationToggle(
+          '#toggle--createAdhocTask--fromLocation',
           '#container--createAdhocTask--fromLocation'
-        ) as HTMLElement
+        )
 
-        fromLocationToggle.addEventListener('click', () => {
-          fromLocationContainer.classList.toggle('is-hidden')
-          const icon = fromLocationToggle.querySelector('i')
-          if (icon !== null) {
-            if (fromLocationContainer.classList.contains('is-hidden')) {
-              icon.className = 'fa-solid fa-chevron-right'
-            } else {
-              icon.className = 'fa-solid fa-chevron-down'
-            }
-          }
-        })
-
-        const toLocationToggle = modalElement.querySelector(
-          '#toggle--createAdhocTask--toLocation'
-        ) as HTMLButtonElement
-        const toLocationContainer = modalElement.querySelector(
+        setupLocationToggle(
+          '#toggle--createAdhocTask--toLocation',
           '#container--createAdhocTask--toLocation'
-        ) as HTMLElement
-
-        toLocationToggle.addEventListener('click', () => {
-          toLocationContainer.classList.toggle('is-hidden')
-          const icon = toLocationToggle.querySelector('i')
-          if (icon !== null) {
-            if (toLocationContainer.classList.contains('is-hidden')) {
-              icon.className = 'fa-solid fa-chevron-right'
-            } else {
-              icon.className = 'fa-solid fa-chevron-down'
-            }
-          }
-        })
+        )
 
         // Focus on task type
         ;(
