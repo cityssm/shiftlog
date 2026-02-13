@@ -899,4 +899,3 @@ async function populateIconDatalist() {
     }
     renderAllDataLists(exports.dataLists);
 })();
-export {};
