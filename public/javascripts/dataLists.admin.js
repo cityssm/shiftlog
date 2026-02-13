@@ -36,6 +36,8 @@
             const userGroupDisplay = userGroup
                 ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
                 : '<span class="has-text-grey-light">-</span>';
+            const colorHex = item.colorHex || '000000';
+            const iconClass = item.iconClass || 'circle';
             const tableRowElement = document.createElement('tr');
             tableRowElement.dataset.dataListItemId = item.dataListItemId.toString();
             // eslint-disable-next-line no-unsanitized/property
@@ -46,6 +48,9 @@
           </span>
         </td>
         <td>
+          <span class="icon is-small" style="color: #${cityssm.escapeHTML(colorHex)};">
+            <i class="fa-solid fa-${cityssm.escapeHTML(iconClass)}"></i>
+          </span>
           <span class="item-text">
             ${cityssm.escapeHTML(item.dataListItem)}
           </span>
@@ -60,6 +65,8 @@
               data-data-list-key="${cityssm.escapeHTML(dataListKey)}"
               data-data-list-item-id="${item.dataListItemId}"
               data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+              data-color-hex="${cityssm.escapeHTML(colorHex)}"
+              data-icon-class="${cityssm.escapeHTML(iconClass)}"
               data-user-group-id="${item.userGroupId ?? ''}"
               type="button"
             >
@@ -631,6 +638,8 @@
         const dataListKey = buttonElement.dataset.dataListKey;
         const dataListItemId = buttonElement.dataset.dataListItemId;
         const dataListItem = buttonElement.dataset.dataListItem;
+        const colorHex = buttonElement.dataset.colorHex;
+        const iconClass = buttonElement.dataset.iconClass;
         const userGroupId = buttonElement.dataset.userGroupId;
         if (dataListKey === undefined ||
             dataListItemId === undefined ||
@@ -687,6 +696,12 @@
                 // Set the item name
                 const dataListItemInput = modalElement.querySelector('#editDataListItem--dataListItem');
                 dataListItemInput.value = dataListItem;
+                // Set the colorHex
+                const colorHexInput = modalElement.querySelector('#editDataListItem--colorHex');
+                colorHexInput.value = colorHex ?? '';
+                // Set the iconClass
+                const iconClassInput = modalElement.querySelector('#editDataListItem--iconClass');
+                iconClassInput.value = iconClass ?? '';
                 // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#editDataListItem--userGroupId');
                 userGroupSelect.innerHTML =
