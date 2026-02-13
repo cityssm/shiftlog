@@ -32,7 +32,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
     redraw: function () {
         if (this._heat && !this._frame && !this._map._animating) {
-            this._frame = window.requestAnimationFrame(this._redraw.bind(this));
+            this._frame = globalThis.requestAnimationFrame(this._redraw.bind(this));
         }
         return this;
     },
@@ -41,7 +41,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         if (!this._canvas) {
             this._initCanvas();
         }
-        map._panes.overlayPane.appendChild(this._canvas);
+        map._panes.overlayPane.append(this._canvas);
         map.on('moveend', this._reset, this);
         if (map.options.zoomAnimation && L.Browser.any3d) {
             map.on('zoomanim', this._animateZoom, this);
@@ -49,7 +49,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         this._reset();
     },
     onRemove: function (map) {
-        map.getPanes().overlayPane.removeChild(this._canvas);
+        this._canvas.remove();
         map.off('moveend', this._reset, this);
         if (map.options.zoomAnimation) {
             map.off('zoomanim', this._animateZoom, this);
@@ -60,13 +60,13 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         return this;
     },
     _initCanvas: function () {
-        var canvas = (this._canvas = L.DomUtil.create('canvas', 'leaflet-heatmap-layer leaflet-layer'));
-        var originProp = 'transformOrigin';
-        canvas.style[originProp] = '50% 50%';
-        var size = this._map.getSize();
+        const canvas = (this._canvas = L.DomUtil.create('canvas', 'leaflet-heatmap-layer leaflet-layer'));
+        const originProperty = 'transformOrigin';
+        canvas.style[originProperty] = '50% 50%';
+        const size = this._map.getSize();
         canvas.width = size.x;
         canvas.height = size.y;
-        var animated = this._map.options.zoomAnimation && L.Browser.any3d;
+        const animated = this._map.options.zoomAnimation && L.Browser.any3d;
         canvas.classList.add('leaflet-zoom-' + (animated ? 'animated' : 'hide'));
         this._heat = simpleheat(canvas);
         this._updateOptions();
@@ -81,9 +81,9 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         }
     },
     _reset: function () {
-        var topLeft = this._map.containerPointToLayerPoint([0, 0]);
+        const topLeft = this._map.containerPointToLayerPoint([0, 0]);
         L.DomUtil.setPosition(this._canvas, topLeft);
-        var size = this._map.getSize();
+        const size = this._map.getSize();
         if (this._heat._width !== size.x) {
             this._canvas.width = this._heat._width = size.x;
         }
@@ -93,36 +93,36 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         this._redraw();
     },
     _redraw: function () {
-        var data = [];
-        var r = this._heat._r;
-        var size = this._map.getSize();
-        var bounds = new L.Bounds(new L.Point([-r, -r]), size.add([r, r]));
-        var max = this.options.max === undefined ? 1 : this.options.max;
-        var maxZoom = this.options.maxZoom === undefined
+        const data = [];
+        const r = this._heat._r;
+        const size = this._map.getSize();
+        const bounds = new L.Bounds(new L.Point([-r, -r]), size.add([r, r]));
+        const max = this.options.max === undefined ? 1 : this.options.max;
+        const maxZoom = this.options.maxZoom === undefined
             ? this._map.getMaxZoom()
             : this.options.maxZoom;
-        var v = 1 / Math.pow(2, Math.max(0, Math.min(maxZoom - this._map.getZoom(), 12)));
-        var cellSize = r / 2;
-        var grid = [];
-        var panePos = this._map._getMapPanePos();
-        var offsetX = panePos.x % cellSize;
-        var offsetY = panePos.y % cellSize;
-        var i;
-        var len;
-        var p;
-        var cell;
-        var x;
-        var y;
-        var j;
-        var len2;
-        var k;
+        const v = 1 / Math.pow(2, Math.max(0, Math.min(maxZoom - this._map.getZoom(), 12)));
+        const cellSize = r / 2;
+        const grid = [];
+        const panePos = this._map._getMapPanePos();
+        const offsetX = panePos.x % cellSize;
+        const offsetY = panePos.y % cellSize;
+        let i;
+        let len;
+        let p;
+        let cell;
+        let x;
+        let y;
+        let j;
+        let len2;
+        let k;
         // console.time('process');
         for (i = 0, len = this._latlngs.length; i < len; i++) {
             p = this._map.latLngToContainerPoint(this._latlngs[i]);
             if (bounds.contains(p)) {
                 x = Math.floor((p.x - offsetX) / cellSize) + 2;
                 y = Math.floor((p.y - offsetY) / cellSize) + 2;
-                var alt = this._latlngs[i].alt !== undefined
+                const alt = this._latlngs[i].alt !== undefined
                     ? this._latlngs[i].alt
                     : this._latlngs[i][2] !== undefined
                         ? +this._latlngs[i][2]
@@ -161,7 +161,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         this._frame = null;
     },
     _animateZoom: function (e) {
-        var scale = this._map.getZoomScale(e.zoom), offset = this._map
+        const scale = this._map.getZoomScale(e.zoom), offset = this._map
             ._getCenterOffset(e.center)
             ._multiplyBy(-scale)
             .subtract(this._map._getMapPanePos());
