@@ -277,15 +277,10 @@ export default async function getWorkOrderAccomplishmentStats(
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
+      AND w.workOrderOpenDateTime <= @endDate
       AND (
-        (
-          w.workOrderOpenDateTime >= @startDate
-          AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
-        )
-        OR (
-          w.workOrderCloseDateTime >= @startDate
-          AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate)
-        )
+        w.workOrderCloseDateTime IS NULL
+        OR w.workOrderCloseDateTime >= @startDate
       ) ${userGroupFilter}
     GROUP BY
       wot.tagName
@@ -332,15 +327,10 @@ export default async function getWorkOrderAccomplishmentStats(
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
+      AND w.workOrderOpenDateTime <= @endDate
       AND (
-        (
-          w.workOrderOpenDateTime >= @startDate
-          AND w.workOrderOpenDateTime <= DATEADD(day, 1, @endDate)
-        )
-        OR (
-          w.workOrderCloseDateTime >= @startDate
-          AND w.workOrderCloseDateTime <= DATEADD(day, 1, @endDate)
-        )
+        w.workOrderCloseDateTime IS NULL
+        OR w.workOrderCloseDateTime >= @startDate
       )
       AND w.locationLatitude IS NOT NULL
       AND w.locationLongitude IS NOT NULL ${userGroupFilter}
