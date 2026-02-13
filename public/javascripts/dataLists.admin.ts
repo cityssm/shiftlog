@@ -64,9 +64,11 @@ declare const exports: {
 
 // Store the icon list globally to avoid re-fetching
 let availableIcons: string[] | null = null
+let iconsFetching = false
 
 async function populateIconDatalist(): Promise<void> {
-  if (availableIcons === null) {
+  if (availableIcons === null && !iconsFetching) {
+    iconsFetching = true
     try {
       // Dynamically import the function
       const { getIconListByStyle } = await import(
@@ -78,6 +80,8 @@ async function populateIconDatalist(): Promise<void> {
       // If import fails, use empty array
       // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
       availableIcons = []
+    } finally {
+      iconsFetching = false
     }
   }
 
@@ -148,13 +152,15 @@ async function populateIconDatalist(): Promise<void> {
         : '<span class="has-text-grey-light">-</span>'
 
       // Sanitize colorHex (must be 6 hex digits)
-      const colorHex = /^[\da-f]{6}$/iv.test(item.colorHex || '')
-        ? item.colorHex
+      const colorHexTrimmed = (item.colorHex || '').trim()
+      const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+        ? colorHexTrimmed
         : '000000'
 
       // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers)
-      const iconClass = /^[\da-z\-]+$/v.test(item.iconClass || '')
-        ? item.iconClass
+      const iconClassTrimmed = (item.iconClass || '').trim()
+      const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+        ? iconClassTrimmed
         : 'circle'
 
       const tableRowElement = document.createElement('tr')

@@ -6,12 +6,14 @@ const debug = Debug(`${DEBUG_NAMESPACE}:database:addDataListItem`);
 export default async function addDataListItem(form) {
     const pool = await getShiftLogConnectionPool();
     // Sanitize colorHex (must be 6 hex digits)
-    const colorHex = /^[\da-f]{6}$/iv.test((form.colorHex ?? '').trim())
-        ? (form.colorHex ?? '').trim()
+    const colorHexTrimmed = (form.colorHex ?? '').trim();
+    const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+        ? colorHexTrimmed
         : '000000';
     // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers for Font Awesome classes)
-    const iconClass = /^[\da-z\-]+$/v.test((form.iconClass ?? '').trim())
-        ? (form.iconClass ?? '').trim()
+    const iconClassTrimmed = (form.iconClass ?? '').trim();
+    const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+        ? iconClassTrimmed
         : 'circle';
     // Check for existing item
     const existingDataListItemResult = await pool

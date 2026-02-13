@@ -1,8 +1,10 @@
 /* eslint-disable max-lines -- Large file */
 // Store the icon list globally to avoid re-fetching
 let availableIcons = null;
+let iconsFetching = false;
 async function populateIconDatalist() {
-    if (availableIcons === null) {
+    if (availableIcons === null && !iconsFetching) {
+        iconsFetching = true;
         try {
             // Dynamically import the function
             const { getIconListByStyle } = await import('@cityssm/fontawesome-free-lists');
@@ -13,6 +15,9 @@ async function populateIconDatalist() {
             // If import fails, use empty array
             // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
             availableIcons = [];
+        }
+        finally {
+            iconsFetching = false;
         }
     }
     // Populate the datalist
@@ -65,12 +70,14 @@ async function populateIconDatalist() {
                 ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
                 : '<span class="has-text-grey-light">-</span>';
             // Sanitize colorHex (must be 6 hex digits)
-            const colorHex = /^[\da-f]{6}$/iv.test(item.colorHex || '')
-                ? item.colorHex
+            const colorHexTrimmed = (item.colorHex || '').trim();
+            const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+                ? colorHexTrimmed
                 : '000000';
             // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers)
-            const iconClass = /^[\da-z\-]+$/v.test(item.iconClass || '')
-                ? item.iconClass
+            const iconClassTrimmed = (item.iconClass || '').trim();
+            const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+                ? iconClassTrimmed
                 : 'circle';
             const tableRowElement = document.createElement('tr');
             tableRowElement.dataset.dataListItemId = item.dataListItemId.toString();
