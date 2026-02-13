@@ -373,6 +373,7 @@ interface WorkOrderAccomplishmentData {
         blur: 15,
         maxZoom: 17,
         max: 1.0,
+        minOpacity: 0.4,
         gradient: {
           0.0: '#48c774',  // Green for low
           0.5: '#ffdd57',  // Yellow for medium
@@ -428,6 +429,9 @@ interface WorkOrderAccomplishmentData {
 
     // Fit map to bounds
     if (bounds.length > 0) {
+      // Invalidate map size to ensure proper rendering after container visibility
+      hotZonesMap.invalidateSize()
+      
       hotZonesMap.fitBounds(bounds, {
         padding: [50, 50],
         maxZoom: 15
