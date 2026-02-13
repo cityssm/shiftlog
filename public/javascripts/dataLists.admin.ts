@@ -72,9 +72,11 @@ async function populateIconDatalist(): Promise<void> {
       const { getIconListByStyle } = await import(
         '@cityssm/fontawesome-free-lists'
       )
+      // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
       availableIcons = await getIconListByStyle('solid', '7.2.0')
     } catch {
       // If import fails, use empty array
+      // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
       availableIcons = []
     }
   }
