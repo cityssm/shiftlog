@@ -117,6 +117,8 @@ CREATE TABLE ShiftLog.DataListItems (
   instance VARCHAR(20) NOT NULL,
   dataListKey VARCHAR(20) NOT NULL,
   dataListItem VARCHAR(200) NOT NULL,
+  colorHex CHAR(6) NOT NULL DEFAULT '000000',
+  iconClass VARCHAR(50) NOT NULL DEFAULT 'circle',
   orderNumber SMALLINT NOT NULL DEFAULT 0,
   userGroupId INT,
   recordCreate_userName VARCHAR(30) NOT NULL,
