@@ -58,6 +58,7 @@
     "@cityssm/esri-mapserver-layer-dl": "^0.1.1",
     "@cityssm/express-abuse-points": "^3.1.0",
     "@cityssm/fa-glow": "^0.1.0",
+    "@cityssm/fontawesome-free-lists": "^0.1.0",
     "@cityssm/jsbarcode-svg": "^0.1.1",
     "@cityssm/ms-teams-workflow-webhook": "^0.1.1",
     "@cityssm/mssql-multi-pool": "^5.1.2",

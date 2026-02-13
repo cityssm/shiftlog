@@ -240,7 +240,7 @@ cityssm.postJSON(
 
 ## Notes for AI Assistants
 
-- Use new PRs when starting new requests to ensure the latest code is available
+- Use new branch names when starting new requests to ensure the latest code is available. Never reuse an old branch name.
 - This project uses TypeScript but commits both source (`.ts`) and compiled (`.js`, `.d.ts`) files
 - Always update all three file types when making changes
 - Use ES Module syntax exclusively (no CommonJS)
