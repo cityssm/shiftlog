@@ -277,7 +277,7 @@ export default async function getWorkOrderAccomplishmentStats(
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
-      AND w.workOrderOpenDateTime <= @endDate
+      AND w.workOrderOpenDateTime < DATEADD(day, 1, @endDate)
       AND (
         w.workOrderCloseDateTime IS NULL
         OR w.workOrderCloseDateTime >= @startDate
@@ -327,7 +327,7 @@ export default async function getWorkOrderAccomplishmentStats(
     WHERE
       w.instance = @instance
       AND w.recordDelete_dateTime IS NULL
-      AND w.workOrderOpenDateTime <= @endDate
+      AND w.workOrderOpenDateTime < DATEADD(day, 1, @endDate)
       AND (
         w.workOrderCloseDateTime IS NULL
         OR w.workOrderCloseDateTime >= @startDate
