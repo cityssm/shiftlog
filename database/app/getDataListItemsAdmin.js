@@ -11,6 +11,8 @@ export default async function getDataListItemsAdmin(dataListKey) {
         dataListItemId,
         dataListKey,
         dataListItem,
+        colorHex,
+        iconClass,
         orderNumber,
         userGroupId
       FROM

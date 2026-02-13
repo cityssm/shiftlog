@@ -5,6 +5,14 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:database:addDataListItem`);
 export default async function addDataListItem(form) {
     const pool = await getShiftLogConnectionPool();
+    // Sanitize colorHex (must be 6 hex digits)
+    const colorHex = /^[\da-f]{6}$/iv.test((form.colorHex ?? '').trim())
+        ? (form.colorHex ?? '').trim()
+        : '000000';
+    // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers for Font Awesome classes)
+    const iconClass = /^[\da-z\-]+$/v.test((form.iconClass ?? '').trim())
+        ? (form.iconClass ?? '').trim()
+        : 'circle';
     // Check for existing item
     const existingDataListItemResult = await pool
         .request()
@@ -58,6 +66,8 @@ export default async function addDataListItem(form) {
             .input('instance', getConfigProperty('application.instance'))
             .input('dataListKey', form.dataListKey)
             .input('dataListItem', form.dataListItem)
+            .input('colorHex', colorHex)
+            .input('iconClass', iconClass)
             .input('userGroupId', (form.userGroupId ?? '') === '' ? null : form.userGroupId)
             .input('userName', form.userName)
             .query(/* sql */ `
@@ -66,6 +76,8 @@ export default async function addDataListItem(form) {
             instance,
             dataListKey,
             dataListItem,
+            colorHex,
+            iconClass,
             userGroupId,
             orderNumber,
             recordCreate_userName,
@@ -75,6 +87,8 @@ export default async function addDataListItem(form) {
           @instance,
           @dataListKey,
           @dataListItem,
+          @colorHex,
+          @iconClass,
           @userGroupId,
           coalesce(max(orderNumber) + 1, 0),
           @userName,

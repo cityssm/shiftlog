@@ -37,6 +37,45 @@
           </div>
         </div>
         <div class="field">
+          <label class="label" for="addDataListItem--colorHex">
+            Color (Hex)
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addDataListItem--colorHex"
+              name="colorHex"
+              type="text"
+              pattern="[0-9A-Fa-f]{6}"
+              placeholder="000000"
+              maxlength="6"
+            />
+          </div>
+          <p class="help">
+            Six-digit hexadecimal color code (e.g., FF0000 for red, 0000FF for blue).
+          </p>
+        </div>
+        <div class="field">
+          <label class="label" for="addDataListItem--iconClass">
+            Icon Class
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addDataListItem--iconClass"
+              name="iconClass"
+              type="text"
+              placeholder="circle"
+              list="iconClass-datalist"
+            />
+            <datalist id="iconClass-datalist">
+            </datalist>
+          </div>
+          <p class="help">
+            Font Awesome icon class from the free, solid style (e.g., circle, square, star).
+          </p>
+        </div>
+        <div class="field">
           <label class="label" for="addDataListItem--userGroupId">
             User Group (Optional)
           </label>

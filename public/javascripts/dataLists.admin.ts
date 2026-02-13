@@ -33,9 +33,11 @@ declare const Sortable: {
 }
 
 interface DataListItemWithDetails {
+  colorHex: string
+  dataListItem: string
   dataListItemId: number
   dataListKey: string
-  dataListItem: string
+  iconClass: string
   orderNumber: number
   userGroupId: number | null
 }
@@ -59,6 +61,36 @@ declare const exports: {
   dataLists: DataListWithItems[]
   userGroups: UserGroup[]
 }
+
+// Store the icon list globally to avoid re-fetching
+let availableIcons: string[] | null = null
+
+async function populateIconDatalist(): Promise<void> {
+  if (availableIcons === null) {
+    try {
+      // Dynamically import the function
+      const { getIconListByStyle } = await import(
+        '@cityssm/fontawesome-free-lists'
+      )
+      availableIcons = await getIconListByStyle('solid', '7.2.0')
+    } catch {
+      // If import fails, use empty array
+      availableIcons = []
+    }
+  }
+
+  // Populate the datalist
+  const datalist = document.querySelector('#iconClass-datalist')
+  if (datalist !== null && availableIcons.length > 0) {
+    datalist.innerHTML = ''
+    for (const icon of availableIcons) {
+      const option = document.createElement('option')
+      option.value = icon
+      datalist.append(option)
+    }
+  }
+}
+
 ;(() => {
   const shiftLog = exports.shiftLog
 
@@ -113,6 +145,16 @@ declare const exports: {
         ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
         : '<span class="has-text-grey-light">-</span>'
 
+      // Sanitize colorHex (must be 6 hex digits)
+      const colorHex = /^[\da-f]{6}$/iv.test(item.colorHex || '')
+        ? item.colorHex
+        : '000000'
+
+      // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers)
+      const iconClass = /^[\da-z\-]+$/v.test(item.iconClass || '')
+        ? item.iconClass
+        : 'circle'
+
       const tableRowElement = document.createElement('tr')
       tableRowElement.dataset.dataListItemId = item.dataListItemId.toString()
 
@@ -124,6 +166,9 @@ declare const exports: {
           </span>
         </td>
         <td>
+          <span class="icon is-small" style="color: #${cityssm.escapeHTML(colorHex)};">
+            <i class="fa-solid fa-${cityssm.escapeHTML(iconClass)}"></i>
+          </span>
           <span class="item-text">
             ${cityssm.escapeHTML(item.dataListItem)}
           </span>
@@ -138,6 +183,8 @@ declare const exports: {
               data-data-list-key="${cityssm.escapeHTML(dataListKey)}"
               data-data-list-item-id="${item.dataListItemId}"
               data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+              data-color-hex="${cityssm.escapeHTML(colorHex)}"
+              data-icon-class="${cityssm.escapeHTML(iconClass)}"
               data-user-group-id="${item.userGroupId ?? ''}"
               type="button"
             >
@@ -704,6 +751,11 @@ declare const exports: {
         ) as HTMLInputElement
         dataListKeyInput.value = dataListKey
 
+        // Populate icon datalist
+        populateIconDatalist().catch(() => {
+          // Silently fail if icons can't be loaded
+        })
+
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
           '#addDataListItem--userGroupId'
@@ -887,6 +939,8 @@ declare const exports: {
     const dataListKey = buttonElement.dataset.dataListKey
     const dataListItemId = buttonElement.dataset.dataListItemId
     const dataListItem = buttonElement.dataset.dataListItem
+    const colorHex = buttonElement.dataset.colorHex
+    const iconClass = buttonElement.dataset.iconClass
     const userGroupId = buttonElement.dataset.userGroupId
 
     if (
@@ -976,6 +1030,23 @@ declare const exports: {
           '#editDataListItem--dataListItem'
         ) as HTMLInputElement
         dataListItemInput.value = dataListItem
+
+        // Set the colorHex
+        const colorHexInput = modalElement.querySelector(
+          '#editDataListItem--colorHex'
+        ) as HTMLInputElement
+        colorHexInput.value = colorHex ?? ''
+
+        // Set the iconClass
+        const iconClassInput = modalElement.querySelector(
+          '#editDataListItem--iconClass'
+        ) as HTMLInputElement
+        iconClassInput.value = iconClass ?? ''
+
+        // Populate icon datalist
+        populateIconDatalist().catch(() => {
+          // Silently fail if icons can't be loaded
+        })
 
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
