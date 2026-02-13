@@ -1,7 +1,6 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type Leaflet from 'leaflet'
-import type { HeatLayer } from 'leaflet.heat'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -18,7 +17,7 @@ declare const L: typeof Leaflet & {
       blur?: number
       gradient?: Record<number, string>
     }
-  ) => HeatLayer
+  ) => L.Layer
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const echarts: any
@@ -99,7 +98,7 @@ interface WorkOrderAccomplishmentData {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let tagCloudChart: any
   let hotZonesMap: L.Map | undefined
-  let hotZonesLayer: HeatLayer | undefined
+  let hotZonesLayer: L.Layer | undefined
 
   // Initialize charts
   function initializeCharts(): void {
@@ -133,27 +132,27 @@ interface WorkOrderAccomplishmentData {
       totalOpened.toString()
     document.querySelector('#kpi--totalClosed')!.textContent =
       stats.totalClosed.toString()
-    document.querySelector(
-      '#kpi--completionRate'
-    )!.textContent = `${stats.percentClosed.toFixed(1)}%`
+    document.querySelector('#kpi--completionRate')!.textContent =
+      `${stats.percentClosed.toFixed(1)}%`
   }
 
   // Update time series chart
-  function updateTimeSeriesChart(
-    timeSeries: WorkOrderTimeSeriesData[]
-  ): void {
+  function updateTimeSeriesChart(timeSeries: WorkOrderTimeSeriesData[]): void {
     // Lazily initialize chart on first use
     if (timeSeriesChart === undefined) {
       const timeSeriesElement = document.querySelector('#chart--timeSeries')
-      if (timeSeriesElement !== null) {
-        timeSeriesChart = echarts.init(timeSeriesElement as HTMLElement)
-      } else {
+      if (timeSeriesElement === null) {
         return
+      } else {
+        timeSeriesChart = echarts.init(timeSeriesElement as HTMLElement)
       }
     }
 
     // Check if there's any data
-    if (timeSeries.length === 0 || timeSeries.every(item => item.openWorkOrdersCount === 0)) {
+    if (
+      timeSeries.length === 0 ||
+      timeSeries.every((item) => item.openWorkOrdersCount === 0)
+    ) {
       // Clear the chart completely before showing no-data message
       timeSeriesChart.clear()
       timeSeriesChart.setOption({
@@ -210,10 +209,10 @@ interface WorkOrderAccomplishmentData {
     // Lazily initialize chart on first use
     if (byAssignedToChart === undefined) {
       const byAssignedToElement = document.querySelector('#chart--byAssignedTo')
-      if (byAssignedToElement !== null) {
-        byAssignedToChart = echarts.init(byAssignedToElement as HTMLElement)
-      } else {
+      if (byAssignedToElement === null) {
         return
+      } else {
+        byAssignedToChart = echarts.init(byAssignedToElement as HTMLElement)
       }
     }
 
@@ -282,10 +281,10 @@ interface WorkOrderAccomplishmentData {
     // Lazily initialize chart on first use
     if (tagCloudChart === undefined) {
       const tagCloudElement = document.querySelector('#chart--tagCloud')
-      if (tagCloudElement !== null) {
-        tagCloudChart = echarts.init(tagCloudElement as HTMLElement)
-      } else {
+      if (tagCloudElement === null) {
         return
+      } else {
+        tagCloudChart = echarts.init(tagCloudElement as HTMLElement)
       }
     }
 
@@ -367,32 +366,33 @@ interface WorkOrderAccomplishmentData {
     }
 
     // Lazily initialize heat layer when first needed (after container is visible)
-    if (hotZonesLayer === undefined) {
-      hotZonesLayer = L.heatLayer([], {
-        radius: 25,
-        blur: 15,
-        maxZoom: 17,
-        max: 1.0,
-        gradient: {
-          0.0: '#48c774',  // Green for low
-          0.5: '#ffdd57',  // Yellow for medium
-          1.0: '#f14668'   // Red for high
-        }
-      }).addTo(hotZonesMap)
-    }
+    hotZonesLayer ??= L.heatLayer([], {
+      radius: 25,
+      blur: 15,
+      maxZoom: 17,
+      max: 1.0,
+      minOpacity: 0.7,
+      gradient: {
+        0.0: '#48c774', // Green for low
+        0.5: '#ffdd57', // Yellow for medium
+        1.0: '#f14668' // Red for high
+      }
+    }).addTo(hotZonesMap)
 
     if (hotZones.length === 0) {
       // Clear heat layer and show "No data available" message on the map
       hotZonesLayer.setLatLngs([])
+
       const mapContainer = document.querySelector('#map--hotZones')
       if (mapContainer !== null) {
         const existingMessage = mapContainer.querySelector('.no-data-message')
         if (existingMessage === null) {
           const noDataDiv = document.createElement('div')
           noDataDiv.className = 'no-data-message'
-          noDataDiv.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #999; font-size: 16px;'
+          noDataDiv.style.cssText =
+            'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #999; font-size: 16px;'
           noDataDiv.textContent = 'No data available'
-          mapContainer.appendChild(noDataDiv)
+          mapContainer.append(noDataDiv)
         }
       }
       return
@@ -413,21 +413,26 @@ interface WorkOrderAccomplishmentData {
     const maxCount = Math.max(...hotZones.map((hz) => hz.count))
 
     // Second pass: prepare heat layer data with normalized intensity
-    const heatData: Array<[number, number, number]> = hotZones.map((hotZone) => {
-      const lat = hotZone.latitude
-      const lng = hotZone.longitude
-      const intensity = hotZone.count / maxCount // Normalize intensity between 0 and 1
+    const heatData: Array<[number, number, number]> = hotZones.map(
+      (hotZone) => {
+        const lat = hotZone.latitude
+        const lng = hotZone.longitude
+        const intensity = hotZone.count / maxCount // Normalize intensity between 0 and 1
 
-      bounds.push([lat, lng])
+        bounds.push([lat, lng])
 
-      return [lat, lng, intensity]
-    })
+        return [lat, lng, intensity]
+      }
+    )
 
     // Update heat layer with new data
     hotZonesLayer.setLatLngs(heatData)
 
     // Fit map to bounds
     if (bounds.length > 0) {
+      // Invalidate map size to ensure proper rendering after container visibility
+      hotZonesMap.invalidateSize()
+
       hotZonesMap.fitBounds(bounds, {
         padding: [50, 50],
         maxZoom: 15

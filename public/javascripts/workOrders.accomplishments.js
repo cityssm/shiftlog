@@ -42,22 +42,24 @@
             totalOpened.toString();
         document.querySelector('#kpi--totalClosed').textContent =
             stats.totalClosed.toString();
-        document.querySelector('#kpi--completionRate').textContent = `${stats.percentClosed.toFixed(1)}%`;
+        document.querySelector('#kpi--completionRate').textContent =
+            `${stats.percentClosed.toFixed(1)}%`;
     }
     // Update time series chart
     function updateTimeSeriesChart(timeSeries) {
         // Lazily initialize chart on first use
         if (timeSeriesChart === undefined) {
             const timeSeriesElement = document.querySelector('#chart--timeSeries');
-            if (timeSeriesElement !== null) {
-                timeSeriesChart = echarts.init(timeSeriesElement);
+            if (timeSeriesElement === null) {
+                return;
             }
             else {
-                return;
+                timeSeriesChart = echarts.init(timeSeriesElement);
             }
         }
         // Check if there's any data
-        if (timeSeries.length === 0 || timeSeries.every(item => item.openWorkOrdersCount === 0)) {
+        if (timeSeries.length === 0 ||
+            timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
             // Clear the chart completely before showing no-data message
             timeSeriesChart.clear();
             timeSeriesChart.setOption({
@@ -109,11 +111,11 @@
         // Lazily initialize chart on first use
         if (byAssignedToChart === undefined) {
             const byAssignedToElement = document.querySelector('#chart--byAssignedTo');
-            if (byAssignedToElement !== null) {
-                byAssignedToChart = echarts.init(byAssignedToElement);
+            if (byAssignedToElement === null) {
+                return;
             }
             else {
-                return;
+                byAssignedToChart = echarts.init(byAssignedToElement);
             }
         }
         // Check if there's any data
@@ -178,11 +180,11 @@
         // Lazily initialize chart on first use
         if (tagCloudChart === undefined) {
             const tagCloudElement = document.querySelector('#chart--tagCloud');
-            if (tagCloudElement !== null) {
-                tagCloudChart = echarts.init(tagCloudElement);
+            if (tagCloudElement === null) {
+                return;
             }
             else {
-                return;
+                tagCloudChart = echarts.init(tagCloudElement);
             }
         }
         // Check if there's any data
@@ -259,19 +261,18 @@
             return;
         }
         // Lazily initialize heat layer when first needed (after container is visible)
-        if (hotZonesLayer === undefined) {
-            hotZonesLayer = L.heatLayer([], {
-                radius: 25,
-                blur: 15,
-                maxZoom: 17,
-                max: 1.0,
-                gradient: {
-                    0.0: '#48c774', // Green for low
-                    0.5: '#ffdd57', // Yellow for medium
-                    1.0: '#f14668' // Red for high
-                }
-            }).addTo(hotZonesMap);
-        }
+        hotZonesLayer ??= L.heatLayer([], {
+            radius: 25,
+            blur: 15,
+            maxZoom: 17,
+            max: 1.0,
+            minOpacity: 0.7,
+            gradient: {
+                0.0: '#48c774', // Green for low
+                0.5: '#ffdd57', // Yellow for medium
+                1.0: '#f14668' // Red for high
+            }
+        }).addTo(hotZonesMap);
         if (hotZones.length === 0) {
             // Clear heat layer and show "No data available" message on the map
             hotZonesLayer.setLatLngs([]);
@@ -281,9 +282,10 @@
                 if (existingMessage === null) {
                     const noDataDiv = document.createElement('div');
                     noDataDiv.className = 'no-data-message';
-                    noDataDiv.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #999; font-size: 16px;';
+                    noDataDiv.style.cssText =
+                        'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #999; font-size: 16px;';
                     noDataDiv.textContent = 'No data available';
-                    mapContainer.appendChild(noDataDiv);
+                    mapContainer.append(noDataDiv);
                 }
             }
             return;
@@ -311,6 +313,8 @@
         hotZonesLayer.setLatLngs(heatData);
         // Fit map to bounds
         if (bounds.length > 0) {
+            // Invalidate map size to ensure proper rendering after container visibility
+            hotZonesMap.invalidateSize();
             hotZonesMap.fitBounds(bounds, {
                 padding: [50, 50],
                 maxZoom: 15
