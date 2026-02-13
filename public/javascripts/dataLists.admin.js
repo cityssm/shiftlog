@@ -1,4 +1,60 @@
 /* eslint-disable max-lines -- Large file */
+/**
+ * Updates the icon preview in a modal
+ * @param modalElement - The modal element containing the inputs
+ * @param modalPrefix - The prefix for the input IDs ('addDataListItem' or 'editDataListItem')
+ */
+function updateIconPreview(modalElement, modalPrefix) {
+    const colorInput = modalElement.querySelector(`#${modalPrefix}--colorHex`);
+    const iconInput = modalElement.querySelector(`#${modalPrefix}--iconClass`);
+    const previewElement = modalElement.querySelector(`#${modalPrefix}--iconPreview`);
+    if (colorInput === null ||
+        iconInput === null ||
+        previewElement === null) {
+        return;
+    }
+    // Get color value (color input returns #RRGGBB format)
+    const colorValue = colorInput.value;
+    // Get icon class and validate
+    const iconClassTrimmed = iconInput.value.trim();
+    const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+        ? iconClassTrimmed
+        : 'circle';
+    // Update preview - recreate the icon element since Font Awesome modifies it via JS
+    const iconContainer = previewElement.querySelector('.icon');
+    if (iconContainer === null) {
+        return;
+    }
+    // Create new icon element
+    const newIcon = document.createElement('i');
+    newIcon.className = `fa-solid fa-${iconClass}`;
+    iconContainer.replaceChildren(newIcon);
+    // Set the color on the preview element
+    previewElement.style.color = colorValue;
+}
+/**
+ * Sets up color and icon change listeners for a modal
+ * @param modalElement - The modal element containing the inputs
+ * @param modalPrefix - The prefix for the input IDs ('addDataListItem' or 'editDataListItem')
+ */
+function setupIconPreviewListeners(modalElement, modalPrefix) {
+    const colorInput = modalElement.querySelector(`#${modalPrefix}--colorHex`);
+    const iconInput = modalElement.querySelector(`#${modalPrefix}--iconClass`);
+    if (colorInput === null || iconInput === null) {
+        return;
+    }
+    // Update preview when color changes
+    colorInput.addEventListener('input', () => {
+        updateIconPreview(modalElement, modalPrefix);
+    });
+    // Update preview when icon class changes
+    iconInput.addEventListener('input', () => {
+        updateIconPreview(modalElement, modalPrefix);
+    });
+    // Initial preview update
+    updateIconPreview(modalElement, modalPrefix);
+}
+;
 (() => {
     const shiftLog = exports.shiftLog;
     // Track Sortable instances to prevent duplicates
@@ -20,7 +76,7 @@
         if (items.length === 0) {
             tbodyElement.innerHTML = /* html */ `
         <tr>
-          <td class="has-text-centered has-text-grey" colspan="4">
+          <td class="has-text-centered has-text-grey" colspan="5">
             No items in this list. Click "Add Item" to create one.
           </td>
         </tr>
@@ -36,6 +92,16 @@
             const userGroupDisplay = userGroup
                 ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
                 : '<span class="has-text-grey-light">-</span>';
+            // Sanitize colorHex (must be 6 hex digits)
+            const colorHexTrimmed = (item.colorHex || '').trim();
+            const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+                ? colorHexTrimmed
+                : '000000';
+            // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers)
+            const iconClassTrimmed = (item.iconClass || '').trim();
+            const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+                ? iconClassTrimmed
+                : 'circle';
             const tableRowElement = document.createElement('tr');
             tableRowElement.dataset.dataListItemId = item.dataListItemId.toString();
             // eslint-disable-next-line no-unsanitized/property
@@ -43,6 +109,11 @@
         <td class="has-text-centered">
           <span class="icon is-small has-text-grey handle" style="cursor: move;">
             <i class="fa-solid fa-grip-vertical"></i>
+          </span>
+        </td>
+        <td class="has-text-centered">
+          <span class="icon is-small" style="color: #${cityssm.escapeHTML(colorHex)};">
+            <i class="fa-solid fa-${cityssm.escapeHTML(iconClass)}"></i>
           </span>
         </td>
         <td>
@@ -60,6 +131,8 @@
               data-data-list-key="${cityssm.escapeHTML(dataListKey)}"
               data-data-list-item-id="${item.dataListItemId}"
               data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+              data-color-hex="${cityssm.escapeHTML(colorHex)}"
+              data-icon-class="${cityssm.escapeHTML(iconClass)}"
               data-user-group-id="${item.userGroupId ?? ''}"
               type="button"
             >
@@ -214,6 +287,7 @@
                 <thead>
                   <tr>
                     <th class="has-text-centered" style="width: 60px;">Order</th>
+                    <th class="has-text-centered" style="width: 60px;">Icon</th>
                     <th>Item</th>
                     <th style="width: 180px;">User Group</th>
                     <th>
@@ -287,8 +361,8 @@
             if (dataListKeySuffix === '' || dataListName === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
-                    title: 'Required Fields',
-                    message: 'Please fill in all required fields.'
+                    message: 'Please fill in all required fields.',
+                    title: 'Required Fields'
                 });
                 return;
             }
@@ -357,8 +431,8 @@
             if (newDataListName === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
-                    title: 'Name Required',
-                    message: 'Please enter a display name.'
+                    message: 'Please enter a display name.',
+                    title: 'Name Required'
                 });
                 return;
             }
@@ -470,6 +544,11 @@
                 });
                 return;
             }
+            // Convert color from #RRGGBB format to RRGGBB format
+            const colorHexValue = formData.get('colorHex');
+            if (colorHexValue?.startsWith('#')) {
+                formData.set('colorHex', colorHexValue.slice(1));
+            }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (responseJSON) => {
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
@@ -516,6 +595,8 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddDataListItem);
+                // Setup icon preview listeners
+                setupIconPreviewListeners(modalElement, 'addDataListItem');
             },
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -549,8 +630,8 @@
             if (dataListItemsToAdd === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
-                    title: 'Items Required',
-                    message: 'Please enter at least one item name.'
+                    message: 'Please enter at least one item name.',
+                    title: 'Items Required'
                 });
                 return;
             }
@@ -631,6 +712,8 @@
         const dataListKey = buttonElement.dataset.dataListKey;
         const dataListItemId = buttonElement.dataset.dataListItemId;
         const dataListItem = buttonElement.dataset.dataListItem;
+        const colorHex = buttonElement.dataset.colorHex;
+        const iconClass = buttonElement.dataset.iconClass;
         const userGroupId = buttonElement.dataset.userGroupId;
         if (dataListKey === undefined ||
             dataListItemId === undefined ||
@@ -654,6 +737,11 @@
                     message: 'Please enter an item name.'
                 });
                 return;
+            }
+            // Convert color from #RRGGBB format to RRGGBB format
+            const colorHexValue = formData.get('colorHex');
+            if (colorHexValue?.startsWith('#')) {
+                formData.set('colorHex', colorHexValue.slice(1));
             }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (responseJSON) => {
                 if (responseJSON.success && responseJSON.items !== undefined) {
@@ -687,6 +775,15 @@
                 // Set the item name
                 const dataListItemInput = modalElement.querySelector('#editDataListItem--dataListItem');
                 dataListItemInput.value = dataListItem;
+                // Set the colorHex (convert from RRGGBB format to #RRGGBB format for color input)
+                const colorHexInput = modalElement.querySelector('#editDataListItem--colorHex');
+                const colorHexValue = colorHex ?? '000000';
+                colorHexInput.value = colorHexValue.startsWith('#')
+                    ? colorHexValue
+                    : `#${colorHexValue}`;
+                // Set the iconClass
+                const iconClassInput = modalElement.querySelector('#editDataListItem--iconClass');
+                iconClassInput.value = iconClass ?? 'circle';
                 // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#editDataListItem--userGroupId');
                 userGroupSelect.innerHTML =
@@ -705,6 +802,8 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateDataListItem);
+                // Setup icon preview listeners
+                setupIconPreviewListeners(modalElement, 'editDataListItem');
             },
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -741,8 +840,8 @@
                 text: 'Delete Item',
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataListItem`, {
-                        dataListKey,
-                        dataListItemId: Number.parseInt(dataListItemId, 10)
+                        dataListItemId: Number.parseInt(dataListItemId, 10),
+                        dataListKey
                     }, (responseJSON) => {
                         if (responseJSON.success && responseJSON.items !== undefined) {
                             renderDataListItems(dataListKey, responseJSON.items);
@@ -803,8 +902,8 @@
         }
         // Create new Sortable instance
         const sortableInstance = Sortable.create(tbodyElement, {
-            handle: '.handle',
             animation: 150,
+            handle: '.handle',
             onEnd() {
                 // Get the new order
                 const rows = tbodyElement.querySelectorAll('tr[data-data-list-item-id]');
@@ -817,8 +916,8 @@
                 }
                 // Send to server
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderDataListItems`, {
-                    dataListKey,
-                    dataListItemIds
+                    dataListItemIds,
+                    dataListKey
                 }, (responseJSON) => {
                     if (!responseJSON.success) {
                         bulmaJS.alert({

@@ -49,6 +49,54 @@
             />
           </div>
         </div>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="editDataListItem--colorHex">
+                Color
+              </label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="editDataListItem--colorHex"
+                  name="colorHex"
+                  type="color"
+                  value="#000000"
+                  style="width: 100%;"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="editDataListItem--iconClass">
+                Icon Class
+              </label>
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input
+                    class="input"
+                    id="editDataListItem--iconClass"
+                    name="iconClass"
+                    type="text"
+                    placeholder="circle"
+                    list="iconClass-datalist"
+                  />
+                </div>
+                <div class="control">
+                  <span class="button is-static" id="editDataListItem--iconPreview">
+                    <span class="icon">
+                      <i class="fa-solid fa-circle"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="help">
+          Select a color and icon for visual differentiation. Font Awesome icon classes from the free, solid style (e.g., circle, square, star).
+        </p>
         <div class="field">
           <label class="label" for="editDataListItem--userGroupId">
             User Group (Optional)

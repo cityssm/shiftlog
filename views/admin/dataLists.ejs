@@ -68,6 +68,12 @@
 
 <%- await include('../_footerA'); -%>
 
+<datalist id="iconClass-datalist">
+  <% for (const iconClass of iconClasses) { %>
+  <option value="<%= iconClass %>"><%= iconClass %></option>
+  <% } %>
+</datalist>
+
 <script>
   exports.dataLists = <%- JSON.stringify(dataLists) %>;
   exports.userGroups = <%- JSON.stringify(userGroups) %>;
