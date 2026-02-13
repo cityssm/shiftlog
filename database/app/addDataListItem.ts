@@ -20,6 +20,16 @@ export default async function addDataListItem(
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
+  // Sanitize colorHex (must be 6 hex digits)
+  const colorHex = /^[\da-f]{6}$/iv.test((form.colorHex ?? '').trim())
+    ? (form.colorHex ?? '').trim()
+    : '000000'
+
+  // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers for Font Awesome classes)
+  const iconClass = /^[\da-z\-]+$/v.test((form.iconClass ?? '').trim())
+    ? (form.iconClass ?? '').trim()
+    : 'circle'
+
   // Check for existing item
   const existingDataListItemResult = await pool
     .request()
@@ -79,8 +89,8 @@ export default async function addDataListItem(
       .input('instance', getConfigProperty('application.instance'))
       .input('dataListKey', form.dataListKey)
       .input('dataListItem', form.dataListItem)
-      .input('colorHex', (form.colorHex ?? '').trim() || '000000')
-      .input('iconClass', (form.iconClass ?? '').trim() || 'circle')
+      .input('colorHex', colorHex)
+      .input('iconClass', iconClass)
       .input(
         'userGroupId',
         (form.userGroupId ?? '') === '' ? null : form.userGroupId

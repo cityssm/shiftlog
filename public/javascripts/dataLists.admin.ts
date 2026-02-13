@@ -115,8 +115,15 @@ declare const exports: {
         ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
         : '<span class="has-text-grey-light">-</span>'
 
-      const colorHex = item.colorHex || '000000'
-      const iconClass = item.iconClass || 'circle'
+      // Sanitize colorHex (must be 6 hex digits)
+      const colorHex = /^[\da-f]{6}$/iv.test(item.colorHex || '')
+        ? item.colorHex
+        : '000000'
+
+      // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers)
+      const iconClass = /^[\da-z\-]+$/v.test(item.iconClass || '')
+        ? item.iconClass
+        : 'circle'
 
       const tableRowElement = document.createElement('tr')
       tableRowElement.dataset.dataListItemId = item.dataListItemId.toString()
