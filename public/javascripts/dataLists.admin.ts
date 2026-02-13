@@ -62,42 +62,6 @@ declare const exports: {
   userGroups: UserGroup[]
 }
 
-// Store the icon list globally to avoid re-fetching
-let availableIcons: string[] | null = null
-let iconsFetching = false
-
-async function populateIconDatalist(): Promise<void> {
-  if (availableIcons === null && !iconsFetching) {
-    iconsFetching = true
-    try {
-      // Dynamically import the function
-      const { getIconListByStyle } = await import(
-        '@cityssm/fontawesome-free-lists'
-      )
-      // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
-      availableIcons = await getIconListByStyle('solid', '7.2.0')
-    } catch {
-      // If import fails, use empty array
-      // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
-      availableIcons = []
-    } finally {
-      // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
-      iconsFetching = false
-    }
-  }
-
-  // Populate the datalist
-  const datalist = document.querySelector('#iconClass-datalist')
-  if (datalist !== null && availableIcons.length > 0) {
-    datalist.innerHTML = ''
-    for (const icon of availableIcons) {
-      const option = document.createElement('option')
-      option.value = icon
-      datalist.append(option)
-    }
-  }
-}
-
 /**
  * Updates the icon preview in a modal
  * @param modalElement - The modal element containing the inputs
@@ -1360,11 +1324,6 @@ function setupIconPreviewListeners(
     // Store the instance for future reference
     sortableInstances.set(dataListKey, sortableInstance)
   }
-
-  // Populate icon datalist on page load
-  populateIconDatalist().catch(() => {
-    // Silently fail if icons can't be loaded
-  })
 
   renderAllDataLists(exports.dataLists)
 })()
