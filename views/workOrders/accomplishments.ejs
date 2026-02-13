@@ -151,42 +151,38 @@
         </div>
       </div>
 
-      <!-- Charts Row 1 -->
+      <!-- Charts Row 1 - Work Orders Over Time (Full Width) -->
+      <div class="box">
+        <h2 class="title is-4">
+          <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
+          Over Time
+        </h2>
+        <div id="chart--timeSeries" style="height: 400px;"></div>
+      </div>
+
+      <!-- Charts Row 2 - Assigned To and Tag Usage (Side by Side) -->
       <div class="columns">
-        <div class="column is-7">
-          <div class="box">
-            <h2 class="title is-4">
-              <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
-              Over Time
-            </h2>
-            <div id="chart--timeSeries" style="height: 400px;"></div>
-          </div>
-        </div>
-        <div class="column is-5">
+        <div class="column is-6">
           <div class="box">
             <h2 class="title is-4">By Assigned To (Top 10)</h2>
             <div id="chart--byAssignedTo" style="height: 400px;"></div>
           </div>
         </div>
-      </div>
-
-      <!-- Charts Row 2 -->
-      <div class="columns">
         <div class="column is-6">
           <div class="box">
             <h2 class="title is-4">Tag Usage (Top 20)</h2>
             <div id="chart--tagCloud" style="height: 400px;"></div>
           </div>
         </div>
-        <div class="column is-6">
-          <div class="box">
-            <h2 class="title is-4">
-              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
-              Hot Zones
-            </h2>
-            <div class="map-gray" id="map--hotZones" style="height: 400px;"></div>
-          </div>
-        </div>
+      </div>
+
+      <!-- Charts Row 3 - Hot Zones (Full Width) -->
+      <div class="box">
+        <h2 class="title is-4">
+          <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+          Hot Zones
+        </h2>
+        <div class="map-gray" id="map--hotZones" style="height: 400px;"></div>
       </div>
     </div>
   </div>

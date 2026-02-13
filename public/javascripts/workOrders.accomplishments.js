@@ -135,9 +135,9 @@
             });
             return;
         }
-        const categories = byAssignedTo.map((item) => item.assignedToName);
-        const openedData = byAssignedTo.map((item) => item.openedCount);
-        const closedData = byAssignedTo.map((item) => item.closedCount);
+        const categories = byAssignedTo.map((item) => item.assignedToName).toReversed();
+        const openedData = byAssignedTo.map((item) => item.openedCount).toReversed();
+        const closedData = byAssignedTo.map((item) => item.closedCount).toReversed();
         byAssignedToChart.setOption({
             title: { show: false },
             legend: {
@@ -206,8 +206,8 @@
         }
         // Use top 20 tags for better visualization
         const topTags = tags.slice(0, 20);
-        const tagNames = topTags.map((tag) => tag.tagName);
-        const tagCounts = topTags.map((tag) => tag.count);
+        const tagNames = topTags.map((tag) => tag.tagName).toReversed();
+        const tagCounts = topTags.map((tag) => tag.count).toReversed();
         tagCloudChart.setOption({
             title: { show: false },
             series: [
