@@ -1,3 +1,4 @@
+import { getIconListByStyle } from '@cityssm/fontawesome-free-lists'
 import type { Request, Response } from 'express'
 
 import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
@@ -10,6 +11,8 @@ export default async function handler(
 ): Promise<void> {
   const dataLists = await getDataLists()
   const userGroups = await getUserGroups()
+
+  const iconClasses = await getIconListByStyle('solid')
 
   // Get items for each data list
   const dataListsWithItems = await Promise.all(
@@ -24,6 +27,7 @@ export default async function handler(
     section: 'admin',
 
     dataLists: dataListsWithItems,
+    iconClasses,
     userGroups
   })
 }
