@@ -1,19 +1,27 @@
+/* eslint-disable max-lines -- Large file */
+// Store the icon list globally to avoid re-fetching
 let availableIcons = null;
 let iconsFetching = false;
 async function populateIconDatalist() {
     if (availableIcons === null && !iconsFetching) {
         iconsFetching = true;
         try {
+            // Dynamically import the function
             const { getIconListByStyle } = await import('@cityssm/fontawesome-free-lists');
+            // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
             availableIcons = await getIconListByStyle('solid', '7.2.0');
         }
         catch {
+            // If import fails, use empty array
+            // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
             availableIcons = [];
         }
         finally {
+            // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
             iconsFetching = false;
         }
     }
+    // Populate the datalist
     const datalist = document.querySelector('#iconClass-datalist');
     if (datalist !== null && availableIcons.length > 0) {
         datalist.innerHTML = '';
@@ -24,6 +32,11 @@ async function populateIconDatalist() {
         }
     }
 }
+/**
+ * Updates the icon preview in a modal
+ * @param modalElement - The modal element containing the inputs
+ * @param modalPrefix - The prefix for the input IDs ('addDataListItem' or 'editDataListItem')
+ */
 function updateIconPreview(modalElement, modalPrefix) {
     const colorInput = modalElement.querySelector(`#${modalPrefix}--colorHex`);
     const iconInput = modalElement.querySelector(`#${modalPrefix}--iconClass`);
@@ -31,11 +44,14 @@ function updateIconPreview(modalElement, modalPrefix) {
     if (colorInput !== null &&
         iconInput !== null &&
         previewElement !== null) {
+        // Get color value (color input returns #RRGGBB format)
         const colorValue = colorInput.value;
+        // Get icon class and validate
         const iconClassTrimmed = iconInput.value.trim();
         const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
             ? iconClassTrimmed
             : 'circle';
+        // Update preview
         const iconElement = previewElement.querySelector('i');
         if (iconElement !== null) {
             iconElement.className = `fa-solid fa-${iconClass}`;
@@ -43,22 +59,31 @@ function updateIconPreview(modalElement, modalPrefix) {
         }
     }
 }
+/**
+ * Sets up color and icon change listeners for a modal
+ * @param modalElement - The modal element containing the inputs
+ * @param modalPrefix - The prefix for the input IDs ('addDataListItem' or 'editDataListItem')
+ */
 function setupIconPreviewListeners(modalElement, modalPrefix) {
     const colorInput = modalElement.querySelector(`#${modalPrefix}--colorHex`);
     const iconInput = modalElement.querySelector(`#${modalPrefix}--iconClass`);
     if (colorInput !== null && iconInput !== null) {
+        // Update preview when color changes
         colorInput.addEventListener('input', () => {
             updateIconPreview(modalElement, modalPrefix);
         });
+        // Update preview when icon class changes
         iconInput.addEventListener('input', () => {
             updateIconPreview(modalElement, modalPrefix);
         });
+        // Initial preview update
         updateIconPreview(modalElement, modalPrefix);
     }
 }
 ;
 (() => {
     const shiftLog = exports.shiftLog;
+    // Track Sortable instances to prevent duplicates
     const sortableInstances = new Map();
     function updateItemCount(dataListKey, count) {
         const countElement = document.querySelector(`#itemCount--${dataListKey}`);
@@ -72,9 +97,10 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         if (tbodyElement === null) {
             return;
         }
+        // Update the item count tag
         updateItemCount(dataListKey, items.length);
         if (items.length === 0) {
-            tbodyElement.innerHTML = `
+            tbodyElement.innerHTML = /* html */ `
         <tr>
           <td class="has-text-centered has-text-grey" colspan="5">
             No items in this list. Click "Add Item" to create one.
@@ -83,6 +109,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
       `;
             return;
         }
+        // Clear existing items
         tbodyElement.innerHTML = '';
         for (const item of items) {
             const userGroup = item.userGroupId
@@ -91,17 +118,20 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             const userGroupDisplay = userGroup
                 ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
                 : '<span class="has-text-grey-light">-</span>';
+            // Sanitize colorHex (must be 6 hex digits)
             const colorHexTrimmed = (item.colorHex || '').trim();
             const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
                 ? colorHexTrimmed
                 : '000000';
+            // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers)
             const iconClassTrimmed = (item.iconClass || '').trim();
             const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
                 ? iconClassTrimmed
                 : 'circle';
             const tableRowElement = document.createElement('tr');
             tableRowElement.dataset.dataListItemId = item.dataListItemId.toString();
-            tableRowElement.innerHTML = `
+            // eslint-disable-next-line no-unsanitized/property
+            tableRowElement.innerHTML = /* html */ `
         <td class="has-text-centered">
           <span class="icon is-small has-text-grey handle" style="cursor: move;">
             <i class="fa-solid fa-grip-vertical"></i>
@@ -154,27 +184,35 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
       `;
             tbodyElement.append(tableRowElement);
         }
+        // Re-attach event listeners
         attachEventListeners(dataListKey);
+        // Re-initialize sortable
         initializeSortable(dataListKey);
     }
     function renderAllDataLists(dataLists) {
+        // Update the global dataLists
         exports.dataLists = dataLists;
+        // Find the container that holds all the detail panels
         const messageBlock = document.querySelector('.message.is-info');
         if (messageBlock === null) {
+            // Fallback to page reload if we can't find the container
             globalThis.location.reload();
             return;
         }
+        // Get the parent that contains all the panels
         const panelsContainer = messageBlock.parentElement;
         if (panelsContainer === null) {
             globalThis.location.reload();
             return;
         }
+        // Remove all existing panels
         const existingPanels = panelsContainer.querySelectorAll('details.panel');
         for (const panel of existingPanels) {
             panel.remove();
         }
+        // Re-render all panels from scratch
         for (const dataList of dataLists) {
-            const panelHtml = `
+            const panelHtml = /* html */ `
         <details class="panel mb-5 collapsable-panel" data-data-list-key="${cityssm.escapeHTML(dataList.dataListKey)}" data-is-system-list="${dataList.isSystemList}">
           <summary class="panel-heading is-clickable">
             <span class="icon-text">
@@ -194,7 +232,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             <div class="columns is-mobile">
               ${dataList.isSystemList
                 ? ''
-                : `
+                : /* html */ `
                     <div class="column is-narrow">
                       <button
                         class="button is-info is-small button--renameDataList"
@@ -291,38 +329,48 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         </details>
       `;
             const tempDiv = document.createElement('div');
+            // eslint-disable-next-line no-unsanitized/property
             tempDiv.innerHTML = panelHtml;
             const panelElement = tempDiv.firstElementChild;
             if (panelElement !== null) {
                 panelsContainer.append(panelElement);
+                // Render items for this list (use items variable which has the default)
                 renderDataListItems(dataList.dataListKey, dataList.items);
+                // Initialize sortable for this list
                 initializeSortable(dataList.dataListKey);
             }
         }
-        bulmaJS.init(panelsContainer);
+        // Re-attach all event listeners
+        bulmaJS.init(panelsContainer); // Re-initialize dropdowns for new content
         attachAllEventListeners();
     }
     function attachAllEventListeners() {
+        // Add Data List button
         const addDataListButton = document.querySelector('.button--addDataList');
         if (addDataListButton !== null) {
             addDataListButton.addEventListener('click', addDataList);
         }
+        // Rename Data List buttons
         const renameButtons = document.querySelectorAll('.button--renameDataList');
         for (const button of renameButtons) {
             button.addEventListener('click', renameDataList);
         }
+        // Delete Data List buttons
         const deleteDataListButtons = document.querySelectorAll('.button--deleteDataList');
         for (const button of deleteDataListButtons) {
             button.addEventListener('click', deleteDataList);
         }
+        // Add item buttons
         const addButtons = document.querySelectorAll('.button--addItem');
         for (const button of addButtons) {
             button.addEventListener('click', addDataListItem);
         }
+        // Add multiple items buttons
         const addMultipleButtons = document.querySelectorAll('.button--addMultipleItems');
         for (const button of addMultipleButtons) {
             button.addEventListener('click', addMultipleDataListItems);
         }
+        // Re-attach event listeners for each data list's items
         for (const dataList of exports.dataLists) {
             attachEventListeners(dataList.dataListKey);
         }
@@ -339,11 +387,12 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             if (dataListKeySuffix === '' || dataListName === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
-                    title: 'Required Fields',
-                    message: 'Please fill in all required fields.'
+                    message: 'Please fill in all required fields.',
+                    title: 'Required Fields'
                 });
                 return;
             }
+            // Prepend "user-" to the key
             const dataListKey = `user-${dataListKeySuffix}`;
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataList`, {
                 dataListKey,
@@ -351,6 +400,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             }, (responseJSON) => {
                 if (responseJSON.success && responseJSON.dataLists !== undefined) {
                     closeModalFunction();
+                    // Render the updated list
                     renderAllDataLists(responseJSON.dataLists);
                     const message = responseJSON.wasRecovered
                         ? 'The previously deleted data list has been recovered.'
@@ -374,6 +424,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         }
         cityssm.openHtmlModal('adminDataLists-addDataList', {
             onshow(modalElement) {
+                // Attach form submit handler
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddDataList);
@@ -381,6 +432,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+                // Focus the key input
                 const keyInput = modalElement.querySelector('#addDataList--dataListKey');
                 keyInput.focus();
             },
@@ -405,8 +457,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             if (newDataListName === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
-                    title: 'Name Required',
-                    message: 'Please enter a display name.'
+                    message: 'Please enter a display name.',
+                    title: 'Name Required'
                 });
                 return;
             }
@@ -431,10 +483,13 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         }
         cityssm.openHtmlModal('adminDataLists-editDataList', {
             onshow(modalElement) {
+                // Set the data list key
                 const dataListKeyInput = modalElement.querySelector('#editDataList--dataListKey');
                 dataListKeyInput.value = dataListKey;
+                // Set the data list name
                 const dataListNameInput = modalElement.querySelector('#editDataList--dataListName');
                 dataListNameInput.value = dataListName;
+                // Attach form submit handler
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateDataList);
@@ -442,6 +497,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+                // Focus and select the input
                 const nameInput = modalElement.querySelector('#editDataList--dataListName');
                 nameInput.focus();
                 nameInput.select();
@@ -470,6 +526,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                     }, (responseJSON) => {
                         if (responseJSON.success &&
                             responseJSON.dataLists !== undefined) {
+                            // Render the updated list
                             renderAllDataLists(responseJSON.dataLists);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -513,13 +570,15 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 });
                 return;
             }
+            // Convert color from #RRGGBB format to RRGGBB format
             const colorHexValue = formData.get('colorHex');
-            if (colorHexValue?.startsWith('#') === true) {
+            if (colorHexValue?.startsWith('#')) {
                 formData.set('colorHex', colorHexValue.slice(1));
             }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (responseJSON) => {
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
+                    // Open the details panel if it's closed
                     const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
                     if (detailsElement !== null && !detailsElement.open) {
                         detailsElement.open = true;
@@ -542,12 +601,17 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         }
         cityssm.openHtmlModal('adminDataLists-addItem', {
             onshow(modalElement) {
+                // Set the modal title
                 const titleElement = modalElement.querySelector('#addDataListItem--title');
                 titleElement.textContent = `Add "${dataList.dataListName}" Item`;
+                // Set the data list key
                 const dataListKeyInput = modalElement.querySelector('#addDataListItem--dataListKey');
                 dataListKeyInput.value = dataListKey;
+                // Populate icon datalist
                 populateIconDatalist().catch(() => {
+                    // Silently fail if icons can't be loaded
                 });
+                // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#addDataListItem--userGroupId');
                 userGroupSelect.innerHTML =
                     '<option value="">None (Available to All)</option>';
@@ -557,14 +621,17 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                     option.textContent = userGroup.userGroupName;
                     userGroupSelect.append(option);
                 }
+                // Attach form submit handler
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddDataListItem);
+                // Setup icon preview listeners
                 setupIconPreviewListeners(modalElement, 'addDataListItem');
             },
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+                // Focus the item name input
                 const itemInput = modalElement.querySelector('#addDataListItem--dataListItem');
                 itemInput.focus();
             },
@@ -593,14 +660,15 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             if (dataListItemsToAdd === '') {
                 bulmaJS.alert({
                     contextualColorName: 'warning',
-                    title: 'Items Required',
-                    message: 'Please enter at least one item name.'
+                    message: 'Please enter at least one item name.',
+                    title: 'Items Required'
                 });
                 return;
             }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddMultipleDataListItems`, addForm, (responseJSON) => {
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
+                    // Open the details panel if it's closed
                     const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
                     if (detailsElement !== null && !detailsElement.open) {
                         detailsElement.open = true;
@@ -636,10 +704,13 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         }
         cityssm.openHtmlModal('adminDataLists-addMultipleItems', {
             onshow(modalElement) {
+                // Set the modal title
                 const titleElement = modalElement.querySelector('#addMultipleDataListItems--title');
                 titleElement.textContent = `Add Multiple ${dataList.dataListName} Items`;
+                // Set the data list key
                 const dataListKeyInput = modalElement.querySelector('#addMultipleDataListItems--dataListKey');
                 dataListKeyInput.value = dataListKey;
+                // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#addMultipleDataListItems--userGroupId');
                 userGroupSelect.innerHTML =
                     '<option value="">None (Available to All)</option>';
@@ -649,9 +720,11 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                     option.textContent = userGroup.userGroupName;
                     userGroupSelect.append(option);
                 }
+                // Attach form submit handler
                 modalElement
                     .querySelector('#form--addMultipleDataListItems')
                     ?.addEventListener('submit', doAddMultipleDataListItems);
+                // Focus the textarea
                 const textareaInput = modalElement.querySelector('#addMultipleDataListItems--dataListItems');
                 textareaInput.focus();
             },
@@ -695,8 +768,9 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 });
                 return;
             }
+            // Convert color from #RRGGBB format to RRGGBB format
             const colorHexValue = formData.get('colorHex');
-            if (colorHexValue?.startsWith('#') === true) {
+            if (colorHexValue?.startsWith('#')) {
                 formData.set('colorHex', colorHexValue.slice(1));
             }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (responseJSON) => {
@@ -720,23 +794,31 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         }
         cityssm.openHtmlModal('adminDataLists-editItem', {
             onshow(modalElement) {
+                // Set the modal title
                 const titleElement = modalElement.querySelector('#editDataListItem--title');
                 titleElement.textContent = `Edit "${dataList.dataListName}" Item`;
+                // Set the hidden fields
                 const dataListKeyInput = modalElement.querySelector('#editDataListItem--dataListKey');
                 dataListKeyInput.value = dataListKey;
                 const dataListItemIdInput = modalElement.querySelector('#editDataListItem--dataListItemId');
                 dataListItemIdInput.value = dataListItemId;
+                // Set the item name
                 const dataListItemInput = modalElement.querySelector('#editDataListItem--dataListItem');
                 dataListItemInput.value = dataListItem;
+                // Set the colorHex (convert from RRGGBB format to #RRGGBB format for color input)
                 const colorHexInput = modalElement.querySelector('#editDataListItem--colorHex');
                 const colorHexValue = colorHex ?? '000000';
                 colorHexInput.value = colorHexValue.startsWith('#')
                     ? colorHexValue
                     : `#${colorHexValue}`;
+                // Set the iconClass
                 const iconClassInput = modalElement.querySelector('#editDataListItem--iconClass');
                 iconClassInput.value = iconClass ?? 'circle';
+                // Populate icon datalist
                 populateIconDatalist().catch(() => {
+                    // Silently fail if icons can't be loaded
                 });
+                // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#editDataListItem--userGroupId');
                 userGroupSelect.innerHTML =
                     '<option value="">None (Available to All)</option>';
@@ -750,14 +832,17 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                     }
                     userGroupSelect.append(option);
                 }
+                // Attach form submit handler
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateDataListItem);
+                // Setup icon preview listeners
                 setupIconPreviewListeners(modalElement, 'editDataListItem');
             },
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
+                // Focus and select the input
                 const itemInput = modalElement.querySelector('#editDataListItem--dataListItem');
                 itemInput.focus();
                 itemInput.select();
@@ -789,8 +874,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 text: 'Delete Item',
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataListItem`, {
-                        dataListKey,
-                        dataListItemId: Number.parseInt(dataListItemId, 10)
+                        dataListItemId: Number.parseInt(dataListItemId, 10),
+                        dataListKey
                     }, (responseJSON) => {
                         if (responseJSON.success && responseJSON.items !== undefined) {
                             renderDataListItems(dataListKey, responseJSON.items);
@@ -817,10 +902,12 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         if (section === null) {
             return;
         }
+        // Edit buttons
         const editButtons = section.querySelectorAll('.button--editItem');
         for (const button of editButtons) {
             button.addEventListener('click', editDataListItem);
         }
+        // Delete buttons
         const deleteButtons = section.querySelectorAll('.button--deleteItem');
         for (const button of deleteButtons) {
             button.addEventListener('click', deleteDataListItem);
@@ -831,8 +918,10 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         if (tbodyElement === null) {
             return;
         }
+        // Check if the tbody has any sortable items (rows with data-data-list-item-id)
         const hasItems = tbodyElement.querySelectorAll('tr[data-data-list-item-id]').length > 0;
         if (!hasItems) {
+            // Destroy existing instance if no items
             const existingInstance = sortableInstances.get(dataListKey);
             if (existingInstance !== undefined) {
                 existingInstance.destroy();
@@ -840,14 +929,17 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             }
             return;
         }
+        // Destroy existing Sortable instance before creating a new one
         const existingInstance = sortableInstances.get(dataListKey);
         if (existingInstance !== undefined) {
             existingInstance.destroy();
         }
+        // Create new Sortable instance
         const sortableInstance = Sortable.create(tbodyElement, {
-            handle: '.handle',
             animation: 150,
+            handle: '.handle',
             onEnd() {
+                // Get the new order
                 const rows = tbodyElement.querySelectorAll('tr[data-data-list-item-id]');
                 const dataListItemIds = [];
                 for (const row of rows) {
@@ -856,9 +948,10 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                         dataListItemIds.push(Number.parseInt(dataListItemId, 10));
                     }
                 }
+                // Send to server
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderDataListItems`, {
-                    dataListKey,
-                    dataListItemIds
+                    dataListItemIds,
+                    dataListKey
                 }, (responseJSON) => {
                     if (!responseJSON.success) {
                         bulmaJS.alert({
@@ -870,6 +963,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 });
             }
         });
+        // Store the instance for future reference
         sortableInstances.set(dataListKey, sortableInstance);
     }
     renderAllDataLists(exports.dataLists);
