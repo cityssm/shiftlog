@@ -2,10 +2,10 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface DataListItemWithDetails {
+  colorHex: string
+  dataListItem: string
   dataListItemId: number
   dataListKey: string
-  dataListItem: string
-  colorHex: string
   iconClass: string
   orderNumber: number
   userGroupId: number | null

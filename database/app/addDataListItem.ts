@@ -7,9 +7,9 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 const debug = Debug(`${DEBUG_NAMESPACE}:database:addDataListItem`)
 
 export interface AddDataListItemForm {
-  dataListKey: string
-  dataListItem: string
   colorHex?: string
+  dataListItem: string
+  dataListKey: string
   iconClass?: string
   userGroupId?: number | string | null
   userName: string

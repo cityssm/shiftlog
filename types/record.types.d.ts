@@ -57,10 +57,10 @@ export interface UserGroup extends BaseRecord {
     members?: string[];
 }
 export interface DataListItem extends BaseRecord {
+    colorHex: string;
+    dataListItem: string;
     dataListItemId: number;
     dataListKey: string;
-    dataListItem: string;
-    colorHex: string;
     iconClass: string;
     userGroupId?: number | null;
     userGroupName?: string;

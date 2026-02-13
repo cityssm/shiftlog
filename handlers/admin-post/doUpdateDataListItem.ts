@@ -9,8 +9,8 @@ import updateDataListItem, {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoUpdateDataListItemResponse = {
-  success: boolean
   items?: DataListItemWithDetails[]
+  success: boolean
 }
 
 export default async function handler(
@@ -22,12 +22,12 @@ export default async function handler(
   response: Response<DoUpdateDataListItemResponse>
 ): Promise<void> {
   const form = {
-    dataListItemId: request.body.dataListItemId,
-    dataListItem: request.body.dataListItem,
     colorHex: request.body.colorHex,
+    dataListItem: request.body.dataListItem,
+    dataListItemId: request.body.dataListItemId,
     iconClass: request.body.iconClass,
-    userName: request.session.user?.userName ?? '',
-    userGroupId: request.body.userGroupId
+    userGroupId: request.body.userGroupId,
+    userName: request.session.user?.userName ?? ''
   }
 
   const success = await updateDataListItem(form)
@@ -39,7 +39,7 @@ export default async function handler(
   }
 
   response.json({
-    success,
-    items
+    items,
+    success
   })
 }

@@ -1,7 +1,7 @@
 export interface UpdateDataListItemForm {
-    dataListItemId: number;
-    dataListItem: string;
     colorHex?: string;
+    dataListItem: string;
+    dataListItemId: number;
     iconClass?: string;
     userGroupId?: number | string | null;
     userName: string;

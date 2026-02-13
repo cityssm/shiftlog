@@ -1,8 +1,8 @@
 export interface DataListItemWithDetails {
+    colorHex: string;
+    dataListItem: string;
     dataListItemId: number;
     dataListKey: string;
-    dataListItem: string;
-    colorHex: string;
     iconClass: string;
     orderNumber: number;
     userGroupId: number | null;

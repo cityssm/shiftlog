@@ -1,7 +1,7 @@
 export interface AddDataListItemForm {
-    dataListKey: string;
-    dataListItem: string;
     colorHex?: string;
+    dataListItem: string;
+    dataListKey: string;
     iconClass?: string;
     userGroupId?: number | string | null;
     userName: string;
