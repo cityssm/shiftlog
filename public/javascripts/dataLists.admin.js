@@ -607,10 +607,6 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 // Set the data list key
                 const dataListKeyInput = modalElement.querySelector('#addDataListItem--dataListKey');
                 dataListKeyInput.value = dataListKey;
-                // Populate icon datalist
-                populateIconDatalist().catch(() => {
-                    // Silently fail if icons can't be loaded
-                });
                 // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#addDataListItem--userGroupId');
                 userGroupSelect.innerHTML =
@@ -814,10 +810,6 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 // Set the iconClass
                 const iconClassInput = modalElement.querySelector('#editDataListItem--iconClass');
                 iconClassInput.value = iconClass ?? 'circle';
-                // Populate icon datalist
-                populateIconDatalist().catch(() => {
-                    // Silently fail if icons can't be loaded
-                });
                 // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#editDataListItem--userGroupId');
                 userGroupSelect.innerHTML =
@@ -966,5 +958,9 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         // Store the instance for future reference
         sortableInstances.set(dataListKey, sortableInstance);
     }
+    // Populate icon datalist on page load
+    populateIconDatalist().catch(() => {
+        // Silently fail if icons can't be loaded
+    });
     renderAllDataLists(exports.dataLists);
 })();

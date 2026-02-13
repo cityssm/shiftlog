@@ -843,11 +843,6 @@ function setupIconPreviewListeners(
         ) as HTMLInputElement
         dataListKeyInput.value = dataListKey
 
-        // Populate icon datalist
-        populateIconDatalist().catch(() => {
-          // Silently fail if icons can't be loaded
-        })
-
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
           '#addDataListItem--userGroupId'
@@ -1147,11 +1142,6 @@ function setupIconPreviewListeners(
         ) as HTMLInputElement
         iconClassInput.value = iconClass ?? 'circle'
 
-        // Populate icon datalist
-        populateIconDatalist().catch(() => {
-          // Silently fail if icons can't be loaded
-        })
-
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
           '#editDataListItem--userGroupId'
@@ -1359,6 +1349,11 @@ function setupIconPreviewListeners(
     // Store the instance for future reference
     sortableInstances.set(dataListKey, sortableInstance)
   }
+
+  // Populate icon datalist on page load
+  populateIconDatalist().catch(() => {
+    // Silently fail if icons can't be loaded
+  })
 
   renderAllDataLists(exports.dataLists)
 })()
