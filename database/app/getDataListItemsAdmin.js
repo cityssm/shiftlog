@@ -6,7 +6,7 @@ export default async function getDataListItemsAdmin(dataListKey) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('dataListKey', dataListKey)
-        .query(`
+        .query(/* sql */ `
       SELECT
         dataListItemId,
         dataListKey,

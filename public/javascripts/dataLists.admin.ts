@@ -25,8 +25,8 @@ declare const Sortable: {
   create: (
     element: HTMLElement,
     options: {
-      handle: string
       animation: number
+      handle: string
       onEnd: () => void
     }
   ) => SortableInstance
@@ -50,9 +50,9 @@ interface DataListWithItems {
 }
 
 interface UserGroup {
+  memberCount?: number
   userGroupId: number
   userGroupName: string
-  memberCount?: number
 }
 
 declare const exports: {
@@ -81,6 +81,7 @@ async function populateIconDatalist(): Promise<void> {
       // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
       availableIcons = []
     } finally {
+      // eslint-disable-next-line require-atomic-updates -- False positive, checked null before async call
       iconsFetching = false
     }
   }
@@ -534,8 +535,8 @@ function setupIconPreviewListeners(
       if (dataListKeySuffix === '' || dataListName === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
-          title: 'Required Fields',
-          message: 'Please fill in all required fields.'
+          message: 'Please fill in all required fields.',
+          title: 'Required Fields'
         })
         return
       }
@@ -627,8 +628,8 @@ function setupIconPreviewListeners(
       if (newDataListName === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
-          title: 'Name Required',
-          message: 'Please enter a display name.'
+          message: 'Please enter a display name.',
+          title: 'Name Required'
         })
         return
       }
@@ -787,8 +788,8 @@ function setupIconPreviewListeners(
       }
 
       // Convert color from #RRGGBB format to RRGGBB format
-      const colorHexValue = formData.get('colorHex') as string
-      if (colorHexValue?.startsWith('#') === true) {
+      const colorHexValue = formData.get('colorHex') as string | null
+      if (colorHexValue?.startsWith('#')) {
         formData.set('colorHex', colorHexValue.slice(1))
       }
 
@@ -920,8 +921,8 @@ function setupIconPreviewListeners(
       if (dataListItemsToAdd === '') {
         bulmaJS.alert({
           contextualColorName: 'warning',
-          title: 'Items Required',
-          message: 'Please enter at least one item name.'
+          message: 'Please enter at least one item name.',
+          title: 'Items Required'
         })
         return
       }
@@ -1075,8 +1076,8 @@ function setupIconPreviewListeners(
       }
 
       // Convert color from #RRGGBB format to RRGGBB format
-      const colorHexValue = formData.get('colorHex') as string
-      if (colorHexValue?.startsWith('#') === true) {
+      const colorHexValue = formData.get('colorHex') as string | null
+      if (colorHexValue?.startsWith('#')) {
         formData.set('colorHex', colorHexValue.slice(1))
       }
 
@@ -1234,8 +1235,8 @@ function setupIconPreviewListeners(
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteDataListItem`,
             {
-              dataListKey,
-              dataListItemId: Number.parseInt(dataListItemId, 10)
+              dataListItemId: Number.parseInt(dataListItemId, 10),
+              dataListKey
             },
             (responseJSON: DoDeleteDataListItemResponse) => {
               if (responseJSON.success && responseJSON.items !== undefined) {
@@ -1317,8 +1318,8 @@ function setupIconPreviewListeners(
 
     // Create new Sortable instance
     const sortableInstance = Sortable.create(tbodyElement, {
-      handle: '.handle',
       animation: 150,
+      handle: '.handle',
       onEnd() {
         // Get the new order
         const rows = tbodyElement.querySelectorAll(
@@ -1338,8 +1339,8 @@ function setupIconPreviewListeners(
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doReorderDataListItems`,
           {
-            dataListKey,
-            dataListItemIds
+            dataListItemIds,
+            dataListKey
           },
           (responseJSON: DoReorderDataListItemsResponse) => {
             if (!responseJSON.success) {

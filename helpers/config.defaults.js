@@ -7,7 +7,7 @@ export const configDefaultValues = {
     'application.instance': '',
     'application.httpPort': 9000,
     'application.maximumProcesses': 4,
-    'application.attachmentMaximumFileSizeBytes': 20 * 1024 * 1024,
+    'application.attachmentMaximumFileSizeBytes': 20 * 1024 * 1024, // 20 MB
     'application.attachmentStoragePath': 'data/attachments',
     'login.authentication': undefined,
     'login.domain': '',
@@ -27,33 +27,40 @@ export const configDefaultValues = {
     'connectors.ntfy.serverUrl': DEFAULT_NTFY_SERVER,
     'connectors.pearl': undefined,
     'connectors.email': undefined,
+    // Shifts
     'shifts.isEnabled': false,
     'shifts.router': 'shifts',
     'shifts.sectionName': 'Shifts',
     'shifts.sectionNameSingular': 'Shift',
     'shifts.iconClass': 'fa-calendar-day',
+    // Work Orders
     'workOrders.isEnabled': false,
     'workOrders.router': 'workOrders',
     'workOrders.sectionName': 'Work Orders',
     'workOrders.sectionNameSingular': 'Work Order',
     'workOrders.iconClass': 'fa-hard-hat',
+    // Timesheets
     'timesheets.isEnabled': false,
     'timesheets.router': 'timesheets',
     'timesheets.sectionName': 'Timesheets',
     'timesheets.sectionNameSingular': 'Timesheet',
     'timesheets.iconClass': 'fa-clock',
+    // Employees
     employees: {
         syncSource: ''
     },
     'employees.syncSource': '',
+    // Equipment
     equipment: {
         syncSource: ''
     },
     'equipment.syncSource': '',
+    // Locations
     locations: {
         syncSource: ''
     },
     'locations.syncSource': '',
+    // Notifications
     'notifications.protocols': []
 };
 export default configDefaultValues;

@@ -10,7 +10,7 @@ export default async function createDataList(form, userName) {
             .input('dataListName', form.dataListName)
             .input('isSystemList', form.isSystemList)
             .input('userName', userName)
-            .query(`
+            .query(/* sql */ `
         INSERT INTO
           ShiftLog.DataLists (
             instance,
