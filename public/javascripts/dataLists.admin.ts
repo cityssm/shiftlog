@@ -97,6 +97,80 @@ async function populateIconDatalist(): Promise<void> {
   }
 }
 
+/**
+ * Updates the icon preview in a modal
+ * @param modalElement - The modal element containing the inputs
+ * @param modalPrefix - The prefix for the input IDs ('addDataListItem' or 'editDataListItem')
+ */
+function updateIconPreview(
+  modalElement: HTMLElement,
+  modalPrefix: 'addDataListItem' | 'editDataListItem'
+): void {
+  const colorInput = modalElement.querySelector(
+    `#${modalPrefix}--colorHex`
+  ) as HTMLInputElement | null
+  const iconInput = modalElement.querySelector(
+    `#${modalPrefix}--iconClass`
+  ) as HTMLInputElement | null
+  const previewElement = modalElement.querySelector(
+    `#${modalPrefix}--iconPreview`
+  ) as HTMLElement | null
+
+  if (
+    colorInput !== null &&
+    iconInput !== null &&
+    previewElement !== null
+  ) {
+    // Get color value (color input returns #RRGGBB format)
+    const colorValue = colorInput.value
+
+    // Get icon class and validate
+    const iconClassTrimmed = iconInput.value.trim()
+    const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+      ? iconClassTrimmed
+      : 'circle'
+
+    // Update preview
+    const iconElement = previewElement.querySelector('i')
+    if (iconElement !== null) {
+      iconElement.className = `fa-solid fa-${iconClass}`
+      previewElement.style.color = colorValue
+    }
+  }
+}
+
+/**
+ * Sets up color and icon change listeners for a modal
+ * @param modalElement - The modal element containing the inputs
+ * @param modalPrefix - The prefix for the input IDs ('addDataListItem' or 'editDataListItem')
+ */
+function setupIconPreviewListeners(
+  modalElement: HTMLElement,
+  modalPrefix: 'addDataListItem' | 'editDataListItem'
+): void {
+  const colorInput = modalElement.querySelector(
+    `#${modalPrefix}--colorHex`
+  ) as HTMLInputElement | null
+  const iconInput = modalElement.querySelector(
+    `#${modalPrefix}--iconClass`
+  ) as HTMLInputElement | null
+
+  if (colorInput !== null && iconInput !== null) {
+    // Update preview when color changes
+    colorInput.addEventListener('input', () => {
+      updateIconPreview(modalElement, modalPrefix)
+    })
+
+    // Update preview when icon class changes
+    iconInput.addEventListener('input', () => {
+      updateIconPreview(modalElement, modalPrefix)
+    })
+
+    // Initial preview update
+    updateIconPreview(modalElement, modalPrefix)
+  }
+}
+
 ;(() => {
   const shiftLog = exports.shiftLog
 
@@ -131,7 +205,7 @@ async function populateIconDatalist(): Promise<void> {
     if (items.length === 0) {
       tbodyElement.innerHTML = /* html */ `
         <tr>
-          <td class="has-text-centered has-text-grey" colspan="4">
+          <td class="has-text-centered has-text-grey" colspan="5">
             No items in this list. Click "Add Item" to create one.
           </td>
         </tr>
@@ -173,10 +247,12 @@ async function populateIconDatalist(): Promise<void> {
             <i class="fa-solid fa-grip-vertical"></i>
           </span>
         </td>
-        <td>
+        <td class="has-text-centered">
           <span class="icon is-small" style="color: #${cityssm.escapeHTML(colorHex)};">
             <i class="fa-solid fa-${cityssm.escapeHTML(iconClass)}"></i>
           </span>
+        </td>
+        <td>
           <span class="item-text">
             ${cityssm.escapeHTML(item.dataListItem)}
           </span>
@@ -359,6 +435,7 @@ async function populateIconDatalist(): Promise<void> {
                 <thead>
                   <tr>
                     <th class="has-text-centered" style="width: 60px;">Order</th>
+                    <th class="has-text-centered" style="width: 60px;">Icon</th>
                     <th>Item</th>
                     <th style="width: 180px;">User Group</th>
                     <th>
@@ -709,6 +786,12 @@ async function populateIconDatalist(): Promise<void> {
         return
       }
 
+      // Convert color from #RRGGBB format to RRGGBB format
+      const colorHexValue = formData.get('colorHex') as string
+      if (colorHexValue?.startsWith('#') === true) {
+        formData.set('colorHex', colorHexValue.slice(1))
+      }
+
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddDataListItem`,
         addForm,
@@ -783,6 +866,9 @@ async function populateIconDatalist(): Promise<void> {
         modalElement
           .querySelector('form')
           ?.addEventListener('submit', doAddDataListItem)
+
+        // Setup icon preview listeners
+        setupIconPreviewListeners(modalElement, 'addDataListItem')
       },
       onshown(modalElement, closeFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -988,6 +1074,12 @@ async function populateIconDatalist(): Promise<void> {
         return
       }
 
+      // Convert color from #RRGGBB format to RRGGBB format
+      const colorHexValue = formData.get('colorHex') as string
+      if (colorHexValue?.startsWith('#') === true) {
+        formData.set('colorHex', colorHexValue.slice(1))
+      }
+
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateDataListItem`,
         editForm,
@@ -1039,17 +1131,20 @@ async function populateIconDatalist(): Promise<void> {
         ) as HTMLInputElement
         dataListItemInput.value = dataListItem
 
-        // Set the colorHex
+        // Set the colorHex (convert from RRGGBB format to #RRGGBB format for color input)
         const colorHexInput = modalElement.querySelector(
           '#editDataListItem--colorHex'
         ) as HTMLInputElement
-        colorHexInput.value = colorHex ?? ''
+        const colorHexValue = colorHex ?? '000000'
+        colorHexInput.value = colorHexValue.startsWith('#')
+          ? colorHexValue
+          : `#${colorHexValue}`
 
         // Set the iconClass
         const iconClassInput = modalElement.querySelector(
           '#editDataListItem--iconClass'
         ) as HTMLInputElement
-        iconClassInput.value = iconClass ?? ''
+        iconClassInput.value = iconClass ?? 'circle'
 
         // Populate icon datalist
         populateIconDatalist().catch(() => {
@@ -1083,6 +1178,9 @@ async function populateIconDatalist(): Promise<void> {
         modalElement
           .querySelector('form')
           ?.addEventListener('submit', doUpdateDataListItem)
+
+        // Setup icon preview listeners
+        setupIconPreviewListeners(modalElement, 'editDataListItem')
       },
       onshown(modalElement, closeFunction) {
         bulmaJS.toggleHtmlClipped()

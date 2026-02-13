@@ -5,7 +5,7 @@ export default async function getDataLists() {
     const dataListsResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         dataListKey,
         dataListName,

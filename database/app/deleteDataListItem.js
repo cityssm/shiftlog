@@ -6,7 +6,7 @@ export default async function deleteDataListItem(form) {
             .request()
             .input('dataListItemId', form.dataListItemId)
             .input('userName', form.userName)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.DataListItems
         SET
           recordDelete_userName = @userName,
