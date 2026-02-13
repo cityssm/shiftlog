@@ -11,11 +11,8 @@
     // Set initial month
     monthElement.value = currentMonth.toString();
     // Chart instances
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let timeSeriesChart;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let byAssignedToChart;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tagCloudChart;
     let hotZonesMap;
     let hotZonesLayer;
@@ -58,8 +55,7 @@
             }
         }
         // Check if there's any data
-        if (timeSeries.length === 0 ||
-            timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
+        if (timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
             // Clear the chart completely before showing no-data message
             timeSeriesChart.clear();
             timeSeriesChart.setOption({
@@ -135,7 +131,9 @@
             });
             return;
         }
-        const categories = byAssignedTo.map((item) => item.assignedToName).toReversed();
+        const categories = byAssignedTo
+            .map((item) => item.assignedToName)
+            .toReversed();
         const openedData = byAssignedTo.map((item) => item.openedCount).toReversed();
         const closedData = byAssignedTo.map((item) => item.closedCount).toReversed();
         byAssignedToChart.setOption({
