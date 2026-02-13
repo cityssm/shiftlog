@@ -21,7 +21,7 @@ export default async function addDataListItem(
   const pool = await getShiftLogConnectionPool()
 
   // Sanitize colorHex (must be 6 hex digits)
-  const colorHexTrimmed = (form.colorHex ?? '').trim()
+  const colorHexTrimmed = (form.colorHex ?? '').trim().slice(-6)
   const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
     ? colorHexTrimmed
     : '000000'
