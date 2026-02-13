@@ -3,6 +3,8 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 export interface UpdateDataListItemForm {
   dataListItemId: number
   dataListItem: string
+  colorHex?: string
+  iconClass?: string
   userGroupId?: number | string | null
   userName: string
 }
@@ -17,6 +19,8 @@ export default async function updateDataListItem(
       .request()
       .input('dataListItemId', form.dataListItemId)
       .input('dataListItem', form.dataListItem)
+      .input('colorHex', (form.colorHex ?? '').trim() || '000000')
+      .input('iconClass', (form.iconClass ?? '').trim() || 'circle')
       .input(
         'userGroupId',
         (form.userGroupId ?? '') === '' ? null : form.userGroupId
@@ -26,6 +30,8 @@ export default async function updateDataListItem(
         UPDATE ShiftLog.DataListItems
         SET
           dataListItem = @dataListItem,
+          colorHex = @colorHex,
+          iconClass = @iconClass,
           userGroupId = @userGroupId,
           recordUpdate_userName = @userName,
           recordUpdate_dateTime = getdate()

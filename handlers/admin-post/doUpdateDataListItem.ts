@@ -24,6 +24,8 @@ export default async function handler(
   const form = {
     dataListItemId: request.body.dataListItemId,
     dataListItem: request.body.dataListItem,
+    colorHex: request.body.colorHex,
+    iconClass: request.body.iconClass,
     userName: request.session.user?.userName ?? '',
     userGroupId: request.body.userGroupId
   }

@@ -58,6 +58,8 @@ export default async function addDataListItem(form) {
             .input('instance', getConfigProperty('application.instance'))
             .input('dataListKey', form.dataListKey)
             .input('dataListItem', form.dataListItem)
+            .input('colorHex', (form.colorHex ?? '').trim() || '000000')
+            .input('iconClass', (form.iconClass ?? '').trim() || 'circle')
             .input('userGroupId', (form.userGroupId ?? '') === '' ? null : form.userGroupId)
             .input('userName', form.userName)
             .query(/* sql */ `
@@ -66,6 +68,8 @@ export default async function addDataListItem(form) {
             instance,
             dataListKey,
             dataListItem,
+            colorHex,
+            iconClass,
             userGroupId,
             orderNumber,
             recordCreate_userName,
@@ -75,6 +79,8 @@ export default async function addDataListItem(form) {
           @instance,
           @dataListKey,
           @dataListItem,
+          @colorHex,
+          @iconClass,
           @userGroupId,
           coalesce(max(orderNumber) + 1, 0),
           @userName,

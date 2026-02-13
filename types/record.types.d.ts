@@ -60,6 +60,8 @@ export interface DataListItem extends BaseRecord {
     dataListItemId: number;
     dataListKey: string;
     dataListItem: string;
+    colorHex: string;
+    iconClass: string;
     userGroupId?: number | null;
     userGroupName?: string;
 }

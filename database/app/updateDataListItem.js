@@ -6,12 +6,16 @@ export default async function updateDataListItem(form) {
             .request()
             .input('dataListItemId', form.dataListItemId)
             .input('dataListItem', form.dataListItem)
+            .input('colorHex', (form.colorHex ?? '').trim() || '000000')
+            .input('iconClass', (form.iconClass ?? '').trim() || 'circle')
             .input('userGroupId', (form.userGroupId ?? '') === '' ? null : form.userGroupId)
             .input('userName', form.userName)
             .query(/* sql */ `
         UPDATE ShiftLog.DataListItems
         SET
           dataListItem = @dataListItem,
+          colorHex = @colorHex,
+          iconClass = @iconClass,
           userGroupId = @userGroupId,
           recordUpdate_userName = @userName,
           recordUpdate_dateTime = getdate()

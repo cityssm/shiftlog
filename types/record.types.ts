@@ -80,6 +80,8 @@ export interface DataListItem extends BaseRecord {
   dataListKey: string
 
   dataListItem: string
+  colorHex: string
+  iconClass: string
 
   userGroupId?: number | null
   userGroupName?: string

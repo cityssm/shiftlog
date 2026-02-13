@@ -113,6 +113,9 @@ declare const exports: {
         ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
         : '<span class="has-text-grey-light">-</span>'
 
+      const colorHex = item.colorHex || '000000'
+      const iconClass = item.iconClass || 'circle'
+
       const tableRowElement = document.createElement('tr')
       tableRowElement.dataset.dataListItemId = item.dataListItemId.toString()
 
@@ -124,6 +127,9 @@ declare const exports: {
           </span>
         </td>
         <td>
+          <span class="icon is-small" style="color: #${cityssm.escapeHTML(colorHex)};">
+            <i class="fa-solid fa-${cityssm.escapeHTML(iconClass)}"></i>
+          </span>
           <span class="item-text">
             ${cityssm.escapeHTML(item.dataListItem)}
           </span>
@@ -138,6 +144,8 @@ declare const exports: {
               data-data-list-key="${cityssm.escapeHTML(dataListKey)}"
               data-data-list-item-id="${item.dataListItemId}"
               data-data-list-item="${cityssm.escapeHTML(item.dataListItem)}"
+              data-color-hex="${cityssm.escapeHTML(colorHex)}"
+              data-icon-class="${cityssm.escapeHTML(iconClass)}"
               data-user-group-id="${item.userGroupId ?? ''}"
               type="button"
             >
@@ -887,6 +895,8 @@ declare const exports: {
     const dataListKey = buttonElement.dataset.dataListKey
     const dataListItemId = buttonElement.dataset.dataListItemId
     const dataListItem = buttonElement.dataset.dataListItem
+    const colorHex = buttonElement.dataset.colorHex
+    const iconClass = buttonElement.dataset.iconClass
     const userGroupId = buttonElement.dataset.userGroupId
 
     if (
@@ -976,6 +986,18 @@ declare const exports: {
           '#editDataListItem--dataListItem'
         ) as HTMLInputElement
         dataListItemInput.value = dataListItem
+
+        // Set the colorHex
+        const colorHexInput = modalElement.querySelector(
+          '#editDataListItem--colorHex'
+        ) as HTMLInputElement
+        colorHexInput.value = colorHex ?? ''
+
+        // Set the iconClass
+        const iconClassInput = modalElement.querySelector(
+          '#editDataListItem--iconClass'
+        ) as HTMLInputElement
+        iconClassInput.value = iconClass ?? ''
 
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
