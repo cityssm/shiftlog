@@ -1,11 +1,13 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { EChartsType } from 'echarts/types/dist/echarts.js'
 import type Leaflet from 'leaflet'
 
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+
 declare const L: typeof Leaflet & {
   heatLayer: (
     latlngs: Array<[number, number, number]>,
@@ -19,8 +21,10 @@ declare const L: typeof Leaflet & {
     }
   ) => L.Layer
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const echarts: any
+
+declare const echarts: {
+  init: (dom: HTMLElement) => EChartsType
+}
 
 declare const exports: {
   currentMonth: number
@@ -74,15 +78,19 @@ interface WorkOrderAccomplishmentData {
   const yearElement = document.querySelector(
     '#filter--year'
   ) as HTMLInputElement
+
   const monthElement = document.querySelector(
     '#filter--month'
   ) as HTMLSelectElement
+
   const refreshButton = document.querySelector(
     '#button--refresh'
   ) as HTMLButtonElement
+
   const loadingContainer = document.querySelector(
     '#container--loading'
   ) as HTMLElement
+
   const dashboardContainer = document.querySelector(
     '#container--dashboard'
   ) as HTMLElement
@@ -91,12 +99,10 @@ interface WorkOrderAccomplishmentData {
   monthElement.value = currentMonth.toString()
 
   // Chart instances
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let timeSeriesChart: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let byAssignedToChart: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let tagCloudChart: any
+  let timeSeriesChart: EChartsType | undefined
+  let byAssignedToChart: EChartsType | undefined
+  let tagCloudChart: EChartsType | undefined
+
   let hotZonesMap: L.Map | undefined
   let hotZonesLayer: L.Layer | undefined
 
@@ -130,8 +136,10 @@ interface WorkOrderAccomplishmentData {
 
     document.querySelector('#kpi--totalOpened')!.textContent =
       totalOpened.toString()
+
     document.querySelector('#kpi--totalClosed')!.textContent =
       stats.totalClosed.toString()
+
     document.querySelector('#kpi--completionRate')!.textContent =
       `${stats.percentClosed.toFixed(1)}%`
   }
@@ -149,10 +157,7 @@ interface WorkOrderAccomplishmentData {
     }
 
     // Check if there's any data
-    if (
-      timeSeries.length === 0 ||
-      timeSeries.every((item) => item.openWorkOrdersCount === 0)
-    ) {
+    if (timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
       // Clear the chart completely before showing no-data message
       timeSeriesChart.clear()
       timeSeriesChart.setOption({
@@ -234,7 +239,9 @@ interface WorkOrderAccomplishmentData {
       return
     }
 
-    const categories = byAssignedTo.map((item) => item.assignedToName).toReversed()
+    const categories = byAssignedTo
+      .map((item) => item.assignedToName)
+      .toReversed()
     const openedData = byAssignedTo.map((item) => item.openedCount).toReversed()
     const closedData = byAssignedTo.map((item) => item.closedCount).toReversed()
 
