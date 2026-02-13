@@ -24,17 +24,9 @@
       </ul>
     </nav>
 
-    <div class="is-clearfix">
-      <h1 class="title is-1 is-pulled-left">
-        <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Accomplishments
-      </h1>
-      <div class="buttons is-pulled-right is-hidden-print">
-        <button class="button is-light" type="button" onclick="window.print()">
-          <span class="icon"><i class="fa-solid fa-print"></i></span>
-          <span>Print</span>
-        </button>
-      </div>
-    </div>
+    <h1 class="title is-1">
+      <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Accomplishments
+    </h1>
 
     <!-- Date Filter -->
     <div class="box is-hidden-print">
@@ -43,7 +35,14 @@
           <div class="field">
             <label class="label" for="filter--year">Year</label>
             <div class="control">
-              <input class="input" type="number" id="filter--year" value="<%= currentYear %>" min="2000" max="2100" />
+              <input
+                class="input"
+                id="filter--year"
+                type="number"
+                value="<%= currentYear %>"
+                min="2000"
+                max="<%= currentYear + 1 %>"
+              />
             </div>
           </div>
         </div>
@@ -75,7 +74,7 @@
           <div class="field">
             <label class="label">&nbsp;</label>
             <div class="control">
-              <button class="button is-primary" type="button" id="button--refresh">
+              <button class="button is-primary" id="button--refresh" type="button">
                 <span class="icon"><i class="fa-solid fa-sync"></i></span>
                 <span>Refresh</span>
               </button>
@@ -156,7 +155,10 @@
       <div class="columns">
         <div class="column is-7">
           <div class="box">
-            <h2 class="title is-4">Work Orders Over Time</h2>
+            <h2 class="title is-4">
+              <%= configFunctions.getConfigProperty('workOrders.sectionName') %>
+              Over Time
+            </h2>
             <div id="chart--timeSeries" style="height: 400px;"></div>
           </div>
         </div>
@@ -178,8 +180,11 @@
         </div>
         <div class="column is-6">
           <div class="box">
-            <h2 class="title is-4">Work Order Hot Zones</h2>
-            <div id="map--hotZones" class="map-gray" style="height: 400px;"></div>
+            <h2 class="title is-4">
+              <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+              Hot Zones
+            </h2>
+            <div class="map-gray" id="map--hotZones" style="height: 400px;"></div>
           </div>
         </div>
       </div>
