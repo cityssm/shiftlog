@@ -41,23 +41,34 @@ function updateIconPreview(modalElement, modalPrefix) {
     const colorInput = modalElement.querySelector(`#${modalPrefix}--colorHex`);
     const iconInput = modalElement.querySelector(`#${modalPrefix}--iconClass`);
     const previewElement = modalElement.querySelector(`#${modalPrefix}--iconPreview`);
-    if (colorInput !== null &&
-        iconInput !== null &&
-        previewElement !== null) {
-        // Get color value (color input returns #RRGGBB format)
-        const colorValue = colorInput.value;
-        // Get icon class and validate
-        const iconClassTrimmed = iconInput.value.trim();
-        const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
-            ? iconClassTrimmed
-            : 'circle';
-        // Update preview
-        const iconElement = previewElement.querySelector('i');
-        if (iconElement !== null) {
-            iconElement.className = `fa-solid fa-${iconClass}`;
-            previewElement.style.color = colorValue;
-        }
+    if (colorInput === null ||
+        iconInput === null ||
+        previewElement === null) {
+        return;
     }
+    // Get color value (color input returns #RRGGBB format)
+    const colorValue = colorInput.value;
+    // Get icon class and validate
+    const iconClassTrimmed = iconInput.value.trim();
+    const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+        ? iconClassTrimmed
+        : 'circle';
+    // Update preview - recreate the icon element since Font Awesome modifies it via JS
+    const iconContainer = previewElement.querySelector('.icon');
+    if (iconContainer === null) {
+        return;
+    }
+    // Remove old icon element
+    const oldIcon = iconContainer.querySelector('i');
+    if (oldIcon !== null) {
+        oldIcon.remove();
+    }
+    // Create new icon element
+    const newIcon = document.createElement('i');
+    newIcon.className = `fa-solid fa-${iconClass}`;
+    iconContainer.append(newIcon);
+    // Set the color on the preview element
+    previewElement.style.color = colorValue;
 }
 /**
  * Sets up color and icon change listeners for a modal
@@ -67,18 +78,19 @@ function updateIconPreview(modalElement, modalPrefix) {
 function setupIconPreviewListeners(modalElement, modalPrefix) {
     const colorInput = modalElement.querySelector(`#${modalPrefix}--colorHex`);
     const iconInput = modalElement.querySelector(`#${modalPrefix}--iconClass`);
-    if (colorInput !== null && iconInput !== null) {
-        // Update preview when color changes
-        colorInput.addEventListener('input', () => {
-            updateIconPreview(modalElement, modalPrefix);
-        });
-        // Update preview when icon class changes
-        iconInput.addEventListener('input', () => {
-            updateIconPreview(modalElement, modalPrefix);
-        });
-        // Initial preview update
-        updateIconPreview(modalElement, modalPrefix);
+    if (colorInput === null || iconInput === null) {
+        return;
     }
+    // Update preview when color changes
+    colorInput.addEventListener('input', () => {
+        updateIconPreview(modalElement, modalPrefix);
+    });
+    // Update preview when icon class changes
+    iconInput.addEventListener('input', () => {
+        updateIconPreview(modalElement, modalPrefix);
+    });
+    // Initial preview update
+    updateIconPreview(modalElement, modalPrefix);
 }
 ;
 (() => {
