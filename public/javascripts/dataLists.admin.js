@@ -58,15 +58,10 @@ function updateIconPreview(modalElement, modalPrefix) {
     if (iconContainer === null) {
         return;
     }
-    // Remove old icon element
-    const oldIcon = iconContainer.querySelector('i');
-    if (oldIcon !== null) {
-        oldIcon.remove();
-    }
     // Create new icon element
     const newIcon = document.createElement('i');
     newIcon.className = `fa-solid fa-${iconClass}`;
-    iconContainer.append(newIcon);
+    iconContainer.replaceChildren(newIcon);
     // Set the color on the preview element
     previewElement.style.color = colorValue;
 }
