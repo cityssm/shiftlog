@@ -92,7 +92,7 @@
     "parse-full-name": "^1.2.6",
     "session-file-store": "^1.5.0",
     "set-interval-async": "^3.0.3",
-    "sortablejs": "^1.15.6"
+    "sortablejs": "^1.15.7"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",
@@ -107,7 +107,7 @@
     "@types/node": "^25.2.3",
     "@types/node-schedule": "^2.1.8",
     "@types/node-windows": "^0.1.6",
-    "@types/nodemailer": "^7.0.9",
+    "@types/nodemailer": "^7.0.10",
     "@types/papaparse": "^5.5.2",
     "@types/parse-full-name": "^1.2.5",
     "@types/session-file-store": "^1.2.6",
