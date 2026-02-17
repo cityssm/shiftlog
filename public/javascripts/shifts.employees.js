@@ -159,7 +159,10 @@
         for (const employee of shiftEmployees) {
             const rowElement = document.createElement('tr');
             rowElement.innerHTML = /* html */ `
-        <td>${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}</td>
+        <td>
+          ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}<br />
+          <span class="is-size-7">#${cityssm.escapeHTML(employee.employeeNumber)}</span>
+        </td>
         <td>${cityssm.escapeHTML(employee.crewName ?? '')}</td>
         <td>
           <span class="employee-note" data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}">
@@ -245,9 +248,13 @@
             const rowElement = document.createElement('tr');
             // eslint-disable-next-line no-unsanitized/property
             rowElement.innerHTML = /* html */ `
-        <td>${cityssm.escapeHTML(equipment.equipmentName ?? '')}</td>
         <td>
-          ${(equipment.employeeLastName ?? '') === '' ? '' : cityssm.escapeHTML(`${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName ?? ''}`)}
+          ${cityssm.escapeHTML(equipment.equipmentName ?? '')}<br />
+          <span class="is-size-7">#${cityssm.escapeHTML(equipment.equipmentNumber)}</span>
+        </td>
+        <td>
+          ${(equipment.employeeLastName ?? '') === '' ? '' : cityssm.escapeHTML(`${equipment.employeeLastName ?? ''}, ${equipment.employeeFirstName ?? ''}`)}<br />
+          <span class="is-size-7">${(equipment.employeeNumber ?? '') === '' ? '' : cityssm.escapeHTML(`#${equipment.employeeNumber}`)}</span>
         </td>
         <td>
           <span class="equipment-note" data-equipment-number="${cityssm.escapeHTML(equipment.equipmentNumber)}">
@@ -941,7 +948,7 @@
                       ${(shift.shiftTimeDataListItem ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}`}
                       ${(shift.supervisorLastName ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? ''))}`}
                     </small>
-                    ${countsText === '' ? '' : '<br /><small class="has-text-grey">' + cityssm.escapeHTML(countsText) + '</small>'}
+                    ${countsText === '' ? '' : `<br /><small class="has-text-grey">${cityssm.escapeHTML(countsText)}</small>`}
                   </div>
                   <div class="column is-narrow">
                     <span class="icon has-text-info">
