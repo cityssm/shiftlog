@@ -1,6 +1,9 @@
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoGetAvailableShiftsResponse } from '../../handlers/timesheets-post/doGetAvailableShifts.js'
 import type { Shift } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -14,18 +17,21 @@ declare const exports: {
     containerElement: HTMLElement,
     config: {
       timesheetId: number
+
       isEditable: boolean
-      hideEmptyRows: boolean
-      hideEmptyColumns: boolean
+
       filterRows: string
+      hideEmptyColumns: boolean
+      hideEmptyRows: boolean
     }
   ) => {
     init: () => Promise<void>
     setDisplayOptions: (options: {
-      hideEmptyRows?: boolean
-      hideEmptyColumns?: boolean
       filterRows?: string
+      hideEmptyColumns?: boolean
+      hideEmptyRows?: boolean
     }) => void
+
     addColumn: () => void
     addRow: () => void
   }
@@ -86,31 +92,29 @@ declare const exports: {
         supervisorEmployeeNumber,
         shiftDateString
       },
-      (response: { success: boolean; shifts?: Shift[] }) => {
-        if (response.success && response.shifts !== undefined) {
-          // Check if we have a temporarily stored shift ID (from initial page load)
-          const tempShiftId = shiftIdElement.dataset.tempShiftId
-          const currentShiftId = tempShiftId ?? shiftIdElement.value
+      (response: DoGetAvailableShiftsResponse) => {
+        // Check if we have a temporarily stored shift ID (from initial page load)
+        const tempShiftId = shiftIdElement.dataset.tempShiftId
+        const currentShiftId = tempShiftId ?? shiftIdElement.value
 
-          // Rebuild shift dropdown
-          shiftIdElement.innerHTML = '<option value="">(No Shift)</option>'
+        // Rebuild shift dropdown
+        shiftIdElement.innerHTML = '<option value="">(No Shift)</option>'
 
-          for (const shift of response.shifts) {
-            const optionElement = document.createElement('option')
-            optionElement.value = shift.shiftId.toString()
-            optionElement.textContent = `Shift #${shift.shiftId} - ${shift.shiftTimeDataListItem ?? ''} (${shift.shiftTypeDataListItem ?? ''})`
+        for (const shift of response.shifts) {
+          const optionElement = document.createElement('option')
+          optionElement.value = shift.shiftId.toString()
+          optionElement.textContent = `Shift #${shift.shiftId} - ${shift.shiftTimeDataListItem ?? ''} (${shift.shiftTypeDataListItem ?? ''})`
 
-            if (shift.shiftId.toString() === currentShiftId) {
-              optionElement.selected = true
-            }
-
-            shiftIdElement.append(optionElement)
+          if (shift.shiftId.toString() === currentShiftId) {
+            optionElement.selected = true
           }
 
-          // Clear the temporary attribute after first load
-          if (tempShiftId !== null) {
-            delete shiftIdElement.dataset.tempShiftId
-          }
+          shiftIdElement.append(optionElement)
+        }
+
+        // Clear the temporary attribute after first load
+        if (tempShiftId !== null) {
+          delete shiftIdElement.dataset.tempShiftId
         }
       }
     )

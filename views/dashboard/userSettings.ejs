@@ -18,146 +18,6 @@
 
 <div class="columns">
   <div class="column">
-    <% if (employee) { %>
-    <div class="panel">
-      <h2 class="panel-heading">Employee Contact Information</h2>
-      <div class="panel-block is-block">
-        <form id="employeeContactForm">
-          <div class="field">
-            <label class="label" for="employeeContactForm--phoneNumber">Phone Number</label>
-            <div class="control">
-              <input
-                class="input"
-                id="employeeContactForm--phoneNumber"
-                name="phoneNumber"
-                type="text"
-                maxlength="20"
-                value="<%= (employee.phoneNumber ?? '') %>"
-              />
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="label" for="employeeContactForm--phoneNumberAlternate">Alternate Phone Number</label>
-            <div class="control">
-              <input
-                class="input"
-                id="employeeContactForm--phoneNumberAlternate"
-                name="phoneNumberAlternate"
-                type="text"
-                maxlength="20"
-                value="<%= (employee.phoneNumberAlternate ?? '') %>"
-              />
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="label" for="employeeContactForm--emailAddress">Email Address</label>
-            <div class="control">
-              <input
-                class="input"
-                id="employeeContactForm--emailAddress"
-                name="emailAddress"
-                type="email"
-                maxlength="100"
-                value="<%= (employee.emailAddress ?? '') %>"
-              />
-            </div>
-          </div>
-
-          <div class="has-text-right">
-            <button class="button is-success" type="submit">
-              <span class="icon is-small">
-                <i class="fa-solid fa-floppy-disk"></i>
-              </span>
-              <span>Update Contact Information</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-    <% } %>
-
-    <% if (configFunctions.getConfigProperty('workOrders.isEnabled')) { %>
-    <div class="panel">
-      <h2 class="panel-heading"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Settings</h2>
-      <div class="panel-block is-block">
-        <form class="userSettingForm">
-          <input type="hidden" name="settingKey" value="workOrders.defaultAssignedToId" />
-          <label class="label" for="userSettingForm--1">Default "Assigned To" Value</label>
-          <div class="field has-addons">
-            <div class="control is-expanded">
-              <div class="select is-fullwidth">
-                <select id="userSettingForm--1" name="settingValue">
-                  <option value="">-- None --</option>
-                  <% for (const item of assignedToDataListItems) { %>
-                  <option
-                    value="<%= item.assignedToId %>"
-                    <%= user.userSettings['workOrders.defaultAssignedToId'] === item.assignedToId.toString() ? 'selected' : '' %>>
-                    <%= item.assignedToName %>
-                  </option>
-                  <% } %>
-                </select>
-              </div>
-            </div>
-            <div class="control">
-              <button class="button is-success" type="submit">
-                <span class="icon is-small">
-                  <i class="fa-solid fa-floppy-disk"></i>
-                </span>
-                <span>Save</span>
-              </button>
-            </div>
-          </div>
-          <p class="help">
-            This value will help highlight <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> and milestones assigned to you.
-          </p>
-        </form>
-      </div>
-    </div>
-    <% } %>
-    <% if (ntfyNotificationConfigurations.length > 0) { %>
-    <div class="panel">
-      <div class="panel-heading">Available ntfy Notifications</div>
-      <div class="panel-block">
-        <p>
-          <strong>ntfy Server</strong><br />
-          <%= configFunctions.getConfigProperty('connectors.ntfy.serverUrl') %>
-        </p>
-      </div>
-      <div class="panel-block is-block">
-        <table class="table is-fullwidth is-striped is-hoverable">
-          <thead>
-            <tr>
-              <th>Notification Queue</th>
-              <th>Assigned To</th>
-              <th>Topic</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% for (const ntfyConfig of ntfyNotificationConfigurations) { %>
-              <%
-                const ntfyTopic = JSON.parse(ntfyConfig.notificationTypeFormJson || '{}').topic;
-              %>
-            <tr>
-              <td><%= ntfyConfig.notificationQueue %></td>
-              <td>
-                <% if (ntfyConfig.assignedToId === null) { %>
-                  (All)
-                <% } else { %>
-                  <%= ntfyConfig.assignedToName %>
-                <% } %>
-              </td>
-              <td><%= ntfyTopic %></td>
-            </tr>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <% } %>
-  </div>
-  <div class="column">
     <div class="panel">
       <h2 class="panel-heading">API Key Reset</h2>
       <div class="panel-block is-block">
@@ -184,6 +44,151 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="column">
+    <% if (employee) { %>
+    <div class="panel">
+      <h2 class="panel-heading">Employee Contact Information</h2>
+      <div class="panel-block is-block">
+        <form id="employeeContactForm">
+          <div class="field">
+            <label class="label" for="employeeContactForm--phoneNumber">Phone Number</label>
+            <div class="control">
+              <input
+                class="input"
+                id="employeeContactForm--phoneNumber"
+                name="phoneNumber"
+                type="text"
+                value="<%= (employee.phoneNumber ?? '') %>"
+                maxlength="20"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="employeeContactForm--phoneNumberAlternate">Alternate Phone Number</label>
+            <div class="control">
+              <input
+                class="input"
+                id="employeeContactForm--phoneNumberAlternate"
+                name="phoneNumberAlternate"
+                type="text"
+                value="<%= (employee.phoneNumberAlternate ?? '') %>"
+                maxlength="20"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="employeeContactForm--emailAddress">Email Address</label>
+            <div class="control">
+              <input
+                class="input"
+                id="employeeContactForm--emailAddress"
+                name="emailAddress"
+                type="email"
+                value="<%= (employee.emailAddress ?? '') %>"
+                maxlength="100"
+              />
+            </div>
+          </div>
+
+          <div class="has-text-right">
+            <button class="button is-success" type="submit">
+              <span class="icon is-small">
+                <i class="fa-solid fa-floppy-disk"></i>
+              </span>
+              <span>Update Contact Information</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <% } %>
+
+    <% if (configFunctions.getConfigProperty('workOrders.isEnabled')) { %>
+    <div class="panel">
+      <h2 class="panel-heading"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Settings</h2>
+      <div class="panel-block is-block">
+        <form class="userSettingForm">
+          <input name="settingKey" type="hidden" value="workOrders.defaultAssignedToId" />
+          <label class="label" for="userSettingForm--1">Default "Assigned To" Value</label>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <div class="select is-fullwidth">
+                <select id="userSettingForm--1" name="settingValue">
+                  <option value="">-- None --</option>
+                  <% for (const item of assignedToDataListItems) { %>
+                  <% if (user.userSettings['workOrders.defaultAssignedToId'] === item.assignedToId.toString()) { %>
+                  <option value="<%= item.assignedToId %>" selected>
+                    <%= item.assignedToName %>
+                  </option>
+                  <% } else { %>
+                  <option value="<%= item.assignedToId %>">
+                    <%= item.assignedToName %>
+                  </option>
+                  <% } %>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+            <div class="control">
+              <button class="button is-success" type="submit">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                </span>
+                <span>Save</span>
+              </button>
+            </div>
+          </div>
+          <p class="help">
+            This value will help highlight <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> and milestones assigned to you.
+          </p>
+        </form>
+      </div>
+    </div>
+    <% } %>
+
+    <% if (ntfyNotificationConfigurations.length > 0) { %>
+    <div class="panel">
+      <div class="panel-heading">Available ntfy Notifications</div>
+      <div class="panel-block">
+        <p>
+          <strong>ntfy Server</strong><br />
+          <%= configFunctions.getConfigProperty('connectors.ntfy.serverUrl') %>
+        </p>
+      </div>
+      <div class="panel-block is-block">
+        <table class="table is-fullwidth is-striped is-hoverable">
+          <thead>
+            <tr>
+              <th>Notification Queue</th>
+              <th>Assigned To</th>
+              <th>Topic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (const ntfyConfig of ntfyNotificationConfigurations) { %>
+            <%
+            const ntfyTopic = JSON.parse(ntfyConfig.notificationTypeFormJson || '{}').topic;
+            %>
+            <tr>
+              <td><%= ntfyConfig.notificationQueue %></td>
+              <td>
+                <% if (ntfyConfig.assignedToId === null) { %>
+                (All)
+                <% } else { %>
+                <%= ntfyConfig.assignedToName %>
+                <% } %>
+              </td>
+              <td><%= ntfyTopic %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
   </div>
 </div>
 

@@ -1,6 +1,2 @@
-export interface DataList {
-    dataListKey: string;
-    dataListName: string;
-    isSystemList: boolean;
-}
+import type { DataList } from '../../types/record.types.js';
 export default function getDataLists(): Promise<DataList[]>;

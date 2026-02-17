@@ -75,12 +75,21 @@ export interface UserGroup extends BaseRecord {
   members?: string[]
 }
 
+export interface DataList {
+  dataListKey: string
+  dataListName: string
+  isSystemList: boolean
+  items?: DataListItem[]
+}
+
 export interface DataListItem extends BaseRecord {
   colorHex: string
   dataListItem: string
   dataListItemId: number
   dataListKey: string
   iconClass: string
+
+  orderNumber: number
 
   userGroupId?: number | null
   userGroupName?: string

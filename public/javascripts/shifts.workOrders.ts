@@ -282,10 +282,9 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`,
         {},
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
         (responseJSON: DoGetWorkOrderMilestonesResponse) => {
-          if (responseJSON.success && responseJSON.milestones) {
-            allMilestones.push(...responseJSON.milestones)
-          }
+          allMilestones.push(...responseJSON.milestones)
 
           loadedCount += 1
           if (loadedCount === shiftWorkOrders.length) {
@@ -294,18 +293,21 @@ declare const exports: {
               if (
                 a.milestoneDueDateTime === null ||
                 a.milestoneDueDateTime === undefined
-              )
+              ) {
                 return 1
+              }
               if (
                 b.milestoneDueDateTime === null ||
                 b.milestoneDueDateTime === undefined
-              )
+              ) {
                 return -1
+              }
               return (
                 new Date(a.milestoneDueDateTime).getTime() -
                 new Date(b.milestoneDueDateTime).getTime()
               )
             })
+
             renderMilestones()
             updateCounts()
           }
@@ -320,7 +322,7 @@ declare const exports: {
     let closeModalFunction: () => void
     let modalElement: HTMLElement
 
-    function performSearch(searchString: string, limit: number = 20): void {
+    function performSearch(searchString: string, limit = 20): void {
       const resultsContainer = modalElement.querySelector(
         '#addWorkOrder--results'
       ) as HTMLElement
@@ -384,7 +386,7 @@ declare const exports: {
             trElement.innerHTML = /* html */ `
               <td>${cityssm.escapeHTML(workOrder.workOrderNumber)}</td>
               <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
-              <td>${cityssm.escapeHTML(workOrder.requestorName ?? '')}</td>
+              <td>${cityssm.escapeHTML(workOrder.requestorName)}</td>
               <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 50))}${workOrder.workOrderDetails.length > 50 ? '...' : ''}</td>
               <td class="has-text-right">
                 <button class="button is-small is-primary button--select" data-work-order-id="${workOrder.workOrderId}" type="button">
@@ -522,23 +524,19 @@ declare const exports: {
         `${urlPrefix}/doAddShiftWorkOrder`,
         formEvent.currentTarget,
         (responseJSON: DoAddShiftWorkOrderResponse) => {
-          if (responseJSON.success && responseJSON.shiftWorkOrders) {
+          if (responseJSON.success) {
             shiftWorkOrders = responseJSON.shiftWorkOrders
+
             renderShiftWorkOrders()
             updateCounts()
             loadMilestones()
             closeModalFunction()
           } else {
-            const errorMessage =
-              responseJSON.success === false
-                ? responseJSON.errorMessage
-                : 'An unknown error occurred.'
-
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: `Error Adding ${shiftLog.workOrdersSectionNameSingular}`,
 
-              message: errorMessage
+              message: responseJSON.errorMessage
             })
           }
         }
@@ -701,22 +699,18 @@ declare const exports: {
             `${urlPrefix}/doDeleteShiftWorkOrder`,
             { shiftId, workOrderId },
             (responseJSON: DoDeleteShiftWorkOrderResponse) => {
-              if (responseJSON.success && responseJSON.shiftWorkOrders) {
+              if (responseJSON.success) {
                 shiftWorkOrders = responseJSON.shiftWorkOrders
+
                 renderShiftWorkOrders()
                 updateCounts()
                 loadMilestones()
               } else {
-                const errorMessage =
-                  responseJSON.success === false
-                    ? responseJSON.errorMessage
-                    : 'An unknown error occurred.'
-
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: `Error Removing ${shiftLog.workOrdersSectionNameSingular}`,
 
-                  message: errorMessage
+                  message: responseJSON.errorMessage
                 })
               }
             }

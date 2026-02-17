@@ -1055,7 +1055,7 @@ declare const bulmaJS: BulmaJS
         noteText: formData.get('noteText') as string
       }
 
-      const noteTypeId = formData.get('noteTypeId') as string
+      const noteTypeId = formData.get('noteTypeId') as string | null
       if (noteTypeId !== null && noteTypeId !== '') {
         noteData.noteTypeId = noteTypeId
       }

@@ -4,23 +4,14 @@ import deleteDataList, {
   type DeleteDataListForm
 } from '../../database/app/deleteDataList.js'
 import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js'
-import getDataLists, { type DataList } from '../../database/app/getDataLists.js'
+import getDataLists from '../../database/app/getDataLists.js'
+import type { DataList } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoDeleteDataListResponse = {
   success: boolean
   errorMessage?: string
-  dataLists?: DataListWithItems[]
-}
-
-interface DataListWithItems extends DataList {
-  items: Array<{
-    dataListItemId: number
-    dataListKey: string
-    dataListItem: string
-    orderNumber: number
-    userGroupId: number | null
-  }>
+  dataLists?: DataList[]
 }
 
 export default async function handler(
@@ -34,7 +25,7 @@ export default async function handler(
 
   const success = await deleteDataList(form)
 
-  let dataLists: DataListWithItems[] | undefined
+  let dataLists: DataList[] | undefined
 
   if (success) {
     const lists = await getDataLists()

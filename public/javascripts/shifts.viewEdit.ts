@@ -21,7 +21,7 @@ declare const exports: {
     if (editButtonLink !== null) {
       const menuTabLinks = shiftTabsContainerElement.querySelectorAll('.menu a')
 
-      // Set initial hash on Edit button based on currently active tab
+      // Set initial hash on Edit button based on active tab
       const activeTabLink = shiftTabsContainerElement.querySelector(
         '.menu a.is-active'
       ) as HTMLAnchorElement | null

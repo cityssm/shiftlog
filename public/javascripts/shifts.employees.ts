@@ -119,7 +119,7 @@ declare const exports: {
       equipmentCountElement.textContent = shiftEquipment.length.toString()
     }
 
-    // Show/hide checkmark icon on main tab
+    // Show/hide check mark icon on main tab
     const hasEmployeesEquipmentIcon = document.querySelector(
       '#icon--hasEmployeesEquipment'
     )
@@ -1398,7 +1398,7 @@ declare const exports: {
                     <small>
                       ${cityssm.escapeHTML(shift.shiftTypeDataListItem ?? '')}
                       ${(shift.shiftTimeDataListItem ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(shift.shiftTimeDataListItem ?? '')}`}
-                      ${(shift.supervisorLastName ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(shift.supervisorLastName + ', ' + (shift.supervisorFirstName ?? ''))}`}
+                      ${(shift.supervisorLastName ?? '') === '' ? '' : ` - ${cityssm.escapeHTML(`${shift.supervisorLastName}, ${shift.supervisorFirstName ?? ''}`)}`}
                     </small>
                     ${countsText === '' ? '' : `<br /><small class="has-text-grey">${cityssm.escapeHTML(countsText)}</small>`}
                   </div>

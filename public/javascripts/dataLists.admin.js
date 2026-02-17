@@ -8,9 +8,7 @@ function updateIconPreview(modalElement, modalPrefix) {
     const colorInput = modalElement.querySelector(`#${modalPrefix}--colorHex`);
     const iconInput = modalElement.querySelector(`#${modalPrefix}--iconClass`);
     const previewElement = modalElement.querySelector(`#${modalPrefix}--iconPreview`);
-    if (colorInput === null ||
-        iconInput === null ||
-        previewElement === null) {
+    if (colorInput === null || iconInput === null || previewElement === null) {
         return;
     }
     // Get color value (color input returns #RRGGBB format)
@@ -196,8 +194,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
               <span class="has-text-weight-semibold mr-2">
                 ${cityssm.escapeHTML(dataList.dataListName)}
               </span>
-              <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
-                ${dataList.items.length}
+              <span class="tag is-rounded ${dataList.items?.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
+                ${dataList.items?.length ?? 0}
               </span>
               ${dataList.isSystemList ? '' : '<span class="tag is-info is-light ml-2">Custom</span>'}
             </span>
@@ -309,7 +307,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             if (panelElement !== null) {
                 panelsContainer.append(panelElement);
                 // Render items for this list (use items variable which has the default)
-                renderDataListItems(dataList.dataListKey, dataList.items);
+                renderDataListItems(dataList.dataListKey, dataList.items ?? []);
                 // Initialize sortable for this list
                 initializeSortable(dataList.dataListKey);
             }

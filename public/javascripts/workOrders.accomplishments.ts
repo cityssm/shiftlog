@@ -12,11 +12,13 @@ declare const L: typeof Leaflet & {
     latlngs: Array<[number, number, number]>,
     options?: {
       minOpacity?: number
-      maxZoom?: number
+
       max?: number
-      radius?: number
+      maxZoom?: number
+
       blur?: number
       gradient?: Record<number, string>
+      radius?: number
     }
   ) => L.Layer
 }
@@ -103,7 +105,7 @@ interface WorkOrderAccomplishmentData {
 
   // Initialize charts
   function initializeCharts(): void {
-    // Note: ECharts will be initialized lazily when data is available
+    // Note: ECharts will be initialized when data is available
     // to avoid initialization on hidden containers with 0 dimensions
 
     // Initialize Leaflet map
@@ -120,7 +122,7 @@ interface WorkOrderAccomplishmentData {
           '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(hotZonesMap)
 
-      // Note: Heat layer will be initialized lazily when data is available
+      // Note: Heat layer will be initialized when data is available
       // to avoid simpleheat getImageData() errors on hidden containers
     }
   }
@@ -129,17 +131,18 @@ interface WorkOrderAccomplishmentData {
   function updateKPIs(stats: WorkOrderAccomplishmentStats): void {
     const totalOpened = stats.totalOpen + stats.totalClosed
 
-    document.querySelector('#kpi--totalOpened')!.textContent =
+    ;(document.querySelector('#kpi--totalOpened') as HTMLElement).textContent =
       totalOpened.toString()
-    document.querySelector('#kpi--totalClosed')!.textContent =
+    ;(document.querySelector('#kpi--totalClosed') as HTMLElement).textContent =
       stats.totalClosed.toString()
-    document.querySelector('#kpi--completionRate')!.textContent =
-      `${stats.percentClosed.toFixed(1)}%`
+    ;(
+      document.querySelector('#kpi--completionRate') as HTMLElement
+    ).textContent = `${stats.percentClosed.toFixed(1)}%`
   }
 
   // Update time series chart
   function updateTimeSeriesChart(timeSeries: WorkOrderTimeSeriesData[]): void {
-    // Lazily initialize chart on first use
+    // Initialize chart on first use
     if (timeSeriesChart === undefined) {
       const timeSeriesElement = document.querySelector('#chart--timeSeries')
       if (timeSeriesElement === null) {
@@ -151,13 +154,15 @@ interface WorkOrderAccomplishmentData {
 
     // Check if there's any data
     if (timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
-      // Clear the chart completely before showing no-data message
+      // Clear the chart before showing no-data message
       timeSeriesChart.clear()
       timeSeriesChart.setOption({
         title: {
           text: 'No data available',
+
           left: 'center',
           top: 'middle',
+
           textStyle: {
             color: '#999',
             fontSize: 16
@@ -172,9 +177,11 @@ interface WorkOrderAccomplishmentData {
 
     timeSeriesChart.setOption({
       title: { show: false },
+
       legend: {
         data: ['Open Work Orders']
       },
+
       series: [
         {
           data: openData,
@@ -204,7 +211,7 @@ interface WorkOrderAccomplishmentData {
   function updateByAssignedToChart(
     byAssignedTo: WorkOrderByAssignedTo[]
   ): void {
-    // Lazily initialize chart on first use
+    // Initialize chart on first use
     if (byAssignedToChart === undefined) {
       const byAssignedToElement = document.querySelector('#chart--byAssignedTo')
       if (byAssignedToElement === null) {
@@ -216,13 +223,15 @@ interface WorkOrderAccomplishmentData {
 
     // Check if there's any data
     if (byAssignedTo.length === 0) {
-      // Clear the chart completely before showing no-data message
+      // Clear the chart before showing no-data message
       byAssignedToChart.clear()
       byAssignedToChart.setOption({
         title: {
           text: 'No data available',
+
           left: 'center',
           top: 'middle',
+
           textStyle: {
             color: '#999',
             fontSize: 16
@@ -240,9 +249,11 @@ interface WorkOrderAccomplishmentData {
 
     byAssignedToChart.setOption({
       title: { show: false },
+
       legend: {
         data: ['Opened', 'Closed']
       },
+
       series: [
         {
           data: openedData,
@@ -278,7 +289,7 @@ interface WorkOrderAccomplishmentData {
 
   // Update tag cloud chart
   function updateTagCloudChart(tags: WorkOrderTagStatistic[]): void {
-    // Lazily initialize chart on first use
+    // Initialize chart on first use
     if (tagCloudChart === undefined) {
       const tagCloudElement = document.querySelector('#chart--tagCloud')
       if (tagCloudElement === null) {
@@ -295,8 +306,10 @@ interface WorkOrderAccomplishmentData {
       tagCloudChart.setOption({
         title: {
           text: 'No data available',
+
           left: 'center',
           top: 'middle',
+
           textStyle: {
             color: '#999',
             fontSize: 16
@@ -313,6 +326,7 @@ interface WorkOrderAccomplishmentData {
 
     tagCloudChart.setOption({
       title: { show: false },
+
       series: [
         {
           data: tagCounts,
@@ -365,18 +379,20 @@ interface WorkOrderAccomplishmentData {
       return
     }
 
-    // Lazily initialize heat layer when first needed (after container is visible)
+    // Initialize heat layer when first needed (after container is visible)
     hotZonesLayer ??= L.heatLayer([], {
-      radius: 25,
-      blur: 15,
-      maxZoom: 17,
-      max: 1.0,
       minOpacity: 0.7,
+
+      max: 1,
+      maxZoom: 17,
+
+      blur: 15,
       gradient: {
-        0.0: '#48c774', // Green for low
+        0: '#48c774', // Green for low
         0.5: '#ffdd57', // Yellow for medium
-        1.0: '#f14668' // Red for high
-      }
+        1: '#f14668' // Red for high
+      },
+      radius: 25
     }).addTo(hotZonesMap)
 
     if (hotZones.length === 0) {
@@ -392,6 +408,7 @@ interface WorkOrderAccomplishmentData {
           noDataDiv.style.cssText =
             'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #999; font-size: 16px;'
           noDataDiv.textContent = 'No data available'
+
           mapContainer.append(noDataDiv)
         }
       }
@@ -401,10 +418,7 @@ interface WorkOrderAccomplishmentData {
     // Remove "No data available" message if it exists
     const mapContainer = document.querySelector('#map--hotZones')
     if (mapContainer !== null) {
-      const existingMessage = mapContainer.querySelector('.no-data-message')
-      if (existingMessage !== null) {
-        existingMessage.remove()
-      }
+      mapContainer.querySelector('.no-data-message')?.remove()
     }
 
     const bounds: L.LatLngTuple[] = []
@@ -485,6 +499,7 @@ interface WorkOrderAccomplishmentData {
               responseJSON.errorMessage ?? 'Failed to load accomplishment data',
             title: 'Error'
           })
+
           loadingContainer.style.display = 'none'
         }
       }

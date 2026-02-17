@@ -11,6 +11,7 @@ import type { DoDeleteDataListItemResponse } from '../../handlers/admin-post/doD
 import type { DoReorderDataListItemsResponse } from '../../handlers/admin-post/doReorderDataListItems.js'
 import type { DoUpdateDataListResponse } from '../../handlers/admin-post/doUpdateDataList.js'
 import type { DoUpdateDataListItemResponse } from '../../handlers/admin-post/doUpdateDataListItem.js'
+import type { DataList, DataListItem } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -32,23 +33,6 @@ declare const Sortable: {
   ) => SortableInstance
 }
 
-interface DataListItemWithDetails {
-  colorHex: string
-  dataListItem: string
-  dataListItemId: number
-  dataListKey: string
-  iconClass: string
-  orderNumber: number
-  userGroupId: number | null
-}
-
-interface DataListWithItems {
-  dataListKey: string
-  dataListName: string
-  isSystemList: boolean
-  items: DataListItemWithDetails[]
-}
-
 interface UserGroup {
   memberCount?: number
   userGroupId: number
@@ -58,7 +42,7 @@ interface UserGroup {
 declare const exports: {
   shiftLog: ShiftLogGlobal
 
-  dataLists: DataListWithItems[]
+  dataLists: DataList[]
   userGroups: UserGroup[]
 }
 
@@ -81,11 +65,7 @@ function updateIconPreview(
     `#${modalPrefix}--iconPreview`
   ) as HTMLElement | null
 
-  if (
-    colorInput === null ||
-    iconInput === null ||
-    previewElement === null
-  ) {
+  if (colorInput === null || iconInput === null || previewElement === null) {
     return
   }
 
@@ -165,7 +145,7 @@ function setupIconPreviewListeners(
 
   function renderDataListItems(
     dataListKey: string,
-    items: DataListItemWithDetails[]
+    items: DataListItem[]
   ): void {
     const tbodyElement = document.querySelector(
       `#dataListItems--${dataListKey}`
@@ -279,7 +259,7 @@ function setupIconPreviewListeners(
     initializeSortable(dataListKey)
   }
 
-  function renderAllDataLists(dataLists: DataListWithItems[]): void {
+  function renderAllDataLists(dataLists: DataList[]): void {
     // Update the global dataLists
     exports.dataLists = dataLists
 
@@ -318,8 +298,8 @@ function setupIconPreviewListeners(
               <span class="has-text-weight-semibold mr-2">
                 ${cityssm.escapeHTML(dataList.dataListName)}
               </span>
-              <span class="tag is-rounded ${dataList.items.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
-                ${dataList.items.length}
+              <span class="tag is-rounded ${dataList.items?.length === 0 ? 'is-warning' : ''}" id="itemCount--${cityssm.escapeHTML(dataList.dataListKey)}">
+                ${dataList.items?.length ?? 0}
               </span>
               ${dataList.isSystemList ? '' : '<span class="tag is-info is-light ml-2">Custom</span>'}
             </span>
@@ -436,7 +416,7 @@ function setupIconPreviewListeners(
         panelsContainer.append(panelElement)
 
         // Render items for this list (use items variable which has the default)
-        renderDataListItems(dataList.dataListKey, dataList.items)
+        renderDataListItems(dataList.dataListKey, dataList.items ?? [])
 
         // Initialize sortable for this list
         initializeSortable(dataList.dataListKey)

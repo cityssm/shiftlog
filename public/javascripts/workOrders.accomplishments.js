@@ -18,7 +18,7 @@
     let hotZonesLayer;
     // Initialize charts
     function initializeCharts() {
-        // Note: ECharts will be initialized lazily when data is available
+        // Note: ECharts will be initialized when data is available
         // to avoid initialization on hidden containers with 0 dimensions
         // Initialize Leaflet map
         const mapElement = document.querySelector('#map--hotZones');
@@ -28,7 +28,7 @@
             new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(hotZonesMap);
-            // Note: Heat layer will be initialized lazily when data is available
+            // Note: Heat layer will be initialized when data is available
             // to avoid simpleheat getImageData() errors on hidden containers
         }
     }
@@ -39,12 +39,11 @@
             totalOpened.toString();
         document.querySelector('#kpi--totalClosed').textContent =
             stats.totalClosed.toString();
-        document.querySelector('#kpi--completionRate').textContent =
-            `${stats.percentClosed.toFixed(1)}%`;
+        document.querySelector('#kpi--completionRate').textContent = `${stats.percentClosed.toFixed(1)}%`;
     }
     // Update time series chart
     function updateTimeSeriesChart(timeSeries) {
-        // Lazily initialize chart on first use
+        // Initialize chart on first use
         if (timeSeriesChart === undefined) {
             const timeSeriesElement = document.querySelector('#chart--timeSeries');
             if (timeSeriesElement === null) {
@@ -56,7 +55,7 @@
         }
         // Check if there's any data
         if (timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
-            // Clear the chart completely before showing no-data message
+            // Clear the chart before showing no-data message
             timeSeriesChart.clear();
             timeSeriesChart.setOption({
                 title: {
@@ -104,7 +103,7 @@
     }
     // Update by assigned to chart
     function updateByAssignedToChart(byAssignedTo) {
-        // Lazily initialize chart on first use
+        // Initialize chart on first use
         if (byAssignedToChart === undefined) {
             const byAssignedToElement = document.querySelector('#chart--byAssignedTo');
             if (byAssignedToElement === null) {
@@ -116,7 +115,7 @@
         }
         // Check if there's any data
         if (byAssignedTo.length === 0) {
-            // Clear the chart completely before showing no-data message
+            // Clear the chart before showing no-data message
             byAssignedToChart.clear();
             byAssignedToChart.setOption({
                 title: {
@@ -175,7 +174,7 @@
     }
     // Update tag cloud chart
     function updateTagCloudChart(tags) {
-        // Lazily initialize chart on first use
+        // Initialize chart on first use
         if (tagCloudChart === undefined) {
             const tagCloudElement = document.querySelector('#chart--tagCloud');
             if (tagCloudElement === null) {
@@ -258,18 +257,18 @@
         if (hotZonesMap === undefined) {
             return;
         }
-        // Lazily initialize heat layer when first needed (after container is visible)
+        // Initialize heat layer when first needed (after container is visible)
         hotZonesLayer ??= L.heatLayer([], {
-            radius: 25,
-            blur: 15,
-            maxZoom: 17,
-            max: 1.0,
             minOpacity: 0.7,
+            max: 1,
+            maxZoom: 17,
+            blur: 15,
             gradient: {
-                0.0: '#48c774', // Green for low
+                0: '#48c774', // Green for low
                 0.5: '#ffdd57', // Yellow for medium
-                1.0: '#f14668' // Red for high
-            }
+                1: '#f14668' // Red for high
+            },
+            radius: 25
         }).addTo(hotZonesMap);
         if (hotZones.length === 0) {
             // Clear heat layer and show "No data available" message on the map
@@ -291,10 +290,7 @@
         // Remove "No data available" message if it exists
         const mapContainer = document.querySelector('#map--hotZones');
         if (mapContainer !== null) {
-            const existingMessage = mapContainer.querySelector('.no-data-message');
-            if (existingMessage !== null) {
-                existingMessage.remove();
-            }
+            mapContainer.querySelector('.no-data-message')?.remove();
         }
         const bounds = [];
         // First pass: collect counts to find max

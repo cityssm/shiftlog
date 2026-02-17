@@ -199,20 +199,22 @@
         }
         let loadedCount = 0;
         for (const workOrder of shiftWorkOrders) {
-            cityssm.postJSON(`${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`, {}, (responseJSON) => {
-                if (responseJSON.success && responseJSON.milestones) {
-                    allMilestones.push(...responseJSON.milestones);
-                }
+            cityssm.postJSON(`${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`, {}, 
+            // eslint-disable-next-line @typescript-eslint/no-loop-func
+            (responseJSON) => {
+                allMilestones.push(...responseJSON.milestones);
                 loadedCount += 1;
                 if (loadedCount === shiftWorkOrders.length) {
                     // Sort milestones by due date
                     allMilestones.sort((a, b) => {
                         if (a.milestoneDueDateTime === null ||
-                            a.milestoneDueDateTime === undefined)
+                            a.milestoneDueDateTime === undefined) {
                             return 1;
+                        }
                         if (b.milestoneDueDateTime === null ||
-                            b.milestoneDueDateTime === undefined)
+                            b.milestoneDueDateTime === undefined) {
                             return -1;
+                        }
                         return (new Date(a.milestoneDueDateTime).getTime() -
                             new Date(b.milestoneDueDateTime).getTime());
                     });
@@ -276,7 +278,7 @@
                     trElement.innerHTML = /* html */ `
               <td>${cityssm.escapeHTML(workOrder.workOrderNumber)}</td>
               <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
-              <td>${cityssm.escapeHTML(workOrder.requestorName ?? '')}</td>
+              <td>${cityssm.escapeHTML(workOrder.requestorName)}</td>
               <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 50))}${workOrder.workOrderDetails.length > 50 ? '...' : ''}</td>
               <td class="has-text-right">
                 <button class="button is-small is-primary button--select" data-work-order-id="${workOrder.workOrderId}" type="button">
@@ -360,7 +362,7 @@
         function doAdd(formEvent) {
             formEvent.preventDefault();
             cityssm.postJSON(`${urlPrefix}/doAddShiftWorkOrder`, formEvent.currentTarget, (responseJSON) => {
-                if (responseJSON.success && responseJSON.shiftWorkOrders) {
+                if (responseJSON.success) {
                     shiftWorkOrders = responseJSON.shiftWorkOrders;
                     renderShiftWorkOrders();
                     updateCounts();
@@ -368,13 +370,10 @@
                     closeModalFunction();
                 }
                 else {
-                    const errorMessage = responseJSON.success === false
-                        ? responseJSON.errorMessage
-                        : 'An unknown error occurred.';
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: `Error Adding ${shiftLog.workOrdersSectionNameSingular}`,
-                        message: errorMessage
+                        message: responseJSON.errorMessage
                     });
                 }
             });
@@ -465,20 +464,17 @@
                 text: 'Remove',
                 callbackFunction: () => {
                     cityssm.postJSON(`${urlPrefix}/doDeleteShiftWorkOrder`, { shiftId, workOrderId }, (responseJSON) => {
-                        if (responseJSON.success && responseJSON.shiftWorkOrders) {
+                        if (responseJSON.success) {
                             shiftWorkOrders = responseJSON.shiftWorkOrders;
                             renderShiftWorkOrders();
                             updateCounts();
                             loadMilestones();
                         }
                         else {
-                            const errorMessage = responseJSON.success === false
-                                ? responseJSON.errorMessage
-                                : 'An unknown error occurred.';
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: `Error Removing ${shiftLog.workOrdersSectionNameSingular}`,
-                                message: errorMessage
+                                message: responseJSON.errorMessage
                             });
                         }
                     });

@@ -14,7 +14,7 @@ export type DoAddShiftWorkOrderResponse =
     }
   | {
       success: true
-      shiftWorkOrders?: ShiftWorkOrder[]
+      shiftWorkOrders: ShiftWorkOrder[]
     }
 
 export default async function handler(

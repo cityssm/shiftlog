@@ -26,7 +26,7 @@ declare const cityssm: cityssmGlobal
 
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftTimesheets`,
-      { shiftId: shiftId },
+      { shiftId },
       (responseJSON: DoGetShiftTimesheetsResponse) => {
         // Update the indicator icon
         const indicatorIcon = document.querySelector('#icon--hasTimesheets')

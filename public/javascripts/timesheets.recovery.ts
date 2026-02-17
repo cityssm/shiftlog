@@ -1,6 +1,7 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoRecoverTimesheetResponse } from '../../handlers/timesheets-post/doRecoverTimesheet.js'
 import type { Timesheet } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -29,12 +30,7 @@ declare const exports: {
           cityssm.postJSON(
             `${exports.shiftLog.urlPrefix}/${exports.shiftLog.timesheetsRouter}/doRecoverTimesheet`,
             { timesheetId },
-            (response: {
-              success: boolean
-              message?: string
-              redirectUrl?: string
-              errorMessage?: string
-            }) => {
+            (response: DoRecoverTimesheetResponse) => {
               if (response.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -53,7 +49,9 @@ declare const exports: {
                   title: 'Error',
 
                   message:
-                    response.errorMessage ?? 'Failed to recover timesheet.'
+                    response.errorMessage === ''
+                      ? 'Failed to recover timesheet.'
+                      : response.errorMessage
                 })
               }
             }
@@ -105,10 +103,9 @@ declare const exports: {
       const tableRowElement = document.createElement('tr')
 
       const supervisorName =
-        timesheet.supervisorLastName ||
-        timesheet.supervisorFirstName
+        timesheet.supervisorLastName || timesheet.supervisorFirstName
           ? `${timesheet.supervisorLastName ?? ''}, ${timesheet.supervisorFirstName ?? ''}`
-          : timesheet.supervisorEmployeeNumber ?? '-'
+          : (timesheet.supervisorEmployeeNumber ?? '-')
 
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `

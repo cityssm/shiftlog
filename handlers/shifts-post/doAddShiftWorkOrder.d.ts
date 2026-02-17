@@ -5,7 +5,7 @@ export type DoAddShiftWorkOrderResponse = {
     errorMessage: string;
 } | {
     success: true;
-    shiftWorkOrders?: ShiftWorkOrder[];
+    shiftWorkOrders: ShiftWorkOrder[];
 };
 export default function handler(request: Request<unknown, unknown, {
     shiftId: number | string;

@@ -59,7 +59,7 @@
             const isOverdue = !isComplete &&
                 milestone.milestoneDueDateTime !== null &&
                 new Date(milestone.milestoneDueDateTime) < new Date();
-            const canEdit = exports.isEdit &&
+            const canEditMilestone = exports.isEdit &&
                 (exports.shiftLog.userCanManageWorkOrders ||
                     milestone.recordCreate_userName === exports.shiftLog.userName);
             // eslint-disable-next-line no-unsanitized/property
@@ -96,7 +96,7 @@
         <td>
           ${milestone.milestoneCompleteDateTime
                 ? formatDateTime(milestone.milestoneCompleteDateTime)
-                : canEdit && exports.isEdit
+                : canEditMilestone
                     ? /* html */ `
                   <button class="button is-small is-success is-light complete-milestone" type="button" title="Complete Milestone">
                     <span class="icon"><i class="fa-solid fa-check"></i></span>
@@ -108,7 +108,7 @@
         ${exports.isEdit
                 ? /* html */ `
               <td class="is-hidden-print">
-                ${canEdit
+                ${canEditMilestone
                     ? /* html */ `
                       <div class="buttons are-small is-justify-content-flex-end">
                         <button class="button edit-milestone" type="button" title="Edit">
@@ -125,22 +125,22 @@
                 : ''}
       `;
             // Add event listeners
-            if (canEdit) {
-                const editButton = trElement.querySelector('.edit-milestone');
-                editButton.addEventListener('click', () => {
+            if (canEditMilestone) {
+                trElement
+                    .querySelector('.edit-milestone')
+                    ?.addEventListener('click', () => {
                     showEditMilestoneModal(milestone);
                 });
-                const deleteButton = trElement.querySelector('.delete-milestone');
-                deleteButton.addEventListener('click', () => {
+                trElement
+                    .querySelector('.delete-milestone')
+                    ?.addEventListener('click', () => {
                     deleteMilestone(milestone.workOrderMilestoneId);
                 });
-                // Add complete button listener if milestone is not complete
-                if (!isComplete) {
-                    const completeButton = trElement.querySelector('.complete-milestone');
-                    completeButton?.addEventListener('click', () => {
-                        completeMilestone(milestone.workOrderMilestoneId);
-                    });
-                }
+                trElement
+                    .querySelector('.complete-milestone')
+                    ?.addEventListener('click', () => {
+                    completeMilestone(milestone.workOrderMilestoneId);
+                });
             }
             tbodyElement.append(trElement);
         }

@@ -130,7 +130,7 @@ declare const Sortable: {
         milestone.milestoneDueDateTime !== null &&
         new Date(milestone.milestoneDueDateTime) < new Date()
 
-      const canEdit =
+      const canEditMilestone =
         exports.isEdit &&
         (exports.shiftLog.userCanManageWorkOrders ||
           milestone.recordCreate_userName === exports.shiftLog.userName)
@@ -174,7 +174,7 @@ declare const Sortable: {
           ${
             milestone.milestoneCompleteDateTime
               ? formatDateTime(milestone.milestoneCompleteDateTime)
-              : canEdit && exports.isEdit
+              : canEditMilestone
                 ? /* html */ `
                   <button class="button is-small is-success is-light complete-milestone" type="button" title="Complete Milestone">
                     <span class="icon"><i class="fa-solid fa-check"></i></span>
@@ -189,7 +189,7 @@ declare const Sortable: {
             ? /* html */ `
               <td class="is-hidden-print">
                 ${
-                  canEdit
+                  canEditMilestone
                     ? /* html */ `
                       <div class="buttons are-small is-justify-content-flex-end">
                         <button class="button edit-milestone" type="button" title="Edit">
@@ -209,30 +209,24 @@ declare const Sortable: {
       `
 
       // Add event listeners
-      if (canEdit) {
-        const editButton = trElement.querySelector(
-          '.edit-milestone'
-        ) as HTMLButtonElement
-        editButton.addEventListener('click', () => {
-          showEditMilestoneModal(milestone)
-        })
+      if (canEditMilestone) {
+        trElement
+          .querySelector('.edit-milestone')
+          ?.addEventListener('click', () => {
+            showEditMilestoneModal(milestone)
+          })
 
-        const deleteButton = trElement.querySelector(
-          '.delete-milestone'
-        ) as HTMLButtonElement
-        deleteButton.addEventListener('click', () => {
-          deleteMilestone(milestone.workOrderMilestoneId)
-        })
+        trElement
+          .querySelector('.delete-milestone')
+          ?.addEventListener('click', () => {
+            deleteMilestone(milestone.workOrderMilestoneId)
+          })
 
-        // Add complete button listener if milestone is not complete
-        if (!isComplete) {
-          const completeButton = trElement.querySelector(
-            '.complete-milestone'
-          ) as HTMLButtonElement | null
-          completeButton?.addEventListener('click', () => {
+        trElement
+          .querySelector('.complete-milestone')
+          ?.addEventListener('click', () => {
             completeMilestone(milestone.workOrderMilestoneId)
           })
-        }
       }
 
       tbodyElement.append(trElement)

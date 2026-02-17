@@ -6,7 +6,7 @@
         const container = document.querySelector('#container--shiftTimesheets');
         if (!container)
             return;
-        cityssm.postJSON(`${urlPrefix}/doGetShiftTimesheets`, { shiftId: shiftId }, (responseJSON) => {
+        cityssm.postJSON(`${urlPrefix}/doGetShiftTimesheets`, { shiftId }, (responseJSON) => {
             // Update the indicator icon
             const indicatorIcon = document.querySelector('#icon--hasTimesheets');
             if (indicatorIcon && responseJSON.timesheets.length > 0) {

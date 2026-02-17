@@ -4,7 +4,6 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { DataList } from '../../database/app/getDataLists.js'
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
 import type { DoAddNoteTypeResponse } from '../../handlers/admin-post/doAddNoteType.js'
 import type { DoAddNoteTypeFieldResponse } from '../../handlers/admin-post/doAddNoteTypeField.js'
@@ -15,7 +14,7 @@ import type { DoGetNoteTypeTemplatesResponse } from '../../handlers/admin-post/d
 import type { DoReorderNoteTypeFieldsResponse } from '../../handlers/admin-post/doReorderNoteTypeFields.js'
 import type { DoUpdateNoteTypeResponse } from '../../handlers/admin-post/doUpdateNoteType.js'
 import type { DoUpdateNoteTypeFieldResponse } from '../../handlers/admin-post/doUpdateNoteTypeField.js'
-import type { UserGroup } from '../../types/record.types.js'
+import type { DataList, UserGroup } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 

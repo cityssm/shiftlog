@@ -25,7 +25,9 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error',
-                                message: response.errorMessage ?? 'Failed to recover timesheet.'
+                                message: response.errorMessage === ''
+                                    ? 'Failed to recover timesheet.'
+                                    : response.errorMessage
                             });
                         }
                     });
@@ -64,10 +66,9 @@
         const tableBodyElement = tableElement.querySelector('tbody');
         for (const timesheet of data.timesheets) {
             const tableRowElement = document.createElement('tr');
-            const supervisorName = timesheet.supervisorLastName ||
-                timesheet.supervisorFirstName
+            const supervisorName = timesheet.supervisorLastName || timesheet.supervisorFirstName
                 ? `${timesheet.supervisorLastName ?? ''}, ${timesheet.supervisorFirstName ?? ''}`
-                : timesheet.supervisorEmployeeNumber ?? '-';
+                : (timesheet.supervisorEmployeeNumber ?? '-');
             // eslint-disable-next-line no-unsanitized/property
             tableRowElement.innerHTML = /* html */ `
         <td>

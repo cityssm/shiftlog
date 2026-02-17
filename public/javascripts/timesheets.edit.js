@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.timesheetsRouter}`;
@@ -27,25 +28,23 @@
             supervisorEmployeeNumber,
             shiftDateString
         }, (response) => {
-            if (response.success && response.shifts !== undefined) {
-                // Check if we have a temporarily stored shift ID (from initial page load)
-                const tempShiftId = shiftIdElement.dataset.tempShiftId;
-                const currentShiftId = tempShiftId ?? shiftIdElement.value;
-                // Rebuild shift dropdown
-                shiftIdElement.innerHTML = '<option value="">(No Shift)</option>';
-                for (const shift of response.shifts) {
-                    const optionElement = document.createElement('option');
-                    optionElement.value = shift.shiftId.toString();
-                    optionElement.textContent = `Shift #${shift.shiftId} - ${shift.shiftTimeDataListItem ?? ''} (${shift.shiftTypeDataListItem ?? ''})`;
-                    if (shift.shiftId.toString() === currentShiftId) {
-                        optionElement.selected = true;
-                    }
-                    shiftIdElement.append(optionElement);
+            // Check if we have a temporarily stored shift ID (from initial page load)
+            const tempShiftId = shiftIdElement.dataset.tempShiftId;
+            const currentShiftId = tempShiftId ?? shiftIdElement.value;
+            // Rebuild shift dropdown
+            shiftIdElement.innerHTML = '<option value="">(No Shift)</option>';
+            for (const shift of response.shifts) {
+                const optionElement = document.createElement('option');
+                optionElement.value = shift.shiftId.toString();
+                optionElement.textContent = `Shift #${shift.shiftId} - ${shift.shiftTimeDataListItem ?? ''} (${shift.shiftTypeDataListItem ?? ''})`;
+                if (shift.shiftId.toString() === currentShiftId) {
+                    optionElement.selected = true;
                 }
-                // Clear the temporary attribute after first load
-                if (tempShiftId !== null) {
-                    delete shiftIdElement.dataset.tempShiftId;
-                }
+                shiftIdElement.append(optionElement);
+            }
+            // Clear the temporary attribute after first load
+            if (tempShiftId !== null) {
+                delete shiftIdElement.dataset.tempShiftId;
             }
         });
     }

@@ -6,18 +6,20 @@ declare const exports: {
     containerElement: HTMLElement,
     config: {
       timesheetId: number
+
       isEditable: boolean
-      hideEmptyRows: boolean
-      hideEmptyColumns: boolean
+
       filterRows: string
+      hideEmptyColumns: boolean
+      hideEmptyRows: boolean
     }
   ) => {
-    init(): Promise<void>
-    setDisplayOptions(options: {
-      hideEmptyRows?: boolean
-      hideEmptyColumns?: boolean
+    init: () => Promise<void>
+    setDisplayOptions: (options: {
       filterRows?: string
-    }): void
+      hideEmptyColumns?: boolean
+      hideEmptyRows?: boolean
+    }) => void
   }
 }
 ;(() => {

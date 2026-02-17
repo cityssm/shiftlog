@@ -1,11 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
-
-export interface DataList {
-  dataListKey: string
-  dataListName: string
-  isSystemList: boolean
-}
+import type { DataList } from '../../types/record.types.js'
 
 export default async function getDataLists(): Promise<DataList[]> {
   const pool = await getShiftLogConnectionPool()

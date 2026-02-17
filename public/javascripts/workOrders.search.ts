@@ -77,26 +77,26 @@ declare const exports: {
       const tableRowElement = document.createElement('tr')
 
       let openClosedIconHTML =
-        '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>'
+        /* html */ '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>'
 
       if (workOrder.workOrderCloseDateTime !== null) {
         openClosedIconHTML =
-          '<span class="icon has-text-grey" title="Closed"><i class="fa-solid fa-stop"></i></span>'
+          /* html */ '<span class="icon has-text-grey" title="Closed"><i class="fa-solid fa-stop"></i></span>'
       } else if (workOrder.workOrderDueDateTime !== null) {
         const dueDateTime = new Date(workOrder.workOrderDueDateTime as string)
         const now = new Date()
         if (dueDateTime < now) {
           openClosedIconHTML =
-            '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>'
+            /* html */ '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>'
         }
       }
 
       let extraDateHTML = ''
 
       if (workOrder.workOrderCloseDateTime !== null) {
-        extraDateHTML = `<i class="fa-solid fa-stop" title="Close Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderCloseDateTime ?? ''))}`
+        extraDateHTML =  /* html */ `<i class="fa-solid fa-stop" title="Close Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderCloseDateTime ?? ''))}`
       } else if (workOrder.workOrderDueDateTime !== null) {
-        extraDateHTML = `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`
+        extraDateHTML = /* html */ `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`
       }
 
       // Build tags HTML
