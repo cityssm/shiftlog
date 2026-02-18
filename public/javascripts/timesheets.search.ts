@@ -40,7 +40,8 @@ declare const exports: {
     }
 
     const tableElement = document.createElement('table')
-    tableElement.className = 'table is-fullwidth is-striped is-hoverable is-narrow'
+    tableElement.className =
+      'table is-fullwidth is-striped is-hoverable is-narrow'
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
@@ -123,7 +124,7 @@ declare const exports: {
   // Set up search on change
   formElement.addEventListener('change', resetOffsetAndGetResults)
 
-   document
+  document
     .querySelector('#timesheetSearch--limit')
     ?.addEventListener('change', resetOffsetAndGetResults)
 

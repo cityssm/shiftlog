@@ -15,7 +15,8 @@
             return;
         }
         const tableElement = document.createElement('table');
-        tableElement.className = 'table is-fullwidth is-striped is-hoverable is-narrow';
+        tableElement.className =
+            'table is-fullwidth is-striped is-hoverable is-narrow';
         tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
