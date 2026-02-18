@@ -153,10 +153,7 @@
         offsetInputElement.value = '0';
         getSearchResults();
     }
-    const formElements = filtersFormElement.querySelectorAll('input, select');
-    for (const formElement of formElements) {
-        formElement.addEventListener('change', resetOffsetAndGetResults);
-    }
+    filtersFormElement.addEventListener('change', resetOffsetAndGetResults);
     document
         .querySelector('#shiftSearch--limit')
         ?.addEventListener('change', resetOffsetAndGetResults);

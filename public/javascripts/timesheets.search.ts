@@ -40,13 +40,12 @@ declare const exports: {
     }
 
     const tableElement = document.createElement('table')
-    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
+    tableElement.className = 'table is-fullwidth is-striped is-hoverable is-narrow'
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Type</th>
           <th>Date</th>
+          <th>${cityssm.escapeHTML(shiftLog.timesheetsSectionNameSingular)}</th>
           <th>Title</th>
           <th>Supervisor</th>
         </tr>
@@ -68,12 +67,15 @@ declare const exports: {
 
       tableRowElement.innerHTML = /* html */ `
         <td>
-          <a href="${exports.shiftLog.buildTimesheetURL(timesheet.timesheetId)}">
-            ${cityssm.escapeHTML(timesheet.timesheetId.toString())}
-          </a>
+          ${cityssm.dateToString(timesheetDate)}<br />
+          <span class="is-size-7">${cityssm.escapeHTML(shiftLog.daysOfWeek[timesheetDate.getDay()])}</span>
         </td>
-        <td>${cityssm.escapeHTML(timesheet.timesheetTypeDataListItem ?? '(Unknown Timesheet Type)')}</td>
-        <td>${cityssm.dateToString(timesheetDate)}</td>
+        <td>
+          <a class="has-text-weight-semibold" href="${exports.shiftLog.buildTimesheetURL(timesheet.timesheetId)}">
+            ${cityssm.escapeHTML(timesheet.timesheetTypeDataListItem ?? '(Unknown Timesheet Type)')}
+          </a><br />
+          <span class="is-size-7">#${cityssm.escapeHTML(timesheet.timesheetId.toString())}</span>
+        </td>
         <td>${cityssm.escapeHTML(timesheet.timesheetTitle === '' ? '(No Title)' : timesheet.timesheetTitle)}</td>
         <td>
           ${cityssm.escapeHTML(timesheet.supervisorLastName ?? '')}, ${cityssm.escapeHTML(timesheet.supervisorFirstName ?? '')}
@@ -113,18 +115,17 @@ declare const exports: {
     )
   }
 
-  // Set up search on change
-  formElement.addEventListener('change', () => {
+  function resetOffsetAndGetResults(): void {
     offsetElement.value = '0'
     doSearch()
-  })
+  }
 
-  // Initial search with current date
-  const timesheetDateStringElement = document.createElement('input')
-  timesheetDateStringElement.name = 'timesheetDateString'
-  timesheetDateStringElement.type = 'hidden'
-  timesheetDateStringElement.value = currentTimesheetDateString
-  formElement.prepend(timesheetDateStringElement)
+  // Set up search on change
+  formElement.addEventListener('change', resetOffsetAndGetResults)
+
+   document
+    .querySelector('#timesheetSearch--limit')
+    ?.addEventListener('change', resetOffsetAndGetResults)
 
   doSearch()
 })()
