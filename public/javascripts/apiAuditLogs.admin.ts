@@ -141,6 +141,7 @@ declare const exports: {
         requestMethod: cityssm.escapeHTML(log.requestMethod),
         requestTime: cityssm.escapeHTML(requestTime.toLocaleString()),
         userName: cityssm.escapeHTML(log.userName ?? '-'),
+
         rawUserName: log.userName ?? ''
       }
 

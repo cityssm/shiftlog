@@ -1,5 +1,5 @@
 import type { ShiftWorkOrder } from '../../database/shifts/getShiftWorkOrders.js';
-import type { AdhocTask, DataListItem, Employee, Shift, ShiftCrew, ShiftEmployee, ShiftEquipment } from '../../types/record.types.js';
+import type { AdhocTask, DataListItem, Employee, Shift, ShiftCrew, ShiftEmployee, ShiftEquipment, Timesheet } from '../../types/record.types.js';
 export interface ShiftEditResponse {
     headTitle: string;
     section: 'shifts';
@@ -9,8 +9,9 @@ export interface ShiftEditResponse {
     shiftCrews: ShiftCrew[];
     shiftEmployees: ShiftEmployee[];
     shiftEquipment: ShiftEquipment[];
-    shiftWorkOrders: ShiftWorkOrder[];
     shiftAdhocTasks: AdhocTask[];
+    shiftWorkOrders: ShiftWorkOrder[];
+    shiftTimesheets: Timesheet[];
     shiftTimes: DataListItem[];
     shiftTypes: DataListItem[];
     supervisors: Employee[];

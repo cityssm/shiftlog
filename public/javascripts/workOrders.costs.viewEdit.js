@@ -49,16 +49,16 @@
             let total = 0;
             for (const cost of costs) {
                 const tableRowElement = document.createElement('tr');
-                const canEdit = exports.shiftLog.userCanManageWorkOrders ||
+                const canEditCost = exports.shiftLog.userCanManageWorkOrders ||
                     cost.recordCreate_userName === exports.shiftLog.userName;
                 total += cost.costAmount;
                 // eslint-disable-next-line no-unsanitized/property
                 tableRowElement.innerHTML = /* html */ `
           <td>${cityssm.escapeHTML(cost.costDescription)}</td>
           <td class="has-text-right">$${cost.costAmount.toFixed(2)}</td>
-          <td class="is-hidden-touch">${cityssm.escapeHTML(cost.recordCreate_userName)}</td>
-          <td class="is-hidden-touch">${cityssm.dateToString(new Date(cost.recordCreate_dateTime))}</td>
-          ${exports.isEdit && canEdit
+          <td class="is-hidden-touch">${cityssm.escapeHTML(cost.recordCreate_userName ?? '')}</td>
+          <td class="is-hidden-touch">${cityssm.dateToString(new Date(cost.recordCreate_dateTime ?? ''))}</td>
+          ${exports.isEdit && canEditCost
                     ? /* html */ `
                 <td class="is-hidden-print">
                   <div class="buttons are-small is-justify-content-end">
@@ -85,7 +85,7 @@
                         ? '<td></td>'
                         : ''}
         `;
-                if (exports.isEdit && canEdit) {
+                if (exports.isEdit && canEditCost) {
                     const editButton = tableRowElement.querySelector('.edit-cost');
                     editButton.addEventListener('click', () => {
                         showEditCostModal(cost);

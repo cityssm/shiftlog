@@ -20,4 +20,59 @@
   <% } %>
 </div>
 
-<div id="container--shiftTimesheets"></div>
+<% if (shiftTimesheets.length > 0) { %>
+<table class="table is-fullwidth is-striped is-hoverable">
+  <thead>
+    <tr>
+      <th><%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %> ID</th>
+      <th>Date</th>
+      <th>Type</th>
+      <th>Title</th>
+      <th>Supervisor</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- eslint-disable html/indent -->
+    <% for (const timesheet of shiftTimesheets) { %>
+    <% 
+      let statusBadge
+
+      if (timesheet.recordSubmitted_dateTime) {
+        statusBadge = '<span class="tag is-success">Submitted</span>'
+      } else if (
+        timesheet.employeesEntered_dateTime ||
+        timesheet.equipmentEntered_dateTime
+      ) {
+        statusBadge = '<span class="tag is-warning">Data Entered</span>'
+      } else {
+        statusBadge = '<span class="tag is-info">Draft</span>'
+      }
+    %>
+    <tr>
+      <td>
+        <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/<%= timesheet.timesheetId %>">
+          #<%= timesheet.timesheetId %>
+        </a>
+      </td>
+      <td><%= dateTimeFunctions.dateToString(timesheet.timesheetDate) %></td>
+      <td><%= timesheet.timesheetTypeDataListItem %></td>
+      <td><%= timesheet.timesheetTitle %></td>
+      <td>
+        <%= timesheet.supervisorLastName %>, <%= timesheet.supervisorFirstName %>
+      </td>
+      <td><%- statusBadge %></td>
+    </tr>
+    <% } %>
+  </tbody>
+</table>
+<% } else { %>
+<div class="message is-info">
+  <p class="message-body">
+    No related
+    <%= configFunctions.getConfigProperty('timesheets.sectionName').toLowerCase() %>
+    found for this
+    <%= configFunctions.getConfigProperty('shifts.sectionNameSingular').toLowerCase() %>.
+  </p>
+</div>
+<% } %>

@@ -6,7 +6,8 @@ import type {
   Shift,
   ShiftCrew,
   ShiftEmployee,
-  ShiftEquipment
+  ShiftEquipment,
+  Timesheet
 } from '../../types/record.types.js'
 
 export interface ShiftEditResponse {
@@ -20,8 +21,11 @@ export interface ShiftEditResponse {
   shiftCrews: ShiftCrew[]
   shiftEmployees: ShiftEmployee[]
   shiftEquipment: ShiftEquipment[]
-  shiftWorkOrders: ShiftWorkOrder[]
+
   shiftAdhocTasks: AdhocTask[]
+  shiftWorkOrders: ShiftWorkOrder[]
+
+  shiftTimesheets: Timesheet[]
 
   shiftTimes: DataListItem[]
   shiftTypes: DataListItem[]

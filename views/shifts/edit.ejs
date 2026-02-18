@@ -375,19 +375,25 @@
             </div>
           </a>
         </li> 
-        <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
+        <% if (user.userProperties.timesheets.canView) { %>
         <li>
           <a href="#tab--timesheets" title="<%= configFunctions.getConfigProperty('timesheets.sectionName') %>">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
-                <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i></span>
+                <span class="icon">
+                  <i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
+                </span>
               </div>
-              <div class="column is-hidden-touch"><%= configFunctions.getConfigProperty('timesheets.sectionName') %></div>
+              <div class="column is-hidden-touch">
+                <%= configFunctions.getConfigProperty('timesheets.sectionName') %>
+              </div>
+              <% if (shiftTimesheets.length > 0) { %>
               <div class="column is-narrow is-hidden-touch">
-                <span class="icon has-text-success ml-2 is-hidden" id="icon--hasTimesheets">
+                <span class="icon has-text-success ml-2" id="icon--hasTimesheets">
                   <i class="fa-solid fa-circle"></i>
                 </span>
               </div>
+              <% } %>
             </div>
           </a>
         </li>
@@ -406,7 +412,7 @@
       <div id="tab--notes" class="is-hidden">
         <%- await include('_edit-notes'); -%>
       </div>
-      <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
+      <% if (user.userProperties.timesheets.canView) { %>
       <div id="tab--timesheets" class="is-hidden">
         <%- await include('_edit-timesheets'); -%>
       </div>
@@ -429,24 +435,24 @@
 <% if (!isCreate) { %>
 <script>
   exports.isEdit = <%= isEdit %>;
+
   exports.shiftCrews = <%- JSON.stringify(shiftCrews) %>;
   exports.shiftEmployees = <%- JSON.stringify(shiftEmployees) %>;  
   exports.shiftEquipment = <%- JSON.stringify(shiftEquipment) %>;
+
   exports.shiftWorkOrders = <%- JSON.stringify(shiftWorkOrders) %>;
   exports.shiftAdhocTasks = <%- JSON.stringify(shiftAdhocTasks) %>;
+
+  exports.shiftTimesheets = <%- JSON.stringify(shiftTimesheets) %>;
 </script>
 <script src="<%= urlPrefix %>/javascripts/shifts.employees.js"></script>
 <script src="<%= urlPrefix %>/javascripts/shifts.notes.viewEdit.js"></script>
 
-<% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
+<% if (user.userProperties.workOrders.canView) { %>
 <script src="<%= urlPrefix %>/javascripts/shifts.workOrders.js"></script>
 <% } %>
 
 <script src="<%= urlPrefix %>/javascripts/shifts.adhocTasks.js"></script>
-
-<% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
-<script src="<%= urlPrefix %>/javascripts/shifts.timesheets.viewEdit.js"></script>
-<% } %>
 <% } %>
 
 <%- await include('../_footerB'); -%>

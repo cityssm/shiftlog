@@ -9,6 +9,7 @@ import getShiftEquipment from '../../database/shifts/getShiftEquipment.js'
 import getShiftTimeDataListItems from '../../database/shifts/getShiftTimeDataListItems.js'
 import getShiftTypeDataListItems from '../../database/shifts/getShiftTypeDataListItems.js'
 import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js'
+import getTimesheetsByShift from '../../database/timesheets/getTimesheetsByShift.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 import type { ShiftEditResponse } from './types.js'
@@ -40,14 +41,20 @@ export default async function handler(
   }
 
   const shiftCrews = await getShiftCrews(request.params.shiftId)
-
   const shiftEmployees = await getShiftEmployees(request.params.shiftId)
-
   const shiftEquipment = await getShiftEquipment(request.params.shiftId)
 
-  const shiftWorkOrders = await getShiftWorkOrders(request.params.shiftId)
+  const shiftWorkOrders =
+    (request.session.user?.userProperties.workOrders.canView ?? false)
+      ? await getShiftWorkOrders(request.params.shiftId)
+      : []
 
   const shiftAdhocTasks = await getShiftAdhocTasks(request.params.shiftId)
+
+  const shiftTimesheets =
+    (request.session.user?.userProperties.timesheets.canView ?? false)
+      ? await getTimesheetsByShift(request.params.shiftId, request.session.user)
+      : []
 
   let supervisors = await getEmployees({ isSupervisor: true })
 
@@ -74,8 +81,11 @@ export default async function handler(
     shiftCrews,
     shiftEmployees,
     shiftEquipment,
-    shiftWorkOrders,
+
     shiftAdhocTasks,
+    shiftWorkOrders,
+
+    shiftTimesheets,
 
     shiftTimes,
     shiftTypes,

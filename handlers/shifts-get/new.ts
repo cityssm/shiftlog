@@ -61,11 +61,14 @@ export default async function handler(
     isEdit: true,
 
     shift,
-    shiftAdhocTasks: [],
     shiftCrews: [],
     shiftEmployees: [],
     shiftEquipment: [],
+
+    shiftAdhocTasks: [],
     shiftWorkOrders: [],
+
+    shiftTimesheets: [],
 
     shiftTimes,
     shiftTypes,

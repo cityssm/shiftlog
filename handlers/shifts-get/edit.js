@@ -7,6 +7,7 @@ import getShiftEquipment from '../../database/shifts/getShiftEquipment.js';
 import getShiftTimeDataListItems from '../../database/shifts/getShiftTimeDataListItems.js';
 import getShiftTypeDataListItems from '../../database/shifts/getShiftTypeDataListItems.js';
 import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js';
+import getTimesheetsByShift from '../../database/timesheets/getTimesheetsByShift.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('shifts.router')}`;
 export default async function handler(request, response) {
@@ -29,8 +30,13 @@ export default async function handler(request, response) {
     const shiftCrews = await getShiftCrews(request.params.shiftId);
     const shiftEmployees = await getShiftEmployees(request.params.shiftId);
     const shiftEquipment = await getShiftEquipment(request.params.shiftId);
-    const shiftWorkOrders = await getShiftWorkOrders(request.params.shiftId);
+    const shiftWorkOrders = (request.session.user?.userProperties.workOrders.canView ?? false)
+        ? await getShiftWorkOrders(request.params.shiftId)
+        : [];
     const shiftAdhocTasks = await getShiftAdhocTasks(request.params.shiftId);
+    const shiftTimesheets = (request.session.user?.userProperties.timesheets.canView ?? false)
+        ? await getTimesheetsByShift(request.params.shiftId, request.session.user)
+        : [];
     let supervisors = await getEmployees({ isSupervisor: true });
     if (!(request.session.user?.userProperties.shifts.canManage ?? false)) {
         supervisors = supervisors.filter((supervisor) => supervisor.userName === request.session.user?.userName);
@@ -46,8 +52,9 @@ export default async function handler(request, response) {
         shiftCrews,
         shiftEmployees,
         shiftEquipment,
-        shiftWorkOrders,
         shiftAdhocTasks,
+        shiftWorkOrders,
+        shiftTimesheets,
         shiftTimes,
         shiftTypes,
         supervisors

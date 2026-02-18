@@ -6,6 +6,7 @@ import getShiftCrews from '../../database/shifts/getShiftCrews.js'
 import getShiftEmployees from '../../database/shifts/getShiftEmployees.js'
 import getShiftEquipment from '../../database/shifts/getShiftEquipment.js'
 import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js'
+import getTimesheetsByShift from '../../database/timesheets/getTimesheetsByShift.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 import type { ShiftEditResponse } from './types.js'
@@ -14,7 +15,7 @@ const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfig
 
 export default async function handler(
   request: Request<{ shiftId: string }, unknown, unknown, { error?: string }>,
-  response: Response<ShiftEditResponse>
+  response: Response
 ): Promise<void> {
   const shift = await getShift(request.params.shiftId, request.session.user)
 
@@ -26,8 +27,18 @@ export default async function handler(
   const shiftCrews = await getShiftCrews(request.params.shiftId)
   const shiftEmployees = await getShiftEmployees(request.params.shiftId)
   const shiftEquipment = await getShiftEquipment(request.params.shiftId)
-  const shiftWorkOrders = await getShiftWorkOrders(request.params.shiftId)
+
+  const shiftWorkOrders =
+    (request.session.user?.userProperties.workOrders.canView ?? false)
+      ? await getShiftWorkOrders(request.params.shiftId)
+      : []
+
   const shiftAdhocTasks = await getShiftAdhocTasks(request.params.shiftId)
+
+  const shiftTimesheets =
+    (request.session.user?.userProperties.timesheets.canView ?? false)
+      ? await getTimesheetsByShift(request.params.shiftId, request.session.user)
+      : []
 
   response.render('shifts/edit', {
     headTitle: `${getConfigProperty('shifts.sectionNameSingular')} #${
@@ -39,11 +50,15 @@ export default async function handler(
     isEdit: false,
 
     shift,
-    shiftAdhocTasks,
+
     shiftCrews,
     shiftEmployees,
     shiftEquipment,
+
+    shiftAdhocTasks,
     shiftWorkOrders,
+
+    shiftTimesheets,
 
     shiftTimes: [],
     shiftTypes: [],

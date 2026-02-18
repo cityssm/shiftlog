@@ -110,6 +110,7 @@ interface WorkOrderAccomplishmentData {
 
     // Initialize Leaflet map
     const mapElement = document.querySelector('#map--hotZones')
+
     if (mapElement !== null) {
       hotZonesMap = new L.Map('map--hotZones').setView(
         [shiftLog.defaultLatitude, shiftLog.defaultLongitude],

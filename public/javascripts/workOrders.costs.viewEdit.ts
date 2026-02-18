@@ -90,7 +90,7 @@ declare const bulmaJS: BulmaJS
       for (const cost of costs) {
         const tableRowElement = document.createElement('tr')
 
-        const canEdit =
+        const canEditCost =
           exports.shiftLog.userCanManageWorkOrders ||
           cost.recordCreate_userName === exports.shiftLog.userName
 
@@ -100,10 +100,10 @@ declare const bulmaJS: BulmaJS
         tableRowElement.innerHTML = /* html */ `
           <td>${cityssm.escapeHTML(cost.costDescription)}</td>
           <td class="has-text-right">$${cost.costAmount.toFixed(2)}</td>
-          <td class="is-hidden-touch">${cityssm.escapeHTML(cost.recordCreate_userName)}</td>
-          <td class="is-hidden-touch">${cityssm.dateToString(new Date(cost.recordCreate_dateTime))}</td>
+          <td class="is-hidden-touch">${cityssm.escapeHTML(cost.recordCreate_userName ?? '')}</td>
+          <td class="is-hidden-touch">${cityssm.dateToString(new Date(cost.recordCreate_dateTime ?? ''))}</td>
           ${
-            exports.isEdit && canEdit
+            exports.isEdit && canEditCost
               ? /* html */ `
                 <td class="is-hidden-print">
                   <div class="buttons are-small is-justify-content-end">
@@ -132,7 +132,7 @@ declare const bulmaJS: BulmaJS
           }
         `
 
-        if (exports.isEdit && canEdit) {
+        if (exports.isEdit && canEditCost) {
           const editButton = tableRowElement.querySelector(
             '.edit-cost'
           ) as HTMLButtonElement
@@ -239,6 +239,7 @@ declare const bulmaJS: BulmaJS
               bulmaJS.alert({
                 contextualColorName: 'danger',
                 title: 'Error Adding Cost',
+
                 message: responseJSON.errorMessage
               })
             }

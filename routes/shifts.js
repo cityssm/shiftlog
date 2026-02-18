@@ -46,7 +46,6 @@ import handler_doGetShiftEmployees from '../handlers/shifts-post/doGetShiftEmplo
 import handler_doGetShiftEquipment from '../handlers/shifts-post/doGetShiftEquipment.js';
 import handler_doGetShiftNotes from '../handlers/shifts-post/doGetShiftNotes.js';
 import handler_doGetShiftsForBuilder from '../handlers/shifts-post/doGetShiftsForBuilder.js';
-import handler_doGetShiftTimesheets from '../handlers/shifts-post/doGetShiftTimesheets.js';
 import handler_doGetShiftWorkOrders from '../handlers/shifts-post/doGetShiftWorkOrders.js';
 import handler_doRecoverShift from '../handlers/shifts-post/doRecoverShift.js';
 import handler_doSearchShifts from '../handlers/shifts-post/doSearchShifts.js';
@@ -103,8 +102,7 @@ router
 router
     .post('/doGetShiftCrews', handler_doGetShiftCrews)
     .post('/doGetShiftEmployees', handler_doGetShiftEmployees)
-    .post('/doGetShiftEquipment', handler_doGetShiftEquipment)
-    .post('/doGetShiftTimesheets', handler_doGetShiftTimesheets);
+    .post('/doGetShiftEquipment', handler_doGetShiftEquipment);
 // Ignoring eslint-plugin-no-secrets false positive
 router.post(
 // eslint-disable-next-line no-secrets/no-secrets
