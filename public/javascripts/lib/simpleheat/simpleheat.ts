@@ -1,5 +1,5 @@
-function simpleheat(canvas) {
-  if (!(this instanceof simpleheat)) return new simpleheat(canvas)
+function SimpleHeat(canvas) {
+  if (!(this instanceof SimpleHeat)) return new SimpleHeat(canvas)
 
   this._canvas = canvas =
     typeof canvas === 'string' ? document.getElementById(canvas) : canvas
@@ -12,7 +12,7 @@ function simpleheat(canvas) {
   this._data = []
 }
 
-simpleheat.prototype = {
+SimpleHeat.prototype = {
   defaultRadius: 25,
 
   defaultGradient: {
@@ -23,27 +23,27 @@ simpleheat.prototype = {
     1.0: 'red'
   },
 
-  data: function (data) {
+  data(data) {
     this._data = data
     return this
   },
 
-  max: function (max) {
+  max(max) {
     this._max = max
     return this
   },
 
-  add: function (point) {
+  add(point) {
     this._data.push(point)
     return this
   },
 
-  clear: function () {
+  clear() {
     this._data = []
     return this
   },
 
-  radius: function (r, blur) {
+  radius(r, blur) {
     blur = blur === undefined ? 15 : blur
 
     // create a grayscale blurred circle image that we'll use for drawing points
@@ -65,12 +65,12 @@ simpleheat.prototype = {
     return this
   },
 
-  resize: function () {
+  resize() {
     this._width = this._canvas.width
     this._height = this._canvas.height
   },
 
-  gradient: function (grad) {
+  gradient(grad) {
     // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
     const canvas = this._createCanvas()
     const context = canvas.getContext('2d', { willReadFrequently: true })
@@ -91,7 +91,7 @@ simpleheat.prototype = {
     return this
   },
 
-  draw: function (minOpacity) {
+  draw(minOpacity) {
     if (!this._circle) this.radius(this.defaultRadius)
     if (!this._grad) this.gradient(this.defaultGradient)
 
@@ -100,7 +100,7 @@ simpleheat.prototype = {
     context.clearRect(0, 0, this._width, this._height)
 
     // draw a grayscale heatmap by putting a blurred circle at each data point
-    for (var i = 0, len = this._data.length, p; i < len; i++) {
+    for (let i = 0, len = this._data.length, p; i < len; i += 1) {
       p = this._data[i]
       context.globalAlpha = Math.min(
         Math.max(
@@ -122,7 +122,7 @@ simpleheat.prototype = {
     return this
   },
 
-  _colorize: function (pixels, gradient) {
+  _colorize(pixels, gradient) {
     for (let index = 0, len = pixels.length, j; index < len; index += 4) {
       j = pixels[index + 3] * 4 // get gradient color from opacity value
 
@@ -134,7 +134,7 @@ simpleheat.prototype = {
     }
   },
 
-  _createCanvas: function () {
+  _createCanvas() {
     return document.createElement('canvas')
   }
 }

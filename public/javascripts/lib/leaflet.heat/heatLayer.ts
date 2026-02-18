@@ -5,10 +5,10 @@
  */
 
 import type Leaflet from 'leaflet'
-import type Simpleheat from 'simpleheat'
+import type SimpleHeatType from 'simpleheat'
 
 declare const L: typeof Leaflet
-declare const simpleheat: typeof Simpleheat
+declare const SimpleHeat: typeof SimpleHeatType
 
 const HeatLayer = L.Layer.extend({
   // options: {
@@ -100,7 +100,7 @@ const HeatLayer = L.Layer.extend({
 
     canvas.classList.add(`leaflet-zoom-${animated ? 'animated' : 'hide'}`)
 
-    this._heat = simpleheat(canvas)
+    this._heat = SimpleHeat(canvas)
     this._updateOptions()
   },
 

@@ -1,6 +1,6 @@
-function simpleheat(canvas) {
-    if (!(this instanceof simpleheat))
-        return new simpleheat(canvas);
+function SimpleHeat(canvas) {
+    if (!(this instanceof SimpleHeat))
+        return new SimpleHeat(canvas);
     this._canvas = canvas =
         typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
     this._ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -9,7 +9,7 @@ function simpleheat(canvas) {
     this._max = 1;
     this._data = [];
 }
-simpleheat.prototype = {
+SimpleHeat.prototype = {
     defaultRadius: 25,
     defaultGradient: {
         0.4: 'blue',
@@ -18,23 +18,23 @@ simpleheat.prototype = {
         0.8: 'yellow',
         1.0: 'red'
     },
-    data: function (data) {
+    data(data) {
         this._data = data;
         return this;
     },
-    max: function (max) {
+    max(max) {
         this._max = max;
         return this;
     },
-    add: function (point) {
+    add(point) {
         this._data.push(point);
         return this;
     },
-    clear: function () {
+    clear() {
         this._data = [];
         return this;
     },
-    radius: function (r, blur) {
+    radius(r, blur) {
         blur = blur === undefined ? 15 : blur;
         // create a grayscale blurred circle image that we'll use for drawing points
         const circle = (this._circle = this._createCanvas());
@@ -50,11 +50,11 @@ simpleheat.prototype = {
         context.fill();
         return this;
     },
-    resize: function () {
+    resize() {
         this._width = this._canvas.width;
         this._height = this._canvas.height;
     },
-    gradient: function (grad) {
+    gradient(grad) {
         // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
         const canvas = this._createCanvas();
         const context = canvas.getContext('2d', { willReadFrequently: true });
@@ -69,7 +69,7 @@ simpleheat.prototype = {
         this._grad = context.getImageData(0, 0, 1, 256).data;
         return this;
     },
-    draw: function (minOpacity) {
+    draw(minOpacity) {
         if (!this._circle)
             this.radius(this.defaultRadius);
         if (!this._grad)
@@ -77,7 +77,7 @@ simpleheat.prototype = {
         const context = this._ctx;
         context.clearRect(0, 0, this._width, this._height);
         // draw a grayscale heatmap by putting a blurred circle at each data point
-        for (var i = 0, len = this._data.length, p; i < len; i++) {
+        for (let i = 0, len = this._data.length, p; i < len; i += 1) {
             p = this._data[i];
             context.globalAlpha = Math.min(Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity), 1);
             context.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
@@ -90,7 +90,7 @@ simpleheat.prototype = {
         }
         return this;
     },
-    _colorize: function (pixels, gradient) {
+    _colorize(pixels, gradient) {
         for (let index = 0, len = pixels.length, j; index < len; index += 4) {
             j = pixels[index + 3] * 4; // get gradient color from opacity value
             if (j) {
@@ -100,7 +100,7 @@ simpleheat.prototype = {
             }
         }
     },
-    _createCanvas: function () {
+    _createCanvas() {
         return document.createElement('canvas');
     }
 };

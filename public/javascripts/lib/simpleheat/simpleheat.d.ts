@@ -1,1 +1,1 @@
-declare function simpleheat(canvas: any): any;
+declare function SimpleHeat(canvas: any): any;

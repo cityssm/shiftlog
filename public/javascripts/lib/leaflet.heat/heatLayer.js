@@ -68,7 +68,7 @@ const HeatLayer = L.Layer.extend({
         canvas.height = size.y;
         const animated = this._map.options.zoomAnimation && L.Browser.any3d;
         canvas.classList.add(`leaflet-zoom-${animated ? 'animated' : 'hide'}`);
-        this._heat = simpleheat(canvas);
+        this._heat = SimpleHeat(canvas);
         this._updateOptions();
     },
     _updateOptions() {
