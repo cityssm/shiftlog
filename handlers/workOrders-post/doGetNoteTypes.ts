@@ -4,7 +4,8 @@ import getNoteTypes, {
   type NoteTypeWithFields
 } from '../../database/noteTypes/getNoteTypes.js'
 
-export interface DoGetNoteTypesResponse {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
+export type DoGetNoteTypesResponse = {
   noteTypes: NoteTypeWithFields[]
 }
 
