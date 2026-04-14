@@ -35,7 +35,7 @@ describe('Admin - Employee Management', () => {
         cy.get('#editEmployee--lastName')
             .invoke('val')
             .then((originalValue) => {
-            const newValue = (originalValue + updatedText).slice(-50);
+            const newValue = (String(originalValue) + updatedText).slice(-50);
             cy.get('#editEmployee--lastName').clear().type(newValue);
         });
         cy.get('#form--editEmployee').submit();
