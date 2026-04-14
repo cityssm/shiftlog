@@ -4,7 +4,6 @@
     const formElement = document.querySelector('#form--timesheetSearch');
     const searchResultsContainerElement = document.querySelector('#container--timesheetSearchResults');
     const offsetElement = formElement.querySelector('#timesheetSearch--offset');
-    const currentTimesheetDateString = cityssm.dateToString(new Date());
     function renderTimesheetResults(data) {
         if (data.timesheets.length === 0) {
             searchResultsContainerElement.innerHTML = /* html */ `

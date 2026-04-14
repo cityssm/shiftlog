@@ -26,8 +26,6 @@ declare const exports: {
     '#timesheetSearch--offset'
   ) as HTMLInputElement
 
-  const currentTimesheetDateString = cityssm.dateToString(new Date())
-
   function renderTimesheetResults(data: DoSearchTimesheetsResponse): void {
     if (data.timesheets.length === 0) {
       searchResultsContainerElement.innerHTML = /* html */ `
