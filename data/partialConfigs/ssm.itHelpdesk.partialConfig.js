@@ -1,8 +1,8 @@
 import { config as baseConfig } from './itHelpdesk.partialConfig.js';
 export const config = { ...baseConfig };
-config.application.attachmentStoragePath = 'data/attachments/itHelpDesk';
+config.application.attachmentStoragePath = 'data/attachments/itHelpdesk';
 config.reverseProxy = {
     trafficIsForwarded: true,
-    urlPrefix: '/itHelpDesk'
+    urlPrefix: '/itHelpdesk'
 };
 export default config;
