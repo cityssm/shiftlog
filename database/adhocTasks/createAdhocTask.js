@@ -29,7 +29,7 @@ export default async function createAdhocTask(task, sessionUser) {
         : task.taskDueDateTimeString)
         .input('recordCreate_userName', sessionUser.userName)
         .input('recordUpdate_userName', sessionUser.userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.AdhocTasks (
           adhocTaskTypeDataListItemId,

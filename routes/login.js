@@ -31,13 +31,7 @@ async function postHandler(request, response) {
     const passwordPlain = typeof request.body.password === 'string' ? request.body.password : '';
     const unsafeRedirectUrl = request.body.redirect;
     const redirectUrl = getSafeRedirectUrl(typeof unsafeRedirectUrl === 'string' ? unsafeRedirectUrl : '');
-    /*
-     * Authenticate User
-     */
     const isAuthenticated = await authenticate(userName, passwordPlain);
-    /*
-     * Get User Object
-     */
     let userObject;
     if (isAuthenticated) {
         userObject = await getUser(userName);
@@ -69,7 +63,6 @@ async function postHandler(request, response) {
     }
     if (isAuthenticated && userObject !== undefined) {
         clearAbuse(request);
-        // Override user permissions based on config file
         if (!getConfigProperty('workOrders.isEnabled')) {
             userObject.userProperties.workOrders.canView = false;
             userObject.userProperties.workOrders.canUpdate = false;

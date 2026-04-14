@@ -7,7 +7,7 @@ export default async function markEmployeesAsEntered(timesheetId, userName) {
         .input('timesheetId', timesheetId)
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Timesheets
       SET
         employeesEntered_dateTime = getdate(),

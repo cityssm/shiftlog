@@ -1,12 +1,11 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function copyFromPreviousTimesheet(sourceTimesheetId, targetTimesheetId) {
     const pool = await getShiftLogConnectionPool();
-    // Copy columns
     await pool
         .request()
         .input('sourceTimesheetId', sourceTimesheetId)
         .input('targetTimesheetId', targetTimesheetId)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.TimesheetColumns (
           timesheetId,
@@ -28,12 +27,11 @@ export default async function copyFromPreviousTimesheet(sourceTimesheetId, targe
       WHERE
         timesheetId = @sourceTimesheetId
     `);
-    // Copy rows
     await pool
         .request()
         .input('sourceTimesheetId', sourceTimesheetId)
         .input('targetTimesheetId', targetTimesheetId)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.TimesheetRows (
           instance,
@@ -57,12 +55,11 @@ export default async function copyFromPreviousTimesheet(sourceTimesheetId, targe
       WHERE
         timesheetId = @sourceTimesheetId
     `);
-    // Copy cells with remapped IDs
     await pool
         .request()
         .input('sourceTimesheetId', sourceTimesheetId)
         .input('targetTimesheetId', targetTimesheetId)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.TimesheetCells (timesheetRowId, timesheetColumnId, recordHours)
       SELECT

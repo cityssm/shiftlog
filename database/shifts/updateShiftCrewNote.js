@@ -7,7 +7,7 @@ export default async function updateShiftCrewNote(form) {
             .input('shiftId', form.shiftId)
             .input('crewId', form.crewId)
             .input('shiftCrewNote', form.shiftCrewNote)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.ShiftCrews
         SET
           shiftCrewNote = @shiftCrewNote

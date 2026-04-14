@@ -6,7 +6,7 @@ export default async function getLocationSuggestions(searchString) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('searchString', searchString)
-        .query(/* sql */ `
+        .query(`
       SELECT
         locationId,
         address1,

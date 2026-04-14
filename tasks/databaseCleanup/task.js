@@ -29,16 +29,13 @@ async function runCleanup() {
     }
 }
 debug('Starting database cleanup task');
-// Run the cleanup task on Monday at 2:00 AM
-// The task is automatically started and managed by the ScheduledTask class
 const scheduledTask = new ScheduledTask('Database Cleanup', runCleanup, {
     schedule: {
-        dayOfWeek: 1, // Monday
+        dayOfWeek: 1,
         hour: 2,
         minute: 0,
         second: 0
     },
-    // Do not run more than once a day
     minimumIntervalMillis: millisecondsInOneDay
 });
 scheduledTask.startTask();

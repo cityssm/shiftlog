@@ -12,7 +12,7 @@ export default async function updateEmployeeList(employeeListFields, user) {
             .input('userGroupId', employeeListFields.userGroupId ?? undefined)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.EmployeeLists
         SET
           employeeListName = @employeeListName,

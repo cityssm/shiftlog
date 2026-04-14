@@ -7,7 +7,7 @@ export default async function deleteAssignedToItem(assignedToId, userName) {
         .input('instance', getConfigProperty('application.instance'))
         .input('assignedToId', assignedToId)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.AssignedTo
       SET
         recordDelete_userName = @userName,

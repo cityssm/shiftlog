@@ -7,7 +7,7 @@ export default async function getUserSettings(userName) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         settingKey,
         settingValue
@@ -21,7 +21,6 @@ export default async function getUserSettings(userName) {
     for (const row of result.recordset) {
         settings[row.settingKey] = row.settingValue;
     }
-    // If apiKey is missing or empty, you may want to handle it here (logic omitted for brevity)
     if (settings.apiKey === undefined || settings.apiKey === '') {
         const newApiKey = await updateApiKeyUserSetting(userName);
         settings.apiKey = newApiKey;

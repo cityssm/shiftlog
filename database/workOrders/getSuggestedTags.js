@@ -8,7 +8,7 @@ export default async function getSuggestedTags(workOrderId, limit = defaultLimit
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderId', workOrderId)
         .input('limit', limit)
-        .query(/* sql */ `
+        .query(`
       SELECT TOP (@limit)
         wot.tagName,
         t.tagBackgroundColor,

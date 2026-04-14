@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getTimesheetCells(timesheetId) {
     const pool = await getShiftLogConnectionPool();
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       tc.timesheetRowId,
       tc.timesheetColumnId,

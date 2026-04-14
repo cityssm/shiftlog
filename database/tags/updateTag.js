@@ -12,7 +12,7 @@ export default async function updateTag(updateTagForm, user) {
             .input('tagTextColor', updateTagForm.tagTextColor)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.Tags
         SET
           tagBackgroundColor = @tagBackgroundColor,

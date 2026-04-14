@@ -15,7 +15,7 @@ export default async function updateLocation(updateLocationForm, user) {
             .input('longitude', updateLocationForm.longitude)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.Locations
         SET
           address1 = @address1,

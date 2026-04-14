@@ -13,7 +13,7 @@ export default async function createWorkOrderCost(createWorkOrderCostForm, userN
         .input('costAmount', createWorkOrderCostForm.costAmount)
         .input('costDescription', createWorkOrderCostForm.costDescription)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.WorkOrderCosts (
           workOrderId,
@@ -32,7 +32,6 @@ export default async function createWorkOrderCost(createWorkOrderCostForm, userN
         )
     `);
     if (result.rowsAffected[0] > 0) {
-        // Send Notification
         sendNotificationWorkerMessage('workOrder.update', typeof createWorkOrderCostForm.workOrderId === 'string'
             ? Number.parseInt(createWorkOrderCostForm.workOrderId, 10)
             : createWorkOrderCostForm.workOrderId);

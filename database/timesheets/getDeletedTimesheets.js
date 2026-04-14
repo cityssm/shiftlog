@@ -4,7 +4,7 @@ export default async function getDeletedTimesheets(user) {
     const pool = await getShiftLogConnectionPool();
     let whereClause = 'where t.instance = @instance and t.recordDelete_dateTime is not null';
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         tType.userGroupId IS NULL
         OR tType.userGroupId IN (
@@ -22,7 +22,7 @@ export default async function getDeletedTimesheets(user) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         t.timesheetId,
         t.timesheetDate,

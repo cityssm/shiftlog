@@ -7,7 +7,7 @@ export default async function getOrAddDataListItemId(dataListKey, dataListItem, 
         .input('instance', getConfigProperty('application.instance'))
         .input('dataListKey', dataListKey)
         .input('dataListItem', dataListItem)
-        .query(/* sql */ `
+        .query(`
       SELECT
         TOP 1 dataListItemId,
         dataListKey,
@@ -34,7 +34,7 @@ export default async function getOrAddDataListItemId(dataListKey, dataListItem, 
                 .request()
                 .input('dataListItemId', existingDataListItem.dataListItemId)
                 .input('userName', userName)
-                .query(/* sql */ `
+                .query(`
           UPDATE ShiftLog.DataListItems
           SET
             recordUpdate_userName = @userName,
@@ -53,7 +53,7 @@ export default async function getOrAddDataListItemId(dataListKey, dataListItem, 
         .input('dataListKey', dataListKey)
         .input('dataListItem', dataListItem)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.DataListItems (
           instance,

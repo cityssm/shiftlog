@@ -16,7 +16,6 @@ export default async function handler(request, response) {
         response.redirect(`${redirectRoot}/${workOrder.workOrderId}?error=recordClosed`);
         return;
     }
-    // Get thumbnail attachment
     const thumbnailAttachment = await getWorkOrderThumbnailAttachment(request.params.workOrderId);
     const workOrderTypes = await getWorkOrderTypes(request.session.user);
     const workOrderStatuses = await getWorkOrderStatusDataListItems(request.session.user);

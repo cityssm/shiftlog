@@ -32,7 +32,7 @@ export default async function updateAdhocTask(task, sessionUser) {
         ? null
         : task.taskCompleteDateTimeString)
         .input('recordUpdate_userName', sessionUser.userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.AdhocTasks
       SET
         adhocTaskTypeDataListItemId = @adhocTaskTypeDataListItemId,

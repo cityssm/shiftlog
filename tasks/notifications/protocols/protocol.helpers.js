@@ -23,6 +23,5 @@ if (enabledProtocols.includes('msTeams')) {
     };
 }
 export function getProtocolFunction(protocol, notificationQueueType) {
-    // eslint-disable-next-line security/detect-object-injection
     return protocolFunctions[protocol]?.[notificationQueueType];
 }

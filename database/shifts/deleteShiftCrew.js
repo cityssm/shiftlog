@@ -6,7 +6,7 @@ export default async function deleteShiftCrew(form) {
             .request()
             .input('shiftId', form.shiftId)
             .input('crewId', form.crewId)
-            .query(/* sql */ `
+            .query(`
         DELETE FROM ShiftLog.ShiftCrews
         WHERE
           shiftId = @shiftId

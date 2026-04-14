@@ -7,7 +7,7 @@ export default async function getWorkOrderTypesAdmin() {
     const workOrderTypesResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         wt.workOrderTypeId,
         wt.workOrderType,

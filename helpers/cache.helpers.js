@@ -4,9 +4,6 @@ import { DEBUG_NAMESPACE, PROCESS_ID_MAX_DIGITS } from '../debug.config.js';
 import { clearApiKeysCache, getCachedApiKeys } from './cache/apiKeys.cache.js';
 import { clearSettingsCache } from './cache/settings.cache.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:helpers.cache:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`);
-/*
- * Cache Management
- */
 export function preloadCaches() {
     debug('Preloading caches');
     void getCachedApiKeys();
@@ -23,9 +20,7 @@ export function clearCacheByTableName(tableName, relayMessage = true) {
             clearApiKeysCache();
             break;
         }
-        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         default: {
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             debug(`No cache clearing action for table: ${tableName}`);
             return;
         }
@@ -46,7 +41,6 @@ export function clearCacheByTableName(tableName, relayMessage = true) {
         }
     }
     catch {
-        // ignore
     }
 }
 export function clearCaches() {

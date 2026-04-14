@@ -2,7 +2,6 @@ import addShiftAdhocTask from '../../database/adhocTasks/addShiftAdhocTask.js';
 import createAdhocTask from '../../database/adhocTasks/createAdhocTask.js';
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js';
 export default async function handler(request, response) {
-    // Create the ad hoc task
     const adhocTaskId = await createAdhocTask({
         adhocTaskTypeDataListItemId: request.body.adhocTaskTypeDataListItemId,
         taskDescription: request.body.taskDescription,
@@ -30,7 +29,6 @@ export default async function handler(request, response) {
         });
         return;
     }
-    // Add the task to the shift
     const success = await addShiftAdhocTask(request.body.shiftId, adhocTaskId, request.body.shiftAdhocTaskNote);
     if (success) {
         const shiftAdhocTasks = await getShiftAdhocTasks(request.body.shiftId);

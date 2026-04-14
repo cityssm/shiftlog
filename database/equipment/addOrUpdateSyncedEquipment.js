@@ -23,7 +23,7 @@ async function addSyncedEquipment(partialEquipment, syncUserName) {
         .input('recordCreate_dateTime', new Date())
         .input('recordUpdate_userName', syncUserName)
         .input('recordUpdate_dateTime', new Date())
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.Equipment (
           instance,
@@ -84,7 +84,7 @@ async function updateSyncedEquipment(currentEquipment, partialEquipment, syncUse
         .input('recordSync_dateTime', updateEquipment.recordSync_dateTime)
         .input('recordUpdate_userName', syncUserName)
         .input('recordUpdate_dateTime', new Date())
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Equipment
       SET
         equipmentName = @equipmentName,

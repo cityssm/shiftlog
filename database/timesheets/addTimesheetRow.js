@@ -11,7 +11,7 @@ export default async function addTimesheetRow(addRowForm) {
         .input('equipmentNumber', addRowForm.equipmentNumber ?? undefined)
         .input('jobClassificationDataListItemId', addRowForm.jobClassificationDataListItemId ?? undefined)
         .input('timeCodeDataListItemId', addRowForm.timeCodeDataListItemId ?? undefined)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.TimesheetRows (
           instance,

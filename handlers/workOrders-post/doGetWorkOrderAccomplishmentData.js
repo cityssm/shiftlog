@@ -8,13 +8,11 @@ export default async function handler(request, response) {
         let endDate;
         let filterType;
         if (monthNumber > 0) {
-            // Specific month filter
             startDate = new Date(yearNumber, monthNumber - 1, 1);
-            endDate = new Date(yearNumber, monthNumber, 0); // Last day of month
+            endDate = new Date(yearNumber, monthNumber, 0);
             filterType = 'month';
         }
         else {
-            // Year filter (month = 0 means "All")
             startDate = new Date(yearNumber, 0, 1);
             endDate = new Date(yearNumber, 11, 31);
             filterType = 'year';

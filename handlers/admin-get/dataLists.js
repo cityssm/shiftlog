@@ -6,7 +6,6 @@ export default async function handler(_request, response) {
     const dataLists = await getDataLists();
     const userGroups = await getUserGroups();
     const iconClasses = await getIconListByStyle('solid');
-    // Get items for each data list
     const dataListsWithItems = await Promise.all(dataLists.map(async (dataList) => ({
         ...dataList,
         items: await getDataListItemsAdmin(dataList.dataListKey)

@@ -2,12 +2,11 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function createAssignedToItem(form, userName) {
     const pool = await getShiftLogConnectionPool();
-    // Check if a deleted item with the same name exists
     const existingResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('assignedToName', form.assignedToName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         assignedToId
       FROM
@@ -17,7 +16,6 @@ export default async function createAssignedToItem(form, userName) {
         AND assignedToName = @assignedToName
         AND recordDelete_dateTime IS NOT NULL
     `);
-    // If a deleted item exists, undelete it
     if (existingResult.recordset.length > 0) {
         const assignedToId = existingResult.recordset[0].assignedToId;
         await pool
@@ -26,7 +24,7 @@ export default async function createAssignedToItem(form, userName) {
             .input('assignedToId', assignedToId)
             .input('userGroupId', form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null)
             .input('userName', userName)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.AssignedTo
         SET
           userGroupId = @userGroupId,
@@ -40,11 +38,10 @@ export default async function createAssignedToItem(form, userName) {
       `);
         return assignedToId;
     }
-    // Get the next order number
     const orderResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         isnull(max(orderNumber), 0) + 1 AS nextOrderNumber
       FROM
@@ -61,7 +58,7 @@ export default async function createAssignedToItem(form, userName) {
         .input('userGroupId', form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null)
         .input('orderNumber', nextOrderNumber)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.AssignedTo (
           instance,

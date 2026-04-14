@@ -1,7 +1,7 @@
 export const workOrderReports = {
     'workOrders-open': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         w.workOrderId,
         w.workOrderNumber,
@@ -62,7 +62,7 @@ export const workOrderReports = {
     },
     'workOrders-closed-byCloseDate': {
         parameterNames: ['workOrderCloseDateStart', 'workOrderCloseDateEnd'],
-        sql: /* sql */ `
+        sql: `
       SELECT
         w.workOrderId,
         w.workOrderNumber,
@@ -124,7 +124,7 @@ export const workOrderReports = {
     },
     'workOrders-workOrderCosts-byWorkOrderId': {
         parameterNames: ['workOrderId'],
-        sql: /* sql */ `
+        sql: `
       SELECT
         w.workOrderNumber,
         c.workOrderCostId,
@@ -159,7 +159,7 @@ export const workOrderReports = {
     },
     'workOrders-workOrderNotes-byWorkOrderId': {
         parameterNames: ['workOrderId'],
-        sql: /* sql */ `
+        sql: `
       SELECT
         w.workOrderNumber,
         n.noteSequence,
@@ -193,7 +193,7 @@ export const workOrderReports = {
     },
     'workOrders-workOrderTags-unmanaged': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         wo.workOrderNumber,
         wot.tagName

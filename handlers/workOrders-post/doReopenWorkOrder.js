@@ -3,7 +3,6 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`;
 export default async function handler(request, response) {
     const workOrderId = request.body.workOrderId;
-    // Check workOrderId validity
     if (workOrderId === '' || Number.isNaN(Number(workOrderId))) {
         response.json({
             errorMessage: `Invalid ${getConfigProperty('workOrders.sectionNameSingular')} ID.`,

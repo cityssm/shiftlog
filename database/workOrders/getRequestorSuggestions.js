@@ -7,7 +7,7 @@ export default async function doGetRequestorSuggestions(searchString, user) {
         .input('instance', getConfigProperty('application.instance'))
         .input('searchString', searchString)
         .input('userName', user?.userName)
-        .query(/* sql */ `
+        .query(`
       SELECT DISTINCT
         requestorName,
         requestorContactInfo

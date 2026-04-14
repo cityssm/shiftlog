@@ -4,14 +4,13 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateSetting(updateForm) {
     const pool = await getShiftLogConnectionPool();
     const currentDate = new Date();
-    // Try to update first
     const updateResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('settingKey', updateForm.settingKey)
         .input('settingValue', updateForm.settingValue)
         .input('recordUpdate_dateTime', currentDate)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.ApplicationSettings
       SET
         settingValue = @settingValue,
@@ -25,7 +24,6 @@ export default async function updateSetting(updateForm) {
         clearCacheByTableName('ApplicationSettings');
         return true;
     }
-    // If no rows updated, insert new
     const insertResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
@@ -33,7 +31,7 @@ export default async function updateSetting(updateForm) {
         .input('settingValue', updateForm.settingValue)
         .input('previousSettingValue', '')
         .input('recordUpdate_dateTime', currentDate)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.ApplicationSettings (
           instance,

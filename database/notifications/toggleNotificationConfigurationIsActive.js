@@ -7,7 +7,7 @@ export default async function toggleNotificationConfigurationIsActive(notificati
         .input('instance', getConfigProperty('application.instance'))
         .input('notificationConfigurationId', notificationConfigurationId)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.NotificationConfigurations
       SET
         isActive = CASE

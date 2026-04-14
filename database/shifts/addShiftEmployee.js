@@ -10,7 +10,7 @@ export default async function addShiftEmployee(form) {
             .input('employeeNumber', form.employeeNumber)
             .input('crewId', (form.crewId ?? '') === '' ? undefined : form.crewId)
             .input('shiftEmployeeNote', form.shiftEmployeeNote ?? '')
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.ShiftEmployees (
             shiftId,

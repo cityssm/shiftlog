@@ -4,7 +4,7 @@ export default async function getDeletedWorkOrders(user) {
     const pool = await getShiftLogConnectionPool();
     let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is not null';
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         wType.userGroupId IS NULL
         OR wType.userGroupId IN (
@@ -22,7 +22,7 @@ export default async function getDeletedWorkOrders(user) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         w.workOrderId,
         w.workOrderNumberPrefix,

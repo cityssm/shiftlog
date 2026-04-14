@@ -3,7 +3,6 @@ import path from 'node:path';
 import getWorkOrderAttachment from '../../database/workOrders/getWorkOrderAttachment.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 function encodeFilenameForContentDisposition(filename) {
-    // Use RFC 5987 encoding for non-ASCII characters and special chars
     const encodedFilename = encodeURIComponent(filename).replaceAll("'", '%27');
     return `filename*=UTF-8''${encodedFilename}`;
 }

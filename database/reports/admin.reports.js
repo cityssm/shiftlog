@@ -1,8 +1,7 @@
 export const rawExportReports = {
-    // Raw Exports - Work Orders
     'admin-workOrders-raw': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         *
       FROM
@@ -13,7 +12,7 @@ export const rawExportReports = {
     },
     'admin-workOrderCosts-raw': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         *
       FROM
@@ -31,7 +30,7 @@ export const rawExportReports = {
     },
     'admin-workOrderMilestones-raw': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         *
       FROM
@@ -49,7 +48,7 @@ export const rawExportReports = {
     },
     'admin-workOrderNotes-raw': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         *
       FROM
@@ -67,7 +66,7 @@ export const rawExportReports = {
     },
     'admin-workOrderTags-raw': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         *
       FROM
@@ -83,10 +82,9 @@ export const rawExportReports = {
         )
     `
     },
-    // Raw Exports - Shifts
     'admin-shifts-raw': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         *
       FROM
@@ -95,10 +93,9 @@ export const rawExportReports = {
         instance = @instance
     `
     },
-    // Raw Exports - Timesheets
     'admin-timesheets-raw': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         *
       FROM
@@ -112,7 +109,7 @@ export const adminReports = {
     ...rawExportReports,
     'admin-apiAuditLogs': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         auditLogId,
         instance,
@@ -136,7 +133,7 @@ export const adminReports = {
     },
     'admin-locations': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         locationId,
         address1,
@@ -156,7 +153,7 @@ export const adminReports = {
     },
     'admin-notificationLogs': {
         parameterNames: [],
-        sql: /* sql */ `
+        sql: `
       SELECT
         l.notificationLogId,
         l.notificationConfigurationId,

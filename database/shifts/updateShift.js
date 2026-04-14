@@ -18,7 +18,7 @@ export default async function updateShift(updateShiftForm, userName) {
         .input('userName', userName)
         .input('recordLockDate', recordLockDate)
         .input('shiftId', updateShiftForm.shiftId)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Shifts
       SET
         shiftTypeDataListItemId = @shiftTypeDataListItemId,

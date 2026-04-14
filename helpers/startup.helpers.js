@@ -3,9 +3,6 @@ import createDataList from '../database/app/createDataList.js';
 import getDataLists from '../database/app/getDataLists.js';
 import { DEBUG_NAMESPACE } from '../debug.config.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:startup`);
-/**
- * System list keys that are required for the application to function properly.
- */
 export const REQUIRED_SYSTEM_LISTS = {
     equipmentTypes: 'Equipment Types',
     workOrderPriorities: 'Work Orders - Priorities',
@@ -17,11 +14,6 @@ export const REQUIRED_SYSTEM_LISTS = {
     timeCodes: 'Timesheets - Time Codes',
     timesheetTypes: 'Timesheets - Types'
 };
-/**
- * Validates that all required system lists exist in the DataLists table.
- * This check should be run on application startup to ensure database integrity.
- * @throws {Error} if any required system lists are missing
- */
 export async function validateSystemLists() {
     debug('Validating system lists...');
     const dataLists = await getDataLists();
@@ -32,7 +24,6 @@ export async function validateSystemLists() {
     for (const missingKey of missingSystemLists) {
         const listName = REQUIRED_SYSTEM_LISTS[missingKey];
         debug(`Missing required system list: ${missingKey} (${listName}), creating...`);
-        // eslint-disable-next-line no-await-in-loop
         await createDataList({
             dataListKey: missingKey,
             dataListName: listName,

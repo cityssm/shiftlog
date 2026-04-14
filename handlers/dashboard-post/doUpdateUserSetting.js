@@ -1,4 +1,3 @@
-/* eslint-disable no-secrets/no-secrets */
 import getUserSettings from '../../database/users/getUserSettings.js';
 import updateUserSetting from '../../database/users/updateUserSetting.js';
 const updatableUserSettingKeys = new Set([

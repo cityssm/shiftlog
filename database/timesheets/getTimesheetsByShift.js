@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getTimesheetsByShift(shiftId, user) {
     const pool = await getShiftLogConnectionPool();
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       t.timesheetId,
       t.timesheetDate,
@@ -31,7 +31,7 @@ export default async function getTimesheetsByShift(shiftId, user) {
       AND t.recordDelete_dateTime IS NULL
       AND t.shiftId = @shiftId ${user === undefined
         ? ''
-        : /* sql */ `
+        : `
             AND (
               tType.userGroupId IS NULL
               OR tType.userGroupId IN (

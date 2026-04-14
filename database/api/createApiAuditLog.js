@@ -15,7 +15,7 @@ export default async function createApiAuditLog(form) {
             .input('userAgent', form.userAgent)
             .input('responseStatus', form.responseStatus)
             .input('errorMessage', form.errorMessage)
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.ApiAuditLog (
             instance,
@@ -46,7 +46,6 @@ export default async function createApiAuditLog(form) {
         return true;
     }
     catch (error) {
-        // Log error but don't throw to avoid breaking API requests
         console.error('Failed to create API audit log:', error);
         return false;
     }

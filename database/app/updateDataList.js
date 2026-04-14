@@ -9,7 +9,7 @@ export default async function updateDataList(form) {
             .input('dataListKey', form.dataListKey)
             .input('dataListName', form.dataListName)
             .input('userName', form.userName)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.DataLists
         SET
           dataListName = @dataListName,

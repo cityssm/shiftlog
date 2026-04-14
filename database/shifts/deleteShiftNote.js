@@ -8,7 +8,7 @@ export default async function deleteShiftNote(shiftId, noteSequence, userName) {
         .input('shiftId', shiftId)
         .input('noteSequence', noteSequence)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.ShiftNotes
       SET
         recordDelete_userName = @userName,

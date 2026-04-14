@@ -11,7 +11,7 @@ export default async function updateUserGroup(userGroupId, userGroupName, user) 
             .input('userGroupName', userGroupName)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.UserGroups
         SET
           userGroupName = @userGroupName,

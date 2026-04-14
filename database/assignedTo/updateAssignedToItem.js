@@ -9,7 +9,7 @@ export default async function updateAssignedToItem(form, userName) {
         .input('assignedToName', form.assignedToName)
         .input('userGroupId', form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.AssignedTo
       SET
         assignedToName = @assignedToName,

@@ -6,7 +6,7 @@ export default async function getApiKeys() {
         .request()
         .input('settingKey', 'apiKey')
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         s.userName,
         s.settingValue

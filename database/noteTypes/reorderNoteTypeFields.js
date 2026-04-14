@@ -3,14 +3,13 @@ export default async function reorderNoteTypeFields(form) {
     const pool = await getShiftLogConnectionPool();
     try {
         for (const [index, noteTypeFieldId] of form.noteTypeFieldIds.entries()) {
-            // eslint-disable-next-line no-await-in-loop
             await pool
                 .request()
                 .input('noteTypeFieldId', noteTypeFieldId)
                 .input('noteTypeId', form.noteTypeId)
                 .input('orderNumber', index)
                 .input('userName', form.userName)
-                .query(/* sql */ `
+                .query(`
           UPDATE ShiftLog.NoteTypeFields
           SET
             orderNumber = @orderNumber,

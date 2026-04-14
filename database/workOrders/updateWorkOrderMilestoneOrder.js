@@ -3,14 +3,13 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateWorkOrderMilestoneOrder(milestoneOrders, userName) {
     const pool = await getShiftLogConnectionPool();
     for (const milestoneOrder of milestoneOrders) {
-        // eslint-disable-next-line no-await-in-loop
         await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('workOrderMilestoneId', milestoneOrder.workOrderMilestoneId)
             .input('orderNumber', milestoneOrder.orderNumber)
             .input('userName', userName)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.WorkOrderMilestones
         SET
           orderNumber = @orderNumber,

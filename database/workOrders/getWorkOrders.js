@@ -21,7 +21,7 @@ function buildWhereClause(filters, user) {
             ' and (w.requestorName like @requestor or w.requestorContactInfo like @requestor)';
     }
     if (filters.assignedToId !== undefined && filters.assignedToId !== '') {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         w.assignedToId = @assignedToId
         OR w.workOrderId IN (
@@ -48,7 +48,7 @@ function buildWhereClause(filters, user) {
                 break;
             }
             case 'overdue': {
-                whereClause += /* sql */ `
+                whereClause += `
           AND w.workOrderCloseDateTime IS NULL
           AND (
             w.workOrderDueDateTime < getdate()
@@ -68,7 +68,7 @@ function buildWhereClause(filters, user) {
         }
     }
     if (filters.searchString !== undefined && filters.searchString !== '') {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         w.workOrderNumber LIKE @searchString
         OR w.requestorName LIKE @searchString
@@ -80,7 +80,7 @@ function buildWhereClause(filters, user) {
     `;
     }
     if (filters.tagName !== undefined && filters.tagName !== '') {
-        whereClause += /* sql */ `
+        whereClause += `
       AND w.workOrderId IN (
         SELECT
           workOrderId
@@ -92,7 +92,7 @@ function buildWhereClause(filters, user) {
     `;
     }
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         wType.userGroupId IS NULL
         OR wType.userGroupId IN (
@@ -132,10 +132,9 @@ export default async function getWorkOrders(filters, options, user) {
     const offset = typeof options.offset === 'string'
         ? Number.parseInt(options.offset, 10)
         : options.offset;
-    // Get total count if limit === -1
     let totalCount = 0;
     if (limit !== -1) {
-        const countSql = /* sql */ `
+        const countSql = `
       SELECT
         count(*) AS totalCount
       FROM
@@ -147,13 +146,11 @@ export default async function getWorkOrders(filters, options, user) {
         const countResult = await countRequest.query(countSql);
         totalCount = countResult.recordset[0].totalCount;
     }
-    // Main query with limit and offset
     let workOrders = [];
     if (totalCount > 0 || limit === -1) {
         const workOrdersRequest = pool.request();
         applyParameters(workOrdersRequest, filters, user);
-        const workOrdersResult = await workOrdersRequest.query(
-        /* sql */ `
+        const workOrdersResult = await workOrdersRequest.query(`
         SELECT
           w.workOrderId,
           w.workOrderNumberPrefix,
@@ -284,17 +281,15 @@ export default async function getWorkOrders(filters, options, user) {
                 }
             }
         }
-        // Fetch tags for all work orders
         if (workOrders.length > 0) {
             const workOrderIds = workOrders.map((wo) => wo.workOrderId);
             const tagsRequest = pool.request();
             tagsRequest.input('instance', getConfigProperty('application.instance'));
-            // Build parameterized IN clause
             const parameterNames = workOrderIds.map((_, index) => `@workOrderId${index}`);
             for (const [index, id] of workOrderIds.entries()) {
                 tagsRequest.input(`workOrderId${index}`, id);
             }
-            const tagsResult = await tagsRequest.query(/* sql */ `
+            const tagsResult = await tagsRequest.query(`
         SELECT
           wot.workOrderId,
           wot.tagName,
@@ -312,7 +307,6 @@ export default async function getWorkOrders(filters, options, user) {
           case when t.tagBackgroundColor is null then 1 else 0 end,
           wot.tagName
       `);
-            // Group tags by workOrderId
             const tagsByWorkOrder = new Map();
             for (const tag of tagsResult.recordset) {
                 if (!tagsByWorkOrder.has(tag.workOrderId)) {
@@ -320,7 +314,6 @@ export default async function getWorkOrders(filters, options, user) {
                 }
                 tagsByWorkOrder.get(tag.workOrderId)?.push(tag);
             }
-            // Assign tags to work orders
             for (const workOrder of workOrders) {
                 workOrder.tags = tagsByWorkOrder.get(workOrder.workOrderId) ?? [];
             }

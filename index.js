@@ -24,9 +24,6 @@ function initializeCluster() {
     debug(`Primary title: ${process.title}`);
     debug(`Version:       ${version}`);
     debug(`Launching ${processCount} worker processes...`);
-    /*
-     * Set up the cluster
-     */
     const clusterSettings = {
         exec: `${directoryName}/app/appProcess.js`
     };
@@ -47,7 +44,6 @@ function initializeCluster() {
         }
         else {
             for (const [pid, activeWorker] of activeWorkers.entries()) {
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (activeWorker === undefined || pid === message.sourcePid) {
                     continue;
                 }
@@ -60,7 +56,6 @@ function initializeCluster() {
         debug(`Worker ${(worker.process.pid ?? 0).toString()} has been killed`);
         activeWorkers.delete(worker.process.pid ?? 0);
         if (!doShutdown) {
-            // eslint-disable-next-line sonarjs/pseudo-random
             const delaySeconds = 5 + 15 * Math.random();
             debug(`New worker will be started in ${delaySeconds.toFixed(0)} seconds...`);
             globalThis.setTimeout(() => {
@@ -72,21 +67,9 @@ function initializeCluster() {
 }
 async function startApplication() {
     await runConnectivityTestUntilSuccess();
-    /*
-     * Validate System Lists
-     */
     await validateSystemLists();
-    /*
-     * Start workers
-     */
     initializeCluster();
-    /*
-     * Start Other Tasks
-     */
     tasksChildProcesses = initializeTasks();
-    /*
-     * Set up the exit hook
-     */
     exitHook(() => {
         doShutdown = true;
         debug('Shutting down cluster workers...');
@@ -102,9 +85,6 @@ async function startApplication() {
     });
 }
 await startApplication();
-/*
- * Set up the startup test
- */
 if (process.env.STARTUP_TEST === 'true') {
     const killSeconds = 10;
     debug(`Killing processes in ${killSeconds} seconds...`);

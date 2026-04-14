@@ -8,7 +8,7 @@ export default async function addCrewEquipment(crewId, equipmentNumber, employee
         .input('crewId', crewId)
         .input('equipmentNumber', equipmentNumber)
         .input('employeeNumber', employeeNumber ?? undefined)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.CrewEquipment (crewId, instance, equipmentNumber, employeeNumber)
       VALUES

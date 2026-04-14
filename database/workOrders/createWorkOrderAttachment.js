@@ -16,8 +16,7 @@ export default async function createWorkOrderAttachment(form, userName) {
         .input('attachmentDescription', form.attachmentDescription ?? '')
         .input('fileSystemPath', form.fileSystemPath)
         .input('userName', userName)
-        // eslint-disable-next-line no-secrets/no-secrets
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.WorkOrderAttachments (
           workOrderId,
@@ -42,7 +41,6 @@ export default async function createWorkOrderAttachment(form, userName) {
         )
     `);
     if (result.rowsAffected[0] > 0) {
-        // Send Notification
         sendNotificationWorkerMessage('workOrder.update', typeof form.workOrderId === 'string'
             ? Number.parseInt(form.workOrderId, 10)
             : form.workOrderId);

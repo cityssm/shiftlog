@@ -2,7 +2,6 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 function buildWhereClause(filters, user) {
     let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
-    // Only include open work orders
     whereClause += ' and w.workOrderCloseDateTime is null';
     if (filters.workOrderTypeId !== undefined && filters.workOrderTypeId !== '') {
         whereClause += ' and w.workOrderTypeId = @workOrderTypeId';
@@ -17,9 +16,8 @@ function buildWhereClause(filters, user) {
         whereClause +=
             ' and w.workOrderStatusDataListItemId = @workOrderStatusDataListItemId';
     }
-    // Handle assigned/unassigned filter
     if (filters.includeUnassigned === true) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         w.assignedToId IS NULL
         OR EXISTS (
@@ -37,7 +35,7 @@ function buildWhereClause(filters, user) {
     }
     else if (filters.assignedToId !== undefined &&
         filters.assignedToId !== '') {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         w.assignedToId = @assignedToId
         OR EXISTS (
@@ -53,11 +51,10 @@ function buildWhereClause(filters, user) {
       )
     `;
     }
-    // Handle date filters
     if (filters.dateFilter !== undefined && filters.dateFilter !== '') {
         switch (filters.dateFilter) {
             case 'dueInDays': {
-                whereClause += /* sql */ `
+                whereClause += `
           AND w.workOrderDueDateTime IS NOT NULL
           AND datediff(day, getdate(), w.workOrderDueDateTime) <= @daysThreshold
           AND w.workOrderDueDateTime >= getdate()
@@ -65,7 +62,7 @@ function buildWhereClause(filters, user) {
                 break;
             }
             case 'milestonesDueInDays': {
-                whereClause += /* sql */ `
+                whereClause += `
           AND EXISTS (
             SELECT
               1
@@ -83,7 +80,7 @@ function buildWhereClause(filters, user) {
                 break;
             }
             case 'milestonesOverdue': {
-                whereClause += /* sql */ `
+                whereClause += `
           AND EXISTS (
             SELECT
               1
@@ -99,7 +96,7 @@ function buildWhereClause(filters, user) {
                 break;
             }
             case 'noUpdatesForDays': {
-                whereClause += /* sql */ `
+                whereClause += `
           AND (
             w.recordUpdate_dateTime IS NULL
             OR datediff(day, w.recordUpdate_dateTime, getdate()) >= @daysThreshold
@@ -119,7 +116,7 @@ function buildWhereClause(filters, user) {
         }
     }
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         wType.userGroupId IS NULL
         OR wType.userGroupId IN (
@@ -158,10 +155,9 @@ export default async function getWorkOrdersForPlanner(filters, options, user) {
     const offset = typeof options.offset === 'string'
         ? Number.parseInt(options.offset, 10)
         : options.offset;
-    // Get total count if limit !== -1
     let totalCount = 0;
     if (limit !== -1) {
-        const countSql = /* sql */ `
+        const countSql = `
       SELECT
         count(*) AS totalCount
       FROM
@@ -173,13 +169,11 @@ export default async function getWorkOrdersForPlanner(filters, options, user) {
         const countResult = await countRequest.query(countSql);
         totalCount = countResult.recordset[0].totalCount;
     }
-    // Main query with limit and offset
     let workOrders = [];
     if (totalCount > 0 || limit === -1) {
         const workOrdersRequest = pool.request();
         applyParameters(workOrdersRequest, filters, user);
-        const workOrdersResult = await workOrdersRequest.query(
-        /* sql */ `
+        const workOrdersResult = await workOrdersRequest.query(`
         SELECT
           w.workOrderId,
           w.workOrderNumberPrefix,

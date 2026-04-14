@@ -9,7 +9,7 @@ export default async function updateTimesheetRow(updateRowForm) {
         .input('rowTitle', updateRowForm.rowTitle)
         .input('jobClassificationDataListItemId', updateRowForm.jobClassificationDataListItemId ?? undefined)
         .input('timeCodeDataListItemId', updateRowForm.timeCodeDataListItemId ?? undefined)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.TimesheetRows
       SET
         rowTitle = @rowTitle,

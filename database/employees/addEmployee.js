@@ -14,7 +14,7 @@ async function insertNewEmployee(employeeNumber, firstName, lastName, user) {
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.Employees (
             instance,
@@ -55,7 +55,7 @@ async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user)
         .input('lastName', lastName)
         .input('recordUpdate_userName', user.userName)
         .input('recordUpdate_dateTime', currentDate)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Employees
       SET
         firstName = @firstName,
@@ -73,12 +73,11 @@ async function restoreDeletedEmployee(employeeNumber, firstName, lastName, user)
 }
 export default async function addEmployee(employeeNumber, firstName, lastName, user) {
     const pool = await getShiftLogConnectionPool();
-    // Check if an employee with the same number already exists
     const recordDeleteResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('employeeNumber', employeeNumber)
-        .query(/* sql */ `
+        .query(`
       SELECT
         recordDelete_dateTime
       FROM

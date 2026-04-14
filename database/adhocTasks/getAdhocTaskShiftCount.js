@@ -4,7 +4,7 @@ export default async function getAdhocTaskShiftCount(adhocTaskId) {
     const result = await pool
         .request()
         .input('adhocTaskId', adhocTaskId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         count(*) AS recordCount
       FROM

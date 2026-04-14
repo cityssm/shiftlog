@@ -8,11 +8,8 @@ import handler_doUpdateEmployeeContact from '../handlers/dashboard-post/doUpdate
 import handler_doUpdateUserSetting from '../handlers/dashboard-post/doUpdateUserSetting.js';
 export const router = Router();
 router.get('/', handler_dashboard);
-// Reports
 router.get('/reports', handler_reports);
-// Data Lists
 router.post('/doGetDataListItems', handler_doGetDataListItems);
-// User Settings
 router
     .get('/userSettings', handler_userSettings)
     .post('/doResetApiKey', handler_doResetApiKey)

@@ -9,20 +9,15 @@ function onError(error) {
     if (error.syscall !== 'listen') {
         throw error;
     }
-    // handle specific listen errors with friendly messages
     switch (error.code) {
         case 'EACCES': {
             debug('Requires elevated privileges');
             gracefulExit(1);
-            // break;
         }
-        // eslint-disable-next-line no-fallthrough
         case 'EADDRINUSE': {
             debug('Port is already in use.');
             gracefulExit(1);
-            // break;
         }
-        // eslint-disable-next-line no-fallthrough
         default: {
             throw error;
         }
@@ -35,9 +30,6 @@ function onListening(server) {
         debug(`HTTP Listening on ${bind}`);
     }
 }
-/*
- * Initialize HTTP
- */
 process.title = `${getConfigProperty('application.applicationName')} (Worker)`;
 const httpPort = getConfigProperty('application.httpPort');
 const httpServer = http.createServer(app);

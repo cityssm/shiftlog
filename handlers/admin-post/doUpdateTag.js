@@ -4,7 +4,6 @@ export default async function handler(request, response) {
     const tagName = request.body.tagName || '';
     let tagBackgroundColor = request.body.tagBackgroundColor || '000000';
     let tagTextColor = request.body.tagTextColor || 'FFFFFF';
-    // Remove # prefix if present
     if (tagBackgroundColor.startsWith('#')) {
         tagBackgroundColor = tagBackgroundColor.slice(1);
     }

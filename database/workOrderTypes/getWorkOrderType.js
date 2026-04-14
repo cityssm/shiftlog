@@ -8,7 +8,7 @@ export default async function getWorkOrderType(workOrderTypeId, user, includeDel
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName ?? '')
         .input('workOrderTypeId', workOrderTypeId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         wt.workOrderTypeId,
         wt.workOrderType,
@@ -26,7 +26,7 @@ export default async function getWorkOrderType(workOrderTypeId, user, includeDel
         ? ''
         : 'and wt.recordDelete_dateTime is null'} ${user === undefined
         ? ''
-        : /* sql */ `
+        : `
               AND (
                 wt.userGroupId IS NULL
                 OR wt.userGroupId IN (

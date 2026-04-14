@@ -18,7 +18,7 @@ export default async function updateNoteTypeField(fieldFields, user) {
             .input('hasDividerAbove', fieldFields.hasDividerAbove)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE
           ShiftLog.NoteTypeFields
         SET

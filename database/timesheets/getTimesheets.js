@@ -15,7 +15,7 @@ function buildWhereClause(filters, user) {
             ' and t.timesheetTypeDataListItemId = @timesheetTypeDataListItemId';
     }
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         tType.userGroupId IS NULL
         OR tType.userGroupId IN (
@@ -40,10 +40,9 @@ export default async function getTimesheets(filters, options, user) {
     const offset = typeof options.offset === 'string'
         ? Number.parseInt(options.offset, 10)
         : options.offset;
-    // Get total count if limit === -1
     let totalCount = 0;
     if (limit !== -1) {
-        const countSql = /* sql */ `
+        const countSql = `
       SELECT
         count(*) AS totalCount
       FROM
@@ -60,7 +59,6 @@ export default async function getTimesheets(filters, options, user) {
             .query(countSql);
         totalCount = countResult.recordset[0]?.totalCount ?? 0;
     }
-    // Main query with limit and offset
     let timesheets = [];
     if (totalCount > 0 || limit === -1) {
         const timesheetsResult = await pool
@@ -70,7 +68,7 @@ export default async function getTimesheets(filters, options, user) {
             .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
             .input('timesheetTypeDataListItemId', filters.timesheetTypeDataListItemId ?? null)
             .input('userName', user?.userName)
-            .query(/* sql */ `
+            .query(`
         SELECT
           t.timesheetId,
           t.timesheetDate,

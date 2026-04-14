@@ -1,6 +1,7 @@
 {
   "name": "@cityssm/shiftlog",
   "version": "1.0.0-dev.6",
+  "private": true,
   "description": "ShiftLog - A work management system with work order recording, shift activity logging, and timesheet tracking",
   "keywords": [
     "worktech"
@@ -16,7 +17,9 @@
   "license": "MIT",
   "author": "The Corporation of the City of Sault Ste. Marie",
   "type": "module",
-  "exports": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "coverage": "cross-env NODE_ENV=development DEBUG=shiftlog:* TEST_DATABASES=true c8 --reporter=lcov --reporter=text --reporter=text-summary node --test --no-experimental-strip-types --test-concurrency 1",
     "cy:open": "cypress open --config-file cypress.config.js",

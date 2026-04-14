@@ -6,7 +6,7 @@ export default async function getWorkOrderAttachment(workOrderAttachmentId) {
         .request()
         .input('workOrderAttachmentId', workOrderAttachmentId)
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         workOrderAttachmentId,
         workOrderId,

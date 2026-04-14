@@ -1,15 +1,13 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateWorkOrderTypeDefaultMilestones(workOrderTypeId, defaultMilestones) {
     const pool = await getShiftLogConnectionPool();
-    // Delete existing default milestones
     await pool
         .request()
         .input('workOrderTypeId', workOrderTypeId)
-        .query(/* sql */ `
+        .query(`
       delete from ShiftLog.WorkOrderTypeMilestones
       where workOrderTypeId = @workOrderTypeId
     `);
-    // Insert new default milestones
     for (const milestone of defaultMilestones) {
         const trimmedTitle = milestone.milestoneTitle.trim();
         const trimmedDescription = milestone.milestoneDescription.trim();
@@ -21,7 +19,7 @@ export default async function updateWorkOrderTypeDefaultMilestones(workOrderType
                 .input('milestoneDescription', trimmedDescription)
                 .input('dueDays', milestone.dueDays ?? null)
                 .input('orderNumber', milestone.orderNumber)
-                .query(/* sql */ `
+                .query(`
           insert into ShiftLog.WorkOrderTypeMilestones (
             workOrderTypeId,
             milestoneTitle,

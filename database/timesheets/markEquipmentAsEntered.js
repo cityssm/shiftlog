@@ -7,7 +7,7 @@ export default async function markEquipmentAsEntered(timesheetId, userName) {
         .input('timesheetId', timesheetId)
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Timesheets
       SET
         equipmentEntered_dateTime = getdate(),

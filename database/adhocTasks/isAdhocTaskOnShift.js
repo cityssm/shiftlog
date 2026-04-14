@@ -5,7 +5,7 @@ export default async function isAdhocTaskOnShift(shiftId, adhocTaskId) {
         .request()
         .input('shiftId', shiftId)
         .input('adhocTaskId', adhocTaskId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         count(*) AS recordCount
       FROM

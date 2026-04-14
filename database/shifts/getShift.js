@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShift(shiftId, user) {
     const pool = await getShiftLogConnectionPool();
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       s.shiftId,
       s.shiftDate,
@@ -27,7 +27,7 @@ export default async function getShift(shiftId, user) {
       AND s.recordDelete_dateTime IS NULL
       AND s.shiftId = @shiftId ${user === undefined
         ? ''
-        : /* sql */ `
+        : `
             AND (
               sType.userGroupId IS NULL
               OR sType.userGroupId IN (

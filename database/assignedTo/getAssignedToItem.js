@@ -6,7 +6,7 @@ export default async function getAssignedToItem(assignedToId) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('assignedToId', assignedToId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         a.assignedToId,
         a.assignedToName,

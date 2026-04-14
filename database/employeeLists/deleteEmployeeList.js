@@ -10,7 +10,7 @@ export default async function deleteEmployeeList(employeeListId, user) {
             .input('employeeListId', employeeListId)
             .input('recordDelete_userName', user.userName)
             .input('recordDelete_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.EmployeeLists
         SET
           recordDelete_userName = @recordDelete_userName,

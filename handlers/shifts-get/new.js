@@ -9,7 +9,6 @@ export default async function handler(request, response) {
     }
     const shiftTypes = await getShiftTypeDataListItems(request.session.user);
     const shiftTimes = await getShiftTimeDataListItems(request.session.user);
-    // Use date from query parameter if provided, otherwise use today
     let shiftDate = new Date();
     if (request.query.date !== undefined && request.query.date !== '') {
         try {
@@ -19,7 +18,6 @@ export default async function handler(request, response) {
             }
         }
         catch {
-            // Use default date if parsing fails
         }
     }
     const shift = {

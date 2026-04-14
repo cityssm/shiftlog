@@ -8,7 +8,7 @@ export default async function updateWorkOrderAttachment(updateWorkOrderAttachmen
         .input('workOrderAttachmentId', updateWorkOrderAttachmentForm.workOrderAttachmentId)
         .input('attachmentDescription', updateWorkOrderAttachmentForm.attachmentDescription)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrderAttachments
       SET
         attachmentDescription = @attachmentDescription,

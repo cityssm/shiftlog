@@ -5,7 +5,7 @@ export default async function isWorkOrderOnShift(shiftId, workOrderId) {
         .request()
         .input('shiftId', shiftId)
         .input('workOrderId', workOrderId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         count(*) AS recordCount
       FROM

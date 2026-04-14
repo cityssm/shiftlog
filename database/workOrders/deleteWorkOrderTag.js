@@ -8,7 +8,7 @@ export default async function deleteWorkOrderTag(workOrderId, tagName) {
             .input('instance', getConfigProperty('application.instance'))
             .input('workOrderId', workOrderId)
             .input('tagName', tagName)
-            .query(/* sql */ `
+            .query(`
         DELETE FROM ShiftLog.WorkOrderTags
         WHERE
           workOrderId = @workOrderId

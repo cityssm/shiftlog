@@ -6,7 +6,7 @@ export default async function addShiftWorkOrder(shiftId, workOrderId, shiftWorkO
         .input('shiftId', shiftId)
         .input('workOrderId', workOrderId)
         .input('shiftWorkOrderNote', shiftWorkOrderNote)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.ShiftWorkOrders (shiftId, workOrderId, shiftWorkOrderNote)
       VALUES

@@ -15,7 +15,6 @@ export const SYSTEM_USER = {
 };
 export async function apiKeyIsValid(request) {
     const apiKey = request.params?.apiKey;
-    // eslint-disable-next-line security/detect-possible-timing-attacks
     if (apiKey === undefined) {
         return false;
     }
@@ -27,7 +26,6 @@ export function userIsAdmin(request) {
 }
 export async function getUser(userName) {
     const userNameLowerCase = userName.toLowerCase();
-    // First check local users in database
     const localUser = await getUserFromDatabase(userNameLowerCase);
     if (localUser?.isActive ?? false) {
         return {

@@ -7,7 +7,7 @@ export default async function getDataListItems(dataListKey, userName) {
         .input('instance', getConfigProperty('application.instance'))
         .input('dataListKey', dataListKey)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         i.dataListItemId,
         i.dataListKey,
@@ -19,7 +19,7 @@ export default async function getDataListItems(dataListKey, userName) {
         AND i.dataListKey = @dataListKey
         AND i.recordDelete_dateTime IS NULL ${userName === undefined
         ? ''
-        : /* sql */ `
+        : `
               AND (
                 i.userGroupId IS NULL
                 OR i.userGroupId IN (

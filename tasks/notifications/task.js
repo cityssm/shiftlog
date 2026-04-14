@@ -37,7 +37,6 @@ async function sendNotifications() {
             }
             let notificationConfigurations = notificationConfigurationsByQueue[notificationQueueType];
             if (notificationConfigurations === undefined) {
-                // eslint-disable-next-line no-await-in-loop
                 notificationConfigurations = await getNotificationConfigurations(notificationQueueType);
                 notificationConfigurationsByQueue[notificationQueueType] = notificationConfigurations;
             }
@@ -57,7 +56,6 @@ async function sendNotifications() {
                 else {
                     let notificationResult;
                     try {
-                        // eslint-disable-next-line no-await-in-loop
                         notificationResult = await protocolFunction(notificationConfiguration, recordId);
                     }
                     catch (error) {
@@ -68,7 +66,6 @@ async function sendNotifications() {
                         };
                     }
                     if (notificationResult !== undefined) {
-                        // eslint-disable-next-line no-await-in-loop
                         await recordNotificationLog({
                             notificationConfigurationId: notificationConfiguration.notificationConfigurationId,
                             recordId,
@@ -85,17 +82,12 @@ async function sendNotifications() {
     }
     debug('Notification task completed');
     isRunningSemaphore.release();
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (runAgain) {
         debug('Running sendNotifications again to process queued entries');
         await sendNotifications();
     }
 }
-/*
- * Message Handling
- */
 process.on('message', (message) => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (message.messageType !== 'sendNotification') {
         return;
     }
@@ -108,7 +100,6 @@ process.on('message', (message) => {
         case 'workOrder.update': {
             if (notificationQueues['workOrder.create']?.hasPendingEntry(message.recordId) ??
                 false) {
-                // If a create notification is pending, skip the update and reset the timer
                 notificationQueues['workOrder.create']?.enqueue(message.recordId, updateMillis);
             }
             else {
@@ -118,9 +109,6 @@ process.on('message', (message) => {
         }
     }
 });
-/*
- * Schedule
- */
 if (Object.keys(notificationQueues).length > 0) {
     for (const notificationQueue of Object.values(notificationQueues)) {
         notificationQueue.addEventListener('enqueue', () => {

@@ -2,11 +2,10 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getUsers() {
     const pool = await getShiftLogConnectionPool();
-    // Get all users
     const usersResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         u.userName,
         u.isActive,
@@ -33,14 +32,12 @@ export default async function getUsers() {
         u.userName
     `);
     const users = usersResult.recordset;
-    // Get settings for each user
     for (const user of users) {
-        // eslint-disable-next-line no-await-in-loop
         const settingsResult = await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('userName', user.userName)
-            .query(/* sql */ `
+            .query(`
         SELECT
           settingKey,
           settingValue

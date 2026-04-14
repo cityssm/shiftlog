@@ -4,7 +4,6 @@ import updateCrew from '../../database/crews/updateCrew.js';
 export default async function handler(request, response) {
     const user = request.session.user;
     const crewId = Number.parseInt(request.body.crewId, 10);
-    // Check permissions
     if (!user.userProperties.shifts.canManage) {
         const crew = await getCrew(crewId);
         if (crew === undefined || crew.recordCreate_userName !== user.userName) {

@@ -2,12 +2,11 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShiftNotes(shiftId) {
     const pool = await getShiftLogConnectionPool();
-    // Get notes with note type information
     const notesResult = await pool
         .request()
         .input('shiftId', shiftId)
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         sn.shiftId,
         sn.noteSequence,
@@ -40,11 +39,10 @@ export default async function getShiftNotes(shiftId) {
         sn.noteSequence DESC
     `);
     const notes = notesResult.recordset;
-    // Get all field values for these notes
     const fieldsResult = await pool
         .request()
         .input('shiftId', shiftId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         snf.noteSequence,
         snf.noteTypeFieldId,
@@ -69,7 +67,6 @@ export default async function getShiftNotes(shiftId) {
       ORDER BY
         COALESCE(ntf.orderNumber, 999999), snf.noteTypeFieldId
     `);
-    // Group fields by note sequence
     const fieldsMap = new Map();
     for (const field of fieldsResult.recordset) {
         if (!fieldsMap.has(field.noteSequence)) {
@@ -91,7 +88,6 @@ export default async function getShiftNotes(shiftId) {
             orderNumber: field.orderNumber
         });
     }
-    // Attach fields to notes
     for (const note of notes) {
         note.fields = fieldsMap.get(note.noteSequence) ?? [];
     }

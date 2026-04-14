@@ -6,7 +6,7 @@ export default async function getEquipmentList(filters = {}) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('equipmentNumber', filters.equipmentNumber)
-        .query(/* sql */ `
+        .query(`
       SELECT
         e.equipmentNumber,
         e.equipmentName,

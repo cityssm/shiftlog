@@ -9,7 +9,7 @@ export default async function updateWorkOrderNote(updateWorkOrderNoteForm, userN
         .input('noteSequence', updateWorkOrderNoteForm.noteSequence)
         .input('noteText', updateWorkOrderNoteForm.noteText)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrderNotes
       SET
         noteText = @noteText,
@@ -30,17 +30,15 @@ export default async function updateWorkOrderNote(updateWorkOrderNoteForm, userN
         )
     `);
     if (result.rowsAffected[0] > 0) {
-        // Update field values if fields are provided
         if (updateWorkOrderNoteForm.fields !== undefined) {
             for (const [noteTypeFieldId, fieldValue] of Object.entries(updateWorkOrderNoteForm.fields)) {
                 if (fieldValue !== undefined && fieldValue !== null) {
-                    // Check if field value already exists
                     const existingField = await pool
                         .request()
                         .input('workOrderId', updateWorkOrderNoteForm.workOrderId)
                         .input('noteSequence', updateWorkOrderNoteForm.noteSequence)
                         .input('noteTypeFieldId', noteTypeFieldId)
-                        .query(/* sql */ `
+                        .query(`
               SELECT COUNT(*) as count
               FROM ShiftLog.WorkOrderNoteFields
               WHERE workOrderId = @workOrderId
@@ -48,14 +46,13 @@ export default async function updateWorkOrderNote(updateWorkOrderNoteForm, userN
                 AND noteTypeFieldId = @noteTypeFieldId
             `);
                     if (existingField.recordset[0].count > 0) {
-                        // Update existing field
                         await pool
                             .request()
                             .input('workOrderId', updateWorkOrderNoteForm.workOrderId)
                             .input('noteSequence', updateWorkOrderNoteForm.noteSequence)
                             .input('noteTypeFieldId', noteTypeFieldId)
                             .input('fieldValue', fieldValue)
-                            .query(/* sql */ `
+                            .query(`
                 UPDATE ShiftLog.WorkOrderNoteFields
                 SET fieldValue = @fieldValue
                 WHERE workOrderId = @workOrderId
@@ -64,14 +61,13 @@ export default async function updateWorkOrderNote(updateWorkOrderNoteForm, userN
               `);
                     }
                     else {
-                        // Insert new field (for backwards compatibility with existing notes)
                         await pool
                             .request()
                             .input('workOrderId', updateWorkOrderNoteForm.workOrderId)
                             .input('noteSequence', updateWorkOrderNoteForm.noteSequence)
                             .input('noteTypeFieldId', noteTypeFieldId)
                             .input('fieldValue', fieldValue)
-                            .query(/* sql */ `
+                            .query(`
                 INSERT INTO ShiftLog.WorkOrderNoteFields (
                   workOrderId,
                   noteSequence,

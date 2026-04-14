@@ -5,7 +5,7 @@ export default async function deleteShiftAdhocTask(shiftId, adhocTaskId) {
         .request()
         .input('shiftId', shiftId)
         .input('adhocTaskId', adhocTaskId)
-        .query(/* sql */ `
+        .query(`
       DELETE FROM ShiftLog.ShiftAdhocTasks
       WHERE
         shiftId = @shiftId

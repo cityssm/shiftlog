@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 const orderByOptions = {
@@ -12,7 +11,7 @@ export default async function getEmployees(filters = {}, orderBy = 'name') {
         .input('instance', getConfigProperty('application.instance'))
         .input('employeeNumber', filters.employeeNumber)
         .input('isSupervisor', filters.isSupervisor)
-        .query(/* sql */ `
+        .query(`
       SELECT
         employeeNumber,
         firstName,

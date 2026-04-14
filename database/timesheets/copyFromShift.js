@@ -1,12 +1,11 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function copyFromShift(shiftId, timesheetId) {
     const pool = await getShiftLogConnectionPool();
-    // Copy work orders as columns
     await pool
         .request()
         .input('shiftId', shiftId)
         .input('timesheetId', timesheetId)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.TimesheetColumns (
           timesheetId,
@@ -29,12 +28,11 @@ export default async function copyFromShift(shiftId, timesheetId) {
         sw.shiftId = @shiftId
         AND w.recordDelete_dateTime IS NULL
     `);
-    // Copy employees as rows
     await pool
         .request()
         .input('shiftId', shiftId)
         .input('timesheetId', timesheetId)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.TimesheetRows (instance, timesheetId, rowTitle, employeeNumber)
       SELECT
@@ -50,12 +48,11 @@ export default async function copyFromShift(shiftId, timesheetId) {
         se.shiftId = @shiftId
         AND e.recordDelete_dateTime IS NULL
     `);
-    // Copy equipment as rows (with employee assignments maintained)
     await pool
         .request()
         .input('shiftId', shiftId)
         .input('timesheetId', timesheetId)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.TimesheetRows (
           instance,

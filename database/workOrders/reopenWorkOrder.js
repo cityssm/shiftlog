@@ -8,7 +8,7 @@ export default async function reopenWorkOrder(workOrderId, userName) {
         .input('workOrderId', workOrderId)
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrders
       SET
         workOrderCloseDateTime = NULL,
@@ -21,7 +21,6 @@ export default async function reopenWorkOrder(workOrderId, userName) {
         AND recordDelete_dateTime IS NULL
     `);
     if (result.rowsAffected[0] > 0) {
-        // Send Notification
         sendNotificationWorkerMessage('workOrder.update', typeof workOrderId === 'string'
             ? Number.parseInt(workOrderId, 10)
             : workOrderId);

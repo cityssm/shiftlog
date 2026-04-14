@@ -14,7 +14,7 @@ export default async function addTag(tagFields, user) {
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.Tags (
             instance,

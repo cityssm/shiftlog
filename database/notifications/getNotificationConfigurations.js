@@ -6,7 +6,7 @@ export default async function getNotificationConfigurations(notificationQueue) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('notificationQueue', notificationQueue)
-        .query(/* sql */ `
+        .query(`
       SELECT
         nc.notificationConfigurationId,
         nc.notificationQueue,

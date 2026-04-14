@@ -18,8 +18,7 @@ export default async function getApiAuditLogs(filters = {}) {
     if (filters.endDate !== undefined) {
         whereClause += ' and requestTime <= @endDate';
     }
-    // Get total count
-    const countSql = /* sql */ `
+    const countSql = `
     SELECT
       count(*) AS totalCount
     FROM
@@ -42,8 +41,7 @@ export default async function getApiAuditLogs(filters = {}) {
     }
     const countResult = await countRequest.query(countSql);
     const totalCount = countResult.recordset[0]?.totalCount ?? 0;
-    // Get paginated data
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       auditLogId,
       userName,

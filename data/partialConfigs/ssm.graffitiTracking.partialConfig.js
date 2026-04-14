@@ -1,4 +1,3 @@
-/* eslint-disable @cspell/spellchecker -- GIS column names */
 import { config as baseConfig } from './graffitiTracking.partialConfig.js';
 export const config = { ...baseConfig };
 config.application.attachmentStoragePath = 'data/attachments/graffiti';

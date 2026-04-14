@@ -5,7 +5,7 @@ export default async function getLocations() {
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         locationId,
         latitude,

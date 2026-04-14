@@ -5,7 +5,7 @@ export default async function deleteAdhocTask(adhocTaskId, sessionUser) {
         .request()
         .input('adhocTaskId', adhocTaskId)
         .input('recordDelete_userName', sessionUser.userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.AdhocTasks
       SET
         recordDelete_userName = @recordDelete_userName,

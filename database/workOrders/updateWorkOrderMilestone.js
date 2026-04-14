@@ -17,7 +17,7 @@ export default async function updateWorkOrderMilestone(form, userName) {
         : null)
         .input('assignedToId', form.assignedToId && form.assignedToId !== '' ? form.assignedToId : null)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrderMilestones
       SET
         milestoneTitle = @milestoneTitle,
@@ -41,7 +41,6 @@ export default async function updateWorkOrderMilestone(form, userName) {
         )
     `);
     if (result.rowsAffected[0] > 0) {
-        // Send Notification
         sendNotificationWorkerMessage('workOrder.update', typeof result.recordset[0].workOrderId === 'string'
             ? Number.parseInt(result.recordset[0].workOrderId, 10)
             : result.recordset[0].workOrderId);

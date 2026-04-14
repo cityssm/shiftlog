@@ -16,7 +16,7 @@ export default async function updateEquipment(equipmentFields, user) {
             .input('recordSync_isSynced', equipmentFields.recordSync_isSynced ?? false)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.Equipment
         SET
           equipmentName = @equipmentName,

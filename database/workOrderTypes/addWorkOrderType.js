@@ -10,7 +10,7 @@ export default async function addWorkOrderType(form, userName) {
         .input('dueDays', form.dueDays === '' || form.dueDays === undefined ? null : form.dueDays)
         .input('userGroupId', form.userGroupId === '' ? null : (form.userGroupId ?? null))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.WorkOrderTypes (
           instance,

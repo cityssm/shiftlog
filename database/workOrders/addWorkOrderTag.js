@@ -11,7 +11,7 @@ export default async function addWorkOrderTag(workOrderId, tagName) {
             .request()
             .input('workOrderId', workOrderId)
             .input('tagName', tagName)
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.WorkOrderTags (workOrderId, tagName)
         VALUES

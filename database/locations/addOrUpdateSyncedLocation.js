@@ -22,7 +22,7 @@ async function addSyncedLocation(partialLocation, syncUserName) {
         .input('recordCreate_dateTime', new Date())
         .input('recordUpdate_userName', syncUserName)
         .input('recordUpdate_dateTime', new Date())
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.Locations (
           instance,
@@ -84,7 +84,7 @@ async function updateSyncedLocation(currentLocation, partialLocation, syncUserNa
         .input('recordSync_dateTime', updateLocation.recordSync_dateTime)
         .input('recordUpdate_userName', syncUserName)
         .input('recordUpdate_dateTime', new Date())
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Locations
       SET
         address1 = @address1,

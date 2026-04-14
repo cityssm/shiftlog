@@ -15,7 +15,7 @@ export default async function updateNoteType(noteTypeFields, user) {
             .input('isAvailableTimesheets', noteTypeFields.isAvailableTimesheets)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE
           ShiftLog.NoteTypes
         SET

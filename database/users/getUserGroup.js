@@ -6,7 +6,7 @@ export default async function getUserGroup(userGroupId) {
         .request()
         .input('userGroupId', userGroupId)
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         userGroupId,
         userGroupName,
@@ -25,12 +25,11 @@ export default async function getUserGroup(userGroupId) {
         return undefined;
     }
     const userGroup = groupResult.recordset[0];
-    // Get members
     const membersResult = await pool
         .request()
         .input('userGroupId', userGroupId)
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         userName
       FROM
