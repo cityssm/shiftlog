@@ -34,7 +34,8 @@ Different events in ShiftLog can trigger notifications:
 ShiftLog supports multiple notification delivery methods:
 
 - **Email** - Send notifications via email.
-- **Ntfy** - Send phone and browser notifications through the ntfy notification service.
+- **Ntfy** - Send phone and browser notifications through the ntfy notification
+  service.
 - **MS Teams** - POST notification data to a webhook URL.
 
 ⚠️ **Note**: Notification protocols must be configured in the application
@@ -90,35 +91,36 @@ The **Assigned To** field determines who receives the notification:
 
 To verify that notifications are working correctly:
 
-1. Create a test notification configuration
-2. Trigger the event (e.g., create a test work order)
-3. Verify that the notification is received
-4. Review logs if notifications are not being delivered
+1. Create a test notification configuration.
+2. Trigger the event (e.g., create a test work order).
+3. Verify that the notification is received.
+4. Review logs if notifications are not being delivered.
 
 ## Troubleshooting
 
 ### Notifications Not Sending
 
-1. **Check configuration is active** - Ensure the Active checkbox is checked
-2. **Verify protocol setup** - Confirm notification protocols are configured in settings
-3. **Check assigned to mapping** - Verify the assigned to item has delivery addresses
-4. **Review system logs** - Check application logs for error messages
+1. **Check configuration is active** - Ensure the Active checkbox is checked.
+2. **Verify protocol setup** - Confirm notification protocols are configured
+   in settings.
+3. **Check assigned to mapping** - Verify the assigned to item has delivery addresses.
+4. **Review system logs** - Check application logs for error messages.
 
 ### Duplicate Notifications
 
-- Multiple configurations for the same queue type will send multiple notifications
-- Review and consolidate configurations if receiving duplicates
+- Multiple configurations for the same queue type will send multiple notifications.
+- Review and consolidate configurations if receiving duplicates.
 
 ---
 
 ## Best Practices
 
-1. **Start with test configurations** - Test notifications before deploying widely
-2. **Use descriptive names** - Choose clear assigned to names for easy identification
-3. **Limit notifications** - Only notify for critical events to avoid alert fatigue
-4. **Monitor delivery** - Regularly check that notifications are being delivered
-5. **Document recipients** - Keep records of who receives what notifications
-6. **Review periodically** - Audit notification configurations regularly
+1. **Start with test configurations** - Test notifications before deploying widely.
+2. **Use descriptive names** - Choose clear assigned to names for easy identification.
+3. **Limit notifications** - Only notify for critical events to avoid alert fatigue.
+4. **Monitor delivery** - Regularly check that notifications are being delivered.
+5. **Document recipients** - Keep records of who receives what notifications.
+6. **Review periodically** - Audit notification configurations regularly.
 
 ---
 

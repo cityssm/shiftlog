@@ -19,7 +19,8 @@ prioritize, and organize work orders with customizable color-coding.
 1. Navigate to **Administrator Tools** > **Tags**.
 2. Click the **Add Tag** button.
 3. Enter tag information:
-   - **Tag Name**: A descriptive name for the tag (e.g., "Priority", "In Progress", "Urgent")
+   - **Tag Name**: A descriptive name for the tag
+     (e.g., "Priority", "In Progress", "Urgent")
    - **Background Color**: Choose a background color for the tag
    - **Text Color**: Choose a text color for optimal readability
 4. Click **Add Tag** to create the tag.
@@ -28,13 +29,13 @@ prioritize, and organize work orders with customizable color-coding.
 
 Work orders can have tags applied to them directly, even if those tags don't exist
 in the Tag Management system. These "ad-hoc" tags will display with default styling
-instead of custom colors. The **Add Tag from Work Order** feature allows you to easily
-promote these ad-hoc tags to system tags with custom colors.
+instead of custom colors. The **Add Tag from Work Order** feature allows you to
+easily promote these ad-hoc tags to system tags with custom colors.
 
 1. Navigate to **Administrator Tools** > **Tags**.
 2. Click the **Add Tag from Work Order** button.
-3. A modal will display showing all tags that are used on work orders but don't have
-   system records, along with their usage count.
+3. A modal will display showing all tags that are used on work orders but don't
+   have system records, along with their usage count.
 4. Click the **Add** button next to the tag you want to promote.
 5. A new modal will open with the tag name pre-filled. Choose colors:
    - **Background Color**: Choose a background color for the tag
@@ -85,20 +86,20 @@ Tags created in the Tag Management interface can be applied to work orders:
 
 ## Best Practices
 
-### Tag Naming
+### Tag Naming Best Practices
 
 - Use clear, descriptive names that convey meaning at a glance.
 - Maintain consistent naming conventions across tags.
 - Avoid overly long tag names for better visual presentation.
 
-### Color Selection
+### Color Selection Best Practices
 
 - Choose colors that provide good contrast for readability.
 - Use consistent color schemes (e.g., red for urgent, yellow for in-progress).
 - Ensure text color is readable against the background color.
 - Consider color-blind accessibility when selecting colors.
 
-### Tag Management
+### Tag Management Best Practices
 
 - Create a core set of commonly used tags for your organization.
 - Avoid creating too many tags, which can reduce their effectiveness.

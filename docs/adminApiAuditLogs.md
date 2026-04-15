@@ -8,7 +8,8 @@
 
 The API Audit Logs feature provides comprehensive tracking and monitoring of all
 API endpoint access in ShiftLog. This security feature helps administrators monitor
-API usage, detect unauthorized access attempts, and troubleshoot API integration issues.
+API usage, detect unauthorized access attempts, and troubleshoot API integration
+issues.
 
 ## Overview
 
@@ -88,8 +89,8 @@ Common status codes:
 ### Data Retention
 
 API audit logs are retained in the database indefinitely by default. Administrators
-should establish a retention policy and periodically archive or delete old logs to
-manage database size.
+should establish a retention policy and periodically archive or delete old logs
+to manage database size.
 
 ### Sensitive Information
 
@@ -105,32 +106,33 @@ Access to audit logs should be restricted to administrators only.
 
 ### Security Monitoring
 
-- Detect unusual patterns in API usage
-- Identify unauthorized access attempts
-- Monitor for brute force attacks
-- Track API key compromise
+- Detect unusual patterns in API usage.
+- Identify unauthorized access attempts.
+- Monitor for brute force attacks.
+- Track API key compromise.
 
 ### Troubleshooting
 
-- Debug API integration issues
-- Identify why certain requests are failing
-- Verify API endpoint accessibility
-- Check request timing and frequency
+- Debug API integration issues.
+- Identify why certain requests are failing.
+- Verify API endpoint accessibility.
+- Check request timing and frequency.
 
 ### Compliance
 
-- Demonstrate access controls
-- Provide audit trails for security reviews
-- Document API usage for compliance requirements
-- Track data access for privacy regulations
+- Demonstrate access controls.
+- Provide audit trails for security reviews.
+- Document API usage for compliance requirements.
+- Track data access for privacy regulations.
 
 ## Best Practices
 
-1. **Regular Reviews** - Review audit logs regularly for suspicious activity
-2. **Alert on Failures** - Monitor for patterns of invalid API key attempts
-3. **Rotate Keys** - Periodically rotate API keys and verify logs show expected usage
-4. **Archive Old Logs** - Establish a retention policy and archive old logs
-5. **Investigate Anomalies** - Follow up on unexpected patterns or access attempts
+1. **Regular Reviews** - Review audit logs regularly for suspicious activity.
+2. **Alert on Failures** - Monitor for patterns of invalid API key attempts.
+3. **Rotate Keys** - Periodically rotate API keys and verify logs show expected
+   usage.
+4. **Archive Old Logs** - Establish a retention policy and archive old logs.
+5. **Investigate Anomalies** - Follow up on unexpected patterns or access attempts.
 
 ## API Endpoints Logged
 

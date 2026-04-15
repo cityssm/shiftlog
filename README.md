@@ -23,7 +23,7 @@ Built with the following use cases in mind:
 
 ## Features
 
-### Free Mapping!
+### Free Mapping
 
 ![Open Work Order Map](./docs/images/workOrders-map.png)
 
