@@ -1,5 +1,5 @@
-import getEquipment from '../database/equipment/getEquipment.js';
 import getEmployeeList from '../database/employeeLists/getEmployeeList.js';
+import getEquipment from '../database/equipment/getEquipment.js';
 export async function validateEmployeeForEquipment(equipmentNumber, employeeNumber) {
     if (employeeNumber === undefined || employeeNumber === null || employeeNumber === '') {
         return { success: true };
