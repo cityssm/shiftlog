@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
@@ -11,27 +10,18 @@
     let availableCrews = [];
     let availableEmployees = [];
     let availableEquipment = [];
-    /**
-     * Switch to a specific tab
-     * @param tabId - The ID of the tab content to show (e.g., 'tab-content--crews')
-     */
     function switchToTab(tabId) {
-        // Find the tab link for this content
         const tabLink = document.querySelector(`a[href="#${tabId}"]`);
         if (tabLink !== null) {
-            // Remove is-active from all tabs
             const allTabLinks = document.querySelectorAll('#tab--employees .tabs a');
             for (const link of allTabLinks) {
                 link.parentElement?.classList.remove('is-active');
             }
-            // Set is-active on the selected tab
             tabLink.parentElement?.classList.add('is-active');
-            // Hide all tab content
             const allTabContent = document.querySelectorAll('[id^="tab-content--crews"], [id^="tab-content--employees"], [id^="tab-content--equipment"]');
             for (const content of allTabContent) {
                 content.classList.add('is-hidden');
             }
-            // Show the selected tab content
             const selectedContent = document.querySelector(`#${tabId}`);
             if (selectedContent !== null) {
                 selectedContent.classList.remove('is-hidden');
@@ -39,7 +29,6 @@
         }
     }
     function updateCounts() {
-        // Update count badges
         const crewsCountElement = document.querySelector('#crewsCount');
         if (crewsCountElement !== null) {
             crewsCountElement.textContent = shiftCrews.length.toString();
@@ -52,7 +41,6 @@
         if (equipmentCountElement !== null) {
             equipmentCountElement.textContent = shiftEquipment.length.toString();
         }
-        // Show/hide check mark icon on main tab
         const hasEmployeesEquipmentIcon = document.querySelector('#icon--hasEmployeesEquipment');
         if (hasEmployeesEquipmentIcon !== null) {
             hasEmployeesEquipmentIcon.classList.toggle('is-hidden', !(shiftCrews.length > 0 ||
@@ -63,7 +51,7 @@
     function renderShiftCrews() {
         const containerElement = document.querySelector('#container--shiftCrews');
         if (shiftCrews.length === 0) {
-            containerElement.innerHTML = /* html */ `
+            containerElement.innerHTML = `
         <div class="message">
           <div class="message-body">No crews assigned to this shift.</div>
         </div>
@@ -72,8 +60,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Crew</th>
@@ -86,7 +73,7 @@
         const tbodyElement = tableElement.querySelector('tbody');
         for (const crew of shiftCrews) {
             const rowElement = document.createElement('tr');
-            rowElement.innerHTML = /* html */ `
+            rowElement.innerHTML = `
         <td>${cityssm.escapeHTML(crew.crewName ?? '')}</td>
         <td>
           <span class="crew-note" data-crew-id="${cityssm.escapeHTML(crew.crewId.toString())}">
@@ -95,8 +82,7 @@
         </td>
       `;
             if (isEdit) {
-                rowElement.insertAdjacentHTML('beforeend', 
-                /* html */ `
+                rowElement.insertAdjacentHTML('beforeend', `
             <td class="has-text-right">
               <button
                 class="button is-small is-light is-warning button--editCrewNote"
@@ -134,7 +120,7 @@
     function renderShiftEmployees() {
         const containerElement = document.querySelector('#container--shiftEmployees');
         if (shiftEmployees.length === 0) {
-            containerElement.innerHTML = /* html */ `
+            containerElement.innerHTML = `
         <div class="message">
           <div class="message-body">No employees assigned to this shift.</div>
         </div>
@@ -143,8 +129,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Employee</th>
@@ -158,7 +143,7 @@
         const tableBodyElement = tableElement.querySelector('tbody');
         for (const employee of shiftEmployees) {
             const rowElement = document.createElement('tr');
-            rowElement.innerHTML = /* html */ `
+            rowElement.innerHTML = `
         <td>
           ${cityssm.escapeHTML(employee.lastName ?? '')}, ${cityssm.escapeHTML(employee.firstName ?? '')}<br />
           <span class="is-size-7">#${cityssm.escapeHTML(employee.employeeNumber)}</span>
@@ -171,8 +156,7 @@
         </td>
       `;
             if (isEdit) {
-                rowElement.insertAdjacentHTML('beforeend', 
-                /* html */ `
+                rowElement.insertAdjacentHTML('beforeend', `
             <td class="has-text-right">
               <button
                 class="button is-small is-light is-info button--editEmployeeCrew"
@@ -222,7 +206,7 @@
     function renderShiftEquipment() {
         const containerElement = document.querySelector('#container--shiftEquipment');
         if (shiftEquipment.length === 0) {
-            containerElement.innerHTML = /* html */ `
+            containerElement.innerHTML = `
         <div class="message">
           <div class="message-body">No equipment assigned to this shift.</div>
         </div>
@@ -231,8 +215,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Equipment</th>
@@ -246,8 +229,7 @@
         const tableBodyElement = tableElement.querySelector('tbody');
         for (const equipment of shiftEquipment) {
             const rowElement = document.createElement('tr');
-            // eslint-disable-next-line no-unsanitized/property
-            rowElement.innerHTML = /* html */ `
+            rowElement.innerHTML = `
         <td>
           ${cityssm.escapeHTML(equipment.equipmentName ?? '')}<br />
           <span class="is-size-7">#${cityssm.escapeHTML(equipment.equipmentNumber)}</span>
@@ -263,8 +245,7 @@
         </td>
       `;
             if (isEdit) {
-                rowElement.insertAdjacentHTML('beforeend', 
-                /* html */ `
+                rowElement.insertAdjacentHTML('beforeend', `
             <td class="has-text-right">
               <button
                 class="button is-small is-light is-info button--editEquipmentEmployee"
@@ -338,9 +319,7 @@
         refreshEquipmentData();
     }
     function loadAvailableData() {
-        cityssm.postJSON(
-        // eslint-disable-next-line no-secrets/no-secrets
-        `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`, {}, (responseJSON) => {
+        cityssm.postJSON(`${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`, {}, (responseJSON) => {
             availableCrews = responseJSON.crews;
             availableEmployees = responseJSON.employees;
             availableEquipment = responseJSON.equipment;
@@ -375,12 +354,10 @@
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 const crewIdElement = modalElement.querySelector('select[name="crewId"]');
                 for (const crew of availableCrews) {
-                    // Skip crews already added
                     if (shiftCrews.some((sc) => sc.crewId === crew.crewId)) {
                         continue;
                     }
-                    crewIdElement.insertAdjacentHTML('beforeend', 
-                    /* html */ `
+                    crewIdElement.insertAdjacentHTML('beforeend', `
               <option value="${cityssm.escapeHTML(crew.crewId.toString())}">
                 ${cityssm.escapeHTML(crew.crewName)}
               </option>
@@ -429,12 +406,10 @@
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
                 for (const employee of availableEmployees) {
-                    // Skip employees already added
                     if (shiftEmployees.some((se) => se.employeeNumber === employee.employeeNumber)) {
                         continue;
                     }
-                    employeeNumberElement.insertAdjacentHTML('beforeend', 
-                    /* html */ `
+                    employeeNumberElement.insertAdjacentHTML('beforeend', `
               <option value="${cityssm.escapeHTML(employee.employeeNumber)}">
                 ${cityssm.escapeHTML(employee.lastName)},
                 ${cityssm.escapeHTML(employee.firstName)}
@@ -444,8 +419,7 @@
                 }
                 const crewIdElement = modalElement.querySelector('select[name="crewId"]');
                 for (const crew of shiftCrews) {
-                    crewIdElement.insertAdjacentHTML('beforeend', 
-                    /* html */ `
+                    crewIdElement.insertAdjacentHTML('beforeend', `
               <option value="${cityssm.escapeHTML(crew.crewId.toString())}">
                 ${cityssm.escapeHTML(crew.crewName ?? '')}
               </option>
@@ -495,12 +469,10 @@
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 const equipmentNumberElement = modalElement.querySelector('select[name="equipmentNumber"]');
                 for (const equipment of availableEquipment) {
-                    // Skip equipment already added
                     if (shiftEquipment.some((se) => se.equipmentNumber === equipment.equipmentNumber)) {
                         continue;
                     }
-                    equipmentNumberElement.insertAdjacentHTML('beforeend', 
-                    /* html */ `
+                    equipmentNumberElement.insertAdjacentHTML('beforeend', `
               <option value="${cityssm.escapeHTML(equipment.equipmentNumber)}">
                 ${cityssm.escapeHTML(equipment.equipmentNumber)}
                 -
@@ -510,8 +482,7 @@
                 }
                 const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
                 for (const employee of shiftEmployees) {
-                    employeeNumberElement.insertAdjacentHTML('beforeend', 
-                    /* html */ `
+                    employeeNumberElement.insertAdjacentHTML('beforeend', `
               <option value="${cityssm.escapeHTML(employee.employeeNumber)}">
                 ${cityssm.escapeHTML(employee.lastName ?? '')},
                 ${cityssm.escapeHTML(employee.firstName ?? '')}
@@ -608,9 +579,7 @@
                 const crewIdElement = modalElement.querySelector('select[name="crewId"]');
                 for (const crew of shiftCrews) {
                     const selected = crew.crewId === employee.crewId;
-                    // eslint-disable-next-line no-unsanitized/method
-                    crewIdElement.insertAdjacentHTML('beforeend', 
-                    /* html */ `
+                    crewIdElement.insertAdjacentHTML('beforeend', `
               <option
                 value="${cityssm.escapeHTML(crew.crewId.toString())}"
                 ${selected ? ' selected' : ''}
@@ -707,9 +676,7 @@
                 const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
                 for (const employee of shiftEmployees) {
                     const selected = employee.employeeNumber === equipment.employeeNumber;
-                    // eslint-disable-next-line no-unsanitized/method
-                    employeeNumberElement.insertAdjacentHTML('beforeend', 
-                    /* html */ `
+                    employeeNumberElement.insertAdjacentHTML('beforeend', `
               <option
                 value="${cityssm.escapeHTML(employee.employeeNumber)}"
                 ${selected ? ' selected' : ''}
@@ -909,7 +876,7 @@
                 const resultsContainer = document.querySelector('#container--searchResults');
                 const listContainer = document.querySelector('#list--shifts');
                 if (responseJSON.shifts.length === 0) {
-                    listContainer.innerHTML = /* html */ `
+                    listContainer.innerHTML = `
               <div class="message">
                 <div class="message-body">No matching shifts found.</div>
               </div>
@@ -935,9 +902,7 @@
                         shiftElement.className = 'panel-block is-block';
                         shiftElement.dataset.shiftId = shift.shiftId.toString();
                         shiftElement.href = '#';
-                        // All user data is escaped with cityssm.escapeHTML()
-                        // eslint-disable-next-line no-unsanitized/property
-                        shiftElement.innerHTML = /* html */ `
+                        shiftElement.innerHTML = `
                 <div class="columns is-mobile is-vcentered">
                   <div class="column">
                     <strong>Shift #${cityssm.escapeHTML(shift.shiftId.toString())}</strong>
@@ -961,7 +926,6 @@
                             clickEvent.preventDefault();
                             const previousShiftIdInput = document.querySelector('#input--previousShiftId');
                             previousShiftIdInput.value = shift.shiftId.toString();
-                            // Highlight selected shift
                             const allPanelBlocks = listContainer.querySelectorAll('.panel-block');
                             for (const block of allPanelBlocks) {
                                 block.classList.remove('is-active');
@@ -976,20 +940,16 @@
         }
         cityssm.openHtmlModal('shifts-importFromPreviousShift', {
             onshow(modalElement) {
-                // Get current shift data from the form
                 const currentShiftTypeId = document.querySelector('#shift--shiftTypeDataListItemId').value;
                 const currentSupervisorNumber = document.querySelector('#shift--supervisorEmployeeNumber').value;
                 const currentShiftTimeId = document.querySelector('#shift--shiftTimeDataListItemId').value;
                 const currentShiftDate = document.querySelector('#shift--shiftDateString').value;
-                // Set hidden fields
                 const searchCurrentShiftIdInputs = modalElement.querySelectorAll('input[name="currentShiftId"]');
                 for (const input of searchCurrentShiftIdInputs) {
                     input.value = shiftId;
                 }
-                // Set shift date for filtering
                 ;
                 modalElement.querySelector('form#form--searchShifts input[name="shiftDateString"]').value = currentShiftDate;
-                // Populate shift types
                 const shiftTypeSelect = modalElement.querySelector('#search--shiftTypeDataListItemId');
                 const shiftTypeOptions = document.querySelectorAll('#shift--shiftTypeDataListItemId option');
                 for (const option of shiftTypeOptions) {
@@ -1000,7 +960,6 @@
                     }
                 }
                 shiftTypeSelect.addEventListener('change', doSearch);
-                // Populate supervisors
                 const supervisorSelect = modalElement.querySelector('#search--supervisorEmployeeNumber');
                 const supervisorOptions = document.querySelectorAll('#shift--supervisorEmployeeNumber option');
                 for (const option of supervisorOptions) {
@@ -1011,7 +970,6 @@
                     }
                 }
                 supervisorSelect.addEventListener('change', doSearch);
-                // Populate shift times
                 const shiftTimeSelect = modalElement.querySelector('#search--shiftTimeDataListItemId');
                 const shiftTimeOptions = document.querySelectorAll('#shift--shiftTimeDataListItemId option');
                 for (const option of shiftTimeOptions) {
@@ -1030,7 +988,6 @@
                 formElement.addEventListener('submit', doImport);
                 searchFormElement = modalElement.querySelector('#form--searchShifts');
                 searchFormElement.addEventListener('submit', doSearch);
-                // Auto-trigger search with current shift's values
                 doSearch(new Event('submit'));
             },
             onremoved() {
@@ -1038,7 +995,6 @@
             }
         });
     }
-    // Event listeners for add buttons
     if (isEdit) {
         document
             .querySelector('#button--addCrew')
@@ -1054,7 +1010,6 @@
             ?.addEventListener('click', importFromPreviousShift);
         loadAvailableData();
     }
-    // Initial render
     renderShiftCrews();
     renderShiftEmployees();
     renderShiftEquipment();

@@ -1,16 +1,4 @@
-/*
- * (c) 2014, Vladimir Agafonkin
- * Leaflet.heat, a tiny and fast heatmap plugin for Leaflet.
- * https://github.com/Leaflet/Leaflet.heat
- */
 const HeatLayer = L.Layer.extend({
-    // options: {
-    //     minOpacity: 0.05,
-    //     maxZoom: 18,
-    //     radius: 25,
-    //     blur: 15,
-    //     max: 1.0
-    // },
     initialize(latlngs, options) {
         this._latlngs = latlngs;
         L.Util.setOptions(this, options);
@@ -112,7 +100,6 @@ const HeatLayer = L.Layer.extend({
         let x;
         let y;
         let k;
-        // console.time('process');
         for (let i = 0, len = this._latlngs.length; i < len; i += 1) {
             p = this._map.latLngToContainerPoint(this._latlngs[i]);
             if (bounds.contains(p)) {
@@ -130,9 +117,9 @@ const HeatLayer = L.Layer.extend({
                     grid[y][x] = [p.x, p.y, k];
                 }
                 else {
-                    cell[0] = (cell[0] * cell[2] + p.x * k) / (cell[2] + k); // x
-                    cell[1] = (cell[1] * cell[2] + p.y * k) / (cell[2] + k); // y
-                    cell[2] += k; // cumulated intensity value
+                    cell[0] = (cell[0] * cell[2] + p.x * k) / (cell[2] + k);
+                    cell[1] = (cell[1] * cell[2] + p.y * k) / (cell[2] + k);
+                    cell[2] += k;
                 }
             }
         }
@@ -150,10 +137,7 @@ const HeatLayer = L.Layer.extend({
                 }
             }
         }
-        // console.timeEnd('process');
-        // console.time('draw ' + data.length);
         this._heat.data(data).draw(this.options.minOpacity);
-        // console.timeEnd('draw ' + data.length);
         this._frame = null;
     },
     _animateZoom(zoomEvent) {

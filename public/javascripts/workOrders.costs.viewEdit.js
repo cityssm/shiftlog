@@ -3,20 +3,16 @@
     const workOrderId = workOrderFormElement === null
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
-    /*
-     * Costs functionality
-     */
     const costsContainerElement = document.querySelector('#container--costs');
     if (costsContainerElement !== null) {
         function renderCosts(costs) {
-            // Update costs count
             const costsCountElement = document.querySelector('#costsCount');
             if (costsCountElement !== null) {
                 costsCountElement.textContent = costs.length.toString();
             }
             if (costs.length === 0) {
                 ;
-                costsContainerElement.innerHTML = /* html */ `
+                costsContainerElement.innerHTML = `
           <div class="message is-info">
             <p class="message-body">No costs have been added yet.</p>
           </div>
@@ -25,8 +21,7 @@
             }
             const tableElement = document.createElement('table');
             tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-            // eslint-disable-next-line no-unsanitized/property
-            tableElement.innerHTML = /* html */ `
+            tableElement.innerHTML = `
         <thead>
           <tr>
             <th>Description</th>
@@ -52,14 +47,13 @@
                 const canEditCost = exports.shiftLog.userCanManageWorkOrders ||
                     cost.recordCreate_userName === exports.shiftLog.userName;
                 total += cost.costAmount;
-                // eslint-disable-next-line no-unsanitized/property
-                tableRowElement.innerHTML = /* html */ `
+                tableRowElement.innerHTML = `
           <td>${cityssm.escapeHTML(cost.costDescription)}</td>
           <td class="has-text-right">$${cost.costAmount.toFixed(2)}</td>
           <td class="is-hidden-touch">${cityssm.escapeHTML(cost.recordCreate_userName ?? '')}</td>
           <td class="is-hidden-touch">${cityssm.dateToString(new Date(cost.recordCreate_dateTime ?? ''))}</td>
           ${exports.isEdit && canEditCost
-                    ? /* html */ `
+                    ? `
                 <td class="is-hidden-print">
                   <div class="buttons are-small is-justify-content-end">
                     <button
@@ -97,7 +91,6 @@
                 }
                 tableBodyElement.append(tableRowElement);
             }
-            // Update total
             const totalElement = tableElement.querySelector('#costs--total');
             if (totalElement !== null) {
                 totalElement.textContent = `$${total.toFixed(2)}`;
@@ -213,11 +206,9 @@
                 renderCosts(responseJSON.costs);
             });
         }
-        // Add cost button
         document
             .querySelector('#button--addCost')
             ?.addEventListener('click', showAddCostModal);
-        // Load costs initially
         loadCosts();
     }
 })();

@@ -3,13 +3,12 @@
     const filtersFormElement = document.querySelector('#form--workOrderSearch');
     const offsetInputElement = document.querySelector('#workOrderSearch--offset');
     const resultsContainerElement = document.querySelector('#container--workOrderSearchResults');
-    // Validate hex color format (6 characters, alphanumeric)
     function isValidHex(color) {
         return color !== undefined && /^[0-9a-f]{6}$/iv.test(color);
     }
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {
-            resultsContainerElement.innerHTML = /* html */ `
+            resultsContainerElement.innerHTML = `
         <div class="message is-info">
           <p class="message-body">No records found.</p>
         </div>
@@ -19,7 +18,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable is-narrow';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th class="has-width-1">
@@ -45,28 +44,26 @@
         const tableBodyElement = tableElement.querySelector('tbody');
         for (const workOrder of data.workOrders) {
             const tableRowElement = document.createElement('tr');
-            let openClosedIconHTML = 
-            /* html */ '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>';
+            let openClosedIconHTML = '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>';
             if (workOrder.workOrderCloseDateTime !== null) {
                 openClosedIconHTML =
-                    /* html */ '<span class="icon has-text-grey" title="Closed"><i class="fa-solid fa-stop"></i></span>';
+                    '<span class="icon has-text-grey" title="Closed"><i class="fa-solid fa-stop"></i></span>';
             }
             else if (workOrder.workOrderDueDateTime !== null) {
                 const dueDateTime = new Date(workOrder.workOrderDueDateTime);
                 const now = new Date();
                 if (dueDateTime < now) {
                     openClosedIconHTML =
-                        /* html */ '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>';
+                        '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>';
                 }
             }
             let extraDateHTML = '';
             if (workOrder.workOrderCloseDateTime !== null) {
-                extraDateHTML = /* html */ `<i class="fa-solid fa-stop" title="Close Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderCloseDateTime ?? ''))}`;
+                extraDateHTML = `<i class="fa-solid fa-stop" title="Close Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderCloseDateTime ?? ''))}`;
             }
             else if (workOrder.workOrderDueDateTime !== null) {
-                extraDateHTML = /* html */ `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`;
+                extraDateHTML = `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`;
             }
-            // Build tags HTML
             let tagsHTML = '';
             if (workOrder.tags && workOrder.tags.length > 0) {
                 const tagsElements = workOrder.tags
@@ -77,7 +74,6 @@
                     const textColor = isValidHex(tag.tagTextColor)
                         ? `#${tag.tagTextColor}`
                         : '';
-                    // Only apply custom styling if both colors are present to ensure consistency
                     const style = backgroundColor && textColor
                         ? `style="background-color: ${backgroundColor}; color: ${textColor};"`
                         : '';
@@ -86,17 +82,15 @@
                     .join(' ');
                 tagsHTML = `<div class="tags mt-1">${tagsElements}</div>`;
             }
-            // Build attachment icon HTML
             const attachmentIconHTML = workOrder.attachmentsCount && workOrder.attachmentsCount > 0
-                ? /* html */ `
+                ? `
             <span class="icon" title="${workOrder.attachmentsCount} attachment(s)">
               <i class="fa-solid fa-paperclip"></i>
             </span>
           `
                 : '';
-            // Build thumbnail icon HTML
             const thumbnailIconHTML = workOrder.thumbnailAttachmentId
-                ? /* html */ `
+                ? `
           <a
             class="icon has-text-info"
             href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline"
@@ -107,30 +101,27 @@
           </a>
         `
                 : '';
-            // Build notes icon HTML
             const notesIconHTML = workOrder.notesCount && workOrder.notesCount > 0
-                ? /* html */ `
+                ? `
             <span class="icon" title="${workOrder.notesCount} note(s)">
               <i class="fa-solid fa-note-sticky"></i>
             </span>
           `
                 : '';
-            // Build costs icon HTML
             const costsIconHTML = workOrder.costsCount &&
                 workOrder.costsCount > 0 &&
                 workOrder.costsTotal !== undefined
-                ? /* html */ `
+                ? `
             <span class="icon" title="Total Cost: $${workOrder.costsTotal.toFixed(2)}">
               <i class="fa-solid fa-dollar-sign"></i>
             </span>
           `
                 : '';
-            // eslint-disable-next-line no-unsanitized/property
-            tableRowElement.innerHTML = /* html */ `
+            tableRowElement.innerHTML = `
         <td class="has-text-centered">
           ${openClosedIconHTML}<br />
           ${workOrder.milestonesCount && workOrder.milestonesCount > 0
-                ? /* html */ `
+                ? `
                 <span class="tag">
                   ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
                 </span>
@@ -189,7 +180,6 @@
             tableBodyElement.append(tableRowElement);
         }
         resultsContainerElement.replaceChildren(tableElement);
-        // Pagination
         resultsContainerElement.append(shiftLog.buildPaginationControls({
             totalCount: data.totalCount,
             currentPageOrOffset: data.offset,
@@ -201,7 +191,7 @@
         }));
     }
     function getSearchResults() {
-        resultsContainerElement.innerHTML = /* html */ `
+        resultsContainerElement.innerHTML = `
       <div class="has-text-centered py-5">
         <span class="icon is-large has-text-grey-lighter">
           <i class="fa-solid fa-spinner fa-pulse fa-2x"></i>

@@ -1,13 +1,9 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.timesheetsRouter}`;
     const formElement = document.querySelector('#form--timesheet');
     const timesheetIdElement = formElement.querySelector('#timesheet--timesheetId');
     const isCreate = timesheetIdElement.value === '' || timesheetIdElement.value === '-1';
-    /*
-     * Load available shifts based on supervisor and date
-     */
     const supervisorElement = formElement.querySelector('#timesheet--supervisorEmployeeNumber');
     const timesheetDateElement = formElement.querySelector('#timesheet--timesheetDateString');
     const shiftIdElement = formElement.querySelector('#timesheet--shiftId');
@@ -20,7 +16,6 @@
         const supervisorEmployeeNumber = supervisorElement.value;
         const shiftDateString = timesheetDateElement.value;
         if (supervisorEmployeeNumber === '' || shiftDateString === '') {
-            // Clear shift dropdown except the "No Shift" option
             shiftIdElement.innerHTML = '<option value="">(No Shift)</option>';
             return;
         }
@@ -28,10 +23,8 @@
             supervisorEmployeeNumber,
             shiftDateString
         }, (response) => {
-            // Check if we have a temporarily stored shift ID (from initial page load)
             const tempShiftId = shiftIdElement.dataset.tempShiftId;
             const currentShiftId = tempShiftId ?? shiftIdElement.value;
-            // Rebuild shift dropdown
             shiftIdElement.innerHTML = '<option value="">(No Shift)</option>';
             for (const shift of response.shifts) {
                 const optionElement = document.createElement('option');
@@ -42,24 +35,19 @@
                 }
                 shiftIdElement.append(optionElement);
             }
-            // Clear the temporary attribute after first load
             if (tempShiftId !== null) {
                 delete shiftIdElement.dataset.tempShiftId;
             }
         });
     }
-    // Load shifts when supervisor or date changes
     if (supervisorElement !== null) {
         supervisorElement.addEventListener('change', loadAvailableShifts);
     }
     if (timesheetDateElement !== null) {
         timesheetDateElement.addEventListener('change', loadAvailableShifts);
     }
-    // Load shifts on page load (for both create and edit modes)
     if (supervisorElement !== null && timesheetDateElement !== null) {
-        // Get initial shift ID from data attribute
         const initialShiftId = shiftIdElement?.dataset.initialValue ?? '';
-        // Store it temporarily
         if (shiftIdElement !== null && initialShiftId !== '') {
             shiftIdElement.dataset.tempShiftId = initialShiftId;
         }
@@ -89,9 +77,6 @@
         });
     }
     formElement.addEventListener('submit', doSaveTimesheet);
-    /*
-     * Initialize timesheet grid (edit mode)
-     */
     if (!isCreate) {
         const gridContainer = document.querySelector('#timesheet-grid-container');
         if (gridContainer !== null) {
@@ -103,7 +88,6 @@
                 hideEmptyColumns: false,
                 filterRows: ''
             });
-            // Display options
             const hideEmptyRowsCheckbox = document.querySelector('#display--hideEmptyRows');
             const hideEmptyColumnsCheckbox = document.querySelector('#display--hideEmptyColumns');
             const filterRowsInput = document.querySelector('#display--filterRows');
@@ -126,11 +110,9 @@
                     grid.setDisplayOptions({ filterRows: filterRowsInput.value });
                 });
             }
-            // Initialize grid
             grid.init().catch((error) => {
                 console.error('Error initializing grid:', error);
             });
-            // Initialize dropdown
             const dropdownElement = document.querySelector('#dropdown--add');
             if (dropdownElement !== null) {
                 const dropdownTrigger = dropdownElement.querySelector('.dropdown-trigger button');
@@ -139,14 +121,12 @@
                         dropdownElement.classList.toggle('is-active');
                     });
                 }
-                // Close dropdown when clicking outside
                 document.addEventListener('click', (event) => {
                     if (!dropdownElement.contains(event.target)) {
                         dropdownElement.classList.remove('is-active');
                     }
                 });
             }
-            // Add column button
             const addColumnButton = document.querySelector('#button--addColumn');
             if (addColumnButton !== null) {
                 addColumnButton.addEventListener('click', (event) => {
@@ -155,7 +135,6 @@
                     grid.addColumn();
                 });
             }
-            // Add row button
             const addRowButton = document.querySelector('#button--addRow');
             if (addRowButton !== null) {
                 addRowButton.addEventListener('click', (event) => {
@@ -164,7 +143,6 @@
                     grid.addRow();
                 });
             }
-            // Copy from shift button
             const copyFromShiftButton = document.querySelector('#button--copyFromShift');
             if (copyFromShiftButton !== null) {
                 copyFromShiftButton.addEventListener('click', (event) => {
@@ -173,7 +151,6 @@
                     openCopyFromShiftModal();
                 });
             }
-            // Copy from previous timesheet button
             const copyFromPreviousButton = document.querySelector('#button--copyFromPrevious');
             if (copyFromPreviousButton !== null) {
                 copyFromPreviousButton.addEventListener('click', (event) => {
@@ -182,9 +159,6 @@
                     openCopyFromPreviousTimesheetModal();
                 });
             }
-            /*
-             * Copy from Shift Modal
-             */
             function openCopyFromShiftModal() {
                 let closeModalFunction;
                 cityssm.openHtmlModal('timesheets-copyFromShift', {
@@ -196,7 +170,6 @@
                         const loadingNotice = modalElement.querySelector('#notice--loading');
                         const noShiftsNotice = modalElement.querySelector('#notice--noShifts');
                         let selectedShiftId = null;
-                        // Load available shifts
                         const supervisorEmployeeNumber = supervisorElement?.value ?? '';
                         const shiftDateString = timesheetDateElement?.value ?? '';
                         cityssm.postJSON(`${urlPrefix}/doGetAvailableShifts`, {
@@ -230,12 +203,10 @@
                       </div>
                     `;
                                     shiftElement.addEventListener('click', () => {
-                                        // Deselect all
                                         listContainer.querySelectorAll('.box').forEach((box) => {
                                             box.classList.remove('has-background-success-light');
                                             box.querySelector('[data-shift-check]')?.classList.add('is-hidden');
                                         });
-                                        // Select this one
                                         shiftElement.classList.add('has-background-success-light');
                                         shiftElement.querySelector('[data-shift-check]')?.classList.remove('is-hidden');
                                         selectedShiftId = shift.shiftId;
@@ -248,7 +219,6 @@
                                 noShiftsNotice.classList.remove('is-hidden');
                             }
                         });
-                        // Handle form submission
                         modalElement
                             .querySelector('#form--copyFromShift')
                             ?.addEventListener('submit', (formEvent) => {
@@ -267,7 +237,6 @@
                                         contextualColorName: 'success',
                                         message: 'Successfully copied data from shift.'
                                     });
-                                    // Refresh the grid
                                     grid.init().catch((error) => {
                                         console.error('Error reinitializing grid:', error);
                                     });
@@ -287,9 +256,6 @@
                     }
                 });
             }
-            /*
-             * Copy from Previous Timesheet Modal
-             */
             function openCopyFromPreviousTimesheetModal() {
                 let closeModalFunction;
                 cityssm.openHtmlModal('timesheets-copyFromPreviousTimesheet', {
@@ -303,7 +269,6 @@
                         const listContainer = modalElement.querySelector('#list--timesheets');
                         const searchResultsContainer = modalElement.querySelector('#container--searchResults');
                         const noTimesheetsNotice = modalElement.querySelector('#notice--noTimesheets');
-                        // Populate timesheet type dropdown
                         const timesheetTypeSelect = modalElement.querySelector('#searchTimesheets--timesheetTypeDataListItemId');
                         const originalTimesheetTypeSelect = formElement.querySelector('#timesheet--timesheetTypeDataListItemId');
                         if (originalTimesheetTypeSelect !== null) {
@@ -319,7 +284,6 @@
                                 }
                             });
                         }
-                        // Populate supervisor dropdown
                         const supervisorSelect = modalElement.querySelector('#searchTimesheets--supervisorEmployeeNumber');
                         const originalSupervisorSelect = formElement.querySelector('#timesheet--supervisorEmployeeNumber');
                         if (originalSupervisorSelect !== null) {
@@ -336,14 +300,12 @@
                             });
                         }
                         let selectedTimesheetId = null;
-                        // Search form submission
                         modalElement
                             .querySelector('#form--searchTimesheets')
                             ?.addEventListener('submit', (formEvent) => {
                             formEvent.preventDefault();
                             const searchForm = formEvent.currentTarget;
                             const searchData = new FormData(searchForm);
-                            // Clear previous results
                             listContainer.innerHTML = '';
                             selectedTimesheetId = null;
                             submitButton.disabled = true;
@@ -357,7 +319,6 @@
                                 if (response.success &&
                                     response.timesheets !== undefined &&
                                     response.timesheets.length > 0) {
-                                    // Filter out the current timesheet
                                     const filteredTimesheets = response.timesheets.filter((t) => t.timesheetId.toString() !== timesheetId);
                                     if (filteredTimesheets.length === 0) {
                                         noTimesheetsNotice.classList.remove('is-hidden');
@@ -396,14 +357,12 @@
                         </div>
                       `;
                                         timesheetElement.addEventListener('click', () => {
-                                            // Deselect all
                                             listContainer
                                                 .querySelectorAll('.box')
                                                 .forEach((box) => {
                                                 box.classList.remove('has-background-success-light');
                                                 box.querySelector('[data-timesheet-check]')?.classList.add('is-hidden');
                                             });
-                                            // Select this one
                                             timesheetElement.classList.add('has-background-success-light');
                                             timesheetElement.querySelector('[data-timesheet-check]')?.classList.remove('is-hidden');
                                             selectedTimesheetId = timesheet.timesheetId;
@@ -418,7 +377,6 @@
                                 }
                             });
                         });
-                        // Handle copy form submission
                         modalElement
                             .querySelector('#form--copyFromPreviousTimesheet')
                             ?.addEventListener('submit', (formEvent) => {
@@ -437,7 +395,6 @@
                                         contextualColorName: 'success',
                                         message: 'Successfully copied data from previous timesheet.'
                                     });
-                                    // Refresh the grid
                                     grid.init().catch((error) => {
                                         console.error('Error reinitializing grid:', error);
                                     });

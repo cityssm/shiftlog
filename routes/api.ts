@@ -10,7 +10,7 @@ export const router = Router()
 router.get(
   '/:apiKey/reports/:reportKey',
   apiGetHandler,
-  handler_reportKey as RequestHandler
+  handler_reportKey as unknown as RequestHandler
 )
 
 router.get(

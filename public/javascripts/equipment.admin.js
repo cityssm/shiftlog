@@ -1,7 +1,6 @@
 (() => {
     const shiftLog = exports.shiftLog;
     const equipmentContainerElement = document.querySelector('#container--equipment');
-    // Pagination settings
     const ITEMS_PER_PAGE = 10;
     let currentPage = 1;
     let currentFilteredEquipment = exports.equipment;
@@ -92,7 +91,6 @@
                 modalElement.querySelector('[name="recordSync_isSynced"]').checked = equipment.recordSync_isSynced;
                 modalElement.querySelector('[name="equipmentName"]').value = equipment.equipmentName;
                 modalElement.querySelector('[name="equipmentDescription"]').value = equipment.equipmentDescription;
-                // Populate equipment types dropdown
                 const equipmentTypeSelect = modalElement.querySelector('[name="equipmentTypeDataListItemId"]');
                 for (const equipmentType of exports.equipmentTypes) {
                     const option = document.createElement('option');
@@ -102,7 +100,6 @@
                 }
                 equipmentTypeSelect.value =
                     equipment.equipmentTypeDataListItemId.toString();
-                // Populate employee lists dropdown
                 const employeeListSelect = modalElement.querySelector('[name="employeeListId"]');
                 for (const employeeList of exports.employeeLists) {
                     const option = document.createElement('option');
@@ -111,7 +108,6 @@
                     employeeListSelect.append(option);
                 }
                 employeeListSelect.value = equipment.employeeListId?.toString() ?? '';
-                // Populate user groups dropdown
                 const userGroupSelect = modalElement.querySelector('[name="userGroupId"]');
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
@@ -135,7 +131,7 @@
     }
     function renderEquipment(equipmentList) {
         if (equipmentList.length === 0) {
-            equipmentContainerElement.innerHTML = /* html */ `
+            equipmentContainerElement.innerHTML = `
         <div class="message is-info">
           <div class="message-body">
             No equipment records available.
@@ -147,7 +143,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable has-sticky-header';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>
@@ -168,11 +164,10 @@
         const tbodyElement = tableElement.querySelector('tbody');
         for (const equipment of equipmentList) {
             const rowElement = document.createElement('tr');
-            // eslint-disable-next-line no-unsanitized/property
-            rowElement.innerHTML = /* html */ `
+            rowElement.innerHTML = `
         <td>
           ${equipment.recordSync_isSynced
-                ? /* html */ `
+                ? `
                 <span class="is-size-7 has-text-grey" title="Synchronized">
                   <i class="fa-solid fa-arrows-rotate"></i>
                 </span>
@@ -221,17 +216,11 @@
             button.addEventListener('click', deleteEquipment);
         }
     }
-    /**
-     * Render equipment with pagination
-     */
     function renderEquipmentWithPagination(equipmentList) {
-        // Calculate pagination
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIndex = startIndex + ITEMS_PER_PAGE;
         const paginatedEquipment = equipmentList.slice(startIndex, endIndex);
-        // Render table
         renderEquipment(paginatedEquipment);
-        // Add pagination controls if needed
         if (equipmentList.length > ITEMS_PER_PAGE) {
             const paginationControls = shiftLog.buildPaginationControls({
                 totalCount: equipmentList.length,
@@ -275,7 +264,6 @@
                 modalElement.querySelector('[name="equipmentNumber"]').value = '';
                 modalElement.querySelector('[name="equipmentName"]').value = '';
                 modalElement.querySelector('[name="equipmentDescription"]').value = '';
-                // Populate equipment types dropdown
                 const equipmentTypeSelect = modalElement.querySelector('[name="equipmentTypeDataListItemId"]');
                 for (const equipmentType of exports.equipmentTypes) {
                     const option = document.createElement('option');
@@ -283,7 +271,6 @@
                     option.textContent = equipmentType.dataListItem;
                     equipmentTypeSelect.append(option);
                 }
-                // Populate employee lists dropdown
                 const employeeListSelect = modalElement.querySelector('[name="employeeListId"]');
                 for (const employeeList of exports.employeeLists) {
                     const option = document.createElement('option');
@@ -291,7 +278,6 @@
                     option.textContent = employeeList.employeeListName;
                     employeeListSelect.append(option);
                 }
-                // Populate user groups dropdown
                 const userGroupSelect = modalElement.querySelector('[name="userGroupId"]');
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
@@ -317,18 +303,13 @@
         .querySelector('#button--addEquipment')
         ?.addEventListener('click', addEquipment);
     renderEquipmentWithPagination(exports.equipment);
-    /*
-     * Filter equipment with debouncing
-     */
     const filterInput = document.querySelector('#filter--equipment');
     let filterTimeout;
     if (filterInput !== null) {
         filterInput.addEventListener('input', () => {
-            // Clear existing timeout
             if (filterTimeout !== undefined) {
                 clearTimeout(filterTimeout);
             }
-            // Set new timeout (debounce for 300ms)
             filterTimeout = setTimeout(() => {
                 const filterText = filterInput.value.toLowerCase();
                 if (filterText === '') {

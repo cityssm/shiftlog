@@ -1,3 +1,4 @@
+"use strict";
 function SimpleHeat(canvas) {
     if (!(this instanceof SimpleHeat))
         return new SimpleHeat(canvas);
@@ -36,7 +37,6 @@ SimpleHeat.prototype = {
     },
     radius(r, blur) {
         blur = blur === undefined ? 15 : blur;
-        // create a grayscale blurred circle image that we'll use for drawing points
         const circle = (this._circle = this._createCanvas());
         const context = circle.getContext('2d');
         const r2 = (this._r = r + blur);
@@ -55,7 +55,6 @@ SimpleHeat.prototype = {
         this._height = this._canvas.height;
     },
     gradient(grad) {
-        // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
         const canvas = this._createCanvas();
         const context = canvas.getContext('2d', { willReadFrequently: true });
         const gradient = context.createLinearGradient(0, 0, 0, 256);
@@ -76,13 +75,11 @@ SimpleHeat.prototype = {
             this.gradient(this.defaultGradient);
         const context = this._ctx;
         context.clearRect(0, 0, this._width, this._height);
-        // draw a grayscale heatmap by putting a blurred circle at each data point
         for (let i = 0, len = this._data.length, p; i < len; i += 1) {
             p = this._data[i];
             context.globalAlpha = Math.min(Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity), 1);
             context.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
-        // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
         if (this._width != 0 && this._height != 0) {
             const colored = context.getImageData(0, 0, this._width, this._height);
             this._colorize(colored.data, this._grad);
@@ -92,7 +89,7 @@ SimpleHeat.prototype = {
     },
     _colorize(pixels, gradient) {
         for (let index = 0, len = pixels.length, j; index < len; index += 4) {
-            j = pixels[index + 3] * 4; // get gradient color from opacity value
+            j = pixels[index + 3] * 4;
             if (j) {
                 pixels[index] = gradient[j];
                 pixels[index + 1] = gradient[j + 1];

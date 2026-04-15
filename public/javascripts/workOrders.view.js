@@ -1,5 +1,4 @@
 (() => {
-    // View page - map display for location
     const mapViewElement = document.querySelector('#map--locationView');
     if (mapViewElement !== null) {
         const lat = Number.parseFloat(mapViewElement.dataset.lat ?? '0');

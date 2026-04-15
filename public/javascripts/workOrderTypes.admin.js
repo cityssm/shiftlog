@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     let workOrderTypes = exports.workOrderTypes;
@@ -13,7 +12,6 @@
       </tr>`;
             return;
         }
-        // Clear existing
         tbodyElement.innerHTML = '';
         for (const workOrderType of workOrderTypes) {
             const userGroupDisplay = (workOrderType.userGroupName ?? '') === ''
@@ -22,8 +20,7 @@
             const rowElement = document.createElement('tr');
             rowElement.dataset.workOrderTypeId =
                 workOrderType.workOrderTypeId.toString();
-            // eslint-disable-next-line no-unsanitized/property
-            rowElement.innerHTML = /* html */ `
+            rowElement.innerHTML = `
         <td class="has-text-centered">
           <span class="icon is-small has-text-grey handle" style="cursor: move;">
             <i class="fa-solid fa-grip-vertical"></i>
@@ -105,7 +102,6 @@
         cityssm.openHtmlModal('adminWorkOrderTypes-add', {
             onshow(modalElement) {
                 shiftLog.populateSectionAliases(modalElement);
-                // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#addWorkOrderType--userGroupId');
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
@@ -139,14 +135,12 @@
             currentWorkOrderNumberPrefix === undefined) {
             return;
         }
-        // Get the current moreInfoFormNames from the workOrderTypes array
         const workOrderTypeData = workOrderTypes.find((wot) => wot.workOrderTypeId === Number.parseInt(workOrderTypeId, 10));
         const currentMoreInfoFormNames = workOrderTypeData?.moreInfoFormNames ?? [];
         let closeModalFunction;
         function doUpdateWorkOrderType(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            // Collect milestone data
             const modalElement = editForm.closest('.modal');
             const milestoneItems = modalElement.querySelectorAll('.milestone-item');
             const milestones = [];
@@ -165,7 +159,6 @@
                     });
                 }
             }
-            // Add milestones as hidden input to form
             const existingMilestonesInput = editForm.querySelector('input[name="defaultMilestones"]');
             if (existingMilestonesInput !== null) {
                 existingMilestonesInput.remove();
@@ -202,7 +195,6 @@
                 modalElement.querySelector('#editWorkOrderType--workOrderType').value = currentWorkOrderType;
                 modalElement.querySelector('#editWorkOrderType--workOrderNumberPrefix').value = currentWorkOrderNumberPrefix;
                 modalElement.querySelector('#editWorkOrderType--dueDays').value = currentDueDays ?? '';
-                // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#editWorkOrderType--userGroupId');
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
@@ -215,7 +207,6 @@
                     }
                     userGroupSelect.append(option);
                 }
-                // Populate more info forms checkboxes
                 const moreInfoFormsContainer = modalElement.querySelector('#editWorkOrderType--moreInfoForms');
                 const availableForms = exports.availableWorkOrderMoreInfoForms;
                 const formKeys = Object.keys(availableForms);
@@ -228,7 +219,7 @@
                     for (const formKey of formKeys) {
                         const formLabel = availableForms[formKey].formName;
                         const isChecked = currentMoreInfoFormNames.includes(formKey);
-                        formsHtml += /* html */ `
+                        formsHtml += `
               <label class="checkbox is-block mb-2">
                 <input
                   name="moreInfoFormNames"
@@ -240,10 +231,8 @@
               </label>
             `;
                     }
-                    // eslint-disable-next-line no-unsanitized/property
                     moreInfoFormsContainer.innerHTML = formsHtml;
                 }
-                // Populate default milestones
                 const currentDefaultMilestones = workOrderTypeData?.defaultMilestones ?? [];
                 const defaultMilestonesContainer = modalElement.querySelector('#editWorkOrderType--defaultMilestones');
                 function renderDefaultMilestones() {
@@ -257,8 +246,7 @@
                     const milestoneElement = document.createElement('div');
                     milestoneElement.className = 'milestone-item box p-3 mb-2';
                     milestoneElement.dataset.orderNumber = orderNumber.toString();
-                    // eslint-disable-next-line no-unsanitized/property
-                    milestoneElement.innerHTML = /* html */ `
+                    milestoneElement.innerHTML = `
             <div class="is-flex is-align-items-start">
               <span class="icon is-small has-text-grey milestone-handle mr-2" style="cursor: move;">
                 <i class="fa-solid fa-grip-vertical"></i>
@@ -317,7 +305,6 @@
               </button>
             </div>
           `;
-                    // Add remove button event
                     milestoneElement
                         .querySelector('.remove-milestone-button')
                         ?.addEventListener('click', () => {
@@ -326,18 +313,15 @@
                     });
                     defaultMilestonesContainer.append(milestoneElement);
                 }
-                // Clear container and add existing milestones
                 defaultMilestonesContainer.innerHTML = '';
                 for (const [index, milestone] of currentDefaultMilestones.entries()) {
                     addMilestoneItem(milestone.milestoneTitle, milestone.milestoneDescription, milestone.dueDays, index);
                 }
                 renderDefaultMilestones();
-                // Initialize sortable for milestones
                 Sortable.create(defaultMilestonesContainer, {
                     animation: 150,
                     handle: '.milestone-handle',
                     onEnd() {
-                        // Update order numbers after sorting
                         const items = defaultMilestonesContainer.querySelectorAll('.milestone-item');
                         for (const [index, item] of items.entries()) {
                             ;
@@ -345,7 +329,6 @@
                         }
                     }
                 });
-                // Add milestone button event
                 modalElement
                     .querySelector('#editWorkOrderType--addMilestoneButton')
                     ?.addEventListener('click', () => {
@@ -408,12 +391,10 @@
         });
     }
     function attachEventListeners() {
-        // Edit buttons
         const editButtons = document.querySelectorAll('.button--editWorkOrderType');
         for (const button of editButtons) {
             button.addEventListener('click', editWorkOrderType);
         }
-        // Delete buttons
         const deleteButtons = document.querySelectorAll('.button--deleteWorkOrderType');
         for (const button of deleteButtons) {
             button.addEventListener('click', deleteWorkOrderType);
@@ -425,7 +406,6 @@
                 animation: 150,
                 handle: '.handle',
                 onEnd() {
-                    // Get the new order
                     const rows = tbodyElement.querySelectorAll('tr[data-work-order-type-id]');
                     const workOrderTypeIds = [];
                     for (const row of rows) {
@@ -434,7 +414,6 @@
                             workOrderTypeIds.push(Number.parseInt(id, 10));
                         }
                     }
-                    // Send to server
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderWorkOrderTypes`, {
                         workOrderTypeIds
                     }, (responseJSON) => {
@@ -450,11 +429,9 @@
             });
         }
     }
-    // Add work order type button
     document
         .querySelector('#button--addWorkOrderType')
         ?.addEventListener('click', addWorkOrderType);
-    // Initialize
     attachEventListeners();
     initializeSortable();
 })();

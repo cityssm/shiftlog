@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 class TimesheetGrid {
     cells = new Map();
     columns = [];
@@ -46,14 +45,12 @@ class TimesheetGrid {
         };
         cityssm.openHtmlModal('timesheets-addColumn', {
             onshow: (modalElement) => {
-                // Set the timesheet ID
                 ;
                 modalElement.querySelector('#addTimesheetColumn--timesheetId').value = this.config.timesheetId.toString();
                 modalElement.querySelector('#addTimesheetColumn--columnTitle').value = '';
                 modalElement.querySelector('#addTimesheetColumn--workOrderNumber').value = '';
                 modalElement.querySelector('#addTimesheetColumn--costCenterA').value = '';
                 modalElement.querySelector('#addTimesheetColumn--costCenterB').value = '';
-                // Attach form submit handler
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddColumn);
@@ -73,7 +70,6 @@ class TimesheetGrid {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
             const formData = new FormData(addForm);
-            // Convert empty strings to null for foreign key fields
             const requestData = {};
             for (const [key, value] of formData.entries()) {
                 const stringValue = value.toString();
@@ -110,7 +106,6 @@ class TimesheetGrid {
                 }
             });
         };
-        // Load options for the modal
         cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`, {}, (optionsData) => {
             if (!optionsData.success) {
                 bulmaJS.alert({
@@ -122,29 +117,23 @@ class TimesheetGrid {
             }
             cityssm.openHtmlModal('timesheets-addRow', {
                 onshow: (modalElement) => {
-                    // Set the timesheet ID
                     ;
                     modalElement.querySelector('#addTimesheetRow--timesheetId').value = this.config.timesheetId.toString();
-                    // Clear form fields
                     const rowTitleInput = modalElement.querySelector('#addTimesheetRow--rowTitle');
                     rowTitleInput.value = '';
-                    // Populate employees
                     const employeeSelect = modalElement.querySelector('#addTimesheetRow--employeeNumber');
                     employeeSelect.innerHTML = '<option value="">(None)</option>';
                     for (const employee of optionsData.employees) {
                         employeeSelect.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(employee.employeeNumber)}">${cityssm.escapeHTML(employee.lastName)}, ${cityssm.escapeHTML(employee.firstName)} (${cityssm.escapeHTML(employee.employeeNumber)})</option>`);
                     }
-                    // Populate equipment
                     const equipmentSelect = modalElement.querySelector('#addTimesheetRow--equipmentNumber');
                     equipmentSelect.innerHTML = '<option value="">(None)</option>';
                     for (const equip of optionsData.equipment) {
                         equipmentSelect.insertAdjacentHTML('beforeend', `<option value="${cityssm.escapeHTML(equip.equipmentNumber)}">${cityssm.escapeHTML(equip.equipmentName)} (${cityssm.escapeHTML(equip.equipmentNumber)})</option>`);
                     }
-                    // Auto-populate row title when employee or equipment is selected
                     const updateRowTitle = () => {
                         const selectedEquipment = equipmentSelect.value;
                         const selectedEmployee = employeeSelect.value;
-                        // Equipment takes precedence
                         if (selectedEquipment !== '') {
                             const equipOption = optionsData.equipment.find((possibleEquipment) => possibleEquipment.equipmentNumber === selectedEquipment);
                             if (equipOption !== undefined) {
@@ -160,29 +149,24 @@ class TimesheetGrid {
                     };
                     employeeSelect.addEventListener('change', updateRowTitle);
                     equipmentSelect.addEventListener('change', updateRowTitle);
-                    // Populate job classifications
                     const jobClassSelect = modalElement.querySelector('#addTimesheetRow--jobClassificationDataListItemId');
                     jobClassSelect.innerHTML = '<option value="">(None)</option>';
                     for (const jobClass of optionsData.jobClassifications) {
-                        jobClassSelect.insertAdjacentHTML('beforeend', 
-                        /* html */ `
+                        jobClassSelect.insertAdjacentHTML('beforeend', `
                   <option value="${cityssm.escapeHTML(jobClass.dataListItemId.toString())}">
                     ${cityssm.escapeHTML(jobClass.dataListItem)}
                   </option>
                 `);
                     }
-                    // Populate time codes
                     const timeCodeSelect = modalElement.querySelector('#addTimesheetRow--timeCodeDataListItemId');
                     timeCodeSelect.innerHTML = '<option value="">(None)</option>';
                     for (const timeCode of optionsData.timeCodes) {
-                        timeCodeSelect.insertAdjacentHTML('beforeend', 
-                        /* html */ `
+                        timeCodeSelect.insertAdjacentHTML('beforeend', `
                   <option value="${cityssm.escapeHTML(timeCode.dataListItemId.toString())}">
                     ${cityssm.escapeHTML(timeCode.dataListItem)}
                   </option>
                 `);
                     }
-                    // Attach form submit handler with preprocessing
                     modalElement
                         .querySelector('form')
                         ?.addEventListener('submit', doAddRow);
@@ -273,14 +257,12 @@ class TimesheetGrid {
         };
         cityssm.openHtmlModal('timesheets-editColumn', {
             onshow(modalElement) {
-                // Set form values
                 ;
                 modalElement.querySelector('#editTimesheetColumn--timesheetColumnId').value = column.timesheetColumnId.toString();
                 modalElement.querySelector('#editTimesheetColumn--columnTitle').value = column.columnTitle;
                 modalElement.querySelector('#editTimesheetColumn--workOrderNumber').value = column.workOrderNumber ?? '';
                 modalElement.querySelector('#editTimesheetColumn--costCenterA').value = column.costCenterA ?? '';
                 modalElement.querySelector('#editTimesheetColumn--costCenterB').value = column.costCenterB ?? '';
-                // Attach form submit handler
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateColumn);
@@ -300,15 +282,11 @@ class TimesheetGrid {
     }
     async loadData() {
         const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`;
-        // eslint-disable-next-line promise/avoid-new
         await new Promise((resolve, _reject) => {
-            // Load columns
             cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetColumns`, { timesheetId: this.config.timesheetId }, (columnsData) => {
                 this.columns = columnsData.columns;
-                // Load rows
                 cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetRows`, { timesheetId: this.config.timesheetId }, (rowsData) => {
                     this.rows = rowsData.rows;
-                    // Load cells
                     cityssm.postJSON(`${timesheetUrlPrefix}/doGetTimesheetCells`, { timesheetId: this.config.timesheetId }, (cellsData) => {
                         this.cells.clear();
                         for (const cell of cellsData.cells) {
@@ -322,7 +300,6 @@ class TimesheetGrid {
         });
     }
     moveColumn(column, direction) {
-        // Find the current column and the adjacent one
         const currentIndex = this.columns.findIndex((c) => c.timesheetColumnId === column.timesheetColumnId);
         if (currentIndex === -1) {
             return;
@@ -340,14 +317,11 @@ class TimesheetGrid {
                 return;
             }
         }
-        // Swap the columns in the array
         const newColumns = [...this.columns];
         const temp = newColumns[currentIndex];
         newColumns[currentIndex] = newColumns[targetIndex];
         newColumns[targetIndex] = temp;
-        // Build the new order array
         const timesheetColumnIds = newColumns.map((c) => c.timesheetColumnId);
-        // Send the reorder request
         const timesheetUrlPrefix = `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}`;
         cityssm.postJSON(`${timesheetUrlPrefix}/doReorderTimesheetColumns`, {
             timesheetId: this.config.timesheetId,
@@ -374,14 +348,11 @@ class TimesheetGrid {
     render() {
         const visibleColumns = this.columns.filter((col) => this.shouldShowColumn(col));
         const visibleRows = this.rows.filter((row) => this.shouldShowRow(row));
-        // Create table
         const table = document.createElement('table');
         table.className =
             'table is-bordered is-striped is-hoverable is-fullwidth has-sticky-header timesheet-grid';
-        // Create header
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
-        // First column is for row labels
         const thCorner = document.createElement('th');
         thCorner.style.minWidth = '200px';
         const cornerTitle = document.createElement('div');
@@ -394,7 +365,6 @@ class TimesheetGrid {
             addRowButton.innerHTML =
                 '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>';
             addRowButton.addEventListener('click', () => {
-                // Trigger the add row button in the toolbar
                 const addRowToolbarButton = document.querySelector('#button--addRow');
                 if (addRowToolbarButton !== null) {
                     addRowToolbarButton.click();
@@ -403,7 +373,6 @@ class TimesheetGrid {
             thCorner.append(addRowButton);
         }
         headerRow.append(thCorner);
-        // Column headers
         for (let colIndex = 0; colIndex < visibleColumns.length; colIndex += 1) {
             const column = visibleColumns[colIndex];
             const th = document.createElement('th');
@@ -424,7 +393,6 @@ class TimesheetGrid {
             if (this.config.isEditable) {
                 const columnActions = document.createElement('div');
                 columnActions.className = 'buttons are-small is-centered mt-2';
-                // Move left button (only if not first column)
                 if (colIndex > 0) {
                     const moveLeftButton = document.createElement('button');
                     moveLeftButton.className = 'button is-light is-small';
@@ -436,7 +404,6 @@ class TimesheetGrid {
                     });
                     columnActions.append(moveLeftButton);
                 }
-                // Move right button (only if not last column)
                 if (colIndex < visibleColumns.length - 1) {
                     const moveRightButton = document.createElement('button');
                     moveRightButton.className = 'button is-light is-small';
@@ -469,7 +436,6 @@ class TimesheetGrid {
             }
             headerRow.append(th);
         }
-        // Add column header (before Total Hours)
         if (this.config.isEditable) {
             const thAddColumn = document.createElement('th');
             thAddColumn.style.width = '80px';
@@ -480,7 +446,6 @@ class TimesheetGrid {
                 '<span class="icon is-small"><i class="fa-solid fa-plus"></i></span><span>Add</span>';
             addColumnButton.title = 'Add Column';
             addColumnButton.addEventListener('click', () => {
-                // Trigger the add column button in the toolbar
                 const addColumnToolbarButton = document.querySelector('#button--addColumn');
                 if (addColumnToolbarButton !== null) {
                     addColumnToolbarButton.click();
@@ -489,7 +454,6 @@ class TimesheetGrid {
             thAddColumn.append(addColumnButton);
             headerRow.append(thAddColumn);
         }
-        // Total column
         const thTotal = document.createElement('th');
         thTotal.textContent = 'Total Hours';
         thTotal.style.textAlign = 'center';
@@ -497,11 +461,9 @@ class TimesheetGrid {
         headerRow.append(thTotal);
         thead.append(headerRow);
         table.append(thead);
-        // Create body
         const tbody = document.createElement('tbody');
         for (const row of visibleRows) {
             const tr = document.createElement('tr');
-            // Row label
             const tdLabel = document.createElement('td');
             tdLabel.className = 'timesheet-row-label';
             const rowTitle = document.createElement('strong');
@@ -542,18 +504,15 @@ class TimesheetGrid {
                 tdLabel.append(rowActions);
             }
             tr.append(tdLabel);
-            // Create cells for each column
             for (const column of visibleColumns) {
                 const td = this.createCellElement(row, column);
                 tr.append(td);
             }
-            // Empty cell for the add column header (if editable)
             if (this.config.isEditable) {
                 const tdEmpty = document.createElement('td');
                 tdEmpty.className = 'has-background-light';
                 tr.append(tdEmpty);
             }
-            // Total cell
             const tdTotal = document.createElement('td');
             tdTotal.dataset.rowTotal = row.timesheetRowId.toString();
             const rowTotal = this.getRowTotal(row.timesheetRowId);
@@ -567,7 +526,6 @@ class TimesheetGrid {
             tbody.append(tr);
         }
         table.append(tbody);
-        // Clear container and add table
         this.containerElement.innerHTML = '';
         this.containerElement.append(table);
     }
@@ -659,7 +617,6 @@ class TimesheetGrid {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
             const formData = new FormData(editForm);
-            // Convert empty strings to null for foreign key fields
             const requestData = {};
             for (const [key, value] of formData.entries()) {
                 const stringValue = value.toString();
@@ -696,7 +653,6 @@ class TimesheetGrid {
                 }
             });
         };
-        // Load options for the modal
         cityssm.postJSON(`${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doGetTimesheetRowOptions`, {}, (optionsData) => {
             if (!optionsData.success) {
                 bulmaJS.alert({
@@ -708,30 +664,24 @@ class TimesheetGrid {
             }
             cityssm.openHtmlModal('timesheets-editRow', {
                 onshow(modalElement) {
-                    // Set form values
                     ;
                     modalElement.querySelector('#editTimesheetRow--timesheetRowId').value = row.timesheetRowId.toString();
                     modalElement.querySelector('#editTimesheetRow--rowTitle').value = row.rowTitle;
-                    // Display employee (read-only)
                     const employeeDisplay = modalElement.querySelector('#editTimesheetRow--employeeDisplay');
                     employeeDisplay.value =
                         row.employeeNumber !== undefined && row.employeeNumber !== null
                             ? `${row.employeeLastName ?? ''}, ${row.employeeFirstName ?? ''} (${row.employeeNumber})`
                             : '(None)';
-                    // Display equipment (read-only)
                     const equipmentDisplay = modalElement.querySelector('#editTimesheetRow--equipmentDisplay');
                     equipmentDisplay.value =
                         row.equipmentNumber !== undefined && row.equipmentNumber !== null
                             ? `${row.equipmentName ?? ''} (${row.equipmentNumber})`
                             : '(None)';
-                    // Populate job classifications
                     const jobClassSelect = modalElement.querySelector('#editTimesheetRow--jobClassificationDataListItemId');
                     jobClassSelect.innerHTML = '<option value="">(None)</option>';
                     for (const jobClass of optionsData.jobClassifications) {
                         const selected = row.jobClassificationDataListItemId === jobClass.dataListItemId;
-                        // eslint-disable-next-line no-unsanitized/method
-                        jobClassSelect.insertAdjacentHTML('beforeend', 
-                        /* html */ `
+                        jobClassSelect.insertAdjacentHTML('beforeend', `
                   <option value="${cityssm.escapeHTML(jobClass.dataListItemId.toString())}"
                     ${selected ? ' selected' : ''}
                   >
@@ -739,14 +689,11 @@ class TimesheetGrid {
                   </option>
                 `);
                     }
-                    // Populate time codes
                     const timeCodeSelect = modalElement.querySelector('#editTimesheetRow--timeCodeDataListItemId');
                     timeCodeSelect.innerHTML = '<option value="">(None)</option>';
                     for (const timeCode of optionsData.timeCodes) {
                         const selected = row.timeCodeDataListItemId === timeCode.dataListItemId;
-                        // eslint-disable-next-line no-unsanitized/method
-                        timeCodeSelect.insertAdjacentHTML('beforeend', 
-                        /* html */ `
+                        timeCodeSelect.insertAdjacentHTML('beforeend', `
                   <option value="${cityssm.escapeHTML(timeCode.dataListItemId.toString())}"
                     ${selected ? ' selected' : ''}
                   >
@@ -754,7 +701,6 @@ class TimesheetGrid {
                   </option>
                 `);
                     }
-                    // Attach form submit handler
                     modalElement
                         .querySelector('form')
                         ?.addEventListener('submit', doUpdateRow);
@@ -808,7 +754,6 @@ class TimesheetGrid {
         return this.getColumnTotal(column.timesheetColumnId) > 0;
     }
     shouldShowRow(row) {
-        // Check filter first
         if (this.config.filterRows !== '') {
             const filterLower = this.config.filterRows.toLowerCase();
             const rowTitleLower = row.rowTitle.toLowerCase();
@@ -824,7 +769,6 @@ class TimesheetGrid {
                 return false;
             }
         }
-        // Check empty rows
         if (!this.config.hideEmptyRows) {
             return true;
         }
@@ -851,7 +795,6 @@ class TimesheetGrid {
         });
     }
     updateTotals() {
-        // Update column totals
         for (const column of this.columns) {
             const columnTotal = this.getColumnTotal(column.timesheetColumnId);
             const columnHeader = document.querySelector(`th[data-column-id="${column.timesheetColumnId}"]`);
@@ -859,7 +802,6 @@ class TimesheetGrid {
                 columnHeader.classList.toggle('has-background-warning-light', columnTotal === 0);
             }
         }
-        // Update row totals
         for (const row of this.rows) {
             const rowTotal = this.getRowTotal(row.timesheetRowId);
             const totalCell = document.querySelector(`td[data-row-total="${row.timesheetRowId}"]`);
@@ -870,5 +812,4 @@ class TimesheetGrid {
         }
     }
 }
-// Add to exports for use in other scripts
 exports.TimesheetGrid = TimesheetGrid;

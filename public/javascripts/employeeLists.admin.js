@@ -1,8 +1,6 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const employeeListsContainerElement = document.querySelector('#container--employeeLists');
-    // Track Sortable instances to prevent duplicates
     const sortableInstances = new Map();
     function deleteEmployeeList(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
@@ -202,7 +200,6 @@
             onshow(modalElement) {
                 formElement = modalElement.querySelector('form');
                 formElement.querySelector('#employeeListMember--employeeListId').value = employeeListId.toString();
-                // Populate employee select
                 const selectElement = formElement.querySelector('#employeeListMember--employeeNumber');
                 for (const employee of exports.employees) {
                     const optionElement = document.createElement('option');
@@ -210,7 +207,6 @@
                     optionElement.textContent = `${employee.firstName} ${employee.lastName} (${employee.employeeNumber})`;
                     selectElement.append(optionElement);
                 }
-                // Initialize flatpickr for seniority date
                 const seniorityDateInput = formElement.querySelector('#employeeListMember--seniorityDate');
                 globalThis.flatpickr(seniorityDateInput, {
                     dateFormat: 'Y-m-d',
@@ -262,9 +258,7 @@
                 formElement.querySelector('#employeeListMemberEdit--employeeNumber').value = employeeNumber;
                 formElement.querySelector('#employeeListMemberEdit--employeeName').value =
                     `${member.firstName ?? ''} ${member.lastName ?? ''} (${employeeNumber})`;
-                // Initialize flatpickr for seniority date
                 const seniorityDateInput = formElement.querySelector('#employeeListMemberEdit--seniorityDate');
-                // Set initial value
                 if (member.seniorityDate) {
                     seniorityDateInput.value = cityssm.dateToString(new Date(member.seniorityDate));
                 }
@@ -285,7 +279,6 @@
         });
     }
     function initializeSortable(employeeListId, seniorityDate, panelElement) {
-        // Sanitize dateKey for use in CSS selector (remove special characters)
         const sanitizedDateKey = seniorityDate
             ? seniorityDate.replaceAll(/[^a-z0-9\-]/giv, '-')
             : 'nodate';
@@ -294,10 +287,8 @@
         if (tbodyElement === null) {
             return;
         }
-        // Check if the tbody has any sortable items
         const hasItems = tbodyElement.querySelectorAll('tr[data-employee-number]').length > 0;
         if (!hasItems) {
-            // Destroy existing instance if no items
             const existingInstance = sortableInstances.get(containerId);
             if (existingInstance !== undefined) {
                 existingInstance.destroy();
@@ -305,17 +296,14 @@
             }
             return;
         }
-        // Destroy existing Sortable instance before creating a new one
         const existingInstance = sortableInstances.get(containerId);
         if (existingInstance !== undefined) {
             existingInstance.destroy();
         }
-        // Create new Sortable instance
         const sortableInstance = Sortable.create(tbodyElement, {
             handle: '.handle',
             animation: 150,
             onEnd() {
-                // Get the new order
                 const rows = tbodyElement.querySelectorAll('tr[data-employee-number]');
                 const employeeNumbers = [];
                 for (const row of rows) {
@@ -324,7 +312,6 @@
                         employeeNumbers.push(employeeNumber);
                     }
                 }
-                // Send to server
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderEmployeeListMembers`, {
                     employeeListId,
                     employeeNumbers,
@@ -344,13 +331,12 @@
                 });
             }
         });
-        // Store the instance for future reference
         sortableInstances.set(containerId, sortableInstance);
     }
     function renderEmployeeListMembers(employeeList, panelElement) {
         const membersContainerElement = panelElement.querySelector('.panel-block-members');
         if (employeeList.members.length === 0) {
-            membersContainerElement.innerHTML = /* html */ `
+            membersContainerElement.innerHTML = `
         <div class="panel-block">
           <p class="has-text-grey">
             No employees in this list. Click "Add Member" to add an employee.
@@ -359,7 +345,6 @@
       `;
             return;
         }
-        // Group members by seniority date
         const membersByDate = new Map();
         for (const member of employeeList.members) {
             const dateKey = member.seniorityDate?.toString() ?? 'no-date';
@@ -370,7 +355,6 @@
         }
         let membersHtml = '';
         for (const [dateKey, members] of membersByDate) {
-            // Sanitize dateKey for use in CSS selector (remove special characters)
             const sanitizedDateKey = dateKey === 'no-date'
                 ? 'nodate'
                 : dateKey.replaceAll(/[^a-z0-9\-]/giv, '-');
@@ -398,7 +382,7 @@
             </thead>
             <tbody class="is-sortable" id="${containerId}">`;
             for (const member of members) {
-                membersHtml += /* html */ `
+                membersHtml += `
           <tr data-employee-number="${cityssm.escapeHTML(member.employeeNumber)}">
             <td class="has-text-centered">
               <span class="icon is-small has-text-grey handle" style="cursor: move;">
@@ -443,9 +427,7 @@
         </div>
       </div>`;
         }
-        // eslint-disable-next-line no-unsanitized/property
         membersContainerElement.innerHTML = membersHtml;
-        // Add event listeners for edit buttons
         const editButtons = membersContainerElement.querySelectorAll('.button--editMember');
         for (const button of editButtons) {
             button.addEventListener('click', (clickEvent) => {
@@ -454,7 +436,6 @@
                 editEmployeeListMember(employeeList.employeeListId, employeeNumber, employeeList, panelElement);
             });
         }
-        // Add event listeners for delete buttons
         const deleteButtons = membersContainerElement.querySelectorAll('.button--deleteMember');
         for (const button of deleteButtons) {
             button.addEventListener('click', (clickEvent) => {
@@ -478,14 +459,13 @@
                 });
             });
         }
-        // Initialize sortable for each date group
         for (const [dateKey] of membersByDate) {
             initializeSortable(employeeList.employeeListId, dateKey === 'no-date' ? undefined : dateKey, panelElement);
         }
     }
     function renderEmployeeLists() {
         if (exports.employeeLists.length === 0) {
-            employeeListsContainerElement.innerHTML = /* html */ `
+            employeeListsContainerElement.innerHTML = `
         <div class="message is-info">
           <div class="message-body">
             No employee lists available.
@@ -504,8 +484,7 @@
             panelElement.className = 'panel mb-5 collapsable-panel';
             panelElement.dataset.employeeListId =
                 employeeList.employeeListId.toString();
-            // eslint-disable-next-line no-unsanitized/property
-            panelElement.innerHTML = /* html */ `
+            panelElement.innerHTML = `
         <summary class="panel-heading is-clickable">
           <span class="icon-text">
             <span class="icon">
@@ -558,7 +537,6 @@
         <div class="panel-block-members"></div>
       `;
             employeeListsContainerElement.append(panelElement);
-            // Add event listeners
             panelElement
                 .querySelector('.button--editEmployeeList')
                 ?.addEventListener('click', editEmployeeList);
@@ -570,7 +548,6 @@
                 ?.addEventListener('click', () => {
                 addEmployeeListMember(employeeList.employeeListId, panelElement);
             });
-            // Load details when panel is opened
             panelElement.addEventListener('toggle', () => {
                 if (panelElement.open) {
                     loadEmployeeListDetails(employeeList.employeeListId, panelElement);
@@ -578,7 +555,6 @@
             });
         }
     }
-    // Initialize
     renderEmployeeLists();
     document
         .querySelector('#button--addEmployeeList')

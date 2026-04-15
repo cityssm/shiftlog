@@ -1,8 +1,5 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
-    // Scroll to top in edit mode while preserving the active tab
-    // Use setTimeout to ensure this runs after tabs are initialized
     if (globalThis.location.hash !== '') {
         setTimeout(() => {
             globalThis.scrollTo(0, 0);
@@ -13,9 +10,7 @@
     const workOrderId = workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     const workOrderCloseDateTimeStringElement = workOrderFormElement.querySelector('#workOrder--workOrderCloseDateTimeString');
     const isCreate = workOrderId === '';
-    // Track original close date for change detection
     const originalWorkOrderCloseDateTime = workOrderCloseDateTimeStringElement?.value ?? '';
-    // Track original work order type for change detection
     const workOrderTypeSelect = workOrderFormElement.querySelector('#workOrder--workOrderTypeId');
     let originalWorkOrderTypeId = '';
     let workOrderTypeChanged = false;
@@ -32,13 +27,11 @@
                     okButton: {
                         text: 'Continue',
                         callbackFunction() {
-                            // User confirmed the change, keep the new value
                         }
                     },
                     cancelButton: {
                         text: 'Revert',
                         callbackFunction() {
-                            // Revert to original value
                             workOrderTypeSelect.value = originalWorkOrderTypeId;
                             workOrderTypeChanged = false;
                         }
@@ -49,13 +42,11 @@
     }
     function updateWorkOrder(formEvent) {
         formEvent.preventDefault();
-        // Check if work order is being closed (close date is being set)
         const currentCloseDateTime = workOrderCloseDateTimeStringElement?.value ?? '';
         const isBeingClosed = !isCreate &&
             originalWorkOrderCloseDateTime === '' &&
             currentCloseDateTime !== '';
         if (isBeingClosed) {
-            // Fetch milestones to check if there are any open ones
             cityssm.postJSON(`${workOrderUrlPrefix}/${workOrderId}/doGetWorkOrderMilestones`, {}, (milestonesResponseJSON) => {
                 const openMilestonesCount = milestonesResponseJSON.milestones.filter((m) => m.milestoneCompleteDateTime === null).length;
                 const message = openMilestonesCount > 0
@@ -86,7 +77,6 @@
                     globalThis.location.href = shiftLog.buildWorkOrderURL(responseJSON.workOrderId, true);
                 }
                 else if ((workOrderCloseDateTimeStringElement?.value ?? '') === '') {
-                    // If work order type changed, refresh the page to show updated form
                     if (workOrderTypeChanged) {
                         globalThis.location.href = shiftLog.buildWorkOrderURL(Number(workOrderId), true);
                     }
@@ -111,9 +101,6 @@
         });
     }
     workOrderFormElement.addEventListener('submit', updateWorkOrder);
-    /*
-     * Requestor Name Datalist
-     */
     const requestorNameInput = workOrderFormElement.querySelector('#workOrder--requestorName');
     const requestorContactInfoInput = workOrderFormElement.querySelector('#workOrder--requestorContactInfo');
     const requestorDatalist = document.querySelector('#datalist--requestorNames');
@@ -125,7 +112,6 @@
             if (newSearchString.length >= 3 &&
                 newSearchString !== requestorSearchString) {
                 requestorSearchString = newSearchString;
-                // Load requestor suggestions
                 cityssm.postJSON(`${workOrderUrlPrefix}/doGetRequestorSuggestions`, {
                     searchString: requestorSearchString
                 }, (responseJSON) => {
@@ -144,12 +130,10 @@
                 });
             }
         });
-        // Handle requestor name selection
         requestorNameInput.addEventListener('change', () => {
             const selectedName = requestorNameInput.value;
             const matchingRequestor = requestorsData.find((possibleRequestor) => possibleRequestor.requestorName === selectedName);
             if (matchingRequestor?.requestorContactInfo !== undefined) {
-                // Check if contact info is already set
                 if (requestorContactInfoInput.value !== '' &&
                     requestorContactInfoInput.value !==
                         matchingRequestor.requestorContactInfo) {
@@ -172,9 +156,6 @@
             }
         });
     }
-    /*
-     * Location Address Datalist
-     */
     const locationAddress1Input = workOrderFormElement.querySelector('#workOrder--locationAddress1');
     const locationAddress2Input = workOrderFormElement.querySelector('#workOrder--locationAddress2');
     const locationCityProvinceInput = workOrderFormElement.querySelector('#workOrder--locationCityProvince');
@@ -185,9 +166,6 @@
         const LOCATION_SEARCH_MIN_LENGTH = 3;
         let locationSearchString = '';
         let locationsData = [];
-        /**
-         * Populate the location datalist with the provided locations
-         */
         function populateLocationDatalist(locations) {
             locationDatalist?.replaceChildren();
             for (const location of locations) {
@@ -207,9 +185,6 @@
                 locationDatalist?.append(option);
             }
         }
-        /**
-         * Fetch location suggestions from the server
-         */
         function fetchLocationSuggestions(searchString, callback) {
             cityssm.postJSON(`${workOrderUrlPrefix}/doGetLocationSuggestions`, { searchString }, (responseJSON) => {
                 locationsData = responseJSON.locations;
@@ -226,16 +201,13 @@
             if (newSearchString.length >= LOCATION_SEARCH_MIN_LENGTH &&
                 newSearchString !== locationSearchString) {
                 locationSearchString = newSearchString;
-                // Load location suggestions
                 fetchLocationSuggestions(locationSearchString);
             }
         });
-        // Handle location selection
         locationAddress1Input.addEventListener('change', () => {
             const selectedAddress = locationAddress1Input.value;
             const matchingLocation = locationsData.find((possibleLocation) => possibleLocation.address1 === selectedAddress);
             if (matchingLocation !== undefined) {
-                // Check if other location fields are already set
                 const hasExistingData = locationAddress2Input.value !== '' ||
                     locationCityProvinceInput.value !== '' ||
                     locationLatitudeInput.value !== '' ||
@@ -257,13 +229,10 @@
                 }
             }
             else if (selectedAddress.trim().length >= LOCATION_SEARCH_MIN_LENGTH) {
-                // Selection wasn't from the datalist (e.g., browser history)
-                // Refresh the datalist with the selected value as the search string
                 locationSearchString = selectedAddress
                     .trim()
                     .slice(0, LOCATION_SEARCH_MIN_LENGTH);
                 fetchLocationSuggestions(locationSearchString, () => {
-                    // Check if the newly fetched data includes the selected address
                     const newMatchingLocation = locationsData.find((possibleLocation) => possibleLocation.address1 === selectedAddress);
                     if (newMatchingLocation !== undefined) {
                         applyLocationData(newMatchingLocation);
@@ -280,14 +249,10 @@
             if (location.longitude !== null && location.longitude !== undefined) {
                 locationLongitudeInput.value = location.longitude.toString();
             }
-            // Update map if coordinates are set
             const changeEvent = new Event('change');
             locationLatitudeInput.dispatchEvent(changeEvent);
         }
     }
-    /*
-     * Set up date-time pickers
-     */
     const dateTimePickerOptions = {
         allowInput: true,
         enableTime: true,
@@ -337,9 +302,6 @@
             }
         }
     });
-    /*
-     * Set Due Date Options
-     */
     function setDueDateOption(clickEvent) {
         clickEvent.preventDefault();
         const target = clickEvent.currentTarget;
@@ -355,9 +317,6 @@
     for (const dueDateOptionElement of dueDateOptionElements) {
         dueDateOptionElement.addEventListener('click', setDueDateOption);
     }
-    /*
-     * Set Close Time to Now Button
-     */
     document
         .querySelector('#button--setCloseTimeNow')
         ?.addEventListener('click', () => {
@@ -365,14 +324,10 @@
         workOrderCloseDateTimePicker?.set('maxDate', now);
         workOrderCloseDateTimePicker?.setDate(now, true);
     });
-    /*
-     * Set up map for location picker
-     */
     const mapPickerElement = document.querySelector('#map--locationPicker');
     if (mapPickerElement !== null) {
         const latitudeInput = workOrderFormElement.querySelector('#workOrder--locationLatitude');
         const longitudeInput = workOrderFormElement.querySelector('#workOrder--locationLongitude');
-        // Default to SSM or use existing coordinates
         let defaultLat = shiftLog.defaultLatitude;
         let defaultLng = shiftLog.defaultLongitude;
         let defaultZoom = 13;
@@ -400,7 +355,6 @@
             marker = new L.Marker([lat, lng]).addTo(map);
             shiftLog.setUnsavedChanges();
         });
-        // Update map when coordinates are manually entered
         function updateMapFromInputs() {
             const lat = Number.parseFloat(latitudeInput.value);
             const lng = Number.parseFloat(longitudeInput.value);
@@ -420,7 +374,6 @@
         latitudeInput.addEventListener('change', updateMapFromInputs);
         longitudeInput.addEventListener('change', updateMapFromInputs);
     }
-    // View-only map
     const mapViewElement = document.querySelector('#map--locationView');
     if (mapViewElement !== null) {
         const lat = Number.parseFloat(mapViewElement.dataset.lat ?? '0');
@@ -431,9 +384,6 @@
         }).addTo(map);
         new L.Marker([lat, lng]).addTo(map);
     }
-    /*
-     * Delete work order
-     */
     const deleteWorkOrderButton = document.querySelector('#button--deleteWorkOrder');
     if (deleteWorkOrderButton !== null) {
         deleteWorkOrderButton.addEventListener('click', (event) => {
@@ -465,9 +415,6 @@
             });
         });
     }
-    /*
-     * Block navigation if there are unsaved changes
-     */
     for (const inputElement of workOrderFormElement.querySelectorAll('input, select, textarea')) {
         inputElement.addEventListener('change', () => {
             shiftLog.setUnsavedChanges();

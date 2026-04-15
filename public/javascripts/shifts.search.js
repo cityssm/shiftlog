@@ -11,7 +11,7 @@
     }
     function renderShiftsTable(data) {
         if (data.shifts.length === 0) {
-            resultsContainerElement.innerHTML = /* html */ `
+            resultsContainerElement.innerHTML = `
         <div class="message is-info">
           <p class="message-body">No records found.</p>
         </div>
@@ -21,7 +21,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable is-narrow';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Date</th>
@@ -40,52 +40,50 @@
         const tableBodyElement = tableElement.querySelector('tbody');
         for (const shift of data.shifts) {
             const tableRowElement = document.createElement('tr');
-            // Build counts icons HTML
             const workOrdersIconHTML = (shift.workOrdersCount ?? 0) > 0
-                ? /* html */ `
+                ? `
             <span class="icon" title="${shift.workOrdersCount} work order(s)">
               <i class="fa-solid fa-clipboard-list"></i>
             </span>
           `
                 : '';
             const employeesIconHTML = (shift.employeesCount ?? 0) > 0
-                ? /* html */ `
+                ? `
             <span class="icon" title="${shift.employeesCount} employee(s)">
               <i class="fa-solid fa-users"></i>
             </span>
           `
                 : '';
             const crewsIconHTML = (shift.crewsCount ?? 0) > 0
-                ? /* html */ `
+                ? `
             <span class="icon" title="${shift.crewsCount} crew(s)">
               <i class="fa-solid fa-users-gear"></i>
             </span>
           `
                 : '';
             const equipmentIconHTML = (shift.equipmentCount ?? 0) > 0
-                ? /* html */ `
+                ? `
             <span class="icon" title="${shift.equipmentCount} equipment">
               <i class="fa-solid fa-truck"></i>
             </span>
           `
                 : '';
             const notesIconHTML = (shift.notesCount ?? 0) > 0
-                ? /* html */ `
+                ? `
             <span class="icon" title="${shift.notesCount} note(s)">
               <i class="fa-solid fa-note-sticky"></i>
             </span>
           `
                 : '';
             const timesheetsIconHTML = (shift.timesheetsCount ?? 0) > 0
-                ? /* html */ `
+                ? `
             <span class="icon" title="${shift.timesheetsCount} timesheet(s)">
               <i class="fa-solid fa-clock"></i>
             </span>
           `
                 : '';
             const shiftDate = new Date(shift.shiftDate);
-            // eslint-disable-next-line no-unsanitized/property
-            tableRowElement.innerHTML = /* html */ `
+            tableRowElement.innerHTML = `
         <td class="${dateIsToday(shiftDate) ? 'has-background-success-light' : ''}">
           ${cityssm.dateToString(shiftDate)}<br />
           <span class="is-size-7">${shiftLog.daysOfWeek[shiftDate.getDay()]}</span>
@@ -123,7 +121,6 @@
             tableBodyElement.append(tableRowElement);
         }
         resultsContainerElement.replaceChildren(tableElement);
-        // Pagination
         resultsContainerElement.append(shiftLog.buildPaginationControls({
             totalCount: data.totalCount,
             currentPageOrOffset: data.offset,
@@ -135,7 +132,7 @@
         }));
     }
     function getSearchResults() {
-        resultsContainerElement.innerHTML = /* html */ `
+        resultsContainerElement.innerHTML = `
       <div class="has-text-centered py-5">
         <span class="icon is-large has-text-grey-lighter">
           <i class="fa-solid fa-spinner fa-pulse fa-2x"></i>

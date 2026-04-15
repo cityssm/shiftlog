@@ -35,7 +35,7 @@
     }
     function renderDeletedRecordsTable(data) {
         if (data.workOrders.length === 0) {
-            resultsContainerElement.innerHTML = /* html */ `
+            resultsContainerElement.innerHTML = `
         <div class="message is-info">
           <p class="message-body">No deleted records found.</p>
         </div>
@@ -45,7 +45,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable is-narrow';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Number</th>
@@ -65,8 +65,7 @@
         const tableBodyElement = tableElement.querySelector('tbody');
         for (const workOrder of data.workOrders) {
             const tableRowElement = document.createElement('tr');
-            // eslint-disable-next-line no-unsanitized/property
-            tableRowElement.innerHTML = /* html */ `
+            tableRowElement.innerHTML = `
         <td>
           ${cityssm.escapeHTML(workOrder.workOrderNumber)}
         </td>
@@ -104,7 +103,7 @@
         resultsContainerElement.append(tableElement);
     }
     function getDeletedRecords() {
-        resultsContainerElement.innerHTML = /* html */ `
+        resultsContainerElement.innerHTML = `
       <div class="message">
         <p class="message-body has-text-centered">
           <span class="icon"><i class="fa-solid fa-spinner fa-spin"></i></span>

@@ -5,7 +5,6 @@
     const daysThresholdElement = document.querySelector('#workOrderPlanner--daysThreshold');
     const offsetInputElement = document.querySelector('#workOrderPlanner--offset');
     const resultsContainerElement = document.querySelector('#container--workOrderPlannerResults');
-    // Enable/disable days threshold based on date filter selection
     dateFilterElement.addEventListener('change', () => {
         const requiresDays = [
             'dueInDays',
@@ -20,7 +19,7 @@
     });
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {
-            resultsContainerElement.innerHTML = /* html */ `
+            resultsContainerElement.innerHTML = `
         <div class="message is-info">
           <p class="message-body">
             No ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found matching the selected criteria.
@@ -32,7 +31,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable is-narrow';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th class="has-width-1">
@@ -72,14 +71,13 @@
                 ? '-'
                 : cityssm.dateToString(new Date(workOrder.workOrderDueDateTime));
             const milestonesHTML = workOrder.milestonesCount && workOrder.milestonesCount > 0
-                ? /* html */ `
+                ? `
             <span class="tag ${workOrder.overdueMilestonesCount && workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info'}">
               ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
             </span>
           `
                 : '';
-            // eslint-disable-next-line no-unsanitized/property
-            tableRowElement.innerHTML = /* html */ `
+            tableRowElement.innerHTML = `
         <td class="has-text-centered">
           ${priorityIconHTML}<br />
           ${milestonesHTML}
@@ -133,7 +131,6 @@
             tableBodyElement.append(tableRowElement);
         }
         resultsContainerElement.replaceChildren(tableElement);
-        // Pagination
         resultsContainerElement.append(shiftLog.buildPaginationControls({
             totalCount: data.totalCount,
             currentPageOrOffset: data.offset,
@@ -145,14 +142,13 @@
         }));
     }
     function getPlannerResults() {
-        resultsContainerElement.innerHTML = /* html */ `
+        resultsContainerElement.innerHTML = `
       <div class="has-text-centered py-5">
         <span class="icon is-large has-text-grey-lighter">
           <i class="fa-solid fa-spinner fa-pulse fa-2x"></i>
         </span>
       </div>
     `;
-        // Handle "unassigned" special value
         const formData = new FormData(filtersFormElement);
         const requestData = {};
         for (const [key, value] of formData.entries()) {

@@ -1,7 +1,5 @@
 (() => {
     const shiftLog = exports.shiftLog;
-    // Scroll to top in edit mode while preserving the active tab
-    // Use setTimeout to ensure this runs after tabs are initialized
     if (globalThis.location.hash !== '') {
         setTimeout(() => {
             globalThis.scrollTo(0, 0);
@@ -11,9 +9,6 @@
     const shiftFormElement = document.querySelector('#form--shift');
     const shiftId = shiftFormElement.querySelector('#shift--shiftId').value;
     const isCreate = shiftId === '';
-    /*
-     * Set up date picker
-     */
     const shiftDateStringElement = shiftFormElement.querySelector('#shift--shiftDateString');
     if (shiftDateStringElement !== null) {
         flatpickr(shiftDateStringElement, {
@@ -47,9 +42,6 @@
         });
     }
     shiftFormElement.addEventListener('submit', updateShift);
-    /*
-     * Delete shift
-     */
     const deleteShiftButton = document.querySelector('#button--deleteShift');
     if (deleteShiftButton !== null) {
         deleteShiftButton.addEventListener('click', (event) => {

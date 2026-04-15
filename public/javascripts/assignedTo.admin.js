@@ -11,7 +11,6 @@
       </tr>`;
             return;
         }
-        // Clear existing
         tbodyElement.innerHTML = '';
         for (const item of assignedToList) {
             const userGroup = exports.userGroups.find((ug) => ug.userGroupId === item.userGroupId);
@@ -20,8 +19,7 @@
                 : `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`;
             const rowElement = document.createElement('tr');
             rowElement.dataset.assignedToId = item.assignedToId.toString();
-            // eslint-disable-next-line no-unsanitized/property
-            rowElement.innerHTML = /* html */ `
+            rowElement.innerHTML = `
         <td class="has-text-centered">
           <span class="icon is-small has-text-grey handle" style="cursor: move;">
             <i class="fa-solid fa-grip-vertical"></i>
@@ -101,7 +99,6 @@
         }
         cityssm.openHtmlModal('adminAssignedTo-add', {
             onshow(modalElement) {
-                // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#addAssignedTo--userGroupId');
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
@@ -160,11 +157,9 @@
         }
         cityssm.openHtmlModal('adminAssignedTo-edit', {
             onshow(modalElement) {
-                // Set current values
                 ;
                 modalElement.querySelector('#editAssignedTo--assignedToId').value = assignedToId;
                 modalElement.querySelector('#editAssignedTo--assignedToName').value = currentAssignedToName;
-                // Populate user group options
                 const userGroupSelect = modalElement.querySelector('#editAssignedTo--userGroupId');
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
@@ -222,7 +217,6 @@
             }
         });
     }
-    // Initialize sortable
     Sortable.create(tbodyElement, {
         handle: '.handle',
         animation: 150,
@@ -247,7 +241,6 @@
             });
         }
     });
-    // Add event listener for add button
     document
         .querySelector('#button--addAssignedTo')
         ?.addEventListener('click', addAssignedTo);

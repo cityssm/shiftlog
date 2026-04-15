@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
@@ -7,14 +6,12 @@
     const isEdit = document.querySelector('#button--createAdhocTask') !== null;
     let shiftAdhocTasks = exports.shiftAdhocTasks;
     let adhocTaskTypes = [];
-    // Load task types
     function loadAdhocTaskTypes() {
         cityssm.postJSON(`${urlPrefix}/doGetAdhocTaskTypes`, {}, (responseJSON) => {
             adhocTaskTypes = responseJSON.adhocTaskTypes;
         });
     }
     function populateTaskTypeDropdown(selectElement, selectedId) {
-        // Clear existing options except the first one
         while (selectElement.options.length > 1) {
             selectElement.remove(1);
         }
@@ -61,7 +58,6 @@
             }
             marker = new L.Marker([lat, lng]).addTo(map);
         });
-        // Update map when coordinates are manually entered
         function updateMapFromInputs() {
             const lat = Number.parseFloat(latitudeInput.value);
             const lng = Number.parseFloat(longitudeInput.value);
@@ -86,7 +82,6 @@
         if (adhocTasksCountElement !== null) {
             adhocTasksCountElement.textContent = shiftAdhocTasks.length.toString();
         }
-        // Show/hide tasks icon indicator
         const hasTasksIconElement = document.querySelector('#icon--hasTasks');
         if (hasTasksIconElement !== null) {
             const hasAnyTasks = shiftAdhocTasks.length > 0 ||
@@ -97,7 +92,7 @@
     function renderShiftAdhocTasks() {
         const containerElement = document.querySelector('#container--shiftAdhocTasks');
         if (shiftAdhocTasks.length === 0) {
-            containerElement.innerHTML = /* html */ `
+            containerElement.innerHTML = `
         <div class="message">
           <div class="message-body">
             No ad hoc tasks assigned to this shift.
@@ -108,8 +103,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Type</th>
@@ -156,8 +150,7 @@
                     new Date(task.taskDueDateTime ?? '').getTime() < Date.now()
                     ? '<span class="tag is-danger">Overdue</span>'
                     : '<span class="tag is-warning">Pending</span>';
-            // eslint-disable-next-line no-unsanitized/property
-            trElement.innerHTML = /* html */ `
+            trElement.innerHTML = `
         <td>
           ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
         </td>
@@ -167,12 +160,12 @@
         <td>${statusHtml}</td>
         <td>${cityssm.escapeHTML(task.shiftAdhocTaskNote ?? '')}</td>
         ${isEdit
-                ? /* html */ `
+                ? `
               <td class="has-text-right">
                 <div class="buttons is-right">
                   ${isComplete
                     ? ''
-                    : /* html */ `
+                    : `
                         <button
                           class="button is-small is-info button--edit"
                           data-adhoc-task-id="${task.adhocTaskId}"
@@ -261,10 +254,8 @@
             onshow(modalElementParameter) {
                 modalElement = modalElementParameter;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
-                // Populate task types
                 const taskTypeSelect = modalElement.querySelector('#createAdhocTask--adhocTaskTypeDataListItemId');
                 populateTaskTypeDropdown(taskTypeSelect);
-                // Set default city/province
                 const defaultCityProvince = shiftLog.defaultCityProvince ?? '';
                 modalElement.querySelector('#createAdhocTask--locationCityProvince').value = defaultCityProvince;
                 modalElement.querySelector('#createAdhocTask--fromLocationCityProvince').value = defaultCityProvince;
@@ -276,7 +267,6 @@
                 modalElement = modalElementParameter;
                 const formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doCreate);
-                // Initialize date picker
                 const dueDateInput = modalElement.querySelector('#createAdhocTask--taskDueDateTimeString');
                 flatpickr(dueDateInput, {
                     allowInput: true,
@@ -285,11 +275,9 @@
                     nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
                     prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
                 });
-                // Initialize maps for all three locations
                 initializeMap('map--createAdhocTask--location', modalElement.querySelector('#createAdhocTask--locationLatitude'), modalElement.querySelector('#createAdhocTask--locationLongitude'));
                 initializeMap('map--createAdhocTask--fromLocation', modalElement.querySelector('#createAdhocTask--fromLocationLatitude'), modalElement.querySelector('#createAdhocTask--fromLocationLongitude'));
                 initializeMap('map--createAdhocTask--toLocation', modalElement.querySelector('#createAdhocTask--toLocationLatitude'), modalElement.querySelector('#createAdhocTask--toLocationLongitude'));
-                // Setup toggle handlers for collapsible location sections
                 function setupLocationToggle(toggleSelector, containerSelector) {
                     const toggleButton = modalElement.querySelector(toggleSelector);
                     const container = modalElement.querySelector(containerSelector);
@@ -339,7 +327,6 @@
                 modalElement = modalElementParameter;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 modalElement.querySelector('input[name="adhocTaskId"]').value = adhocTaskId ?? '';
-                // Populate task types
                 const taskTypeSelect = modalElement.querySelector('select[name="adhocTaskTypeDataListItemId"]');
                 populateTaskTypeDropdown(taskTypeSelect, task.adhocTaskTypeDataListItemId);
                 modalElement.querySelector('textarea[name="taskDescription"]').value = task.taskDescription;
@@ -370,7 +357,6 @@
                 modalElement = modalElementParameter;
                 const formElement = modalElement.querySelector('form');
                 formElement.addEventListener('submit', doUpdate);
-                // Initialize date picker
                 const dueDateInput = modalElement.querySelector('input[name="taskDueDateTimeString"]');
                 flatpickr(dueDateInput, {
                     allowInput: true,
@@ -379,11 +365,9 @@
                     nextArrow: '<i class="fa-solid fa-chevron-right"></i>',
                     prevArrow: '<i class="fa-solid fa-chevron-left"></i>'
                 });
-                // Initialize maps for all three locations
                 initializeMap('map--editAdhocTask--location', modalElement.querySelector('input[name="locationLatitude"]'), modalElement.querySelector('input[name="locationLongitude"]'), task.locationLatitude, task.locationLongitude);
                 initializeMap('map--editAdhocTask--fromLocation', modalElement.querySelector('input[name="fromLocationLatitude"]'), modalElement.querySelector('input[name="fromLocationLongitude"]'), task.fromLocationLatitude, task.fromLocationLongitude);
                 initializeMap('map--editAdhocTask--toLocation', modalElement.querySelector('input[name="toLocationLatitude"]'), modalElement.querySelector('input[name="toLocationLongitude"]'), task.toLocationLatitude, task.toLocationLongitude);
-                // Setup toggle handlers for collapsible location sections
                 function setupEditLocationToggle(toggleSelector, containerSelector) {
                     const toggleButton = modalElement.querySelector(toggleSelector);
                     const container = modalElement.querySelector(containerSelector);
@@ -401,7 +385,6 @@
                 }
                 setupEditLocationToggle('#toggle--editAdhocTask--fromLocation', '#container--editAdhocTask--fromLocation');
                 setupEditLocationToggle('#toggle--editAdhocTask--toLocation', '#container--editAdhocTask--toLocation');
-                // Check if from/to locations have values and show sections if they do
                 const fromLocationContainer = modalElement.querySelector('#container--editAdhocTask--fromLocation');
                 const fromLocationToggle = modalElement.querySelector('#toggle--editAdhocTask--fromLocation');
                 if (hasLocationData(task.fromLocationAddress1, task.fromLocationAddress2, task.fromLocationCityProvince, task.fromLocationLatitude, task.fromLocationLongitude)) {
@@ -471,7 +454,6 @@
         clickEvent.preventDefault();
         let closeModalFunction;
         let modalElement;
-        // Load available tasks
         cityssm.postJSON(`${urlPrefix}/doGetAvailableAdhocTasks`, { shiftId }, (responseJSON) => {
             if (responseJSON.adhocTasks.length === 0) {
                 bulmaJS.alert({
@@ -505,10 +487,8 @@
                         ;
                         addModalElement.querySelector('input[name="shiftId"]').value = shiftId;
                         addModalElement.querySelector('input[name="adhocTaskId"]').value = task.adhocTaskId.toString();
-                        // Display task details
                         const detailsDiv = addModalElement.querySelector('#addAdhocTask--taskDetails');
-                        // eslint-disable-next-line no-unsanitized/property
-                        detailsDiv.innerHTML = /* html */ `
+                        detailsDiv.innerHTML = `
                 <p class="mb-2">
                   <strong>Type:</strong>
                   ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
@@ -518,7 +498,7 @@
                   ${cityssm.escapeHTML(task.taskDescription)}
                 </p>
                 ${task.locationAddress1
-                            ? /* html */ `
+                            ? `
                       <p class="mb-2">
                         <strong>Location:</strong>
                         ${cityssm.escapeHTML(task.locationAddress1)}
@@ -526,7 +506,7 @@
                     `
                             : ''}
                 ${task.taskDueDateTime
-                            ? /* html */ `
+                            ? `
                       <p class="mb-2">
                         <strong>Due:</strong>
                         ${cityssm.dateToString(new Date(task.taskDueDateTime))}
@@ -555,11 +535,10 @@
                     bulmaJS.toggleHtmlClipped();
                     closeModalFunction = _closeModalFunction;
                     modalElement = selectModalElement;
-                    // Render task list
                     const tableElement = document.createElement('table');
                     tableElement.className =
                         'table is-fullwidth is-striped is-hoverable';
-                    tableElement.innerHTML = /* html */ `
+                    tableElement.innerHTML = `
               <thead>
                 <tr>
                   <th>Type</th>
@@ -578,8 +557,7 @@
                             task.taskDueDateTime !== undefined
                             ? cityssm.dateToString(new Date(task.taskDueDateTime))
                             : '';
-                        // eslint-disable-next-line no-unsanitized/property
-                        trElement.innerHTML = /* html */ `
+                        trElement.innerHTML = `
                 <td>
                   ${cityssm.escapeHTML(task.adhocTaskTypeDataListItem ?? '')}
                 </td>
@@ -626,7 +604,7 @@
         bulmaJS.confirm({
             contextualColorName: 'warning',
             title: 'Remove Ad Hoc Task from Shift',
-            message: /* html */ `
+            message: `
         Are you sure you want to remove this task
         from this shift?<br /><br />
         <strong>Would you like to:</strong><br />
@@ -674,10 +652,8 @@
         document
             .querySelector('#button--addExistingAdhocTask')
             ?.addEventListener('click', addExistingAdhocTask);
-        // Load task types for modals
         loadAdhocTaskTypes();
     }
-    // Initial render
     renderShiftAdhocTasks();
     updateCount();
 })();
