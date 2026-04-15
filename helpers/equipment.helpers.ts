@@ -14,9 +14,13 @@ import type { Employee } from '../types/record.types.js'
 export async function validateEmployeeForEquipment(
   equipmentNumber: string,
   employeeNumber?: string | null
-): Promise<{ success: boolean; errorMessage?: string }> {
+): Promise<{ errorMessage?: string; success: boolean }> {
   // If no employee is assigned, validation passes
-  if (employeeNumber === undefined || employeeNumber === null || employeeNumber === '') {
+  if (
+    employeeNumber === undefined ||
+    employeeNumber === null ||
+    employeeNumber === ''
+  ) {
     return { success: true }
   }
 
@@ -25,13 +29,16 @@ export async function validateEmployeeForEquipment(
 
   if (equipment === undefined) {
     return {
-      success: false,
-      errorMessage: 'Equipment not found.'
+      errorMessage: 'Equipment not found.',
+      success: false
     }
   }
 
   // If equipment has no employee list restriction, allow any employee
-  if (equipment.employeeListId === null || equipment.employeeListId === undefined) {
+  if (
+    equipment.employeeListId === null ||
+    equipment.employeeListId === undefined
+  ) {
     return { success: true }
   }
 
@@ -40,8 +47,8 @@ export async function validateEmployeeForEquipment(
 
   if (employeeList === undefined) {
     return {
-      success: false,
-      errorMessage: 'Employee list not found for this equipment.'
+      errorMessage: 'Employee list not found for this equipment.',
+      success: false
     }
   }
 
@@ -52,8 +59,8 @@ export async function validateEmployeeForEquipment(
 
   if (!isEmployeeInList) {
     return {
-      success: false,
-      errorMessage: `Employee ${employeeNumber} is not authorized for equipment ${equipmentNumber}. Only employees on the "${employeeList.employeeListName}" list can be assigned to this equipment.`
+      errorMessage: `Employee ${employeeNumber} is not authorized for equipment ${equipmentNumber}. Only employees on the "${employeeList.employeeListName}" list can be assigned to this equipment.`,
+      success: false
     }
   }
 
@@ -64,7 +71,6 @@ export async function validateEmployeeForEquipment(
  * Gets the list of employees eligible to be assigned to a piece of equipment.
  * If the equipment has an employee list, returns only those employees.
  * If the equipment has no employee list, returns all provided employees.
- *
  * @param equipmentNumber - The equipment number to check
  * @param allEmployees - The complete list of employees to filter
  * @returns Array of eligible employees
@@ -81,7 +87,10 @@ export async function getEligibleEmployeesForEquipment(
   }
 
   // If equipment has no employee list restriction, return all employees
-  if (equipment.employeeListId === null || equipment.employeeListId === undefined) {
+  if (
+    equipment.employeeListId === null ||
+    equipment.employeeListId === undefined
+  ) {
     return allEmployees
   }
 

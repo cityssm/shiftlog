@@ -50,7 +50,7 @@ app
     }
 });
 app.disable('x-powered-by');
-if (!configFunctions.getConfigProperty('reverseProxy.disableEtag')) {
+if (configFunctions.getConfigProperty('reverseProxy.disableEtag')) {
     app.set('etag', false);
 }
 if (!configFunctions.getConfigProperty('reverseProxy.disableCompression')) {

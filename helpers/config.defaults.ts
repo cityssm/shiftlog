@@ -27,6 +27,7 @@ export const configDefaultValues = {
   'application.httpPort': 9000,
   'application.maximumProcesses': 4,
 
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   'application.attachmentMaximumFileSizeBytes': 20 * 1024 * 1024, // 20 MB
   'application.attachmentStoragePath': 'data/attachments',
 
@@ -71,8 +72,8 @@ export const configDefaultValues = {
 
   'connectors.ntfy': undefined as unknown as
     | {
-        serverUrl?: string
         defaultTopic: string
+        serverUrl?: string
       }
     | undefined,
   'connectors.ntfy.serverUrl': DEFAULT_NTFY_SERVER,

@@ -17,8 +17,8 @@ config.login = {
 config.connectors = {
     shiftLog: {
         server: 'localhost',
-        user: 'sa',
         password: 'dbatools.I0',
+        user: 'sa',
         database: 'ShiftLog',
         options: {
             encrypt: false

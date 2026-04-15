@@ -28,9 +28,9 @@ export interface UserProperties {
    * These settings take into account if shifts are enabled in the system.
    */
   shifts: {
-    canView: boolean
-    canUpdate: boolean
     canManage: boolean
+    canUpdate: boolean
+    canView: boolean
   }
 
   /**
@@ -38,9 +38,9 @@ export interface UserProperties {
    * These settings take into account if work orders are enabled in the system.
    */
   workOrders: {
-    canView: boolean
-    canUpdate: boolean
     canManage: boolean
+    canUpdate: boolean
+    canView: boolean
   }
 
   /**
@@ -48,9 +48,9 @@ export interface UserProperties {
    * These settings take into account if timesheets are enabled in the system.
    */
   timesheets: {
-    canView: boolean
-    canUpdate: boolean
     canManage: boolean
+    canUpdate: boolean
+    canView: boolean
   }
 }
 

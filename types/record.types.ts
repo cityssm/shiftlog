@@ -1,3 +1,5 @@
+/* eslint-disable sonarjs/use-type-alias */
+
 import type { SettingKey } from './setting.types.js'
 import type { UserSettingKey } from './user.types.js'
 

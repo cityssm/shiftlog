@@ -39,6 +39,7 @@ function runCypress(browser: 'chrome' | 'firefox', done: () => void): void {
 }
 
 await describe('shiftLog', async () => {
+  // eslint-disable-next-line @typescript-eslint/strict-void-return
   const httpServer = http.createServer(app)
 
   let serverStarted = false

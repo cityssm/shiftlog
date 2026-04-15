@@ -16,14 +16,15 @@ export interface UserRequest {
 
 export const SYSTEM_USER: User = {
   userName: 'system',
+
   employeeNumber: '',
   firstName: '',
   lastName: '',
   userProperties: {
     isAdmin: true,
-    shifts: { canView: true, canUpdate: true, canManage: true },
-    workOrders: { canView: true, canUpdate: true, canManage: true },
-    timesheets: { canView: true, canUpdate: true, canManage: true }
+    shifts: { canManage: true, canUpdate: true, canView: true },
+    timesheets: { canManage: true, canUpdate: true, canView: true },
+    workOrders: { canManage: true, canUpdate: true, canView: true }
   },
   userSettings: {}
 }
@@ -61,21 +62,21 @@ export async function getUser(userName: string): Promise<User | undefined> {
 
       userProperties: {
         shifts: {
-          canView: localUser?.shifts_canView ?? false,
+          canManage: localUser?.shifts_canManage ?? false,
           canUpdate: localUser?.shifts_canUpdate ?? false,
-          canManage: localUser?.shifts_canManage ?? false
+          canView: localUser?.shifts_canView ?? false
         },
 
         workOrders: {
-          canView: localUser?.workOrders_canView ?? false,
+          canManage: localUser?.workOrders_canManage ?? false,
           canUpdate: localUser?.workOrders_canUpdate ?? false,
-          canManage: localUser?.workOrders_canManage ?? false
+          canView: localUser?.workOrders_canView ?? false
         },
 
         timesheets: {
-          canView: localUser?.timesheets_canView ?? false,
+          canManage: localUser?.timesheets_canManage ?? false,
           canUpdate: localUser?.timesheets_canUpdate ?? false,
-          canManage: localUser?.timesheets_canManage ?? false
+          canView: localUser?.timesheets_canView ?? false
         },
 
         isAdmin: localUser?.isAdmin ?? false

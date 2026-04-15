@@ -67,7 +67,7 @@ app.use((request, _response, next) => {
 app
   .set('views', 'views')
   .set('view engine', 'ejs')
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/strict-void-return
   .engine('ejs', async (path, data, callback) => {
     try {
       const html = await ejs.renderFile(path, data, { async: true })
@@ -83,7 +83,7 @@ app
 
 app.disable('x-powered-by')
 
-if (!configFunctions.getConfigProperty('reverseProxy.disableEtag')) {
+if (configFunctions.getConfigProperty('reverseProxy.disableEtag')) {
   app.set('etag', false)
 }
 
