@@ -20,7 +20,8 @@
     "esModuleInterop": true,
 
     "strictNullChecks": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "ignoreDeprecations": "6.0"
   },
   "compileOnSave": true,
   "buildOnSave": true,
