@@ -395,7 +395,13 @@ declare const exports: {
           assignedToIds
         },
         (responseJSON: DoReorderAssignedToItemsResponse) => {
-          if (!responseJSON.success) {
+          if (responseJSON.success) {
+            assignedToList.sort(
+              (a, b) =>
+                assignedToIds.indexOf(a.assignedToId) -
+                assignedToIds.indexOf(b.assignedToId)
+            )
+          } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
               title: 'Error Reordering Items',

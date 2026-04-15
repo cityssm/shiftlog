@@ -231,7 +231,10 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderAssignedToItems`, {
                 assignedToIds
             }, (responseJSON) => {
-                if (!responseJSON.success) {
+                if (responseJSON.success) {
+                    assignedToList.sort((a, b) => assignedToIds.indexOf(a.assignedToId) - assignedToIds.indexOf(b.assignedToId));
+                }
+                else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error Reordering Items',
