@@ -1,4 +1,3 @@
-/* eslint-disable @cspell/spellchecker -- GIS column names */
 import { config as baseConfig } from './accessibility.partialConfig.js';
 export const config = { ...baseConfig };
 config.application.attachmentStoragePath = 'data/attachments/accessibility';
@@ -11,7 +10,10 @@ config.locations = {
     layerURL: 'https://enterprise.ssmic.com/server/rest/services/SooMaps/SooMaps_GeneralLayers/MapServer/0',
     whereClause: "MUNICIPALITY = 'SSM'",
     mappings: {
-        address1: (record) => `${record.CIVICNUMBER} ${record.STREETNAME}`,
+        address1: (record) => {
+            const typedRecord = record;
+            return `${typedRecord.CIVICNUMBER} ${typedRecord.STREETNAME}`;
+        },
         cityProvince: () => 'Sault Ste. Marie, ON',
         latitude: 'LATITUDE',
         longitude: 'LONGITUDE'

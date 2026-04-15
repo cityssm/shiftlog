@@ -7,7 +7,7 @@ export default async function addCrewMember(crewId, employeeNumber) {
         .input('instance', getConfigProperty('application.instance'))
         .input('crewId', crewId)
         .input('employeeNumber', employeeNumber)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.CrewMembers (crewId, instance, employeeNumber)
       VALUES

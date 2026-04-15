@@ -6,7 +6,7 @@ export default async function updateCrewEquipment(crewId, equipmentNumber, emplo
         .input('crewId', crewId)
         .input('equipmentNumber', equipmentNumber)
         .input('employeeNumber', employeeNumber ?? undefined)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.CrewEquipment
       SET
         employeeNumber = @employeeNumber

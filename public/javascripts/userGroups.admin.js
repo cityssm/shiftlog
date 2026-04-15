@@ -111,7 +111,7 @@
                 return;
             }
             const listHtml = currentMembers
-                .map((userName) => /* html */ `
+                .map((userName) => `
             <div class="field is-grouped">
               <div class="control is-expanded">
                 <input
@@ -132,9 +132,7 @@
             </div>
           `)
                 .join('');
-            // eslint-disable-next-line no-unsanitized/property
             membersContainer.innerHTML = listHtml;
-            // Add event listeners for remove buttons
             const removeButtons = membersContainer.querySelectorAll('.remove-member');
             for (const button of removeButtons) {
                 button.addEventListener('click', removeMember);
@@ -155,7 +153,6 @@
                     if (responseJSON.userGroup !== undefined) {
                         currentMembers = responseJSON.userGroup.members ?? [];
                         renderMembersList();
-                        // Update the user group in the main list and re-render
                         const groupIndex = exports.userGroups.findIndex((ug) => ug.userGroupId.toString() === userGroupId);
                         if (groupIndex !== -1 &&
                             responseJSON.userGroup.memberCount !== undefined) {
@@ -164,7 +161,6 @@
                             renderUserGroups(exports.userGroups);
                         }
                     }
-                    // Reset the form
                     ;
                     addForm.querySelector('[name="userName"]').value = '';
                     bulmaJS.alert({
@@ -196,7 +192,6 @@
                     if (responseJSON.userGroup !== undefined) {
                         currentMembers = responseJSON.userGroup.members ?? [];
                         renderMembersList();
-                        // Update the user group in the main list and re-render
                         const groupIndex = exports.userGroups.findIndex((ug) => ug.userGroupId.toString() === userGroupId);
                         if (groupIndex !== -1 &&
                             responseJSON.userGroup.memberCount !== undefined) {
@@ -224,18 +219,15 @@
             onshow(modalElement) {
                 ;
                 modalElement.querySelector('#span--groupName').textContent = userGroup.userGroupName;
-                // Populate user dropdown
                 const userSelect = modalElement.querySelector('[name="userName"]');
-                // eslint-disable-next-line no-unsanitized/property
                 userSelect.innerHTML = `<option value="">Select a user...</option>
           ${exports.users
-                    .map((user) => /* html */ `
+                    .map((user) => `
                 <option value="${cityssm.escapeHTML(user.userName)}">
                   ${cityssm.escapeHTML(user.userName)}
                 </option>
               `)
                     .join('')}`;
-                // Get current members
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetUserGroup`, { userGroupId }, (responseJSON) => {
                     if (responseJSON.userGroup !== undefined) {
                         currentMembers = responseJSON.userGroup.members ?? [];
@@ -245,7 +237,6 @@
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
-                // closeModalFunction = _closeModalFunction
                 modalElement
                     .querySelector('#form--addMember')
                     ?.addEventListener('submit', addMember);
@@ -257,8 +248,7 @@
     }
     function buildUserGroupRowElement(userGroup) {
         const rowElement = document.createElement('tr');
-        // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML = /* html */ `
+        rowElement.innerHTML = `
       <td>${cityssm.escapeHTML(userGroup.userGroupName)}</td>
       <td class="has-text-centered">${userGroup.memberCount ?? 0}</td>
       <td class="has-text-right">
@@ -300,7 +290,7 @@
     }
     function renderUserGroups(userGroups) {
         if (userGroups.length === 0) {
-            userGroupsContainerElement.innerHTML = /* html */ `
+            userGroupsContainerElement.innerHTML = `
         <div class="message is-info">
           <div class="message-body">No user groups found.</div>
         </div>
@@ -309,7 +299,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Group Name</th>
@@ -325,7 +315,6 @@
             const rowElement = buildUserGroupRowElement(userGroup);
             tableElement.querySelector('tbody')?.append(rowElement);
         }
-        // Add event listeners
         const manageMembersButtons = tableElement.querySelectorAll('.manage-members');
         for (const button of manageMembersButtons) {
             button.addEventListener('click', manageMembers);

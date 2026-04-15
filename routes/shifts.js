@@ -91,22 +91,17 @@ router
     .get('/:shiftId/edit', updateHandler, handler_edit)
     .post('/doUpdateShift', updateHandler, handler_doUpdateShift)
     .post('/doDeleteShift', updateHandler, handler_doDeleteShift);
-// Shift notes endpoints
 router
     .post('/:shiftId/doGetShiftNotes', handler_doGetShiftNotes)
     .post('/doGetNoteTypes', handler_doGetNoteTypes)
     .post('/doCreateShiftNote', updateHandler, handler_doCreateShiftNote)
     .post('/doUpdateShiftNote', updateHandler, handler_doUpdateShiftNote)
     .post('/doDeleteShiftNote', updateHandler, handler_doDeleteShiftNote);
-// Shift crews, employees, and equipment endpoints
 router
     .post('/doGetShiftCrews', handler_doGetShiftCrews)
     .post('/doGetShiftEmployees', handler_doGetShiftEmployees)
     .post('/doGetShiftEquipment', handler_doGetShiftEquipment);
-// Ignoring eslint-plugin-no-secrets false positive
-router.post(
-// eslint-disable-next-line no-secrets/no-secrets
-'/doGetAvailableCrewsEmployeesEquipment', handler_doGetAvailableCrewsEmployeesEquipment);
+router.post('/doGetAvailableCrewsEmployeesEquipment', handler_doGetAvailableCrewsEmployeesEquipment);
 router.post('/doGetEligibleEmployeesForEquipment', handler_doGetEligibleEmployeesForEquipment);
 router
     .post('/doAddShiftCrew', updateHandler, handler_doAddShiftCrew)
@@ -122,12 +117,10 @@ router
     .post('/doDeleteShiftCrew', updateHandler, handler_doDeleteShiftCrew)
     .post('/doDeleteShiftEmployee', updateHandler, handler_doDeleteShiftEmployee)
     .post('/doDeleteShiftEquipment', updateHandler, handler_doDeleteShiftEquipment);
-// Shift work orders endpoints
 router.post('/doGetShiftWorkOrders', handler_doGetShiftWorkOrders);
 router.post('/doAddShiftWorkOrder', updateHandler, handler_doAddShiftWorkOrder);
 router.post('/doUpdateShiftWorkOrderNote', updateHandler, handler_doUpdateShiftWorkOrderNote);
 router.post('/doDeleteShiftWorkOrder', updateHandler, handler_doDeleteShiftWorkOrder);
-// Shift ad hoc tasks endpoints
 router
     .post('/doGetShiftAdhocTasks', handler_doGetShiftAdhocTasks)
     .post('/doGetAvailableAdhocTasks', handler_doGetAvailableAdhocTasks)
@@ -141,7 +134,6 @@ router
 router
     .post('/doGetPreviousShifts', handler_doGetPreviousShifts)
     .post('/doCopyFromPreviousShift', updateHandler, handler_doCopyFromPreviousShift);
-// Crew maintenance endpoints
 router
     .get('/crews', updateHandler, handler_crews)
     .post('/doGetCrew', updateHandler, handler_doGetCrew)

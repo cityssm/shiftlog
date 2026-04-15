@@ -16,10 +16,8 @@ export default async function handler(request, response) {
     const shiftEmployees = await getShiftEmployees(request.params.shiftId);
     const shiftEquipment = await getShiftEquipment(request.params.shiftId);
     const shiftWorkOrders = await getShiftWorkOrders(request.params.shiftId);
-    // Load milestones for all work orders
     const allMilestones = [];
     for (const workOrder of shiftWorkOrders) {
-        // eslint-disable-next-line no-await-in-loop
         const milestones = await getWorkOrderMilestones(workOrder.workOrderId.toString());
         allMilestones.push(...milestones);
     }

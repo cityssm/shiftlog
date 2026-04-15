@@ -3,13 +3,12 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 const maxResults = 10;
 export default async function getPreviousShifts(filters, user) {
     const pool = await getShiftLogConnectionPool();
-    let whereClause = /* sql */ `
+    let whereClause = `
     WHERE
       s.instance = @instance
       AND s.recordDelete_dateTime IS NULL
       AND s.shiftId <> @currentShiftId
   `;
-    // Add optional filters
     if (filters.shiftTypeDataListItemId !== undefined &&
         filters.shiftTypeDataListItemId !== '') {
         whereClause += ' AND s.shiftTypeDataListItemId = @shiftTypeDataListItemId';
@@ -25,8 +24,7 @@ export default async function getPreviousShifts(filters, user) {
     if (filters.shiftDateString !== undefined && filters.shiftDateString !== '') {
         whereClause += ' AND s.shiftDate < @shiftDateString';
     }
-    // User group filter
-    whereClause += /* sql */ `
+    whereClause += `
     AND (
       sType.userGroupId IS NULL
       OR sType.userGroupId IN (
@@ -48,7 +46,7 @@ export default async function getPreviousShifts(filters, user) {
         .input('shiftTimeDataListItemId', filters.shiftTimeDataListItemId ?? undefined)
         .input('shiftDateString', filters.shiftDateString ?? undefined)
         .input('userName', user.userName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         TOP ${maxResults} s.shiftId,
         s.shiftDate,

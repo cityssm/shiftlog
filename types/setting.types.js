@@ -1,4 +1,3 @@
-/* eslint-disable perfectionist/sort-objects */
 export const settingProperties = [
     {
         settingKey: 'cleanup.apiAuditLogRetentionDays',

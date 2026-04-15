@@ -12,7 +12,7 @@ async function insertNewUser(newUserName, user) {
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.Users (
             instance,
@@ -47,7 +47,7 @@ async function restoreDeletedUser(newUserName, user) {
         .input('userName', newUserName)
         .input('recordUpdate_userName', user.userName)
         .input('recordUpdate_dateTime', currentDate)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Users
       SET
         recordUpdate_userName = @recordUpdate_userName,
@@ -62,12 +62,11 @@ async function restoreDeletedUser(newUserName, user) {
 }
 export default async function addUser(newUserName, user) {
     const pool = await getShiftLogConnectionPool();
-    // Check if an user with the same name already exists
     const recordDeleteResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', newUserName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         recordDelete_dateTime
       FROM

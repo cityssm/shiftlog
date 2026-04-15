@@ -1,4 +1,3 @@
-/* eslint-disable no-secrets/no-secrets */
 import eslintCspell from '@cspell/eslint-plugin';
 import configWebApp, { defineConfig } from 'eslint-config-cityssm';
 import { cspellWords } from 'eslint-config-cityssm/exports';
@@ -19,7 +18,6 @@ export const config = defineConfig(configWebApp, {
     },
     plugins: {
         '@cspell': eslintCspell,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         'no-unsanitized': eslintPluginNoUnsanitized
     },
     rules: {
@@ -29,7 +27,6 @@ export const config = defineConfig(configWebApp, {
                 cspell: {
                     words: [
                         ...cspellWords,
-                        // App
                         'hellip',
                         'latlng',
                         'latlngs',
@@ -39,18 +36,13 @@ export const config = defineConfig(configWebApp, {
                         'javascripts',
                         'radiusless',
                         'rowspan',
-                        // SQL
                         'datediff',
-                        // Shift Log
                         'maint',
                         'shiftlog',
                         'timesheet',
                         'timesheets',
-                        // Avanti
                         'avanti',
-                        // Pearl
                         'worktech',
-                        // ArcGIS
                         'arcgis',
                         'ntfy'
                     ]

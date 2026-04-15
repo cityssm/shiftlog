@@ -81,7 +81,6 @@ router
     .post('/doSearchWorkOrders', handler_doSearchWorkOrders)
     .post('/doGetCalendarEvents', handler_doGetCalendarEvents)
     .post('/doGetWorkOrdersForPlanner', handler_doGetWorkOrdersForPlanner)
-    // eslint-disable-next-line no-secrets/no-secrets -- route name, not a secret
     .post('/doGetWorkOrderAccomplishmentData', handler_doGetWorkOrderAccomplishmentData);
 router
     .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)
@@ -116,8 +115,7 @@ router
     .post('/doUploadWorkOrderAttachment', updateHandler, upload.single('attachmentFile'), handler_doUploadWorkOrderAttachment)
     .post('/doUpdateWorkOrderAttachment', updateHandler, handler_doUpdateWorkOrderAttachment)
     .post('/doDeleteWorkOrderAttachment', updateHandler, handler_doDeleteWorkOrderAttachment)
-    .post('/doSetWorkOrderAttachmentThumbnail', // eslint-disable-line no-secrets/no-secrets -- false positive, this is a route name
-updateHandler, handler_doSetWorkOrderAttachmentThumbnail);
+    .post('/doSetWorkOrderAttachmentThumbnail', updateHandler, handler_doSetWorkOrderAttachmentThumbnail);
 router
     .post('/:workOrderId/doGetWorkOrderTags', handler_doGetWorkOrderTags)
     .post('/:workOrderId/doGetSuggestedTags', handler_doGetSuggestedTags)

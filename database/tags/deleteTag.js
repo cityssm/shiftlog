@@ -8,7 +8,7 @@ export default async function deleteTag(tagName, user) {
             .input('tagName', tagName)
             .input('recordDelete_userName', user.userName)
             .input('recordDelete_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.Tags
         SET
           recordDelete_userName = @recordDelete_userName,

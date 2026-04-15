@@ -1,7 +1,7 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShiftCrews(shiftId, user) {
     const pool = await getShiftLogConnectionPool();
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       sc.shiftId,
       sc.crewId,
@@ -15,7 +15,7 @@ export default async function getShiftCrews(shiftId, user) {
       sc.shiftId = @shiftId
       AND c.recordDelete_dateTime IS NULL ${user === undefined
         ? ''
-        : /* sql */ `
+        : `
             AND (
               c.userGroupId IS NULL
               OR c.userGroupId IN (

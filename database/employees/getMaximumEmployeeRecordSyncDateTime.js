@@ -5,7 +5,7 @@ export default async function getMaximumEmployeeRecordSyncDateTime() {
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         max(recordSync_dateTime) AS maxRecordSyncDateTime
       FROM

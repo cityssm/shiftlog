@@ -1,8 +1,4 @@
 import createApiAuditLog from '../database/api/createApiAuditLog.js';
-/**
- * Logs an API request to the audit log
- * @param options - Options for logging the API request
- */
 export async function logApiRequest(options) {
     const { errorMessage, isValidApiKey, request, responseStatus, userName } = options;
     const apiKey = request.params.apiKey;

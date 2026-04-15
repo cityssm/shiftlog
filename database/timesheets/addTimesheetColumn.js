@@ -1,11 +1,10 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function addTimesheetColumn(addColumnForm) {
     const pool = await getShiftLogConnectionPool();
-    // Get the next order number
     const maxOrderResult = await pool
         .request()
         .input('timesheetId', addColumnForm.timesheetId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         isnull(max(orderNumber), -1) + 1 AS nextOrderNumber
       FROM
@@ -22,7 +21,7 @@ export default async function addTimesheetColumn(addColumnForm) {
         .input('costCenterA', addColumnForm.costCenterA ?? null)
         .input('costCenterB', addColumnForm.costCenterB ?? null)
         .input('orderNumber', nextOrderNumber)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.TimesheetColumns (
           timesheetId,

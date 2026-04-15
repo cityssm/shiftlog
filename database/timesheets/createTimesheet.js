@@ -12,7 +12,7 @@ export default async function createTimesheet(createTimesheetForm, userName) {
         .input('timesheetNote', createTimesheetForm.timesheetNote)
         .input('shiftId', createTimesheetForm.shiftId ?? undefined)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.Timesheets (
           instance,

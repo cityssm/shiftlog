@@ -8,7 +8,7 @@ export default async function recordNotificationLog(form) {
         .input('notificationDateTime', form.notificationDate ?? new Date())
         .input('isSuccess', form.isSuccess)
         .input('errorMessage', form.errorMessage)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.NotificationLogs (
           notificationConfigurationId,

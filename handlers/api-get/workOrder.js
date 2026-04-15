@@ -5,13 +5,11 @@ import getWorkOrderMilestones from '../../database/workOrders/getWorkOrderMilest
 import { getApplicationUrl } from '../../helpers/application.helpers.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
-    // Authenticate API user
     const apiUser = await getUserByApiKey(request.params.apiKey);
     if (apiUser === undefined) {
         response.status(401).json({ error: 'Invalid API key' });
         return;
     }
-    // Get work order
     const workOrder = await getWorkOrder(request.params.workOrderId, apiUser.userName);
     if (workOrder === undefined) {
         response
@@ -22,7 +20,6 @@ export default async function handler(request, response) {
         return;
     }
     const workOrderMilestones = await getWorkOrderMilestones(workOrder.workOrderId);
-    // Create calendar
     const workOrderUrl = `${getApplicationUrl(request)}/${getConfigProperty('workOrders.router')}/${workOrder.workOrderId}`;
     const descriptionString = `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}\n\n${workOrderUrl}`;
     const calendar = ical({
@@ -34,7 +31,6 @@ export default async function handler(request, response) {
         url: workOrderUrl
     });
     const workOrderIsClosed = Boolean(workOrder.workOrderCloseDateTime);
-    // Open event
     calendar.createEvent({
         start: workOrder.workOrderOpenDateTime,
         status: workOrderIsClosed
@@ -44,7 +40,6 @@ export default async function handler(request, response) {
         description: descriptionString,
         url: workOrderUrl
     });
-    // Due event
     if (workOrder.workOrderDueDateTime) {
         calendar.createEvent({
             start: workOrder.workOrderDueDateTime,
@@ -56,7 +51,6 @@ export default async function handler(request, response) {
             url: workOrderUrl
         });
     }
-    // Close event
     if (workOrder.workOrderCloseDateTime) {
         calendar.createEvent({
             start: workOrder.workOrderCloseDateTime,

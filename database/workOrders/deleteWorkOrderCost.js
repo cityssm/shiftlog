@@ -7,7 +7,7 @@ export default async function deleteWorkOrderCost(workOrderCostId, userName) {
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderCostId', workOrderCostId)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrderCosts
       SET
         recordDelete_userName = @userName,

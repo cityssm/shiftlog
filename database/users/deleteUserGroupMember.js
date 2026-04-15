@@ -8,7 +8,7 @@ export default async function deleteUserGroupMember(userGroupId, userName) {
             .input('userGroupId', userGroupId)
             .input('userName', userName)
             .input('instance', getConfigProperty('application.instance'))
-            .query(/* sql */ `
+            .query(`
         DELETE FROM ShiftLog.UserGroupMembers
         WHERE
           userGroupId = @userGroupId

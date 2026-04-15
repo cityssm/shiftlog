@@ -13,7 +13,6 @@ describe('User Settings', () => {
         cy.checkA11y();
     });
     it('Has an employee contact form if employee record is available', () => {
-        // Check if the employee contact form exists
         cy.get('body').then(($body) => {
             if ($body.find('#employeeContactForm').length > 0) {
                 cy.get('#employeeContactForm').should('be.visible');

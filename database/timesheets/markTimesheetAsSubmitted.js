@@ -7,7 +7,7 @@ export default async function markTimesheetAsSubmitted(timesheetId, userName) {
         .input('timesheetId', timesheetId)
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Timesheets
       SET
         recordSubmitted_dateTime = getdate(),

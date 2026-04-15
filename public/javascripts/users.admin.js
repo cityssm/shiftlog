@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const usersContainerElement = document.querySelector('#container--users');
@@ -20,7 +19,6 @@
                         userName
                     }, (responseJSON) => {
                         if (responseJSON.success) {
-                            // Update the users list with the new data from the server
                             renderUsers(responseJSON.users);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -69,7 +67,6 @@
         if (userName === undefined) {
             return;
         }
-        // Find the user in the current users list
         const user = exports.users.find((u) => u.userName === userName);
         if (user === undefined) {
             return;
@@ -81,7 +78,6 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserSettings`, settingsForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
-                    // Update the users list with the new data from the server
                     exports.users = responseJSON.users;
                     renderUsers(responseJSON.users);
                     bulmaJS.alert({
@@ -104,9 +100,7 @@
                 ;
                 modalElement.querySelector('#span--userName').textContent = userName;
                 modalElement.querySelector('[name="userName"]').value = userName;
-                // Pre-populate settings fields
                 const settings = user.userSettings ?? {};
-                // Dynamically generate form fields for all user settings
                 const containerElement = modalElement.querySelector('#container--userSettings');
                 containerElement.innerHTML = '';
                 for (const settingKey of exports.userSettingKeys) {
@@ -114,8 +108,7 @@
                     fieldElement.className = 'field';
                     const isApiKey = settingKey === 'apiKey';
                     const settingValue = settings[settingKey] ?? '';
-                    // eslint-disable-next-line no-unsanitized/property
-                    fieldElement.innerHTML = /* html */ `
+                    fieldElement.innerHTML = `
             <label class="label" for="${cityssm.escapeHTML(settingKey)}">
               ${cityssm.escapeHTML(settingKey)}
             </label>
@@ -149,7 +142,6 @@
           `;
                     containerElement.append(fieldElement);
                 }
-                // Add event listener for reset API key button
                 const resetApiKeyButton = modalElement.querySelector('#button--resetApiKey');
                 if (resetApiKeyButton !== null) {
                     resetApiKeyButton.addEventListener('click', () => {
@@ -185,7 +177,6 @@
             userName
         }, (responseJSON) => {
             if (responseJSON.success) {
-                // Update the users list with the new data from the server
                 exports.users = responseJSON.users;
                 renderUsers(responseJSON.users);
                 bulmaJS.alert({
@@ -212,8 +203,7 @@
     function buildUserRowElement(user) {
         const rowElement = document.createElement('tr');
         rowElement.dataset.userName = user.userName;
-        // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML = /* html */ `
+        rowElement.innerHTML = `
       <th>${cityssm.escapeHTML(user.userName)}</th>
       <td class="has-text-centered has-border-left">
         <button
@@ -227,9 +217,7 @@
       </td>
     `;
         if (shiftLog.shiftsAreEnabled) {
-            // eslint-disable-next-line no-unsanitized/method
-            rowElement.insertAdjacentHTML('beforeend', 
-            /* html */ `
+            rowElement.insertAdjacentHTML('beforeend', `
           <td class="has-text-centered has-border-left">
             <button
               class="button is-small permission-toggle ${user.shifts_canView ? activePermissionClass : inactivePermissionClass}"
@@ -263,9 +251,7 @@
         `);
         }
         if (shiftLog.workOrdersAreEnabled) {
-            // eslint-disable-next-line no-unsanitized/method
-            rowElement.insertAdjacentHTML('beforeend', 
-            /* html */ `
+            rowElement.insertAdjacentHTML('beforeend', `
           <td class="has-text-centered has-border-left">
             <button
               class="button is-small permission-toggle ${user.workOrders_canView ? activePermissionClass : inactivePermissionClass}"
@@ -299,9 +285,7 @@
         `);
         }
         if (shiftLog.timesheetsAreEnabled) {
-            // eslint-disable-next-line no-unsanitized/method
-            rowElement.insertAdjacentHTML('beforeend', 
-            /* html */ `
+            rowElement.insertAdjacentHTML('beforeend', `
           <td class="has-text-centered has-border-left">
             <button
               class="button is-small permission-toggle ${user.timesheets_canView ? activePermissionClass : inactivePermissionClass}"
@@ -334,8 +318,7 @@
           </td>
         `);
         }
-        // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML += /* html */ `
+        rowElement.innerHTML += `
       <td class="has-text-centered has-border-left">
         <button
           class="button is-small permission-toggle ${user.isAdmin ? activePermissionClass : inactivePermissionClass}"
@@ -377,33 +360,32 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        const sectionColumnHeaderHTML = /* html */ `
+        const sectionColumnHeaderHTML = `
       <th class="has-text-centered has-border-left">View</th>
       <th class="has-text-centered">Update</th>
       <th class="has-text-centered">Manage</th>
     `;
-        // eslint-disable-next-line no-unsanitized/property
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th rowspan="2">User Name</th>
           <th class="has-text-centered has-border-left" rowspan="2">Can Login</th>
           ${shiftLog.shiftsAreEnabled
-            ? /* html */ `
+            ? `
                 <th class="has-text-centered has-border-left" colspan="3">
                   ${cityssm.escapeHTML(shiftLog.shiftsSectionName)}
                 </th>
               `
             : ''}
           ${shiftLog.workOrdersAreEnabled
-            ? /* html */ `
+            ? `
                 <th class="has-text-centered has-border-left" colspan="3">
                   ${cityssm.escapeHTML(shiftLog.workOrdersSectionName)}
                 </th>
               `
             : ''}
           ${shiftLog.timesheetsAreEnabled
-            ? /* html */ `
+            ? `
                 <th class="has-text-centered has-border-left" colspan="3">
                   ${cityssm.escapeHTML(shiftLog.timesheetsSectionName)}
                 </th>
@@ -426,15 +408,12 @@
             const rowElement = buildUserRowElement(user);
             tableElement.querySelector('tbody')?.append(rowElement);
         }
-        // Add event listeners for permission toggles
         for (const button of tableElement.querySelectorAll('.permission-toggle')) {
             button.addEventListener('click', toggleUserPermission);
         }
-        // Add event listeners for edit settings buttons
         for (const button of tableElement.querySelectorAll('.edit-user-settings')) {
             button.addEventListener('click', editUserSettings);
         }
-        // Add event listeners for delete buttons
         for (const button of tableElement.querySelectorAll('.delete-user')) {
             button.addEventListener('click', deleteUser);
         }

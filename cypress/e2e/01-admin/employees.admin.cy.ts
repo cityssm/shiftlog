@@ -57,8 +57,8 @@ describe('Admin - Employee Management', () => {
 
     cy.get('#editEmployee--lastName')
       .invoke('val')
-      .then((originalValue: string) => {
-        const newValue = (originalValue + updatedText).slice(-50)
+      .then((originalValue) => {
+        const newValue = (String(originalValue) + updatedText).slice(-50)
 
         cy.get('#editEmployee--lastName').clear().type(newValue)
       })

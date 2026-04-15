@@ -20,7 +20,6 @@ export default async function getLocations() {
                 value = mapping(gisRecord);
             }
             else if (typeof mapping === 'string') {
-                // eslint-disable-next-line security/detect-object-injection
                 value = gisRecord[mapping];
             }
             if (value !== undefined) {

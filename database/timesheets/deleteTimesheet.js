@@ -7,7 +7,7 @@ export default async function deleteTimesheet(timesheetId, userName) {
         .input('timesheetId', timesheetId)
         .input('userName', userName)
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Timesheets
       SET
         recordDelete_userName = @userName,

@@ -1,7 +1,6 @@
 (() => {
     const shiftLog = exports.shiftLog;
     const employeesContainerElement = document.querySelector('#container--employees');
-    // Pagination settings
     const ITEMS_PER_PAGE = 10;
     const FILTER_DEBOUNCE_MS = 300;
     let currentPage = 1;
@@ -29,7 +28,6 @@
                         employeeNumber
                     }, (responseJSON) => {
                         if (responseJSON.success) {
-                            // Update the employees list with the new data from the server
                             exports.employees = responseJSON.employees;
                             applyCurrentFilter();
                             bulmaJS.alert({
@@ -56,7 +54,6 @@
         if (employeeNumber === undefined) {
             return;
         }
-        // Find the employee in the current employees list
         const employee = exports.employees.find((possibleEmployee) => possibleEmployee.employeeNumber === employeeNumber);
         if (employee === undefined) {
             return;
@@ -68,7 +65,6 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployee`, editForm, (responseJSON) => {
                 if (responseJSON.success) {
                     closeModalFunction();
-                    // Update the employees list with the new data from the server
                     exports.employees = responseJSON.employees;
                     applyCurrentFilter();
                     bulmaJS.alert({
@@ -88,7 +84,6 @@
         }
         cityssm.openHtmlModal('adminEmployees-edit', {
             onshow(modalElement) {
-                // Set employeeNumber field
                 ;
                 modalElement.querySelector('#editEmployee--employeeNumber').value = employeeNumber;
                 modalElement.querySelector('#editEmployee--firstName').value = employee.firstName;
@@ -99,7 +94,6 @@
                 modalElement.querySelector('#editEmployee--phoneNumber').value = employee.phoneNumber ?? '';
                 modalElement.querySelector('#editEmployee--phoneNumberAlternate').value = employee.phoneNumberAlternate ?? '';
                 modalElement.querySelector('#editEmployee--emailAddress').value = employee.emailAddress ?? '';
-                // Populate user groups dropdown
                 const userGroupSelect = modalElement.querySelector('#editEmployee--userGroupId');
                 for (const userGroup of exports.userGroups) {
                     const optionElement = document.createElement('option');
@@ -129,11 +123,10 @@
         const rowElement = document.createElement('tr');
         rowElement.dataset.employeeNumber = employee.employeeNumber;
         const userGroup = exports.userGroups.find((ug) => ug.userGroupId === employee.userGroupId);
-        // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML = /* html */ `
+        rowElement.innerHTML = `
       <td>
         ${employee.recordSync_isSynced
-            ? /* html */ `
+            ? `
               <span class="is-size-7 has-text-grey" title="Synchronized">
                 <i class="fa-solid fa-arrows-rotate"></i>
               </span>
@@ -180,7 +173,7 @@
     }
     function renderEmployees(employees) {
         if (employees.length === 0) {
-            employeesContainerElement.innerHTML = /* html */ `
+            employeesContainerElement.innerHTML = `
         <div class="message is-info">
           <div class="message-body">
             No employees available.
@@ -192,7 +185,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable has-sticky-header';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>
@@ -216,28 +209,19 @@
             const rowElement = buildEmployeeRowElement(employee);
             tableElement.querySelector('tbody')?.append(rowElement);
         }
-        // Add event listeners for edit buttons
         for (const button of tableElement.querySelectorAll('.edit-employee')) {
             button.addEventListener('click', editEmployee);
         }
-        // Add event listeners for delete buttons
         for (const button of tableElement.querySelectorAll('.delete-employee')) {
             button.addEventListener('click', deleteEmployee);
         }
         employeesContainerElement.replaceChildren(tableElement);
     }
-    /**
-     * Render employees with pagination
-     * @param employees - List of employees to render
-     */
     function renderEmployeesWithPagination(employees) {
-        // Calculate pagination
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIndex = startIndex + ITEMS_PER_PAGE;
         const paginatedEmployees = employees.slice(startIndex, endIndex);
-        // Render table
         renderEmployees(paginatedEmployees);
-        // Add pagination controls if needed
         if (employees.length > ITEMS_PER_PAGE) {
             const paginationControls = shiftLog.buildPaginationControls({
                 totalCount: employees.length,
@@ -259,7 +243,6 @@
                 if (responseJSON.success) {
                     closeModalFunction();
                     addForm.reset();
-                    // Update the employees list with the new data from the server
                     exports.employees = responseJSON.employees;
                     applyCurrentFilter();
                     bulmaJS.alert({
@@ -292,14 +275,8 @@
         });
     });
     renderEmployeesWithPagination(exports.employees);
-    /*
-     * Filter employees with debouncing
-     */
     const filterInput = document.querySelector('#filter--employees');
     let filterTimeout;
-    /**
-     * Apply the current filter to the employees list
-     */
     function applyCurrentFilter() {
         let filteredEmployees = exports.employees;
         if (filterInput !== null) {
@@ -317,11 +294,9 @@
     }
     if (filterInput !== null) {
         filterInput.addEventListener('input', () => {
-            // Clear existing timeout
             if (filterTimeout !== undefined) {
                 clearTimeout(filterTimeout);
             }
-            // Set new timeout (debounce)
             filterTimeout = setTimeout(() => {
                 applyCurrentFilter();
             }, FILTER_DEBOUNCE_MS);

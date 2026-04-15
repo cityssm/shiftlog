@@ -1,23 +1,14 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-/**
- * Retrieves calendar events for work orders and milestones within a specified month.
- * @param filters - Filter parameters including year, month, date type toggles, and assigned to filter
- * @param user - Optional user object for applying user group security filtering.
- *               When provided, only work orders from work order types accessible to the user's groups are returned.
- * @returns Array of calendar events matching the specified filters
- */
 export default async function getCalendarEvents(filters, user) {
     const pool = await getShiftLogConnectionPool();
     const instance = getConfigProperty('application.instance');
-    // Calculate date range for the month
     const startDate = new Date(filters.year, filters.month - 1, 1);
     const endDate = new Date(filters.year, filters.month, 0, 23, 59, 59);
     const events = [];
-    // Build user group WHERE clause for security
     const userGroupWhereClause = user === undefined
         ? ''
-        : /* sql */ `
+        : `
           AND (
             wType.userGroupId IS NULL
             OR wType.userGroupId IN (
@@ -30,11 +21,10 @@ export default async function getCalendarEvents(filters, user) {
             )
           )
         `;
-    // Query for work order dates
     if (filters.showOpenDates || filters.showDueDates || filters.showCloseDates) {
         const workOrderDateQueries = [];
         if (filters.showOpenDates) {
-            workOrderDateQueries.push(/* sql */ `
+            workOrderDateQueries.push(`
         SELECT
           w.workOrderOpenDateTime AS eventDate,
           'workOrderOpen' AS eventType,
@@ -63,7 +53,7 @@ export default async function getCalendarEvents(filters, user) {
       `);
         }
         if (filters.showDueDates) {
-            workOrderDateQueries.push(/* sql */ `
+            workOrderDateQueries.push(`
         SELECT
           w.workOrderDueDateTime AS eventDate,
           'workOrderDue' AS eventType,
@@ -93,7 +83,7 @@ export default async function getCalendarEvents(filters, user) {
       `);
         }
         if (filters.showCloseDates) {
-            workOrderDateQueries.push(/* sql */ `
+            workOrderDateQueries.push(`
         SELECT
           w.workOrderCloseDateTime AS eventDate,
           'workOrderClose' AS eventType,
@@ -138,11 +128,10 @@ export default async function getCalendarEvents(filters, user) {
             events.push(...workOrderResults.recordset);
         }
     }
-    // Query for milestone dates
     if (filters.showMilestoneDueDates || filters.showMilestoneCompleteDates) {
         const milestoneQueries = [];
         if (filters.showMilestoneDueDates) {
-            milestoneQueries.push(/* sql */ `
+            milestoneQueries.push(`
         SELECT
           m.milestoneDueDateTime AS eventDate,
           'milestoneDue' AS eventType,
@@ -171,7 +160,7 @@ export default async function getCalendarEvents(filters, user) {
           AND m.milestoneDueDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
                 undefined
                 ? ''
-                : /* sql */ `
+                : `
                 AND (
                   m.assignedToId = @assignedToId
                   OR (
@@ -183,7 +172,7 @@ export default async function getCalendarEvents(filters, user) {
       `);
         }
         if (filters.showMilestoneCompleteDates) {
-            milestoneQueries.push(/* sql */ `
+            milestoneQueries.push(`
         SELECT
           m.milestoneCompleteDateTime AS eventDate,
           'milestoneComplete' AS eventType,
@@ -212,7 +201,7 @@ export default async function getCalendarEvents(filters, user) {
           AND m.milestoneCompleteDateTime BETWEEN @startDate AND @endDate  ${filters.assignedToId ===
                 undefined
                 ? ''
-                : /* sql */ `
+                : `
                 OR (
                   m.assignedToId IS NULL
                   AND w.assignedToId = @assignedToId

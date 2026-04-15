@@ -51,7 +51,6 @@ router
 router
     .get('/:timesheetId/edit', updateHandler, handler_edit)
     .post('/doUpdateTimesheet', updateHandler, handler_doUpdateTimesheet);
-// Timesheet data endpoints
 router.post('/doGetTimesheetColumns', handler_doGetTimesheetColumns);
 router.post('/doGetTimesheetRows', handler_doGetTimesheetRows);
 router.post('/doGetTimesheetRowOptions', handler_doGetTimesheetRowOptions);

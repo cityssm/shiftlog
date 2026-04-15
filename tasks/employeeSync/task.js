@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { ScheduledTask } from '@cityssm/scheduled-task';
 import { minutesToMillis } from '@cityssm/to-millis';
 import Debug from 'debug';
@@ -48,7 +47,6 @@ async function runSync() {
         if (employeeToSync.employeeNumber === undefined) {
             continue;
         }
-        // eslint-disable-next-line no-await-in-loop
         await addOrUpdateSyncedEmployee(employeeToSync, systemUserName);
     }
 }

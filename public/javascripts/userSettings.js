@@ -1,8 +1,5 @@
 (() => {
     const shiftLog = exports.shiftLog;
-    /*
-     * Employee Contact Information
-     */
     const employeeContactForm = document.querySelector('#employeeContactForm');
     if (employeeContactForm !== null) {
         employeeContactForm.addEventListener('submit', (formEvent) => {
@@ -26,9 +23,6 @@
             });
         });
     }
-    /*
-     * User Settings
-     */
     const userSettingForms = document.querySelectorAll('.userSettingForm');
     for (const userSettingForm of userSettingForms) {
         userSettingForm.addEventListener('submit', (formEvent) => {
@@ -58,9 +52,6 @@
             });
         });
     }
-    /*
-     * API Key
-     */
     function doResetApiKey() {
         cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doResetApiKey`, {}, (responseJSON) => {
             if (responseJSON.success) {

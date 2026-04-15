@@ -13,7 +13,7 @@ export default async function updateTimesheet(updateTimesheetForm, userName) {
         .input('timesheetNote', updateTimesheetForm.timesheetNote)
         .input('shiftId', updateTimesheetForm.shiftId ?? undefined)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Timesheets
       SET
         supervisorEmployeeNumber = @supervisorEmployeeNumber,

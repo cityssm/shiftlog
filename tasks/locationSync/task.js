@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { ScheduledTask } from '@cityssm/scheduled-task';
 import { hoursToMillis } from '@cityssm/to-millis';
 import Debug from 'debug';
@@ -33,7 +32,6 @@ async function runSync() {
         debug('Error occurred during location sync:', error);
     }
     for (const locationToSync of locationList ?? []) {
-        // eslint-disable-next-line no-await-in-loop
         await addOrUpdateSyncedLocation(locationToSync, systemUserName);
     }
 }

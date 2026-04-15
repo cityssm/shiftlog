@@ -1,10 +1,8 @@
 (() => {
     const shiftLog = exports.shiftLog;
     const locationsContainerElement = document.querySelector('#container--locations');
-    // Default map coordinates (Sault Ste. Marie)
     const DEFAULT_MAP_ZOOM = 13;
     const DETAIL_MAP_ZOOM = 15;
-    // Pagination settings
     const ITEMS_PER_PAGE = 10;
     let currentPage = 1;
     let currentFilteredLocations = exports.locations;
@@ -12,11 +10,7 @@
         currentPage = pageNumber;
         renderLocationsWithPagination(currentFilteredLocations);
     }
-    /**
-     * Initialize a Leaflet map picker for location coordinate selection
-     */
     function initializeLocationMapPicker(mapElementId, latitudeInput, longitudeInput) {
-        // Use existing coordinates or default to SSM
         let defaultLat = shiftLog.defaultLatitude;
         let defaultLng = shiftLog.defaultLongitude;
         let defaultZoom = DEFAULT_MAP_ZOOM;
@@ -30,11 +24,9 @@
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
         let marker = null;
-        // Add existing marker if coordinates are set
         if (latitudeInput.value !== '' && longitudeInput.value !== '') {
             marker = new L.Marker([defaultLat, defaultLng]).addTo(map);
         }
-        // Handle map click to set coordinates
         map.on('click', (event) => {
             const lat = event.latlng.lat;
             const lng = event.latlng.lng;
@@ -45,7 +37,6 @@
             }
             marker = new L.Marker([lat, lng]).addTo(map);
         });
-        // Update map when coordinates are manually entered
         function updateMapFromInputs() {
             const lat = Number.parseFloat(latitudeInput.value);
             const lng = Number.parseFloat(longitudeInput.value);
@@ -86,7 +77,6 @@
                         if (responseJSON.success) {
                             exports.locations = responseJSON.locations;
                             currentFilteredLocations = responseJSON.locations;
-                            // Adjust current page if it becomes invalid after deletion
                             const totalPages = Math.ceil(responseJSON.locations.length / ITEMS_PER_PAGE);
                             if (currentPage > totalPages && totalPages > 0) {
                                 currentPage = totalPages;
@@ -129,7 +119,6 @@
                     closeModalFunction();
                     exports.locations = responseJSON.locations;
                     currentFilteredLocations = responseJSON.locations;
-                    // Keep the current page after updating
                     renderLocationsWithPagination(responseJSON.locations);
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -162,7 +151,6 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateLocation);
-                // Initialize map picker
                 const mapPickerElement = modalElement.querySelector('#map--editLocationPicker');
                 if (mapPickerElement !== null) {
                     initializeLocationMapPicker('map--editLocationPicker', modalElement.querySelector('#editLocation--latitude'), modalElement.querySelector('#editLocation--longitude'));
@@ -176,11 +164,10 @@
     function buildLocationRowElement(location) {
         const rowElement = document.createElement('tr');
         rowElement.dataset.locationId = location.locationId.toString();
-        // eslint-disable-next-line no-unsanitized/property
-        rowElement.innerHTML = /* html */ `
+        rowElement.innerHTML = `
       <td class="has-text-centered has-width-1">
         ${location.recordSync_isSynced
-            ? /* html */ `
+            ? `
               <span class="is-size-7 has-text-grey" title="Synchronized">
                 <i class="fa-solid fa-arrows-rotate"></i>
               </span>
@@ -222,7 +209,7 @@
     }
     function renderLocations(locations) {
         if (locations.length === 0) {
-            locationsContainerElement.innerHTML = /* html */ `
+            locationsContainerElement.innerHTML = `
         <div class="message is-info">
           <div class="message-body">
             No locations available.
@@ -234,7 +221,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable has-sticky-header';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>
@@ -255,27 +242,19 @@
             const rowElement = buildLocationRowElement(location);
             tableElement.querySelector('tbody')?.append(rowElement);
         }
-        // Add event listeners for edit buttons
         for (const button of tableElement.querySelectorAll('.edit-location')) {
             button.addEventListener('click', editLocation);
         }
-        // Add event listeners for delete buttons
         for (const button of tableElement.querySelectorAll('.delete-location')) {
             button.addEventListener('click', deleteLocation);
         }
         locationsContainerElement.replaceChildren(tableElement);
     }
-    /**
-     * Render locations with pagination
-     */
     function renderLocationsWithPagination(locations) {
-        // Calculate pagination
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIndex = startIndex + ITEMS_PER_PAGE;
         const paginatedLocations = locations.slice(startIndex, endIndex);
-        // Render table
         renderLocations(paginatedLocations);
-        // Add pagination controls if needed
         if (locations.length > ITEMS_PER_PAGE) {
             const paginationControls = shiftLog.buildPaginationControls({
                 totalCount: locations.length,
@@ -325,7 +304,6 @@
                     ?.addEventListener('submit', doAddLocation);
                 modalElement.querySelector('#addLocation--cityProvince').value = exports.defaultCityProvince;
                 modalElement.querySelector('#addLocation--address1').focus();
-                // Initialize map picker
                 const mapPickerElement = modalElement.querySelector('#map--addLocationPicker');
                 if (mapPickerElement !== null) {
                     initializeLocationMapPicker('map--addLocationPicker', modalElement.querySelector('#addLocation--latitude'), modalElement.querySelector('#addLocation--longitude'));
@@ -337,18 +315,13 @@
         });
     });
     renderLocationsWithPagination(exports.locations);
-    /*
-     * Filter locations with debouncing
-     */
     const filterInput = document.querySelector('#filter--locations');
     let filterTimeout = null;
     if (filterInput !== null) {
         filterInput.addEventListener('input', () => {
-            // Clear existing timeout
             if (filterTimeout !== null) {
                 clearTimeout(filterTimeout);
             }
-            // Set new timeout (debounce for 300ms)
             filterTimeout = setTimeout(() => {
                 const filterText = filterInput.value.toLowerCase();
                 if (filterText === '') {

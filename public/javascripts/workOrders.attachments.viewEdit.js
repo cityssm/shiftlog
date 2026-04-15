@@ -3,11 +3,7 @@
     const workOrderId = workOrderFormElement === null
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
-    /*
-     * Attachments functionality
-     */
     const attachmentsContainerElement = document.querySelector('#container--attachments');
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- for safety
     if (attachmentsContainerElement === null) {
         return;
     }
@@ -41,13 +37,12 @@
         return 'fa-file';
     }
     function renderAttachments(attachments) {
-        // Update attachments count
         const attachmentsCountElement = document.querySelector('#attachmentsCount');
         if (attachmentsCountElement !== null) {
             attachmentsCountElement.textContent = attachments.length.toString();
         }
         if (attachments.length === 0) {
-            attachmentsContainerElement.innerHTML = /* html */ `
+            attachmentsContainerElement.innerHTML = `
         <div
           class="message is-info"
         >
@@ -65,13 +60,12 @@
                     attachment.recordCreate_userName === exports.shiftLog.userName);
             const fileIcon = getFileIcon(attachment.attachmentFileType);
             const isImage = attachment.attachmentFileType.startsWith('image/');
-            // eslint-disable-next-line no-unsanitized/property
-            attachmentElement.innerHTML = /* html */ `
+            attachmentElement.innerHTML = `
         <article class="media">
           <figure class="media-left">
             <p class="image is-48x48">
               ${isImage
-                ? /* html */ `
+                ? `
                     <img
                       src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline"
                       alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
@@ -100,7 +94,7 @@
                     ${cityssm.escapeHTML(attachment.attachmentFileName)}
                   </a>
                   ${attachment.isWorkOrderThumbnail
-                ? /* html */ `
+                ? `
                         <span
                           class="tag is-info is-light ml-1"
                           title="Thumbnail"
@@ -125,7 +119,7 @@
               </p>
             </div>
             ${canEdit && isImage && !attachment.isWorkOrderThumbnail
-                ? /* html */ `
+                ? `
                   <div class="buttons">
                     <button
                       class="button is-small is-info is-light set-thumbnail"
@@ -141,7 +135,7 @@
                 : ''}
           </div>
           ${canEdit
-                ? /* html */ `
+                ? `
                 <div class="media-right">
                   <div class="buttons">
                     <button
@@ -167,7 +161,6 @@
                 : ''}
         </article>
       `;
-            // Add event listeners
             if (canEdit) {
                 const deleteLink = attachmentElement.querySelector('.delete-attachment');
                 deleteLink.addEventListener('click', (event) => {
@@ -250,10 +243,8 @@
             onshow(modalElement) {
                 exports.shiftLog.setUnsavedChanges('modal');
                 modalElement.querySelector('#addWorkOrderAttachment--workOrderId').value = workOrderId;
-                // Display max file size
                 const maxSizeElement = modalElement.querySelector('#addWorkOrderAttachment--maxSize');
                 maxSizeElement.textContent = `Maximum file size: ${formatFileSize(exports.attachmentMaximumFileSizeBytes)}`;
-                // Handle file selection display
                 const fileInput = modalElement.querySelector('#addWorkOrderAttachment--attachmentFile');
                 const fileNameSpan = modalElement.querySelector('#addWorkOrderAttachment--fileName');
                 fileInput.addEventListener('change', () => {
@@ -362,12 +353,10 @@
             renderAttachments(responseJSON.attachments);
         });
     }
-    // Add attachment button
     document
         .querySelector('#button--addAttachment')
         ?.addEventListener('click', () => {
         showAddAttachmentModal();
     });
-    // Load attachments initially
     loadAttachments();
 })();

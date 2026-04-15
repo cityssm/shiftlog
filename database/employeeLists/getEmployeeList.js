@@ -2,12 +2,11 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getEmployeeList(employeeListId) {
     const pool = await getShiftLogConnectionPool();
-    // Get the employee list
     const listResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('employeeListId', employeeListId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         el.employeeListId,
         el.employeeListName,
@@ -29,12 +28,11 @@ export default async function getEmployeeList(employeeListId) {
         return undefined;
     }
     const employeeList = listResult.recordset[0];
-    // Get the members
     const membersResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('employeeListId', employeeListId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         elm.employeeListId,
         elm.employeeNumber,

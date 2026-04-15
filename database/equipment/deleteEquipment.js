@@ -10,7 +10,7 @@ export default async function deleteEquipment(equipmentNumber, user) {
             .input('equipmentNumber', equipmentNumber)
             .input('recordDelete_userName', user.userName)
             .input('recordDelete_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.Equipment
         SET
           recordDelete_userName = @recordDelete_userName,

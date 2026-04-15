@@ -6,7 +6,7 @@ export default async function getAssignedToList(userName) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         a.assignedToId,
         a.assignedToName,
@@ -24,7 +24,7 @@ export default async function getAssignedToList(userName) {
         a.instance = @instance
         AND a.recordDelete_dateTime IS NULL ${userName === undefined
         ? ''
-        : /* sql */ `
+        : `
               AND (
                 a.userGroupId IS NULL
                 OR a.userGroupId IN (

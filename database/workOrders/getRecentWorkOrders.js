@@ -4,7 +4,7 @@ export default async function getRecentWorkOrders(limit, user) {
     const pool = await getShiftLogConnectionPool();
     let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         wType.userGroupId IS NULL
         OR wType.userGroupId IN (
@@ -23,7 +23,7 @@ export default async function getRecentWorkOrders(limit, user) {
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
         .input('limit', limit)
-        .query(/* sql */ `
+        .query(`
       SELECT
         TOP (@limit) w.workOrderId,
         w.workOrderNumberYear,

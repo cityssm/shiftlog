@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     const urlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
@@ -9,7 +8,6 @@
     let shiftWorkOrders = exports.shiftWorkOrders;
     let allMilestones = [];
     function updateCounts() {
-        // Update count badges
         const workOrdersCountElement = document.querySelector('#workOrdersCount');
         if (workOrdersCountElement !== null) {
             workOrdersCountElement.textContent = shiftWorkOrders.length.toString();
@@ -18,7 +16,6 @@
         if (milestonesCountElement !== null) {
             milestonesCountElement.textContent = allMilestones.length.toString();
         }
-        // Show/hide tasks icon indicator
         const hasTasksIconElement = document.querySelector('#icon--hasTasks');
         if (hasTasksIconElement !== null) {
             hasTasksIconElement.classList.toggle('is-hidden', shiftWorkOrders.length === 0);
@@ -27,7 +24,7 @@
     function renderShiftWorkOrders() {
         const containerElement = document.querySelector('#container--shiftWorkOrders');
         if (shiftWorkOrders.length === 0) {
-            containerElement.innerHTML = /* html */ `
+            containerElement.innerHTML = `
         <div class="message">
           <div class="message-body">
             No ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} assigned to this shift.
@@ -38,8 +35,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} #</th>
@@ -55,8 +51,7 @@
         const tbodyElement = tableElement.querySelector('tbody');
         for (const workOrder of shiftWorkOrders) {
             const trElement = document.createElement('tr');
-            // eslint-disable-next-line no-unsanitized/property
-            trElement.innerHTML = /* html */ `
+            trElement.innerHTML = `
         <td>
           <a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
@@ -71,7 +66,7 @@
         <td>${cityssm.escapeHTML(workOrder.workOrderDetails.slice(0, 100))}${workOrder.workOrderDetails.length > 100 ? '...' : ''}</td>
         <td>${cityssm.escapeHTML(workOrder.shiftWorkOrderNote)}</td>
         ${isEdit
-                ? /* html */ `
+                ? `
               <td class="has-text-right">
                 <div class="buttons is-right">
                   <button
@@ -112,7 +107,7 @@
     function renderMilestones() {
         const containerElement = document.querySelector('#container--shiftMilestones');
         if (allMilestones.length === 0) {
-            containerElement.innerHTML = /* html */ `
+            containerElement.innerHTML = `
         <div class="message">
           <div class="message-body">
             No milestones on related ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())}.
@@ -123,8 +118,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} #</th>
@@ -143,12 +137,11 @@
             const trElement = document.createElement('tr');
             const isComplete = milestone.milestoneCompleteDateTime !== null &&
                 milestone.milestoneCompleteDateTime !== undefined;
-            // eslint-disable-next-line no-unsanitized/property
-            trElement.innerHTML = /* html */ `
+            trElement.innerHTML = `
         <td>
           ${workOrder === undefined
                 ? ''
-                : /* html */ `
+                : `
                 <a href="${workOrdersUrlPrefix}/${workOrder.workOrderId}" target="_blank">
                   ${cityssm.escapeHTML(workOrder.workOrderNumber)}
                 </a>
@@ -159,11 +152,11 @@
         <td>${milestone.milestoneDueDateTime !== null && milestone.milestoneDueDateTime !== undefined ? new Date(milestone.milestoneDueDateTime).toLocaleString() : ''}</td>
         <td>
           ${isComplete
-                ? /* html */ `<span class="icon has-text-success"><i class="fa-solid fa-check"></i></span> ${new Date(milestone.milestoneCompleteDateTime ?? '').toLocaleString()}`
+                ? `<span class="icon has-text-success"><i class="fa-solid fa-check"></i></span> ${new Date(milestone.milestoneCompleteDateTime ?? '').toLocaleString()}`
                 : ''}
         </td>
         ${isEdit && !isComplete
-                ? /* html */ `
+                ? `
               <td class="has-text-right">
                 <button
                   class="button is-small is-primary button--complete"
@@ -190,7 +183,6 @@
         }
     }
     function loadMilestones() {
-        // Load milestones for all work orders
         allMilestones = [];
         if (shiftWorkOrders.length === 0) {
             renderMilestones();
@@ -199,13 +191,10 @@
         }
         let loadedCount = 0;
         for (const workOrder of shiftWorkOrders) {
-            cityssm.postJSON(`${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`, {}, 
-            // eslint-disable-next-line @typescript-eslint/no-loop-func
-            (responseJSON) => {
+            cityssm.postJSON(`${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`, {}, (responseJSON) => {
                 allMilestones.push(...responseJSON.milestones);
                 loadedCount += 1;
                 if (loadedCount === shiftWorkOrders.length) {
-                    // Sort milestones by due date
                     allMilestones.sort((a, b) => {
                         if (a.milestoneDueDateTime === null ||
                             a.milestoneDueDateTime === undefined) {
@@ -230,8 +219,7 @@
         let modalElement;
         function performSearch(searchString, limit = 20) {
             const resultsContainer = modalElement.querySelector('#addWorkOrder--results');
-            // eslint-disable-next-line no-unsanitized/property
-            resultsContainer.innerHTML = /* html */ `
+            resultsContainer.innerHTML = `
         <div class="message is-info">
           <div class="message-body">
             ${searchString.length > 0 ? 'Searching...' : 'Loading recent records...'}
@@ -245,8 +233,7 @@
                 offset: 0
             }, (responseJSON) => {
                 if (!responseJSON.success || responseJSON.workOrders.length === 0) {
-                    // eslint-disable-next-line no-unsanitized/property
-                    resultsContainer.innerHTML = /* html */ `
+                    resultsContainer.innerHTML = `
               <div class="message is-warning">
                 <div class="message-body">
                   No open ${cityssm.escapeHTML(shiftLog.workOrdersSectionName.toLowerCase())} found
@@ -256,10 +243,9 @@
             `;
                     return;
                 }
-                // Render search results
                 const tableElement = document.createElement('table');
                 tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-                tableElement.innerHTML = /* html */ `
+                tableElement.innerHTML = `
             <thead>
               <tr>
                 <th>${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)} #</th>
@@ -274,8 +260,7 @@
                 const tbodyElement = tableElement.querySelector('tbody');
                 for (const workOrder of responseJSON.workOrders) {
                     const trElement = document.createElement('tr');
-                    // eslint-disable-next-line no-unsanitized/property
-                    trElement.innerHTML = /* html */ `
+                    trElement.innerHTML = `
               <td>${cityssm.escapeHTML(workOrder.workOrderNumber)}</td>
               <td>${cityssm.escapeHTML(workOrder.workOrderType ?? '')}</td>
               <td>${cityssm.escapeHTML(workOrder.requestorName)}</td>
@@ -293,8 +278,7 @@
                 if (responseJSON.totalCount > limit) {
                     const messageElement = document.createElement('div');
                     messageElement.className = 'message is-info mt-2';
-                    // eslint-disable-next-line no-unsanitized/property
-                    messageElement.innerHTML = /* html */ `
+                    messageElement.innerHTML = `
               <div class="message-body">
                 Showing ${limit} of ${cityssm.escapeHTML(responseJSON.totalCount.toString())} results.
                 ${searchString.length > 0 ? 'Refine your search to see more specific results.' : 'Use the search box to find specific records.'}
@@ -302,7 +286,6 @@
             `;
                     resultsContainer.append(messageElement);
                 }
-                // Add event listeners to select buttons
                 const selectButtons = resultsContainer.querySelectorAll('.button--select');
                 for (const button of selectButtons) {
                     button.addEventListener('click', (selectEvent) => {
@@ -331,7 +314,6 @@
             performSearch(searchString, 20);
         }
         function selectWorkOrder(workOrder) {
-            // Hide search results and show the form
             const resultsContainer = modalElement.querySelector('#addWorkOrder--results');
             resultsContainer.classList.add('is-hidden');
             const addForm = modalElement.querySelector('#addWorkOrder--form');
@@ -340,7 +322,7 @@
             submitButton.classList.remove('is-hidden');
             modalElement.querySelector('#addWorkOrder--selectedWorkOrderId').value = workOrder.workOrderId.toString();
             const selectedWorkOrderDiv = modalElement.querySelector('#addWorkOrder--selectedWorkOrder');
-            selectedWorkOrderDiv.innerHTML = /* html */ `
+            selectedWorkOrderDiv.innerHTML = `
         <p class="mb-2">
           <strong>
             ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)}
@@ -392,7 +374,6 @@
                 searchForm.addEventListener('submit', doSearch);
                 const addForm = modalElement.querySelector('#addWorkOrder--form');
                 addForm.addEventListener('submit', doAdd);
-                // Load 10 most recent open work orders by default
                 performSearch('', 10);
                 modalElement.querySelector('#addWorkOrder--searchString').focus();
             },
@@ -529,7 +510,6 @@
             .querySelector('#button--addWorkOrder')
             ?.addEventListener('click', addWorkOrder);
     }
-    // Initial render
     renderShiftWorkOrders();
     renderMilestones();
     updateCounts();

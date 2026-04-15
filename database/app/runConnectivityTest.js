@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import { setTimeout as delay } from 'node:timers/promises';
 import { millisecondsInOneHour, secondsToMillis } from '@cityssm/to-millis';
 import Debug from 'debug';
@@ -8,11 +7,10 @@ const debug = Debug(`${DEBUG_NAMESPACE}:database:runConnectivityTest`);
 export default async function runConnectivityTest() {
     try {
         const pool = await getShiftLogConnectionPool();
-        const result = await pool.request().query(/* sql */ `
+        const result = await pool.request().query(`
       SELECT
         1 AS test
     `);
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         return result.recordset.length === 1 && result.recordset[0].test === 1;
     }
     catch {
@@ -26,7 +24,6 @@ const maxRetries = Math.floor(millisecondsInOneHour / retryIntervalMs);
 export async function runConnectivityTestUntilSuccess() {
     let isConnected = false;
     let retryCount = 0;
-    // Try to connect until successful
     while (!isConnected) {
         isConnected = await runConnectivityTest();
         if (!isConnected) {

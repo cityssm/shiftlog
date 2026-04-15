@@ -14,7 +14,7 @@ function buildWhereClause(filters, user) {
         whereClause += ' AND s.supervisorEmployeeNumber = @supervisorEmployeeNumber';
     }
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         sType.userGroupId IS NULL
         OR sType.userGroupId IN (
@@ -39,10 +39,9 @@ export default async function getShifts(filters, options, user) {
     const offset = typeof options.offset === 'string'
         ? Number.parseInt(options.offset, 10)
         : options.offset;
-    // Get total count if limit === -1
     let totalCount = 0;
     if (limit !== -1) {
-        const countSql = /* sql */ `
+        const countSql = `
       SELECT
         count(*) AS totalCount
       FROM
@@ -59,7 +58,6 @@ export default async function getShifts(filters, options, user) {
             .query(countSql);
         totalCount = countResult.recordset[0]?.totalCount ?? 0;
     }
-    // Main query with limit and offset
     let shifts = [];
     if (totalCount > 0 || limit === -1) {
         const shiftsResult = await pool
@@ -69,7 +67,7 @@ export default async function getShifts(filters, options, user) {
             .input('shiftTypeDataListItemId', filters.shiftTypeDataListItemId ?? null)
             .input('supervisorEmployeeNumber', filters.supervisorEmployeeNumber ?? null)
             .input('userName', user?.userName)
-            .query(/* sql */ `
+            .query(`
         SELECT
           s.shiftId,
           s.shiftDate,

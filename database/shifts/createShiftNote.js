@@ -6,11 +6,10 @@ export default async function createShiftNote(createShiftNoteForm, userName) {
         return undefined;
     }
     const pool = await getShiftLogConnectionPool();
-    // Get the next sequence number
     const sequenceResult = await pool
         .request()
         .input('shiftId', createShiftNoteForm.shiftId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         isnull(max(noteSequence), 0) + 1 AS nextSequence
       FROM
@@ -19,7 +18,6 @@ export default async function createShiftNote(createShiftNoteForm, userName) {
         shiftId = @shiftId
     `);
     const nextSequence = sequenceResult.recordset[0].nextSequence;
-    // Insert the note
     const result = await pool
         .request()
         .input('shiftId', createShiftNoteForm.shiftId)
@@ -27,7 +25,7 @@ export default async function createShiftNote(createShiftNoteForm, userName) {
         .input('noteTypeId', createShiftNoteForm.noteTypeId ?? null)
         .input('noteText', createShiftNoteForm.noteText)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.ShiftNotes (
           shiftId,
@@ -48,19 +46,17 @@ export default async function createShiftNote(createShiftNoteForm, userName) {
         )
     `);
     if (result.rowsAffected[0] > 0) {
-        // Insert field values if note type is set and fields are provided
         if (createShiftNoteForm.noteTypeId !== undefined &&
             createShiftNoteForm.fields !== undefined) {
             for (const [noteTypeFieldId, fieldValue] of Object.entries(createShiftNoteForm.fields)) {
                 if (fieldValue !== undefined && fieldValue !== null && fieldValue !== '') {
-                    // eslint-disable-next-line no-await-in-loop -- inserting field values sequentially
                     await pool
                         .request()
                         .input('shiftId', createShiftNoteForm.shiftId)
                         .input('noteSequence', nextSequence)
                         .input('noteTypeFieldId', noteTypeFieldId)
                         .input('fieldValue', fieldValue)
-                        .query(/* sql */ `
+                        .query(`
               INSERT INTO
                 ShiftLog.ShiftNoteFields (
                   shiftId,

@@ -52,7 +52,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         : updateWorkOrderForm.assignedToId)
         .input('moreInfoFormDataJson', moreInfoFormDataJson)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrders
       SET
         workOrderTypeId = @workOrderTypeId,
@@ -79,7 +79,6 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         AND recordDelete_dateTime IS NULL
     `);
     if (result.rowsAffected[0] > 0) {
-        // Send Notification
         sendNotificationWorkerMessage('workOrder.update', typeof updateWorkOrderForm.workOrderId === 'string'
             ? Number.parseInt(updateWorkOrderForm.workOrderId, 10)
             : updateWorkOrderForm.workOrderId);

@@ -3,7 +3,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getAvailableAdhocTasks(shiftId) {
     const pool = await getShiftLogConnectionPool();
     const request = pool.request();
-    let query = /* sql */ `
+    let query = `
     SELECT
       t.adhocTaskId,
       t.adhocTaskTypeDataListItemId,
@@ -48,7 +48,7 @@ export default async function getAvailableAdhocTasks(shiftId) {
   `;
     if (shiftId !== undefined && shiftId !== '') {
         request.input('shiftId', shiftId);
-        query += /* sql */ `
+        query += `
       AND t.adhocTaskId NOT IN (
         SELECT
           adhocTaskId
@@ -59,7 +59,7 @@ export default async function getAvailableAdhocTasks(shiftId) {
       )
     `;
     }
-    query += /* sql */ `
+    query += `
     ORDER BY
       t.taskDueDateTime,
       t.recordCreate_dateTime DESC

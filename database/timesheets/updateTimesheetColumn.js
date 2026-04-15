@@ -10,7 +10,7 @@ export default async function updateTimesheetColumn(updateColumnForm) {
         .input('costCenterA', updateColumnForm.costCenterA ?? undefined)
         .input('costCenterB', updateColumnForm.costCenterB ?? undefined)
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.TimesheetColumns
       SET
         columnTitle = @columnTitle,

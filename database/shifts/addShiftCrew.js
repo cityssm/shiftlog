@@ -3,23 +3,21 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function addShiftCrew(form, user) {
     const pool = await getShiftLogConnectionPool();
     try {
-        // Add the crew to the shift
         await pool
             .request()
             .input('shiftId', form.shiftId)
             .input('crewId', form.crewId)
             .input('shiftCrewNote', form.shiftCrewNote ?? '')
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.ShiftCrews (shiftId, crewId, shiftCrewNote)
         VALUES
           (@shiftId, @crewId, @shiftCrewNote)
       `);
-        // Get crew members
         const crewMembersResult = await pool
             .request()
             .input('crewId', form.crewId)
-            .query(/* sql */ `
+            .query(`
         SELECT
           employeeNumber
         FROM
@@ -27,16 +25,14 @@ export default async function addShiftCrew(form, user) {
         WHERE
           crewId = @crewId
       `);
-        // Add crew members to shift employees (if not already there)
         for (const member of crewMembersResult.recordset) {
-            // eslint-disable-next-line no-await-in-loop
             await pool
                 .request()
                 .input('shiftId', form.shiftId)
                 .input('instance', getConfigProperty('application.instance'))
                 .input('employeeNumber', member.employeeNumber)
                 .input('crewId', form.crewId)
-                .query(/* sql */ `
+                .query(`
           IF NOT EXISTS (
             SELECT
               1
@@ -58,11 +54,10 @@ export default async function addShiftCrew(form, user) {
             (@shiftId, @instance, @employeeNumber, @crewId, '') END
         `);
         }
-        // Get crew equipment
         const crewEquipmentResult = await pool
             .request()
             .input('crewId', form.crewId)
-            .query(/* sql */ `
+            .query(`
         SELECT
           equipmentNumber,
           employeeNumber
@@ -71,16 +66,14 @@ export default async function addShiftCrew(form, user) {
         WHERE
           crewId = @crewId
       `);
-        // Add crew equipment to shift equipment (if not already there)
         for (const equipment of crewEquipmentResult.recordset) {
-            // eslint-disable-next-line no-await-in-loop
             await pool
                 .request()
                 .input('shiftId', form.shiftId)
                 .input('instance', getConfigProperty('application.instance'))
                 .input('equipmentNumber', equipment.equipmentNumber)
                 .input('employeeNumber', equipment.employeeNumber ?? null)
-                .query(/* sql */ `
+                .query(`
           IF NOT EXISTS (
             SELECT
               1

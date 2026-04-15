@@ -28,7 +28,6 @@ else {
             authenticator = new PlainTextAuthenticator(authenticationConfig.config);
             break;
         }
-        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         default: {
             debug("Unknown 'login.authentication' type");
         }
@@ -47,7 +46,6 @@ export async function authenticate(userName, passwordPlain) {
 const workOrderRouter = getConfigProperty('workOrders.router').toLowerCase();
 const shiftRouter = getConfigProperty('shifts.router').toLowerCase();
 const timesheetRouter = getConfigProperty('timesheets.router').toLowerCase();
-/* eslint-disable @cspell/spellchecker */
 const safeRedirects = new Set([
     '/admin/apiauditlogs',
     '/admin/assignedto',
@@ -66,7 +64,6 @@ const safeRedirects = new Set([
     '/dashboard/reports',
     '/dashboard/usersettings'
 ]);
-/* eslint-enable @cspell/spellchecker */
 export function getSafeRedirectUrl(possibleRedirectUrl = '') {
     const urlPrefix = getConfigProperty('reverseProxy.urlPrefix');
     if (typeof possibleRedirectUrl === 'string') {

@@ -13,7 +13,7 @@ export default async function addEmployeeList(employeeListFields, user) {
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.EmployeeLists (
             instance,

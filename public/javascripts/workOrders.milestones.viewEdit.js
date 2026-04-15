@@ -1,14 +1,9 @@
-/* eslint-disable max-lines */
 (() => {
     const workOrderFormElement = document.querySelector('#form--workOrder');
     const workOrderId = workOrderFormElement === null
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
-    /*
-     * Milestones functionality
-     */
     const milestonesContainerElement = document.querySelector('#container--milestones');
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (milestonesContainerElement === null) {
         return;
     }
@@ -20,14 +15,13 @@
         return `${cityssm.dateToString(date)} ${cityssm.dateToTimeString(date)}`;
     }
     function renderMilestones(milestones) {
-        // Update milestones count (completed / total)
         const milestonesCountElement = document.querySelector('#milestonesCount');
         if (milestonesCountElement !== null) {
             const completedCount = milestones.filter((m) => m.milestoneCompleteDateTime !== null).length;
             milestonesCountElement.textContent = `${completedCount} / ${milestones.length}`;
         }
         if (milestones.length === 0) {
-            milestonesContainerElement.innerHTML = /* html */ `
+            milestonesContainerElement.innerHTML = `
         <div class="message is-info">
           <p class="message-body">No milestones have been added yet.</p>
         </div>
@@ -36,8 +30,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        // eslint-disable-next-line no-unsanitized/property
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           ${exports.isEdit ? '<th class="is-hidden-print" style="width: 30px;"></th>' : ''}
@@ -62,10 +55,9 @@
             const canEditMilestone = exports.isEdit &&
                 (exports.shiftLog.userCanManageWorkOrders ||
                     milestone.recordCreate_userName === exports.shiftLog.userName);
-            // eslint-disable-next-line no-unsanitized/property
-            trElement.innerHTML = /* html */ `
+            trElement.innerHTML = `
         ${exports.isEdit
-                ? /* html */ `
+                ? `
               <td class="is-hidden-print">
                 <span class="icon drag-handle" style="cursor: grab;">
                   <i class="fa-solid fa-grip-vertical"></i>
@@ -80,7 +72,7 @@
             <strong>${cityssm.escapeHTML(milestone.milestoneTitle)}</strong>
           </div>
           ${milestone.milestoneDescription
-                ? /* html */ `
+                ? `
                 <div class="is-size-7 has-text-grey">
                   ${cityssm.escapeHTML(milestone.milestoneDescription.slice(0, 100))}${milestone.milestoneDescription.length > 100 ? '…' : ''}
                 </div>
@@ -97,7 +89,7 @@
           ${milestone.milestoneCompleteDateTime
                 ? formatDateTime(milestone.milestoneCompleteDateTime)
                 : canEditMilestone
-                    ? /* html */ `
+                    ? `
                   <button class="button is-small is-success is-light complete-milestone" type="button" title="Complete Milestone">
                     <span class="icon"><i class="fa-solid fa-check"></i></span>
                     <span>Mark as Complete</span>
@@ -106,10 +98,10 @@
                     : '<span class="has-text-grey">-</span>'}
         </td>
         ${exports.isEdit
-                ? /* html */ `
+                ? `
               <td class="is-hidden-print">
                 ${canEditMilestone
-                    ? /* html */ `
+                    ? `
                       <div class="buttons are-small is-justify-content-flex-end">
                         <button class="button edit-milestone" type="button" title="Edit">
                           <span class="icon"><i class="fa-solid fa-edit"></i></span>
@@ -124,7 +116,6 @@
             `
                 : ''}
       `;
-            // Add event listeners
             if (canEditMilestone) {
                 trElement
                     .querySelector('.edit-milestone')
@@ -144,7 +135,6 @@
             }
             tbodyElement.append(trElement);
         }
-        // Initialize sortable for reordering
         if (exports.isEdit && exports.shiftLog.userCanUpdateWorkOrders) {
             Sortable.create(tbodyElement, {
                 handle: '.drag-handle',
@@ -217,20 +207,16 @@
             onshow(modalElement) {
                 exports.shiftLog.setUnsavedChanges('modal');
                 modalElement.querySelector('#addWorkOrderMilestone--workOrderId').value = workOrderId;
-                // Populate Assigned To select
                 const assignedToSelect = modalElement.querySelector('#addWorkOrderMilestone--assignedToId');
                 populateAssignedToSelect(assignedToSelect);
-                // Set the default value to the work order's "assigned to" value
                 if (exports.workOrderAssignedToId !== null) {
                     assignedToSelect.value = exports.workOrderAssignedToId.toString();
                 }
-                // Initialize flatpickr on date fields
                 flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneDueDateTimeString'), dateTimePickerOptions);
                 const completeDatePicker = flatpickr(modalElement.querySelector('#addWorkOrderMilestone--milestoneCompleteDateTimeString'), {
                     ...dateTimePickerOptions,
                     maxDate: new Date()
                 });
-                // Add "Now" button handler for complete date
                 modalElement
                     .querySelector('#addWorkOrderMilestone--setCompleteTimeNow')
                     ?.addEventListener('click', () => {
@@ -277,7 +263,6 @@
                 modalElement.querySelector('#editWorkOrderMilestone--workOrderMilestoneId').value = milestone.workOrderMilestoneId.toString();
                 modalElement.querySelector('#editWorkOrderMilestone--milestoneTitle').value = milestone.milestoneTitle;
                 modalElement.querySelector('#editWorkOrderMilestone--milestoneDescription').value = milestone.milestoneDescription;
-                // Initialize flatpickr on date fields
                 const dueDateInput = modalElement.querySelector('#editWorkOrderMilestone--milestoneDueDateTimeString');
                 flatpickr(dueDateInput, {
                     ...dateTimePickerOptions,
@@ -293,7 +278,6 @@
                         : undefined,
                     maxDate: new Date()
                 });
-                // Add "Now" button handler for complete date
                 modalElement
                     .querySelector('#editWorkOrderMilestone--setCompleteTimeNow')
                     ?.addEventListener('click', () => {
@@ -301,14 +285,11 @@
                     completeDatePicker.set('maxDate', now);
                     completeDatePicker.setDate(now, true);
                 });
-                // Populate Assigned To select
                 const assignedToSelect = modalElement.querySelector('#editWorkOrderMilestone--assignedToId');
                 populateAssignedToSelect(assignedToSelect);
-                // Set the selected option if there is one
                 if (milestone.assignedToId !== null) {
                     assignedToSelect.value = milestone.assignedToId?.toString() ?? '';
                 }
-                // If no assignedTo is set, leave it as "(Not Assigned)" - don't default to work order's value
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -331,7 +312,6 @@
             okButton: {
                 text: 'Complete Milestone',
                 callbackFunction: () => {
-                    // First, get the current milestone data
                     cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (milestonesResponseJSON) => {
                         const milestone = milestonesResponseJSON.milestones.find((m) => m.workOrderMilestoneId === workOrderMilestoneId);
                         if (!milestone) {
@@ -404,12 +384,10 @@
             renderMilestones(responseJSON.milestones);
         });
     }
-    // Add milestone button
     document
         .querySelector('#button--addMilestone')
         ?.addEventListener('click', () => {
         showAddMilestoneModal();
     });
-    // Load milestones initially
     loadMilestones();
 })();

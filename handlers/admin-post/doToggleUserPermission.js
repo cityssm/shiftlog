@@ -30,7 +30,6 @@ export default async function handler(request, response) {
         return;
     }
     try {
-        // Get current user data
         const users = await getUsers();
         const currentUser = users.find((u) => u.userName === userName);
         if (!currentUser) {
@@ -40,7 +39,6 @@ export default async function handler(request, response) {
             });
             return;
         }
-        // Toggle the permission
         const updateForm = {
             userName,
             isActive: permissionField === 'isActive'

@@ -1,22 +1,13 @@
 import { dateToString } from '@cityssm/utils-datetime';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-/**
- * Get work order accomplishment statistics for a date range
- * @param startDate - Start date for the period
- * @param endDate - End date for the period
- * @param filterType - 'month' or 'year' for time series grouping
- * @param user - Optional user for permission filtering
- * @returns Work order accomplishment data
- */
 export default async function getWorkOrderAccomplishmentStats(startDate, endDate, filterType, user) {
     const pool = await getShiftLogConnectionPool();
     const instance = getConfigProperty('application.instance');
     const startDateString = dateToString(startDate);
     const endDateString = dateToString(endDate);
-    // Build user group filter
     const userGroupFilter = user
-        ? /* sql */ `
+        ? `
         AND (
           wType.userGroupId IS NULL
           OR wType.userGroupId IN (
@@ -30,14 +21,13 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         )
       `
         : '';
-    // 1. Get overall statistics
     const statsRequest = pool.request();
     statsRequest
         .input('instance', instance)
         .input('startDate', startDateString)
         .input('endDate', endDateString)
         .input('userName', user?.userName);
-    const statsResult = await statsRequest.query(/* sql */ `
+    const statsResult = await statsRequest.query(`
     SELECT
       COALESCE(
         SUM(
@@ -80,21 +70,18 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     const total = totalOpen + totalClosed;
     const hundredPercent = 100;
     const percentClosed = total > 0 ? (totalClosed / total) * hundredPercent : 0;
-    // 2. Get time series data (count of open work orders at each time bucket)
     const timeSeriesRequest = pool.request();
     timeSeriesRequest
         .input('instance', instance)
         .input('startDate', startDateString)
         .input('endDate', endDateString)
         .input('userName', user?.userName);
-    // Generate time buckets and count open work orders at each point
-    // For month: daily buckets, For year: monthly buckets (using last day of month)
-    const timeSeriesResult = await timeSeriesRequest.query(/* sql */ `
+    const timeSeriesResult = await timeSeriesRequest.query(`
     WITH
       DateBuckets AS (
         SELECT
           ${filterType === 'month'
-        ? /* sql */ `
+        ? `
               CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
               FROM
                 master..spt_values
@@ -102,7 +89,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
               TYPE = 'P'
               AND DATEADD(day, number, @startDate) <= @endDate
             `
-        : /* sql */ `
+        : `
               EOMONTH(
                 DATEFROMPARTS(
                   YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12,
@@ -144,14 +131,13 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       db.bucketDate
   `);
     const timeSeries = timeSeriesResult.recordset;
-    // 3. Get work orders by assigned to
     const byAssignedToRequest = pool.request();
     byAssignedToRequest
         .input('instance', instance)
         .input('startDate', startDateString)
         .input('endDate', endDateString)
         .input('userName', user?.userName);
-    const byAssignedToResult = await byAssignedToRequest.query(/* sql */ `
+    const byAssignedToResult = await byAssignedToRequest.query(`
     SELECT
       TOP 10 COALESCE(assignedTo.assignedToName, '(Unassigned)') AS assignedToName,
       COUNT(*) AS openedCount,
@@ -183,14 +169,13 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         closedCount: row.closedCount,
         openedCount: row.openedCount
     }));
-    // 4. Get tag statistics
     const tagsRequest = pool.request();
     tagsRequest
         .input('instance', instance)
         .input('startDate', startDateString)
         .input('endDate', endDateString)
         .input('userName', user?.userName);
-    const tagsResult = await tagsRequest.query(/* sql */ `
+    const tagsResult = await tagsRequest.query(`
     SELECT
       TOP 50 wot.tagName,
       COUNT(*) AS count
@@ -212,14 +197,13 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       count DESC
   `);
     const tags = tagsResult.recordset;
-    // 5. Get hot zones (work orders grouped by location)
     const hotZonesRequest = pool.request();
     hotZonesRequest
         .input('instance', instance)
         .input('startDate', startDateString)
         .input('endDate', endDateString)
         .input('userName', user?.userName);
-    const hotZonesResult = await hotZonesRequest.query(/* sql */ `
+    const hotZonesResult = await hotZonesRequest.query(`
     SELECT
       w.locationLatitude AS latitude,
       w.locationLongitude AS longitude,

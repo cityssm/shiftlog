@@ -3,7 +3,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import getWorkOrderTags from './getWorkOrderTags.js';
 export default async function getWorkOrder(workOrderId, userName) {
     const pool = await getShiftLogConnectionPool();
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       w.workOrderId,
       w.workOrderNumberYear,
@@ -40,7 +40,7 @@ export default async function getWorkOrder(workOrderId, userName) {
       AND w.workOrderId = @workOrderId
       AND w.instance = @instance ${userName === undefined
         ? ''
-        : /* sql */ `
+        : `
             AND (
               wType.userGroupId IS NULL
               OR wType.userGroupId IN (
@@ -76,7 +76,6 @@ export default async function getWorkOrder(workOrderId, userName) {
                 workOrder.moreInfoFormData = {};
             }
         }
-        // Get tags for this work order
         workOrder.tags = await getWorkOrderTags(workOrder.workOrderId);
         return workOrder;
     }

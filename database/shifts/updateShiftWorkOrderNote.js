@@ -6,7 +6,7 @@ export default async function updateShiftWorkOrderNote(shiftId, workOrderId, shi
         .input('shiftId', shiftId)
         .input('workOrderId', workOrderId)
         .input('shiftWorkOrderNote', shiftWorkOrderNote)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.ShiftWorkOrders
       SET
         shiftWorkOrderNote = @shiftWorkOrderNote

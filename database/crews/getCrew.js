@@ -2,12 +2,11 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getCrew(crewId) {
     const pool = await getShiftLogConnectionPool();
-    // Get the crew
     const crewResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('crewId', crewId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         c.crewId,
         c.crewName,
@@ -29,12 +28,11 @@ export default async function getCrew(crewId) {
         return undefined;
     }
     const crew = crewResult.recordset[0];
-    // Get the members
     const membersResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('crewId', crewId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         cm.crewId,
         cm.employeeNumber,
@@ -52,12 +50,11 @@ export default async function getCrew(crewId) {
         e.lastName,
         e.firstName
     `);
-    // Get the equipment
     const equipmentResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('crewId', crewId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         ce.crewId,
         ce.equipmentNumber,

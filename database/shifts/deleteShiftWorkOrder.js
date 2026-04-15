@@ -5,7 +5,7 @@ export default async function deleteShiftWorkOrder(shiftId, workOrderId) {
         .request()
         .input('shiftId', shiftId)
         .input('workOrderId', workOrderId)
-        .query(/* sql */ `
+        .query(`
       DELETE FROM ShiftLog.ShiftWorkOrders
       WHERE
         shiftId = @shiftId

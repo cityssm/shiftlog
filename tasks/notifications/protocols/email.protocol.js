@@ -24,7 +24,7 @@ export const sendWorkOrderCreateEmailNotification = async (notificationConfigura
     const response = await transporter.sendMail({
         from: emailConnectorConfig.fromAddress ?? 'no-reply@localhost',
         to: emailSpecificConfig.recipientEmails.join(', '),
-        html: /* html */ `
+        html: `
         A new ${workOrder.workOrderType} has been created.<br />
         <br />
         ${getConfigProperty('workOrders.sectionNameSingular')} Number: ${workOrder.workOrderNumber}<br />
@@ -39,7 +39,6 @@ export const sendWorkOrderCreateEmailNotification = async (notificationConfigura
         ? { success: true }
         : {
             success: false,
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             errorMessage: `Failed to send email to: ${response.rejected.join(', ')}`
         };
 };
@@ -64,7 +63,7 @@ export const sendWorkOrderUpdateEmailNotification = async (notificationConfigura
     const response = await transporter.sendMail({
         from: emailConnectorConfig.fromAddress ?? 'no-reply@localhost',
         to: emailSpecificConfig.recipientEmails.join(', '),
-        html: /* html */ `
+        html: `
         The ${workOrder.workOrderType} has been updated.<br />
         <br />
         ${getConfigProperty('workOrders.sectionNameSingular')} Number: ${workOrder.workOrderNumber}<br />
@@ -77,7 +76,6 @@ export const sendWorkOrderUpdateEmailNotification = async (notificationConfigura
         ? { success: true }
         : {
             success: false,
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             errorMessage: `Failed to send email to: ${response.rejected.join(', ')}`
         };
 };

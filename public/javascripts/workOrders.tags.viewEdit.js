@@ -3,15 +3,12 @@
     const workOrderId = workOrderFormElement === null
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
-    /*
-     * Tags functionality
-     */
     const tagsContainerElement = document.querySelector('#container--tags');
     if (tagsContainerElement !== null) {
         function renderTags(tags) {
             if (tags.length === 0) {
                 ;
-                tagsContainerElement.innerHTML = /* html */ `
+                tagsContainerElement.innerHTML = `
           <p class="has-text-grey">No tags have been added.</p>
         `;
                 return;
@@ -23,7 +20,6 @@
             for (const tag of tags) {
                 const tagElement = document.createElement('span');
                 tagElement.className = 'tag is-medium';
-                // Apply colors if available
                 if (tag.tagBackgroundColor && tag.tagTextColor) {
                     tagElement.style.backgroundColor = `#${tag.tagBackgroundColor}`;
                     tagElement.style.color = `#${tag.tagTextColor}`;
@@ -31,7 +27,6 @@
                 const tagTextElement = document.createElement('span');
                 tagTextElement.textContent = tag.tagName;
                 tagElement.append(tagTextElement);
-                // Add delete button if in edit mode
                 if (exports.isEdit) {
                     const deleteButton = document.createElement('button');
                     deleteButton.className = 'delete is-small';
@@ -87,7 +82,7 @@
                     containerElement.innerHTML = '';
                     return;
                 }
-                containerElement.innerHTML = /* html */ `
+                containerElement.innerHTML = `
           <div class="field">
             <label class="label">Suggested Tags</label>
             <div class="control">
@@ -101,7 +96,6 @@
                     const tagElement = document.createElement('button');
                     tagElement.className = 'tag is-medium is-clickable';
                     tagElement.type = 'button';
-                    // Apply colors if available
                     if ((suggestedTag.tagBackgroundColor?.length ?? 0) > 0 &&
                         (suggestedTag.tagTextColor?.length ?? 0) > 0) {
                         tagElement.style.backgroundColor = `#${suggestedTag.tagBackgroundColor}`;
@@ -177,7 +171,6 @@
                     modalElement
                         .querySelector('form')
                         ?.addEventListener('submit', doAddTag);
-                    // Fetch and render suggested tags
                     const suggestedTagsContainer = modalElement.querySelector('#container--suggestedTags');
                     if (suggestedTagsContainer !== null) {
                         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`, {}, (responseJSON) => {
@@ -201,9 +194,7 @@
                 renderTags(responseJSON.tags);
             });
         }
-        // Add tag button
         document.querySelector('#button--addTag')?.addEventListener('click', addTag);
-        // Initial load
         getTags();
     }
 })();

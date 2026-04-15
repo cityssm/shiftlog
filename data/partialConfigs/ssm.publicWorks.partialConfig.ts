@@ -42,10 +42,10 @@ config.locations = {
   whereClause: "MUNICIPALITY = 'SSM'",
 
   mappings: {
-    address1: (record: {
-      CIVICNUMBER: number
-      STREETNAME: string
-    }): string | undefined => `${record.CIVICNUMBER} ${record.STREETNAME}`,
+    address1: (record: unknown): string | undefined => {
+      const typedRecord = record as { CIVICNUMBER: number; STREETNAME: string }
+      return `${typedRecord.CIVICNUMBER} ${typedRecord.STREETNAME}`
+    },
 
     cityProvince: (): string => 'Sault Ste. Marie, ON',
 

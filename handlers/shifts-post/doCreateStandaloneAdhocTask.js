@@ -1,7 +1,6 @@
 import createAdhocTask from '../../database/adhocTasks/createAdhocTask.js';
 import getAvailableAdhocTasks from '../../database/adhocTasks/getAvailableAdhocTasks.js';
 export default async function handler(request, response) {
-    // Create the ad hoc task without assigning to a shift
     const adhocTaskId = await createAdhocTask({
         adhocTaskTypeDataListItemId: request.body.adhocTaskTypeDataListItemId,
         taskDescription: request.body.taskDescription,
@@ -29,7 +28,6 @@ export default async function handler(request, response) {
         });
     }
     else {
-        // Get all available adhoc tasks to return
         const adhocTasks = await getAvailableAdhocTasks();
         response.json({
             success: true,

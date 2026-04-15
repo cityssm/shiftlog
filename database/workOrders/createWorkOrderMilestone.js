@@ -7,11 +7,10 @@ export default async function createWorkOrderMilestone(form, userName) {
         return undefined;
     }
     const pool = await getShiftLogConnectionPool();
-    // Get the next order number
     const orderResult = await pool
         .request()
         .input('workOrderId', form.workOrderId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         isnull(max(orderNumber), 0) + 1 AS nextOrderNumber
       FROM
@@ -35,7 +34,7 @@ export default async function createWorkOrderMilestone(form, userName) {
         .input('assignedToId', form.assignedToId && form.assignedToId !== '' ? form.assignedToId : null)
         .input('orderNumber', nextOrderNumber)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.WorkOrderMilestones (
           workOrderId,
@@ -62,7 +61,6 @@ export default async function createWorkOrderMilestone(form, userName) {
         )
     `);
     if (result.rowsAffected[0] > 0) {
-        // Send Notification
         sendNotificationWorkerMessage('workOrder.update', typeof form.workOrderId === 'string'
             ? Number.parseInt(form.workOrderId, 10)
             : form.workOrderId);

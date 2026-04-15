@@ -7,7 +7,7 @@ export default async function getAvailableEquipment(shiftDateString) {
         .request()
         .input('instance', instance)
         .input('shiftDateString', shiftDateString)
-        .query(/* sql */ `
+        .query(`
       SELECT
         eq.equipmentNumber,
         eq.equipmentName

@@ -7,7 +7,7 @@ export default async function updateShiftEquipment(form) {
             .input('shiftId', form.shiftId)
             .input('equipmentNumber', form.equipmentNumber)
             .input('employeeNumber', (form.employeeNumber ?? '') === '' ? undefined : form.employeeNumber)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.ShiftEquipment
         SET
           employeeNumber = @employeeNumber

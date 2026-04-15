@@ -2,12 +2,11 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function deleteTimesheetRow(timesheetRowId) {
     const pool = await getShiftLogConnectionPool();
-    // Delete cells first
     await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('timesheetRowId', timesheetRowId)
-        .query(/* sql */ `
+        .query(`
       DELETE FROM ShiftLog.TimesheetCells
       WHERE
         timesheetRowId = @timesheetRowId
@@ -20,12 +19,11 @@ export default async function deleteTimesheetRow(timesheetRowId) {
             instance = @instance
         )
     `);
-    // Delete row
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('timesheetRowId', timesheetRowId)
-        .query(/* sql */ `
+        .query(`
       DELETE FROM ShiftLog.TimesheetRows
       WHERE
         timesheetRowId = @timesheetRowId

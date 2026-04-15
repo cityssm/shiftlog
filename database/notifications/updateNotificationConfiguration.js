@@ -12,7 +12,7 @@ export default async function updateNotificationConfiguration(form, userName) {
         .input('assignedToId', form.assignedToId && form.assignedToId !== '' ? form.assignedToId : null)
         .input('isActive', form.isActive === true || form.isActive === '1' ? 1 : 0)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.NotificationConfigurations
       SET
         notificationQueue = @notificationQueue,

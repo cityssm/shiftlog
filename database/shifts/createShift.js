@@ -17,7 +17,7 @@ export default async function createShift(createShiftForm, userName) {
         .input('shiftDescription', createShiftForm.shiftDescription)
         .input('userName', userName)
         .input('recordLockDate', recordLockDate)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.Shifts (
           instance,

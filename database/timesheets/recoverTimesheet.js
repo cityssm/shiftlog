@@ -7,7 +7,7 @@ export default async function recoverTimesheet(timesheetId, userName) {
         .input('timesheetId', timesheetId)
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Timesheets
       SET
         recordDelete_userName = NULL,

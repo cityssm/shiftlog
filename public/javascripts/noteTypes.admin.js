@@ -1,19 +1,13 @@
-/* eslint-disable max-lines -- Complex admin interface with multiple modals */
-/* eslint-disable no-unsanitized/property -- Using cityssm.escapeHTML() for sanitization */
 (() => {
     const shiftLog = exports.shiftLog;
     const noteTypesContainerElement = document.querySelector('#container--noteTypes');
     let noteTypes = exports.noteTypes;
     const userGroups = exports.userGroups;
     const dataLists = exports.dataLists;
-    // Track which panels are open
     const openPanels = new Set();
-    // Track Sortable instances
     const sortableInstances = new Map();
-    // Track current filter
     let availabilityFilter = '';
     function renderNoteTypes() {
-        // Store currently open panels before re-rendering
         const openDetails = noteTypesContainerElement.querySelectorAll('details[open]');
         for (const detail of openDetails) {
             const noteTypeId = detail.dataset.noteTypeId;
@@ -22,7 +16,6 @@
             }
         }
         noteTypesContainerElement.innerHTML = '';
-        // Filter note types based on availability
         const filteredNoteTypes = noteTypes.filter((noteType) => {
             if (availabilityFilter === '') {
                 return true;
@@ -41,7 +34,7 @@
         if (filteredNoteTypes.length === 0) {
             const emptyMessage = document.createElement('div');
             emptyMessage.className = 'panel-block is-block';
-            emptyMessage.innerHTML = /* html */ `
+            emptyMessage.innerHTML = `
         <div class="message is-info">
           <p class="message-body">
             <strong>No note types available.</strong><br />
@@ -56,7 +49,6 @@
                 const noteTypePanel = document.createElement('details');
                 noteTypePanel.className = 'panel mb-5 collapsable-panel';
                 noteTypePanel.dataset.noteTypeId = noteType.noteTypeId.toString();
-                // Restore open state
                 if (openPanels.has(noteType.noteTypeId)) {
                     noteTypePanel.setAttribute('open', '');
                 }
@@ -72,7 +64,7 @@
                 if (noteType.isAvailableTimesheets) {
                     availabilityBadges.push(`<span class="tag is-info is-light">${cityssm.escapeHTML(shiftLog.timesheetsSectionName)}</span>`);
                 }
-                summaryElement.innerHTML = /* html */ `
+                summaryElement.innerHTML = `
           <span class="icon-text">
             <span class="icon">
               <i class="fa-solid fa-chevron-right details-chevron"></i>
@@ -89,10 +81,9 @@
           </span>
         `;
                 noteTypePanel.append(summaryElement);
-                // Action buttons panel
                 const actionBlock = document.createElement('div');
                 actionBlock.className = 'panel-block is-justify-content-space-between';
-                actionBlock.innerHTML = /* html */ `
+                actionBlock.innerHTML = `
           <div>
             <button class="button is-small is-info button--editNoteType" data-note-type-id="${noteType.noteTypeId}" type="button">
               <span class="icon"><i class="fa-solid fa-pencil"></i></span>
@@ -111,11 +102,10 @@
           </div>
         `;
                 noteTypePanel.append(actionBlock);
-                // Fields table
                 const tableBlock = document.createElement('div');
                 tableBlock.className = 'panel-block p-0';
                 if (noteType.fields.length === 0) {
-                    tableBlock.innerHTML = /* html */ `
+                    tableBlock.innerHTML = `
             <div class="table-container" style="width: 100%;">
               <table class="table is-striped is-hoverable is-fullwidth mb-0">
                 <tbody>
@@ -130,7 +120,7 @@
           `;
                 }
                 else {
-                    let tableHTML = /* html */ `
+                    let tableHTML = `
             <div class="table-container" style="width: 100%;">
               <table class="table is-striped is-hoverable is-fullwidth mb-0">
                 <thead>
@@ -150,7 +140,7 @@
                         const dividerStyle = field.hasDividerAbove
                             ? ' style="border-top-width:5px"'
                             : '';
-                        tableHTML += /* html */ `
+                        tableHTML += `
               <tr data-note-type-field-id="${field.noteTypeFieldId}">
                 <td class="has-text-centered">
                   <span class="icon is-small has-text-grey handle" style="cursor: move;">
@@ -197,33 +187,26 @@
                 noteTypesContainerElement.append(noteTypePanel);
             }
         }
-        // Attach event listeners
         attachEventListeners();
-        // Initialize Sortable for each note type with fields
         initializeSortables();
     }
     function attachEventListeners() {
-        // Edit Note Type buttons
         const editButtons = noteTypesContainerElement.querySelectorAll('.button--editNoteType');
         for (const button of editButtons) {
             button.addEventListener('click', openEditNoteTypeModal);
         }
-        // Delete Note Type buttons
         const deleteButtons = noteTypesContainerElement.querySelectorAll('.button--deleteNoteType');
         for (const button of deleteButtons) {
             button.addEventListener('click', deleteNoteType);
         }
-        // Add Field buttons
         const addFieldButtons = noteTypesContainerElement.querySelectorAll('.button--addField');
         for (const button of addFieldButtons) {
             button.addEventListener('click', openAddFieldModal);
         }
-        // Edit Field buttons
         const editFieldButtons = noteTypesContainerElement.querySelectorAll('.button--editField');
         for (const button of editFieldButtons) {
             button.addEventListener('click', openEditFieldModal);
         }
-        // Delete Field buttons
         const deleteFieldButtons = noteTypesContainerElement.querySelectorAll('.button--deleteField');
         for (const button of deleteFieldButtons) {
             button.addEventListener('click', deleteField);
@@ -496,7 +479,6 @@
                 const dataListField = formElement.querySelector('#field--dataListKey');
                 const minMaxFields = formElement.querySelector('#fields--minMax');
                 const unitPrefixSuffixFields = formElement.querySelector('#fields--unitPrefixSuffix');
-                // Update field visibility based on the current field type (since it can't be changed)
                 const fieldType = fieldTypeSelect.value;
                 const isTextOrSelect = fieldType === 'text' || fieldType === 'select';
                 const isTextOrNumber = fieldType === 'text' || fieldType === 'number';
@@ -552,18 +534,14 @@
             if (tbodyElement === null || noteType.fields.length === 0) {
                 continue;
             }
-            // Destroy existing Sortable instance before creating a new one
             const existingInstance = sortableInstances.get(noteType.noteTypeId);
             if (existingInstance !== undefined) {
                 existingInstance.destroy();
             }
-            // Create new Sortable instance
             const sortableInstance = Sortable.create(tbodyElement, {
                 handle: '.handle',
                 animation: 150,
-                // eslint-disable-next-line @typescript-eslint/no-loop-func
                 onEnd() {
-                    // Get the new order
                     const rows = tbodyElement.querySelectorAll('tr[data-note-type-field-id]');
                     const noteTypeFieldIds = [];
                     for (const row of rows) {
@@ -572,7 +550,6 @@
                             noteTypeFieldIds.push(Number.parseInt(fieldId, 10));
                         }
                     }
-                    // Save the new order to the database
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderNoteTypeFields`, {
                         noteTypeId: noteType.noteTypeId,
                         noteTypeFieldIds
@@ -591,13 +568,11 @@
                                 title: 'Error Saving Field Order',
                                 message: 'An error occurred while saving the field order. Please try again.'
                             });
-                            // Refresh to restore original order
                             renderNoteTypes();
                         }
                     });
                 }
             });
-            // Store the instance for future reference
             sortableInstances.set(noteType.noteTypeId, sortableInstance);
         }
     }
@@ -606,7 +581,7 @@
         cityssm.openHtmlModal('adminNoteTypes-selectTemplate', {
             onshow(modalElement) {
                 const templatesContainer = modalElement.querySelector('#container--noteTypeTemplates');
-                templatesContainer.innerHTML = /* html */ `
+                templatesContainer.innerHTML = `
           <div class="has-text-centered">
             <span class="icon is-large">
               <i class="fa-solid fa-spinner fa-pulse fa-3x"></i>
@@ -614,10 +589,9 @@
             <p class="mt-2">Loading templates...</p>
           </div>
         `;
-                // Fetch templates
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`, {}, (responseJSON) => {
                     if (responseJSON.templates.length === 0) {
-                        templatesContainer.innerHTML = /* html */ `
+                        templatesContainer.innerHTML = `
                 <div class="message is-info">
                   <p class="message-body">
                     No templates are currently available.
@@ -626,12 +600,11 @@
               `;
                         return;
                     }
-                    // Render template cards
                     templatesContainer.innerHTML = '';
                     for (const template of responseJSON.templates) {
                         const templateCard = document.createElement('div');
                         templateCard.className = 'box mb-3';
-                        templateCard.innerHTML = /* html */ `
+                        templateCard.innerHTML = `
                 <article class="media">
                   <div class="media-left">
                     <span class="icon is-large has-text-info">
@@ -667,20 +640,17 @@
               `;
                         templatesContainer.append(templateCard);
                     }
-                    // Attach event listeners to template buttons
                     const useTemplateButtons = templatesContainer.querySelectorAll('.button--useTemplate');
                     for (const button of useTemplateButtons) {
-                        // eslint-disable-next-line @typescript-eslint/no-loop-func
                         button.addEventListener('click', (event) => {
                             const templateId = event.currentTarget
                                 .dataset.templateId;
                             if (!templateId) {
                                 return;
                             }
-                            // Disable button and show loading state
                             const clickedButton = event.currentTarget;
                             clickedButton.disabled = true;
-                            clickedButton.innerHTML = /* html */ `
+                            clickedButton.innerHTML = `
                   <span class="icon">
                     <i class="fa-solid fa-spinner fa-pulse"></i>
                   </span>
@@ -704,9 +674,8 @@
                                         title: 'Error Creating Note Type',
                                         message: addResponseJSON.message
                                     });
-                                    // Re-enable button
                                     clickedButton.disabled = false;
-                                    clickedButton.innerHTML = /* html */ `
+                                    clickedButton.innerHTML = `
                         <span class="icon">
                           <i class="fa-solid fa-plus"></i>
                         </span>
@@ -727,20 +696,16 @@
             }
         });
     }
-    // Initialize
     renderNoteTypes();
-    // Add Note Type button
     document
         .querySelector('#button--addNoteType')
         ?.addEventListener('click', openAddNoteTypeModal);
-    // Add Note Type from Template button
     document
         .querySelector('#button--addNoteTypeFromTemplate')
         ?.addEventListener('click', (event) => {
         event.preventDefault();
         openSelectTemplateModal();
     });
-    // Availability filter
     document
         .querySelector('#filter--availability')
         ?.addEventListener('change', (event) => {

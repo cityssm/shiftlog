@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 (() => {
     const shiftLog = exports.shiftLog;
     let notificationConfigurations = exports.notificationConfigurations;
@@ -19,17 +18,15 @@
                 case 'ntfy': {
                     return `Topic: ${cityssm.escapeHTML(config.topic ?? '')}`;
                 }
-                // No default
             }
         }
         catch {
-            // ignore parse errors
         }
         return '';
     }
     function renderNotificationConfigurations() {
         if (notificationConfigurations.length === 0) {
-            tbodyElement.innerHTML = /* html */ `
+            tbodyElement.innerHTML = `
         <tr id="tr--noNotificationConfigurations">
           <td class="has-text-centered has-text-grey" colspan="5">
             No notification configurations found. Click "Add Notification Configuration" to create one.
@@ -38,7 +35,6 @@
       `;
             return;
         }
-        // Clear existing
         tbodyElement.innerHTML = '';
         for (const config of notificationConfigurations) {
             const assignedTo = exports.assignedToList.find((at) => at.assignedToId === config.assignedToId);
@@ -49,8 +45,7 @@
             const rowElement = document.createElement('tr');
             rowElement.dataset.notificationConfigurationId =
                 config.notificationConfigurationId.toString();
-            // eslint-disable-next-line no-unsanitized/property
-            rowElement.innerHTML = /* html */ `
+            rowElement.innerHTML = `
         <td>
           <span class="notification-queue">
             ${cityssm.escapeHTML(config.notificationQueue)}
@@ -161,13 +156,12 @@
                 config = JSON.parse(existingConfig);
             }
             catch {
-                // ignore parse errors
             }
         }
         switch (notificationType) {
             case 'email': {
                 const emailConfig = config;
-                formContainer.innerHTML = /* html */ `
+                formContainer.innerHTML = `
           <div class="field">
             <label class="label" for="notificationTypeForm--recipientEmails">
               Recipient Email Addresses
@@ -189,8 +183,7 @@
             }
             case 'msTeams': {
                 const msTeamsConfig = config;
-                // eslint-disable-next-line no-secrets/no-secrets
-                formContainer.innerHTML = /* html */ `
+                formContainer.innerHTML = `
           <div class="field">
             <label class="label" for="notificationTypeForm--webhookUrl">
               Microsoft Teams Webhook URL
@@ -211,7 +204,7 @@
             }
             case 'ntfy': {
                 const ntfyConfig = config;
-                formContainer.innerHTML = /* html */ `
+                formContainer.innerHTML = `
           <div class="field">
             <label class="label" for="notificationTypeForm--topic">
               Ntfy Topic
@@ -237,7 +230,6 @@
         function doAddNotificationConfiguration(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            // Build notification type form JSON
             const notificationType = addForm.querySelector('#addNotificationConfiguration--notificationType').value;
             let notificationTypeFormJson = '{}';
             switch (notificationType) {
@@ -297,7 +289,6 @@
         }
         cityssm.openHtmlModal('adminNotificationConfiguration-add', {
             onshow(modalElement) {
-                // Populate notification queue options
                 const queueSelect = modalElement.querySelector('#addNotificationConfiguration--notificationQueue');
                 for (const queueType of exports.notificationQueueTypes) {
                     const option = document.createElement('option');
@@ -305,7 +296,6 @@
                     option.textContent = queueType;
                     queueSelect.append(option);
                 }
-                // Populate notification type options
                 const typeSelect = modalElement.querySelector('#addNotificationConfiguration--notificationType');
                 for (const type of exports.notificationTypes) {
                     const option = document.createElement('option');
@@ -313,7 +303,6 @@
                     option.textContent = type;
                     typeSelect.append(option);
                 }
-                // Populate assigned to options
                 const assignedToSelect = modalElement.querySelector('#addNotificationConfiguration--assignedToId');
                 for (const assignedTo of exports.assignedToList) {
                     const option = document.createElement('option');
@@ -321,11 +310,9 @@
                     option.textContent = assignedTo.assignedToName;
                     assignedToSelect.append(option);
                 }
-                // Handle notification type change
                 typeSelect.addEventListener('change', () => {
                     renderNotificationTypeForm(modalElement, typeSelect.value);
                 });
-                // Render initial form
                 renderNotificationTypeForm(modalElement, typeSelect.value);
             },
             onshown(modalElement, _closeModalFunction) {
@@ -334,7 +321,6 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddNotificationConfiguration);
-                // Focus the notification queue field
                 const queueSelect = modalElement.querySelector('#addNotificationConfiguration--notificationQueue');
                 queueSelect.focus();
             },
@@ -358,7 +344,6 @@
         function doUpdateNotificationConfiguration(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            // Build notification type form JSON
             const notificationType = editForm.querySelector('#editNotificationConfiguration--notificationType').value;
             let notificationTypeFormJson = '{}';
             switch (notificationType) {
@@ -426,7 +411,6 @@
         }
         cityssm.openHtmlModal('adminNotificationConfiguration-edit', {
             onshow(modalElement) {
-                // Populate notification queue options
                 const queueSelect = modalElement.querySelector('#editNotificationConfiguration--notificationQueue');
                 for (const queueType of exports.notificationQueueTypes) {
                     const option = document.createElement('option');
@@ -437,7 +421,6 @@
                     }
                     queueSelect.append(option);
                 }
-                // Populate notification type options
                 const typeSelect = modalElement.querySelector('#editNotificationConfiguration--notificationType');
                 for (const type of exports.notificationTypes) {
                     const option = document.createElement('option');
@@ -448,7 +431,6 @@
                     }
                     typeSelect.append(option);
                 }
-                // Populate assigned to options
                 const assignedToSelect = modalElement.querySelector('#editNotificationConfiguration--assignedToId');
                 for (const assignedTo of exports.assignedToList) {
                     const option = document.createElement('option');
@@ -460,14 +442,11 @@
                     }
                     assignedToSelect.append(option);
                 }
-                // Set isActive checkbox
                 ;
                 modalElement.querySelector('#editNotificationConfiguration--isActive').checked = currentIsActive;
-                // Handle notification type change
                 typeSelect.addEventListener('change', () => {
                     renderNotificationTypeForm(modalElement, typeSelect.value);
                 });
-                // Render initial form with existing data
                 renderNotificationTypeForm(modalElement, currentNotificationType, currentNotificationTypeFormJson);
             },
             onshown(modalElement, _closeModalFunction) {

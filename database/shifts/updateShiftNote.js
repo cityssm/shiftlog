@@ -9,7 +9,7 @@ export default async function updateShiftNote(updateShiftNoteForm, userName) {
         .input('noteSequence', updateShiftNoteForm.noteSequence)
         .input('noteText', updateShiftNoteForm.noteText)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.ShiftNotes
       SET
         noteText = @noteText,
@@ -30,17 +30,15 @@ export default async function updateShiftNote(updateShiftNoteForm, userName) {
         )
     `);
     if (result.rowsAffected[0] > 0) {
-        // Update field values if fields are provided
         if (updateShiftNoteForm.fields !== undefined) {
             for (const [noteTypeFieldId, fieldValue] of Object.entries(updateShiftNoteForm.fields)) {
                 if (fieldValue !== undefined && fieldValue !== null) {
-                    // Check if field value already exists
                     const existingField = await pool
                         .request()
                         .input('shiftId', updateShiftNoteForm.shiftId)
                         .input('noteSequence', updateShiftNoteForm.noteSequence)
                         .input('noteTypeFieldId', noteTypeFieldId)
-                        .query(/* sql */ `
+                        .query(`
               SELECT COUNT(*) as count
               FROM ShiftLog.ShiftNoteFields
               WHERE shiftId = @shiftId
@@ -48,14 +46,13 @@ export default async function updateShiftNote(updateShiftNoteForm, userName) {
                 AND noteTypeFieldId = @noteTypeFieldId
             `);
                     if (existingField.recordset[0].count > 0) {
-                        // Update existing field
                         await pool
                             .request()
                             .input('shiftId', updateShiftNoteForm.shiftId)
                             .input('noteSequence', updateShiftNoteForm.noteSequence)
                             .input('noteTypeFieldId', noteTypeFieldId)
                             .input('fieldValue', fieldValue)
-                            .query(/* sql */ `
+                            .query(`
                 UPDATE ShiftLog.ShiftNoteFields
                 SET fieldValue = @fieldValue
                 WHERE shiftId = @shiftId
@@ -64,14 +61,13 @@ export default async function updateShiftNote(updateShiftNoteForm, userName) {
               `);
                     }
                     else {
-                        // Insert new field (for backwards compatibility with existing notes)
                         await pool
                             .request()
                             .input('shiftId', updateShiftNoteForm.shiftId)
                             .input('noteSequence', updateShiftNoteForm.noteSequence)
                             .input('noteTypeFieldId', noteTypeFieldId)
                             .input('fieldValue', fieldValue)
-                            .query(/* sql */ `
+                            .query(`
                 INSERT INTO ShiftLog.ShiftNoteFields (
                   shiftId,
                   noteSequence,

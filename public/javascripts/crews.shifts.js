@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- Large file */
 (() => {
     const shiftLog = exports.shiftLog;
     const shiftUrlPrefix = `${shiftLog.urlPrefix}/${shiftLog.shiftsRouter}`;
@@ -130,9 +129,7 @@
             onshow(modalElement) {
                 ;
                 modalElement.querySelector('#crewMemberAdd--crewId').value = crewId.toString();
-                // Populate employee dropdown
                 const selectElement = modalElement.querySelector('#crewMemberAdd--employeeNumber');
-                // Get existing members to exclude them
                 cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (responseJSON) => {
                     if (responseJSON.success) {
                         const existingMemberNumbers = new Set(responseJSON.crew.members.map((member) => member.employeeNumber));
@@ -221,9 +218,7 @@
                 }
             }
             else {
-                // Revert to previous value
                 selectElement.value = previousValue;
-                // Update the stored previous value to match the reverted state
                 selectElement.dataset.previousValue = previousValue;
                 bulmaJS.alert({
                     contextualColorName: 'danger',
@@ -242,15 +237,11 @@
             onshow(modalElement) {
                 ;
                 modalElement.querySelector('#crewEquipmentAdd--crewId').value = crewId.toString();
-                // Populate equipment dropdown
                 const equipmentSelectElement = modalElement.querySelector('#crewEquipmentAdd--equipmentNumber');
-                // Populate employee dropdown
                 const employeeSelectElement = modalElement.querySelector('#crewEquipmentAdd--employeeNumber');
-                // Get existing equipment to exclude them
                 cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (responseJSON) => {
                     if (responseJSON.success) {
                         const existingEquipmentNumbers = new Set(responseJSON.crew.equipment.map((equipment) => equipment.equipmentNumber));
-                        // Populate equipment
                         for (const equipmentItem of exports.equipment) {
                             if (!existingEquipmentNumbers.has(equipmentItem.equipmentNumber)) {
                                 const optionElement = document.createElement('option');
@@ -259,7 +250,6 @@
                                 equipmentSelectElement.append(optionElement);
                             }
                         }
-                        // Helper function to populate employee dropdown
                         const populateEmployeeOptions = (members, eligibleEmployeeNumbers) => {
                             employeeSelectElement.innerHTML =
                                 '<option value="">(Unassigned)</option>';
@@ -273,24 +263,19 @@
                                 }
                             }
                         };
-                        // Populate crew members for assignment
                         populateEmployeeOptions(responseJSON.crew.members);
-                        // Add event listener to filter employees when equipment is selected
                         equipmentSelectElement.addEventListener('change', () => {
                             const selectedEquipment = equipmentSelectElement.value;
                             if (selectedEquipment === '') {
-                                // Reset to all crew members
                                 populateEmployeeOptions(responseJSON.crew.members);
                             }
                             else {
-                                // Get eligible employees for the selected equipment
                                 cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
                                     if (eligibleResponseJSON.success) {
                                         const eligibleEmployeeNumbers = new Set(eligibleResponseJSON.employees.map((emp) => emp.employeeNumber));
                                         populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers);
                                     }
                                     else {
-                                        // On error, show all crew members
                                         populateEmployeeOptions(responseJSON.crew.members);
                                         bulmaJS.alert({
                                             contextualColorName: 'warning',
@@ -340,11 +325,8 @@
         if (detailsElement === null) {
             return;
         }
-        // Clear previous content
         detailsElement.innerHTML = '';
-        // Check permissions
         const canEdit = exports.canManage || crew.recordCreate_userName === shiftLog.userName;
-        // Render members section header with Add button
         const membersHeaderBlock = document.createElement('div');
         membersHeaderBlock.className =
             'panel-block is-justify-content-space-between is-align-items-center';
@@ -397,7 +379,6 @@
                 detailsElement.append(memberBlock);
             }
         }
-        // Render equipment section header with Add button
         const equipmentHeaderBlock = document.createElement('div');
         equipmentHeaderBlock.className =
             'panel-block is-justify-content-space-between is-align-items-center';
@@ -458,7 +439,6 @@
                     select.dataset.equipmentNumber = equipmentItem.equipmentNumber;
                     select.dataset.updateAssignment = '';
                     select.dataset.previousValue = equipmentItem.employeeNumber ?? '';
-                    // Helper function to populate the dropdown
                     const populateDropdown = (eligibleEmployeeNumbers) => {
                         select.innerHTML = '';
                         const unassignedOption = document.createElement('option');
@@ -466,7 +446,6 @@
                         unassignedOption.textContent = '(Unassigned)';
                         select.append(unassignedOption);
                         for (const member of crew.members) {
-                            // Only add if no restriction or employee is eligible
                             if (eligibleEmployeeNumbers === undefined ||
                                 eligibleEmployeeNumbers.has(member.employeeNumber) ||
                                 member.employeeNumber === equipmentItem.employeeNumber) {
@@ -480,12 +459,9 @@
                             }
                         }
                     };
-                    // If equipment has an employee list, filter the options before showing
                     if (equipmentItem.employeeListId !== null &&
                         equipmentItem.employeeListId !== undefined) {
-                        // Disable while loading
                         select.disabled = true;
-                        // Show loading state
                         const loadingOption = document.createElement('option');
                         loadingOption.textContent = 'Loading...';
                         select.append(loadingOption);
@@ -495,14 +471,12 @@
                                 populateDropdown(eligibleEmployeeNumbers);
                             }
                             else {
-                                // On error, show all members
                                 populateDropdown();
                             }
                             select.disabled = false;
                         });
                     }
                     else {
-                        // No employee list restriction, show all members
                         populateDropdown();
                     }
                     select.addEventListener('change', updateEquipmentAssignment);
@@ -556,7 +530,6 @@
             const panelElement = document.createElement('details');
             panelElement.className = 'panel mb-5 collapsable-panel';
             panelElement.dataset.crewId = crew.crewId.toString();
-            // Panel heading with summary
             const summaryElement = document.createElement('summary');
             summaryElement.className = 'panel-heading is-clickable';
             const iconText = document.createElement('span');
@@ -578,7 +551,6 @@
             }
             summaryElement.append(iconText);
             panelElement.append(summaryElement);
-            // Edit/Delete buttons block (shown right below heading)
             if (canEdit) {
                 const buttonBlock = document.createElement('div');
                 buttonBlock.className = 'panel-block is-justify-content-end';
@@ -604,12 +576,10 @@
                 buttonBlock.append(buttonsDiv);
                 panelElement.append(buttonBlock);
             }
-            // Details container
             const detailsDiv = document.createElement('div');
             detailsDiv.className = 'panel-block-details';
             panelElement.append(detailsDiv);
             crewsContainerElement.append(panelElement);
-            // Load details when panel is opened
             panelElement.addEventListener('toggle', () => {
                 if (panelElement.open) {
                     const crewId = Number.parseInt(panelElement.dataset.crewId ?? '', 10);
@@ -662,7 +632,6 @@
             }
         });
     }
-    // Initialize
     document
         .querySelector('#button--addCrew')
         ?.addEventListener('click', openAddCrewModal);

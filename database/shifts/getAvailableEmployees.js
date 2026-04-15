@@ -7,7 +7,7 @@ export default async function getAvailableEmployees(shiftDateString) {
         .request()
         .input('instance', instance)
         .input('shiftDateString', shiftDateString)
-        .query(/* sql */ `
+        .query(`
       SELECT
         e.employeeNumber,
         e.firstName,

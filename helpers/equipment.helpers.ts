@@ -1,5 +1,5 @@
-import getEquipment from '../database/equipment/getEquipment.js'
 import getEmployeeList from '../database/employeeLists/getEmployeeList.js'
+import getEquipment from '../database/equipment/getEquipment.js'
 import type { Employee } from '../types/record.types.js'
 
 /**

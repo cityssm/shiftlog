@@ -26,7 +26,8 @@ Employee lists are useful for:
 
 1. Navigate to **Administrator Tools** > **Employee Lists**.
 2. Click the **Add Employee List** button.
-3. Enter a descriptive name for the list (e.g., "Night Shift Crew", "Roads Department", "Weekend Team").
+3. Enter a descriptive name for the list
+   (e.g., "Night Shift Crew", "Roads Department", "Weekend Team").
 4. Select employees to include in the list.
 5. Optionally, select a **User Group** to restrict visibility to specific users.
 6. Click **Save** to create the list.

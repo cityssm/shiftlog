@@ -5,7 +5,7 @@ export default async function getEmployeeLists() {
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         el.employeeListId,
         el.employeeListName,

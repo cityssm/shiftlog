@@ -3,27 +3,21 @@ import { getUserByApiKey } from '../../database/users/getUser.js';
 import { getWorkOrdersForDigest } from '../../database/workOrders/getWorkOrdersForDigest.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
-    // Authenticate API user
     const apiUser = await getUserByApiKey(request.params.apiKey);
     if (apiUser === undefined) {
         response.status(401).json({ error: 'Invalid API key' });
         return;
     }
-    // Validate required parameter
     if (!request.query.assignedToId) {
         response
             .status(400)
             .json({ error: 'Missing required parameter: assignedToId' });
         return;
     }
-    // Get assigned to item
     const assignedToId = Number(request.query.assignedToId);
     const assignedToItem = await getAssignedToItem(assignedToId);
-    // Get digest data
     const digestData = await getWorkOrdersForDigest(request.query.assignedToId);
-    // Generate report date/time
     const reportDateTime = new Date();
-    // Render the print view
     response.render('print/workOrderDigest', {
         headTitle: `${getConfigProperty('workOrders.sectionName')} Digest`,
         reportDateTime,

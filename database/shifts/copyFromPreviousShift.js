@@ -2,14 +2,13 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function copyFromPreviousShift(form, user) {
     const pool = await getShiftLogConnectionPool();
     try {
-        // Copy crews
         if (form.copyCrews) {
             await pool
                 .request()
                 .input('currentShiftId', form.currentShiftId)
                 .input('previousShiftId', form.previousShiftId)
                 .input('userName', user.userName)
-                .query(/* sql */ `
+                .query(`
           INSERT INTO
             ShiftLog.ShiftCrews (shiftId, crewId, shiftCrewNote)
           SELECT
@@ -44,14 +43,13 @@ export default async function copyFromPreviousShift(form, user) {
             )
         `);
         }
-        // Copy employees
         if (form.copyEmployees) {
             await pool
                 .request()
                 .input('currentShiftId', form.currentShiftId)
                 .input('previousShiftId', form.previousShiftId)
                 .input('userName', user.userName)
-                .query(/* sql */ `
+                .query(`
           INSERT INTO
             ShiftLog.ShiftEmployees (
               shiftId,
@@ -95,14 +93,13 @@ export default async function copyFromPreviousShift(form, user) {
             )
         `);
         }
-        // Copy equipment
         if (form.copyEquipment) {
             await pool
                 .request()
                 .input('currentShiftId', form.currentShiftId)
                 .input('previousShiftId', form.previousShiftId)
                 .input('userName', user.userName)
-                .query(/* sql */ `
+                .query(`
           INSERT INTO
             ShiftLog.ShiftEquipment (
               shiftId,

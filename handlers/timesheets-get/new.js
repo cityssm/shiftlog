@@ -8,7 +8,6 @@ export default async function handler(request, response) {
         supervisors = supervisors.filter((supervisor) => supervisor.userName === request.session.user?.userName);
     }
     const timesheetTypes = await getTimesheetTypeDataListItems(request.session.user);
-    // Get shift data if shiftId is provided
     let shift;
     let timesheetDate = new Date();
     let supervisorEmployeeNumber = '';

@@ -1,7 +1,4 @@
 (() => {
-    /*
-     * Make form read only
-     */
     const formElement = document.querySelector('#form--timesheet');
     formElement?.addEventListener('submit', (formEvent) => {
         formEvent.preventDefault();
@@ -14,9 +11,6 @@
             inputElement.readOnly = true;
         }
     });
-    /*
-     * Initialize timesheet grid (view-only mode)
-     */
     const gridContainer = document.querySelector('#timesheet-grid-container');
     const timesheetIdInput = document.querySelector('#timesheet--timesheetId');
     if (gridContainer !== null &&
@@ -30,7 +24,6 @@
             hideEmptyColumns: false,
             filterRows: ''
         });
-        // Display options
         const hideEmptyRowsCheckbox = document.querySelector('#display--hideEmptyRows');
         const hideEmptyColumnsCheckbox = document.querySelector('#display--hideEmptyColumns');
         const filterRowsInput = document.querySelector('#display--filterRows');
@@ -51,7 +44,6 @@
                 grid.setDisplayOptions({ filterRows: filterRowsInput.value });
             });
         }
-        // Initialize grid
         grid.init().catch((error) => {
             console.error('Error initializing grid:', error);
         });

@@ -4,7 +4,6 @@ import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`;
-// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 export default async function handler(request, response) {
     const workOrder = await getWorkOrder(request.params.workOrderId, request.session.user?.userName);
@@ -13,9 +12,7 @@ export default async function handler(request, response) {
         return;
     }
     const workOrderType = (await getWorkOrderType(workOrder.workOrderTypeId, request.session.user, true));
-    // Get thumbnail attachment
     const thumbnailAttachment = await getWorkOrderThumbnailAttachment(request.params.workOrderId);
-    // Check if work order can be reopened
     let canReopen = false;
     if (workOrder.workOrderCloseDateTime !== null &&
         workOrder.workOrderCloseDateTime !== undefined &&

@@ -10,7 +10,7 @@ export default async function updateEmployeeListMember(employeeListId, employeeN
             .input('employeeNumber', employeeNumber)
             .input('seniorityDate', seniorityDate ?? null)
             .input('seniorityOrderNumber', seniorityOrderNumber)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.EmployeeListMembers
         SET
           seniorityDate = @seniorityDate,

@@ -4,7 +4,7 @@ export default async function getShiftAdhocTasks(shiftId) {
     const result = await pool
         .request()
         .input('shiftId', shiftId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         t.adhocTaskId,
         t.adhocTaskTypeDataListItemId,

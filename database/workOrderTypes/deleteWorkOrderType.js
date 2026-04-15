@@ -6,7 +6,7 @@ export default async function deleteWorkOrderType(workOrderTypeId, userName) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderTypeId', workOrderTypeId)
-        .input('userName', userName).query(/* sql */ `
+        .input('userName', userName).query(`
       update ShiftLog.WorkOrderTypes
       set
         recordDelete_userName = @userName,

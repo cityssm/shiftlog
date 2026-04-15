@@ -18,7 +18,7 @@ export default async function getTimesheetRows(timesheetId, filters) {
         whereClause += ' AND tr.equipmentNumber IS NOT NULL';
     }
     if (filters?.onlyWithData) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND EXISTS (
         SELECT
           1
@@ -30,7 +30,7 @@ export default async function getTimesheetRows(timesheetId, filters) {
       )
     `;
     }
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       tr.timesheetRowId,
       tr.timesheetId,

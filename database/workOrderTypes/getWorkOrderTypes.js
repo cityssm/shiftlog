@@ -7,7 +7,7 @@ export default async function getWorkOrderTypes(user) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         wt.workOrderTypeId,
         wt.workOrderType,
@@ -23,7 +23,7 @@ export default async function getWorkOrderTypes(user) {
         wt.instance = @instance
         AND wt.recordDelete_dateTime IS NULL ${user === undefined
         ? ''
-        : /* sql */ `
+        : `
               AND (
                 wt.userGroupId IS NULL
                 OR wt.userGroupId IN (
@@ -42,7 +42,6 @@ export default async function getWorkOrderTypes(user) {
     `);
     const workOrderTypes = workOrderTypesResult.recordset;
     for (const workOrderType of workOrderTypes) {
-        // eslint-disable-next-line no-await-in-loop
         workOrderType.moreInfoFormNames = await getWorkOrderTypeMoreInfoFormNames(workOrderType.workOrderTypeId);
     }
     return workOrderTypes;

@@ -6,7 +6,7 @@ export default async function getWorkOrderTags(workOrderId) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderId', workOrderId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         wot.workOrderId,
         wot.tagName,

@@ -2,14 +2,14 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getShiftsForBuilder(shiftDateString, user) {
     const pool = await getShiftLogConnectionPool();
-    let whereClause = /* sql */ `
+    let whereClause = `
     WHERE
       s.instance = @instance
       AND s.recordDelete_dateTime IS NULL
       AND s.shiftDate = @shiftDateString
   `;
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         sType.userGroupId IS NULL
         OR sType.userGroupId IN (
@@ -23,7 +23,7 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
       )
     `;
     }
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       s.shiftId,
       s.shiftDate,
@@ -58,13 +58,11 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
         .input('userName', user?.userName)
         .query(sql);
     const shifts = shiftsResult.recordset;
-    // Get crews, employees, equipment, and work orders for all shifts
     const shiftIds = shifts.map((shift) => shift.shiftId);
     if (shiftIds.length === 0) {
         return [];
     }
-    // Get crews
-    const crewsSql = /* sql */ `
+    const crewsSql = `
     SELECT
       sc.shiftId,
       sc.crewId,
@@ -80,8 +78,7 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
       c.crewName
   `;
     const crewsResult = await pool.request().query(crewsSql);
-    // Get employees
-    const employeesSql = /* sql */ `
+    const employeesSql = `
     SELECT
       se.shiftId,
       se.employeeNumber,
@@ -104,8 +101,7 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
       e.firstName
   `;
     const employeesResult = await pool.request().query(employeesSql);
-    // Get equipment
-    const equipmentSql = /* sql */ `
+    const equipmentSql = `
     SELECT
       seq.shiftId,
       seq.equipmentNumber,
@@ -127,8 +123,7 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
       eq.equipmentName
   `;
     const equipmentResult = await pool.request().query(equipmentSql);
-    // Get work orders
-    const workOrdersSql = /* sql */ `
+    const workOrdersSql = `
     SELECT
       sw.shiftId,
       sw.workOrderId,
@@ -145,8 +140,7 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
       wo.workOrderNumber
   `;
     const workOrdersResult = await pool.request().query(workOrdersSql);
-    // Get adhoc tasks
-    const adhocTasksSql = /* sql */ `
+    const adhocTasksSql = `
     SELECT
       st.shiftId,
       st.adhocTaskId,
@@ -170,7 +164,6 @@ export default async function getShiftsForBuilder(shiftDateString, user) {
       t.recordCreate_dateTime DESC
   `;
     const adhocTasksResult = await pool.request().query(adhocTasksSql);
-    // Combine data
     for (const shift of shifts) {
         shift.crews = crewsResult.recordset.filter((crew) => crew.shiftId === shift.shiftId);
         shift.employees = employeesResult.recordset.filter((employee) => employee.shiftId === shift.shiftId);

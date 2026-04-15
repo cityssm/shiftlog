@@ -1,6 +1,3 @@
-/**
- * Available note type templates for creating predefined note types
- */
 const noteTypeTemplates = [
     {
         templateId: 'equipment-hours',
@@ -175,15 +172,9 @@ const noteTypeTemplates = [
         ]
     }
 ];
-/**
- * Get all available note type templates
- */
 export function getNoteTypeTemplates() {
     return noteTypeTemplates;
 }
-/**
- * Get a specific note type template by ID
- */
 export function getNoteTypeTemplateById(templateId) {
     return noteTypeTemplates.find((template) => template.templateId === templateId);
 }

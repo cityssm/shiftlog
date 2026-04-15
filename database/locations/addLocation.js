@@ -16,7 +16,7 @@ export default async function addLocation(locationFields, user) {
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         INSERT INTO
           ShiftLog.Locations (
             instance,

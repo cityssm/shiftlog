@@ -10,7 +10,7 @@ export default async function deleteLocation(locationId, user) {
             .input('instance', getConfigProperty('application.instance'))
             .input('recordDelete_userName', user.userName)
             .input('recordDelete_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.Locations
         SET
           recordDelete_userName = @recordDelete_userName,

@@ -2,7 +2,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getOverdueWorkOrders(limit, user) {
     const pool = await getShiftLogConnectionPool();
-    let whereClause = /* sql */ `
+    let whereClause = `
     WHERE
       w.recordDelete_dateTime IS NULL
       AND w.workOrderCloseDateTime IS NULL
@@ -10,7 +10,7 @@ export default async function getOverdueWorkOrders(limit, user) {
       AND w.instance = @instance
   `;
     if (user !== undefined) {
-        whereClause += /* sql */ `
+        whereClause += `
       AND (
         wType.userGroupId IS NULL
         OR wType.userGroupId IN (
@@ -29,7 +29,7 @@ export default async function getOverdueWorkOrders(limit, user) {
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user?.userName)
         .input('limit', limit)
-        .query(/* sql */ `
+        .query(`
       SELECT
         TOP (@limit) w.workOrderId,
         w.workOrderNumberYear,

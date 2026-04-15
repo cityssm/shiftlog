@@ -4,7 +4,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import updateUserSetting from './updateUserSetting.js';
 export async function _getUser(userField, userNameOrApiKey) {
     const pool = await getShiftLogConnectionPool();
-    const sql = /* sql */ `
+    const sql = `
     SELECT
       TOP 1 u.userName,
       u.isActive,
@@ -39,7 +39,6 @@ export async function _getUser(userField, userNameOrApiKey) {
         : 'AND u.userName = @userNameOrApiKey'}
       AND u.recordDelete_dateTime IS NULL
   `;
-    // Get user record
     const userResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
@@ -49,12 +48,11 @@ export async function _getUser(userField, userNameOrApiKey) {
         return undefined;
     }
     const user = userResult.recordset[0];
-    // Get user settings
     const settingsResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', user.userName)
-        .query(/* sql */ `
+        .query(`
       SELECT
         settingKey,
         settingValue

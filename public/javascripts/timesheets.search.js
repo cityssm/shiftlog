@@ -4,10 +4,9 @@
     const formElement = document.querySelector('#form--timesheetSearch');
     const searchResultsContainerElement = document.querySelector('#container--timesheetSearchResults');
     const offsetElement = formElement.querySelector('#timesheetSearch--offset');
-    const currentTimesheetDateString = cityssm.dateToString(new Date());
     function renderTimesheetResults(data) {
         if (data.timesheets.length === 0) {
-            searchResultsContainerElement.innerHTML = /* html */ `
+            searchResultsContainerElement.innerHTML = `
         <div class="message is-info">
           <p class="message-body">No records found.</p>
         </div>
@@ -17,7 +16,7 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable is-narrow';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Date</th>
@@ -34,7 +33,7 @@
                 ? new Date(timesheet.timesheetDate)
                 : timesheet.timesheetDate;
             const tableRowElement = document.createElement('tr');
-            tableRowElement.innerHTML = /* html */ `
+            tableRowElement.innerHTML = `
         <td>
           ${cityssm.dateToString(timesheetDate)}<br />
           <span class="is-size-7">${cityssm.escapeHTML(shiftLog.daysOfWeek[timesheetDate.getDay()])}</span>
@@ -53,7 +52,6 @@
             tableBodyElement.append(tableRowElement);
         }
         searchResultsContainerElement.replaceChildren(tableElement);
-        // Pagination
         searchResultsContainerElement.append(shiftLog.buildPaginationControls({
             totalCount: data.totalCount,
             currentPageOrOffset: data.offset,
@@ -73,7 +71,6 @@
         offsetElement.value = '0';
         doSearch();
     }
-    // Set up search on change
     formElement.addEventListener('change', resetOffsetAndGetResults);
     document
         .querySelector('#timesheetSearch--limit')

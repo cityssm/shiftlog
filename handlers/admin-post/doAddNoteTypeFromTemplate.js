@@ -19,7 +19,6 @@ export default async function handler(request, response) {
         });
         return;
     }
-    // Create the note type
     const noteTypeSuccess = await addNoteType({
         noteType: template.noteType.noteType,
         userGroupId: template.noteType.userGroupId,
@@ -34,7 +33,6 @@ export default async function handler(request, response) {
         });
         return;
     }
-    // Get the newly created note type to retrieve its ID
     const allNoteTypes = await getNoteTypes();
     const newNoteType = allNoteTypes.find((nt) => nt.noteType === template.noteType.noteType);
     if (!newNoteType) {
@@ -44,7 +42,6 @@ export default async function handler(request, response) {
         });
         return;
     }
-    // Add all fields from the template
     for (const field of template.fields) {
         await addNoteTypeField({
             noteTypeId: newNoteType.noteTypeId,
@@ -60,7 +57,6 @@ export default async function handler(request, response) {
             hasDividerAbove: field.hasDividerAbove
         }, request.session.user);
     }
-    // Get updated note types with fields
     const noteTypes = await getNoteTypes();
     response.json({
         noteTypes,

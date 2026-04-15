@@ -11,7 +11,7 @@ export default async function createNotificationConfiguration(form, userName) {
         .input('assignedToId', form.assignedToId && form.assignedToId !== '' ? form.assignedToId : null)
         .input('isActive', form.isActive === true || form.isActive === '1' ? 1 : 0)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.NotificationConfigurations (
           instance,

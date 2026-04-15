@@ -25,12 +25,9 @@ export default async function getReportData(reportKey, reportParameters, user) {
     }
     const pool = await getShiftLogConnectionPool();
     const request = pool.request();
-    // Add standard parameters
     request.input('instance', getConfigProperty('application.instance'));
     request.input('userName', user.userName);
-    // Add report parameters
     for (const parameterName of reportDefinition.parameterNames) {
-        // eslint-disable-next-line security/detect-object-injection
         const parameterValue = reportParameters[parameterName];
         request.input(parameterName, parameterValue);
     }

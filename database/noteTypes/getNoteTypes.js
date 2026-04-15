@@ -2,11 +2,10 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getNoteTypes() {
     const pool = await getShiftLogConnectionPool();
-    // Get all note types
     const noteTypesResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         nt.noteTypeId,
         nt.noteType,
@@ -30,11 +29,10 @@ export default async function getNoteTypes() {
         nt.noteType
     `);
     const noteTypes = noteTypesResult.recordset;
-    // Get all fields for all note types
     const fieldsResult = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         ntf.noteTypeFieldId,
         ntf.noteTypeId,
@@ -64,7 +62,6 @@ export default async function getNoteTypes() {
         ntf.orderNumber, ntf.noteTypeFieldId
     `);
     const fields = fieldsResult.recordset;
-    // Group fields by noteTypeId
     const noteTypesWithFields = noteTypes.map((noteType) => ({
         ...noteType,
         fields: fields.filter((field) => field.noteTypeId === noteType.noteTypeId)

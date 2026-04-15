@@ -1,19 +1,11 @@
-/* eslint-disable max-lines -- Large file */
 (() => {
     const shiftLog = exports.shiftLog;
     const tagsContainerElement = document.querySelector('#container--tags');
-    // WCAG Contrast Calculation Functions
     const WCAG_AA_NORMAL_RATIO = 4.5;
     const WCAG_AAA_NORMAL_RATIO = 7;
-    /* eslint-disable @typescript-eslint/no-magic-numbers -- WCAG contrast ratios */
-    /**
-     * Convert a hex color to RGB values
-     */
     function hexToRgb(hex) {
         const cleanHex = hex.replace(/^#/v, '');
-        // Validate hex string
         if (!/^[\dA-F]{6}$/iv.test(cleanHex)) {
-            // Default to black if invalid
             return { r: 0, g: 0, b: 0 };
         }
         const bigint = Number.parseInt(cleanHex, 16);
@@ -22,9 +14,6 @@
         const b = bigint & 255;
         return { r, g, b };
     }
-    /**
-     * Calculate relative luminance according to WCAG 2.0
-     */
     function getRelativeLuminance(rgb) {
         const rsRGB = rgb.r / 255;
         const gsRGB = rgb.g / 255;
@@ -34,9 +23,6 @@
         const b = bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
         return 0.2126 * r + 0.7152 * g + 0.0722 * b;
     }
-    /**
-     * Calculate contrast ratio between two colors
-     */
     function getContrastRatio(color1, color2) {
         const rgb1 = hexToRgb(color1);
         const rgb2 = hexToRgb(color2);
@@ -46,19 +32,12 @@
         const darker = Math.min(lum1, lum2);
         return (lighter + 0.05) / (darker + 0.05);
     }
-    /* eslint-enable @typescript-eslint/no-magic-numbers */
-    /**
-     * Get WCAG compliance level for a contrast ratio
-     */
     function getWCAGCompliance(contrastRatio) {
         return {
             aa: contrastRatio >= WCAG_AA_NORMAL_RATIO,
             aaa: contrastRatio >= WCAG_AAA_NORMAL_RATIO
         };
     }
-    /**
-     * Update the preview and contrast information for a tag
-     */
     function updateTagPreview(elements, backgroundColor, textColor, tagName) {
         elements.previewElement.style.backgroundColor = backgroundColor;
         elements.previewElement.style.color = textColor;
@@ -68,10 +47,8 @@
         const contrastRatio = getContrastRatio(backgroundColor, textColor);
         const compliance = getWCAGCompliance(contrastRatio);
         elements.contrastRatioElement.textContent = contrastRatio.toFixed(2);
-        // Clear existing content
         elements.wcagAAElement.textContent = '';
         elements.wcagAAAElement.textContent = '';
-        // Create and append status badges
         const aaSpan = document.createElement('span');
         aaSpan.className = compliance.aa ? 'tag is-success' : 'tag is-danger';
         aaSpan.textContent = compliance.aa ? 'Pass' : 'Fail';
@@ -81,7 +58,6 @@
         aaaSpan.textContent = compliance.aaa ? 'Pass' : 'Fail';
         elements.wcagAAAElement.append(aaaSpan);
     }
-    // Pagination settings
     const ITEMS_PER_PAGE = 20;
     let currentPage = 1;
     let currentFilteredTags = exports.tags;
@@ -182,7 +158,6 @@
                 tagNameDisplayInput.value = tag.tagName;
                 backgroundColorInput.value = `#${tag.tagBackgroundColor}`;
                 textColorInput.value = `#${tag.tagTextColor}`;
-                // Update preview when colors change
                 function updatePreview() {
                     updateTagPreview({
                         previewElement,
@@ -191,9 +166,7 @@
                         wcagAAAElement
                     }, backgroundColorInput.value, textColorInput.value, tag?.tagName);
                 }
-                // Initialize preview with current values
                 updatePreview();
-                // Add event listeners for real-time updates
                 backgroundColorInput.addEventListener('input', updatePreview);
                 textColorInput.addEventListener('input', updatePreview);
                 modalElement
@@ -212,9 +185,6 @@
             }
         });
     }
-    /**
-     * Set up the tag preview and WCAG contrast ratio updates for the add tag modal
-     */
     function setupTagModalPreview(modalElement) {
         const tagNameInput = modalElement.querySelector('#addTag--tagName');
         const backgroundColorInput = modalElement.querySelector('#addTag--tagBackgroundColor');
@@ -223,7 +193,6 @@
         const contrastRatioElement = modalElement.querySelector('#addTag--contrastRatio');
         const wcagAAElement = modalElement.querySelector('#addTag--wcagAA');
         const wcagAAAElement = modalElement.querySelector('#addTag--wcagAAA');
-        // Update preview when colors or name change
         function updatePreview() {
             updateTagPreview({
                 previewElement,
@@ -232,9 +201,7 @@
                 wcagAAAElement
             }, backgroundColorInput.value, textColorInput.value, tagNameInput.value || 'Sample Tag');
         }
-        // Initialize preview with default values
         updatePreview();
-        // Add event listeners for real-time updates
         tagNameInput.addEventListener('input', updatePreview);
         backgroundColorInput.addEventListener('input', updatePreview);
         textColorInput.addEventListener('input', updatePreview);
@@ -276,7 +243,6 @@
             onshown(modalElement, closeFunction) {
                 bulmaJS.toggleHtmlClipped();
                 closeModalFunction = closeFunction;
-                // Focus the tag name input
                 const tagNameInput = modalElement.querySelector('#addTag--tagName');
                 tagNameInput.focus();
             },
@@ -290,7 +256,6 @@
         const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
-        // Clear container
         tagsContainerElement.innerHTML = '';
         if (tags.length === 0) {
             tagsContainerElement.innerHTML = `
@@ -302,11 +267,10 @@
       `;
             return;
         }
-        // Create table
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-striped is-hoverable is-fullwidth';
         const thead = document.createElement('thead');
-        thead.innerHTML = /* html */ `
+        thead.innerHTML = `
       <tr>
         <th>Tag Name</th>
         <th style="width: 150px;">Background</th>
@@ -320,7 +284,7 @@
         for (let index = startIndex; index < endIndex; index += 1) {
             const tag = tags[index];
             const tr = document.createElement('tr');
-            tr.innerHTML = /* html */ `
+            tr.innerHTML = `
         <td>${cityssm.escapeHTML(tag.tagName)}</td>
         <td>
           <span style="color: #${cityssm.escapeHTML(tag.tagBackgroundColor)};">
@@ -356,7 +320,6 @@
         }
         tableElement.append(tbody);
         tagsContainerElement.append(tableElement);
-        // Add pagination if needed
         if (totalPages > 1) {
             const paginationElement = document.createElement('nav');
             paginationElement.className = 'pagination is-centered';
@@ -364,7 +327,7 @@
             paginationElement.setAttribute('aria-label', 'pagination');
             let paginationHTML = '<ul class="pagination-list">';
             for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
-                paginationHTML += /* html */ `
+                paginationHTML += `
           <li>
             <a class="pagination-link ${pageNumber === currentPage ? 'is-current' : ''}"
               data-page="${pageNumber}"
@@ -376,7 +339,6 @@
         `;
             }
             paginationHTML += '</ul>';
-            // eslint-disable-next-line no-unsanitized/property
             paginationElement.innerHTML = paginationHTML;
             for (const link of paginationElement.querySelectorAll('.pagination-link')) {
                 link.addEventListener('click', (clickEvent) => {
@@ -391,7 +353,6 @@
     function addTagFromWorkOrder(event) {
         event.preventDefault();
         let closeModalFunction = () => {
-            // Initialized with no-op, will be assigned in onshown
         };
         function selectOrphanedTag(clickEvent) {
             const buttonElement = clickEvent.currentTarget;
@@ -400,15 +361,12 @@
                 return;
             }
             closeModalFunction();
-            // Open the add tag modal with the tag name pre-filled
             let closeAddModalFunction;
             cityssm.openHtmlModal('adminTags-add', {
                 onshow(modalElement) {
-                    // Set tag name and make it readonly
                     const tagNameInput = modalElement.querySelector('#addTag--tagName');
                     tagNameInput.value = tagName;
                     tagNameInput.readOnly = true;
-                    // Set up preview and event listeners
                     setupTagModalPreview(modalElement);
                     modalElement
                         .querySelector('form')
@@ -453,7 +411,7 @@
             onshow(modalElement) {
                 shiftLog.populateSectionAliases(modalElement);
                 const containerElement = modalElement.querySelector('#container--orphanedTags');
-                containerElement.innerHTML = /* html */ `
+                containerElement.innerHTML = `
           <div class="message is-info">
             <p class="message-body">
               <span class="icon"><i class="fa-solid fa-spinner fa-pulse"></i></span>
@@ -464,7 +422,7 @@
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetOrphanedTags`, {}, (responseJSON) => {
                     if (responseJSON.success) {
                         if (responseJSON.orphanedTags.length === 0) {
-                            containerElement.innerHTML = /* html */ `
+                            containerElement.innerHTML = `
                   <div class="message is-success">
                     <p class="message-body">
                       <span class="icon"><i class="fa-solid fa-check"></i></span>
@@ -477,7 +435,7 @@
                             const tableElement = document.createElement('table');
                             tableElement.className =
                                 'table is-striped is-hoverable is-fullwidth';
-                            tableElement.innerHTML = /* html */ `
+                            tableElement.innerHTML = `
                   <thead>
                     <tr>
                       <th>Tag Name</th>
@@ -489,7 +447,7 @@
                             const tbody = document.createElement('tbody');
                             for (const orphanedTag of responseJSON.orphanedTags) {
                                 const tr = document.createElement('tr');
-                                tr.innerHTML = /* html */ `
+                                tr.innerHTML = `
                     <td>
                       <span class="tag is-light">
                         ${cityssm.escapeHTML(orphanedTag.tagName)}
@@ -514,7 +472,7 @@
                         }
                     }
                     else {
-                        containerElement.innerHTML = /* html */ `
+                        containerElement.innerHTML = `
                 <div class="message is-danger">
                   <p class="message-body">
                     <span class="icon"><i class="fa-solid fa-exclamation-triangle"></i></span>
@@ -534,7 +492,6 @@
             }
         });
     }
-    // Filter functionality
     const filterInput = document.querySelector('#filter--tags');
     filterInput.addEventListener('keyup', () => {
         const filterValue = filterInput.value.toLowerCase();
@@ -542,12 +499,9 @@
         currentPage = 1;
         renderTagsWithPagination(currentFilteredTags);
     });
-    // Add tag button
     document.querySelector('#button--addTag')?.addEventListener('click', addTag);
-    // Add tag from work order button
     document
         .querySelector('#button--addTagFromWorkOrder')
         ?.addEventListener('click', addTagFromWorkOrder);
-    // Initial render
     renderTagsWithPagination(exports.tags);
 })();

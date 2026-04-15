@@ -4,7 +4,6 @@ import { validateEmployeeForEquipment } from '../../helpers/equipment.helpers.js
 export default async function handler(request, response) {
     const user = request.session.user;
     const crewId = Number.parseInt(request.body.crewId, 10);
-    // Check permissions
     const crew = await getCrew(crewId);
     if (crew === undefined) {
         response.status(404).json({
@@ -22,7 +21,6 @@ export default async function handler(request, response) {
         return;
     }
     const employeeNumber = request.body.employeeNumber === '' ? undefined : request.body.employeeNumber;
-    // Validate employee is allowed for this equipment
     const validation = await validateEmployeeForEquipment(request.body.equipmentNumber, employeeNumber);
     if (!validation.success) {
         response.status(400).json({

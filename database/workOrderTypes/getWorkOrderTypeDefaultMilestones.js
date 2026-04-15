@@ -4,8 +4,7 @@ export default async function getWorkOrderTypeDefaultMilestones(workOrderTypeId)
     const result = await pool
         .request()
         .input('workOrderTypeId', workOrderTypeId)
-        // eslint-disable-next-line no-secrets/no-secrets
-        .query(/* sql */ `
+        .query(`
       SELECT
         workOrderTypeId,
         milestoneTitle,

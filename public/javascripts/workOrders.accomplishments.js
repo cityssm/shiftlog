@@ -2,37 +2,26 @@
 (() => {
     const shiftLog = exports.shiftLog;
     const currentMonth = exports.currentMonth;
-    // Elements
     const yearElement = document.querySelector('#filter--year');
     const monthElement = document.querySelector('#filter--month');
     const refreshButton = document.querySelector('#button--refresh');
     const loadingContainer = document.querySelector('#container--loading');
     const dashboardContainer = document.querySelector('#container--dashboard');
-    // Set initial month
     monthElement.value = currentMonth.toString();
-    // Chart instances
     let timeSeriesChart;
     let byAssignedToChart;
     let tagCloudChart;
     let hotZonesMap;
     let hotZonesLayer;
-    // Initialize charts
     function initializeCharts() {
-        // Note: ECharts will be initialized when data is available
-        // to avoid initialization on hidden containers with 0 dimensions
-        // Initialize Leaflet map
         const mapElement = document.querySelector('#map--hotZones');
         if (mapElement !== null) {
             hotZonesMap = new L.Map('map--hotZones').setView([shiftLog.defaultLatitude, shiftLog.defaultLongitude], 13);
-            // Use OpenStreetMap tiles with CSS grayscale filter
             new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(hotZonesMap);
-            // Note: Heat layer will be initialized when data is available
-            // to avoid simpleheat getImageData() errors on hidden containers
         }
     }
-    // Update KPIs
     function updateKPIs(stats) {
         const totalOpened = stats.totalOpen + stats.totalClosed;
         document.querySelector('#kpi--totalOpened').textContent =
@@ -41,9 +30,7 @@
             stats.totalClosed.toString();
         document.querySelector('#kpi--completionRate').textContent = `${stats.percentClosed.toFixed(1)}%`;
     }
-    // Update time series chart
     function updateTimeSeriesChart(timeSeries) {
-        // Initialize chart on first use
         if (timeSeriesChart === undefined) {
             const timeSeriesElement = document.querySelector('#chart--timeSeries');
             if (timeSeriesElement === null) {
@@ -53,9 +40,7 @@
                 timeSeriesChart = echarts.init(timeSeriesElement);
             }
         }
-        // Check if there's any data
         if (timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
-            // Clear the chart before showing no-data message
             timeSeriesChart.clear();
             timeSeriesChart.setOption({
                 title: {
@@ -101,9 +86,7 @@
             }
         });
     }
-    // Update by assigned to chart
     function updateByAssignedToChart(byAssignedTo) {
-        // Initialize chart on first use
         if (byAssignedToChart === undefined) {
             const byAssignedToElement = document.querySelector('#chart--byAssignedTo');
             if (byAssignedToElement === null) {
@@ -113,9 +96,7 @@
                 byAssignedToChart = echarts.init(byAssignedToElement);
             }
         }
-        // Check if there's any data
         if (byAssignedTo.length === 0) {
-            // Clear the chart before showing no-data message
             byAssignedToChart.clear();
             byAssignedToChart.setOption({
                 title: {
@@ -172,9 +153,7 @@
             }
         });
     }
-    // Update tag cloud chart
     function updateTagCloudChart(tags) {
-        // Initialize chart on first use
         if (tagCloudChart === undefined) {
             const tagCloudElement = document.querySelector('#chart--tagCloud');
             if (tagCloudElement === null) {
@@ -184,9 +163,7 @@
                 tagCloudChart = echarts.init(tagCloudElement);
             }
         }
-        // Check if there's any data
         if (tags.length === 0) {
-            // Clear the chart completely before showing no-data message
             tagCloudChart.clear();
             tagCloudChart.setOption({
                 title: {
@@ -201,7 +178,6 @@
             });
             return;
         }
-        // Use top 20 tags for better visualization
         const topTags = tags.slice(0, 20);
         const tagNames = topTags.map((tag) => tag.tagName).toReversed();
         const tagCounts = topTags.map((tag) => tag.count).toReversed();
@@ -252,26 +228,23 @@
             }
         });
     }
-    // Update hot zones map
     function updateHotZonesMap(hotZones) {
         if (hotZonesMap === undefined) {
             return;
         }
-        // Initialize heat layer when first needed (after container is visible)
         hotZonesLayer ??= L.heatLayer([], {
             minOpacity: 0.7,
             max: 1,
             maxZoom: 17,
             blur: 15,
             gradient: {
-                0: '#48c774', // Green for low
-                0.5: '#ffdd57', // Yellow for medium
-                1: '#f14668' // Red for high
+                0: '#48c774',
+                0.5: '#ffdd57',
+                1: '#f14668'
             },
             radius: 25
         }).addTo(hotZonesMap);
         if (hotZones.length === 0) {
-            // Clear heat layer and show "No data available" message on the map
             hotZonesLayer.setLatLngs([]);
             const mapContainer = document.querySelector('#map--hotZones');
             if (mapContainer !== null) {
@@ -287,27 +260,21 @@
             }
             return;
         }
-        // Remove "No data available" message if it exists
         const mapContainer = document.querySelector('#map--hotZones');
         if (mapContainer !== null) {
             mapContainer.querySelector('.no-data-message')?.remove();
         }
         const bounds = [];
-        // First pass: collect counts to find max
         const maxCount = Math.max(...hotZones.map((hz) => hz.count));
-        // Second pass: prepare heat layer data with normalized intensity
         const heatData = hotZones.map((hotZone) => {
             const lat = hotZone.latitude;
             const lng = hotZone.longitude;
-            const intensity = hotZone.count / maxCount; // Normalize intensity between 0 and 1
+            const intensity = hotZone.count / maxCount;
             bounds.push([lat, lng]);
             return [lat, lng, intensity];
         });
-        // Update heat layer with new data
         hotZonesLayer.setLatLngs(heatData);
-        // Fit map to bounds
         if (bounds.length > 0) {
-            // Invalidate map size to ensure proper rendering after container visibility
             hotZonesMap.invalidateSize();
             hotZonesMap.fitBounds(bounds, {
                 padding: [50, 50],
@@ -315,28 +282,21 @@
             });
         }
     }
-    // Load data
     function loadData() {
         loadingContainer.style.display = 'block';
         dashboardContainer.style.display = 'none';
         const year = yearElement.value;
         const month = monthElement.value;
-        cityssm.postJSON(
-        // eslint-disable-next-line no-secrets/no-secrets -- route name, not a secret
-        `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrderAccomplishmentData`, {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrderAccomplishmentData`, {
             month,
             year
         }, (rawResponseJSON) => {
             const responseJSON = rawResponseJSON;
             if (responseJSON.success && responseJSON.data !== undefined) {
                 const data = responseJSON.data;
-                // Show dashboard and hide loading BEFORE updating charts
-                // This ensures lazy-loaded components (like heat layer) initialize with visible containers
                 loadingContainer.style.display = 'none';
                 dashboardContainer.style.display = 'block';
-                // Update KPIs
                 updateKPIs(data.stats);
-                // Update charts (lazy initialization happens here)
                 updateTimeSeriesChart(data.timeSeries);
                 updateByAssignedToChart(data.byAssignedTo);
                 updateTagCloudChart(data.tags);
@@ -352,9 +312,7 @@
             }
         });
     }
-    // Event listeners
     refreshButton.addEventListener('click', loadData);
-    // Initialize
     initializeCharts();
     loadData();
 })();

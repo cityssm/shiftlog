@@ -9,7 +9,7 @@ export default async function updateCrew(crewForm, user) {
         .input('crewName', crewForm.crewName)
         .input('userGroupId', crewForm.userGroupId ?? undefined)
         .input('recordUpdate_userName', user.userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Crews
       SET
         crewName = @crewName,

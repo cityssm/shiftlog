@@ -28,7 +28,7 @@ public/images-custom/*
 megalinter-reports/
 temp_build/
 
-tsconfig.tsbuildinfo
+.tsbuildinfo
 *.js.map
 *.d.ts.map
 compile.log

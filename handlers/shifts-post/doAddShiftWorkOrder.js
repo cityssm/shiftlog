@@ -3,7 +3,6 @@ import getShiftWorkOrders from '../../database/shifts/getShiftWorkOrders.js';
 import isWorkOrderOnShift from '../../database/shifts/isWorkOrderOnShift.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 export default async function handler(request, response) {
-    // Check if work order is already on this shift
     const alreadyExists = await isWorkOrderOnShift(request.body.shiftId, request.body.workOrderId);
     if (alreadyExists) {
         response.json({

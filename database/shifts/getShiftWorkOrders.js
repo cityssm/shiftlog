@@ -6,7 +6,7 @@ export default async function getShiftWorkOrders(shiftId) {
         .request()
         .input('shiftId', shiftId)
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         w.workOrderId,
         w.workOrderNumberPrefix,

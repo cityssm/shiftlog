@@ -6,7 +6,7 @@ export default async function getSettings() {
     const result = (await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         s.settingKey,
         s.settingValue,

@@ -20,7 +20,7 @@ export default async function updateUser(updateForm, user) {
         .input('isAdmin', updateForm.isAdmin ? 1 : 0)
         .input('recordUpdate_userName', user.userName)
         .input('recordUpdate_dateTime', currentDate)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Users
       SET
         isActive = @isActive,

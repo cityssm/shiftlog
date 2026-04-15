@@ -8,7 +8,7 @@ export default async function deleteEmployeeListMember(employeeListId, employeeN
             .input('instance', getConfigProperty('application.instance'))
             .input('employeeListId', employeeListId)
             .input('employeeNumber', employeeNumber)
-            .query(/* sql */ `
+            .query(`
         DELETE FROM ShiftLog.EmployeeListMembers
         WHERE
           instance = @instance

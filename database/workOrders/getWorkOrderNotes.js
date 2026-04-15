@@ -2,12 +2,11 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function getWorkOrderNotes(workOrderId) {
     const pool = await getShiftLogConnectionPool();
-    // Get notes with note type information
     const notesResult = await pool
         .request()
         .input('workOrderId', workOrderId)
         .input('instance', getConfigProperty('application.instance'))
-        .query(/* sql */ `
+        .query(`
       SELECT
         wn.workOrderId,
         wn.noteSequence,
@@ -40,11 +39,10 @@ export default async function getWorkOrderNotes(workOrderId) {
         wn.noteSequence DESC
     `);
     const notes = notesResult.recordset;
-    // Get all field values for these notes
     const fieldsResult = await pool
         .request()
         .input('workOrderId', workOrderId)
-        .query(/* sql */ `
+        .query(`
       SELECT
         wnf.noteSequence,
         wnf.noteTypeFieldId,
@@ -69,7 +67,6 @@ export default async function getWorkOrderNotes(workOrderId) {
       ORDER BY
         COALESCE(ntf.orderNumber, 999999), wnf.noteTypeFieldId
     `);
-    // Group fields by note sequence
     const fieldsMap = new Map();
     for (const field of fieldsResult.recordset) {
         if (!fieldsMap.has(field.noteSequence)) {
@@ -91,7 +88,6 @@ export default async function getWorkOrderNotes(workOrderId) {
             orderNumber: field.orderNumber
         });
     }
-    // Attach fields to notes
     for (const note of notes) {
         note.fields = fieldsMap.get(note.noteSequence) ?? [];
     }

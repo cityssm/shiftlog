@@ -8,7 +8,7 @@ export default async function deleteWorkOrderNote(workOrderId, noteSequence, use
         .input('workOrderId', workOrderId)
         .input('noteSequence', noteSequence)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrderNotes
       SET
         recordDelete_userName = @userName,

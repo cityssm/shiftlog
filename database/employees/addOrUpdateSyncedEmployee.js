@@ -26,7 +26,7 @@ async function addSyncedEmployee(partialEmployee, syncUserName) {
         .input('recordCreate_dateTime', new Date())
         .input('recordUpdate_userName', syncUserName)
         .input('recordUpdate_dateTime', new Date())
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.Employees (
           instance,
@@ -102,7 +102,7 @@ async function updateSyncedEmployee(currentEmployee, partialEmployee, syncUserNa
         .input('recordSync_dateTime', updateEmployee.recordSync_dateTime)
         .input('recordUpdate_userName', syncUserName)
         .input('recordUpdate_dateTime', new Date())
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Employees
       SET
         firstName = @firstName,

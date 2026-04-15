@@ -3,7 +3,6 @@ import getCrew from '../../database/crews/getCrew.js';
 export default async function handler(request, response) {
     const user = request.session.user;
     const crewId = Number.parseInt(request.body.crewId, 10);
-    // Check permissions
     const crew = await getCrew(crewId);
     if (crew === undefined) {
         response.status(404).json({

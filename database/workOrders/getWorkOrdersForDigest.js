@@ -3,13 +3,12 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 const newItemHours = 48;
 export async function getWorkOrdersForDigest(assignedToId) {
     const pool = await getShiftLogConnectionPool();
-    // Fetch open work orders assigned to the selected value
     const workOrdersResult = await pool
         .request()
         .input('assignedToId', assignedToId)
         .input('instance', getConfigProperty('application.instance'))
         .input('newItemHours', newItemHours)
-        .query(/* sql */ `
+        .query(`
       SELECT
         w.workOrderId,
         w.workOrderNumberPrefix,
@@ -62,13 +61,12 @@ export async function getWorkOrdersForDigest(assignedToId) {
         w.workOrderDueDateTime,
         w.workOrderOpenDateTime DESC
     `);
-    // Fetch open milestones assigned to the selected value
     const milestonesResult = await pool
         .request()
         .input('assignedToId', assignedToId)
         .input('instance', getConfigProperty('application.instance'))
         .input('newItemHours', newItemHours)
-        .query(/* sql */ `
+        .query(`
       SELECT
         m.workOrderMilestoneId,
         m.workOrderId,

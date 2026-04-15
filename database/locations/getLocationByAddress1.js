@@ -6,7 +6,7 @@ export default async function getLocationByAddress1(address1) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('address1', address1)
-        .query(/* sql */ `
+        .query(`
       SELECT
         locationId,
         address1,

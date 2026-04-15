@@ -15,10 +15,12 @@ to maintain consistency in data entry.
 
 ### System Lists
 
-System lists are pre-configured lists that are essential for the application's core functionality.
+System lists are pre-configured lists that are essential for the application's
+core functionality.
 These lists cannot be renamed or deleted and are identified by the application itself.
 
 Examples include:
+
 - Equipment Types
 - Work Order Priorities
 - Work Order Statuses
@@ -27,10 +29,12 @@ Examples include:
 
 ### Non-System Lists (Custom Lists)
 
-Non-system lists are custom lists that administrators can create to meet specific organizational needs.
+Non-system lists are custom lists that administrators can create to meet
+specific organizational needs.
 These lists are identified by a `dataListKey` that starts with the "user-" prefix.
 
 Non-system lists can be:
+
 - Created with custom names
 - Renamed at any time
 - Deleted when no longer needed
@@ -56,7 +60,8 @@ Non-system lists can be:
 3. Enter the new display name.
 4. Click **Update Name**.
 
-Note: Only non-system lists can be renamed. System lists maintain their original names.
+Note: Only non-system lists can be renamed. System lists maintain their
+original names.
 
 ## Deleting a Non-System Data List
 
@@ -64,7 +69,8 @@ Note: Only non-system lists can be renamed. System lists maintain their original
 2. Click the **Delete List** button.
 3. Confirm the deletion.
 
-⚠️ Deleting a data list will also delete all items in that list. This action cannot be undone.
+⚠️ Deleting a data list will also delete all items in that list. This action
+cannot be undone.
 
 ## Adding a Data List Item
 

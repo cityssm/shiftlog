@@ -1,3 +1,6 @@
+/* eslint-disable css/no-important */
+/* eslint css/no-invalid-properties: ["error", { allowUnknownVariables: true }] */
+
 .has-width-1 {
   width: 1px;
 }
@@ -304,6 +307,7 @@ details.collapsable-panel[open] .details-chevron {
 }
 
 .image svg text {
+  /* eslint-disable-next-line css/use-baseline */
   user-select: none;
 }
 

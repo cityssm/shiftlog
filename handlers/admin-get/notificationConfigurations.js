@@ -5,9 +5,7 @@ import { notificationQueueTypes, notificationTypes } from '../../tasks/notificat
 export default async function handler(_request, response) {
     const notificationConfigurations = await getNotificationConfigurations();
     const assignedToList = await getAssignedToList();
-    // Get configured notification protocols from config
     const configuredProtocols = getConfigProperty('notifications.protocols');
-    // Filter notification types to only include configured protocols
     const filteredNotificationTypes = configuredProtocols.length > 0
         ? notificationTypes.filter((type) => configuredProtocols.includes(type))
         : [];

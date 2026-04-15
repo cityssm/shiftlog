@@ -9,7 +9,7 @@ export default async function updateWorkOrderCost(updateWorkOrderCostForm, userN
         .input('costAmount', updateWorkOrderCostForm.costAmount)
         .input('costDescription', updateWorkOrderCostForm.costDescription)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrderCosts
       SET
         costAmount = @costAmount,

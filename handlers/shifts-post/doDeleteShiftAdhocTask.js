@@ -3,7 +3,6 @@ import deleteShiftAdhocTask from '../../database/adhocTasks/deleteShiftAdhocTask
 import getAdhocTaskShiftCount from '../../database/adhocTasks/getAdhocTaskShiftCount.js';
 import getShiftAdhocTasks from '../../database/adhocTasks/getShiftAdhocTasks.js';
 export default async function handler(request, response) {
-    // Remove task from shift
     const removeSuccess = await deleteShiftAdhocTask(request.body.shiftId, request.body.adhocTaskId);
     if (!removeSuccess) {
         response.json({
@@ -12,9 +11,7 @@ export default async function handler(request, response) {
         });
         return;
     }
-    // If deleteTask is true, try to delete the task entirely
     if (request.body.deleteTask) {
-        // Check if task is still on other shifts
         const shiftCount = await getAdhocTaskShiftCount(request.body.adhocTaskId);
         if (shiftCount > 0) {
             response.json({
@@ -23,7 +20,6 @@ export default async function handler(request, response) {
             });
             return;
         }
-        // Delete the task
         const deleteSuccess = await deleteAdhocTask(request.body.adhocTaskId, request.session.user);
         if (!deleteSuccess) {
             response.json({

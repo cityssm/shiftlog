@@ -10,7 +10,7 @@ export default async function deleteNoteType(noteTypeId, user) {
             .input('noteTypeId', noteTypeId)
             .input('recordDelete_userName', user.userName)
             .input('recordDelete_dateTime', currentDate)
-            .query(/* sql */ `
+            .query(`
         UPDATE
           ShiftLog.NoteTypes
         SET

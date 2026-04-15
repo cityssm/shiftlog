@@ -3,7 +3,6 @@ import getDataListItemsAdmin from '../../database/app/getDataListItemsAdmin.js';
 import getDataLists from '../../database/app/getDataLists.js';
 import recoverDataList from '../../database/app/recoverDataList.js';
 export default async function handler(request, response) {
-    // Validate that the dataListKey starts with "user-"
     if (!request.body.dataListKey.startsWith('user-')) {
         response.json({
             success: false,
@@ -12,14 +11,12 @@ export default async function handler(request, response) {
         return;
     }
     const userName = request.session.user?.userName ?? '';
-    // First, try to recover a deleted data list with the same key
     const wasRecovered = await recoverDataList({
         dataListKey: request.body.dataListKey,
         dataListName: request.body.dataListName,
         userName
     });
     let success = wasRecovered;
-    // If not recovered, create a new data list
     if (!wasRecovered) {
         const form = {
             ...request.body,
@@ -30,7 +27,6 @@ export default async function handler(request, response) {
     let dataLists;
     if (success) {
         const lists = await getDataLists();
-        // Get items for each data list
         dataLists = await Promise.all(lists.map(async (dataList) => ({
             ...dataList,
             items: await getDataListItemsAdmin(dataList.dataListKey)

@@ -32,21 +32,14 @@ function hasSession(request) {
     return (Object.hasOwn(request.session, 'user') &&
         Object.hasOwn(request.cookies, sessionCookieName));
 }
-/*
- * INITIALIZE APP
- */
 export const app = express();
 app.use((request, _response, next) => {
     debug(`${request.method} ${request.url}`);
     next();
 });
-/*
- * Configure Views
- */
 app
     .set('views', 'views')
     .set('view engine', 'ejs')
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     .engine('ejs', async (path, data, callback) => {
     try {
         const html = await ejs.renderFile(path, data, { async: true });
@@ -56,9 +49,6 @@ app
         callback(error, '');
     }
 });
-/*
- * Adjust headers
- */
 app.disable('x-powered-by');
 if (!configFunctions.getConfigProperty('reverseProxy.disableEtag')) {
     app.set('etag', false);
@@ -69,17 +59,11 @@ if (!configFunctions.getConfigProperty('reverseProxy.disableCompression')) {
 if (configFunctions.getConfigProperty('reverseProxy.trafficIsForwarded')) {
     app.set('trust proxy', 1);
 }
-/*
- * Parsers
- */
 app.use(express.json());
 app.use(express.urlencoded({
     extended: false
 }));
 app.use(cookieParser());
-/*
- * URL Prefix
- */
 const urlPrefix = configFunctions.getConfigProperty('reverseProxy.urlPrefix');
 if (urlPrefix !== '') {
     debug(`urlPrefix = ${urlPrefix}`);
@@ -87,18 +71,12 @@ if (urlPrefix !== '') {
         response.redirect(urlPrefix);
     });
 }
-/*
- * Rate Limiter
- */
 if (!configFunctions.getConfigProperty('reverseProxy.disableRateLimit')) {
     app.use(rateLimit({
         limit: 2000,
         windowMs: millisecondsInOneMinute
     }));
 }
-/*
- * Static content
- */
 app
     .use(urlPrefix, express.static('public'))
     .use(`${urlPrefix}/lib/bulma`, express.static('node_modules/bulma/css'))
@@ -111,11 +89,7 @@ app
     .use(`${urlPrefix}/lib/echarts`, express.static('node_modules/echarts/dist'))
     .use(`${urlPrefix}/lib/leaflet`, express.static('node_modules/leaflet/dist'))
     .use(`${urlPrefix}/lib/sortablejs`, express.static('node_modules/sortablejs'));
-/*
- * SESSION MANAGEMENT
- */
 const FileStoreSession = FileStore(session);
-// Initialize session
 app.use(session({
     name: sessionCookieName,
     cookie: {
@@ -132,7 +106,6 @@ app.use(session({
     rolling: true,
     saveUninitialized: false
 }));
-// Redirect logged in users
 const sessionCheckHandler = (request, response, next) => {
     if (hasSession(request)) {
         next();
@@ -142,9 +115,6 @@ const sessionCheckHandler = (request, response, next) => {
     const redirectUrl = getSafeRedirectUrl(request.originalUrl);
     response.redirect(`${urlPrefix}/login?redirect=${encodeURIComponent(redirectUrl)}`);
 };
-/*
- * Locals
- */
 app.use((request, response, next) => {
     response.locals.buildNumber = version;
     response.locals.user = request.session.user;
@@ -159,17 +129,12 @@ app.use((request, response, next) => {
     }
     next();
 });
-/*
- * LOGIN / LOGOUT
- * Before CSRF Protection
- */
 const loginAbuseCheck = abuseCheck({
     byIP: !configFunctions.getConfigProperty('reverseProxy.trafficIsForwarded'),
     byXForwardedFor: configFunctions.getConfigProperty('reverseProxy.trafficIsForwarded'),
     abusePoints: 1,
     abusePointsMax: 5,
     clearIntervalMillis: millisecondsInOneHour,
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     expiryMillis: minutesToMillis(5),
     abuseMessageText: 'Too many login attempts. Please try again later.'
 });
@@ -189,16 +154,11 @@ app.get(`${urlPrefix}/logout`, (request, response) => {
         response.redirect(`${urlPrefix}/login`);
     }
 });
-/*
- * CSRF PROTECTION
- */
 if (!configFunctions.getConfigProperty('reverseProxy.disableCsrf')) {
     const csrfSecret = await getCsrfSecret();
-    const { doubleCsrfProtection, // This is the default CSRF protection middleware.
-    generateCsrfToken // Use this in your routes to provide a CSRF token.
-     } = doubleCsrf({
-        getSecret: (_request) => csrfSecret, // return a secret for the request
-        getSessionIdentifier: (request) => request.session.id, // return the requests unique identifier
+    const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
+        getSecret: (_request) => csrfSecret,
+        getSessionIdentifier: (request) => request.session.id,
         skipCsrfProtection(request) {
             return (hasSession(request) &&
                 request.path.endsWith('/doUploadWorkOrderAttachment'));
@@ -210,9 +170,6 @@ if (!configFunctions.getConfigProperty('reverseProxy.disableCsrf')) {
         next();
     });
 }
-/*
- * ROUTES
- */
 app.get(`${urlPrefix}/`, sessionCheckHandler, (_request, response) => {
     response.redirect(`${urlPrefix}/dashboard`);
 });
@@ -256,22 +213,15 @@ if (configFunctions.getConfigProperty('session.doKeepAlive')) {
         });
     });
 }
-/*
- * Error handling
- */
-// Catch 404 and forward to error handler
 app.use((_request, _response, next) => {
     next(createError(404));
 });
-// Error handler
 app.use((error, request, response, _next) => {
-    // Set locals, only providing error in development
     response.locals.message = error.message;
     response.locals.error =
         request.app.get('env') === 'development' ? error : {};
     response.locals.configFunctions = configFunctions;
     response.locals.urlPrefix = configFunctions.getConfigProperty('reverseProxy.urlPrefix');
-    // Render the error page
     response.status(error.status ?? 500);
     response.render('error');
 });

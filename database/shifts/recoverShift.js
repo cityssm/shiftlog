@@ -7,7 +7,7 @@ export default async function recoverShift(shiftId, userName) {
         .input('shiftId', shiftId)
         .input('instance', getConfigProperty('application.instance'))
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Shifts
       SET
         recordDelete_userName = NULL,

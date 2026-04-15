@@ -6,7 +6,7 @@ export default async function updateShiftAdhocTaskNote(shiftId, adhocTaskId, shi
         .input('shiftId', shiftId)
         .input('adhocTaskId', adhocTaskId)
         .input('shiftAdhocTaskNote', shiftAdhocTaskNote)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.ShiftAdhocTasks
       SET
         shiftAdhocTaskNote = @shiftAdhocTaskNote

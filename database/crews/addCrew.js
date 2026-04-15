@@ -9,7 +9,7 @@ export default async function addCrew(crewForm, user) {
         .input('userGroupId', crewForm.userGroupId ?? undefined)
         .input('recordCreate_userName', user.userName)
         .input('recordUpdate_userName', user.userName)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.Crews (
           instance,

@@ -1,7 +1,6 @@
 (() => {
     const shiftLog = exports.shiftLog;
     const containerElement = document.querySelector('#container--auditLogs');
-    // Pagination settings
     const ITEMS_PER_PAGE = 50;
     let currentPage = 1;
     let totalCount = 0;
@@ -28,7 +27,6 @@
                                 title: 'API Key Reset',
                                 message: `API key has been successfully reset for user "${userName}".`
                             });
-                            // Reload the audit logs to reflect any changes
                             loadAuditLogs();
                         }
                         else {
@@ -49,7 +47,7 @@
     }
     function renderAuditLogs(logs) {
         if (logs.length === 0) {
-            containerElement.innerHTML = /* html */ `
+            containerElement.innerHTML = `
         <div class="message is-info">
           <div class="message-body">
             No audit logs found.
@@ -60,7 +58,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
-        tableElement.innerHTML = /* html */ `
+        tableElement.innerHTML = `
       <thead>
         <tr>
           <th>Request Time</th>
@@ -102,9 +100,7 @@
                 userName: cityssm.escapeHTML(log.userName ?? '-'),
                 rawUserName: log.userName ?? ''
             };
-            // eslint-disable-next-line no-unsanitized/method -- Escaped content
-            tableElement.querySelector('tbody')?.insertAdjacentHTML('beforeend', 
-            /* html */ `
+            tableElement.querySelector('tbody')?.insertAdjacentHTML('beforeend', `
           <tr>
             <td>${escapedContent.requestTime}</td>
             <td>${escapedContent.userName}</td>
@@ -132,7 +128,6 @@
           </tr>
         `);
         }
-        // Add event listeners for reset API key buttons
         for (const button of tableElement.querySelectorAll('.reset-api-key')) {
             button.addEventListener('click', resetApiKeyFromButton);
         }
@@ -153,10 +148,8 @@
             requestBody.isValidApiKey = isValidApiKeyValue === 'true';
         }
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`, requestBody, (responseJSON) => {
-            // if (responseJSON.success) {
             totalCount = responseJSON.totalCount;
             renderAuditLogs(responseJSON.logs);
-            // Add pagination controls if needed
             if (totalCount > ITEMS_PER_PAGE) {
                 const paginationControls = shiftLog.buildPaginationControls({
                     clickHandler: pageSelect,
@@ -166,10 +159,8 @@
                 });
                 containerElement.append(paginationControls);
             }
-            // }
         });
     }
-    // Event listeners
     document
         .querySelector('#button--refresh')
         ?.addEventListener('click', loadAuditLogs);
@@ -181,13 +172,11 @@
             loadAuditLogs();
         }
     });
-    // Auto-refresh on filter change
     document
         .querySelector('#filter--isValidApiKey')
         ?.addEventListener('change', () => {
         currentPage = 1;
         loadAuditLogs();
     });
-    // Initial load
     loadAuditLogs();
 })();

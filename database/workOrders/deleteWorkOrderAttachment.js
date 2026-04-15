@@ -7,7 +7,7 @@ export default async function deleteWorkOrderAttachment(workOrderAttachmentId, u
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderAttachmentId', workOrderAttachmentId)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrderAttachments
       SET
         recordDelete_userName = @userName,

@@ -1,7 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateEmployeeContactByUserName(userName, contactFields, user) {
-    // Basic validation
     if (contactFields.phoneNumber !== undefined &&
         contactFields.phoneNumber !== null &&
         contactFields.phoneNumber.length > 20) {
@@ -28,7 +27,7 @@ export default async function updateEmployeeContactByUserName(userName, contactF
         .input('emailAddress', contactFields.emailAddress)
         .input('recordUpdate_userName', user.userName)
         .input('recordUpdate_dateTime', currentDate)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.Employees
       SET
         phoneNumber = @phoneNumber,

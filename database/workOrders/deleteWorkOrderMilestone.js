@@ -8,7 +8,7 @@ export default async function deleteWorkOrderMilestone(workOrderMilestoneId, use
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderMilestoneId', workOrderMilestoneId)
         .input('userName', userName)
-        .query(/* sql */ `
+        .query(`
       UPDATE ShiftLog.WorkOrderMilestones
       SET
         recordDelete_userName = @userName,
@@ -27,7 +27,6 @@ export default async function deleteWorkOrderMilestone(workOrderMilestoneId, use
         )
     `);
     if (result.rowsAffected[0] > 0) {
-        // Send Notification
         sendNotificationWorkerMessage('workOrder.update', typeof result.recordset[0].workOrderId === 'string'
             ? Number.parseInt(result.recordset[0].workOrderId, 10)
             : result.recordset[0].workOrderId);

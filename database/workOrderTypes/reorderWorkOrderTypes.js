@@ -8,7 +8,7 @@ export default async function reorderWorkOrderTypes(workOrderTypeIds, userName) 
             .input('instance', getConfigProperty('application.instance'))
             .input('workOrderTypeId', workOrderTypeId)
             .input('orderNumber', index)
-            .input('userName', userName).query(/* sql */ `
+            .input('userName', userName).query(`
         update ShiftLog.WorkOrderTypes
         set
           orderNumber = @orderNumber,

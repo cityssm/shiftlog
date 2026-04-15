@@ -5,14 +5,13 @@ export default async function reorderAssignedToItems(assignedToIds, userName) {
     let orderNumber = 0;
     for (const assignedToId of assignedToIds) {
         orderNumber += 1;
-        // eslint-disable-next-line no-await-in-loop
         await pool
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('assignedToId', assignedToId)
             .input('orderNumber', orderNumber)
             .input('userName', userName)
-            .query(/* sql */ `
+            .query(`
         UPDATE ShiftLog.AssignedTo
         SET
           orderNumber = @orderNumber,

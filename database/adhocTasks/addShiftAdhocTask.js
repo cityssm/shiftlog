@@ -6,7 +6,7 @@ export default async function addShiftAdhocTask(shiftId, adhocTaskId, shiftAdhoc
         .input('shiftId', shiftId)
         .input('adhocTaskId', adhocTaskId)
         .input('shiftAdhocTaskNote', shiftAdhocTaskNote)
-        .query(/* sql */ `
+        .query(`
       INSERT INTO
         ShiftLog.ShiftAdhocTasks (shiftId, adhocTaskId, shiftAdhocTaskNote)
       VALUES

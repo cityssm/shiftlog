@@ -1,11 +1,6 @@
 import path from 'node:path';
 import { getConfigProperty } from './helpers/config.helpers.js';
 const _dirname = '.';
-/**
- * Get the Windows service configuration
- * @param configFilePath - Optional path to the config file (defaults to data/config.js)
- * @returns ServiceConfig object for node-windows
- */
 export function getServiceConfig(configFilePath) {
     const config = {
         name: `ShiftLog (${getConfigProperty('application.instance')})`,
@@ -20,5 +15,4 @@ export function getServiceConfig(configFilePath) {
     }
     return config;
 }
-// Maintain backward compatibility with default export
 export const serviceConfig = getServiceConfig();
