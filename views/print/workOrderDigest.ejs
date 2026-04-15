@@ -42,7 +42,12 @@
     </thead>
     <tbody>
       <% for (const workOrder of workOrders) { %>
-      <tr class="<%= workOrder.isOverdue ? 'has-background-danger-light' : '' %> <%= workOrder.isNew ? 'has-background-info-light' : '' %>">
+      <%
+      let trClass = '';
+      if (workOrder.isOverdue) { trClass += ' has-background-danger-light'; }
+      if (workOrder.isNew) { trClass += ' has-background-info-light'; }
+      %>
+      <tr class="<%= trClass %>">
         <td class="has-text-weight-bold">
           <%= workOrder.workOrderNumber %>
           <% if (workOrder.isOverdue) { %>
@@ -55,9 +60,7 @@
         <td><%= workOrder.workOrderType ?? '' %></td>
         <td><%= workOrder.workOrderStatusDataListItem ?? '' %></td>
         <td><%= workOrder.workOrderPriorityDataListItem ?? '' %></td>
-        <td style="white-space: pre-wrap; max-width: 300px;">
-          <%= (workOrder.workOrderDetails && workOrder.workOrderDetails.length > 100) ? workOrder.workOrderDetails.substring(0, 100) + '...' : (workOrder.workOrderDetails || '') %>
-        </td>
+        <td style="white-space: pre-wrap; max-width: 300px;"><%= (workOrder.workOrderDetails && workOrder.workOrderDetails.length > 100) ? workOrder.workOrderDetails.substring(0, 100) + '...' : (workOrder.workOrderDetails || '') %></td>
         <td>
           <% if (workOrder.workOrderDueDateTime) { %>
           <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>
@@ -92,7 +95,12 @@
     </thead>
     <tbody>
       <% for (const milestone of milestones) { %>
-      <tr class="<%= milestone.isOverdue ? 'has-background-danger-light' : '' %> <%= milestone.isNew ? 'has-background-info-light' : '' %>">
+      <%
+      let trClass = '';
+      if (milestone.isOverdue) { trClass += ' has-background-danger-light'; }
+      if (milestone.isNew) { trClass += ' has-background-info-light'; }
+      %>
+      <tr class="<%= trClass %>">
         <td class="has-text-weight-bold">
           <%= milestone.workOrderNumber %>
         </td>
