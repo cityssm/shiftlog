@@ -396,10 +396,13 @@ declare const exports: {
         },
         (responseJSON: DoReorderAssignedToItemsResponse) => {
           if (responseJSON.success) {
+            const positionMap = new Map(
+              assignedToIds.map((id, index) => [id, index])
+            )
             assignedToList.sort(
               (a, b) =>
-                assignedToIds.indexOf(a.assignedToId) -
-                assignedToIds.indexOf(b.assignedToId)
+                (positionMap.get(a.assignedToId) ?? 0) -
+                (positionMap.get(b.assignedToId) ?? 0)
             )
           } else {
             bulmaJS.alert({

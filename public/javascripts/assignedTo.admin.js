@@ -232,7 +232,8 @@
                 assignedToIds
             }, (responseJSON) => {
                 if (responseJSON.success) {
-                    assignedToList.sort((a, b) => assignedToIds.indexOf(a.assignedToId) - assignedToIds.indexOf(b.assignedToId));
+                    const positionMap = new Map(assignedToIds.map((id, index) => [id, index]));
+                    assignedToList.sort((a, b) => (positionMap.get(a.assignedToId) ?? 0) - (positionMap.get(b.assignedToId) ?? 0));
                 }
                 else {
                     bulmaJS.alert({
