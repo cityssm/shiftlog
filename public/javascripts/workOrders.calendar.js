@@ -210,7 +210,8 @@
             showMilestoneCompleteDates: showMilestoneCompleteDatesCheckbox.checked,
             showMilestoneDueDates: showMilestoneDueDatesCheckbox.checked,
             showOpenDates: showOpenDatesCheckbox.checked
-        }, (responseJSON) => {
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             renderCalendar(responseJSON.events);
         });
     }

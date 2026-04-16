@@ -157,7 +157,8 @@
                 orderNumber: index + 1
             });
         }
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestoneOrder`, { milestoneOrders }, (responseJSON) => {
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestoneOrder`, { milestoneOrders }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (!responseJSON.success) {
                 bulmaJS.alert({
                     contextualColorName: 'danger',
@@ -190,7 +191,8 @@
         function doAddMilestone(submitEvent) {
             submitEvent.preventDefault();
             const formElement = submitEvent.currentTarget;
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderMilestone`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderMilestone`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     loadMilestones();
@@ -244,7 +246,8 @@
         function doUpdateMilestone(submitEvent) {
             submitEvent.preventDefault();
             const formElement = submitEvent.currentTarget;
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestone`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestone`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     loadMilestones();
@@ -338,7 +341,8 @@
                                 : '',
                             milestoneCompleteDateTimeString: completeDateTimeString,
                             assignedToId: milestone.assignedToId ?? ''
-                        }, (responseJSON) => {
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
                                 loadMilestones();
                             }
@@ -364,7 +368,8 @@
                 callbackFunction: () => {
                     cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderMilestone`, {
                         workOrderMilestoneId
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             loadMilestones();
                         }
@@ -380,7 +385,8 @@
         });
     }
     function loadMilestones() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (responseJSON) => {
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             renderMilestones(responseJSON.milestones);
         });
     }

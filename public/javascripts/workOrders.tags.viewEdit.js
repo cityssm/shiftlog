@@ -54,7 +54,8 @@
                         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderTag`, {
                             tagName,
                             workOrderId: Number.parseInt(workOrderId, 10)
-                        }, (responseJSON) => {
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
                                 renderTags(responseJSON.tags);
                                 bulmaJS.alert({
@@ -106,7 +107,8 @@
                         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`, {
                             tagName: suggestedTag.tagName,
                             workOrderId: Number.parseInt(workOrderId, 10)
-                        }, (responseJSON) => {
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
                                 getCloseFunction()();
                                 renderTags(responseJSON.tags);
@@ -141,7 +143,8 @@
                 cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`, {
                     tagName: tagNameInput.value,
                     workOrderId: Number.parseInt(workOrderId, 10)
-                }, (responseJSON) => {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.success) {
                         closeModalFunction();
                         renderTags(responseJSON.tags);
@@ -173,7 +176,8 @@
                         ?.addEventListener('submit', doAddTag);
                     const suggestedTagsContainer = modalElement.querySelector('#container--suggestedTags');
                     if (suggestedTagsContainer !== null) {
-                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`, {}, (responseJSON) => {
+                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`, {}, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             renderSuggestedTags(suggestedTagsContainer, responseJSON.suggestedTags, () => closeModalFunction);
                         });
                     }
@@ -190,7 +194,8 @@
             });
         }
         function getTags() {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`, {}, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`, {}, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 renderTags(responseJSON.tags);
             });
         }

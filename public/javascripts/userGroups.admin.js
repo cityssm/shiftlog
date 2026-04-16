@@ -17,7 +17,8 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteUserGroup`, {
                         userGroupId
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             exports.userGroups = responseJSON.userGroups;
                             renderUserGroups(responseJSON.userGroups);
@@ -53,7 +54,8 @@
         function doUpdateUserGroup(submitEvent) {
             submitEvent.preventDefault();
             const updateForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserGroup`, updateForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserGroup`, updateForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     exports.userGroups = responseJSON.userGroups;
@@ -148,7 +150,8 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUserGroupMember`, {
                 userGroupId,
                 userName
-            }, (responseJSON) => {
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     if (responseJSON.userGroup !== undefined) {
                         currentMembers = responseJSON.userGroup.members ?? [];
@@ -187,7 +190,8 @@
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteUserGroupMember`, {
                 userGroupId,
                 userName
-            }, (responseJSON) => {
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     if (responseJSON.userGroup !== undefined) {
                         currentMembers = responseJSON.userGroup.members ?? [];
@@ -228,7 +232,8 @@
                 </option>
               `)
                     .join('')}`;
-                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetUserGroup`, { userGroupId }, (responseJSON) => {
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetUserGroup`, { userGroupId }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.userGroup !== undefined) {
                         currentMembers = responseJSON.userGroup.members ?? [];
                         renderMembersList();
@@ -336,7 +341,8 @@
         function doAddUserGroup(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUserGroup`, addForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUserGroup`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     exports.userGroups = responseJSON.userGroups;

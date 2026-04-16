@@ -70,7 +70,8 @@
         }
     }
     function submitWorkOrderUpdate() {
-        cityssm.postJSON(`${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (responseJSON) => {
+        cityssm.postJSON(`${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`, workOrderFormElement, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 shiftLog.clearUnsavedChanges();
                 if (isCreate) {
@@ -114,7 +115,8 @@
                 requestorSearchString = newSearchString;
                 cityssm.postJSON(`${workOrderUrlPrefix}/doGetRequestorSuggestions`, {
                     searchString: requestorSearchString
-                }, (responseJSON) => {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     requestorsData = responseJSON.requestors;
                     for (const requestor of responseJSON.requestors) {
                         const option = document.createElement('option');
@@ -186,7 +188,8 @@
             }
         }
         function fetchLocationSuggestions(searchString, callback) {
-            cityssm.postJSON(`${workOrderUrlPrefix}/doGetLocationSuggestions`, { searchString }, (responseJSON) => {
+            cityssm.postJSON(`${workOrderUrlPrefix}/doGetLocationSuggestions`, { searchString }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 locationsData = responseJSON.locations;
                 populateLocationDatalist(responseJSON.locations);
                 if (callback !== undefined) {
@@ -397,7 +400,8 @@
                     callbackFunction: () => {
                         cityssm.postJSON(`${workOrderUrlPrefix}/doDeleteWorkOrder`, {
                             workOrderId
-                        }, (responseJSON) => {
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
                                 shiftLog.clearUnsavedChanges();
                                 globalThis.location.href = responseJSON.redirectUrl;

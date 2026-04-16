@@ -387,7 +387,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderAttachment`,
         formElement,
-        (responseJSON: DoUpdateWorkOrderAttachmentResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateWorkOrderAttachmentResponse
           if (responseJSON.success) {
             closeModalFunction()
             loadAttachments()
@@ -445,7 +446,8 @@ declare const bulmaJS: BulmaJS
             {
               workOrderAttachmentId
             },
-            (responseJSON: DoDeleteWorkOrderAttachmentResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteWorkOrderAttachmentResponse
               if (responseJSON.success) {
                 loadAttachments()
               } else {
@@ -467,7 +469,8 @@ declare const bulmaJS: BulmaJS
       {
         workOrderAttachmentId
       },
-      (responseJSON: DoSetWorkOrderAttachmentThumbnailResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoSetWorkOrderAttachmentThumbnailResponse
         if (responseJSON.success) {
           loadAttachments()
           bulmaJS.alert({
@@ -488,7 +491,8 @@ declare const bulmaJS: BulmaJS
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`,
       {},
-      (responseJSON: DoGetWorkOrderAttachmentsResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoGetWorkOrderAttachmentsResponse
         renderAttachments(responseJSON.attachments)
       }
     )

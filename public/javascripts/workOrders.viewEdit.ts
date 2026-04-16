@@ -79,7 +79,8 @@ declare const bulmaJS: BulmaJS
               {
                 workOrderId: workOrderIdElement.value
               },
-              (responseJSON: DoReopenWorkOrderResponse) => {
+              (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON as DoReopenWorkOrderResponse
                 if (responseJSON.success) {
                   globalThis.location.href = responseJSON.redirectUrl
                 } else {

@@ -85,7 +85,8 @@ declare const bulmaJS: BulmaJS
         `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
         { dataListKey: key },
         // eslint-disable-next-line @typescript-eslint/no-loop-func
-        (responseJSON: DoGetDataListItemsResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoGetDataListItemsResponse
           dataListMap.set(key, responseJSON.items)
 
           loadedCount += 1
@@ -374,7 +375,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`,
         noteData,
-        (responseJSON: DoUpdateWorkOrderNoteResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateWorkOrderNoteResponse
           if (responseJSON.success) {
             closeModalFunction()
             loadNotes()
@@ -1081,7 +1083,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`,
         noteData,
-        (responseJSON: DoCreateWorkOrderNoteResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoCreateWorkOrderNoteResponse
           if (responseJSON.success) {
             closeModalFunction()
             formElement.reset()
@@ -1159,7 +1162,8 @@ declare const bulmaJS: BulmaJS
               workOrderId,
               noteSequence
             },
-            (responseJSON: DoDeleteWorkOrderNoteResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteWorkOrderNoteResponse
               if (responseJSON.success) {
                 loadNotes()
               } else {
@@ -1179,7 +1183,8 @@ declare const bulmaJS: BulmaJS
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`,
       {},
-      (responseJSON: DoGetWorkOrderNotesResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoGetWorkOrderNotesResponse
         renderNotes(responseJSON.notes)
       }
     )

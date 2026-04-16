@@ -158,7 +158,8 @@ const shadowSize = [41, 41];
         if (assignedToId !== '') {
             filters.assignedToId = assignedToId;
         }
-        cityssm.postJSON(`${urlPrefix}/doSearchWorkOrders`, filters, (responseJSON) => {
+        cityssm.postJSON(`${urlPrefix}/doSearchWorkOrders`, filters, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             markersLayer.clearLayers();
             const bounds = [];
             let displayedCount = 0;

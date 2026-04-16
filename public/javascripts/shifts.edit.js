@@ -20,7 +20,8 @@
     }
     function updateShift(formEvent) {
         formEvent.preventDefault();
-        cityssm.postJSON(`${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`, shiftFormElement, (responseJSON) => {
+        cityssm.postJSON(`${shiftUrlPrefix}/${isCreate ? 'doCreateShift' : 'doUpdateShift'}`, shiftFormElement, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 if (isCreate && 'shiftId' in responseJSON) {
                     globalThis.location.href = shiftLog.buildShiftURL(responseJSON.shiftId, true);
@@ -55,7 +56,8 @@
                     callbackFunction: () => {
                         cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShift`, {
                             shiftId
-                        }, (responseJSON) => {
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }

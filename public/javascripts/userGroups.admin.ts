@@ -50,7 +50,8 @@ declare const exports: {
             {
               userGroupId
             },
-            (responseJSON: DoDeleteUserGroupResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteUserGroupResponse
               if (responseJSON.success) {
                 exports.userGroups = responseJSON.userGroups
                 renderUserGroups(responseJSON.userGroups)
@@ -102,7 +103,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateUserGroup`,
         updateForm,
-        (responseJSON: DoUpdateUserGroupResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateUserGroupResponse
           if (responseJSON.success) {
             closeModalFunction()
 
@@ -238,7 +240,8 @@ declare const exports: {
           userGroupId,
           userName
         },
-        (responseJSON: DoAddUserGroupMemberResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddUserGroupMemberResponse
           if (responseJSON.success) {
             if (responseJSON.userGroup !== undefined) {
               currentMembers = responseJSON.userGroup.members ?? []
@@ -298,7 +301,8 @@ declare const exports: {
           userGroupId,
           userName
         },
-        (responseJSON: DoDeleteUserGroupMemberResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoDeleteUserGroupMemberResponse
           if (responseJSON.success) {
             if (responseJSON.userGroup !== undefined) {
               currentMembers = responseJSON.userGroup.members ?? []
@@ -363,7 +367,8 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doGetUserGroup`,
           { userGroupId },
-          (responseJSON: DoGetUserGroupResponse) => {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as DoGetUserGroupResponse
             if (responseJSON.userGroup !== undefined) {
               currentMembers = responseJSON.userGroup.members ?? []
               renderMembersList()
@@ -500,7 +505,8 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doAddUserGroup`,
           addForm,
-          (responseJSON: DoAddUserGroupResponse) => {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as DoAddUserGroupResponse
             if (responseJSON.success) {
               closeModalFunction()
               exports.userGroups = responseJSON.userGroups

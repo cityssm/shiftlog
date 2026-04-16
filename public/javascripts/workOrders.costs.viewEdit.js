@@ -102,7 +102,8 @@
             function doUpdateCost(submitEvent) {
                 submitEvent.preventDefault();
                 const formElement = submitEvent.currentTarget;
-                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderCost`, formElement, (responseJSON) => {
+                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderCost`, formElement, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.success) {
                         closeModalFunction();
                         loadCosts();
@@ -141,7 +142,8 @@
             function doAddCost(submitEvent) {
                 submitEvent.preventDefault();
                 const formElement = submitEvent.currentTarget;
-                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderCost`, formElement, (responseJSON) => {
+                cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderCost`, formElement, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.success) {
                         closeModalFunction();
                         formElement.reset();
@@ -186,7 +188,8 @@
                     callbackFunction: () => {
                         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderCost`, {
                             workOrderCostId
-                        }, (responseJSON) => {
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
                                 loadCosts();
                             }
@@ -202,7 +205,8 @@
             });
         }
         function loadCosts() {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderCosts`, {}, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderCosts`, {}, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 renderCosts(responseJSON.costs);
             });
         }

@@ -82,7 +82,8 @@ declare const bulmaJS: BulmaJS
         `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
         { dataListKey: key },
         // eslint-disable-next-line @typescript-eslint/no-loop-func
-        (responseJSON: DoGetDataListItemsResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoGetDataListItemsResponse
           dataListMap.set(key, responseJSON.items)
 
           loadedCount += 1
@@ -371,7 +372,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doUpdateShiftNote`,
         noteData,
-        (responseJSON: DoUpdateShiftNoteResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftNoteResponse
           if (responseJSON.success) {
             closeModalFunction()
             loadNotes()
@@ -1076,7 +1078,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doCreateShiftNote`,
         noteData,
-        (responseJSON: DoCreateShiftNoteResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoCreateShiftNoteResponse
           if (responseJSON.success) {
             closeModalFunction()
             formElement.reset()
@@ -1154,7 +1157,8 @@ declare const bulmaJS: BulmaJS
               shiftId,
               noteSequence
             },
-            (responseJSON: DoDeleteShiftNoteResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteShiftNoteResponse
               if (responseJSON.success) {
                 loadNotes()
               } else {
@@ -1174,7 +1178,8 @@ declare const bulmaJS: BulmaJS
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId}/doGetShiftNotes`,
       {},
-      (responseJSON: DoGetShiftNotesResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoGetShiftNotesResponse
         renderNotes(responseJSON.notes)
       }
     )

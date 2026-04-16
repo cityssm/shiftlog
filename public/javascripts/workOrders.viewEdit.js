@@ -33,7 +33,8 @@
                         const workOrderIdElement = document.querySelector('#workOrder--workOrderId');
                         cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doReopenWorkOrder`, {
                             workOrderId: workOrderIdElement.value
-                        }, (responseJSON) => {
+                        }, (rawResponseJSON) => {
+                            const responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
                                 globalThis.location.href = responseJSON.redirectUrl;
                             }
