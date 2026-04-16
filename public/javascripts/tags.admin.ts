@@ -34,9 +34,9 @@ declare const exports: {
    * Convert a hex color to RGB values
    */
   function hexToRgb(hex: string): { r: number; g: number; b: number } {
-    const cleanHex = hex.replace(/^#/v, '')
+    const cleanHex = hex.replace(/^#/, '')
     // Validate hex string
-    if (!/^[\dA-F]{6}$/iv.test(cleanHex)) {
+    if (!/^[\dA-F]{6}$/i.test(cleanHex)) {
       // Default to black if invalid
       return { r: 0, g: 0, b: 0 }
     }

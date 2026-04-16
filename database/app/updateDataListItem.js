@@ -2,11 +2,11 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function updateDataListItem(form) {
     const pool = await getShiftLogConnectionPool();
     const colorHexTrimmed = (form.colorHex ?? '').trim().slice(-6);
-    const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+    const colorHex = /^[\da-f]{6}$/i.test(colorHexTrimmed)
         ? colorHexTrimmed
         : '000000';
     const iconClassTrimmed = (form.iconClass ?? '').trim();
-    const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+    const iconClass = /^[\da-z-]+$/.test(iconClassTrimmed)
         ? iconClassTrimmed
         : 'circle';
     try {

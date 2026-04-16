@@ -801,7 +801,8 @@ declare const exports: {
         `${shiftUrlPrefix}/doGetAvailableAdhocTasks`,
         {},
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoGetAvailableAdhocTasksResponse
+          const responseJSON =
+            rawResponseJSON as DoGetAvailableAdhocTasksResponse
           renderAvailableAdhocTasks(responseJSON.adhocTasks)
         }
       )
@@ -813,7 +814,8 @@ declare const exports: {
           shiftDateString
         },
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
+          const responseJSON =
+            rawResponseJSON as DoGetAvailableResourcesResponse
           renderAvailableResources(responseJSON)
         }
       )
@@ -1610,8 +1612,10 @@ declare const exports: {
             shiftId: draggedData.fromShiftId,
             adhocTaskId: draggedData.id
           },
-          (response: { success: boolean }) => {
-            if (response.success) {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as { success: boolean }
+
+            if (responseJSON.success) {
               bulmaJS.alert({
                 contextualColorName: 'success',
                 message: 'Ad hoc task removed from shift.'
@@ -1664,8 +1668,10 @@ declare const exports: {
             crewId: draggedData.id,
             shiftId: draggedData.fromShiftId
           },
-          (response: { success: boolean }) => {
-            if (response.success) {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as { success: boolean }
+
+            if (responseJSON.success) {
               // Also delete crew employees and their equipment
               let employeesDeletedCount = 0
               let employeesFailedCount = 0
@@ -1691,7 +1697,10 @@ declare const exports: {
                       shiftId: draggedData.fromShiftId
                     },
                     // eslint-disable-next-line @typescript-eslint/no-loop-func
-                    (empResponse: DoDeleteShiftEmployeeResponse) => {
+                    (rawEmpResponseJSON) => {
+                      const empResponse =
+                        rawEmpResponseJSON as DoDeleteShiftEmployeeResponse
+
                       if (empResponse.success) {
                         employeesDeletedCount += 1
                       } else {
@@ -1729,8 +1738,11 @@ declare const exports: {
                                 shiftId: draggedData.fromShiftId
                               },
                               // eslint-disable-next-line @typescript-eslint/no-loop-func
-                              (eqResponse: DoDeleteShiftEquipmentResponse) => {
-                                if (eqResponse.success) {
+                              (rawEquipResponseJSON) => {
+                                const equipmentResponse =
+                                  rawEquipResponseJSON as DoDeleteShiftEquipmentResponse
+
+                                if (equipmentResponse.success) {
                                   equipmentDeletedCount += 1
                                 } else {
                                   equipmentFailedCount += 1
@@ -1795,8 +1807,11 @@ declare const exports: {
             employeeNumber: draggedData.id,
             shiftId: draggedData.fromShiftId
           },
-          (response: { success: boolean }) => {
-            if (response.success) {
+          (rawResponseJSON) => {
+            const responseJSON =
+              rawResponseJSON as DoDeleteShiftEmployeeResponse
+
+            if (responseJSON.success) {
               // Also delete assigned equipment
               let equipmentDeletedCount = 0
               const totalEquipment = assignedEquipment.length
@@ -1816,16 +1831,27 @@ declare const exports: {
                       equipmentNumber: equipment.equipmentNumber,
                       shiftId: draggedData.fromShiftId
                     },
-                    (_equipResponse) => {
-                      equipmentDeletedCount += 1
+                    (rawEquipResponse) => {
+                      const equipResponse =
+                        rawEquipResponse as DoDeleteShiftEquipmentResponse
 
-                      if (equipmentDeletedCount === totalEquipment) {
+                      if (equipResponse.success) {
+                        equipmentDeletedCount += 1
+
+                        if (equipmentDeletedCount === totalEquipment) {
+                          bulmaJS.alert({
+                            contextualColorName: 'success',
+                            message: `Employee and ${totalEquipment} assigned equipment removed from shift.`
+                          })
+
+                          loadShifts()
+                        }
+                      } else {
                         bulmaJS.alert({
-                          contextualColorName: 'success',
-                          message: `Employee and ${totalEquipment} assigned equipment removed from shift.`
+                          contextualColorName: 'warning',
+                          message: `Employee removed, but failed to remove assigned equipment: ${equipment.equipmentName} (#${equipment.equipmentNumber}).`,
+                          title: 'Partial Success'
                         })
-
-                        loadShifts()
                       }
                     }
                   )
@@ -1850,8 +1876,11 @@ declare const exports: {
             equipmentNumber: draggedData.id,
             shiftId: draggedData.fromShiftId
           },
-          (response: { success: boolean }) => {
-            if (response.success) {
+          (rawResponseJSON) => {
+            const responseJSON =
+              rawResponseJSON as DoDeleteShiftEquipmentResponse
+
+            if (responseJSON.success) {
               bulmaJS.alert({
                 contextualColorName: 'success',
                 message: 'Equipment removed from shift.'
@@ -1877,8 +1906,10 @@ declare const exports: {
             shiftId: draggedData.fromShiftId,
             workOrderId: draggedData.id
           },
-          (response: { success: boolean }) => {
-            if (response.success) {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as { success: boolean }
+
+            if (responseJSON.success) {
               bulmaJS.alert({
                 contextualColorName: 'success',
                 message: 'Work order removed from shift.'
@@ -1914,7 +1945,9 @@ declare const exports: {
           shiftEmployeeNote: '',
           shiftId: toShiftId
         },
-        (addResponse: { success: boolean }) => {
+        (rawResponseJSON) => {
+          const addResponse = rawResponseJSON as { success: boolean }
+
           if (addResponse.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -1944,7 +1977,9 @@ declare const exports: {
         employeeNumber,
         shiftId: fromShiftId
       },
-      (deleteResponse: { success: boolean }) => {
+      (rawResponseJSON) => {
+        const deleteResponse = rawResponseJSON as { success: boolean }
+
         if (deleteResponse.success) {
           // Add to new shift
           cityssm.postJSON(
@@ -1954,7 +1989,9 @@ declare const exports: {
               shiftEmployeeNote: '',
               shiftId: toShiftId
             },
-            (addResponse: { success: boolean }) => {
+            (rawAddResponseJSON) => {
+              const addResponse = rawAddResponseJSON as { success: boolean }
+
               if (addResponse.success) {
                 // Move assigned equipment too
                 let equipmentMovedCount = 0
@@ -1976,7 +2013,10 @@ declare const exports: {
                         equipmentNumber: equipment.equipmentNumber,
                         shiftId: fromShiftId
                       },
-                      (deleteEquipResponse: DoDeleteShiftEquipmentResponse) => {
+                      (rawDeleteEquipResponse) => {
+                        const deleteEquipResponse =
+                          rawDeleteEquipResponse as DoDeleteShiftEquipmentResponse
+
                         if (deleteEquipResponse.success) {
                           // Add equipment to new shift with operator assignment
                           cityssm.postJSON(
@@ -1987,7 +2027,10 @@ declare const exports: {
                               shiftEquipmentNote: '',
                               shiftId: toShiftId
                             },
-                            () => {
+                            (rawAddEquipResponse) => {
+                              const addEquipResponse =
+                                rawAddEquipResponse as DoAddShiftEquipmentResponse
+
                               equipmentMovedCount += 1
 
                               if (equipmentMovedCount === totalEquipment) {
@@ -2042,8 +2085,13 @@ declare const exports: {
           shiftEquipmentNote: '',
           shiftId: toShiftId
         },
-        (addResponse: { success: boolean; message?: string }) => {
-          if (addResponse.success) {
+        (rawAddResponseJSON) => {
+          const addResponseJSON = rawAddResponseJSON as {
+            success: boolean
+            message?: string
+          }
+
+          if (addResponseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
               title: 'Equipment Added',
@@ -2055,7 +2103,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               message:
-                addResponse.message ?? 'Failed to add equipment to shift.',
+                addResponseJSON.message ?? 'Failed to add equipment to shift.',
               title: 'Error'
             })
           }
@@ -2071,7 +2119,12 @@ declare const exports: {
         equipmentNumber,
         shiftId: fromShiftId
       },
-      (deleteResponse: { success: boolean; message?: string }) => {
+      (rawDeleteResponseJSON) => {
+        const deleteResponse = rawDeleteResponseJSON as {
+          success: boolean
+          message?: string
+        }
+
         if (deleteResponse.success) {
           // Add to new shift
           cityssm.postJSON(
@@ -2081,7 +2134,12 @@ declare const exports: {
               shiftEquipmentNote: '',
               shiftId: toShiftId
             },
-            (addResponse: { success: boolean; message?: string }) => {
+            (rawAddResponseJSON) => {
+              const addResponse = rawAddResponseJSON as {
+                success: boolean
+                message?: string
+              }
+
               if (addResponse.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -2128,7 +2186,9 @@ declare const exports: {
           shiftCrewNote: '',
           shiftId: toShiftId
         },
-        (addResponse: { success: boolean }) => {
+        (rawAddResponseJSON) => {
+          const addResponse = rawAddResponseJSON as { success: boolean }
+
           if (addResponse.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2178,7 +2238,9 @@ declare const exports: {
         crewId,
         shiftId: fromShiftId
       },
-      (deleteResponse: { success: boolean }) => {
+      (rawDeleteResponseJSON) => {
+        const deleteResponse = rawDeleteResponseJSON as { success: boolean }
+
         if (deleteResponse.success) {
           // Add crew to new shift
           cityssm.postJSON(
@@ -2188,7 +2250,9 @@ declare const exports: {
               shiftCrewNote: '',
               shiftId: toShiftId
             },
-            (addResponse: { success: boolean }) => {
+            (rawAddResponseJSON) => {
+              const addResponse = rawAddResponseJSON as { success: boolean }
+
               if (addResponse.success) {
                 // Now move employees
                 let employeesProcessed = 0
@@ -2212,7 +2276,10 @@ declare const exports: {
                         employeeNumber: employee.employeeNumber,
                         shiftId: fromShiftId
                       },
-                      (deleteEmpResponse: DoDeleteShiftEmployeeResponse) => {
+                      (rawDeleteEmpResponseJSON) => {
+                        const deleteEmpResponse =
+                          rawDeleteEmpResponseJSON as DoDeleteShiftEmployeeResponse
+
                         if (deleteEmpResponse.success) {
                           // Add employee to new shift with crew assignment
                           cityssm.postJSON(
@@ -2359,8 +2426,13 @@ declare const exports: {
           shiftWorkOrderNote: '',
           workOrderId
         },
-        (addResponse: { success: boolean; errorMessage?: string }) => {
-          if (addResponse.success) {
+        (rawAddResponseJSON) => {
+          const addResponseJSON = rawAddResponseJSON as {
+            success: boolean
+            errorMessage?: string
+          }
+
+          if (addResponseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
               message: 'Work order has been added to the shift.',
@@ -2371,7 +2443,7 @@ declare const exports: {
             bulmaJS.alert({
               contextualColorName: 'danger',
               message:
-                addResponse.errorMessage ??
+                addResponseJSON.errorMessage ??
                 'Failed to add work order to shift.',
               title: 'Error'
             })
@@ -2390,7 +2462,12 @@ declare const exports: {
         shiftWorkOrderNote: '',
         workOrderId
       },
-      (addResponse: { success: boolean; errorMessage?: string }) => {
+      (rawAddResponse) => {
+        const addResponse = rawAddResponse as {
+          success: boolean
+          errorMessage?: string
+        }
+
         if (addResponse.success) {
           // Successfully added to new shift, now remove from old shift
           cityssm.postJSON(
@@ -2399,7 +2476,9 @@ declare const exports: {
               shiftId: fromShiftId,
               workOrderId
             },
-            (deleteResponse: { success: boolean }) => {
+            (rawDeleteResponse) => {
+              const deleteResponse = rawDeleteResponse as { success: boolean }
+
               if (deleteResponse.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -2448,7 +2527,12 @@ declare const exports: {
           shiftAdhocTaskNote: '',
           adhocTaskId
         },
-        (addResponse: { success: boolean; errorMessage?: string }) => {
+        (rawAddResponse) => {
+          const addResponse = rawAddResponse as {
+            success: boolean
+            errorMessage?: string
+          }
+
           if (addResponse.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2479,7 +2563,12 @@ declare const exports: {
         shiftAdhocTaskNote: '',
         adhocTaskId
       },
-      (addResponse: { success: boolean; errorMessage?: string }) => {
+      (rawAddResponse) => {
+        const addResponse = rawAddResponse as {
+          success: boolean
+          errorMessage?: string
+        }
+
         if (addResponse.success) {
           // Successfully added to new shift, now remove from old shift
           cityssm.postJSON(
@@ -2488,7 +2577,9 @@ declare const exports: {
               shiftId: fromShiftId,
               adhocTaskId
             },
-            (deleteResponse: { success: boolean }) => {
+            (rawDeleteResponse) => {
+              const deleteResponse = rawDeleteResponse as { success: boolean }
+
               if (deleteResponse.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -2545,6 +2636,7 @@ declare const exports: {
       },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoUpdateShiftResponse
+
         if (responseJSON.success) {
           bulmaJS.alert({
             contextualColorName: 'success',
@@ -2604,7 +2696,9 @@ declare const exports: {
           employeeNumber,
           shiftId: fromShiftId
         },
-        (deleteResponse: { success: boolean }) => {
+        (rawDeleteResponse) => {
+          const deleteResponse = rawDeleteResponse as { success: boolean }
+
           if (deleteResponse.success) {
             // Add to new shift with crew assignment
             cityssm.postJSON(
@@ -2615,7 +2709,9 @@ declare const exports: {
                 shiftEmployeeNote: '',
                 shiftId: toShiftId
               },
-              (addResponse: DoAddShiftEmployeeResponse) => {
+              (rawAddResponse) => {
+                const addResponse = rawAddResponse as DoAddShiftEmployeeResponse
+
                 if (addResponse.success) {
                   bulmaJS.alert({
                     contextualColorName: 'success',
@@ -2663,6 +2759,7 @@ declare const exports: {
         },
         (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftEquipmentResponse
+
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2688,7 +2785,9 @@ declare const exports: {
           equipmentNumber,
           shiftId: fromShiftId
         },
-        (deleteResponse: { success: boolean }) => {
+        (rawDeleteResponse) => {
+          const deleteResponse = rawDeleteResponse as { success: boolean }
+
           if (deleteResponse.success) {
             // Add to new shift with employee assignment
             cityssm.postJSON(
@@ -2699,7 +2798,10 @@ declare const exports: {
                 shiftEquipmentNote: '',
                 shiftId: toShiftId
               },
-              (addResponse: DoAddShiftEquipmentResponse) => {
+              (rawAddResponse) => {
+                const addResponse =
+                  rawAddResponse as DoAddShiftEquipmentResponse
+
                 if (addResponse.success) {
                   bulmaJS.alert({
                     contextualColorName: 'success',
@@ -2748,7 +2850,8 @@ declare const exports: {
   // Set up drag and drop for available resources sidebar
   const availableResourcesContainer = document.querySelector(
     '#container--availableResources'
-  )
+  ) as HTMLElement | null
+
   if (availableResourcesContainer !== null) {
     availableResourcesContainer.addEventListener('dragstart', handleDragStart)
     availableResourcesContainer.addEventListener('dragend', handleDragEnd)
@@ -2807,7 +2910,9 @@ declare const exports: {
           `${shiftUrlPrefix}/doGetShiftCreationData`,
           {},
           (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoGetShiftCreationDataResponse
+            const responseJSON =
+              rawResponseJSON as DoGetShiftCreationDataResponse
+
             // Populate shift types
             for (const shiftType of responseJSON.shiftTypes) {
               const optionElement = document.createElement('option')
@@ -3216,17 +3321,17 @@ declare const exports: {
       { searchString, orderBy: 'workOrderNumber desc', limit: 20, offset: 0 },
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
-        count: number
-        success: boolean
-        workOrders: Array<{
-          requestorEmployeeNumber: string | null
-          requestorFirstName: string | null
-          requestorLastName: string | null
-          workOrderDetails: string
-          workOrderId: number
-          workOrderNumber: string
-        }>
-      }
+          count: number
+          success: boolean
+          workOrders: Array<{
+            requestorEmployeeNumber: string | null
+            requestorFirstName: string | null
+            requestorLastName: string | null
+            workOrderDetails: string
+            workOrderId: number
+            workOrderNumber: string
+          }>
+        }
         if (responseJSON.success) {
           const workOrderList = modalElement.querySelector(
             '#builderAddResource--workOrderList'
@@ -3754,7 +3859,10 @@ declare const exports: {
                 `${shiftUrlPrefix}/doCreateStandaloneAdhocTask`,
                 formEvent.currentTarget as HTMLFormElement,
                 (rawResponseJSON) => {
-                  const responseJSON = rawResponseJSON as { success: boolean; errorMessage?: string }
+                  const responseJSON = rawResponseJSON as {
+                    success: boolean
+                    errorMessage?: string
+                  }
                   if (responseJSON.success) {
                     bulmaJS.alert({
                       contextualColorName: 'success',
@@ -4079,7 +4187,10 @@ declare const exports: {
               employeeNumber: employeeNumber === '' ? null : employeeNumber
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean; message?: string }
+              const responseJSON = rawResponseJSON as {
+                success: boolean
+                message?: string
+              }
               if (responseJSON.success) {
                 // Update note
                 cityssm.postJSON(
@@ -4178,7 +4289,10 @@ declare const exports: {
             `${shiftUrlPrefix}/doUpdateShiftWorkOrderNote`,
             formElement,
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as { success: boolean; errorMessage?: string }
+              const responseJSON = rawResponseJSON as {
+                success: boolean
+                errorMessage?: string
+              }
               if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',

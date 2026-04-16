@@ -6,9 +6,9 @@ import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:workOrders-post:doUploadWorkOrderAttachment`);
 function sanitizeFileName(originalName) {
-    let sanitized = originalName.replaceAll(/[\u0000-\u001F\u007F-\u009F]/gv, '');
+    let sanitized = originalName.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, '');
     sanitized = sanitized.replaceAll(/[<>:"/\\|?*]/g, '_');
-    sanitized = sanitized.replace(/^\.+/v, '');
+    sanitized = sanitized.replace(/^\.+/, '');
     if (sanitized.length > 200) {
         const extension = path.extname(sanitized);
         const basename = path.basename(sanitized, extension);

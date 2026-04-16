@@ -4,8 +4,8 @@
     const WCAG_AA_NORMAL_RATIO = 4.5;
     const WCAG_AAA_NORMAL_RATIO = 7;
     function hexToRgb(hex) {
-        const cleanHex = hex.replace(/^#/v, '');
-        if (!/^[\dA-F]{6}$/iv.test(cleanHex)) {
+        const cleanHex = hex.replace(/^#/, '');
+        if (!/^[\dA-F]{6}$/i.test(cleanHex)) {
             return { r: 0, g: 0, b: 0 };
         }
         const bigint = Number.parseInt(cleanHex, 16);
