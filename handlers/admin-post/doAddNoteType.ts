@@ -10,7 +10,6 @@ export type DoAddNoteTypeResponse =
       success: false
     }
   | {
-      message?: undefined
       noteTypes: NoteTypeWithFields[]
       success: true
     }
@@ -38,9 +37,11 @@ export default async function handler(
   const isAvailableWorkOrders =
     request.body.isAvailableWorkOrders === true ||
     request.body.isAvailableWorkOrders === '1'
+
   const isAvailableShifts =
     request.body.isAvailableShifts === true ||
     request.body.isAvailableShifts === '1'
+
   const isAvailableTimesheets =
     request.body.isAvailableTimesheets === true ||
     request.body.isAvailableTimesheets === '1'

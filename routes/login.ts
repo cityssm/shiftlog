@@ -77,6 +77,7 @@ async function postHandler(
   }
 
   if (isAuthenticated && userObject === undefined && knownUserCount === 0) {
+    // eslint-disable-next-line require-atomic-updates
     knownUserCount = await getUserCount()
 
     if (knownUserCount === 0) {
@@ -85,6 +86,7 @@ async function postHandler(
       const success = await addUser(userName, SYSTEM_USER)
 
       if (success) {
+        // eslint-disable-next-line require-atomic-updates
         knownUserCount = 1
 
         await updateUser(

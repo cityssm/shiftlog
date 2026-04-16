@@ -166,9 +166,7 @@
     document
         .querySelector('#button--refresh')
         ?.addEventListener('click', loadAuditLogs);
-    document
-        .querySelector('#filter--userName')
-        ?.addEventListener('keyup', (keyEvent) => {
+    document.querySelector('#filter--userName').addEventListener('keyup', (keyEvent) => {
         if (keyEvent.key === 'Enter') {
             currentPage = 1;
             loadAuditLogs();

@@ -248,15 +248,14 @@ declare const exports: {
   document
     .querySelector('#button--refresh')
     ?.addEventListener('click', loadAuditLogs)
-
-  document
-    .querySelector('#filter--userName')
-    ?.addEventListener('keyup', (keyEvent: KeyboardEvent) => {
-      if (keyEvent.key === 'Enter') {
-        currentPage = 1
-        loadAuditLogs()
-      }
-    })
+  ;(
+    document.querySelector('#filter--userName') as HTMLInputElement
+  ).addEventListener('keyup', (keyEvent: KeyboardEvent) => {
+    if (keyEvent.key === 'Enter') {
+      currentPage = 1
+      loadAuditLogs()
+    }
+  })
 
   // Auto-refresh on filter change
   document

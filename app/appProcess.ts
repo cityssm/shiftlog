@@ -62,6 +62,7 @@ process.title = `${getConfigProperty('application.applicationName')} (Worker)`
 
 const httpPort = getConfigProperty('application.httpPort')
 
+// eslint-disable-next-line @typescript-eslint/strict-void-return
 const httpServer = http.createServer(app)
 
 httpServer
