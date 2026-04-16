@@ -75,7 +75,8 @@
         function doAddAssignedTo(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddAssignedToItem`, addForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddAssignedToItem`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     assignedToList.push({
                         assignedToId: responseJSON.assignedToId,
@@ -132,7 +133,8 @@
         function doUpdateAssignedTo(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`, editForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     const itemIndex = assignedToList.findIndex((item) => assignedToId !== undefined &&
                         item.assignedToId === Number.parseInt(assignedToId, 10));
@@ -193,7 +195,8 @@
         function doDelete() {
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteAssignedToItem`, {
                 assignedToId
-            }, (responseJSON) => {
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     assignedToList = assignedToList.filter((item) => item.assignedToId !== assignedToId);
                     renderAssignedToList();
@@ -230,7 +233,8 @@
             }
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderAssignedToItems`, {
                 assignedToIds
-            }, (responseJSON) => {
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     const positionMap = new Map(assignedToIds.map((id, index) => [id, index]));
                     assignedToList.sort((a, b) => (positionMap.get(a.assignedToId) ?? 0) -

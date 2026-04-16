@@ -26,7 +26,8 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEmployee`, {
                         employeeNumber
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             exports.employees = responseJSON.employees;
                             applyCurrentFilter();
@@ -62,7 +63,8 @@
         function doUpdateEmployee(submitEvent) {
             submitEvent.preventDefault();
             const editForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployee`, editForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateEmployee`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     exports.employees = responseJSON.employees;
@@ -239,7 +241,8 @@
         function doAddEmployee(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployee`, addForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddEmployee`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     addForm.reset();

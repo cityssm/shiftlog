@@ -325,7 +325,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataList`, {
                 dataListKey,
                 dataListName
-            }, (responseJSON) => {
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.dataLists !== undefined) {
                     closeModalFunction();
                     renderAllDataLists(responseJSON.dataLists);
@@ -387,7 +388,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataList`, editForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataList`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.dataLists !== undefined) {
                     closeModalFunction();
                     renderAllDataLists(responseJSON.dataLists);
@@ -444,7 +446,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataList`, {
                         dataListKey
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success &&
                             responseJSON.dataLists !== undefined) {
                             renderAllDataLists(responseJSON.dataLists);
@@ -494,7 +497,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             if (colorHexValue?.startsWith('#')) {
                 formData.set('colorHex', colorHexValue.slice(1));
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddDataListItem`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
                     const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
@@ -573,7 +577,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 });
                 return;
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddMultipleDataListItems`, addForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddMultipleDataListItems`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
                     const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
@@ -674,7 +679,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
             if (colorHexValue?.startsWith('#')) {
                 formData.set('colorHex', colorHexValue.slice(1));
             }
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateDataListItem`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
                     renderDataListItems(dataListKey, responseJSON.items);
@@ -764,7 +770,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteDataListItem`, {
                         dataListItemId: Number.parseInt(dataListItemId, 10),
                         dataListKey
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.items !== undefined) {
                             renderDataListItems(dataListKey, responseJSON.items);
                             bulmaJS.alert({
@@ -832,7 +839,8 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderDataListItems`, {
                     dataListItemIds,
                     dataListKey
-                }, (responseJSON) => {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (!responseJSON.success) {
                         bulmaJS.alert({
                             contextualColorName: 'danger',

@@ -217,7 +217,8 @@
         let closeModalFunction;
         function doAdd(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteType`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteType`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
@@ -269,7 +270,8 @@
         let closeModalFunction;
         function doUpdate(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteType`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteType`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
@@ -333,7 +335,8 @@
             okButton: {
                 text: 'Yes, Delete Note Type',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteType`, { noteTypeId }, (responseJSON) => {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteType`, { noteTypeId }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             renderNoteTypes();
@@ -360,7 +363,8 @@
         let closeModalFunction;
         function doAdd(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeField`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeField`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
@@ -432,7 +436,8 @@
         let closeModalFunction;
         function doUpdate(submitEvent) {
             submitEvent.preventDefault();
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     noteTypes = responseJSON.noteTypes;
                     closeModalFunction();
@@ -507,7 +512,8 @@
             okButton: {
                 text: 'Yes, Delete Field',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteTypeField`, { noteTypeFieldId: fieldId }, (responseJSON) => {
+                    cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNoteTypeField`, { noteTypeFieldId: fieldId }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             noteTypes = responseJSON.noteTypes;
                             renderNoteTypes();
@@ -553,7 +559,8 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderNoteTypeFields`, {
                         noteTypeId: noteType.noteTypeId,
                         noteTypeFieldIds
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success &&
                             responseJSON.noteTypes !== undefined) {
                             noteTypes = responseJSON.noteTypes;
@@ -589,7 +596,8 @@
             <p class="mt-2">Loading templates...</p>
           </div>
         `;
-                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`, {}, (responseJSON) => {
+                cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`, {}, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.templates.length === 0) {
                         templatesContainer.innerHTML = `
                 <div class="message is-info">

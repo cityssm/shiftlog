@@ -128,7 +128,8 @@
         }
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doToggleNotificationConfigurationIsActive`, {
             notificationConfigurationId
-        }, (responseJSON) => {
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 const configIndex = notificationConfigurations.findIndex((c) => c.notificationConfigurationId ===
                     Number.parseInt(notificationConfigurationId, 10));
@@ -263,7 +264,8 @@
                 assignedToId: addForm.querySelector('#addNotificationConfiguration--assignedToId').value,
                 isActive: addForm.querySelector('#addNotificationConfiguration--isActive').checked
             };
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNotificationConfiguration`, formData, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNotificationConfiguration`, formData, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     notificationConfigurations.push({
                         notificationConfigurationId: responseJSON.notificationConfigurationId,
@@ -378,7 +380,8 @@
                 assignedToId: editForm.querySelector('#editNotificationConfiguration--assignedToId').value,
                 isActive: editForm.querySelector('#editNotificationConfiguration--isActive').checked
             };
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNotificationConfiguration`, formData, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateNotificationConfiguration`, formData, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     const configIndex = notificationConfigurations.findIndex((c) => notificationConfigurationId !== undefined &&
                         c.notificationConfigurationId ===
@@ -477,7 +480,8 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteNotificationConfiguration`, {
                         notificationConfigurationId
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             notificationConfigurations = notificationConfigurations.filter((c) => c.notificationConfigurationId !==
                                 Number.parseInt(notificationConfigurationId, 10));

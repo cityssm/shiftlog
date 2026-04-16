@@ -18,7 +18,8 @@
     function updateSetting(formEvent) {
         formEvent.preventDefault();
         const formElement = formEvent.currentTarget;
-        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateSetting`, formElement, (responseJSON) => {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateSetting`, formElement, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 bulmaJS.alert({
                     contextualColorName: 'success',

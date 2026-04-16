@@ -79,7 +79,8 @@
         function doAddWorkOrderType(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddWorkOrderType`, addForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddWorkOrderType`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     workOrderTypes = responseJSON.workOrderTypes;
@@ -168,7 +169,8 @@
             milestonesInput.name = 'defaultMilestones';
             milestonesInput.value = JSON.stringify(milestones);
             editForm.append(milestonesInput);
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, editForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`, editForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     workOrderTypes = responseJSON.workOrderTypes;
@@ -366,7 +368,8 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteWorkOrderType`, {
                         workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             workOrderTypes = responseJSON.workOrderTypes;
                             renderWorkOrderTypes();
@@ -416,7 +419,8 @@
                     }
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doReorderWorkOrderTypes`, {
                         workOrderTypeIds
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (!responseJSON.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',

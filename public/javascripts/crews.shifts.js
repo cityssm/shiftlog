@@ -19,7 +19,8 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftUrlPrefix}/doDeleteCrew`, {
                         crewId
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             if (responseJSON.crews !== undefined) {
                                 exports.crews = responseJSON.crews;
@@ -61,7 +62,8 @@
                     .querySelector('#form--editCrew')
                     ?.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftUrlPrefix}/doUpdateCrew`, formEvent.currentTarget, (responseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doUpdateCrew`, formEvent.currentTarget, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             if (responseJSON.crews !== undefined) {
                                 exports.crews = responseJSON.crews;
@@ -109,7 +111,8 @@
                     cityssm.postJSON(`${shiftUrlPrefix}/doDeleteCrewMember`, {
                         crewId,
                         employeeNumber
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
                             const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
                             if (panelElement !== null) {
@@ -130,7 +133,8 @@
                 ;
                 modalElement.querySelector('#crewMemberAdd--crewId').value = crewId.toString();
                 const selectElement = modalElement.querySelector('#crewMemberAdd--employeeNumber');
-                cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (responseJSON) => {
+                cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.success) {
                         const existingMemberNumbers = new Set(responseJSON.crew.members.map((member) => member.employeeNumber));
                         for (const employee of exports.employees) {
@@ -147,7 +151,8 @@
                     .querySelector('#form--addCrewMember')
                     ?.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrewMember`, formEvent.currentTarget, (responseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrewMember`, formEvent.currentTarget, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
                             const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
                             if (panelElement !== null) {
@@ -188,7 +193,8 @@
                     cityssm.postJSON(`${shiftUrlPrefix}/doDeleteCrewEquipment`, {
                         crewId,
                         equipmentNumber
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
                             const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
                             if (panelElement !== null) {
@@ -210,7 +216,8 @@
             crewId,
             equipmentNumber,
             employeeNumber
-        }, (responseJSON) => {
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success && responseJSON.crew !== undefined) {
                 const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
                 if (panelElement !== null) {
@@ -239,7 +246,8 @@
                 modalElement.querySelector('#crewEquipmentAdd--crewId').value = crewId.toString();
                 const equipmentSelectElement = modalElement.querySelector('#crewEquipmentAdd--equipmentNumber');
                 const employeeSelectElement = modalElement.querySelector('#crewEquipmentAdd--employeeNumber');
-                cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (responseJSON) => {
+                cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                     if (responseJSON.success) {
                         const existingEquipmentNumbers = new Set(responseJSON.crew.equipment.map((equipment) => equipment.equipmentNumber));
                         for (const equipmentItem of exports.equipment) {
@@ -292,7 +300,8 @@
                     .querySelector('#form--addCrewEquipment')
                     ?.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrewEquipment`, formEvent.currentTarget, (responseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrewEquipment`, formEvent.currentTarget, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success && responseJSON.crew !== undefined) {
                             const panelElement = document.querySelector(`details[data-crew-id="${crewId}"]`);
                             if (panelElement !== null) {
@@ -583,7 +592,8 @@
             panelElement.addEventListener('toggle', () => {
                 if (panelElement.open) {
                     const crewId = Number.parseInt(panelElement.dataset.crewId ?? '', 10);
-                    cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (responseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doGetCrew`, { crewId }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             renderCrewDetails(crewId, responseJSON.crew, panelElement);
                         }
@@ -600,7 +610,8 @@
                     .querySelector('#form--addCrew')
                     ?.addEventListener('submit', (formEvent) => {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrew`, formEvent.currentTarget, (responseJSON) => {
+                    cityssm.postJSON(`${shiftUrlPrefix}/doAddCrew`, formEvent.currentTarget, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             exports.crews = responseJSON.crews;
                             renderCrews();
