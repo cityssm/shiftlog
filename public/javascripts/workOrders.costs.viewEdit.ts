@@ -170,7 +170,8 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderCost`,
           formElement,
-          (responseJSON: DoUpdateWorkOrderCostResponse) => {
+          (rawResponseJSON: DoUpdateWorkOrderCostResponse) => {
+            const responseJSON = rawResponseJSON as DoUpdateWorkOrderCostResponse
             if (responseJSON.success) {
               closeModalFunction()
               loadCosts()
@@ -230,7 +231,8 @@ declare const bulmaJS: BulmaJS
         cityssm.postJSON(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderCost`,
           formElement,
-          (responseJSON: DoCreateWorkOrderCostResponse) => {
+          (rawResponseJSON: DoCreateWorkOrderCostResponse) => {
+            const responseJSON = rawResponseJSON as DoCreateWorkOrderCostResponse
             if (responseJSON.success) {
               closeModalFunction()
               formElement.reset()
@@ -292,7 +294,8 @@ declare const bulmaJS: BulmaJS
               {
                 workOrderCostId
               },
-              (responseJSON: DoDeleteWorkOrderCostResponse) => {
+              (rawResponseJSON: DoDeleteWorkOrderCostResponse) => {
+                const responseJSON = rawResponseJSON as DoDeleteWorkOrderCostResponse
                 if (responseJSON.success) {
                   loadCosts()
                 } else {
@@ -312,7 +315,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderCosts`,
         {},
-        (responseJSON: DoGetWorkOrderCostsResponse) => {
+        (rawResponseJSON: DoGetWorkOrderCostsResponse) => {
+          const responseJSON = rawResponseJSON as DoGetWorkOrderCostsResponse
           renderCosts(responseJSON.costs)
         }
       )

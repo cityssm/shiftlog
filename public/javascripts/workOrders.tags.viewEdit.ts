@@ -106,7 +106,8 @@ declare const bulmaJS: BulmaJS
                 tagName,
                 workOrderId: Number.parseInt(workOrderId, 10)
               },
-              (responseJSON: DoDeleteWorkOrderTagResponse) => {
+              (rawResponseJSON: DoDeleteWorkOrderTagResponse) => {
+                const responseJSON = rawResponseJSON as DoDeleteWorkOrderTagResponse
                 if (responseJSON.success) {
                   renderTags(responseJSON.tags)
 
@@ -187,7 +188,8 @@ declare const bulmaJS: BulmaJS
                 tagName: suggestedTag.tagName,
                 workOrderId: Number.parseInt(workOrderId, 10)
               },
-              (responseJSON: DoAddWorkOrderTagResponse) => {
+              (rawResponseJSON: DoAddWorkOrderTagResponse) => {
+                const responseJSON = rawResponseJSON as DoAddWorkOrderTagResponse
                 if (responseJSON.success) {
                   getCloseFunction()()
                   renderTags(responseJSON.tags)
@@ -234,7 +236,8 @@ declare const bulmaJS: BulmaJS
             tagName: tagNameInput.value,
             workOrderId: Number.parseInt(workOrderId, 10)
           },
-          (responseJSON: DoAddWorkOrderTagResponse) => {
+          (rawResponseJSON: DoAddWorkOrderTagResponse) => {
+            const responseJSON = rawResponseJSON as DoAddWorkOrderTagResponse
             if (responseJSON.success) {
               closeModalFunction()
               renderTags(responseJSON.tags)
@@ -278,7 +281,8 @@ declare const bulmaJS: BulmaJS
             cityssm.postJSON(
               `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`,
               {},
-              (responseJSON: DoGetSuggestedTagsResponse) => {
+              (rawResponseJSON: DoGetSuggestedTagsResponse) => {
+                const responseJSON = rawResponseJSON as DoGetSuggestedTagsResponse
                 renderSuggestedTags(
                   suggestedTagsContainer,
                   responseJSON.suggestedTags,
@@ -309,7 +313,8 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`,
         {},
-        (responseJSON: DoGetWorkOrderTagsResponse) => {
+        (rawResponseJSON: DoGetWorkOrderTagsResponse) => {
+          const responseJSON = rawResponseJSON as DoGetWorkOrderTagsResponse
           renderTags(responseJSON.tags)
         }
       )

@@ -24,7 +24,8 @@
     function doKeepAlive() {
         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/keepAlive`, {
             t: Date.now()
-        }, (responseJSON) => {
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (!responseJSON.activeSession) {
                 bulmaJS.alert({
                     contextualColorName: 'danger',

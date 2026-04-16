@@ -24,7 +24,8 @@
         let loadedCount = 0;
         const totalCount = dataListKeys.size;
         for (const key of dataListKeys) {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, { dataListKey: key }, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, { dataListKey: key }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 dataListMap.set(key, responseJSON.items);
                 loadedCount += 1;
                 if (loadedCount === totalCount) {
@@ -234,7 +235,8 @@
             if (Object.keys(fields).length > 0) {
                 noteData.fields = fields;
             }
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doUpdateShiftNote`, noteData, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doUpdateShiftNote`, noteData, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     loadNotes();
@@ -757,7 +759,8 @@
             if (Object.keys(fields).length > 0) {
                 noteData.fields = fields;
             }
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doCreateShiftNote`, noteData, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doCreateShiftNote`, noteData, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     formElement.reset();
@@ -812,7 +815,8 @@
                     cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doDeleteShiftNote`, {
                         shiftId,
                         noteSequence
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             loadNotes();
                         }
@@ -828,7 +832,8 @@
         });
     }
     function loadNotes() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId}/doGetShiftNotes`, {}, (responseJSON) => {
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId}/doGetShiftNotes`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             renderNotes(responseJSON.notes);
         });
     }

@@ -159,7 +159,8 @@
                 requestData[key] = value;
             }
         }
-        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrdersForPlanner`, requestData, (responseJSON) => {
+        cityssm.postJSON(`${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrdersForPlanner`, requestData, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             renderWorkOrdersTable(responseJSON);
         });
     }

@@ -191,7 +191,8 @@
         }
         let loadedCount = 0;
         for (const workOrder of shiftWorkOrders) {
-            cityssm.postJSON(`${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`, {}, (responseJSON) => {
+            cityssm.postJSON(`${workOrdersUrlPrefix}/${workOrder.workOrderId}/doGetWorkOrderMilestones`, {}, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 allMilestones.push(...responseJSON.milestones);
                 loadedCount += 1;
                 if (loadedCount === shiftWorkOrders.length) {
@@ -231,7 +232,8 @@
                 openClosedFilter: 'open',
                 limit,
                 offset: 0
-            }, (responseJSON) => {
+            }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (!responseJSON.success || responseJSON.workOrders.length === 0) {
                     resultsContainer.innerHTML = `
               <div class="message is-warning">
@@ -343,7 +345,8 @@
         }
         function doAdd(formEvent) {
             formEvent.preventDefault();
-            cityssm.postJSON(`${urlPrefix}/doAddShiftWorkOrder`, formEvent.currentTarget, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doAddShiftWorkOrder`, formEvent.currentTarget, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     shiftWorkOrders = responseJSON.shiftWorkOrders;
                     renderShiftWorkOrders();
@@ -394,7 +397,8 @@
         function doUpdate(formEvent) {
             formEvent.preventDefault();
             const note = formEvent.currentTarget.querySelector('[name="shiftWorkOrderNote"]').value;
-            cityssm.postJSON(`${urlPrefix}/doUpdateShiftWorkOrderNote`, formEvent.currentTarget, (responseJSON) => {
+            cityssm.postJSON(`${urlPrefix}/doUpdateShiftWorkOrderNote`, formEvent.currentTarget, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     ;
                     workOrder.shiftWorkOrderNote = note;
@@ -444,7 +448,8 @@
             okButton: {
                 text: 'Remove',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${urlPrefix}/doDeleteShiftWorkOrder`, { shiftId, workOrderId }, (responseJSON) => {
+                    cityssm.postJSON(`${urlPrefix}/doDeleteShiftWorkOrder`, { shiftId, workOrderId }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             shiftWorkOrders = responseJSON.shiftWorkOrders;
                             renderShiftWorkOrders();
@@ -489,7 +494,8 @@
                         milestoneDueDateTimeString: milestone.milestoneDueDateTime,
                         assignedToId: milestone.assignedToId,
                         milestoneCompleteDateTimeString: currentDateString
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             loadMilestones();
                         }

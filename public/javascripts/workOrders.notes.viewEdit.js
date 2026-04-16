@@ -23,7 +23,8 @@
         let loadedCount = 0;
         const totalCount = dataListKeys.size;
         for (const key of dataListKeys) {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, { dataListKey: key }, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`, { dataListKey: key }, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 dataListMap.set(key, responseJSON.items);
                 loadedCount += 1;
                 if (loadedCount === totalCount) {
@@ -229,7 +230,8 @@
             if (Object.keys(fields).length > 0) {
                 noteData.fields = fields;
             }
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`, noteData, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`, noteData, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     loadNotes();
@@ -752,7 +754,8 @@
             if (Object.keys(fields).length > 0) {
                 noteData.fields = fields;
             }
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`, noteData, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`, noteData, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     formElement.reset();
@@ -807,7 +810,8 @@
                     cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderNote`, {
                         workOrderId,
                         noteSequence
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             loadNotes();
                         }
@@ -823,7 +827,8 @@
         });
     }
     function loadNotes() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`, {}, (responseJSON) => {
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             renderNotes(responseJSON.notes);
         });
     }

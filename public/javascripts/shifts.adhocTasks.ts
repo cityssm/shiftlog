@@ -46,7 +46,8 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetAdhocTaskTypes`,
       {},
-      (responseJSON: DoGetAdhocTaskTypesResponse) => {
+      (rawResponseJSON: DoGetAdhocTaskTypesResponse) => {
+        const responseJSON = rawResponseJSON as DoGetAdhocTaskTypesResponse
         adhocTaskTypes = responseJSON.adhocTaskTypes
       }
     )
@@ -356,7 +357,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doCreateAdhocTask`,
         formEvent.currentTarget,
-        (responseJSON: DoCreateAdhocTaskResponse) => {
+        (rawResponseJSON: DoCreateAdhocTaskResponse) => {
+          const responseJSON = rawResponseJSON as DoCreateAdhocTaskResponse
           if (responseJSON.success) {
             shiftAdhocTasks = responseJSON.shiftAdhocTasks
             renderShiftAdhocTasks()
@@ -526,7 +528,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateAdhocTask`,
         formEvent.currentTarget,
-        (responseJSON: DoUpdateAdhocTaskResponse) => {
+        (rawResponseJSON: DoUpdateAdhocTaskResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateAdhocTaskResponse
           if (responseJSON.success) {
             shiftAdhocTasks = responseJSON.shiftAdhocTasks
             renderShiftAdhocTasks()
@@ -841,7 +844,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftAdhocTaskNote`,
         formEvent.currentTarget,
-        (responseJSON: DoUpdateShiftAdhocTaskNoteResponse) => {
+        (rawResponseJSON: DoUpdateShiftAdhocTaskNoteResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftAdhocTaskNoteResponse
           if (responseJSON.success) {
             ;(task as AdhocTask).shiftAdhocTaskNote = note
 
@@ -908,7 +912,8 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetAvailableAdhocTasks`,
       { shiftId },
-      (responseJSON: DoGetAvailableAdhocTasksResponse) => {
+      (rawResponseJSON: DoGetAvailableAdhocTasksResponse) => {
+        const responseJSON = rawResponseJSON as DoGetAvailableAdhocTasksResponse
         if (responseJSON.adhocTasks.length === 0) {
           bulmaJS.alert({
             contextualColorName: 'info',
@@ -1152,7 +1157,8 @@ declare const exports: {
 
               deleteTask: deleteOption === 'delete'
             },
-            (responseJSON: DoDeleteShiftAdhocTaskResponse) => {
+            (rawResponseJSON: DoDeleteShiftAdhocTaskResponse) => {
+              const responseJSON = rawResponseJSON as DoDeleteShiftAdhocTaskResponse
               if (responseJSON.success) {
                 shiftAdhocTasks = responseJSON.shiftAdhocTasks
                 renderShiftAdhocTasks()

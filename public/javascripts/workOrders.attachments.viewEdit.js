@@ -216,7 +216,8 @@
                 body: formData
             })
                 .then(async (response) => (await response.json()))
-                .then((responseJSON) => {
+                .then((rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
                 submitButton.disabled = false;
                 submitButton.classList.remove('is-loading');
                 if (responseJSON.success) {
@@ -272,7 +273,8 @@
         function doUpdateAttachment(submitEvent) {
             submitEvent.preventDefault();
             const formElement = submitEvent.currentTarget;
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderAttachment`, formElement, (responseJSON) => {
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderAttachment`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     loadAttachments();
@@ -314,7 +316,8 @@
                 callbackFunction: () => {
                     cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doDeleteWorkOrderAttachment`, {
                         workOrderAttachmentId
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             loadAttachments();
                         }
@@ -332,7 +335,8 @@
     function setThumbnail(workOrderAttachmentId) {
         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doSetWorkOrderAttachmentThumbnail`, {
             workOrderAttachmentId
-        }, (responseJSON) => {
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 loadAttachments();
                 bulmaJS.alert({
@@ -349,7 +353,8 @@
         });
     }
     function loadAttachments() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`, {}, (responseJSON) => {
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             renderAttachments(responseJSON.attachments);
         });
     }

@@ -464,7 +464,8 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftCrews`,
       { shiftId },
-      (responseJSON: DoGetShiftCrewsResponse) => {
+      (rawResponseJSON: DoGetShiftCrewsResponse) => {
+        const responseJSON = rawResponseJSON as DoGetShiftCrewsResponse
         shiftCrews = responseJSON.shiftCrews
         renderShiftCrews()
         updateCounts()
@@ -476,7 +477,8 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftEmployees`,
       { shiftId },
-      (responseJSON: DoGetShiftEmployeesResponse) => {
+      (rawResponseJSON: DoGetShiftEmployeesResponse) => {
+        const responseJSON = rawResponseJSON as DoGetShiftEmployeesResponse
         shiftEmployees = responseJSON.shiftEmployees
         renderShiftEmployees()
         updateCounts()
@@ -488,7 +490,8 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftEquipment`,
       { shiftId },
-      (responseJSON: DoGetShiftEquipmentResponse) => {
+      (rawResponseJSON: DoGetShiftEquipmentResponse) => {
+        const responseJSON = rawResponseJSON as DoGetShiftEquipmentResponse
         shiftEquipment = responseJSON.shiftEquipment
         renderShiftEquipment()
         updateCounts()
@@ -507,7 +510,8 @@ declare const exports: {
       // eslint-disable-next-line no-secrets/no-secrets
       `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`,
       {},
-      (responseJSON: DoGetAvailableCrewsEmployeesEquipmentResponse) => {
+      (rawResponseJSON: DoGetAvailableCrewsEmployeesEquipmentResponse) => {
+        const responseJSON = rawResponseJSON as DoGetAvailableCrewsEmployeesEquipmentResponse
         availableCrews = responseJSON.crews
         availableEmployees = responseJSON.employees
         availableEquipment = responseJSON.equipment
@@ -526,7 +530,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftCrew`,
         formElement,
-        (responseJSON: DoAddShiftCrewResponse) => {
+        (rawResponseJSON: DoAddShiftCrewResponse) => {
+          const responseJSON = rawResponseJSON as DoAddShiftCrewResponse
           if (responseJSON.success) {
             refreshData()
             switchToTab('tab-content--crews')
@@ -603,7 +608,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftEmployee`,
         formElement,
-        (responseJSON: DoAddShiftEmployeeResponse) => {
+        (rawResponseJSON: DoAddShiftEmployeeResponse) => {
+          const responseJSON = rawResponseJSON as DoAddShiftEmployeeResponse
           if (responseJSON.success) {
             refreshData()
             switchToTab('tab-content--employees')
@@ -703,7 +709,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftEquipment`,
         formElement,
-        (responseJSON: DoAddShiftEquipmentResponse) => {
+        (rawResponseJSON: DoAddShiftEquipmentResponse) => {
+          const responseJSON = rawResponseJSON as DoAddShiftEquipmentResponse
           if (responseJSON.success) {
             refreshData()
             switchToTab('tab-content--equipment')
@@ -811,7 +818,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftCrewNote`,
         formElement,
-        (responseJSON: DoUpdateShiftCrewNoteResponse) => {
+        (rawResponseJSON: DoUpdateShiftCrewNoteResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftCrewNoteResponse
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -877,7 +885,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEmployee`,
         formElement,
-        (responseJSON: DoUpdateShiftEmployeeResponse) => {
+        (rawResponseJSON: DoUpdateShiftEmployeeResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftEmployeeResponse
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -960,7 +969,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEmployeeNote`,
         formElement,
-        (responseJSON: DoUpdateShiftEmployeeNoteResponse) => {
+        (rawResponseJSON: DoUpdateShiftEmployeeNoteResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftEmployeeNoteResponse
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -1029,7 +1039,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEquipment`,
         formElement,
-        (responseJSON: DoUpdateShiftEquipmentResponse) => {
+        (rawResponseJSON: DoUpdateShiftEquipmentResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftEquipmentResponse
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -1114,7 +1125,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEquipmentNote`,
         formElement,
-        (responseJSON: DoUpdateShiftEquipmentNoteResponse) => {
+        (rawResponseJSON: DoUpdateShiftEquipmentNoteResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftEquipmentNoteResponse
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -1184,7 +1196,8 @@ declare const exports: {
               shiftId,
               crewId
             },
-            (responseJSON: DoDeleteShiftCrewResponse) => {
+            (rawResponseJSON: DoDeleteShiftCrewResponse) => {
+              const responseJSON = rawResponseJSON as DoDeleteShiftCrewResponse
               if (responseJSON.success) {
                 refreshData()
                 bulmaJS.alert({
@@ -1230,7 +1243,8 @@ declare const exports: {
               shiftId,
               employeeNumber
             },
-            (responseJSON: DoDeleteShiftEmployeeResponse) => {
+            (rawResponseJSON: DoDeleteShiftEmployeeResponse) => {
+              const responseJSON = rawResponseJSON as DoDeleteShiftEmployeeResponse
               if (responseJSON.success) {
                 refreshData()
                 bulmaJS.alert({
@@ -1277,7 +1291,8 @@ declare const exports: {
               shiftId,
               equipmentNumber
             },
-            (responseJSON: DoDeleteShiftEquipmentResponse) => {
+            (rawResponseJSON: DoDeleteShiftEquipmentResponse) => {
+              const responseJSON = rawResponseJSON as DoDeleteShiftEquipmentResponse
               if (responseJSON.success) {
                 refreshData()
                 bulmaJS.alert({
@@ -1312,7 +1327,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doCopyFromPreviousShift`,
         formElement,
-        (responseJSON: DoCopyFromPreviousShiftResponse) => {
+        (rawResponseJSON: DoCopyFromPreviousShiftResponse) => {
+          const responseJSON = rawResponseJSON as DoCopyFromPreviousShiftResponse
           if (responseJSON.success) {
             refreshData()
             bulmaJS.alert({
@@ -1338,7 +1354,8 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doGetPreviousShifts`,
         searchFormElement,
-        (responseJSON: DoGetPreviousShiftsResponse) => {
+        (rawResponseJSON: DoGetPreviousShiftsResponse) => {
+          const responseJSON = rawResponseJSON as DoGetPreviousShiftsResponse
           const resultsContainer = document.querySelector(
             '#container--searchResults'
           ) as HTMLElement

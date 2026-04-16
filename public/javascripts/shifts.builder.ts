@@ -769,7 +769,8 @@ declare const exports: {
       {
         shiftDateString
       },
-      (responseJSON: DoGetShiftsForBuilderResponse) => {
+      (rawResponseJSON: DoGetShiftsForBuilderResponse) => {
+        const responseJSON = rawResponseJSON as DoGetShiftsForBuilderResponse
         currentShifts = responseJSON.shifts
         renderShifts()
         loadAvailableResources()
@@ -799,7 +800,8 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftUrlPrefix}/doGetAvailableAdhocTasks`,
         {},
-        (responseJSON: DoGetAvailableAdhocTasksResponse) => {
+        (rawResponseJSON: DoGetAvailableAdhocTasksResponse) => {
+          const responseJSON = rawResponseJSON as DoGetAvailableAdhocTasksResponse
           renderAvailableAdhocTasks(responseJSON.adhocTasks)
         }
       )
@@ -810,7 +812,8 @@ declare const exports: {
         {
           shiftDateString
         },
-        (responseJSON: DoGetAvailableResourcesResponse) => {
+        (rawResponseJSON: DoGetAvailableResourcesResponse) => {
+          const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
           renderAvailableResources(responseJSON)
         }
       )
@@ -2540,7 +2543,8 @@ declare const exports: {
         shiftTypeDataListItemId: shift.shiftTypeDataListItemId,
         supervisorEmployeeNumber: employeeNumber
       },
-      (responseJSON: DoUpdateShiftResponse) => {
+      (rawResponseJSON: DoUpdateShiftResponse) => {
+        const responseJSON = rawResponseJSON as DoUpdateShiftResponse
         if (responseJSON.success) {
           bulmaJS.alert({
             contextualColorName: 'success',
@@ -2575,7 +2579,8 @@ declare const exports: {
           employeeNumber,
           shiftId: toShiftId
         },
-        (responseJSON: DoUpdateShiftEmployeeResponse) => {
+        (rawResponseJSON: DoUpdateShiftEmployeeResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftEmployeeResponse
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2656,7 +2661,8 @@ declare const exports: {
           equipmentNumber,
           shiftId: toShiftId
         },
-        (responseJSON: DoUpdateShiftEquipmentResponse) => {
+        (rawResponseJSON: DoUpdateShiftEquipmentResponse) => {
+          const responseJSON = rawResponseJSON as DoUpdateShiftEquipmentResponse
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -2800,7 +2806,8 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftUrlPrefix}/doGetShiftCreationData`,
           {},
-          (responseJSON: DoGetShiftCreationDataResponse) => {
+          (rawResponseJSON: DoGetShiftCreationDataResponse) => {
+            const responseJSON = rawResponseJSON as DoGetShiftCreationDataResponse
             // Populate shift types
             for (const shiftType of responseJSON.shiftTypes) {
               const optionElement = document.createElement('option')
@@ -3060,7 +3067,8 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (responseJSON: DoGetAvailableResourcesResponse) => {
+      (rawResponseJSON: DoGetAvailableResourcesResponse) => {
+        const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
         // Filter out employees already on the shift
         const shiftEmployeeNumbers = new Set(
           shift.employees.map((employee) => employee.employeeNumber)
@@ -3106,7 +3114,8 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (responseJSON: DoGetAvailableResourcesResponse) => {
+      (rawResponseJSON: DoGetAvailableResourcesResponse) => {
+        const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
         // Filter out equipment already on the shift
         const shiftEquipmentNumbers = new Set(
           shift.equipment.map(
@@ -3156,7 +3165,8 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (responseJSON: DoGetAvailableResourcesResponse) => {
+      (rawResponseJSON: DoGetAvailableResourcesResponse) => {
+        const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
         // Filter out crews already on the shift
         const shiftCrewIds = new Set(shift.crews.map((c) => c.crewId))
         const availableCrews = responseJSON.crews.filter(
@@ -3204,7 +3214,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`,
       { searchString, orderBy: 'workOrderNumber desc', limit: 20, offset: 0 },
-      (responseJSON: {
+      (rawResponseJSON: {
         count: number
         success: boolean
         workOrders: Array<{
@@ -3216,6 +3226,18 @@ declare const exports: {
           workOrderNumber: string
         }>
       }) => {
+        const responseJSON = rawResponseJSON as {
+        count: number
+        success: boolean
+        workOrders: Array<{
+          requestorEmployeeNumber: string | null
+          requestorFirstName: string | null
+          requestorLastName: string | null
+          workOrderDetails: string
+          workOrderId: number
+          workOrderNumber: string
+        }>
+      }
         if (responseJSON.success) {
           const workOrderList = modalElement.querySelector(
             '#builderAddResource--workOrderList'
@@ -3742,7 +3764,8 @@ declare const exports: {
               cityssm.postJSON(
                 `${shiftUrlPrefix}/doCreateStandaloneAdhocTask`,
                 formEvent.currentTarget as HTMLFormElement,
-                (responseJSON: { success: boolean; errorMessage?: string }) => {
+                (rawResponseJSON: { success: boolean; errorMessage?: string }) => {
+                  const responseJSON = rawResponseJSON as { success: boolean; errorMessage?: string }
                   if (responseJSON.success) {
                     bulmaJS.alert({
                       contextualColorName: 'success',
@@ -3818,7 +3841,8 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftUrlPrefix}/doUpdateShiftCrewNote`,
             formElement,
-            (responseJSON: { success: boolean }) => {
+            (rawResponseJSON: { success: boolean }) => {
+              const responseJSON = rawResponseJSON as { success: boolean }
               if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -3930,7 +3954,8 @@ declare const exports: {
               employeeNumber: employee.employeeNumber,
               crewId: crewId === '' ? null : crewId
             },
-            (responseJSON: { success: boolean }) => {
+            (rawResponseJSON: { success: boolean }) => {
+              const responseJSON = rawResponseJSON as { success: boolean }
               if (responseJSON.success) {
                 // Update note
                 cityssm.postJSON(
@@ -4064,7 +4089,8 @@ declare const exports: {
               equipmentNumber: equipment.equipmentNumber,
               employeeNumber: employeeNumber === '' ? null : employeeNumber
             },
-            (responseJSON: { success: boolean; message?: string }) => {
+            (rawResponseJSON: { success: boolean; message?: string }) => {
+              const responseJSON = rawResponseJSON as { success: boolean; message?: string }
               if (responseJSON.success) {
                 // Update note
                 cityssm.postJSON(
@@ -4162,7 +4188,8 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftUrlPrefix}/doUpdateShiftWorkOrderNote`,
             formElement,
-            (responseJSON: { success: boolean; errorMessage?: string }) => {
+            (rawResponseJSON: { success: boolean; errorMessage?: string }) => {
+              const responseJSON = rawResponseJSON as { success: boolean; errorMessage?: string }
               if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',

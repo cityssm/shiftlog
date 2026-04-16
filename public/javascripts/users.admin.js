@@ -17,7 +17,8 @@
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteUser`, {
                         userName
-                    }, (responseJSON) => {
+                    }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             renderUsers(responseJSON.users);
                             bulmaJS.alert({
@@ -48,7 +49,8 @@
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doToggleUserPermission`, {
             permissionField: permission,
             userName
-        }, (responseJSON) => {
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 renderUsers(responseJSON.users);
             }
@@ -75,7 +77,8 @@
         function doUpdateUserSettings(submitEvent) {
             submitEvent.preventDefault();
             const settingsForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserSettings`, settingsForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateUserSettings`, settingsForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     exports.users = responseJSON.users;
@@ -175,7 +178,8 @@
     function resetUserApiKey(userName) {
         cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doResetUserApiKey`, {
             userName
-        }, (responseJSON) => {
+        }, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
             if (responseJSON.success) {
                 exports.users = responseJSON.users;
                 renderUsers(responseJSON.users);
@@ -424,7 +428,8 @@
         function doAddUser(submitEvent) {
             submitEvent.preventDefault();
             const addForm = submitEvent.currentTarget;
-            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUser`, addForm, (responseJSON) => {
+            cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddUser`, addForm, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
                     exports.users = responseJSON.users;
