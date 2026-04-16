@@ -104,9 +104,11 @@ async function postHandler(
           },
           SYSTEM_USER
         )
-      }
 
-      userObject = await getUser(userName)
+        userObject = await getUser(userName)
+      } else {
+        userObject = await getUser(userName)
+      }
     }
   }
 

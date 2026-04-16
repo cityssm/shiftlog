@@ -55,8 +55,11 @@ async function postHandler(request, response) {
                     timesheets_canView: false,
                     isAdmin: true
                 }, SYSTEM_USER);
+                userObject = await getUser(userName);
             }
-            userObject = await getUser(userName);
+            else {
+                userObject = await getUser(userName);
+            }
         }
     }
     if (isAuthenticated && userObject !== undefined) {
