@@ -187,6 +187,7 @@
           <button
             class="button is-small is-info edit-location"
             data-location-id="${location.locationId}"
+            type="button"
             title="Edit Location"
           >
             <span class="icon is-small">
@@ -197,6 +198,7 @@
           <button
             class="button is-small is-danger delete-location"
             data-location-id="${location.locationId}"
+            type="button"
             title="Delete Location"
           >
             <span class="icon is-small">

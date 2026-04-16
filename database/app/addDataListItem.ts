@@ -22,13 +22,13 @@ export default async function addDataListItem(
 
   // Sanitize colorHex (must be 6 hex digits)
   const colorHexTrimmed = (form.colorHex ?? '').trim().slice(-6)
-  const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+  const colorHex = /^[\da-f]{6}$/i.test(colorHexTrimmed)
     ? colorHexTrimmed
     : '000000'
 
   // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers for Font Awesome classes)
   const iconClassTrimmed = (form.iconClass ?? '').trim()
-  const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+  const iconClass = /^[\da-z-]+$/.test(iconClassTrimmed)
     ? iconClassTrimmed
     : 'circle'
 

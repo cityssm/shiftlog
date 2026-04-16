@@ -278,7 +278,8 @@
                                 populateEmployeeOptions(responseJSON.crew.members);
                             }
                             else {
-                                cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (eligibleResponseJSON) => {
+                                cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: selectedEquipment }, (rawEligibleResponseJSON) => {
+                                    const eligibleResponseJSON = rawEligibleResponseJSON;
                                     if (eligibleResponseJSON.success) {
                                         const eligibleEmployeeNumbers = new Set(eligibleResponseJSON.employees.map((emp) => emp.employeeNumber));
                                         populateEmployeeOptions(responseJSON.crew.members, eligibleEmployeeNumbers);
@@ -474,7 +475,8 @@
                         const loadingOption = document.createElement('option');
                         loadingOption.textContent = 'Loading...';
                         select.append(loadingOption);
-                        cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: equipmentItem.equipmentNumber }, (eligibleResponseJSON) => {
+                        cityssm.postJSON(`${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`, { equipmentNumber: equipmentItem.equipmentNumber }, (rawEligibleResponseJSON) => {
+                            const eligibleResponseJSON = rawEligibleResponseJSON;
                             if (eligibleResponseJSON.success) {
                                 const eligibleEmployeeNumbers = new Set(eligibleResponseJSON.employees.map((emp) => emp.employeeNumber));
                                 populateDropdown(eligibleEmployeeNumbers);

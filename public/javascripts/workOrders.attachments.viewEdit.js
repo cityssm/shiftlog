@@ -216,8 +216,7 @@
                 body: formData
             })
                 .then(async (response) => (await response.json()))
-                .then((rawResponseJSON) => {
-                    const responseJSON = rawResponseJSON;
+                .then((responseJSON) => {
                 submitButton.disabled = false;
                 submitButton.classList.remove('is-loading');
                 if (responseJSON.success) {

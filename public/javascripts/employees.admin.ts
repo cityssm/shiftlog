@@ -269,6 +269,7 @@ declare const exports: {
           <button
             class="button is-small is-info edit-employee"
             data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
+            type="button"
             title="Edit Employee"
           >
             <span class="icon is-small">
@@ -279,6 +280,7 @@ declare const exports: {
           <button
             class="button is-small is-danger delete-employee"
             data-employee-number="${cityssm.escapeHTML(employee.employeeNumber)}"
+            type="button"
             title="Delete Employee"
           >
             <span class="icon is-small">

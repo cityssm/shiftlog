@@ -7,7 +7,7 @@ function updateIconPreview(modalElement, modalPrefix) {
     }
     const colorValue = colorInput.value;
     const iconClassTrimmed = iconInput.value.trim();
-    const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+    const iconClass = /^[\da-z-]+$/.test(iconClassTrimmed)
         ? iconClassTrimmed
         : 'circle';
     const iconContainer = previewElement.querySelector('.icon');
@@ -69,11 +69,11 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 ? `<span class="tag is-info">${cityssm.escapeHTML(userGroup.userGroupName)}</span>`
                 : '<span class="has-text-grey-light">-</span>';
             const colorHexTrimmed = (item.colorHex || '').trim();
-            const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+            const colorHex = /^[\da-f]{6}$/i.test(colorHexTrimmed)
                 ? colorHexTrimmed
                 : '000000';
             const iconClassTrimmed = (item.iconClass || '').trim();
-            const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+            const iconClass = /^[\da-z-]+$/.test(iconClassTrimmed)
                 ? iconClassTrimmed
                 : 'circle';
             const tableRowElement = document.createElement('tr');

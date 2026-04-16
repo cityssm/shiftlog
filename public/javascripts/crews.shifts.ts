@@ -329,7 +329,8 @@ declare const exports: {
               equipmentNumber
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteCrewEquipmentResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteCrewEquipmentResponse
 
               if (responseJSON.success && responseJSON.crew !== undefined) {
                 const panelElement = document.querySelector(
@@ -481,9 +482,10 @@ declare const exports: {
                   cityssm.postJSON(
                     `${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`,
                     { equipmentNumber: selectedEquipment },
-                    (
-                      eligibleResponseJSON: DoGetEligibleEmployeesForEquipmentResponse
-                    ) => {
+                    (rawEligibleResponseJSON) => {
+                      const eligibleResponseJSON =
+                        rawEligibleResponseJSON as DoGetEligibleEmployeesForEquipmentResponse
+
                       if (eligibleResponseJSON.success) {
                         const eligibleEmployeeNumbers = new Set(
                           eligibleResponseJSON.employees.map(
@@ -522,7 +524,8 @@ declare const exports: {
               `${shiftUrlPrefix}/doAddCrewEquipment`,
               formEvent.currentTarget,
               (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoAddCrewEquipmentResponse
+                const responseJSON =
+                  rawResponseJSON as DoAddCrewEquipmentResponse
 
                 if (responseJSON.success && responseJSON.crew !== undefined) {
                   const panelElement = document.querySelector(
@@ -765,9 +768,10 @@ declare const exports: {
             cityssm.postJSON(
               `${shiftUrlPrefix}/doGetEligibleEmployeesForEquipment`,
               { equipmentNumber: equipmentItem.equipmentNumber },
-              (
-                eligibleResponseJSON: DoGetEligibleEmployeesForEquipmentResponse
-              ) => {
+              (rawEligibleResponseJSON) => {
+                const eligibleResponseJSON =
+                  rawEligibleResponseJSON as DoGetEligibleEmployeesForEquipmentResponse
+
                 if (eligibleResponseJSON.success) {
                   const eligibleEmployeeNumbers = new Set(
                     eligibleResponseJSON.employees.map(

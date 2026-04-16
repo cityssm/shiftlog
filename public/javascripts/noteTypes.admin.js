@@ -627,7 +627,7 @@
                         ${cityssm.escapeHTML(template.templateDescription)}
                         <br />
                         <small class="has-text-grey">
-                          ${template.fields.length} field${template.fields.length !== 1 ? 's' : ''}
+                          ${template.fields.length} field${template.fields.length === 1 ? '' : 's'}
                         </small>
                       </p>
                     </div>
@@ -666,7 +666,8 @@
                 `;
                             cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddNoteTypeFromTemplate`, {
                                 templateId
-                            }, (addResponseJSON) => {
+                            }, (rawAddResponseJSON) => {
+                                const addResponseJSON = rawAddResponseJSON;
                                 if (addResponseJSON.success) {
                                     noteTypes = addResponseJSON.noteTypes;
                                     closeModalFunction();

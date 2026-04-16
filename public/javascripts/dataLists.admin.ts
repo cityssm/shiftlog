@@ -74,7 +74,7 @@ function updateIconPreview(
 
   // Get icon class and validate
   const iconClassTrimmed = iconInput.value.trim()
-  const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+  const iconClass = /^[\da-z-]+$/.test(iconClassTrimmed)
     ? iconClassTrimmed
     : 'circle'
 
@@ -183,13 +183,13 @@ function setupIconPreviewListeners(
 
       // Sanitize colorHex (must be 6 hex digits)
       const colorHexTrimmed = (item.colorHex || '').trim()
-      const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+      const colorHex = /^[\da-f]{6}$/i.test(colorHexTrimmed)
         ? colorHexTrimmed
         : '000000'
 
       // Sanitize iconClass (only allow lowercase letters, hyphens, and numbers)
       const iconClassTrimmed = (item.iconClass || '').trim()
-      const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+      const iconClass = /^[\da-z-]+$/.test(iconClassTrimmed)
         ? iconClassTrimmed
         : 'circle'
 

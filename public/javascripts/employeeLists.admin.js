@@ -287,7 +287,7 @@
     }
     function initializeSortable(employeeListId, seniorityDate, panelElement) {
         const sanitizedDateKey = seniorityDate
-            ? seniorityDate.replaceAll(/[^a-z0-9\-]/giv, '-')
+            ? seniorityDate.replaceAll(/[^a-z0-9-]/gi, '-')
             : 'nodate';
         const containerId = `members--${employeeListId}--${sanitizedDateKey}`;
         const tbodyElement = document.querySelector(`#${containerId}`);
@@ -365,7 +365,7 @@
         for (const [dateKey, members] of membersByDate) {
             const sanitizedDateKey = dateKey === 'no-date'
                 ? 'nodate'
-                : dateKey.replaceAll(/[^a-z0-9\-]/giv, '-');
+                : dateKey.replaceAll(/[^a-z0-9-]/gi, '-');
             const containerId = `members--${employeeList.employeeListId}--${sanitizedDateKey}`;
             const dateDisplay = dateKey === 'no-date'
                 ? 'No Seniority Date'

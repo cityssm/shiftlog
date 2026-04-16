@@ -6,11 +6,11 @@ const debug = Debug(`${DEBUG_NAMESPACE}:database:addDataListItem`);
 export default async function addDataListItem(form) {
     const pool = await getShiftLogConnectionPool();
     const colorHexTrimmed = (form.colorHex ?? '').trim().slice(-6);
-    const colorHex = /^[\da-f]{6}$/iv.test(colorHexTrimmed)
+    const colorHex = /^[\da-f]{6}$/i.test(colorHexTrimmed)
         ? colorHexTrimmed
         : '000000';
     const iconClassTrimmed = (form.iconClass ?? '').trim();
-    const iconClass = /^[\da-z\-]+$/v.test(iconClassTrimmed)
+    const iconClass = /^[\da-z-]+$/.test(iconClassTrimmed)
         ? iconClassTrimmed
         : 'circle';
     const existingDataListItemResult = await pool

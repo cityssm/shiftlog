@@ -201,6 +201,7 @@ declare const exports: {
             </div>
           `
         } else {
+          /* eslint-disable html/require-closing-tags */
           let tableHTML = /* html */ `
             <div class="table-container" style="width: 100%;">
               <table class="table is-striped is-hoverable is-fullwidth mb-0">
@@ -217,6 +218,7 @@ declare const exports: {
                 </thead>
                 <tbody class="is-sortable" id="noteTypeFields--${noteType.noteTypeId}">
           `
+          /* eslint-enable html/require-closing-tags */
 
           for (const field of noteType.fields) {
             const dividerStyle = field.hasDividerAbove
@@ -464,6 +466,7 @@ declare const exports: {
 
         ;(
           formElement.querySelector(
+            // eslint-disable-next-line no-secrets/no-secrets
             'input[name="isAvailableWorkOrders"]'
           ) as HTMLInputElement
         ).checked = noteType.isAvailableWorkOrders
@@ -987,7 +990,7 @@ declare const exports: {
                         ${cityssm.escapeHTML(template.templateDescription)}
                         <br />
                         <small class="has-text-grey">
-                          ${template.fields.length} field${template.fields.length !== 1 ? 's' : ''}
+                          ${template.fields.length} field${template.fields.length === 1 ? '' : 's'}
                         </small>
                       </p>
                     </div>
@@ -1038,7 +1041,10 @@ declare const exports: {
                   {
                     templateId
                   },
-                  (addResponseJSON: DoAddNoteTypeFromTemplateResponse) => {
+                  (rawAddResponseJSON) => {
+                    const addResponseJSON =
+                      rawAddResponseJSON as DoAddNoteTypeFromTemplateResponse
+
                     if (addResponseJSON.success) {
                       noteTypes = addResponseJSON.noteTypes
                       closeModalFunction()

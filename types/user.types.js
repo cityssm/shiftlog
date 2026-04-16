@@ -1,3 +1,4 @@
+import 'express-session';
 export const userSettingKeys = [
     'apiKey',
     'timesheets.canMarkEmployeesAsEntered',

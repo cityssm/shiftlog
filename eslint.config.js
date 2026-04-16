@@ -66,6 +66,7 @@ export const config = defineConfig(configWebApp, {
                 }
             }
         ],
+        'require-unicode-regexp': 'off',
         'unicorn/no-null': 'off'
     }
 });

@@ -1,3 +1,5 @@
+import 'express-session'
+
 declare global {
   export interface User {
     userName: string
@@ -55,7 +57,7 @@ export interface UserProperties {
 }
 
 declare module 'express-session' {
-  interface Session {
+  interface SessionData {
     user?: User
   }
 }
