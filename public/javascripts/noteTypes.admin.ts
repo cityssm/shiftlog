@@ -330,7 +330,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddNoteType`,
         formElement,
-        (responseJSON: DoAddNoteTypeResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddNoteTypeResponse
+
           if (responseJSON.success) {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
@@ -407,7 +409,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateNoteType`,
         formElement,
-        (responseJSON: DoUpdateNoteTypeResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateNoteTypeResponse
+
           if (responseJSON.success) {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
@@ -516,7 +520,9 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteNoteType`,
             { noteTypeId },
-            (responseJSON: DoDeleteNoteTypeResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteNoteTypeResponse
+
               if (responseJSON.success) {
                 noteTypes = responseJSON.noteTypes
                 renderNoteTypes()
@@ -554,7 +560,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddNoteTypeField`,
         formElement,
-        (responseJSON: DoAddNoteTypeFieldResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddNoteTypeFieldResponse
+
           if (responseJSON.success) {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
@@ -668,7 +676,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateNoteTypeField`,
         formElement,
-        (responseJSON: DoUpdateNoteTypeFieldResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateNoteTypeFieldResponse
+
           if (responseJSON.success) {
             noteTypes = responseJSON.noteTypes
             closeModalFunction()
@@ -815,7 +825,10 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftLog.urlPrefix}/admin/doDeleteNoteTypeField`,
             { noteTypeFieldId: fieldId },
-            (responseJSON: DoDeleteNoteTypeFieldResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON =
+                rawResponseJSON as DoDeleteNoteTypeFieldResponse
+
               if (responseJSON.success) {
                 noteTypes = responseJSON.noteTypes
                 renderNoteTypes()
@@ -882,7 +895,10 @@ declare const exports: {
               noteTypeId: noteType.noteTypeId,
               noteTypeFieldIds
             },
-            (responseJSON: DoReorderNoteTypeFieldsResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON =
+                rawResponseJSON as DoReorderNoteTypeFieldsResponse
+
               if (
                 responseJSON.success &&
                 responseJSON.noteTypes !== undefined
@@ -935,7 +951,10 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doGetNoteTypeTemplates`,
           {},
-          (responseJSON: DoGetNoteTypeTemplatesResponse) => {
+          (rawResponseJSON) => {
+            const responseJSON =
+              rawResponseJSON as DoGetNoteTypeTemplatesResponse
+
             if (responseJSON.templates.length === 0) {
               templatesContainer.innerHTML = /* html */ `
                 <div class="message is-info">

@@ -259,6 +259,7 @@ export interface Shift extends BaseRecord {
 
 export interface ShiftCrew {
   shiftId: number
+
   crewId: number
   crewName?: string
   shiftCrewNote: string
@@ -267,9 +268,11 @@ export interface ShiftCrew {
 
 export interface ShiftEmployee {
   shiftId: number
+
   employeeNumber: string
   firstName?: string
   lastName?: string
+
   crewId?: number | null
   crewName?: string
   shiftEmployeeNote: string

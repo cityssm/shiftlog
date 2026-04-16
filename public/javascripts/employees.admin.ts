@@ -63,7 +63,9 @@ declare const exports: {
             {
               employeeNumber
             },
-            (responseJSON: DoDeleteEmployeeResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteEmployeeResponse
+
               if (responseJSON.success) {
                 // Update the employees list with the new data from the server
                 exports.employees = responseJSON.employees
@@ -117,7 +119,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployee`,
         editForm,
-        (responseJSON: DoUpdateEmployeeResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateEmployeeResponse
+
           if (responseJSON.success) {
             closeModalFunction()
 
@@ -384,7 +388,9 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doAddEmployee`,
           addForm,
-          (responseJSON: DoAddEmployeeResponse) => {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as DoAddEmployeeResponse
+
             if (responseJSON.success) {
               closeModalFunction()
 

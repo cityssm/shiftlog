@@ -66,7 +66,9 @@ declare const exports: {
             {
               equipmentNumber
             },
-            (responseJSON: DoDeleteEquipmentResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteEquipmentResponse
+
               if (responseJSON.success) {
                 exports.equipment = responseJSON.equipment
                 currentFilteredEquipment = responseJSON.equipment
@@ -120,7 +122,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEquipment`,
         updateForm,
-        (responseJSON: DoUpdateEquipmentResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateEquipmentResponse
+
           if (responseJSON.success) {
             closeModalFunction()
 
@@ -367,7 +371,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEquipment`,
         addForm,
-        (responseJSON: DoAddEquipmentResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddEquipmentResponse
+
           if (responseJSON.success) {
             closeModalFunction()
 

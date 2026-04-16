@@ -505,7 +505,9 @@ function setupIconPreviewListeners(
           dataListKey,
           dataListName
         },
-        (responseJSON: DoAddDataListResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddDataListResponse
+
           if (responseJSON.success && responseJSON.dataLists !== undefined) {
             closeModalFunction()
 
@@ -592,7 +594,9 @@ function setupIconPreviewListeners(
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateDataList`,
         editForm,
-        (responseJSON: DoUpdateDataListResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateDataListResponse
+
           if (responseJSON.success && responseJSON.dataLists !== undefined) {
             closeModalFunction()
             renderAllDataLists(responseJSON.dataLists)
@@ -675,7 +679,9 @@ function setupIconPreviewListeners(
             {
               dataListKey
             },
-            (responseJSON: DoDeleteDataListResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteDataListResponse
+
               if (
                 responseJSON.success &&
                 responseJSON.dataLists !== undefined
@@ -751,7 +757,9 @@ function setupIconPreviewListeners(
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddDataListItem`,
         addForm,
-        (responseJSON: DoAddDataListItemResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddDataListItemResponse
+
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
 
@@ -880,7 +888,10 @@ function setupIconPreviewListeners(
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddMultipleDataListItems`,
         addForm,
-        (responseJSON: DoAddMultipleDataListItemsResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON =
+            rawResponseJSON as DoAddMultipleDataListItemsResponse
+
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
 
@@ -1034,7 +1045,9 @@ function setupIconPreviewListeners(
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateDataListItem`,
         editForm,
-        (responseJSON: DoUpdateDataListItemResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateDataListItemResponse
+
           if (responseJSON.success && responseJSON.items !== undefined) {
             closeModalFunction()
             renderDataListItems(dataListKey as string, responseJSON.items)
@@ -1183,7 +1196,9 @@ function setupIconPreviewListeners(
               dataListItemId: Number.parseInt(dataListItemId, 10),
               dataListKey
             },
-            (responseJSON: DoDeleteDataListItemResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteDataListItemResponse
+
               if (responseJSON.success && responseJSON.items !== undefined) {
                 renderDataListItems(dataListKey, responseJSON.items)
 
@@ -1287,7 +1302,9 @@ function setupIconPreviewListeners(
             dataListItemIds,
             dataListKey
           },
-          (responseJSON: DoReorderDataListItemsResponse) => {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as DoReorderDataListItemsResponse
+
             if (!responseJSON.success) {
               bulmaJS.alert({
                 contextualColorName: 'danger',

@@ -89,20 +89,20 @@ async function postHandler(
 
         await updateUser(
           {
-            userName,
             isActive: true,
+            userName,
 
-            shifts_canView: false,
-            shifts_canUpdate: false,
             shifts_canManage: false,
+            shifts_canUpdate: false,
+            shifts_canView: false,
 
-            workOrders_canView: false,
-            workOrders_canUpdate: false,
             workOrders_canManage: false,
+            workOrders_canUpdate: false,
+            workOrders_canView: false,
 
-            timesheets_canView: false,
-            timesheets_canUpdate: false,
             timesheets_canManage: false,
+            timesheets_canUpdate: false,
+            timesheets_canView: false,
 
             isAdmin: true
           },

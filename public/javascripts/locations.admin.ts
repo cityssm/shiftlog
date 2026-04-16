@@ -144,7 +144,9 @@ declare const exports: {
             {
               locationId
             },
-            (responseJSON: DoDeleteLocationResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteLocationResponse
+
               if (responseJSON.success) {
                 exports.locations = responseJSON.locations
                 currentFilteredLocations = responseJSON.locations
@@ -206,7 +208,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateLocation`,
         editForm,
-        (responseJSON: DoUpdateLocationResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateLocationResponse
+
           if (responseJSON.success) {
             closeModalFunction()
 
@@ -438,7 +442,9 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftLog.urlPrefix}/admin/doAddLocation`,
           addForm,
-          (responseJSON: DoAddLocationResponse) => {
+          (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON as DoAddLocationResponse
+
             if (responseJSON.success) {
               closeModalFunction()
 

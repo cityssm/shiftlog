@@ -61,7 +61,9 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/admin/doUpdateSetting`,
       formElement,
-      (responseJSON: DoUpdateSettingResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoUpdateSettingResponse
+
         if (responseJSON.success) {
           bulmaJS.alert({
             contextualColorName: 'success',

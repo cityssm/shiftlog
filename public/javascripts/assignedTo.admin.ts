@@ -133,7 +133,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddAssignedToItem`,
         addForm,
-        (responseJSON: DoAddAssignedToItemResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddAssignedToItemResponse
+
           if (responseJSON.success) {
             assignedToList.push({
               assignedToId: responseJSON.assignedToId,
@@ -228,7 +230,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateAssignedToItem`,
         editForm,
-        (responseJSON: DoUpdateAssignedToItemResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateAssignedToItemResponse
+
           if (responseJSON.success) {
             const itemIndex = assignedToList.findIndex(
               (item) =>
@@ -342,7 +346,9 @@ declare const exports: {
         {
           assignedToId
         },
-        (responseJSON: DoDeleteAssignedToItemResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoDeleteAssignedToItemResponse
+
           if (responseJSON.success) {
             assignedToList = assignedToList.filter(
               (item) => item.assignedToId !== assignedToId
@@ -394,7 +400,9 @@ declare const exports: {
         {
           assignedToIds
         },
-        (responseJSON: DoReorderAssignedToItemsResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoReorderAssignedToItemsResponse
+
           if (responseJSON.success) {
             const positionMap = new Map(
               assignedToIds.map((id, index) => [id, index])

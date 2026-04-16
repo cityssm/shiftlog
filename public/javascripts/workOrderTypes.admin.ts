@@ -146,7 +146,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddWorkOrderType`,
         addForm,
-        (responseJSON: DoAddWorkOrderTypeResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddWorkOrderTypeResponse
+
           if (responseJSON.success) {
             closeModalFunction()
             workOrderTypes = responseJSON.workOrderTypes
@@ -283,7 +285,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateWorkOrderType`,
         editForm,
-        (responseJSON: DoUpdateWorkOrderTypeResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateWorkOrderTypeResponse
+
           if (responseJSON.success) {
             closeModalFunction()
             workOrderTypes = responseJSON.workOrderTypes
@@ -560,7 +564,10 @@ declare const exports: {
             {
               workOrderTypeId: Number.parseInt(workOrderTypeId, 10)
             },
-            (responseJSON: DoDeleteWorkOrderTypeResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON =
+                rawResponseJSON as DoDeleteWorkOrderTypeResponse
+
               if (responseJSON.success) {
                 workOrderTypes = responseJSON.workOrderTypes
                 renderWorkOrderTypes()
@@ -627,7 +634,10 @@ declare const exports: {
             {
               workOrderTypeIds
             },
-            (responseJSON: DoReorderWorkOrderTypesResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON =
+                rawResponseJSON as DoReorderWorkOrderTypesResponse
+
               if (!responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'danger',

@@ -47,7 +47,9 @@ declare const exports: {
             {
               userName
             },
-            (responseJSON: DoResetUserApiKeyResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoResetUserApiKeyResponse
+
               if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -219,7 +221,9 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/admin/doGetApiAuditLogs`,
       requestBody,
-      (responseJSON: DoGetApiAuditLogsResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoGetApiAuditLogsResponse
+
         // if (responseJSON.success) {
         totalCount = responseJSON.totalCount
         renderAuditLogs(responseJSON.logs)

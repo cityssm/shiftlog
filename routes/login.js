@@ -44,17 +44,17 @@ async function postHandler(request, response) {
             if (success) {
                 knownUserCount = 1;
                 await updateUser({
-                    userName,
                     isActive: true,
-                    shifts_canView: false,
-                    shifts_canUpdate: false,
+                    userName,
                     shifts_canManage: false,
-                    workOrders_canView: false,
-                    workOrders_canUpdate: false,
+                    shifts_canUpdate: false,
+                    shifts_canView: false,
                     workOrders_canManage: false,
-                    timesheets_canView: false,
-                    timesheets_canUpdate: false,
+                    workOrders_canUpdate: false,
+                    workOrders_canView: false,
                     timesheets_canManage: false,
+                    timesheets_canUpdate: false,
+                    timesheets_canView: false,
                     isAdmin: true
                 }, SYSTEM_USER);
                 userObject = await getUser(userName);

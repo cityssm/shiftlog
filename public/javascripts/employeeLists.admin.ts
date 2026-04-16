@@ -91,7 +91,10 @@ declare const exports: {
             {
               employeeListId
             },
-            (responseJSON: DoDeleteEmployeeListResponse) => {
+            (rawResponseJSON) => {
+              const responseJSON =
+                rawResponseJSON as DoDeleteEmployeeListResponse
+
               if (responseJSON.success) {
                 exports.employeeLists = responseJSON.employeeLists
                 renderEmployeeLists()
@@ -141,7 +144,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployeeList`,
         formElement,
-        (responseJSON: DoUpdateEmployeeListResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoUpdateEmployeeListResponse
+
           if (responseJSON.success) {
             exports.employeeLists = responseJSON.employeeLists
             renderEmployeeLists()
@@ -213,7 +218,9 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEmployeeList`,
         formElement,
-        (responseJSON: DoAddEmployeeListResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON = rawResponseJSON as DoAddEmployeeListResponse
+
           if (responseJSON.success) {
             exports.employeeLists = responseJSON.employeeLists
             renderEmployeeLists()
@@ -270,7 +277,9 @@ declare const exports: {
       {
         employeeListId
       },
-      (responseJSON: DoGetEmployeeListResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoGetEmployeeListResponse
+
         if (responseJSON.employeeList !== undefined) {
           renderEmployeeListMembers(responseJSON.employeeList, panelElement)
         }
@@ -289,7 +298,10 @@ declare const exports: {
         employeeListId,
         employeeNumber
       },
-      (responseJSON: DoDeleteEmployeeListMemberResponse) => {
+      (rawResponseJSON) => {
+        const responseJSON =
+          rawResponseJSON as DoDeleteEmployeeListMemberResponse
+
         if (responseJSON.success && responseJSON.employeeList !== undefined) {
           renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -338,7 +350,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddEmployeeListMember`,
         formElement,
-        (responseJSON: DoAddEmployeeListMemberResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON =
+            rawResponseJSON as DoAddEmployeeListMemberResponse
+
           if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -431,7 +446,10 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateEmployeeListMember`,
         formElement,
-        (responseJSON: DoUpdateEmployeeListMemberResponse) => {
+        (rawResponseJSON) => {
+          const responseJSON =
+            rawResponseJSON as DoUpdateEmployeeListMemberResponse
+
           if (responseJSON.success && responseJSON.employeeList !== undefined) {
             renderEmployeeListMembers(responseJSON.employeeList, panelElement)
 
@@ -578,7 +596,10 @@ declare const exports: {
             employeeNumbers,
             seniorityDate: seniorityDate ?? undefined
           },
-          (responseJSON: DoReorderEmployeeListMembersResponse) => {
+          (rawResponseJSON) => {
+            const responseJSON =
+              rawResponseJSON as DoReorderEmployeeListMembersResponse
+
             if (
               responseJSON.success &&
               responseJSON.employeeList !== undefined
