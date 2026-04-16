@@ -52,7 +52,7 @@ declare const exports: {
       {
         t: Date.now()
       },
-      (rawResponseJSON: { activeSession: boolean }) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as { activeSession: boolean }
         if (!responseJSON.activeSession) {
           bulmaJS.alert({

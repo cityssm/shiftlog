@@ -106,7 +106,7 @@ declare const bulmaJS: BulmaJS
                 tagName,
                 workOrderId: Number.parseInt(workOrderId, 10)
               },
-              (rawResponseJSON: DoDeleteWorkOrderTagResponse) => {
+              (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as DoDeleteWorkOrderTagResponse
                 if (responseJSON.success) {
                   renderTags(responseJSON.tags)
@@ -188,7 +188,7 @@ declare const bulmaJS: BulmaJS
                 tagName: suggestedTag.tagName,
                 workOrderId: Number.parseInt(workOrderId, 10)
               },
-              (rawResponseJSON: DoAddWorkOrderTagResponse) => {
+              (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as DoAddWorkOrderTagResponse
                 if (responseJSON.success) {
                   getCloseFunction()()
@@ -236,7 +236,7 @@ declare const bulmaJS: BulmaJS
             tagName: tagNameInput.value,
             workOrderId: Number.parseInt(workOrderId, 10)
           },
-          (rawResponseJSON: DoAddWorkOrderTagResponse) => {
+          (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as DoAddWorkOrderTagResponse
             if (responseJSON.success) {
               closeModalFunction()
@@ -281,7 +281,7 @@ declare const bulmaJS: BulmaJS
             cityssm.postJSON(
               `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`,
               {},
-              (rawResponseJSON: DoGetSuggestedTagsResponse) => {
+              (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as DoGetSuggestedTagsResponse
                 renderSuggestedTags(
                   suggestedTagsContainer,
@@ -313,7 +313,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`,
         {},
-        (rawResponseJSON: DoGetWorkOrderTagsResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoGetWorkOrderTagsResponse
           renderTags(responseJSON.tags)
         }

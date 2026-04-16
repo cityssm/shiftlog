@@ -55,7 +55,7 @@ declare const exports: {
             {
               userName
             },
-            (rawResponseJSON: DoDeleteUserResponse) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteUserResponse
               if (responseJSON.success) {
                 // Update the users list with the new data from the server
@@ -97,7 +97,7 @@ declare const exports: {
         permissionField: permission,
         userName
       },
-      (rawResponseJSON: DoToggleUserPermissionResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoToggleUserPermissionResponse
         if (responseJSON.success) {
           renderUsers(responseJSON.users)
@@ -138,7 +138,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doUpdateUserSettings`,
         settingsForm,
-        (rawResponseJSON: DoUpdateUserSettingsResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateUserSettingsResponse
           if (responseJSON.success) {
             closeModalFunction()
@@ -276,7 +276,7 @@ declare const exports: {
       {
         userName
       },
-      (rawResponseJSON: DoResetUserApiKeyResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoResetUserApiKeyResponse
         if (responseJSON.success) {
           // Update the users list with the new data from the server
@@ -582,7 +582,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/admin/doAddUser`,
         addForm,
-        (rawResponseJSON: DoAddUserResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoAddUserResponse
           if (responseJSON.success) {
             closeModalFunction()

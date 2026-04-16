@@ -229,7 +229,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doGetWorkOrdersForPlanner`,
       requestData,
-      (rawResponseJSON: DoGetWorkOrdersForPlannerResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetWorkOrdersForPlannerResponse
         renderWorkOrdersTable(responseJSON)
       }

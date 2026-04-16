@@ -30,7 +30,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`,
         formElement,
-        (rawResponseJSON: DoUpdateEmployeeContactResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateEmployeeContactResponse
           if (responseJSON.success) {
             bulmaJS.alert({
@@ -73,7 +73,7 @@ declare const exports: {
           settingKey,
           settingValue
         },
-        (rawResponseJSON: DoUpdateUserSettingResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateUserSettingResponse
           if (responseJSON.success) {
             bulmaJS.alert({
@@ -101,7 +101,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/dashboard/doResetApiKey`,
       {},
-      (rawResponseJSON: DoResetApiKeyResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoResetApiKeyResponse
         if (responseJSON.success) {
           bulmaJS.alert({

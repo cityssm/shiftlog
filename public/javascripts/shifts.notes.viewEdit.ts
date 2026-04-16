@@ -82,7 +82,7 @@ declare const bulmaJS: BulmaJS
         `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
         { dataListKey: key },
         // eslint-disable-next-line @typescript-eslint/no-loop-func
-        (rawResponseJSON: DoGetDataListItemsResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoGetDataListItemsResponse
           dataListMap.set(key, responseJSON.items)
 
@@ -372,7 +372,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doUpdateShiftNote`,
         noteData,
-        (rawResponseJSON: DoUpdateShiftNoteResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftNoteResponse
           if (responseJSON.success) {
             closeModalFunction()
@@ -1078,7 +1078,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/doCreateShiftNote`,
         noteData,
-        (rawResponseJSON: DoCreateShiftNoteResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoCreateShiftNoteResponse
           if (responseJSON.success) {
             closeModalFunction()
@@ -1157,7 +1157,7 @@ declare const bulmaJS: BulmaJS
               shiftId,
               noteSequence
             },
-            (rawResponseJSON: DoDeleteShiftNoteResponse) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteShiftNoteResponse
               if (responseJSON.success) {
                 loadNotes()
@@ -1178,7 +1178,7 @@ declare const bulmaJS: BulmaJS
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.shiftsRouter}/${shiftId}/doGetShiftNotes`,
       {},
-      (rawResponseJSON: DoGetShiftNotesResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetShiftNotesResponse
         renderNotes(responseJSON.notes)
       }

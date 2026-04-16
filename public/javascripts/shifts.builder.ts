@@ -769,7 +769,7 @@ declare const exports: {
       {
         shiftDateString
       },
-      (rawResponseJSON: DoGetShiftsForBuilderResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetShiftsForBuilderResponse
         currentShifts = responseJSON.shifts
         renderShifts()
@@ -800,7 +800,7 @@ declare const exports: {
       cityssm.postJSON(
         `${shiftUrlPrefix}/doGetAvailableAdhocTasks`,
         {},
-        (rawResponseJSON: DoGetAvailableAdhocTasksResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoGetAvailableAdhocTasksResponse
           renderAvailableAdhocTasks(responseJSON.adhocTasks)
         }
@@ -812,7 +812,7 @@ declare const exports: {
         {
           shiftDateString
         },
-        (rawResponseJSON: DoGetAvailableResourcesResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
           renderAvailableResources(responseJSON)
         }
@@ -2543,7 +2543,7 @@ declare const exports: {
         shiftTypeDataListItemId: shift.shiftTypeDataListItemId,
         supervisorEmployeeNumber: employeeNumber
       },
-      (rawResponseJSON: DoUpdateShiftResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoUpdateShiftResponse
         if (responseJSON.success) {
           bulmaJS.alert({
@@ -2579,7 +2579,7 @@ declare const exports: {
           employeeNumber,
           shiftId: toShiftId
         },
-        (rawResponseJSON: DoUpdateShiftEmployeeResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftEmployeeResponse
           if (responseJSON.success) {
             bulmaJS.alert({
@@ -2661,7 +2661,7 @@ declare const exports: {
           equipmentNumber,
           shiftId: toShiftId
         },
-        (rawResponseJSON: DoUpdateShiftEquipmentResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftEquipmentResponse
           if (responseJSON.success) {
             bulmaJS.alert({
@@ -2806,7 +2806,7 @@ declare const exports: {
         cityssm.postJSON(
           `${shiftUrlPrefix}/doGetShiftCreationData`,
           {},
-          (rawResponseJSON: DoGetShiftCreationDataResponse) => {
+          (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as DoGetShiftCreationDataResponse
             // Populate shift types
             for (const shiftType of responseJSON.shiftTypes) {
@@ -3067,7 +3067,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (rawResponseJSON: DoGetAvailableResourcesResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
         // Filter out employees already on the shift
         const shiftEmployeeNumbers = new Set(
@@ -3114,7 +3114,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (rawResponseJSON: DoGetAvailableResourcesResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
         // Filter out equipment already on the shift
         const shiftEquipmentNumbers = new Set(
@@ -3165,7 +3165,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftUrlPrefix}/doGetAvailableResources`,
       { shiftDateString },
-      (rawResponseJSON: DoGetAvailableResourcesResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetAvailableResourcesResponse
         // Filter out crews already on the shift
         const shiftCrewIds = new Set(shift.crews.map((c) => c.crewId))
@@ -3214,18 +3214,7 @@ declare const exports: {
     cityssm.postJSON(
       `${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/doSearchWorkOrders`,
       { searchString, orderBy: 'workOrderNumber desc', limit: 20, offset: 0 },
-      (rawResponseJSON: {
-        count: number
-        success: boolean
-        workOrders: Array<{
-          requestorEmployeeNumber: string | null
-          requestorFirstName: string | null
-          requestorLastName: string | null
-          workOrderDetails: string
-          workOrderId: number
-          workOrderNumber: string
-        }>
-      }) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as {
         count: number
         success: boolean
@@ -3764,7 +3753,7 @@ declare const exports: {
               cityssm.postJSON(
                 `${shiftUrlPrefix}/doCreateStandaloneAdhocTask`,
                 formEvent.currentTarget as HTMLFormElement,
-                (rawResponseJSON: { success: boolean; errorMessage?: string }) => {
+                (rawResponseJSON) => {
                   const responseJSON = rawResponseJSON as { success: boolean; errorMessage?: string }
                   if (responseJSON.success) {
                     bulmaJS.alert({
@@ -3841,7 +3830,7 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftUrlPrefix}/doUpdateShiftCrewNote`,
             formElement,
-            (rawResponseJSON: { success: boolean }) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
               if (responseJSON.success) {
                 bulmaJS.alert({
@@ -3954,7 +3943,7 @@ declare const exports: {
               employeeNumber: employee.employeeNumber,
               crewId: crewId === '' ? null : crewId
             },
-            (rawResponseJSON: { success: boolean }) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean }
               if (responseJSON.success) {
                 // Update note
@@ -4089,7 +4078,7 @@ declare const exports: {
               equipmentNumber: equipment.equipmentNumber,
               employeeNumber: employeeNumber === '' ? null : employeeNumber
             },
-            (rawResponseJSON: { success: boolean; message?: string }) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean; message?: string }
               if (responseJSON.success) {
                 // Update note
@@ -4188,7 +4177,7 @@ declare const exports: {
           cityssm.postJSON(
             `${shiftUrlPrefix}/doUpdateShiftWorkOrderNote`,
             formElement,
-            (rawResponseJSON: { success: boolean; errorMessage?: string }) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as { success: boolean; errorMessage?: string }
               if (responseJSON.success) {
                 bulmaJS.alert({

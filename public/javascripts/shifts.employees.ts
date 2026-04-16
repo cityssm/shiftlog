@@ -464,7 +464,7 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftCrews`,
       { shiftId },
-      (rawResponseJSON: DoGetShiftCrewsResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetShiftCrewsResponse
         shiftCrews = responseJSON.shiftCrews
         renderShiftCrews()
@@ -477,7 +477,7 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftEmployees`,
       { shiftId },
-      (rawResponseJSON: DoGetShiftEmployeesResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetShiftEmployeesResponse
         shiftEmployees = responseJSON.shiftEmployees
         renderShiftEmployees()
@@ -490,7 +490,7 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetShiftEquipment`,
       { shiftId },
-      (rawResponseJSON: DoGetShiftEquipmentResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetShiftEquipmentResponse
         shiftEquipment = responseJSON.shiftEquipment
         renderShiftEquipment()
@@ -510,7 +510,7 @@ declare const exports: {
       // eslint-disable-next-line no-secrets/no-secrets
       `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`,
       {},
-      (rawResponseJSON: DoGetAvailableCrewsEmployeesEquipmentResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetAvailableCrewsEmployeesEquipmentResponse
         availableCrews = responseJSON.crews
         availableEmployees = responseJSON.employees
@@ -530,7 +530,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftCrew`,
         formElement,
-        (rawResponseJSON: DoAddShiftCrewResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoAddShiftCrewResponse
           if (responseJSON.success) {
             refreshData()
@@ -608,7 +608,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftEmployee`,
         formElement,
-        (rawResponseJSON: DoAddShiftEmployeeResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoAddShiftEmployeeResponse
           if (responseJSON.success) {
             refreshData()
@@ -709,7 +709,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doAddShiftEquipment`,
         formElement,
-        (rawResponseJSON: DoAddShiftEquipmentResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoAddShiftEquipmentResponse
           if (responseJSON.success) {
             refreshData()
@@ -818,7 +818,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftCrewNote`,
         formElement,
-        (rawResponseJSON: DoUpdateShiftCrewNoteResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftCrewNoteResponse
           if (responseJSON.success) {
             refreshData()
@@ -885,7 +885,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEmployee`,
         formElement,
-        (rawResponseJSON: DoUpdateShiftEmployeeResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftEmployeeResponse
           if (responseJSON.success) {
             refreshData()
@@ -969,7 +969,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEmployeeNote`,
         formElement,
-        (rawResponseJSON: DoUpdateShiftEmployeeNoteResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftEmployeeNoteResponse
           if (responseJSON.success) {
             refreshData()
@@ -1039,7 +1039,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEquipment`,
         formElement,
-        (rawResponseJSON: DoUpdateShiftEquipmentResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftEquipmentResponse
           if (responseJSON.success) {
             refreshData()
@@ -1125,7 +1125,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftEquipmentNote`,
         formElement,
-        (rawResponseJSON: DoUpdateShiftEquipmentNoteResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftEquipmentNoteResponse
           if (responseJSON.success) {
             refreshData()
@@ -1196,7 +1196,7 @@ declare const exports: {
               shiftId,
               crewId
             },
-            (rawResponseJSON: DoDeleteShiftCrewResponse) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteShiftCrewResponse
               if (responseJSON.success) {
                 refreshData()
@@ -1243,7 +1243,7 @@ declare const exports: {
               shiftId,
               employeeNumber
             },
-            (rawResponseJSON: DoDeleteShiftEmployeeResponse) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteShiftEmployeeResponse
               if (responseJSON.success) {
                 refreshData()
@@ -1291,7 +1291,7 @@ declare const exports: {
               shiftId,
               equipmentNumber
             },
-            (rawResponseJSON: DoDeleteShiftEquipmentResponse) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteShiftEquipmentResponse
               if (responseJSON.success) {
                 refreshData()
@@ -1327,7 +1327,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doCopyFromPreviousShift`,
         formElement,
-        (rawResponseJSON: DoCopyFromPreviousShiftResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoCopyFromPreviousShiftResponse
           if (responseJSON.success) {
             refreshData()
@@ -1354,7 +1354,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doGetPreviousShifts`,
         searchFormElement,
-        (rawResponseJSON: DoGetPreviousShiftsResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoGetPreviousShiftsResponse
           const resultsContainer = document.querySelector(
             '#container--searchResults'

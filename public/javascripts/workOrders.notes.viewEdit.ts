@@ -85,7 +85,7 @@ declare const bulmaJS: BulmaJS
         `${exports.shiftLog.urlPrefix}/dashboard/doGetDataListItems`,
         { dataListKey: key },
         // eslint-disable-next-line @typescript-eslint/no-loop-func
-        (rawResponseJSON: DoGetDataListItemsResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoGetDataListItemsResponse
           dataListMap.set(key, responseJSON.items)
 
@@ -375,7 +375,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderNote`,
         noteData,
-        (rawResponseJSON: DoUpdateWorkOrderNoteResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateWorkOrderNoteResponse
           if (responseJSON.success) {
             closeModalFunction()
@@ -1083,7 +1083,7 @@ declare const bulmaJS: BulmaJS
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderNote`,
         noteData,
-        (rawResponseJSON: DoCreateWorkOrderNoteResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoCreateWorkOrderNoteResponse
           if (responseJSON.success) {
             closeModalFunction()
@@ -1162,7 +1162,7 @@ declare const bulmaJS: BulmaJS
               workOrderId,
               noteSequence
             },
-            (rawResponseJSON: DoDeleteWorkOrderNoteResponse) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteWorkOrderNoteResponse
               if (responseJSON.success) {
                 loadNotes()
@@ -1183,7 +1183,7 @@ declare const bulmaJS: BulmaJS
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderNotes`,
       {},
-      (rawResponseJSON: DoGetWorkOrderNotesResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetWorkOrderNotesResponse
         renderNotes(responseJSON.notes)
       }

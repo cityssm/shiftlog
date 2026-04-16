@@ -153,7 +153,7 @@ declare const exports: {
     cityssm.postJSON(
       `${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`,
       workOrderFormElement,
-      (rawResponseJSON: DoCreateWorkOrderResponse | DoUpdateWorkOrderResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoCreateWorkOrderResponse | DoUpdateWorkOrderResponse
         if (responseJSON.success) {
           shiftLog.clearUnsavedChanges()
@@ -230,7 +230,7 @@ declare const exports: {
           {
             searchString: requestorSearchString
           },
-          (rawResponseJSON: DoGetRequestorSuggestionsResponse) => {
+          (rawResponseJSON) => {
             const responseJSON = rawResponseJSON as DoGetRequestorSuggestionsResponse
             requestorsData = responseJSON.requestors
 
@@ -358,7 +358,7 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrderUrlPrefix}/doGetLocationSuggestions`,
         { searchString },
-        (rawResponseJSON: DoGetLocationSuggestionsResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoGetLocationSuggestionsResponse
           locationsData = responseJSON.locations
           populateLocationDatalist(responseJSON.locations)
@@ -711,7 +711,7 @@ declare const exports: {
               {
                 workOrderId
               },
-              (rawResponseJSON: DoDeleteWorkOrderResponse) => {
+              (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as DoDeleteWorkOrderResponse
                 if (responseJSON.success) {
                   shiftLog.clearUnsavedChanges()

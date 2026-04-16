@@ -266,7 +266,7 @@ declare const Sortable: {
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestoneOrder`,
       { milestoneOrders },
-      (rawResponseJSON: DoUpdateWorkOrderMilestoneOrderResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoUpdateWorkOrderMilestoneOrderResponse
         if (!responseJSON.success) {
           bulmaJS.alert({
@@ -310,7 +310,7 @@ declare const Sortable: {
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderMilestone`,
         formElement,
-        (rawResponseJSON: DoCreateWorkOrderMilestoneResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoCreateWorkOrderMilestoneResponse
           if (responseJSON.success) {
             closeModalFunction()
@@ -402,7 +402,7 @@ declare const Sortable: {
       cityssm.postJSON(
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderMilestone`,
         formElement,
-        (rawResponseJSON: DoUpdateWorkOrderMilestoneResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateWorkOrderMilestoneResponse
           if (responseJSON.success) {
             closeModalFunction()
@@ -547,7 +547,7 @@ declare const Sortable: {
                   milestoneCompleteDateTimeString: completeDateTimeString,
                   assignedToId: milestone.assignedToId ?? ''
                 },
-                (rawResponseJSON: DoUpdateWorkOrderMilestoneResponse) => {
+                (rawResponseJSON) => {
                   const responseJSON = rawResponseJSON as DoUpdateWorkOrderMilestoneResponse
                   if (responseJSON.success) {
                     loadMilestones()
@@ -581,7 +581,7 @@ declare const Sortable: {
             {
               workOrderMilestoneId
             },
-            (rawResponseJSON: DoDeleteWorkOrderMilestoneResponse) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteWorkOrderMilestoneResponse
               if (responseJSON.success) {
                 loadMilestones()
@@ -602,7 +602,7 @@ declare const Sortable: {
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`,
       {},
-      (rawResponseJSON: DoGetWorkOrderMilestonesResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetWorkOrderMilestonesResponse
         renderMilestones(responseJSON.milestones)
       }

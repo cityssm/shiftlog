@@ -46,7 +46,7 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetAdhocTaskTypes`,
       {},
-      (rawResponseJSON: DoGetAdhocTaskTypesResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetAdhocTaskTypesResponse
         adhocTaskTypes = responseJSON.adhocTaskTypes
       }
@@ -357,7 +357,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doCreateAdhocTask`,
         formEvent.currentTarget,
-        (rawResponseJSON: DoCreateAdhocTaskResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoCreateAdhocTaskResponse
           if (responseJSON.success) {
             shiftAdhocTasks = responseJSON.shiftAdhocTasks
@@ -528,7 +528,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateAdhocTask`,
         formEvent.currentTarget,
-        (rawResponseJSON: DoUpdateAdhocTaskResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateAdhocTaskResponse
           if (responseJSON.success) {
             shiftAdhocTasks = responseJSON.shiftAdhocTasks
@@ -844,7 +844,7 @@ declare const exports: {
       cityssm.postJSON(
         `${urlPrefix}/doUpdateShiftAdhocTaskNote`,
         formEvent.currentTarget,
-        (rawResponseJSON: DoUpdateShiftAdhocTaskNoteResponse) => {
+        (rawResponseJSON) => {
           const responseJSON = rawResponseJSON as DoUpdateShiftAdhocTaskNoteResponse
           if (responseJSON.success) {
             ;(task as AdhocTask).shiftAdhocTaskNote = note
@@ -912,7 +912,7 @@ declare const exports: {
     cityssm.postJSON(
       `${urlPrefix}/doGetAvailableAdhocTasks`,
       { shiftId },
-      (rawResponseJSON: DoGetAvailableAdhocTasksResponse) => {
+      (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as DoGetAvailableAdhocTasksResponse
         if (responseJSON.adhocTasks.length === 0) {
           bulmaJS.alert({
@@ -1157,7 +1157,7 @@ declare const exports: {
 
               deleteTask: deleteOption === 'delete'
             },
-            (rawResponseJSON: DoDeleteShiftAdhocTaskResponse) => {
+            (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteShiftAdhocTaskResponse
               if (responseJSON.success) {
                 shiftAdhocTasks = responseJSON.shiftAdhocTasks
