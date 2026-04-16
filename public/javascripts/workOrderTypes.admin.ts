@@ -504,10 +504,11 @@ declare const exports: {
           handle: '.milestone-handle',
           onEnd() {
             // Update order numbers after sorting
-            const items =
+            const items: NodeListOf<HTMLElement> =
               defaultMilestonesContainer.querySelectorAll('.milestone-item')
+
             for (const [index, item] of items.entries()) {
-              ;(item as HTMLElement).dataset.orderNumber = index.toString()
+              item.dataset.orderNumber = index.toString()
             }
           }
         })

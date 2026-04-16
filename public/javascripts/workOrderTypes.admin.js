@@ -326,7 +326,6 @@
                     onEnd() {
                         const items = defaultMilestonesContainer.querySelectorAll('.milestone-item');
                         for (const [index, item] of items.entries()) {
-                            ;
                             item.dataset.orderNumber = index.toString();
                         }
                     }

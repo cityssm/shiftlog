@@ -26,7 +26,7 @@ declare const exports: {
 
   // Validate hex color format (6 characters, alphanumeric)
   function isValidHex(color?: string): boolean {
-    return color !== undefined && /^[0-9a-f]{6}$/iv.test(color)
+    return color !== undefined && /^[0-9a-f]{6}$/i.test(color)
   }
 
   function renderWorkOrdersTable(data: DoSearchWorkOrdersResponse): void {

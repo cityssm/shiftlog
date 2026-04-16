@@ -74,14 +74,15 @@ function manageHandler(request, response, next) {
 export const router = Router();
 router
     .get('/', handler_search)
-    .get('/accomplishments', handler_accomplishments)
-    .get('/calendar', handler_calendar)
     .get('/map', handler_map)
+    .post('/doSearchWorkOrders', handler_doSearchWorkOrders);
+router
+    .get('/calendar', handler_calendar)
+    .post('/doGetCalendarEvents', handler_doGetCalendarEvents);
+router.get('/accomplishments', handler_accomplishments).post('/doGetWorkOrderAccomplishmentData', handler_doGetWorkOrderAccomplishmentData);
+router
     .get('/planner', handler_planner)
-    .post('/doSearchWorkOrders', handler_doSearchWorkOrders)
-    .post('/doGetCalendarEvents', handler_doGetCalendarEvents)
-    .post('/doGetWorkOrdersForPlanner', handler_doGetWorkOrdersForPlanner)
-    .post('/doGetWorkOrderAccomplishmentData', handler_doGetWorkOrderAccomplishmentData);
+    .post('/doGetWorkOrdersForPlanner', handler_doGetWorkOrdersForPlanner);
 router
     .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)
     .post('/doGetLocationSuggestions', handler_doGetLocationSuggestions);

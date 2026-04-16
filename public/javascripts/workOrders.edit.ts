@@ -104,7 +104,8 @@ declare const exports: {
     formEvent.preventDefault()
 
     // Check if work order is being closed (close date is being set)
-    const currentCloseDateTime = workOrderCloseDateTimeStringElement?.value ?? ''
+    const currentCloseDateTime =
+      workOrderCloseDateTimeStringElement?.value ?? ''
     const isBeingClosed =
       !isCreate &&
       originalWorkOrderCloseDateTime === '' &&
@@ -115,11 +116,13 @@ declare const exports: {
       cityssm.postJSON(
         `${workOrderUrlPrefix}/${workOrderId}/doGetWorkOrderMilestones`,
         {},
-        (milestonesResponseJSON: {
-          milestones: Array<{
-            milestoneCompleteDateTime?: Date | string | null
-          }>
-        }) => {
+        (rawMilestonesResponseJSON) => {
+          const milestonesResponseJSON = rawMilestonesResponseJSON as {
+            milestones: Array<{
+              milestoneCompleteDateTime?: Date | string | null
+            }>
+          }
+
           const openMilestonesCount = milestonesResponseJSON.milestones.filter(
             (m) => m.milestoneCompleteDateTime === null
           ).length
@@ -154,7 +157,9 @@ declare const exports: {
       `${workOrderUrlPrefix}/${isCreate ? 'doCreateWorkOrder' : 'doUpdateWorkOrder'}`,
       workOrderFormElement,
       (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoCreateWorkOrderResponse | DoUpdateWorkOrderResponse
+        const responseJSON = rawResponseJSON as
+          | DoCreateWorkOrderResponse
+          | DoUpdateWorkOrderResponse
         if (responseJSON.success) {
           shiftLog.clearUnsavedChanges()
 
@@ -163,7 +168,9 @@ declare const exports: {
               (responseJSON as DoCreateWorkOrderResponse).workOrderId,
               true
             )
-          } else if ((workOrderCloseDateTimeStringElement?.value ?? '') === '') {
+          } else if (
+            (workOrderCloseDateTimeStringElement?.value ?? '') === ''
+          ) {
             // If work order type changed, refresh the page to show updated form
             if (workOrderTypeChanged) {
               globalThis.location.href = shiftLog.buildWorkOrderURL(
@@ -231,7 +238,8 @@ declare const exports: {
             searchString: requestorSearchString
           },
           (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoGetRequestorSuggestionsResponse
+            const responseJSON =
+              rawResponseJSON as DoGetRequestorSuggestionsResponse
             requestorsData = responseJSON.requestors
 
             for (const requestor of responseJSON.requestors) {
@@ -359,7 +367,8 @@ declare const exports: {
         `${workOrderUrlPrefix}/doGetLocationSuggestions`,
         { searchString },
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoGetLocationSuggestionsResponse
+          const responseJSON =
+            rawResponseJSON as DoGetLocationSuggestionsResponse
           locationsData = responseJSON.locations
           populateLocationDatalist(responseJSON.locations)
 
@@ -712,7 +721,8 @@ declare const exports: {
                 workOrderId
               },
               (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoDeleteWorkOrderResponse
+                const responseJSON =
+                  rawResponseJSON as DoDeleteWorkOrderResponse
                 if (responseJSON.success) {
                   shiftLog.clearUnsavedChanges()
                   globalThis.location.href = responseJSON.redirectUrl

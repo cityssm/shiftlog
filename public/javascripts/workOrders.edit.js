@@ -47,7 +47,8 @@
             originalWorkOrderCloseDateTime === '' &&
             currentCloseDateTime !== '';
         if (isBeingClosed) {
-            cityssm.postJSON(`${workOrderUrlPrefix}/${workOrderId}/doGetWorkOrderMilestones`, {}, (milestonesResponseJSON) => {
+            cityssm.postJSON(`${workOrderUrlPrefix}/${workOrderId}/doGetWorkOrderMilestones`, {}, (rawMilestonesResponseJSON) => {
+                const milestonesResponseJSON = rawMilestonesResponseJSON;
                 const openMilestonesCount = milestonesResponseJSON.milestones.filter((m) => m.milestoneCompleteDateTime === null).length;
                 const message = openMilestonesCount > 0
                     ? `This work order has ${openMilestonesCount} open milestone${openMilestonesCount > 1 ? 's' : ''}. Are you sure you want to close this work order?`

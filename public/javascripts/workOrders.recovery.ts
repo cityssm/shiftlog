@@ -30,8 +30,10 @@ declare const exports: {
           cityssm.postJSON(
             `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doRecoverWorkOrder`,
             { workOrderId },
-            (response: DoRecoverWorkOrderResponse) => {
-              if (response.success) {
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoRecoverWorkOrderResponse
+
+              if (responseJSON.success) {
                 bulmaJS.alert({
                   contextualColorName: 'success',
                   title: 'Work Order Recovered',
@@ -39,7 +41,8 @@ declare const exports: {
                   message: 'The work order has been recovered successfully.',
                   okButton: {
                     callbackFunction: () => {
-                      globalThis.location.href = response.redirectUrl as string
+                      globalThis.location.href =
+                        responseJSON.redirectUrl as string
                     }
                   }
                 })
@@ -48,7 +51,7 @@ declare const exports: {
                   contextualColorName: 'danger',
                   title: 'Error',
 
-                  message: response.errorMessage
+                  message: responseJSON.errorMessage
                 })
               }
             }
@@ -155,7 +158,14 @@ declare const exports: {
     cityssm.postJSON(
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doGetDeletedWorkOrders`,
       {},
-      renderDeletedRecordsTable
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as {
+          success: boolean
+          workOrders: WorkOrder[]
+        }
+
+        renderDeletedRecordsTable(responseJSON)
+      }
     )
   }
 
