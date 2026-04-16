@@ -17,8 +17,6 @@ const debug = Debug(`${DEBUG_NAMESPACE}:routes:login`)
 
 export const router = Router()
 
-let knownUserCount = await getUserCount()
-
 function getHandler(request: Request, response: Response): void {
   const sessionCookieName = getConfigProperty('session.cookieName')
 
@@ -76,19 +74,15 @@ async function postHandler(
     userObject = await getUser(userName)
   }
 
-  if (isAuthenticated && userObject === undefined && knownUserCount === 0) {
-    // eslint-disable-next-line require-atomic-updates
-    knownUserCount = await getUserCount()
+  if (isAuthenticated && userObject === undefined) {
+    const currentUserCount = await getUserCount()
 
-    if (knownUserCount === 0) {
+    if (currentUserCount === 0) {
       debug(`Creating initial admin user: ${userName}`)
 
       const success = await addUser(userName, SYSTEM_USER)
 
       if (success) {
-        // eslint-disable-next-line require-atomic-updates
-        knownUserCount = 1
-
         await updateUser(
           {
             isActive: true,
@@ -110,9 +104,9 @@ async function postHandler(
           },
           SYSTEM_USER
         )
-
-        userObject = await getUser(userName)
       }
+
+      userObject = await getUser(userName)
     }
   }
 
