@@ -141,6 +141,7 @@
                     <button
                       class="button is-small edit-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
+                      type="button"
                       title="Edit Description"
                     >
                       <span class="icon is-small">
@@ -151,6 +152,7 @@
                     <button
                       class="button is-small is-light is-danger delete-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
+                      type="button"
                       title="Delete Attachment"
                     >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>

@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
@@ -203,6 +205,7 @@ declare const bulmaJS: BulmaJS
                     <button
                       class="button is-small edit-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
+                      type="button"
                       title="Edit Description"
                     >
                       <span class="icon is-small">
@@ -213,6 +216,7 @@ declare const bulmaJS: BulmaJS
                     <button
                       class="button is-small is-light is-danger delete-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
+                      type="button"
                       title="Delete Attachment"
                     >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
@@ -388,7 +392,8 @@ declare const bulmaJS: BulmaJS
         `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderAttachment`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateWorkOrderAttachmentResponse
+          const responseJSON =
+            rawResponseJSON as DoUpdateWorkOrderAttachmentResponse
           if (responseJSON.success) {
             closeModalFunction()
             loadAttachments()
@@ -447,7 +452,8 @@ declare const bulmaJS: BulmaJS
               workOrderAttachmentId
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteWorkOrderAttachmentResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteWorkOrderAttachmentResponse
               if (responseJSON.success) {
                 loadAttachments()
               } else {
@@ -470,7 +476,8 @@ declare const bulmaJS: BulmaJS
         workOrderAttachmentId
       },
       (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoSetWorkOrderAttachmentThumbnailResponse
+        const responseJSON =
+          rawResponseJSON as DoSetWorkOrderAttachmentThumbnailResponse
         if (responseJSON.success) {
           loadAttachments()
           bulmaJS.alert({
@@ -492,7 +499,8 @@ declare const bulmaJS: BulmaJS
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`,
       {},
       (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoGetWorkOrderAttachmentsResponse
+        const responseJSON =
+          rawResponseJSON as DoGetWorkOrderAttachmentsResponse
         renderAttachments(responseJSON.attachments)
       }
     )

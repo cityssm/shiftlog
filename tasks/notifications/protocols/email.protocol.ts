@@ -2,21 +2,13 @@ import nodemailer from 'nodemailer'
 
 import { getWorkOrderUrl } from '../../../helpers/application.helpers.js'
 import { getConfigProperty } from '../../../helpers/config.helpers.js'
-import type { NotificationConfiguration } from '../../../types/record.types.js'
 import { getWorkOrderToSend } from '../helpers/workOrder.helpers.js'
-import type {
-  EmailNotificationConfig,
-  NotificationFunction,
-  NotificationFunctionResult
-} from '../types.js'
+import type { EmailNotificationConfig, NotificationFunction } from '../types.js'
 
 const emailConnectorConfig = getConfigProperty('connectors.email')
 
 export const sendWorkOrderCreateEmailNotification: NotificationFunction =
-  async (
-    notificationConfiguration: NotificationConfiguration,
-    workOrderId: number | string
-  ): Promise<NotificationFunctionResult | undefined> => {
+  async (notificationConfiguration, workOrderId) => {
     if (emailConnectorConfig === undefined) {
       throw new Error('Email connector configuration is missing')
     }
@@ -76,10 +68,7 @@ export const sendWorkOrderCreateEmailNotification: NotificationFunction =
   }
 
 export const sendWorkOrderUpdateEmailNotification: NotificationFunction =
-  async (
-    notificationConfiguration: NotificationConfiguration,
-    workOrderId: number | string
-  ): Promise<NotificationFunctionResult | undefined> => {
+  async (notificationConfiguration, workOrderId) => {
     if (emailConnectorConfig === undefined) {
       throw new Error('Email connector configuration is missing')
     }
