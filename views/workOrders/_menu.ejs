@@ -7,13 +7,13 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
     <li>
       <a
         class="has-text-weight-semibold"
-        href="<%= urlPrefix %>/<%= workOrdersRouter %>/new" 
+        href="<%= urlPrefix %>/<%= workOrdersRouter %>/new"
         title="Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>"
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
-              <i class="fa-solid fa-plus-circle has-text-success"></i>
+            <span class="icon">
+              <i class="fa-solid fa-plus-circle has-text-success-light" data-fa-glow="10" style="--fa-glow-color:var(--bulma-text)"></i>
             </span>
           </div>
           <div class="column is-hidden-touch">
@@ -34,7 +34,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
+            <span class="icon">
               <i class="fa-solid fa-search"></i>
             </span>
           </div>
@@ -52,7 +52,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
+            <span class="icon">
               <i class="fa-solid fa-clipboard-list"></i>
             </span>
           </div>
@@ -70,7 +70,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
+            <span class="icon">
               <i class="fa-solid fa-calendar"></i>
             </span>
           </div>
@@ -88,7 +88,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
+            <span class="icon">
               <i class="fa-solid fa-map"></i>
             </span>
           </div>
@@ -106,7 +106,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
+            <span class="icon">
               <i class="fa-solid fa-chart-line"></i>
             </span>
           </div>
@@ -128,7 +128,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
+            <span class="icon">
               <i class="fa-solid fa-trash-arrow-up"></i>
             </span>
           </div>
@@ -146,7 +146,7 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
+            <span class="icon">
               <i class="fa-solid fa-file-lines"></i>
             </span>
           </div>
@@ -165,8 +165,8 @@ const workOrdersRouter = configFunctions.getConfigProperty('workOrders.router')
       >
         <div class="columns is-mobile is-1">
           <div class="column is-narrow">
-            <span class="icon is-small">
-              <i class="fa-solid fa-question-circle"></i>
+            <span class="icon">
+              <i class="fa-solid fa-question-circle has-text-info-light" data-fa-glow="10" style="--fa-glow-color:var(--bulma-text)"></i>
             </span>
           </div>
           <div class="column is-hidden-touch">
