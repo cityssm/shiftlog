@@ -10,6 +10,7 @@ import { getConfigProperty } from '../helpers/config.helpers.js';
 import { getUser, SYSTEM_USER } from '../helpers/user.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:routes:login`);
 export const router = Router();
+let hasUsers = false;
 function getHandler(request, response) {
     const sessionCookieName = getConfigProperty('session.cookieName');
     if (request.session.user !== undefined &&
@@ -35,12 +36,13 @@ async function postHandler(request, response) {
     if (isAuthenticated) {
         userObject = await getUser(userName);
     }
-    if (isAuthenticated && userObject === undefined) {
+    if (isAuthenticated && userObject === undefined && !hasUsers) {
         const currentUserCount = await getUserCount();
         if (currentUserCount === 0) {
             debug(`Creating initial admin user: ${userName}`);
             const success = await addUser(userName, SYSTEM_USER);
             if (success) {
+                hasUsers = true;
                 await updateUser({
                     isActive: true,
                     userName,
@@ -55,11 +57,8 @@ async function postHandler(request, response) {
                     timesheets_canView: false,
                     isAdmin: true
                 }, SYSTEM_USER);
-                userObject = await getUser(userName);
             }
-            else {
-                userObject = await getUser(userName);
-            }
+            userObject = await getUser(userName);
         }
     }
     if (isAuthenticated && userObject !== undefined) {

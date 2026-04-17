@@ -17,6 +17,8 @@ const debug = Debug(`${DEBUG_NAMESPACE}:routes:login`)
 
 export const router = Router()
 
+let hasUsers = false
+
 function getHandler(request: Request, response: Response): void {
   const sessionCookieName = getConfigProperty('session.cookieName')
 
@@ -74,7 +76,7 @@ async function postHandler(
     userObject = await getUser(userName)
   }
 
-  if (isAuthenticated && userObject === undefined) {
+  if (isAuthenticated && userObject === undefined && !hasUsers) {
     const currentUserCount = await getUserCount()
 
     if (currentUserCount === 0) {
@@ -83,6 +85,9 @@ async function postHandler(
       const success = await addUser(userName, SYSTEM_USER)
 
       if (success) {
+        // eslint-disable-next-line require-atomic-updates
+        hasUsers = true
+
         await updateUser(
           {
             isActive: true,
@@ -104,11 +109,9 @@ async function postHandler(
           },
           SYSTEM_USER
         )
-
-        userObject = await getUser(userName)
-      } else {
-        userObject = await getUser(userName)
       }
+
+      userObject = await getUser(userName)
     }
   }
 
