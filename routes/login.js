@@ -37,6 +37,7 @@ async function postHandler(request, response) {
         userObject = await getUser(userName);
     }
     if (isAuthenticated && userObject === undefined && !hasUsers) {
+        debug('Checking for existing users in database...');
         const currentUserCount = await getUserCount();
         if (currentUserCount === 0) {
             debug(`Creating initial admin user: ${userName}`);
@@ -59,6 +60,9 @@ async function postHandler(request, response) {
                 }, SYSTEM_USER);
             }
             userObject = await getUser(userName);
+        }
+        else {
+            hasUsers = true;
         }
     }
     if (isAuthenticated && userObject !== undefined) {

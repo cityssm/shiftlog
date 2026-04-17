@@ -77,6 +77,8 @@ async function postHandler(
   }
 
   if (isAuthenticated && userObject === undefined && !hasUsers) {
+    debug('Checking for existing users in database...')
+
     const currentUserCount = await getUserCount()
 
     if (currentUserCount === 0) {
@@ -112,6 +114,9 @@ async function postHandler(
       }
 
       userObject = await getUser(userName)
+    } else {
+      // eslint-disable-next-line require-atomic-updates
+      hasUsers = true
     }
   }
 
