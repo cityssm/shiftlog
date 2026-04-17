@@ -10,7 +10,7 @@ import { getConfigProperty } from '../helpers/config.helpers.js';
 import { getUser, SYSTEM_USER } from '../helpers/user.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:routes:login`);
 export const router = Router();
-let knownUserCount = await getUserCount();
+let hasUsers = false;
 function getHandler(request, response) {
     const sessionCookieName = getConfigProperty('session.cookieName');
     if (request.session.user !== undefined &&
@@ -36,13 +36,14 @@ async function postHandler(request, response) {
     if (isAuthenticated) {
         userObject = await getUser(userName);
     }
-    if (isAuthenticated && userObject === undefined && knownUserCount === 0) {
-        knownUserCount = await getUserCount();
-        if (knownUserCount === 0) {
+    if (isAuthenticated && userObject === undefined && !hasUsers) {
+        debug('Checking for existing users in database...');
+        const currentUserCount = await getUserCount();
+        if (currentUserCount === 0) {
             debug(`Creating initial admin user: ${userName}`);
             const success = await addUser(userName, SYSTEM_USER);
             if (success) {
-                knownUserCount = 1;
+                hasUsers = true;
                 await updateUser({
                     isActive: true,
                     userName,
@@ -57,8 +58,11 @@ async function postHandler(request, response) {
                     timesheets_canView: false,
                     isAdmin: true
                 }, SYSTEM_USER);
-                userObject = await getUser(userName);
             }
+            userObject = await getUser(userName);
+        }
+        else {
+            hasUsers = true;
         }
     }
     if (isAuthenticated && userObject !== undefined) {
