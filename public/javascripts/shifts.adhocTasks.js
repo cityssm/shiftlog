@@ -383,8 +383,8 @@
                     return (address1 !== '' ||
                         address2 !== '' ||
                         cityProvince !== '' ||
-                        latitude != null ||
-                        longitude != null);
+                        latitude !== null ||
+                        longitude !== null);
                 }
                 setupEditLocationToggle('#toggle--editAdhocTask--fromLocation', '#container--editAdhocTask--fromLocation');
                 setupEditLocationToggle('#toggle--editAdhocTask--toLocation', '#container--editAdhocTask--toLocation');
@@ -471,7 +471,8 @@
                 let selectedCloseModalFunction;
                 function doAdd(formEvent) {
                     formEvent.preventDefault();
-                    cityssm.postJSON(`${urlPrefix}/doAddShiftAdhocTask`, formEvent.currentTarget, (addResponseJSON) => {
+                    cityssm.postJSON(`${urlPrefix}/doAddShiftAdhocTask`, formEvent.currentTarget, (rawAddResponseJSON) => {
+                        const addResponseJSON = rawAddResponseJSON;
                         if (addResponseJSON.success) {
                             shiftAdhocTasks = addResponseJSON.shiftAdhocTasks;
                             renderShiftAdhocTasks();

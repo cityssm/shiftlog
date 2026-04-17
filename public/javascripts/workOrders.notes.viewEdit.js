@@ -222,7 +222,7 @@
             };
             const fields = {};
             for (const [key, value] of formData.entries()) {
-                const match = /^fields\[(?<fieldIndex>\d+)\]$/v.exec(key);
+                const match = /^fields\[(?<fieldIndex>\d+)\]$/.exec(key);
                 if (match !== null && typeof value === 'string') {
                     fields[match.groups?.fieldIndex ?? ''] = value;
                 }
@@ -746,7 +746,7 @@
             }
             const fields = {};
             for (const [key, value] of formData.entries()) {
-                const match = /^fields\[(?<fieldIndex>\d+)\]$/v.exec(key);
+                const match = /^fields\[(?<fieldIndex>\d+)\]$/.exec(key);
                 if (match !== null && typeof value === 'string') {
                     fields[match.groups?.fieldIndex ?? ''] = value;
                 }

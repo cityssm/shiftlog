@@ -87,15 +87,22 @@ export const router = Router()
 
 router
   .get('/', handler_search)
-  .get('/accomplishments', handler_accomplishments)
-  .get('/calendar', handler_calendar)
   .get('/map', handler_map)
-  .get('/planner', handler_planner)
   .post('/doSearchWorkOrders', handler_doSearchWorkOrders)
+
+router
+  .get('/calendar', handler_calendar)
   .post('/doGetCalendarEvents', handler_doGetCalendarEvents)
-  .post('/doGetWorkOrdersForPlanner', handler_doGetWorkOrdersForPlanner)
+
+router.get('/accomplishments', handler_accomplishments).post(
   // eslint-disable-next-line no-secrets/no-secrets -- route name, not a secret
-  .post('/doGetWorkOrderAccomplishmentData', handler_doGetWorkOrderAccomplishmentData)
+  '/doGetWorkOrderAccomplishmentData',
+  handler_doGetWorkOrderAccomplishmentData
+)
+
+router
+  .get('/planner', handler_planner)
+  .post('/doGetWorkOrdersForPlanner', handler_doGetWorkOrdersForPlanner)
 
 router
   .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)

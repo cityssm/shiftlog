@@ -315,7 +315,8 @@
             okButton: {
                 text: 'Complete Milestone',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (milestonesResponseJSON) => {
+                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderMilestones`, {}, (rawMilestonesResponseJSON) => {
+                        const milestonesResponseJSON = rawMilestonesResponseJSON;
                         const milestone = milestonesResponseJSON.milestones.find((m) => m.workOrderMilestoneId === workOrderMilestoneId);
                         if (!milestone) {
                             bulmaJS.alert({

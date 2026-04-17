@@ -8,15 +8,17 @@
             okButton: {
                 text: 'Yes, Recover',
                 callbackFunction: () => {
-                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doRecoverWorkOrder`, { workOrderId }, (response) => {
-                        if (response.success) {
+                    cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doRecoverWorkOrder`, { workOrderId }, (rawResponseJSON) => {
+                        const responseJSON = rawResponseJSON;
+                        if (responseJSON.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Work Order Recovered',
                                 message: 'The work order has been recovered successfully.',
                                 okButton: {
                                     callbackFunction: () => {
-                                        globalThis.location.href = response.redirectUrl;
+                                        globalThis.location.href =
+                                            responseJSON.redirectUrl;
                                     }
                                 }
                             });
@@ -25,7 +27,7 @@
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error',
-                                message: response.errorMessage
+                                message: responseJSON.errorMessage
                             });
                         }
                     });
@@ -111,7 +113,10 @@
         </p>
       </div>
     `;
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doGetDeletedWorkOrders`, {}, renderDeletedRecordsTable);
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doGetDeletedWorkOrders`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            renderDeletedRecordsTable(responseJSON);
+        });
     }
     getDeletedRecords();
 })();

@@ -753,8 +753,8 @@ declare const exports: {
             address1 !== '' ||
             address2 !== '' ||
             cityProvince !== '' ||
-            latitude != null ||
-            longitude != null
+            latitude !== null ||
+            longitude !== null
           )
         }
 
@@ -845,7 +845,8 @@ declare const exports: {
         `${urlPrefix}/doUpdateShiftAdhocTaskNote`,
         formEvent.currentTarget,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateShiftAdhocTaskNoteResponse
+          const responseJSON =
+            rawResponseJSON as DoUpdateShiftAdhocTaskNoteResponse
           if (responseJSON.success) {
             ;(task as AdhocTask).shiftAdhocTaskNote = note
 
@@ -931,7 +932,10 @@ declare const exports: {
             cityssm.postJSON(
               `${urlPrefix}/doAddShiftAdhocTask`,
               formEvent.currentTarget,
-              (addResponseJSON: DoAddShiftAdhocTaskResponse) => {
+              (rawAddResponseJSON) => {
+                const addResponseJSON =
+                  rawAddResponseJSON as DoAddShiftAdhocTaskResponse
+
                 if (addResponseJSON.success) {
                   shiftAdhocTasks = addResponseJSON.shiftAdhocTasks
                   renderShiftAdhocTasks()
@@ -1158,7 +1162,8 @@ declare const exports: {
               deleteTask: deleteOption === 'delete'
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteShiftAdhocTaskResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteShiftAdhocTaskResponse
               if (responseJSON.success) {
                 shiftAdhocTasks = responseJSON.shiftAdhocTasks
                 renderShiftAdhocTasks()

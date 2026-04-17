@@ -18,8 +18,8 @@ const ntfyConnectorConfig = getConfigProperty('connectors.ntfy')
 const ntfyServerUrl = ntfyConnectorConfig?.serverUrl ?? DEFAULT_NTFY_SERVER
 
 export const sendWorkOrderCreateNtfyNotification: NotificationFunction = async (
-  notificationConfiguration: NotificationConfiguration,
-  workOrderId: number | string
+  notificationConfiguration,
+  workOrderId
 ): Promise<NotificationFunctionResult | undefined> => {
   const workOrderToSend = await getWorkOrderToSend(
     workOrderId,

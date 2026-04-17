@@ -1,3 +1,5 @@
+import type { NotificationConfiguration } from "../../types/record.types.js"
+
 export const notificationQueueTypes = [
   'workOrder.create',
   'workOrder.update'
@@ -27,6 +29,6 @@ export interface NotificationFunctionResult {
 }
 
 export type NotificationFunction = (
-  notificationConfiguration: unknown,
+  notificationConfiguration: NotificationConfiguration,
   recordId: number | string
 ) => Promise<NotificationFunctionResult | undefined>

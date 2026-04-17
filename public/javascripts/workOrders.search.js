@@ -4,7 +4,7 @@
     const offsetInputElement = document.querySelector('#workOrderSearch--offset');
     const resultsContainerElement = document.querySelector('#container--workOrderSearchResults');
     function isValidHex(color) {
-        return color !== undefined && /^[0-9a-f]{6}$/iv.test(color);
+        return color !== undefined && /^[0-9a-f]{6}$/i.test(color);
     }
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {

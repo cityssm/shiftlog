@@ -1045,8 +1045,9 @@
                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftAdhocTask`, {
                     shiftId: draggedData.fromShiftId,
                     adhocTaskId: draggedData.id
-                }, (response) => {
-                    if (response.success) {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success) {
                         bulmaJS.alert({
                             contextualColorName: 'success',
                             message: 'Ad hoc task removed from shift.'
@@ -1079,8 +1080,9 @@
                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftCrew`, {
                     crewId: draggedData.id,
                     shiftId: draggedData.fromShiftId
-                }, (response) => {
-                    if (response.success) {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success) {
                         let employeesDeletedCount = 0;
                         let employeesFailedCount = 0;
                         let equipmentDeletedCount = 0;
@@ -1099,7 +1101,8 @@
                                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEmployee`, {
                                     employeeNumber: employee.employeeNumber,
                                     shiftId: draggedData.fromShiftId
-                                }, (empResponse) => {
+                                }, (rawEmpResponseJSON) => {
+                                    const empResponse = rawEmpResponseJSON;
                                     if (empResponse.success) {
                                         employeesDeletedCount += 1;
                                     }
@@ -1129,8 +1132,9 @@
                                                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEquipment`, {
                                                     equipmentNumber: equipment.equipmentNumber,
                                                     shiftId: draggedData.fromShiftId
-                                                }, (eqResponse) => {
-                                                    if (eqResponse.success) {
+                                                }, (rawEquipResponseJSON) => {
+                                                    const equipmentResponse = rawEquipResponseJSON;
+                                                    if (equipmentResponse.success) {
                                                         equipmentDeletedCount += 1;
                                                     }
                                                     else {
@@ -1178,8 +1182,9 @@
                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEmployee`, {
                     employeeNumber: draggedData.id,
                     shiftId: draggedData.fromShiftId
-                }, (response) => {
-                    if (response.success) {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success) {
                         let equipmentDeletedCount = 0;
                         const totalEquipment = assignedEquipment.length;
                         if (totalEquipment === 0) {
@@ -1194,14 +1199,24 @@
                                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEquipment`, {
                                     equipmentNumber: equipment.equipmentNumber,
                                     shiftId: draggedData.fromShiftId
-                                }, (_equipResponse) => {
-                                    equipmentDeletedCount += 1;
-                                    if (equipmentDeletedCount === totalEquipment) {
+                                }, (rawEquipResponse) => {
+                                    const equipResponse = rawEquipResponse;
+                                    if (equipResponse.success) {
+                                        equipmentDeletedCount += 1;
+                                        if (equipmentDeletedCount === totalEquipment) {
+                                            bulmaJS.alert({
+                                                contextualColorName: 'success',
+                                                message: `Employee and ${totalEquipment} assigned equipment removed from shift.`
+                                            });
+                                            loadShifts();
+                                        }
+                                    }
+                                    else {
                                         bulmaJS.alert({
-                                            contextualColorName: 'success',
-                                            message: `Employee and ${totalEquipment} assigned equipment removed from shift.`
+                                            contextualColorName: 'warning',
+                                            message: `Employee removed, but failed to remove assigned equipment: ${equipment.equipmentName} (#${equipment.equipmentNumber}).`,
+                                            title: 'Partial Success'
                                         });
-                                        loadShifts();
                                     }
                                 });
                             }
@@ -1221,8 +1236,9 @@
                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEquipment`, {
                     equipmentNumber: draggedData.id,
                     shiftId: draggedData.fromShiftId
-                }, (response) => {
-                    if (response.success) {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success) {
                         bulmaJS.alert({
                             contextualColorName: 'success',
                             message: 'Equipment removed from shift.'
@@ -1243,8 +1259,9 @@
                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
                     shiftId: draggedData.fromShiftId,
                     workOrderId: draggedData.id
-                }, (response) => {
-                    if (response.success) {
+                }, (rawResponseJSON) => {
+                    const responseJSON = rawResponseJSON;
+                    if (responseJSON.success) {
                         bulmaJS.alert({
                             contextualColorName: 'success',
                             message: 'Work order removed from shift.'
@@ -1269,7 +1286,8 @@
                 employeeNumber,
                 shiftEmployeeNote: '',
                 shiftId: toShiftId
-            }, (addResponse) => {
+            }, (rawResponseJSON) => {
+                const addResponse = rawResponseJSON;
                 if (addResponse.success) {
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -1292,13 +1310,15 @@
         cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEmployee`, {
             employeeNumber,
             shiftId: fromShiftId
-        }, (deleteResponse) => {
+        }, (rawResponseJSON) => {
+            const deleteResponse = rawResponseJSON;
             if (deleteResponse.success) {
                 cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftEmployee`, {
                     employeeNumber,
                     shiftEmployeeNote: '',
                     shiftId: toShiftId
-                }, (addResponse) => {
+                }, (rawAddResponseJSON) => {
+                    const addResponse = rawAddResponseJSON;
                     if (addResponse.success) {
                         let equipmentMovedCount = 0;
                         const totalEquipment = assignedEquipment.length;
@@ -1315,14 +1335,16 @@
                                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEquipment`, {
                                     equipmentNumber: equipment.equipmentNumber,
                                     shiftId: fromShiftId
-                                }, (deleteEquipResponse) => {
+                                }, (rawDeleteEquipResponse) => {
+                                    const deleteEquipResponse = rawDeleteEquipResponse;
                                     if (deleteEquipResponse.success) {
                                         cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftEquipment`, {
                                             equipmentNumber: equipment.equipmentNumber,
                                             employeeNumber,
                                             shiftEquipmentNote: '',
                                             shiftId: toShiftId
-                                        }, () => {
+                                        }, (rawAddEquipResponse) => {
+                                            const addEquipResponse = rawAddEquipResponse;
                                             equipmentMovedCount += 1;
                                             if (equipmentMovedCount === totalEquipment) {
                                                 bulmaJS.alert({
@@ -1362,8 +1384,9 @@
                 equipmentNumber,
                 shiftEquipmentNote: '',
                 shiftId: toShiftId
-            }, (addResponse) => {
-                if (addResponse.success) {
+            }, (rawAddResponseJSON) => {
+                const addResponseJSON = rawAddResponseJSON;
+                if (addResponseJSON.success) {
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Equipment Added',
@@ -1374,7 +1397,7 @@
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        message: addResponse.message ?? 'Failed to add equipment to shift.',
+                        message: addResponseJSON.message ?? 'Failed to add equipment to shift.',
                         title: 'Error'
                     });
                 }
@@ -1384,13 +1407,15 @@
         cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEquipment`, {
             equipmentNumber,
             shiftId: fromShiftId
-        }, (deleteResponse) => {
+        }, (rawDeleteResponseJSON) => {
+            const deleteResponse = rawDeleteResponseJSON;
             if (deleteResponse.success) {
                 cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftEquipment`, {
                     equipmentNumber,
                     shiftEquipmentNote: '',
                     shiftId: toShiftId
-                }, (addResponse) => {
+                }, (rawAddResponseJSON) => {
+                    const addResponse = rawAddResponseJSON;
                     if (addResponse.success) {
                         bulmaJS.alert({
                             contextualColorName: 'success',
@@ -1424,7 +1449,8 @@
                 crewId,
                 shiftCrewNote: '',
                 shiftId: toShiftId
-            }, (addResponse) => {
+            }, (rawAddResponseJSON) => {
+                const addResponse = rawAddResponseJSON;
                 if (addResponse.success) {
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -1458,13 +1484,15 @@
         cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftCrew`, {
             crewId,
             shiftId: fromShiftId
-        }, (deleteResponse) => {
+        }, (rawDeleteResponseJSON) => {
+            const deleteResponse = rawDeleteResponseJSON;
             if (deleteResponse.success) {
                 cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftCrew`, {
                     crewId,
                     shiftCrewNote: '',
                     shiftId: toShiftId
-                }, (addResponse) => {
+                }, (rawAddResponseJSON) => {
+                    const addResponse = rawAddResponseJSON;
                     if (addResponse.success) {
                         let employeesProcessed = 0;
                         const totalEmployees = crewEmployees.length;
@@ -1481,7 +1509,8 @@
                                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEmployee`, {
                                     employeeNumber: employee.employeeNumber,
                                     shiftId: fromShiftId
-                                }, (deleteEmpResponse) => {
+                                }, (rawDeleteEmpResponseJSON) => {
+                                    const deleteEmpResponse = rawDeleteEmpResponseJSON;
                                     if (deleteEmpResponse.success) {
                                         cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftEmployee`, {
                                             crewId,
@@ -1583,8 +1612,9 @@
                 shiftId: toShiftId,
                 shiftWorkOrderNote: '',
                 workOrderId
-            }, (addResponse) => {
-                if (addResponse.success) {
+            }, (rawAddResponseJSON) => {
+                const addResponseJSON = rawAddResponseJSON;
+                if (addResponseJSON.success) {
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         message: 'Work order has been added to the shift.',
@@ -1595,7 +1625,7 @@
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        message: addResponse.errorMessage ??
+                        message: addResponseJSON.errorMessage ??
                             'Failed to add work order to shift.',
                         title: 'Error'
                     });
@@ -1607,12 +1637,14 @@
             shiftId: toShiftId,
             shiftWorkOrderNote: '',
             workOrderId
-        }, (addResponse) => {
+        }, (rawAddResponse) => {
+            const addResponse = rawAddResponse;
             if (addResponse.success) {
                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftWorkOrder`, {
                     shiftId: fromShiftId,
                     workOrderId
-                }, (deleteResponse) => {
+                }, (rawDeleteResponse) => {
+                    const deleteResponse = rawDeleteResponse;
                     if (deleteResponse.success) {
                         bulmaJS.alert({
                             contextualColorName: 'success',
@@ -1648,7 +1680,8 @@
                 shiftId: toShiftId,
                 shiftAdhocTaskNote: '',
                 adhocTaskId
-            }, (addResponse) => {
+            }, (rawAddResponse) => {
+                const addResponse = rawAddResponse;
                 if (addResponse.success) {
                     bulmaJS.alert({
                         contextualColorName: 'success',
@@ -1672,12 +1705,14 @@
             shiftId: toShiftId,
             shiftAdhocTaskNote: '',
             adhocTaskId
-        }, (addResponse) => {
+        }, (rawAddResponse) => {
+            const addResponse = rawAddResponse;
             if (addResponse.success) {
                 cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftAdhocTask`, {
                     shiftId: fromShiftId,
                     adhocTaskId
-                }, (deleteResponse) => {
+                }, (rawDeleteResponse) => {
+                    const deleteResponse = rawDeleteResponse;
                     if (deleteResponse.success) {
                         bulmaJS.alert({
                             contextualColorName: 'success',
@@ -1767,14 +1802,16 @@
             cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEmployee`, {
                 employeeNumber,
                 shiftId: fromShiftId
-            }, (deleteResponse) => {
+            }, (rawDeleteResponse) => {
+                const deleteResponse = rawDeleteResponse;
                 if (deleteResponse.success) {
                     cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftEmployee`, {
                         crewId,
                         employeeNumber,
                         shiftEmployeeNote: '',
                         shiftId: toShiftId
-                    }, (addResponse) => {
+                    }, (rawAddResponse) => {
+                        const addResponse = rawAddResponse;
                         if (addResponse.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',
@@ -1832,14 +1869,16 @@
             cityssm.postJSON(`${shiftUrlPrefix}/doDeleteShiftEquipment`, {
                 equipmentNumber,
                 shiftId: fromShiftId
-            }, (deleteResponse) => {
+            }, (rawDeleteResponse) => {
+                const deleteResponse = rawDeleteResponse;
                 if (deleteResponse.success) {
                     cityssm.postJSON(`${shiftUrlPrefix}/doAddShiftEquipment`, {
                         employeeNumber,
                         equipmentNumber,
                         shiftEquipmentNote: '',
                         shiftId: toShiftId
-                    }, (addResponse) => {
+                    }, (rawAddResponse) => {
+                        const addResponse = rawAddResponse;
                         if (addResponse.success) {
                             bulmaJS.alert({
                                 contextualColorName: 'success',

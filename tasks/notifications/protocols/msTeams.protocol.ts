@@ -3,19 +3,14 @@ import { recordToFactSet } from '@cityssm/ms-teams-workflow-webhook/helpers'
 
 import { getWorkOrderUrl } from '../../../helpers/application.helpers.js'
 import { getConfigProperty } from '../../../helpers/config.helpers.js'
-import type { NotificationConfiguration } from '../../../types/record.types.js'
 import { getWorkOrderToSend } from '../helpers/workOrder.helpers.js'
 import type {
   MsTeamsNotificationConfig,
-  NotificationFunction,
-  NotificationFunctionResult
+  NotificationFunction
 } from '../types.js'
 
 export const sendWorkOrderCreateMsTeamsNotification: NotificationFunction =
-  async (
-    notificationConfiguration: NotificationConfiguration,
-    workOrderId: number | string
-  ): Promise<NotificationFunctionResult | undefined> => {
+  async (notificationConfiguration, workOrderId) => {
     const workOrderToSend = await getWorkOrderToSend(
       workOrderId,
       notificationConfiguration
@@ -58,10 +53,7 @@ export const sendWorkOrderCreateMsTeamsNotification: NotificationFunction =
   }
 
 export const sendWorkOrderUpdateMsTeamsNotification: NotificationFunction =
-  async (
-    notificationConfiguration: NotificationConfiguration,
-    workOrderId: number | string
-  ): Promise<NotificationFunctionResult | undefined> => {
+  async (notificationConfiguration, workOrderId) => {
     const workOrderToSend = await getWorkOrderToSend(
       workOrderId,
       notificationConfiguration
