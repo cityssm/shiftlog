@@ -264,6 +264,7 @@ export default async function getWorkOrders(
           w.workOrderCloseDateTime,
           w.requestorName,
           w.requestorContactInfo,
+          w.requestorIsSubscribed,
           w.locationLatitude,
           w.locationLongitude,
           w.locationAddress1,

@@ -415,6 +415,7 @@ CREATE TABLE ShiftLog.WorkOrders (
   workOrderCloseDateTime datetime,
   requestorName VARCHAR(100) NOT NULL DEFAULT '',
   requestorContactInfo VARCHAR(100) NOT NULL DEFAULT '',
+  requestorIsSubscribed BIT NOT NULL DEFAULT 0,
   locationLatitude DECIMAL(10, 7),
   locationLongitude DECIMAL(10, 7),
   locationAddress1 VARCHAR(100) NOT NULL DEFAULT '',
@@ -445,6 +446,20 @@ CREATE TABLE ShiftLog.WorkOrderTags (
   workOrderId INT NOT NULL,
   tagName VARCHAR(50) NOT NULL,
   PRIMARY KEY (workOrderId, tagName),
+  FOREIGN KEY (workOrderId) REFERENCES ShiftLog.WorkOrders (workOrderId)
+)
+GO
+CREATE TABLE ShiftLog.WorkOrderSubscribers (
+  workOrderId INT NOT NULL,
+  subscriberSequence INT NOT NULL,
+  subscriberEmailAddress VARCHAR(100) NOT NULL,
+  recordCreate_userName VARCHAR(30) NOT NULL,
+  recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordUpdate_userName VARCHAR(30) NOT NULL,
+  recordUpdate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordDelete_userName VARCHAR(30),
+  recordDelete_dateTime datetime,
+  PRIMARY KEY (workOrderId, subscriberSequence),
   FOREIGN KEY (workOrderId) REFERENCES ShiftLog.WorkOrders (workOrderId)
 )
 GO

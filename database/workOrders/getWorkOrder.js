@@ -21,6 +21,7 @@ export default async function getWorkOrder(workOrderId, userName) {
       w.workOrderCloseDateTime,
       w.requestorName,
       w.requestorContactInfo,
+      w.requestorIsSubscribed,
       w.locationLatitude,
       w.locationLongitude,
       w.locationAddress1,
