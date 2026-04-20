@@ -463,6 +463,12 @@ export interface WorkOrderTag {
   tagTextColor?: string
 }
 
+export interface WorkOrderSubscriber {
+  workOrderId: number
+  subscriberSequence: number
+  subscriberEmailAddress: string
+}
+
 export interface WorkOrderMilestone extends BaseRecord {
   workOrderMilestoneId: number
   workOrderId: number

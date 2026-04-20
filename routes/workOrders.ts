@@ -15,6 +15,7 @@ import handler_print from '../handlers/workOrders-get/print.js'
 import handler_recovery from '../handlers/workOrders-get/recovery.js'
 import handler_search from '../handlers/workOrders-get/search.js'
 import handler_view from '../handlers/workOrders-get/view.js'
+import handler_doAddWorkOrderSubscriber from '../handlers/workOrders-post/doAddWorkOrderSubscriber.js'
 import handler_doAddWorkOrderTag from '../handlers/workOrders-post/doAddWorkOrderTag.js'
 import handler_doCreateWorkOrder from '../handlers/workOrders-post/doCreateWorkOrder.js'
 import handler_doCreateWorkOrderCost from '../handlers/workOrders-post/doCreateWorkOrderCost.js'
@@ -25,6 +26,7 @@ import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doD
 import handler_doDeleteWorkOrderCost from '../handlers/workOrders-post/doDeleteWorkOrderCost.js'
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js'
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js'
+import handler_doDeleteWorkOrderSubscriber from '../handlers/workOrders-post/doDeleteWorkOrderSubscriber.js'
 import handler_doDeleteWorkOrderTag from '../handlers/workOrders-post/doDeleteWorkOrderTag.js'
 import handler_doGetCalendarEvents from '../handlers/workOrders-post/doGetCalendarEvents.js'
 import handler_doGetDeletedWorkOrders from '../handlers/workOrders-post/doGetDeletedWorkOrders.js'
@@ -38,6 +40,7 @@ import handler_doGetWorkOrderCosts from '../handlers/workOrders-post/doGetWorkOr
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js'
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import handler_doGetWorkOrdersForPlanner from '../handlers/workOrders-post/doGetWorkOrdersForPlanner.js'
+import handler_doGetWorkOrderSubscribers from '../handlers/workOrders-post/doGetWorkOrderSubscribers.js'
 import handler_doGetWorkOrderTags from '../handlers/workOrders-post/doGetWorkOrderTags.js'
 import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js'
 import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkOrder.js'
@@ -130,6 +133,22 @@ router
   .post('/doCreateWorkOrderNote', updateHandler, handler_doCreateWorkOrderNote)
   .post('/doUpdateWorkOrderNote', updateHandler, handler_doUpdateWorkOrderNote)
   .post('/doDeleteWorkOrderNote', updateHandler, handler_doDeleteWorkOrderNote)
+
+router
+  .post(
+    '/:workOrderId/doGetWorkOrderSubscribers',
+    handler_doGetWorkOrderSubscribers
+  )
+  .post(
+    '/doAddWorkOrderSubscriber',
+    updateHandler,
+    handler_doAddWorkOrderSubscriber
+  )
+  .post(
+    '/doDeleteWorkOrderSubscriber',
+    updateHandler,
+    handler_doDeleteWorkOrderSubscriber
+  )
 
 router
   .post(

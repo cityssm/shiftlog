@@ -29,6 +29,7 @@ export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
 
   requestorContactInfo: string
   requestorName: string
+  requestorIsSubscribed?: '1'
 
   locationLatitude?: number | string
   locationLongitude?: number | string
@@ -109,6 +110,10 @@ export default async function updateWorkOrder(
     .input('requestorName', updateWorkOrderForm.requestorName)
     .input('requestorContactInfo', updateWorkOrderForm.requestorContactInfo)
     .input(
+      'requestorIsSubscribed',
+      updateWorkOrderForm.requestorIsSubscribed === '1'
+    )
+    .input(
       'locationLatitude',
       (updateWorkOrderForm.locationLatitude ?? '') === ''
         ? null
@@ -143,6 +148,7 @@ export default async function updateWorkOrder(
         workOrderCloseDateTime = @workOrderCloseDateTime,
         requestorName = @requestorName,
         requestorContactInfo = @requestorContactInfo,
+        requestorIsSubscribed = @requestorIsSubscribed,
         locationLatitude = @locationLatitude,
         locationLongitude = @locationLongitude,
         locationAddress1 = @locationAddress1,

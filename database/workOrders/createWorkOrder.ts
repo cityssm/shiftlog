@@ -24,6 +24,7 @@ export interface CreateWorkOrderForm {
 
   requestorName: string
   requestorContactInfo: string
+  requestorIsSubscribed?: '1'
 
   locationLatitude?: number | string
   locationLongitude?: number | string
@@ -125,6 +126,10 @@ export default async function createWorkOrder(
     .input('requestorName', createWorkOrderForm.requestorName)
     .input('requestorContactInfo', createWorkOrderForm.requestorContactInfo)
     .input(
+      'requestorIsSubscribed',
+      createWorkOrderForm.requestorIsSubscribed === '1'
+    )
+    .input(
       'locationLatitude',
       (createWorkOrderForm.locationLatitude ?? '') === ''
         ? null
@@ -161,6 +166,7 @@ export default async function createWorkOrder(
           workOrderDueDateTime,
           requestorName,
           requestorContactInfo,
+          requestorIsSubscribed,
           locationLatitude,
           locationLongitude,
           locationAddress1,
@@ -184,6 +190,7 @@ export default async function createWorkOrder(
           @workOrderDueDateTime,
           @requestorName,
           @requestorContactInfo,
+          @requestorIsSubscribed,
           @locationLatitude,
           @locationLongitude,
           @locationAddress1,

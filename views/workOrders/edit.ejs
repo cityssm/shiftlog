@@ -232,18 +232,38 @@
             <% } %>
           </div>
         </div>
-        <div class="field">
-          <label class="label" for="workOrder--requestorContactInfo">Requestor Contact Info</label>
-          <div class="control">
-            <input
-              class="input"
-              id="workOrder--requestorContactInfo"
-              name="requestorContactInfo"
-              type="text"
-              value="<%= workOrder.requestorContactInfo ?? '' %>"
-              maxlength="100"
-              <% if (!isEdit) { %>readonly<% } %>
-            />
+        <div class="columns is-vcentered">
+          <div class="column">
+            <div class="field mb-0">
+              <label class="label" for="workOrder--requestorContactInfo">Requestor Contact Info</label>
+              <div class="control">
+                <input
+                  class="input"
+                  id="workOrder--requestorContactInfo"
+                  name="requestorContactInfo"
+                  type="text"
+                  value="<%= workOrder.requestorContactInfo ?? '' %>"
+                  maxlength="100"
+                  <% if (!isEdit) { %>readonly<% } %>
+                />
+              </div>
+            </div>
+          </div>
+          <div class="column is-narrow">
+            <label class="label" for="workOrder--requestorIsSubscribed">Subscribed</label>
+            <div class="control">
+              <label class="checkbox">
+                <input
+                  id="workOrder--requestorIsSubscribed"
+                  name="requestorIsSubscribed"
+                  type="checkbox"
+                  value="1"
+                  <% if (workOrder.requestorIsSubscribed) { %>checked<% } %>
+                  <% if (!isEdit) { %>disabled<% } %>
+                />
+                Requestor receives updates
+              </label>
+            </div>
           </div>
         </div>
         <div class="field">
@@ -622,7 +642,20 @@
         </li>
         <% } %>
         <li>
-          <a class="<%= hasMoreInfoForm ? '' : 'is-active' %>" href="#tab--milestones" title="Milestones">
+          <a class="<%= hasMoreInfoForm ? '' : 'is-active' %>" href="#tab--subscribers" title="Subscribers">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-users"></i></span>
+              </div>
+              <div class="column is-hidden-touch">
+                Subscribers
+                <span class="tag is-rounded ml-2" id="subscribersCount">0</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="#tab--milestones" title="Milestones">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-list-check"></i></span>
@@ -683,7 +716,10 @@
         <%- await include('_edit-moreInfo', { workOrderType, workOrder }); -%>
       </div>
       <% } %>
-      <div id="tab--milestones" class="<%= hasMoreInfoForm ? 'is-hidden' : '' %>">
+      <div id="tab--subscribers" class="<%= hasMoreInfoForm ? 'is-hidden' : '' %>">
+        <%- await include('_edit-subscribers'); -%>
+      </div>
+      <div id="tab--milestones" class="is-hidden">
         <%- await include('_edit-milestones'); -%>
       </div>
       <div id="tab--notes" class="is-hidden">
@@ -711,6 +747,7 @@
 </script>
 
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.subscribers.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.notes.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.attachments.viewEdit.js"></script>
