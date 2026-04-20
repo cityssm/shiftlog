@@ -36,9 +36,9 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .input('workOrderCloseDateTime', updateWorkOrderForm.workOrderCloseDateTimeString === ''
         ? null
         : dateTimeInputToSqlDateTime(updateWorkOrderForm.workOrderCloseDateTimeString))
-    .input('requestorName', updateWorkOrderForm.requestorName)
-    .input('requestorContactInfo', updateWorkOrderForm.requestorContactInfo)
-    .input('requestorIsSubscribed', updateWorkOrderForm.requestorIsSubscribed === '1')
+        .input('requestorName', updateWorkOrderForm.requestorName)
+        .input('requestorContactInfo', updateWorkOrderForm.requestorContactInfo)
+        .input('requestorIsSubscribed', updateWorkOrderForm.requestorIsSubscribed === '1')
         .input('locationLatitude', (updateWorkOrderForm.locationLatitude ?? '') === ''
         ? null
         : updateWorkOrderForm.locationLatitude)
