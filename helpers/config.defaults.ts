@@ -5,6 +5,7 @@ import type {
   PlainTextAuthenticatorConfiguration
 } from '@cityssm/authentication-helper'
 import type { AvantiApiConfiguration } from '@cityssm/avanti-api'
+import type { MsGraphMailApiConfig } from '@cityssm/ms-graph-mail'
 import { DEFAULT_NTFY_SERVER } from '@cityssm/ntfy-publish'
 import { hoursToMillis } from '@cityssm/to-millis'
 import type { config as MSSQLConfig } from 'mssql'
@@ -81,6 +82,10 @@ export const configDefaultValues = {
   'connectors.pearl': undefined as unknown as MSSQLConfig | undefined,
 
   'connectors.email': undefined as unknown as ConfigEmail | undefined,
+
+  'connectors.msGraph': undefined as unknown as
+    | MsGraphMailApiConfig
+    | undefined,
 
   // Shifts
 

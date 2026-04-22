@@ -8,6 +8,7 @@ import type {
   AvantiApiConfiguration,
   GetEmployeesRequest
 } from '@cityssm/avanti-api/types.js'
+import type { MsGraphMailApiConfig } from '@cityssm/ms-graph-mail'
 import type {
   GetEmployeesFilters,
   GetEquipmentFilters
@@ -74,6 +75,9 @@ export interface Config {
     }
 
     email?: ConfigEmail
+
+    /** Used for creating work orders from email, and sending updates to subscribers */
+    msGraph?: MsGraphMailApiConfig
   }
 
   shifts?: ConfigSection
@@ -175,7 +179,9 @@ interface ConfigSession {
 export interface ConfigEmail {
   server: string
   port?: number
-  userName?: string
+
   password?: string
+  userName?: string
+
   fromAddress?: string
 }

@@ -7,6 +7,7 @@ type OptionalTaskName =
   | 'equipmentSync'
   | 'locationSync'
   | 'notifications'
+  | 'workOrderMsGraph'
 
 type RequiredTaskName = 'databaseCleanup'
 
@@ -72,6 +73,20 @@ export function initializeTasks(): InitializeTasksReturn {
     })
 
     childProcesses.notifications = notificationTask
+  }
+
+  /*
+   * Work Order MS Graph Task
+   */
+
+  if (getConfigProperty('connectors.msGraph') !== undefined) {
+    const msGraphTask = fork('./tasks/workOrderMsGraph/task.js', {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: 'inherit'
+    })
+
+    childProcesses.workOrderMsGraph = msGraphTask
   }
 
   /*

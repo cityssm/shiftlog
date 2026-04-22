@@ -27,6 +27,7 @@ export const configDefaultValues = {
     'connectors.ntfy.serverUrl': DEFAULT_NTFY_SERVER,
     'connectors.pearl': undefined,
     'connectors.email': undefined,
+    'connectors.msGraph': undefined,
     'shifts.isEnabled': false,
     'shifts.router': 'shifts',
     'shifts.sectionName': 'Shifts',
