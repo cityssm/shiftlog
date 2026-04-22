@@ -59,6 +59,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         : dateTimeInputToSqlDateTime(createWorkOrderForm.workOrderDueDateTimeString))
         .input('requestorName', createWorkOrderForm.requestorName)
         .input('requestorContactInfo', createWorkOrderForm.requestorContactInfo)
+        .input('requestorIsSubscribed', createWorkOrderForm.requestorIsSubscribed === '1')
         .input('locationLatitude', (createWorkOrderForm.locationLatitude ?? '') === ''
         ? null
         : createWorkOrderForm.locationLatitude)
@@ -87,6 +88,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           workOrderDueDateTime,
           requestorName,
           requestorContactInfo,
+          requestorIsSubscribed,
           locationLatitude,
           locationLongitude,
           locationAddress1,
@@ -110,6 +112,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           @workOrderDueDateTime,
           @requestorName,
           @requestorContactInfo,
+          @requestorIsSubscribed,
           @locationLatitude,
           @locationLongitude,
           @locationAddress1,

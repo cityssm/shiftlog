@@ -1,0 +1,49 @@
+<div
+  class="modal"
+  id="modal--addWorkOrderSubscriber"
+  role="dialog"
+  aria-label="Add Subscriber"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Subscriber</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addWorkOrderSubscriber">
+        <div class="field">
+          <label class="label" for="addWorkOrderSubscriber--subscriberEmailAddress">
+            Subscriber Email Address
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addWorkOrderSubscriber--subscriberEmailAddress"
+              name="subscriberEmailAddress"
+              type="email"
+              maxlength="100"
+              placeholder="person@example.com"
+              required
+            />
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-success" type="submit" form="form--addWorkOrderSubscriber">
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Add Subscriber</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Close
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>
