@@ -45,11 +45,6 @@ const shadowSize = [41, 41];
         titleLink.href = shiftLog.buildWorkOrderURL(workOrder.workOrderId);
         titleLink.textContent = workOrder.workOrderNumber;
         titleLink.style.fontWeight = 'bold';
-        const workOrderTitleSpan = document.createElement('span');
-        workOrderTitleSpan.textContent = workOrder.workOrderTitle ?? '';
-        workOrderTitleSpan.style.display = workOrder.workOrderTitle ? 'block' : 'none';
-        workOrderTitleSpan.style.fontWeight = 'bold';
-        workOrderTitleSpan.style.fontSize = '0.9em';
         const typeSpan = document.createElement('span');
         typeSpan.textContent = workOrder.workOrderType ?? '(Unknown Type)';
         typeSpan.style.display = 'block';
@@ -100,7 +95,15 @@ const shadowSize = [41, 41];
         assignedLine.style.marginTop = '0.5em';
         assignedLine.style.fontSize = '0.9em';
         assignedLine.textContent = `Assigned to: ${workOrder.assignedToName ?? '(Not Assigned)'}`;
-        workOrderDiv.append(titleLink, workOrderTitleSpan, typeSpan, statusLine);
+        workOrderDiv.append(titleLink, typeSpan, statusLine);
+        if (workOrder.workOrderTitle) {
+            const workOrderTitleSpan = document.createElement('span');
+            workOrderTitleSpan.textContent = workOrder.workOrderTitle;
+            workOrderTitleSpan.style.display = 'block';
+            workOrderTitleSpan.style.fontWeight = 'bold';
+            workOrderTitleSpan.style.fontSize = '0.9em';
+            titleLink.after(workOrderTitleSpan);
+        }
         if (thumbnailElement !== null) {
             workOrderDiv.append(thumbnailElement);
         }
