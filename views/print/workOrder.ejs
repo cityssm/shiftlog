@@ -36,6 +36,9 @@
       </div>
       <div class="field">
         <label class="label">Details</label>
+        <% if (workOrder.workOrderTitle) { %>
+        <p class="has-text-weight-semibold"><%= workOrder.workOrderTitle %></p>
+        <% } %>
         <p style="white-space: pre-wrap;"><%= workOrder.workOrderDetails || '(No details)' %></p>
       </div>
       <% if (workOrder.tags && workOrder.tags.length > 0) { %>

@@ -45,6 +45,7 @@ export default async function getRecentWorkOrders(
         wType.workOrderType,
         w.workOrderStatusDataListItemId,
         wStatus.dataListItem AS workOrderStatusDataListItem,
+        w.workOrderTitle,
         w.workOrderDetails,
         w.workOrderOpenDateTime,
         w.workOrderDueDateTime,

@@ -71,6 +71,7 @@ function buildWhereClause(filters, user) {
         whereClause += `
       AND (
         w.workOrderNumber LIKE @searchString
+        OR w.workOrderTitle LIKE @searchString
         OR w.requestorName LIKE @searchString
         OR w.requestorContactInfo LIKE @searchString
         OR w.workOrderDetails LIKE @searchString
@@ -164,6 +165,7 @@ export default async function getWorkOrders(filters, options, user) {
           wStatus.dataListItem AS workOrderStatusDataListItem,
           w.workOrderPriorityDataListItemId,
           wPriority.dataListItem AS workOrderPriorityDataListItem,
+          w.workOrderTitle,
           w.workOrderDetails,
           w.workOrderOpenDateTime,
           w.workOrderDueDateTime,

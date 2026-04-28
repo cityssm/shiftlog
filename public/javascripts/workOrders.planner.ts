@@ -141,6 +141,7 @@ declare const exports: {
           <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a><br />
+          ${workOrder.workOrderTitle ? `<span class="is-size-7 has-text-weight-semibold">${cityssm.escapeHTML(workOrder.workOrderTitle)}</span><br />` : ''}
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
           </span>

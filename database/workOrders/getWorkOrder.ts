@@ -23,6 +23,7 @@ async function _getWorkOrder(
       wStatus.dataListItem AS workOrderStatusDataListItem,
       w.workOrderPriorityDataListItemId,
       wPriority.dataListItem AS workOrderPriorityDataListItem,
+      w.workOrderTitle,
       w.workOrderDetails,
       w.workOrderOpenDateTime,
       w.workOrderDueDateTime,

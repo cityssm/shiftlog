@@ -413,6 +413,7 @@ export interface WorkOrder extends BaseRecord {
   workOrderPriorityDataListItem?: string
 
   workOrderDetails: string
+  workOrderTitle: string
 
   workOrderOpenDateTime: Date | string
 

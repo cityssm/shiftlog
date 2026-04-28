@@ -99,6 +99,14 @@ const shadowSize = [41, 41];
             addressLine.textContent += `, ${workOrder.locationAddress2}`;
         }
         workOrderDiv.append(titleLink, typeSpan, statusLine, addressLine);
+        if (workOrder.workOrderTitle) {
+            const workOrderTitleSpan = document.createElement('span');
+            workOrderTitleSpan.textContent = workOrder.workOrderTitle;
+            workOrderTitleSpan.style.display = 'block';
+            workOrderTitleSpan.style.fontWeight = 'bold';
+            workOrderTitleSpan.style.fontSize = '0.9em';
+            titleLink.after(workOrderTitleSpan);
+        }
         return workOrderDiv;
     }
     function addMarkerToMap(workOrders, bounds) {

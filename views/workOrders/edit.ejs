@@ -178,6 +178,20 @@
               </div>
         </div>
         <div class="field">
+          <label class="label" for="workOrder--workOrderTitle">Title</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--workOrderTitle"
+              name="workOrderTitle"
+              type="text"
+              value="<%= workOrder.workOrderTitle ?? '' %>"
+              maxlength="200"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+          </div>
+        </div>
+        <div class="field">
           <label class="label" for="workOrder--workOrderDetails">Details</label>
           <div class="control">
             <textarea

@@ -8,6 +8,7 @@ import { sendNotificationWorkerMessage } from '../../helpers/notification.helper
 export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
   workOrderId: number | string
 
+  workOrderTitle: string
   workOrderDetails: string
   workOrderStatusDataListItemId?: number | string
   workOrderPriorityDataListItemId?: number | string
@@ -85,6 +86,7 @@ export default async function updateWorkOrder(
         : updateWorkOrderForm.workOrderPriorityDataListItemId
     )
     .input('workOrderDetails', updateWorkOrderForm.workOrderDetails)
+    .input('workOrderTitle', updateWorkOrderForm.workOrderTitle)
     .input(
       'workOrderOpenDateTime',
       dateTimeInputToSqlDateTime(
@@ -143,6 +145,7 @@ export default async function updateWorkOrder(
         workOrderStatusDataListItemId = @workOrderStatusDataListItemId,
         workOrderPriorityDataListItemId = @workOrderPriorityDataListItemId,
         workOrderDetails = @workOrderDetails,
+        workOrderTitle = @workOrderTitle,
         workOrderOpenDateTime = @workOrderOpenDateTime,
         workOrderDueDateTime = @workOrderDueDateTime,
         workOrderCloseDateTime = @workOrderCloseDateTime,

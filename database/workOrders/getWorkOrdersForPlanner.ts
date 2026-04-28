@@ -280,6 +280,7 @@ export default async function getWorkOrdersForPlanner(
           wPriority.dataListItem AS workOrderPriorityDataListItem,
           w.workOrderStatusDataListItemId,
           wStatus.dataListItem AS workOrderStatusDataListItem,
+          w.workOrderTitle,
           w.workOrderDetails,
           w.workOrderOpenDateTime,
           w.workOrderDueDateTime,
