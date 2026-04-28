@@ -29,6 +29,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         ? null
         : updateWorkOrderForm.workOrderPriorityDataListItemId)
         .input('workOrderDetails', updateWorkOrderForm.workOrderDetails)
+        .input('workOrderTitle', updateWorkOrderForm.workOrderTitle)
         .input('workOrderOpenDateTime', dateTimeInputToSqlDateTime(updateWorkOrderForm.workOrderOpenDateTimeString))
         .input('workOrderDueDateTime', updateWorkOrderForm.workOrderDueDateTimeString === ''
         ? null
@@ -60,6 +61,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         workOrderStatusDataListItemId = @workOrderStatusDataListItemId,
         workOrderPriorityDataListItemId = @workOrderPriorityDataListItemId,
         workOrderDetails = @workOrderDetails,
+        workOrderTitle = @workOrderTitle,
         workOrderOpenDateTime = @workOrderOpenDateTime,
         workOrderDueDateTime = @workOrderDueDateTime,
         workOrderCloseDateTime = @workOrderCloseDateTime,

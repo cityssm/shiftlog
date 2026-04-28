@@ -53,6 +53,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         ? null
         : createWorkOrderForm.workOrderPriorityDataListItemId)
         .input('workOrderDetails', createWorkOrderForm.workOrderDetails)
+        .input('workOrderTitle', createWorkOrderForm.workOrderTitle)
         .input('workOrderOpenDateTime', dateTimeInputToSqlDateTime(createWorkOrderForm.workOrderOpenDateTimeString))
         .input('workOrderDueDateTime', createWorkOrderForm.workOrderDueDateTimeString === ''
         ? calculatedDueDateTime
@@ -83,6 +84,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           workOrderTypeId,
           workOrderStatusDataListItemId,
           workOrderPriorityDataListItemId,
+          workOrderTitle,
           workOrderDetails,
           workOrderOpenDateTime,
           workOrderDueDateTime,
@@ -107,6 +109,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           @workOrderTypeId,
           @workOrderStatusDataListItemId,
           @workOrderPriorityDataListItemId,
+          @workOrderTitle,
           @workOrderDetails,
           @workOrderOpenDateTime,
           @workOrderDueDateTime,

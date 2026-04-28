@@ -191,6 +191,7 @@ declare const exports: {
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a>
           ${thumbnailIconHTML}
+          ${workOrder.workOrderTitle ? `<br /><span class="is-size-7 has-text-weight-semibold">${cityssm.escapeHTML(workOrder.workOrderTitle)}</span>` : ''}
           <br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
