@@ -4,15 +4,16 @@ import type { WorkOrder } from '../../types/record.types.js'
 
 import getWorkOrderTags from './getWorkOrderTags.js'
 
-export default async function getWorkOrder(
-  workOrderId: number | string,
+async function _getWorkOrder(
+  workOrderIdField: 'workOrderId' | 'workOrderNumber',
+  workOrderIdOrNumber: number | string,
   userName?: string
 ): Promise<WorkOrder | undefined> {
   const pool = await getShiftLogConnectionPool()
 
   const sql = /* sql */ `
     SELECT
-      w.workOrderId,
+      TOP 1 w.workOrderId,
       w.workOrderNumberYear,
       w.workOrderNumberSequence,
       w.workOrderNumber,
@@ -45,7 +46,7 @@ export default async function getWorkOrder(
       LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
     WHERE
       w.recordDelete_dateTime IS NULL
-      AND w.workOrderId = @workOrderId
+      AND w.${workOrderIdField} = @workOrderIdOrNumber
       AND w.instance = @instance ${userName === undefined
         ? ''
         : /* sql */ `
@@ -61,12 +62,14 @@ export default async function getWorkOrder(
               )
             )
           `}
+    ORDER BY
+      w.workOrderId DESC
   `
 
   try {
     const workOrdersResult = await pool
       .request()
-      .input('workOrderId', workOrderId)
+      .input('workOrderIdOrNumber', workOrderIdOrNumber)
       .input('instance', getConfigProperty('application.instance'))
       .input('userName', userName)
       .query<WorkOrder>(sql)
@@ -96,4 +99,18 @@ export default async function getWorkOrder(
   } catch {
     return undefined
   }
+}
+
+export default async function getWorkOrder(
+  workOrderId: number | string,
+  userName?: string
+): Promise<WorkOrder | undefined> {
+  return await _getWorkOrder('workOrderId', workOrderId, userName)
+}
+
+export async function getWorkOrderByWorkOrderNumber(
+  workOrderNumber: string,
+  userName?: string
+): Promise<WorkOrder | undefined> {
+  return await _getWorkOrder('workOrderNumber', workOrderNumber, userName)
 }

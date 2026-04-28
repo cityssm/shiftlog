@@ -409,6 +409,7 @@ CREATE TABLE ShiftLog.WorkOrders (
   END PERSISTED,
   workOrderStatusDataListItemId INT,
   workOrderPriorityDataListItemId INT,
+  workOrderTitle VARCHAR(200) NOT NULL DEFAULT '',
   workOrderDetails VARCHAR(max) NOT NULL DEFAULT '',
   workOrderOpenDateTime datetime NOT NULL,
   workOrderDueDateTime datetime,

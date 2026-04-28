@@ -421,7 +421,7 @@ export interface WorkOrder extends BaseRecord {
 
   requestorName: string
   requestorContactInfo: string
-  requestorIsSubscribed?: boolean
+  requestorIsSubscribed: boolean
 
   locationLatitude?: number | null
   locationLongitude?: number | null

@@ -1,11 +1,11 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import getWorkOrderTags from './getWorkOrderTags.js';
-export default async function getWorkOrder(workOrderId, userName) {
+async function _getWorkOrder(workOrderIdField, workOrderIdOrNumber, userName) {
     const pool = await getShiftLogConnectionPool();
     const sql = `
     SELECT
-      w.workOrderId,
+      TOP 1 w.workOrderId,
       w.workOrderNumberYear,
       w.workOrderNumberSequence,
       w.workOrderNumber,
@@ -38,7 +38,7 @@ export default async function getWorkOrder(workOrderId, userName) {
       LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
     WHERE
       w.recordDelete_dateTime IS NULL
-      AND w.workOrderId = @workOrderId
+      AND w.${workOrderIdField} = @workOrderIdOrNumber
       AND w.instance = @instance ${userName === undefined
         ? ''
         : `
@@ -54,11 +54,13 @@ export default async function getWorkOrder(workOrderId, userName) {
               )
             )
           `}
+    ORDER BY
+      w.workOrderId DESC
   `;
     try {
         const workOrdersResult = await pool
             .request()
-            .input('workOrderId', workOrderId)
+            .input('workOrderIdOrNumber', workOrderIdOrNumber)
             .input('instance', getConfigProperty('application.instance'))
             .input('userName', userName)
             .query(sql);
@@ -83,4 +85,10 @@ export default async function getWorkOrder(workOrderId, userName) {
     catch {
         return undefined;
     }
+}
+export default async function getWorkOrder(workOrderId, userName) {
+    return await _getWorkOrder('workOrderId', workOrderId, userName);
+}
+export async function getWorkOrderByWorkOrderNumber(workOrderNumber, userName) {
+    return await _getWorkOrder('workOrderNumber', workOrderNumber, userName);
 }
