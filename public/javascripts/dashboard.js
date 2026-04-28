@@ -56,6 +56,11 @@ const shadowSize = [41, 41];
         titleLink.href = shiftLog.buildWorkOrderURL(workOrder.workOrderId);
         titleLink.textContent = workOrder.workOrderNumber;
         titleLink.style.fontWeight = 'bold';
+        const workOrderTitleSpan = document.createElement('span');
+        workOrderTitleSpan.textContent = workOrder.workOrderTitle ?? '';
+        workOrderTitleSpan.style.display = workOrder.workOrderTitle ? 'block' : 'none';
+        workOrderTitleSpan.style.fontWeight = 'bold';
+        workOrderTitleSpan.style.fontSize = '0.9em';
         const typeSpan = document.createElement('span');
         typeSpan.textContent = workOrder.workOrderType ?? '(Unknown Type)';
         typeSpan.style.display = 'block';
@@ -98,7 +103,7 @@ const shadowSize = [41, 41];
         if (workOrder.locationAddress2 !== '') {
             addressLine.textContent += `, ${workOrder.locationAddress2}`;
         }
-        workOrderDiv.append(titleLink, typeSpan, statusLine, addressLine);
+        workOrderDiv.append(titleLink, workOrderTitleSpan, typeSpan, statusLine, addressLine);
         return workOrderDiv;
     }
     function addMarkerToMap(workOrders, bounds) {

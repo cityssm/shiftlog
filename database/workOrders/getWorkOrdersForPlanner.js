@@ -187,6 +187,7 @@ export default async function getWorkOrdersForPlanner(filters, options, user) {
           wPriority.dataListItem AS workOrderPriorityDataListItem,
           w.workOrderStatusDataListItemId,
           wStatus.dataListItem AS workOrderStatusDataListItem,
+          w.workOrderTitle,
           w.workOrderDetails,
           w.workOrderOpenDateTime,
           w.workOrderDueDateTime,
