@@ -7,6 +7,10 @@ export type SettingKey =
   | 'locations.defaultCityProvince'
   | 'locations.defaultLatitude'
   | 'locations.defaultLongitude'
+  | 'msGraph.from.allowedDomains'
+  | 'msGraph.from.allowedEmailAddresses'
+  | 'msGraph.from.blockedDomains'
+  | 'msGraph.from.blockedEmailAddresses'
   | 'workOrders.reopenWindowDays'
 
 export interface SettingProperties {
@@ -81,6 +85,42 @@ export const settingProperties: SettingProperties[] = [
       'The number of days after closing a work order that it can be reopened by users with update permissions. Set to 0 to disable reopening.',
     type: 'number',
     defaultValue: '7',
+    isUserConfigurable: true
+  },
+  {
+    settingKey: 'msGraph.from.allowedDomains',
+    settingName: 'Microsoft Graph - Allowed From Domains',
+    description:
+      'Comma-separated list of email domains that are allowed in the "From" field when creating work orders via Microsoft Graph. If empty, all domains are allowed.',
+    type: 'string',
+    defaultValue: '',
+    isUserConfigurable: true
+  },
+  {
+    settingKey: 'msGraph.from.allowedEmailAddresses',
+    settingName: 'Microsoft Graph - Allowed From Email Addresses',
+    description:
+      'Comma-separated list of specific email addresses that are allowed in the "From" field when creating work orders via Microsoft Graph. If empty, all email addresses are allowed.',
+    type: 'string',
+    defaultValue: '',
+    isUserConfigurable: true
+  },
+  {
+    settingKey: 'msGraph.from.blockedDomains',
+    settingName: 'Microsoft Graph - Blocked From Domains',
+    description:
+      'Comma-separated list of email domains that are blocked in the "From" field when creating work orders via Microsoft Graph. If empty, no domains are blocked.',
+    type: 'string',
+    defaultValue: '',
+    isUserConfigurable: true
+  },
+  {
+    settingKey: 'msGraph.from.blockedEmailAddresses',
+    settingName: 'Microsoft Graph - Blocked From Email Addresses',
+    description:
+      'Comma-separated list of specific email addresses that are blocked in the "From" field when creating work orders via Microsoft Graph. If empty, no email addresses are blocked.',
+    type: 'string',
+    defaultValue: '',
     isUserConfigurable: true
   }
 ]

@@ -10,6 +10,7 @@ let settings: Array<Partial<Setting> & SettingProperties> | undefined
 export async function getCachedSettings(): Promise<
   Array<Partial<Setting> & SettingProperties>
 > {
+  // eslint-disable-next-line require-atomic-updates
   settings ??= await getSettingsFromDatabase()
   return settings
 }

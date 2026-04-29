@@ -65,6 +65,7 @@ function initializeCluster(): void {
         debug(
           `Relaying message to task process: ${tasksChildProcesses.notifications.pid}`
         )
+
         tasksChildProcesses.notifications.send(message)
       }
     } else {
@@ -77,6 +78,8 @@ function initializeCluster(): void {
         debug(`Relaying message to worker: ${pid}`)
         activeWorker.send(message)
       }
+
+      tasksChildProcesses.workOrderMsGraph?.send(message)
     }
   })
 

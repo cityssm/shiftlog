@@ -54,5 +54,37 @@ export const settingProperties = [
         type: 'number',
         defaultValue: '7',
         isUserConfigurable: true
+    },
+    {
+        settingKey: 'msGraph.from.allowedDomains',
+        settingName: 'Microsoft Graph - Allowed From Domains',
+        description: 'Comma-separated list of email domains that are allowed in the "From" field when creating work orders via Microsoft Graph. If empty, all domains are allowed.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
+    },
+    {
+        settingKey: 'msGraph.from.allowedEmailAddresses',
+        settingName: 'Microsoft Graph - Allowed From Email Addresses',
+        description: 'Comma-separated list of specific email addresses that are allowed in the "From" field when creating work orders via Microsoft Graph. If empty, all email addresses are allowed.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
+    },
+    {
+        settingKey: 'msGraph.from.blockedDomains',
+        settingName: 'Microsoft Graph - Blocked From Domains',
+        description: 'Comma-separated list of email domains that are blocked in the "From" field when creating work orders via Microsoft Graph. If empty, no domains are blocked.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
+    },
+    {
+        settingKey: 'msGraph.from.blockedEmailAddresses',
+        settingName: 'Microsoft Graph - Blocked From Email Addresses',
+        description: 'Comma-separated list of specific email addresses that are blocked in the "From" field when creating work orders via Microsoft Graph. If empty, no email addresses are blocked.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
     }
 ];

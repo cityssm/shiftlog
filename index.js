@@ -50,6 +50,7 @@ function initializeCluster() {
                 debug(`Relaying message to worker: ${pid}`);
                 activeWorker.send(message);
             }
+            tasksChildProcesses.workOrderMsGraph?.send(message);
         }
     });
     cluster.on('exit', (worker) => {

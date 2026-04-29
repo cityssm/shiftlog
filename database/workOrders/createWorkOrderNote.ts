@@ -44,7 +44,7 @@ export default async function createWorkOrderNote(
     .input('noteSequence', nextSequence)
     .input('noteTypeId', createWorkOrderNoteForm.noteTypeId ?? null)
     .input('noteText', createWorkOrderNoteForm.noteText)
-    .input('userName', userName)
+    .input('userName', userName.slice(0, 30)) // Truncate to 30 characters to match database field length
     .query(/* sql */ `
       INSERT INTO
         ShiftLog.WorkOrderNotes (
@@ -75,11 +75,8 @@ export default async function createWorkOrderNote(
       for (const [noteTypeFieldId, fieldValue] of Object.entries(
         createWorkOrderNoteForm.fields
       )) {
-        if (
-          fieldValue !== undefined &&
-          fieldValue !== null &&
-          fieldValue !== ''
-        ) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if ((fieldValue ?? '') !== '') {
           // eslint-disable-next-line no-await-in-loop -- inserting field values sequentially
           await pool
             .request()

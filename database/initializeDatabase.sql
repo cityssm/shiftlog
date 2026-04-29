@@ -332,6 +332,7 @@ CREATE TABLE ShiftLog.AssignedTo (
   assignedToId INT NOT NULL PRIMARY KEY identity(1, 1),
   instance VARCHAR(20) NOT NULL,
   assignedToName VARCHAR(200) NOT NULL,
+  assignedToEmailAddress VARCHAR(100) NOT NULL DEFAULT '',
   orderNumber SMALLINT NOT NULL DEFAULT 0,
   userGroupId INT,
   recordCreate_userName VARCHAR(30) NOT NULL,

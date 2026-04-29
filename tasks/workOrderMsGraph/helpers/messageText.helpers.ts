@@ -6,13 +6,24 @@ const htmlToTextConverter = new NodeHtmlMarkdown()
 export function messageBodyToText(
   messageBody: MsGraphMailMessage['body']
 ): string {
-  if (messageBody === undefined) {
-    return ''
-  }
+  const messageBodyTextUnsanitized = messageBody?.content ?? ''
 
-  if (messageBody.contentType === 'text') {
-    return messageBody.content
-  }
+  const messageBodyText =
+    messageBody?.contentType === 'html' ||
+    messageBodyTextUnsanitized.includes('<')
+      ? htmlToTextConverter.translate(messageBodyTextUnsanitized)
+      : messageBodyTextUnsanitized
 
-  return htmlToTextConverter.translate(messageBody.content)
+  return messageBodyText
+}
+
+export function messageSubjectToWorkOrderNumber(
+  messageSubject: string
+): string | undefined {
+  // If subject contains "[#XX-2026-1234]", extract "XX-2026-1234" as the work order number
+  const workOrderNumberMatch = /\[#(?<workOrderNumber>.{0,50})\]/.exec(
+    messageSubject
+  )
+
+  return workOrderNumberMatch?.groups?.workOrderNumber
 }

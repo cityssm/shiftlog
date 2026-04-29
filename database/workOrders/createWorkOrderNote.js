@@ -25,7 +25,7 @@ export default async function createWorkOrderNote(createWorkOrderNoteForm, userN
         .input('noteSequence', nextSequence)
         .input('noteTypeId', createWorkOrderNoteForm.noteTypeId ?? null)
         .input('noteText', createWorkOrderNoteForm.noteText)
-        .input('userName', userName)
+        .input('userName', userName.slice(0, 30))
         .query(`
       INSERT INTO
         ShiftLog.WorkOrderNotes (
@@ -50,9 +50,7 @@ export default async function createWorkOrderNote(createWorkOrderNoteForm, userN
         if (createWorkOrderNoteForm.noteTypeId !== undefined &&
             createWorkOrderNoteForm.fields !== undefined) {
             for (const [noteTypeFieldId, fieldValue] of Object.entries(createWorkOrderNoteForm.fields)) {
-                if (fieldValue !== undefined &&
-                    fieldValue !== null &&
-                    fieldValue !== '') {
+                if ((fieldValue ?? '') !== '') {
                     await pool
                         .request()
                         .input('workOrderId', createWorkOrderNoteForm.workOrderId)
