@@ -4,6 +4,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 export interface UpdateAssignedToForm {
   assignedToId: number | string
   assignedToName: string
+  assignedToEmailAddress?: string
   userGroupId?: number | string
 }
 
@@ -18,6 +19,7 @@ export default async function updateAssignedToItem(
     .input('instance', getConfigProperty('application.instance'))
     .input('assignedToId', form.assignedToId)
     .input('assignedToName', form.assignedToName)
+    .input('assignedToEmailAddress', form.assignedToEmailAddress ?? '')
     .input(
       'userGroupId',
       form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null
@@ -27,6 +29,7 @@ export default async function updateAssignedToItem(
       UPDATE ShiftLog.AssignedTo
       SET
         assignedToName = @assignedToName,
+        assignedToEmailAddress = @assignedToEmailAddress,
         userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()

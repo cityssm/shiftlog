@@ -15,6 +15,7 @@ export default async function getAssignedToList(
       SELECT
         a.assignedToId,
         a.assignedToName,
+        a.assignedToEmailAddress,
         a.orderNumber,
         a.userGroupId,
         ug.userGroupName,
