@@ -7,12 +7,14 @@ export default async function updateAssignedToItem(form, userName) {
         .input('instance', getConfigProperty('application.instance'))
         .input('assignedToId', form.assignedToId)
         .input('assignedToName', form.assignedToName)
+        .input('assignedToEmailAddress', form.assignedToEmailAddress ?? '')
         .input('userGroupId', form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null)
         .input('userName', userName)
         .query(`
       UPDATE ShiftLog.AssignedTo
       SET
         assignedToName = @assignedToName,
+        assignedToEmailAddress = @assignedToEmailAddress,
         userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()

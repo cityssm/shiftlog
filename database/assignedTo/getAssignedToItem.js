@@ -10,6 +10,7 @@ export default async function getAssignedToItem(assignedToId) {
       SELECT
         a.assignedToId,
         a.assignedToName,
+        a.assignedToEmailAddress,
         a.orderNumber,
         a.userGroupId,
         ug.userGroupName,

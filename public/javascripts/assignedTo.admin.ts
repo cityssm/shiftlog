@@ -77,6 +77,11 @@ declare const exports: {
           <span class="assigned-to-name">
             ${cityssm.escapeHTML(item.assignedToName)}
           </span>
+          ${
+            item.assignedToEmailAddress
+              ? `<br /><small class="has-text-grey">${cityssm.escapeHTML(item.assignedToEmailAddress)}</small>`
+              : ''
+          }
         </td>
         <td>
           ${userGroupDisplay}
@@ -87,6 +92,7 @@ declare const exports: {
               class="button is-info button--editAssignedTo"
               data-assigned-to-id="${item.assignedToId}"
               data-assigned-to-name="${cityssm.escapeHTML(item.assignedToName)}"
+              data-assigned-to-email-address="${cityssm.escapeHTML(item.assignedToEmailAddress ?? '')}"
               data-user-group-id="${item.userGroupId ?? ''}"
               type="button"
             >
@@ -142,6 +148,11 @@ declare const exports: {
               assignedToName: (
                 addForm.querySelector(
                   '#addAssignedTo--assignedToName'
+                ) as HTMLInputElement
+              ).value,
+              assignedToEmailAddress: (
+                addForm.querySelector(
+                  '#addAssignedTo--assignedToEmailAddress'
                 ) as HTMLInputElement
               ).value,
               userGroupId:
@@ -214,6 +225,8 @@ declare const exports: {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
     const assignedToId = buttonElement.dataset.assignedToId
     const currentAssignedToName = buttonElement.dataset.assignedToName
+    const currentAssignedToEmailAddress =
+      buttonElement.dataset.assignedToEmailAddress
     const currentUserGroupId = buttonElement.dataset.userGroupId
 
     if (assignedToId === undefined || currentAssignedToName === undefined) {
@@ -244,6 +257,12 @@ declare const exports: {
               assignedToList[itemIndex].assignedToName = (
                 editForm.querySelector(
                   '#editAssignedTo--assignedToName'
+                ) as HTMLInputElement
+              ).value
+
+              assignedToList[itemIndex].assignedToEmailAddress = (
+                editForm.querySelector(
+                  '#editAssignedTo--assignedToEmailAddress'
                 ) as HTMLInputElement
               ).value
 
@@ -291,6 +310,11 @@ declare const exports: {
             '#editAssignedTo--assignedToName'
           ) as HTMLInputElement
         ).value = currentAssignedToName
+        ;(
+          modalElement.querySelector(
+            '#editAssignedTo--assignedToEmailAddress'
+          ) as HTMLInputElement
+        ).value = currentAssignedToEmailAddress ?? ''
 
         // Populate user group options
         const userGroupSelect = modalElement.querySelector(
@@ -429,4 +453,6 @@ declare const exports: {
   document
     .querySelector('#button--addAssignedTo')
     ?.addEventListener('click', addAssignedTo)
+
+  renderAssignedToList()
 })()

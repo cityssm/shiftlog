@@ -22,11 +22,13 @@ export default async function createAssignedToItem(form, userName) {
             .request()
             .input('instance', getConfigProperty('application.instance'))
             .input('assignedToId', assignedToId)
+            .input('assignedToEmailAddress', form.assignedToEmailAddress ?? '')
             .input('userGroupId', form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null)
             .input('userName', userName)
             .query(`
         UPDATE ShiftLog.AssignedTo
         SET
+          assignedToEmailAddress = @assignedToEmailAddress,
           userGroupId = @userGroupId,
           recordDelete_userName = NULL,
           recordDelete_dateTime = NULL,
@@ -55,6 +57,7 @@ export default async function createAssignedToItem(form, userName) {
         .request()
         .input('instance', getConfigProperty('application.instance'))
         .input('assignedToName', form.assignedToName)
+        .input('assignedToEmailAddress', form.assignedToEmailAddress ?? '')
         .input('userGroupId', form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null)
         .input('orderNumber', nextOrderNumber)
         .input('userName', userName)
@@ -63,6 +66,7 @@ export default async function createAssignedToItem(form, userName) {
         ShiftLog.AssignedTo (
           instance,
           assignedToName,
+          assignedToEmailAddress,
           userGroupId,
           orderNumber,
           recordCreate_userName,
@@ -72,6 +76,7 @@ export default async function createAssignedToItem(form, userName) {
         (
           @instance,
           @assignedToName,
+          @assignedToEmailAddress,
           @userGroupId,
           @orderNumber,
           @userName,

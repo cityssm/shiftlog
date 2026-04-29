@@ -3,6 +3,7 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface CreateAssignedToForm {
   assignedToName: string
+  assignedToEmailAddress?: string
   userGroupId?: number | string
 }
 
@@ -36,6 +37,7 @@ export default async function createAssignedToItem(
       .request()
       .input('instance', getConfigProperty('application.instance'))
       .input('assignedToId', assignedToId)
+      .input('assignedToEmailAddress', form.assignedToEmailAddress ?? '')
       .input(
         'userGroupId',
         form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null
@@ -44,6 +46,7 @@ export default async function createAssignedToItem(
       .query(/* sql */ `
         UPDATE ShiftLog.AssignedTo
         SET
+          assignedToEmailAddress = @assignedToEmailAddress,
           userGroupId = @userGroupId,
           recordDelete_userName = NULL,
           recordDelete_dateTime = NULL,
@@ -77,6 +80,7 @@ export default async function createAssignedToItem(
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('assignedToName', form.assignedToName)
+    .input('assignedToEmailAddress', form.assignedToEmailAddress ?? '')
     .input(
       'userGroupId',
       form.userGroupId && form.userGroupId !== '' ? form.userGroupId : null
@@ -88,6 +92,7 @@ export default async function createAssignedToItem(
         ShiftLog.AssignedTo (
           instance,
           assignedToName,
+          assignedToEmailAddress,
           userGroupId,
           orderNumber,
           recordCreate_userName,
@@ -97,6 +102,7 @@ export default async function createAssignedToItem(
         (
           @instance,
           @assignedToName,
+          @assignedToEmailAddress,
           @userGroupId,
           @orderNumber,
           @userName,

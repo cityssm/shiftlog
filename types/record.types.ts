@@ -114,6 +114,7 @@ export interface Equipment extends SyncRecord {
 }
 
 export interface AssignedTo extends BaseRecord {
+  assignedToEmailAddress?: string
   assignedToId: number
   assignedToName: string
   orderNumber: number

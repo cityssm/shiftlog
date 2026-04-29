@@ -29,6 +29,9 @@
           <span class="assigned-to-name">
             ${cityssm.escapeHTML(item.assignedToName)}
           </span>
+          ${item.assignedToEmailAddress
+                ? `<br /><small class="has-text-grey">${cityssm.escapeHTML(item.assignedToEmailAddress)}</small>`
+                : ''}
         </td>
         <td>
           ${userGroupDisplay}
@@ -39,6 +42,7 @@
               class="button is-info button--editAssignedTo"
               data-assigned-to-id="${item.assignedToId}"
               data-assigned-to-name="${cityssm.escapeHTML(item.assignedToName)}"
+              data-assigned-to-email-address="${cityssm.escapeHTML(item.assignedToEmailAddress ?? '')}"
               data-user-group-id="${item.userGroupId ?? ''}"
               type="button"
             >
@@ -81,6 +85,7 @@
                     assignedToList.push({
                         assignedToId: responseJSON.assignedToId,
                         assignedToName: addForm.querySelector('#addAssignedTo--assignedToName').value,
+                        assignedToEmailAddress: addForm.querySelector('#addAssignedTo--assignedToEmailAddress').value,
                         userGroupId: addForm.querySelector('#addAssignedTo--userGroupId').value === ''
                             ? undefined
                             : Number.parseInt(addForm.querySelector('#addAssignedTo--userGroupId').value, 10),
@@ -125,6 +130,7 @@
         const buttonElement = clickEvent.currentTarget;
         const assignedToId = buttonElement.dataset.assignedToId;
         const currentAssignedToName = buttonElement.dataset.assignedToName;
+        const currentAssignedToEmailAddress = buttonElement.dataset.assignedToEmailAddress;
         const currentUserGroupId = buttonElement.dataset.userGroupId;
         if (assignedToId === undefined || currentAssignedToName === undefined) {
             return;
@@ -140,6 +146,7 @@
                         item.assignedToId === Number.parseInt(assignedToId, 10));
                     if (itemIndex !== -1) {
                         assignedToList[itemIndex].assignedToName = editForm.querySelector('#editAssignedTo--assignedToName').value;
+                        assignedToList[itemIndex].assignedToEmailAddress = editForm.querySelector('#editAssignedTo--assignedToEmailAddress').value;
                         assignedToList[itemIndex].userGroupId =
                             editForm.querySelector('#editAssignedTo--userGroupId').value === ''
                                 ? undefined
@@ -162,6 +169,7 @@
                 ;
                 modalElement.querySelector('#editAssignedTo--assignedToId').value = assignedToId;
                 modalElement.querySelector('#editAssignedTo--assignedToName').value = currentAssignedToName;
+                modalElement.querySelector('#editAssignedTo--assignedToEmailAddress').value = currentAssignedToEmailAddress ?? '';
                 const userGroupSelect = modalElement.querySelector('#editAssignedTo--userGroupId');
                 for (const userGroup of exports.userGroups) {
                     const option = document.createElement('option');
@@ -253,4 +261,5 @@
     document
         .querySelector('#button--addAssignedTo')
         ?.addEventListener('click', addAssignedTo);
+    renderAssignedToList();
 })();
