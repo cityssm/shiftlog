@@ -1,5 +1,6 @@
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 const htmlToTextConverter = new NodeHtmlMarkdown();
+export const messageHeaderString = 'When replying to work order emails, please do not change the email subject line or the text below. This text is used by the system to link your email reply to the correct work order. If you change or delete this text, your email reply may not be processed correctly.';
 export function messageBodyToText(messageBody) {
     const messageBodyTextUnsanitized = messageBody?.content ?? '';
     const messageBodyText = messageBody?.contentType === 'html' ||

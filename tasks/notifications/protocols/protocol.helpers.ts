@@ -4,7 +4,7 @@ import type { NotificationFunction, NotificationQueueType } from '../types.js'
 export type Protocol = 'email' | 'msTeams' | 'ntfy'
 
 const protocolFunctions: Partial<
-  Record<Protocol, Record<NotificationQueueType, NotificationFunction>>
+  Record<Protocol, Partial<Record<NotificationQueueType, NotificationFunction>>>
 > = {}
 
 const enabledProtocols = getConfigProperty('notifications.protocols', [])

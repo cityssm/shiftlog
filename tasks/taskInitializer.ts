@@ -1,6 +1,7 @@
 import { type ChildProcess, fork } from 'node:child_process'
 
 import { getConfigProperty } from '../helpers/config.helpers.js'
+import type { WorkerMessage } from '../types/application.types.js'
 
 type OptionalTaskName =
   | 'employeeSync'
@@ -87,6 +88,13 @@ export function initializeTasks(): InitializeTasksReturn {
     })
 
     childProcesses.workOrderMsGraph = msGraphTask
+
+    msGraphTask.on('message', (message: WorkerMessage) => {
+      if (message.targetProcesses === 'task.notifications') {
+        childProcesses.notifications?.send(message)
+        msGraphTask.send(message)
+      }
+    })
   }
 
   /*

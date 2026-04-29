@@ -41,6 +41,12 @@ export function initializeTasks() {
             stdio: 'inherit'
         });
         childProcesses.workOrderMsGraph = msGraphTask;
+        msGraphTask.on('message', (message) => {
+            if (message.targetProcesses === 'task.notifications') {
+                childProcesses.notifications?.send(message);
+                msGraphTask.send(message);
+            }
+        });
     }
     const cleanupTask = fork('./tasks/databaseCleanup/task.js', {
         cwd: process.cwd(),

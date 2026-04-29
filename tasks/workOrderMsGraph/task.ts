@@ -1,4 +1,4 @@
-import { millisecondsInOneMinute, minutesToMillis } from '@cityssm/to-millis'
+import { millisecondsInOneMinute, minutesToMillis, secondsToMillis } from '@cityssm/to-millis'
 import Debug from 'debug'
 import { asyncExitHook } from 'exit-hook'
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async/fixed'
@@ -15,16 +15,26 @@ import type {
 } from '../../types/application.types.js'
 
 import { checkEmail } from './checkEmail.task.js'
+import { sendEmail } from './sendEmail.task.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph`)
 
+const checkEmailIntervalMillis = minutesToMillis(2)
+const sendEmailIntervalMillis = secondsToMillis(30)
+
 if (getConfigProperty('connectors.msGraph') !== undefined) {
   await checkEmail()
-  const interval = setIntervalAsync(checkEmail, minutesToMillis(5))
+
+  const checkEmailInterval = setIntervalAsync(
+    checkEmail,
+    checkEmailIntervalMillis
+  )
+  const sendEmailInterval = setIntervalAsync(sendEmail, sendEmailIntervalMillis)
 
   asyncExitHook(
     async () => {
-      await clearIntervalAsync(interval)
+      await clearIntervalAsync(checkEmailInterval)
+      await clearIntervalAsync(sendEmailInterval)
     },
     {
       wait: millisecondsInOneMinute

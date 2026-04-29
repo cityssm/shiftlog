@@ -12,7 +12,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
 import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js';
-import { messageBodyToText, messageSubjectToWorkOrderNumber } from './helpers/messageText.helpers.js';
+import { messageBodyToText, messageHeaderString, messageSubjectToWorkOrderNumber } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:checkEmail`);
 const systemUser = {
@@ -83,7 +83,10 @@ export async function checkEmail() {
                     workOrder = undefined;
                 }
             }
-            const messageBodyText = messageBodyToText(message.body);
+            let messageBodyText = messageBodyToText(message.body);
+            if (messageBodyText.includes(messageHeaderString)) {
+                messageBodyText = messageBodyText.split(messageHeaderString)[0].trim();
+            }
             const receivedDateTime = new Date(message.receivedDateTime);
             const receivedDateTimeString = `${dateToString(receivedDateTime)} ${dateToTimeString(receivedDateTime)}`;
             if (workOrder === undefined) {
@@ -114,7 +117,8 @@ export async function checkEmail() {
             else {
                 await createWorkOrderNote({
                     workOrderId: workOrder.workOrderId,
-                    noteText: `Email received from ${message.from?.emailAddress.address} at ${receivedDateTimeString}:\n\n${messageBodyText}`
+                    noteText: messageBodyText,
+                    recordCreate_dateTime: receivedDateTime,
                 }, fromAddressLowerCase);
             }
             if (workOrder !== undefined && (message.hasAttachments ?? false)) {

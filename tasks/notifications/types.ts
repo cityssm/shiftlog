@@ -1,4 +1,4 @@
-import type { NotificationConfiguration } from "../../types/record.types.js"
+import type { NotificationConfiguration } from '../../types/record.types.js'
 
 export const notificationQueueTypes = [
   'workOrder.create',

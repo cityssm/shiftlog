@@ -194,6 +194,11 @@ process.on('message', (message: SendNotificationWorkerMessage) => {
       }
       break
     }
+    default: {
+      debug(
+        `No notification queue found for message: ${message.notificationQueue}`
+      )
+    }
   }
 })
 

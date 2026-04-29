@@ -29,6 +29,7 @@ import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js'
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js'
 import {
   messageBodyToText,
+  messageHeaderString,
   messageSubjectToWorkOrderNumber
 } from './helpers/messageText.helpers.js'
 
@@ -169,7 +170,11 @@ export async function checkEmail(): Promise<void> {
        * Sanitize the email body
        */
 
-      const messageBodyText = messageBodyToText(message.body)
+      let messageBodyText = messageBodyToText(message.body)
+
+      if (messageBodyText.includes(messageHeaderString)) {
+        messageBodyText = messageBodyText.split(messageHeaderString)[0].trim()
+      }
 
       const receivedDateTime = new Date(message.receivedDateTime as string)
 
@@ -223,7 +228,9 @@ export async function checkEmail(): Promise<void> {
           {
             workOrderId: workOrder.workOrderId,
 
-            noteText: `Email received from ${message.from?.emailAddress.address} at ${receivedDateTimeString}:\n\n${messageBodyText}`
+            noteText: messageBodyText,
+
+            recordCreate_dateTime: receivedDateTime,
           },
           fromAddressLowerCase
         )
@@ -258,6 +265,8 @@ export async function checkEmail(): Promise<void> {
           )
         }
       }
+
+
 
       // Archive the message after processing
       await msGraphApi.archiveMessage(message.id)

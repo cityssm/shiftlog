@@ -50,8 +50,8 @@ function initializeCluster() {
                 debug(`Relaying message to worker: ${pid}`);
                 activeWorker.send(message);
             }
-            tasksChildProcesses.workOrderMsGraph?.send(message);
         }
+        tasksChildProcesses.workOrderMsGraph?.send(message);
     });
     cluster.on('exit', (worker) => {
         debug(`Worker ${(worker.process.pid ?? 0).toString()} has been killed`);

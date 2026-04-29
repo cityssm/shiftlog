@@ -1,5 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js';
 export default async function updateWorkOrderNote(updateWorkOrderNoteForm, userName) {
     const pool = await getShiftLogConnectionPool();
     const result = await pool
@@ -39,9 +40,12 @@ export default async function updateWorkOrderNote(updateWorkOrderNoteForm, userN
                         .input('noteSequence', updateWorkOrderNoteForm.noteSequence)
                         .input('noteTypeFieldId', noteTypeFieldId)
                         .query(`
-              SELECT COUNT(*) as count
-              FROM ShiftLog.WorkOrderNoteFields
-              WHERE workOrderId = @workOrderId
+              SELECT
+                COUNT(*) AS count
+              FROM
+                ShiftLog.WorkOrderNoteFields
+              WHERE
+                workOrderId = @workOrderId
                 AND noteSequence = @noteSequence
                 AND noteTypeFieldId = @noteTypeFieldId
             `);
@@ -54,8 +58,10 @@ export default async function updateWorkOrderNote(updateWorkOrderNoteForm, userN
                             .input('fieldValue', fieldValue)
                             .query(`
                 UPDATE ShiftLog.WorkOrderNoteFields
-                SET fieldValue = @fieldValue
-                WHERE workOrderId = @workOrderId
+                SET
+                  fieldValue = @fieldValue
+                WHERE
+                  workOrderId = @workOrderId
                   AND noteSequence = @noteSequence
                   AND noteTypeFieldId = @noteTypeFieldId
               `);
@@ -68,23 +74,28 @@ export default async function updateWorkOrderNote(updateWorkOrderNoteForm, userN
                             .input('noteTypeFieldId', noteTypeFieldId)
                             .input('fieldValue', fieldValue)
                             .query(`
-                INSERT INTO ShiftLog.WorkOrderNoteFields (
-                  workOrderId,
-                  noteSequence,
-                  noteTypeFieldId,
-                  fieldValue
-                )
-                VALUES (
-                  @workOrderId,
-                  @noteSequence,
-                  @noteTypeFieldId,
-                  @fieldValue
-                )
+                INSERT INTO
+                  ShiftLog.WorkOrderNoteFields (
+                    workOrderId,
+                    noteSequence,
+                    noteTypeFieldId,
+                    fieldValue
+                  )
+                VALUES
+                  (
+                    @workOrderId,
+                    @noteSequence,
+                    @noteTypeFieldId,
+                    @fieldValue
+                  )
               `);
                     }
                 }
             }
         }
+        sendNotificationWorkerMessage('workOrder.update', typeof updateWorkOrderNoteForm.workOrderId === 'string'
+            ? Number.parseInt(updateWorkOrderNoteForm.workOrderId, 10)
+            : updateWorkOrderNoteForm.workOrderId);
     }
     return result.rowsAffected[0] > 0;
 }

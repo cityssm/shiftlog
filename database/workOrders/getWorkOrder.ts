@@ -38,6 +38,7 @@ async function _getWorkOrder(
       w.locationCityProvince,
       w.assignedToId,
       assignedTo.assignedToName,
+      assignedTo.assignedToEmailAddress,
       moreInfoFormDataJson
     FROM
       ShiftLog.WorkOrders w

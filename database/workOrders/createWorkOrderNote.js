@@ -19,12 +19,14 @@ export default async function createWorkOrderNote(createWorkOrderNoteForm, userN
         workOrderId = @workOrderId
     `);
     const nextSequence = sequenceResult.recordset[0].nextSequence;
+    const recordDateTime = createWorkOrderNoteForm.recordCreate_dateTime ?? new Date();
     const result = await pool
         .request()
         .input('workOrderId', createWorkOrderNoteForm.workOrderId)
         .input('noteSequence', nextSequence)
         .input('noteTypeId', createWorkOrderNoteForm.noteTypeId ?? null)
         .input('noteText', createWorkOrderNoteForm.noteText)
+        .input('record_dateTime', recordDateTime)
         .input('userName', userName.slice(0, 30))
         .query(`
       INSERT INTO
@@ -33,7 +35,9 @@ export default async function createWorkOrderNote(createWorkOrderNoteForm, userN
           noteSequence,
           noteTypeId,
           noteText,
+          recordCreate_dateTime,
           recordCreate_userName,
+          recordUpdate_dateTime,
           recordUpdate_userName
         )
       VALUES
@@ -42,7 +46,9 @@ export default async function createWorkOrderNote(createWorkOrderNoteForm, userN
           @noteSequence,
           @noteTypeId,
           @noteText,
+          @record_dateTime,
           @userName,
+          @record_dateTime,
           @userName
         )
     `);

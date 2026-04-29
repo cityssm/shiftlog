@@ -78,9 +78,11 @@ function initializeCluster(): void {
         debug(`Relaying message to worker: ${pid}`)
         activeWorker.send(message)
       }
-
-      tasksChildProcesses.workOrderMsGraph?.send(message)
     }
+
+    // Send all messages to the MsGraph task as well since it may need to react to certain messages
+    // including cache clearing messages and work order updates.
+    tasksChildProcesses.workOrderMsGraph?.send(message)
   })
 
   cluster.on('exit', (worker) => {

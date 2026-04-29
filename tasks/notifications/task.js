@@ -107,6 +107,9 @@ process.on('message', (message) => {
             }
             break;
         }
+        default: {
+            debug(`No notification queue found for message: ${message.notificationQueue}`);
+        }
     }
 });
 if (Object.keys(notificationQueues).length > 0) {

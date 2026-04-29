@@ -8,6 +8,8 @@ export interface CreateWorkOrderNoteForm {
   noteText: string
   noteTypeId?: number | string
   workOrderId: number | string
+
+  recordCreate_dateTime?: Date
 }
 
 export default async function createWorkOrderNote(
@@ -37,6 +39,9 @@ export default async function createWorkOrderNote(
 
   const nextSequence = sequenceResult.recordset[0].nextSequence
 
+  const recordDateTime =
+    createWorkOrderNoteForm.recordCreate_dateTime ?? new Date()
+
   // Insert the note
   const result = await pool
     .request()
@@ -44,6 +49,7 @@ export default async function createWorkOrderNote(
     .input('noteSequence', nextSequence)
     .input('noteTypeId', createWorkOrderNoteForm.noteTypeId ?? null)
     .input('noteText', createWorkOrderNoteForm.noteText)
+    .input('record_dateTime', recordDateTime)
     .input('userName', userName.slice(0, 30)) // Truncate to 30 characters to match database field length
     .query(/* sql */ `
       INSERT INTO
@@ -52,7 +58,9 @@ export default async function createWorkOrderNote(
           noteSequence,
           noteTypeId,
           noteText,
+          recordCreate_dateTime,
           recordCreate_userName,
+          recordUpdate_dateTime,
           recordUpdate_userName
         )
       VALUES
@@ -61,7 +69,9 @@ export default async function createWorkOrderNote(
           @noteSequence,
           @noteTypeId,
           @noteText,
+          @record_dateTime,
           @userName,
+          @record_dateTime,
           @userName
         )
     `)
