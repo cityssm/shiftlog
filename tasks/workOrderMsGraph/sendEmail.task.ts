@@ -2,11 +2,12 @@ import MsGraphMailApi, {
   type MsGraphMailApiConfig,
   MsGraphMailMessageBuilder
 } from '@cityssm/ms-graph-mail'
-import { millisecondsInOneMinute } from '@cityssm/to-millis'
+import { minutesToMillis, secondsToMillis } from '@cityssm/to-millis'
 import UniqueTimedEntryQueue from '@cityssm/unique-timed-entry-queue'
 import { dateToString, dateToTimePeriodString } from '@cityssm/utils-datetime'
 import { Sema } from 'async-sema'
 import Debug from 'debug'
+import { asyncExitHook } from 'exit-hook'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
 import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js'
@@ -26,7 +27,7 @@ const msGraphMailConfig = getConfigProperty('connectors.msGraph')
 
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:sendEmail`)
 
-const workOrderQueue = new UniqueTimedEntryQueue(millisecondsInOneMinute)
+const workOrderQueue = new UniqueTimedEntryQueue(secondsToMillis(30))
 
 const notificationQueueTypes = new Set<Partial<NotificationQueueType>>([
   'workOrder.create',
@@ -134,16 +135,28 @@ export async function sendEmail(): Promise<void> {
         /* html */ `
           <h1>${workOrder.workOrderNumber}</h1>
           <p>
-            <b>${getConfigProperty('workOrders.sectionName')} Type:</b>
+            <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
             ${workOrder.workOrderType}
           </p>
           <p>
-            <b>${getConfigProperty('workOrders.sectionName')} Details:</b><br />
+            <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
             ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
           </p>
         `,
         'html'
       )
+
+    if (workOrder.assignedToId !== undefined) {
+      messageToSend.appendToBody(
+        /* html */ `
+          <p>
+            <b>Assigned To:</b>
+            ${workOrder.assignedToName}
+          </p>
+        `,
+        'html'
+      )
+    }
 
     if (workOrderNotes.length > 0) {
       messageToSend.appendToBody(
@@ -201,3 +214,13 @@ process.on('message', (message: WorkerMessage) => {
     workOrderQueue.enqueue((message as SendNotificationWorkerMessage).recordId)
   }
 })
+
+asyncExitHook(
+  async () => {
+    workOrderQueue.enqueuePending()
+    await sendEmail()
+  },
+  {
+    wait: minutesToMillis(1)
+  }
+)

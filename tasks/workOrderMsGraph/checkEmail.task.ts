@@ -176,6 +176,10 @@ export async function checkEmail(): Promise<void> {
         messageBodyText = messageBodyText.split(messageHeaderString)[0].trim()
       }
 
+      if (messageBodyText.includes('---\n\n**From:**')) {
+        messageBodyText = messageBodyText.split('---\n\n**From:**')[0].trim()
+      }
+
       const receivedDateTime = new Date(message.receivedDateTime as string)
 
       const receivedDateTimeString =

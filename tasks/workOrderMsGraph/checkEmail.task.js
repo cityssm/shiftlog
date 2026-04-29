@@ -87,6 +87,9 @@ export async function checkEmail() {
             if (messageBodyText.includes(messageHeaderString)) {
                 messageBodyText = messageBodyText.split(messageHeaderString)[0].trim();
             }
+            if (messageBodyText.includes('---\n\n**From:**')) {
+                messageBodyText = messageBodyText.split('---\n\n**From:**')[0].trim();
+            }
             const receivedDateTime = new Date(message.receivedDateTime);
             const receivedDateTimeString = `${dateToString(receivedDateTime)} ${dateToTimeString(receivedDateTime)}`;
             if (workOrder === undefined) {
