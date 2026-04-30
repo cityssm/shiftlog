@@ -301,23 +301,23 @@ declare const exports: {
    * Location Address Datalist
    */
 
-  const locationAddress1Input = workOrderFormElement.querySelector(
+  const locationAddress1Input = document.querySelector(
     '#workOrder--locationAddress1'
   ) as HTMLInputElement
 
-  const locationAddress2Input = workOrderFormElement.querySelector(
+  const locationAddress2Input = document.querySelector(
     '#workOrder--locationAddress2'
   ) as HTMLInputElement
 
-  const locationCityProvinceInput = workOrderFormElement.querySelector(
+  const locationCityProvinceInput = document.querySelector(
     '#workOrder--locationCityProvince'
   ) as HTMLInputElement
 
-  const locationLatitudeInput = workOrderFormElement.querySelector(
+  const locationLatitudeInput = document.querySelector(
     '#workOrder--locationLatitude'
   ) as HTMLInputElement
 
-  const locationLongitudeInput = workOrderFormElement.querySelector(
+  const locationLongitudeInput = document.querySelector(
     '#workOrder--locationLongitude'
   ) as HTMLInputElement
 
@@ -598,11 +598,11 @@ declare const exports: {
   ) as HTMLElement | null
 
   if (mapPickerElement !== null) {
-    const latitudeInput = workOrderFormElement.querySelector(
+    const latitudeInput = document.querySelector(
       '#workOrder--locationLatitude'
     ) as HTMLInputElement
 
-    const longitudeInput = workOrderFormElement.querySelector(
+    const longitudeInput = document.querySelector(
       '#workOrder--locationLongitude'
     ) as HTMLInputElement
 

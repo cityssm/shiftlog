@@ -159,11 +159,11 @@
             }
         });
     }
-    const locationAddress1Input = workOrderFormElement.querySelector('#workOrder--locationAddress1');
-    const locationAddress2Input = workOrderFormElement.querySelector('#workOrder--locationAddress2');
-    const locationCityProvinceInput = workOrderFormElement.querySelector('#workOrder--locationCityProvince');
-    const locationLatitudeInput = workOrderFormElement.querySelector('#workOrder--locationLatitude');
-    const locationLongitudeInput = workOrderFormElement.querySelector('#workOrder--locationLongitude');
+    const locationAddress1Input = document.querySelector('#workOrder--locationAddress1');
+    const locationAddress2Input = document.querySelector('#workOrder--locationAddress2');
+    const locationCityProvinceInput = document.querySelector('#workOrder--locationCityProvince');
+    const locationLatitudeInput = document.querySelector('#workOrder--locationLatitude');
+    const locationLongitudeInput = document.querySelector('#workOrder--locationLongitude');
     const locationDatalist = document.querySelector('#datalist--locations');
     if (locationDatalist !== null) {
         const LOCATION_SEARCH_MIN_LENGTH = 3;
@@ -330,8 +330,8 @@
     });
     const mapPickerElement = document.querySelector('#map--locationPicker');
     if (mapPickerElement !== null) {
-        const latitudeInput = workOrderFormElement.querySelector('#workOrder--locationLatitude');
-        const longitudeInput = workOrderFormElement.querySelector('#workOrder--locationLongitude');
+        const latitudeInput = document.querySelector('#workOrder--locationLatitude');
+        const longitudeInput = document.querySelector('#workOrder--locationLongitude');
         let defaultLat = shiftLog.defaultLatitude;
         let defaultLng = shiftLog.defaultLongitude;
         let defaultZoom = 13;
