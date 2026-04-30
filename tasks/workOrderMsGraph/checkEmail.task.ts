@@ -29,8 +29,8 @@ import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js'
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js'
 import {
   messageBodyToText,
-  messageHeaderString,
-  messageSubjectToWorkOrderNumber
+  messageSubjectToWorkOrderNumber,
+  messageTextToLocation
 } from './helpers/messageText.helpers.js'
 
 const msGraphMailConfig = getConfigProperty('connectors.msGraph')
@@ -170,15 +170,7 @@ export async function checkEmail(): Promise<void> {
        * Sanitize the email body
        */
 
-      let messageBodyText = messageBodyToText(message.body)
-
-      if (messageBodyText.includes(messageHeaderString)) {
-        messageBodyText = messageBodyText.split(messageHeaderString)[0].trim()
-      }
-
-      if (messageBodyText.includes('---\n\n**From:**')) {
-        messageBodyText = messageBodyText.split('---\n\n**From:**')[0].trim()
-      }
+      const messageBodyText = messageBodyToText(message.body)
 
       const receivedDateTime = new Date(message.receivedDateTime as string)
 
@@ -204,6 +196,8 @@ export async function checkEmail(): Promise<void> {
           break
         }
 
+        const workOrderLocation = await messageTextToLocation(messageBodyText)
+
         const workOrderId = await createWorkOrder(
           {
             workOrderTypeId: workOrderType.workOrderTypeId,
@@ -215,9 +209,11 @@ export async function checkEmail(): Promise<void> {
             requestorIsSubscribed: '1',
             requestorName: message.from?.emailAddress.name ?? '',
 
-            locationAddress1: '',
-            locationAddress2: '',
-            locationCityProvince: '',
+            locationAddress1: workOrderLocation?.address1 ?? '',
+            locationAddress2: workOrderLocation?.address2 ?? '',
+            locationCityProvince: workOrderLocation?.cityProvince ?? '',
+            locationLatitude: workOrderLocation?.latitude ?? '',
+            locationLongitude: workOrderLocation?.longitude ?? '',
 
             workOrderOpenDateTimeString: receivedDateTimeString,
 
@@ -234,7 +230,7 @@ export async function checkEmail(): Promise<void> {
 
             noteText: messageBodyText,
 
-            recordCreate_dateTime: receivedDateTime,
+            recordCreate_dateTime: receivedDateTime
           },
           fromAddressLowerCase
         )
@@ -248,8 +244,9 @@ export async function checkEmail(): Promise<void> {
         const attachments = await msGraphApi.listMessageAttachments(message.id)
 
         for (const attachment of attachments) {
-
-          const storagePaths = getAttachmentStoragePathForFileName(attachment.name)
+          const storagePaths = getAttachmentStoragePathForFileName(
+            attachment.name
+          )
 
           const fileSize = await writeAttachmentToFileSystem(
             storagePaths.filePath,
@@ -269,8 +266,6 @@ export async function checkEmail(): Promise<void> {
           )
         }
       }
-
-
 
       // Archive the message after processing
       await msGraphApi.archiveMessage(message.id)

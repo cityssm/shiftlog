@@ -12,7 +12,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
 import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js';
-import { messageBodyToText, messageHeaderString, messageSubjectToWorkOrderNumber } from './helpers/messageText.helpers.js';
+import { messageBodyToText, messageSubjectToWorkOrderNumber, messageTextToLocation } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:checkEmail`);
 const systemUser = {
@@ -83,13 +83,7 @@ export async function checkEmail() {
                     workOrder = undefined;
                 }
             }
-            let messageBodyText = messageBodyToText(message.body);
-            if (messageBodyText.includes(messageHeaderString)) {
-                messageBodyText = messageBodyText.split(messageHeaderString)[0].trim();
-            }
-            if (messageBodyText.includes('---\n\n**From:**')) {
-                messageBodyText = messageBodyText.split('---\n\n**From:**')[0].trim();
-            }
+            const messageBodyText = messageBodyToText(message.body);
             const receivedDateTime = new Date(message.receivedDateTime);
             const receivedDateTimeString = `${dateToString(receivedDateTime)} ${dateToTimeString(receivedDateTime)}`;
             if (workOrder === undefined) {
@@ -102,6 +96,7 @@ export async function checkEmail() {
                     debug('No work order types found. Cannot create work order from email.');
                     break;
                 }
+                const workOrderLocation = await messageTextToLocation(messageBodyText);
                 const workOrderId = await createWorkOrder({
                     workOrderTypeId: workOrderType.workOrderTypeId,
                     workOrderDetails: messageBodyText,
@@ -109,9 +104,11 @@ export async function checkEmail() {
                     requestorContactInfo: fromAddressLowerCase,
                     requestorIsSubscribed: '1',
                     requestorName: message.from?.emailAddress.name ?? '',
-                    locationAddress1: '',
-                    locationAddress2: '',
-                    locationCityProvince: '',
+                    locationAddress1: workOrderLocation?.address1 ?? '',
+                    locationAddress2: workOrderLocation?.address2 ?? '',
+                    locationCityProvince: workOrderLocation?.cityProvince ?? '',
+                    locationLatitude: workOrderLocation?.latitude ?? '',
+                    locationLongitude: workOrderLocation?.longitude ?? '',
                     workOrderOpenDateTimeString: receivedDateTimeString,
                     workOrderDueDateTimeString: ''
                 }, systemUser);
@@ -121,7 +118,7 @@ export async function checkEmail() {
                 await createWorkOrderNote({
                     workOrderId: workOrder.workOrderId,
                     noteText: messageBodyText,
-                    recordCreate_dateTime: receivedDateTime,
+                    recordCreate_dateTime: receivedDateTime
                 }, fromAddressLowerCase);
             }
             if (workOrder !== undefined && (message.hasAttachments ?? false)) {

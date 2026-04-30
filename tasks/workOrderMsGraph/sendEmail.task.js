@@ -81,7 +81,7 @@ export async function sendEmail() {
             ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
           </p>
         `, 'html');
-        if (workOrder.assignedToId !== undefined) {
+        if (workOrder.assignedToId !== null) {
             messageToSend.appendToBody(`
           <p>
             <b>Assigned To:</b>
@@ -93,7 +93,7 @@ export async function sendEmail() {
             messageToSend.appendToBody(`
           <h2>Notes:</h2>
         `, 'html');
-            for (const note of workOrderNotes) {
+            for (const [index, note] of workOrderNotes.entries()) {
                 messageToSend.appendToBody(`
             <h3>
               ${note.recordCreate_userName} -
@@ -104,6 +104,9 @@ export async function sendEmail() {
               ${note.noteText.replaceAll('\n', '<br />')}
             </p>
           `, 'html');
+                if (index < workOrderNotes.length - 1) {
+                    messageToSend.appendToBody('<hr />', 'html');
+                }
             }
         }
         await msGraphApi.sendMessage(messageToSend.build());

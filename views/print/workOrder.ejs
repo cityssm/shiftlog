@@ -11,9 +11,15 @@
   </div>
 </div>
 
+<p class="title is-4"><%= workOrder.workOrderTitle %></p>
+
 <div class="columns">
   <div class="column">
     <div class="box avoid-page-break">
+      <div class="field">
+        <label class="label">Details</label>
+        <p style="white-space: pre-wrap;"><%= workOrder.workOrderDetails || '(No details)' %></p>
+      </div>
       <div class="columns">
         <div class="column">
           <div class="field">
@@ -34,13 +40,6 @@
           </div>
         </div>
       </div>
-      <div class="field">
-        <label class="label">Details</label>
-        <% if (workOrder.workOrderTitle) { %>
-        <p class="has-text-weight-semibold"><%= workOrder.workOrderTitle %></p>
-        <% } %>
-        <p style="white-space: pre-wrap;"><%= workOrder.workOrderDetails || '(No details)' %></p>
-      </div>
       <% if (workOrder.tags && workOrder.tags.length > 0) { %>
       <div class="field">
         <label class="label">Tags</label>
@@ -48,6 +47,9 @@
       </div>
       <% } %>
     </div>
+    
+  </div>
+  <div class="column">
     <div class="box avoid-page-break">
       <div class="field">
         <label class="label">Requestor Name</label>
@@ -60,27 +62,6 @@
       <div class="field">
         <label class="label">Assigned To</label>
         <p><%= workOrder.assignedToName ?? '(Not Assigned)' %></p>
-      </div>
-    </div>
-  </div>
-  <div class="column">
-    <div class="box avoid-page-break">
-      <div class="field">
-        <label class="label">Location Address</label>
-        <p>
-          <% if (workOrder.locationAddress1) { %>
-          <%= workOrder.locationAddress1 %><br />
-          <% } %>
-          <% if (workOrder.locationAddress2) { %>
-          <%= workOrder.locationAddress2 %><br />
-          <% } %>
-          <% if (workOrder.locationCityProvince) { %>
-          <%= workOrder.locationCityProvince %>
-          <% } %>
-          <% if (!workOrder.locationAddress1 && !workOrder.locationAddress2 && !workOrder.locationCityProvince) { %>
-          (No address)
-          <% } %>
-        </p>
       </div>
     </div>
     <% if (thumbnailAttachment) { %>
@@ -131,6 +112,25 @@
           <%= dateTimeFunctions.dateToTimeString(workOrder.workOrderCloseDateTime) %>
           <% } else { %>
           (Not closed)
+          <% } %>
+        </p>
+      </div>
+    </div>
+    <div class="box avoid-page-break">
+      <div class="field">
+        <label class="label">Location Address</label>
+        <p>
+          <% if (workOrder.locationAddress1) { %>
+          <%= workOrder.locationAddress1 %><br />
+          <% } %>
+          <% if (workOrder.locationAddress2) { %>
+          <%= workOrder.locationAddress2 %><br />
+          <% } %>
+          <% if (workOrder.locationCityProvince) { %>
+          <%= workOrder.locationCityProvince %>
+          <% } %>
+          <% if (!workOrder.locationAddress1 && !workOrder.locationAddress2 && !workOrder.locationCityProvince) { %>
+          (No address)
           <% } %>
         </p>
       </div>

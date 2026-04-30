@@ -146,7 +146,7 @@ export async function sendEmail(): Promise<void> {
         'html'
       )
 
-    if (workOrder.assignedToId !== undefined) {
+    if (workOrder.assignedToId !== null) {
       messageToSend.appendToBody(
         /* html */ `
           <p>
@@ -166,7 +166,7 @@ export async function sendEmail(): Promise<void> {
         'html'
       )
 
-      for (const note of workOrderNotes) {
+      for (const [index, note] of workOrderNotes.entries()) {
         messageToSend.appendToBody(
           /* html */ `
             <h3>
@@ -180,6 +180,10 @@ export async function sendEmail(): Promise<void> {
           `,
           'html'
         )
+
+        if (index < workOrderNotes.length - 1) {
+          messageToSend.appendToBody('<hr />', 'html')
+        }
       }
     }
 

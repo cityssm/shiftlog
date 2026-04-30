@@ -81,6 +81,33 @@
   <div class="columns">
     <div class="column">
       <div class="box">
+        <div class="field">
+          <label class="label" for="workOrder--workOrderTitle">Title</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--workOrderTitle"
+              name="workOrderTitle"
+              type="text"
+              value="<%= workOrder.workOrderTitle ?? '' %>"
+              maxlength="200"
+              <% if (isCreate) { %>autofocus<% } %>
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="workOrder--workOrderDetails">Details</label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="workOrder--workOrderDetails"
+              name="workOrderDetails"
+              rows="6"
+              <% if (!isEdit) { %>readonly<% } %>
+            ><%= workOrder.workOrderDetails ?? '' %></textarea>
+          </div>
+        </div>
         <div class="columns">
           <div class="column">
             <div class="field">
@@ -126,26 +153,26 @@
                     <% let workOrderStatusFound = false %>
                     <% for (const workOrderStatus of workOrderStatuses) { %>
                       <option
-                      value="<%= workOrderStatus.dataListItemId %>"
-                      <% if (workOrder.workOrderStatusDataListItemId === workOrderStatus.dataListItemId) { %>
+                        value="<%= workOrderStatus.dataListItemId %>"
+                        <% if (workOrder.workOrderStatusDataListItemId === workOrderStatus.dataListItemId) { %>
                         <% workOrderStatusFound = true; %>
                         selected
                         <% } %>
-                        >
+                      >
                         <%= workOrderStatus.dataListItem %>
                       </option>
-                      <% } %>
-                      <% if (!workOrderStatusFound && workOrder.workOrderStatusDataListItemId) { %>
-                        <option value="<%= workOrder.workOrderStatusDataListItemId %>" selected>
-                          <%= workOrder.workOrderStatusDataListItem %>
-                          <%= isEdit ? "(Inactive)" : "" %>
-                        </option>
-                        <% } %>
-                      </select>
-                    </div>
-                  </div>
+                    <% } %>
+                    <% if (!workOrderStatusFound && workOrder.workOrderStatusDataListItemId) { %>
+                      <option value="<%= workOrder.workOrderStatusDataListItemId %>" selected>
+                        <%= workOrder.workOrderStatusDataListItem %>
+                        <%= isEdit ? "(Inactive)" : "" %>
+                      </option>
+                    <% } %>
+                  </select>
                 </div>
               </div>
+            </div>
+          </div>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrder--workOrderPriorityDataListItemId">Priority</label>
@@ -177,32 +204,6 @@
                 </div>
               </div>
         </div>
-        <div class="field">
-          <label class="label" for="workOrder--workOrderTitle">Title</label>
-          <div class="control">
-            <input
-              class="input"
-              id="workOrder--workOrderTitle"
-              name="workOrderTitle"
-              type="text"
-              value="<%= workOrder.workOrderTitle ?? '' %>"
-              maxlength="200"
-              <% if (!isEdit) { %>readonly<% } %>
-            />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label" for="workOrder--workOrderDetails">Details</label>
-          <div class="control">
-            <textarea
-              class="textarea"
-              id="workOrder--workOrderDetails"
-              name="workOrderDetails"
-              rows="6"
-              <% if (!isEdit) { %>readonly<% } %>
-            ><%= workOrder.workOrderDetails ?? '' %></textarea>
-          </div>
-        </div>
         <% if (!isCreate) { %>
           <div class="columns is-mobile mb-0">
             <div class="column">
@@ -223,6 +224,9 @@
           </div>
         <% } %>
       </div>
+      
+    </div>
+    <div class="column">
       <div class="box">
         <div class="field">
           <label class="label" for="workOrder--requestorName">Requestor Name</label>
@@ -317,120 +321,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="column">
-      <div class="box">
-        <div class="field">
-          <label class="label" for="workOrder--locationAddress1">Location Address</label>
-          <div class="control">
-            <input
-              class="input"
-              id="workOrder--locationAddress1"
-              name="locationAddress1"
-              type="text"
-              value="<%= workOrder.locationAddress1 ?? '' %>"
-              placeholder="Address Line 1"
-              maxlength="100"
-              <% if (isEdit) { %>list="datalist--locations"<% } %>
-              <% if (!isEdit) { %>readonly<% } %>
-            />
-            <% if (isEdit) { %>
-            <datalist id="datalist--locations"></datalist>
-            <% } %>
-          </div>
-        </div>
-        <div class="field">
-          <div class="control">
-            <input
-              class="input"
-              id="workOrder--locationAddress2"
-              name="locationAddress2"
-              type="text"
-              value="<%= workOrder.locationAddress2 ?? '' %>"
-              placeholder="Address Line 2"
-              maxlength="100"
-              aria-label="Address Line 2"
-              <% if (!isEdit) { %>readonly<% } %>
-            />
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label" for="workOrder--locationCityProvince">City/Province</label>
-          <div class="control">
-            <input
-              class="input"
-              id="workOrder--locationCityProvince"
-              name="locationCityProvince"
-              type="text"
-              value="<%= workOrder.locationCityProvince ?? '' %>"
-              maxlength="50"
-              <% if (!isEdit) { %>readonly<% } %>
-            />
-          </div>
-        </div>
-
-        <% if (isEdit) { %>
-        <div class="field">
-          <label class="label">Location Coordinates</label>
-          <div class="columns is-mobile is-variable is-2">
-            <div class="column">
-              <div class="control">
-                <input
-                  class="input"
-                  id="workOrder--locationLatitude"
-                  name="locationLatitude"
-                  type="number"
-                  step="0.0000001"
-                  min="-90"
-                  max="90"
-                  value="<%= workOrder.locationLatitude ?? '' %>"
-                  placeholder="Latitude"
-                />
-              </div>
-            </div>
-            <div class="column">
-              <div class="control">
-                <input
-                  class="input"
-                  id="workOrder--locationLongitude"
-                  name="locationLongitude"
-                  type="number"
-                  step="0.0000001"
-                  min="-180"
-                  max="180"
-                  value="<%= workOrder.locationLongitude ?? '' %>"
-                  placeholder="Longitude"
-                />
-              </div>
-            </div>
-          </div>
-          <div id="map--locationPicker" style="height: 300px; margin-top: 0.5rem;" class="has-background-grey-lighter"></div>
-          <p class="help">Click on the map to set location coordinates.</p>
-        </div>
-        <% } else if (workOrder.locationLatitude && workOrder.locationLongitude) { %>
-        <div class="field">
-          <label class="label">Location Coordinates</label>
-          <p class="is-size-7">
-            <%= workOrder.locationLatitude %>, <%= workOrder.locationLongitude %>
-          </p>
-          <div id="map--locationView" data-lat="<%= workOrder.locationLatitude %>" data-lng="<%= workOrder.locationLongitude %>" style="height: 300px; margin-top: 0.5rem;" class="has-background-grey-lighter"></div>
-        </div>
-        <% } %>
-      </div>
-      <% if (!isCreate && thumbnailAttachment) { %>
-      <div class="box">
-        <label class="label">Thumbnail Image</label>
-        <figure class="image">
-          <img 
-            src="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= thumbnailAttachment.workOrderAttachmentId %>/inline" 
-            alt="<%= (thumbnailAttachment.attachmentDescription || 'Thumbnail') %>"
-            style="max-width: 100%; height: auto;"
-            loading="lazy"
-          />
-        </figure>
-      </div>
-      <% } %>
       <div class="box">
         <div class="field">
           <label class="label" for="workOrder--workOrderOpenDateTimeString">Open Date/Time</label>
@@ -531,6 +421,129 @@
         </div>
         <% } %>
       </div>
+    </div>
+  </div>
+  <div class="box">
+    <div class="columns">
+      <div class="column">
+        <div class="field">
+          <label class="label" for="workOrder--locationAddress1">Location Address</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--locationAddress1"
+              name="locationAddress1"
+              type="text"
+              value="<%= workOrder.locationAddress1 ?? '' %>"
+              placeholder="Address Line 1"
+              maxlength="100"
+              <% if (isEdit) { %>list="datalist--locations"<% } %>
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+            <% if (isEdit) { %>
+            <datalist id="datalist--locations"></datalist>
+            <% } %>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--locationAddress2"
+              name="locationAddress2"
+              type="text"
+              value="<%= workOrder.locationAddress2 ?? '' %>"
+              placeholder="Address Line 2"
+              maxlength="100"
+              aria-label="Address Line 2"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="workOrder--locationCityProvince">City/Province</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--locationCityProvince"
+              name="locationCityProvince"
+              type="text"
+              value="<%= workOrder.locationCityProvince ?? '' %>"
+              maxlength="50"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
+          </div>
+        </div>
+      </div>
+      <% if (isEdit || (workOrder.locationLatitude && workOrder.locationLongitude)) { %>
+        <div class="column">
+          <% if (isEdit) { %>
+          <div class="field">
+            <label class="label">Location Coordinates</label>
+            <div class="columns is-mobile is-variable is-2">
+              <div class="column">
+                <div class="control">
+                  <input
+                    class="input"
+                    id="workOrder--locationLatitude"
+                    name="locationLatitude"
+                    type="number"
+                    step="0.0000001"
+                    min="-90"
+                    max="90"
+                    value="<%= workOrder.locationLatitude ?? '' %>"
+                    placeholder="Latitude"
+                  />
+                </div>
+              </div>
+              <div class="column">
+                <div class="control">
+                  <input
+                    class="input"
+                    id="workOrder--locationLongitude"
+                    name="locationLongitude"
+                    type="number"
+                    step="0.0000001"
+                    min="-180"
+                    max="180"
+                    value="<%= workOrder.locationLongitude ?? '' %>"
+                    placeholder="Longitude"
+                  />
+                </div>
+              </div>
+            </div>
+            <div id="map--locationPicker" style="height: 300px; margin-top: 0.5rem;" class="has-background-grey-lighter"></div>
+            <p class="help">Click on the map to set location coordinates.</p>
+          </div>
+          <% } else if (workOrder.locationLatitude && workOrder.locationLongitude) { %>
+          <div class="field">
+            <label class="label">Location Coordinates</label>
+            <p class="is-size-7">
+              <%= workOrder.locationLatitude %>, <%= workOrder.locationLongitude %>
+            </p>
+            <div id="map--locationView" data-lat="<%= workOrder.locationLatitude %>" data-lng="<%= workOrder.locationLongitude %>" style="height: 300px; margin-top: 0.5rem;" class="has-background-grey-lighter"></div>
+          </div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+  <div class="columns">
+    <div class="column">
+      <% if (!isCreate && thumbnailAttachment) { %>
+      <div class="box">
+        <label class="label">Thumbnail Image</label>
+        <figure class="image">
+          <img 
+            src="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= thumbnailAttachment.workOrderAttachmentId %>/inline" 
+            alt="<%= (thumbnailAttachment.attachmentDescription || 'Thumbnail') %>"
+            style="max-width: 100%; height: auto;"
+            loading="lazy"
+          />
+        </figure>
+      </div>
+      <% } %>
+      
     </div>
   </div>
 

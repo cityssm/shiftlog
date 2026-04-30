@@ -61,6 +61,9 @@
     "windows:uninstall:itHelpdesk": "node ./windowsService-uninstall.js --config data/itHelpdesk.config.js",
     "windows:uninstall:legalAgreements": "node ./windowsService-uninstall.js --config data/legalAgreements.config.js"
   },
+  "overrides": {
+    "uuid": "14.0.0"
+  },
   "dependencies": {
     "@cacheable/node-cache": "^3.0.0",
     "@cityssm/authentication-helper": "^0.6.2",
@@ -129,7 +132,7 @@
     "@types/session-file-store": "^1.2.6",
     "@types/simpleheat": "^0.4.3",
     "axe-core": "^4.11.4",
-    "cypress": "^15.14.1",
+    "cypress": "^15.14.2",
     "cypress-axe": "^1.7.0",
     "editorconfig-checker": "^6.1.1",
     "eslint-config-cityssm": "^39.1.0",
