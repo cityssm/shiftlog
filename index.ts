@@ -11,12 +11,12 @@ import { runConnectivityTestUntilSuccess } from './database/app/runConnectivityT
 import { DEBUG_NAMESPACE } from './debug.config.js'
 import { getConfigProperty } from './helpers/config.helpers.js'
 import { validateSystemLists } from './helpers/startup.helpers.js'
+import packageJson from './package.json' with { type: 'json' }
 import {
   type InitializeTasksReturn,
   initializeTasks
 } from './tasks/taskInitializer.js'
 import type { WorkerMessage } from './types/application.types.js'
-import version from './version.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:index`)
 
@@ -39,7 +39,7 @@ function initializeCluster(): void {
 
   debug(`Primary pid:   ${process.pid}`)
   debug(`Primary title: ${process.title}`)
-  debug(`Version:       ${version}`)
+  debug(`Version:       ${packageJson.version}`)
   debug(`Launching ${processCount} worker processes...`)
 
   /*

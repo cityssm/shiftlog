@@ -18,6 +18,7 @@ import { getSafeRedirectUrl } from '../helpers/authentication.helpers.js';
 import { getCachedSettingValue } from '../helpers/cache/settings.cache.js';
 import * as configFunctions from '../helpers/config.helpers.js';
 import { getCsrfSecret } from '../helpers/settings.helpers.js';
+import packageJson from '../package.json' with { type: 'json' };
 import routerAdmin from '../routes/admin.js';
 import routerApi from '../routes/api.js';
 import routerDashboard from '../routes/dashboard.js';
@@ -25,7 +26,6 @@ import routerLogin from '../routes/login.js';
 import routerShifts from '../routes/shifts.js';
 import routerTimesheets from '../routes/timesheets.js';
 import routerWorkOrders from '../routes/workOrders.js';
-import { version } from '../version.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:app:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`);
 const sessionCookieName = `${configFunctions.getConfigProperty('session.cookieName')}-${configFunctions.getConfigProperty('application.instance')}`;
 function hasSession(request) {
@@ -116,7 +116,7 @@ const sessionCheckHandler = (request, response, next) => {
     response.redirect(`${urlPrefix}/login?redirect=${encodeURIComponent(redirectUrl)}`);
 };
 app.use((request, response, next) => {
-    response.locals.buildNumber = version;
+    response.locals.buildNumber = packageJson.version;
     response.locals.user = request.session.user;
     response.locals.configFunctions = configFunctions;
     response.locals.dateTimeFunctions = dateTimeFunctions;
