@@ -55,10 +55,13 @@ declare const bulmaJS: BulmaJS
   }
 
   function truncateText(text: string, maxLength: number): string {
-    if (text.length <= maxLength) {
-      return text
+    const firstParagraph = text.split('\n')[0]
+
+    if (!text.includes('\n') && firstParagraph.length <= maxLength) {
+      return firstParagraph
     }
-    return `${text.slice(0, maxLength)}…`
+
+    return `${firstParagraph.slice(0, maxLength)}…`
   }
 
   /**
@@ -128,7 +131,6 @@ declare const bulmaJS: BulmaJS
           note.recordCreate_userName === exports.shiftLog.userName)
 
       const truncatedText = truncateText(note.noteText, 200)
-      const needsExpand = note.noteText.length > 200
 
       const noteTypeLabel =
         note.noteType !== null && note.noteType !== undefined
@@ -182,11 +184,7 @@ declare const bulmaJS: BulmaJS
                 }
                 <br />
                 <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
-                ${
-                  needsExpand
-                    ? `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>`
-                    : ''
-                }
+                <a class="view-full-note" data-note-sequence="${note.noteSequence}" href="#">View Full Note</a>
               </p>
               ${fieldsHTML}
             </div>
@@ -222,33 +220,26 @@ declare const bulmaJS: BulmaJS
       `
 
       // Add event listeners
-      if (needsExpand) {
-        const viewFullLink = noteElement.querySelector(
-          '.view-full-note'
-        ) as HTMLAnchorElement
-        viewFullLink.addEventListener('click', (event) => {
+      noteElement
+        .querySelector('.view-full-note')
+        ?.addEventListener('click', (event) => {
           event.preventDefault()
           showFullNoteModal(note)
         })
-      }
 
-      if (canEdit) {
-        const editLink = noteElement.querySelector(
-          '.edit-note'
-        ) as HTMLAnchorElement
-        editLink.addEventListener('click', (event) => {
+      noteElement
+        .querySelector('.edit-note')
+        ?.addEventListener('click', (event) => {
           event.preventDefault()
           showEditNoteModal(note)
         })
 
-        const deleteLink = noteElement.querySelector(
-          '.delete-note'
-        ) as HTMLAnchorElement
-        deleteLink.addEventListener('click', (event) => {
+      noteElement
+        .querySelector('.delete-note')
+        ?.addEventListener('click', (event) => {
           event.preventDefault()
           deleteNote(note.noteSequence)
         })
-      }
 
       notesContainerElement.append(noteElement)
     }
@@ -1163,7 +1154,8 @@ declare const bulmaJS: BulmaJS
               noteSequence
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteWorkOrderNoteResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteWorkOrderNoteResponse
               if (responseJSON.success) {
                 loadNotes()
               } else {

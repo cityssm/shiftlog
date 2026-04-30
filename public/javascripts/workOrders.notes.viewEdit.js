@@ -9,10 +9,11 @@
         return;
     }
     function truncateText(text, maxLength) {
-        if (text.length <= maxLength) {
-            return text;
+        const firstParagraph = text.split('\n')[0];
+        if (!text.includes('\n') && firstParagraph.length <= maxLength) {
+            return firstParagraph;
         }
-        return `${text.slice(0, maxLength)}…`;
+        return `${firstParagraph.slice(0, maxLength)}…`;
     }
     function loadDataLists(dataListKeys, callback) {
         if (dataListKeys.size === 0) {
@@ -54,7 +55,6 @@
                 (exports.shiftLog.userCanManageWorkOrders ||
                     note.recordCreate_userName === exports.shiftLog.userName);
             const truncatedText = truncateText(note.noteText, 200);
-            const needsExpand = note.noteText.length > 200;
             const noteTypeLabel = note.noteType !== null && note.noteType !== undefined
                 ? `<span class="tag is-info is-light">${cityssm.escapeHTML(note.noteType)}</span>`
                 : '';
@@ -98,9 +98,7 @@
                 : '<small class="has-text-grey">(edited)</small>'}
                 <br />
                 <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
-                ${needsExpand
-                ? `<a href="#" class="view-full-note" data-note-sequence="${note.noteSequence}">View Full Note</a>`
-                : ''}
+                <a class="view-full-note" data-note-sequence="${note.noteSequence}" href="#">View Full Note</a>
               </p>
               ${fieldsHTML}
             </div>
@@ -132,25 +130,24 @@
                 : ''}
         </article>
       `;
-            if (needsExpand) {
-                const viewFullLink = noteElement.querySelector('.view-full-note');
-                viewFullLink.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    showFullNoteModal(note);
-                });
-            }
-            if (canEdit) {
-                const editLink = noteElement.querySelector('.edit-note');
-                editLink.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    showEditNoteModal(note);
-                });
-                const deleteLink = noteElement.querySelector('.delete-note');
-                deleteLink.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    deleteNote(note.noteSequence);
-                });
-            }
+            noteElement
+                .querySelector('.view-full-note')
+                ?.addEventListener('click', (event) => {
+                event.preventDefault();
+                showFullNoteModal(note);
+            });
+            noteElement
+                .querySelector('.edit-note')
+                ?.addEventListener('click', (event) => {
+                event.preventDefault();
+                showEditNoteModal(note);
+            });
+            noteElement
+                .querySelector('.delete-note')
+                ?.addEventListener('click', (event) => {
+                event.preventDefault();
+                deleteNote(note.noteSequence);
+            });
             notesContainerElement.append(noteElement);
         }
     }
