@@ -77,7 +77,7 @@
     "@cityssm/fa-glow": "^0.1.0",
     "@cityssm/fontawesome-free-lists": "^0.1.0",
     "@cityssm/jsbarcode-svg": "^0.2.0",
-    "@cityssm/ms-graph-mail": "^0.2.0",
+    "@cityssm/ms-graph-mail": "^0.3.0",
     "@cityssm/ms-teams-workflow-webhook": "^0.1.1",
     "@cityssm/mssql-multi-pool": "^5.1.4",
     "@cityssm/ntfy-publish": "^1.1.1",

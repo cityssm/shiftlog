@@ -1,6 +1,7 @@
 import MsGraphMailApi, { wellKnownFolderNames } from '@cityssm/ms-graph-mail';
 import { dateToString, dateToTimeString } from '@cityssm/utils-datetime';
 import Debug from 'debug';
+import addWorkOrderSubscriber from '../../database/workOrders/addWorkOrderSubscriber.js';
 import createWorkOrder from '../../database/workOrders/createWorkOrder.js';
 import createWorkOrderAttachment from '../../database/workOrders/createWorkOrderAttachment.js';
 import createWorkOrderNote from '../../database/workOrders/createWorkOrderNote.js';
@@ -11,6 +12,7 @@ import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
 import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
+import { getSubscriberEmailAddresses } from './helpers/emailAddress.helpers.js';
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js';
 import { messageBodyToText, messageSubjectToWorkOrderNumber, messageTextToLocation } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
@@ -61,6 +63,7 @@ export async function checkEmail() {
         debug(`Found ${messages.length} message(s).`);
         let workOrderType;
         for (const message of messages) {
+            await msGraphApi.markMessageAsRead(message.id);
             const fromAddressLowerCase = message.from?.emailAddress.address.toLowerCase() ?? '';
             if (fromAddressLowerCase === '' ||
                 !(await fromEmailAddressIsAllowed(fromAddressLowerCase))) {
@@ -113,6 +116,10 @@ export async function checkEmail() {
                     workOrderDueDateTimeString: ''
                 }, systemUser);
                 workOrder = await getWorkOrder(workOrderId);
+                const subscribersEmailAddresses = getSubscriberEmailAddresses(message);
+                for (const subscriberEmailAddress of subscribersEmailAddresses) {
+                    await addWorkOrderSubscriber(workOrderId, subscriberEmailAddress, systemUser.userName);
+                }
             }
             else {
                 await createWorkOrderNote({

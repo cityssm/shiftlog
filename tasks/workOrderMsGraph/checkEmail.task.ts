@@ -12,6 +12,7 @@ import {
 } from '@cityssm/utils-datetime'
 import Debug from 'debug'
 
+import addWorkOrderSubscriber from '../../database/workOrders/addWorkOrderSubscriber.js'
 import createWorkOrder from '../../database/workOrders/createWorkOrder.js'
 import createWorkOrderAttachment from '../../database/workOrders/createWorkOrderAttachment.js'
 import createWorkOrderNote from '../../database/workOrders/createWorkOrderNote.js'
@@ -26,6 +27,7 @@ import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helper
 import type { WorkOrderType } from '../../types/record.types.js'
 
 import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js'
+import { getSubscriberEmailAddresses } from './helpers/emailAddress.helpers.js'
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js'
 import {
   messageBodyToText,
@@ -113,6 +115,8 @@ export async function checkEmail(): Promise<void> {
     let workOrderType: WorkOrderType | undefined
 
     for (const message of messages) {
+      await msGraphApi.markMessageAsRead(message.id)
+
       /*
        * Verify that the message is from an allowed email address before doing any further processing.
        * If the message is from a disallowed email address, archive it and skip to the next message.
@@ -223,6 +227,16 @@ export async function checkEmail(): Promise<void> {
         )
 
         workOrder = await getWorkOrder(workOrderId)
+
+        const subscribersEmailAddresses = getSubscriberEmailAddresses(message)
+
+        for (const subscriberEmailAddress of subscribersEmailAddresses) {
+          await addWorkOrderSubscriber(
+            workOrderId,
+            subscriberEmailAddress,
+            systemUser.userName
+          )
+        }
       } else {
         await createWorkOrderNote(
           {
