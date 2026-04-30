@@ -179,7 +179,7 @@ GO
 -- TAGS
 --
 CREATE TABLE ShiftLog.Tags (
-  tagName VARCHAR(50) NOT NULL,
+  tagName NVARCHAR(50) NOT NULL,
   instance VARCHAR(20) NOT NULL,
   tagBackgroundColor CHAR(6) NOT NULL DEFAULT '000000',
   tagTextColor CHAR(6) NOT NULL DEFAULT 'FFFFFF',
@@ -446,7 +446,7 @@ CREATE TABLE ShiftLog.WorkOrders (
 GO
 CREATE TABLE ShiftLog.WorkOrderTags (
   workOrderId INT NOT NULL,
-  tagName VARCHAR(50) NOT NULL,
+  tagName NVARCHAR(50) NOT NULL,
   PRIMARY KEY (workOrderId, tagName),
   FOREIGN KEY (workOrderId) REFERENCES ShiftLog.WorkOrders (workOrderId)
 )
