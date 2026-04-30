@@ -7,6 +7,7 @@ export const workOrderReports = {
         w.workOrderNumber,
         wType.workOrderType,
         wStatus.dataListItem AS workOrderStatus,
+        w.workOrderTitle,
         w.workOrderDetails,
         w.workOrderOpenDateTime,
         w.workOrderDueDateTime,
@@ -68,6 +69,7 @@ export const workOrderReports = {
         w.workOrderNumber,
         wType.workOrderType,
         wStatus.dataListItem AS workOrderStatus,
+        w.workOrderTitle,
         w.workOrderDetails,
         w.workOrderOpenDateTime,
         w.workOrderDueDateTime,
@@ -127,6 +129,7 @@ export const workOrderReports = {
         sql: `
       SELECT
         w.workOrderNumber,
+        w.workOrderTitle,
         c.workOrderCostId,
         c.costDescription,
         c.costAmount,
@@ -162,6 +165,7 @@ export const workOrderReports = {
         sql: `
       SELECT
         w.workOrderNumber,
+        w.workOrderTitle,
         n.noteSequence,
         n.noteText,
         n.recordCreate_userName,
@@ -196,6 +200,7 @@ export const workOrderReports = {
         sql: `
       SELECT
         wo.workOrderNumber,
+        wo.workOrderTitle,
         wot.tagName
       FROM
         ShiftLog.WorkOrderTags wot
