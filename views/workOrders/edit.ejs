@@ -669,33 +669,7 @@
         </li>
         <% } %>
         <li>
-          <a class="<%= hasMoreInfoForm ? '' : 'is-active' %>" href="#tab--subscribers" title="Subscribers">
-            <div class="columns is-mobile is-1">
-              <div class="column is-narrow">
-                <span class="icon"><i class="fa-solid fa-users"></i></span>
-              </div>
-              <div class="column is-hidden-touch">
-                Subscribers
-                <span class="tag is-rounded ml-2" id="subscribersCount">0</span>
-              </div>
-            </div>
-          </a>
-        </li>
-        <li>
-          <a href="#tab--milestones" title="Milestones">
-            <div class="columns is-mobile is-1">
-              <div class="column is-narrow">
-                <span class="icon"><i class="fa-solid fa-list-check"></i></span>
-              </div>
-              <div class="column is-hidden-touch">
-                Milestones
-                <span class="tag is-rounded ml-2" id="milestonesCount">0</span>
-              </div>
-            </div>
-          </a>
-        </li> 
-        <li>
-          <a href="#tab--notes" title="Notes">
+          <a class="<%= hasMoreInfoForm ? '' : 'is-active' %>" href="#tab--notes" title="Notes">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-note-sticky"></i></span>
@@ -716,6 +690,32 @@
               <div class="column is-hidden-touch">
                 Attachments
                 <span class="tag is-rounded ml-2" id="attachmentsCount">0</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="#tab--milestones" title="Milestones">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-list-check"></i></span>
+              </div>
+              <div class="column is-hidden-touch">
+                Milestones
+                <span class="tag is-rounded ml-2" id="milestonesCount">0</span>
+              </div>
+            </div>
+          </a>
+        </li> 
+        <li>
+          <a href="#tab--subscribers" title="Subscribers">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-users"></i></span>
+              </div>
+              <div class="column is-hidden-touch">
+                Subscribers
+                <span class="tag is-rounded ml-2" id="subscribersCount">0</span>
               </div>
             </div>
           </a>
@@ -743,17 +743,17 @@
         <%- await include('_edit-moreInfo', { workOrderType, workOrder }); -%>
       </div>
       <% } %>
-      <div id="tab--subscribers" class="<%= hasMoreInfoForm ? 'is-hidden' : '' %>">
-        <%- await include('_edit-subscribers'); -%>
-      </div>
-      <div id="tab--milestones" class="is-hidden">
-        <%- await include('_edit-milestones'); -%>
-      </div>
-      <div id="tab--notes" class="is-hidden">
+      <div id="tab--notes" class="<%= hasMoreInfoForm ? 'is-hidden' : '' %>">
         <%- await include('_edit-notes'); -%>
       </div>
       <div id="tab--attachments" class="is-hidden">
         <%- await include('_edit-attachments'); -%>
+      </div>
+      <div id="tab--milestones" class="is-hidden">
+        <%- await include('_edit-milestones'); -%>
+      </div>
+      <div id="tab--subscribers" class="is-hidden">
+        <%- await include('_edit-subscribers'); -%>
       </div>
       <div id="tab--costs" class="is-hidden">
         <%- await include('_edit-costs'); -%>
