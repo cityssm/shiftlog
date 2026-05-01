@@ -113,7 +113,7 @@ SimpleHeat.prototype = {
     }
 
     // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
-    if (this._width != 0 && this._height != 0) {
+    if (this._width !== 0 && this._height !== 0) {
       const colored = context.getImageData(0, 0, this._width, this._height)
       this._colorize(colored.data, this._grad)
       context.putImageData(colored, 0, 0)

@@ -80,7 +80,7 @@ SimpleHeat.prototype = {
             context.globalAlpha = Math.min(Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity), 1);
             context.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
-        if (this._width != 0 && this._height != 0) {
+        if (this._width !== 0 && this._height !== 0) {
             const colored = context.getImageData(0, 0, this._width, this._height);
             this._colorize(colored.data, this._grad);
             context.putImageData(colored, 0, 0);
