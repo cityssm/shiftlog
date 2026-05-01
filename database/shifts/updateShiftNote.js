@@ -29,59 +29,64 @@ export default async function updateShiftNote(updateShiftNoteForm, userName) {
             AND instance = @instance
         )
     `);
-    if (result.rowsAffected[0] > 0) {
-        if (updateShiftNoteForm.fields !== undefined) {
-            for (const [noteTypeFieldId, fieldValue] of Object.entries(updateShiftNoteForm.fields)) {
-                if (fieldValue !== undefined && fieldValue !== null) {
-                    const existingField = await pool
+    if (result.rowsAffected[0] > 0 && updateShiftNoteForm.fields !== undefined) {
+        for (const [noteTypeFieldId, fieldValue] of Object.entries(updateShiftNoteForm.fields)) {
+            if (fieldValue !== undefined && fieldValue !== null) {
+                const existingField = await pool
+                    .request()
+                    .input('shiftId', updateShiftNoteForm.shiftId)
+                    .input('noteSequence', updateShiftNoteForm.noteSequence)
+                    .input('noteTypeFieldId', noteTypeFieldId)
+                    .query(`
+            SELECT
+              COUNT(*) AS count
+            FROM
+              ShiftLog.ShiftNoteFields
+            WHERE
+              shiftId = @shiftId
+              AND noteSequence = @noteSequence
+              AND noteTypeFieldId = @noteTypeFieldId
+          `);
+                if (existingField.recordset[0].count > 0) {
+                    await pool
                         .request()
                         .input('shiftId', updateShiftNoteForm.shiftId)
                         .input('noteSequence', updateShiftNoteForm.noteSequence)
                         .input('noteTypeFieldId', noteTypeFieldId)
+                        .input('fieldValue', fieldValue)
                         .query(`
-              SELECT COUNT(*) as count
-              FROM ShiftLog.ShiftNoteFields
-              WHERE shiftId = @shiftId
+              UPDATE ShiftLog.ShiftNoteFields
+              SET
+                fieldValue = @fieldValue
+              WHERE
+                shiftId = @shiftId
                 AND noteSequence = @noteSequence
                 AND noteTypeFieldId = @noteTypeFieldId
             `);
-                    if (existingField.recordset[0].count > 0) {
-                        await pool
-                            .request()
-                            .input('shiftId', updateShiftNoteForm.shiftId)
-                            .input('noteSequence', updateShiftNoteForm.noteSequence)
-                            .input('noteTypeFieldId', noteTypeFieldId)
-                            .input('fieldValue', fieldValue)
-                            .query(`
-                UPDATE ShiftLog.ShiftNoteFields
-                SET fieldValue = @fieldValue
-                WHERE shiftId = @shiftId
-                  AND noteSequence = @noteSequence
-                  AND noteTypeFieldId = @noteTypeFieldId
-              `);
-                    }
-                    else {
-                        await pool
-                            .request()
-                            .input('shiftId', updateShiftNoteForm.shiftId)
-                            .input('noteSequence', updateShiftNoteForm.noteSequence)
-                            .input('noteTypeFieldId', noteTypeFieldId)
-                            .input('fieldValue', fieldValue)
-                            .query(`
-                INSERT INTO ShiftLog.ShiftNoteFields (
+                }
+                else {
+                    await pool
+                        .request()
+                        .input('shiftId', updateShiftNoteForm.shiftId)
+                        .input('noteSequence', updateShiftNoteForm.noteSequence)
+                        .input('noteTypeFieldId', noteTypeFieldId)
+                        .input('fieldValue', fieldValue)
+                        .query(`
+              INSERT INTO
+                ShiftLog.ShiftNoteFields (
                   shiftId,
                   noteSequence,
                   noteTypeFieldId,
                   fieldValue
                 )
-                VALUES (
+              VALUES
+                (
                   @shiftId,
                   @noteSequence,
                   @noteTypeFieldId,
                   @fieldValue
                 )
-              `);
-                    }
+            `);
                 }
             }
         }

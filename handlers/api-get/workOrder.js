@@ -12,9 +12,7 @@ export default async function handler(request, response) {
     }
     const workOrder = await getWorkOrder(request.params.workOrderId, apiUser.userName);
     if (workOrder === undefined) {
-        response
-            .status(404)
-            .json({
+        response.status(404).json({
             error: `Access denied or ${getConfigProperty('workOrders.sectionNameSingular')} not found`
         });
         return;

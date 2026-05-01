@@ -40,7 +40,7 @@ export default async function getApiAuditLogs(filters = {}) {
         countRequest.input('endDate', filters.endDate);
     }
     const countResult = await countRequest.query(countSql);
-    const totalCount = countResult.recordset[0]?.totalCount ?? 0;
+    const totalCount = countResult.recordset[0].totalCount;
     const sql = `
     SELECT
       auditLogId,

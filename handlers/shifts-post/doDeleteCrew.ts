@@ -23,6 +23,7 @@ export default async function handler(
   if (!user.userProperties.shifts.canManage) {
     const crew = await getCrew(crewId)
 
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
     if (crew === undefined || crew.recordCreate_userName !== user.userName) {
       response.status(403).json({
         success: false,

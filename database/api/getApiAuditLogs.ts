@@ -72,7 +72,8 @@ export default async function getApiAuditLogs(
   }
 
   const countResult = await countRequest.query<{ totalCount: number }>(countSql)
-  const totalCount = countResult.recordset[0]?.totalCount ?? 0
+
+  const totalCount = countResult.recordset[0].totalCount
 
   // Get paginated data
   const sql = /* sql */ `

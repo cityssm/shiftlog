@@ -45,34 +45,35 @@ export default async function createShiftNote(createShiftNoteForm, userName) {
           @userName
         )
     `);
-    if (result.rowsAffected[0] > 0) {
-        if (createShiftNoteForm.noteTypeId !== undefined &&
-            createShiftNoteForm.fields !== undefined) {
-            for (const [noteTypeFieldId, fieldValue] of Object.entries(createShiftNoteForm.fields)) {
-                if (fieldValue !== undefined && fieldValue !== null && fieldValue !== '') {
-                    await pool
-                        .request()
-                        .input('shiftId', createShiftNoteForm.shiftId)
-                        .input('noteSequence', nextSequence)
-                        .input('noteTypeFieldId', noteTypeFieldId)
-                        .input('fieldValue', fieldValue)
-                        .query(`
-              INSERT INTO
-                ShiftLog.ShiftNoteFields (
-                  shiftId,
-                  noteSequence,
-                  noteTypeFieldId,
-                  fieldValue
-                )
-              VALUES
-                (
-                  @shiftId,
-                  @noteSequence,
-                  @noteTypeFieldId,
-                  @fieldValue
-                )
-            `);
-                }
+    if (result.rowsAffected[0] > 0 &&
+        createShiftNoteForm.noteTypeId !== undefined &&
+        createShiftNoteForm.fields !== undefined) {
+        for (const [noteTypeFieldId, fieldValue] of Object.entries(createShiftNoteForm.fields)) {
+            if (fieldValue !== undefined &&
+                fieldValue !== null &&
+                fieldValue !== '') {
+                await pool
+                    .request()
+                    .input('shiftId', createShiftNoteForm.shiftId)
+                    .input('noteSequence', nextSequence)
+                    .input('noteTypeFieldId', noteTypeFieldId)
+                    .input('fieldValue', fieldValue)
+                    .query(`
+            INSERT INTO
+              ShiftLog.ShiftNoteFields (
+                shiftId,
+                noteSequence,
+                noteTypeFieldId,
+                fieldValue
+              )
+            VALUES
+              (
+                @shiftId,
+                @noteSequence,
+                @noteTypeFieldId,
+                @fieldValue
+              )
+          `);
             }
         }
     }

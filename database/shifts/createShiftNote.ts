@@ -65,40 +65,43 @@ export default async function createShiftNote(
         )
     `)
 
-  if (result.rowsAffected[0] > 0) {
-    // Insert field values if note type is set and fields are provided
-    if (
-      createShiftNoteForm.noteTypeId !== undefined &&
-      createShiftNoteForm.fields !== undefined
-    ) {
-      for (const [noteTypeFieldId, fieldValue] of Object.entries(
-        createShiftNoteForm.fields
-      )) {
-        if (fieldValue !== undefined && fieldValue !== null && fieldValue !== '') {
-          // eslint-disable-next-line no-await-in-loop -- inserting field values sequentially
-          await pool
-            .request()
-            .input('shiftId', createShiftNoteForm.shiftId)
-            .input('noteSequence', nextSequence)
-            .input('noteTypeFieldId', noteTypeFieldId)
-            .input('fieldValue', fieldValue)
-            .query(/* sql */ `
-              INSERT INTO
-                ShiftLog.ShiftNoteFields (
-                  shiftId,
-                  noteSequence,
-                  noteTypeFieldId,
-                  fieldValue
-                )
-              VALUES
-                (
-                  @shiftId,
-                  @noteSequence,
-                  @noteTypeFieldId,
-                  @fieldValue
-                )
-            `)
-        }
+  // Insert field values if note type is set and fields are provided
+  if (
+    result.rowsAffected[0] > 0 &&
+    createShiftNoteForm.noteTypeId !== undefined &&
+    createShiftNoteForm.fields !== undefined
+  ) {
+    for (const [noteTypeFieldId, fieldValue] of Object.entries(
+      createShiftNoteForm.fields
+    )) {
+      if (
+        fieldValue !== undefined &&
+        fieldValue !== null &&
+        fieldValue !== ''
+      ) {
+        // eslint-disable-next-line no-await-in-loop -- inserting field values sequentially
+        await pool
+          .request()
+          .input('shiftId', createShiftNoteForm.shiftId)
+          .input('noteSequence', nextSequence)
+          .input('noteTypeFieldId', noteTypeFieldId)
+          .input('fieldValue', fieldValue)
+          .query(/* sql */ `
+            INSERT INTO
+              ShiftLog.ShiftNoteFields (
+                shiftId,
+                noteSequence,
+                noteTypeFieldId,
+                fieldValue
+              )
+            VALUES
+              (
+                @shiftId,
+                @noteSequence,
+                @noteTypeFieldId,
+                @fieldValue
+              )
+          `)
       }
     }
   }

@@ -166,6 +166,31 @@ export default async function permanentlyDeleteRecords(): Promise<{
       )
     }
 
+    // WorkOrderSubscribers - no foreign keys to check
+    const subscriberResult = await pool
+      .request()
+      .input('cutoffDate', cutoffDate)
+      .query(/* sql */ `
+        DELETE FROM ShiftLog.WorkOrderSubscribers
+        WHERE
+          workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+          )
+      `)
+
+    if (subscriberResult.rowsAffected[0] > 0) {
+      deletedCount += subscriberResult.rowsAffected[0]
+      debug(
+        `Permanently deleted ${subscriberResult.rowsAffected[0]} WorkOrderSubscribers records`
+      )
+    }
+
     // WorkOrderNotes - no foreign keys to check
     const notesResult = await pool
       .request()
@@ -221,59 +246,67 @@ export default async function permanentlyDeleteRecords(): Promise<{
     }
 
     // Step 3: Clean up WorkOrders that have no active child records
-    const workOrdersResult =
-      await // eslint-disable-next-line no-secrets/no-secrets
-      pool
-        .request()
-        .input('cutoffDate', cutoffDate)
-        .query(/* sql */ `
-          DELETE wo
-          FROM
-            ShiftLog.WorkOrders wo
-          WHERE
-            wo.recordDelete_dateTime IS NOT NULL
-            AND wo.recordDelete_dateTime < @cutoffDate
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderTags wt
-              WHERE
-                wt.workOrderId = wo.workOrderId
-            )
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderNotes wn
-              WHERE
-                wn.workOrderId = wo.workOrderId
-            )
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderMilestones wm
-              WHERE
-                wm.workOrderId = wo.workOrderId
-            )
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderAttachments wa
-              WHERE
-                wa.workOrderId = wo.workOrderId
-            )
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderCosts wc
-              WHERE
-                wc.workOrderId = wo.workOrderId
-            )
-        `)
+    const workOrdersResult = await pool
+      .request()
+      .input('cutoffDate', cutoffDate)
+      // eslint-disable-next-line no-secrets/no-secrets
+      .query(/* sql */ `
+        DELETE wo
+        FROM
+          ShiftLog.WorkOrders wo
+        WHERE
+          wo.recordDelete_dateTime IS NOT NULL
+          AND wo.recordDelete_dateTime < @cutoffDate
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderTags wt
+            WHERE
+              wt.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderSubscribers wt
+            WHERE
+              wt.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderNotes wn
+            WHERE
+              wn.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderMilestones wm
+            WHERE
+              wm.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderAttachments wa
+            WHERE
+              wa.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderCosts wc
+            WHERE
+              wc.workOrderId = wo.workOrderId
+          )
+      `)
+
     if (workOrdersResult.rowsAffected[0] > 0) {
       deletedCount += workOrdersResult.rowsAffected[0]
       debug(
@@ -294,6 +327,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
           l.recordDelete_dateTime IS NOT NULL
           AND l.recordDelete_dateTime < @cutoffDate
       `)
+
     if (locationsResult.rowsAffected[0] > 0) {
       deletedCount += locationsResult.rowsAffected[0]
       debug(
@@ -321,6 +355,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               wo.workOrderTypeId = wot.workOrderTypeId
           )
       `)
+
     if (workOrderTypesResult.rowsAffected[0] > 0) {
       deletedCount += workOrderTypesResult.rowsAffected[0]
       debug(
@@ -378,6 +413,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               )
           )
       `)
+
     if (dataListItemsResult.rowsAffected[0] > 0) {
       deletedCount += dataListItemsResult.rowsAffected[0]
       debug(
@@ -407,6 +443,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               AND dli.dataListKey = dl.dataListKey
           )
       `)
+
     if (dataListsResult.rowsAffected[0] > 0) {
       deletedCount += dataListsResult.rowsAffected[0]
       debug(
@@ -450,6 +487,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               se.crewId = c.crewId
           )
       `)
+
     if (crewsResult.rowsAffected[0] > 0) {
       deletedCount += crewsResult.rowsAffected[0]
       debug(`Permanently deleted ${crewsResult.rowsAffected[0]} Crews records`)
@@ -503,6 +541,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               AND seq.employeeNumber = e.employeeNumber
           )
       `)
+
     if (employeesResult.rowsAffected[0] > 0) {
       deletedCount += employeesResult.rowsAffected[0]
       debug(
@@ -531,6 +570,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               AND se.equipmentNumber = eq.equipmentNumber
           )
       `)
+
     if (equipmentResult.rowsAffected[0] > 0) {
       deletedCount += equipmentResult.rowsAffected[0]
       debug(
@@ -574,6 +614,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               seq.shiftId = s.shiftId
           )
       `)
+
     if (shiftsResult.rowsAffected[0] > 0) {
       deletedCount += shiftsResult.rowsAffected[0]
       debug(
@@ -609,6 +650,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               tr.timesheetId = t.timesheetId
           )
       `)
+
     if (timesheetsResult.rowsAffected[0] > 0) {
       deletedCount += timesheetsResult.rowsAffected[0]
       debug(
@@ -676,6 +718,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               wot.userGroupId = ug.userGroupId
           )
       `)
+
     if (userGroupsResult.rowsAffected[0] > 0) {
       deletedCount += userGroupsResult.rowsAffected[0]
       debug(
@@ -713,6 +756,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
               AND ugm.userName = u.userName
           )
       `)
+
     if (usersResult.rowsAffected[0] > 0) {
       deletedCount += usersResult.rowsAffected[0]
       debug(`Permanently deleted ${usersResult.rowsAffected[0]} Users records`)

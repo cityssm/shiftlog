@@ -28,11 +28,9 @@ export default async function handler(
   )
 
   if (workOrder === undefined) {
-    response
-      .status(404)
-      .json({
-        error: `Access denied or ${getConfigProperty('workOrders.sectionNameSingular')} not found`
-      })
+    response.status(404).json({
+      error: `Access denied or ${getConfigProperty('workOrders.sectionNameSingular')} not found`
+    })
     return
   }
 

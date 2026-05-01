@@ -98,6 +98,26 @@ export default async function permanentlyDeleteRecords() {
             deletedCount += tagsResult.rowsAffected[0];
             debug(`Permanently deleted ${tagsResult.rowsAffected[0]} WorkOrderTags records`);
         }
+        const subscriberResult = await pool
+            .request()
+            .input('cutoffDate', cutoffDate)
+            .query(`
+        DELETE FROM ShiftLog.WorkOrderSubscribers
+        WHERE
+          workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+          )
+      `);
+        if (subscriberResult.rowsAffected[0] > 0) {
+            deletedCount += subscriberResult.rowsAffected[0];
+            debug(`Permanently deleted ${subscriberResult.rowsAffected[0]} WorkOrderSubscribers records`);
+        }
         const notesResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
@@ -141,53 +161,61 @@ export default async function permanentlyDeleteRecords() {
             .request()
             .input('cutoffDate', cutoffDate)
             .query(`
-          DELETE wo
-          FROM
-            ShiftLog.WorkOrders wo
-          WHERE
-            wo.recordDelete_dateTime IS NOT NULL
-            AND wo.recordDelete_dateTime < @cutoffDate
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderTags wt
-              WHERE
-                wt.workOrderId = wo.workOrderId
-            )
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderNotes wn
-              WHERE
-                wn.workOrderId = wo.workOrderId
-            )
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderMilestones wm
-              WHERE
-                wm.workOrderId = wo.workOrderId
-            )
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderAttachments wa
-              WHERE
-                wa.workOrderId = wo.workOrderId
-            )
-            AND NOT EXISTS (
-              SELECT
-                1
-              FROM
-                ShiftLog.WorkOrderCosts wc
-              WHERE
-                wc.workOrderId = wo.workOrderId
-            )
-        `);
+        DELETE wo
+        FROM
+          ShiftLog.WorkOrders wo
+        WHERE
+          wo.recordDelete_dateTime IS NOT NULL
+          AND wo.recordDelete_dateTime < @cutoffDate
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderTags wt
+            WHERE
+              wt.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderSubscribers wt
+            WHERE
+              wt.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderNotes wn
+            WHERE
+              wn.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderMilestones wm
+            WHERE
+              wm.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderAttachments wa
+            WHERE
+              wa.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderCosts wc
+            WHERE
+              wc.workOrderId = wo.workOrderId
+          )
+      `);
         if (workOrdersResult.rowsAffected[0] > 0) {
             deletedCount += workOrdersResult.rowsAffected[0];
             debug(`Permanently deleted ${workOrdersResult.rowsAffected[0]} WorkOrders records`);

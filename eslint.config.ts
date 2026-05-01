@@ -46,7 +46,10 @@ export const config = defineConfig(configWebApp, {
             'rowspan',
 
             // SQL
+            'dateadd',
             'datediff',
+            'datefromparts',
+            'eomonth',
 
             // Shift Log
             'maint',
