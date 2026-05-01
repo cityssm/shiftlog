@@ -10,6 +10,7 @@ import type { ShiftLogGlobal } from './types.js'
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
   isEdit: boolean
 }
 
