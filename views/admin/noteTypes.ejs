@@ -36,9 +36,18 @@
             <span class="select">
               <select id="filter--availability" aria-label="Filter by Availability">
                 <option value="">All</option>
+
+                <% if (configFunctions.getConfigProperty('workOrders.isEnabled')) { %>
                 <option value="workOrders"><%= workOrdersSectionName %></option>
+                <% } %>
+
+                <% if (configFunctions.getConfigProperty('shifts.isEnabled')) { %>
                 <option value="shifts"><%= shiftsSectionName %></option>
+                <% } %>
+
+                <% if (configFunctions.getConfigProperty('timesheets.isEnabled')) { %>
                 <option value="timesheets"><%= timesheetsSectionName %></option>
+                <% } %>
               </select>
             </span>
             <span class="icon is-small is-left">

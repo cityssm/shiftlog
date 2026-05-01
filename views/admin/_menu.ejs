@@ -55,7 +55,7 @@
         </div>
       </a>
     </li>
-    <% if (configFunctions.getConfigProperty('notifications.protocols').length > 0) { %>
+    <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && configFunctions.getConfigProperty('notifications.protocols').length > 0) { %>
     <li>
       <a
         class="<%= headTitle === 'Notification Configuration' ? 'is-active' : '' %>"
