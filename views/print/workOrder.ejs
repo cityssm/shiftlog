@@ -1,56 +1,42 @@
 <%- await include('_header-print'); -%>
 
-<div class="columns is-vcentered" id="pageHeader">
+<div class="columns" id="pageHeader">
   <div class="column">
     <h1 class="title is-3">
-      #<%= workOrder.workOrderNumber %>
+      #<%= workOrder.workOrderNumber %><br />
+      <small><%= workOrder.workOrderTitle %></small>
     </h1>
   </div>
   <div class="column is-narrow">
-    <%- workOrderNumberBarcodeSvg %>
+    <%- workOrderNumberBarcodeSvg %><br />
+    <p class="has-text-right">
+      <%= workOrder.workOrderType ?? '(Not Set)' %>
+      -
+      <%= workOrder.workOrderStatusDataListItem ?? '(No Status)' %>
+      -
+      <%= workOrder.workOrderPriorityDataListItem ?? '(No Priority)' %>
+    </p>
   </div>
 </div>
 
-<p class="title is-4"><%= workOrder.workOrderTitle %></p>
+<p style="white-space: pre-wrap;"><%= workOrder.workOrderDetails || '(No details)' %></p>
+
+<% if (workOrder.tags && workOrder.tags.length > 0) { %>
+<p class="my-4">
+  <% for (const tag of workOrder.tags || []) { %>
+  <span class="tag"><%= tag.tagName %></span>
+  <% } %>
+</p>
+<% } %>
 
 <div class="columns">
   <div class="column">
-    <div class="box avoid-page-break">
-      <div class="field">
-        <label class="label">Details</label>
-        <p style="white-space: pre-wrap;"><%= workOrder.workOrderDetails || '(No details)' %></p>
-      </div>
-      <div class="columns">
-        <div class="column">
-          <div class="field">
-            <span class="label"><%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type</span>
-            <p><%= workOrder.workOrderType ?? '(Not Set)' %></p>
-          </div>
-        </div>
-        <div class="column">
-          <div class="field">
-            <label class="label">Status</label>
-            <p><%= workOrder.workOrderStatusDataListItem ?? '(No Status)' %></p>
-          </div>
-        </div>
-        <div class="column">
-          <div class="field">
-            <label class="label">Priority</label>
-            <p><%= workOrder.workOrderPriorityDataListItem ?? '(No Priority)' %></p>
-          </div>
-        </div>
-      </div>
-      <% if (workOrder.tags && workOrder.tags.length > 0) { %>
-      <div class="field">
-        <label class="label">Tags</label>
-        <p><%= workOrder.tags.map(tag => tag.tagName).join(', ') %></p>
-      </div>
-      <% } %>
-    </div>
-    
-  </div>
-  <div class="column">
-    <div class="box avoid-page-break">
+    <div class="box avoid-page-break report-block">
+      <button class="button is-delete-report-block-button" type="button" title="Remove Notes section from the report">
+        <span class="icon is-small">
+          <i class="fa-solid fa-xmark"></i>
+        </span>
+      </button>
       <div class="field">
         <label class="label">Requestor Name</label>
         <p><%= workOrder.requestorName || '(Not provided)' %></p>
@@ -64,24 +50,38 @@
         <p><%= workOrder.assignedToName ?? '(Not Assigned)' %></p>
       </div>
     </div>
-    <% if (thumbnailAttachment) { %>
     <div class="box avoid-page-break report-block">
-      <button class="button is-delete-report-block-button" type="button" title="Remove Thumbnail Image section from the report">
+      <button class="button is-delete-report-block-button" type="button" title="Remove Notes section from the report">
         <span class="icon is-small">
           <i class="fa-solid fa-xmark"></i>
         </span>
       </button>
-      <label class="label">Thumbnail Image</label>
-      <figure class="image">
-        <img
-          src="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= thumbnailAttachment.workOrderAttachmentId %>/inline"
-          alt="<%= thumbnailAttachment.attachmentDescription || 'Thumbnail' %>"
-          style="max-width: 100%; height: auto;"
-        />
-      </figure>
+      <div class="field">
+        <label class="label">Location Address</label>
+        <p>
+          <% if (workOrder.locationAddress1) { %>
+          <%= workOrder.locationAddress1 %><br />
+          <% } %>
+          <% if (workOrder.locationAddress2) { %>
+          <%= workOrder.locationAddress2 %><br />
+          <% } %>
+          <% if (workOrder.locationCityProvince) { %>
+          <%= workOrder.locationCityProvince %>
+          <% } %>
+          <% if (!workOrder.locationAddress1 && !workOrder.locationAddress2 && !workOrder.locationCityProvince) { %>
+          (No address)
+          <% } %>
+        </p>
+      </div>
     </div>
-    <% } %>
-    <div class="box avoid-page-break">
+  </div>
+  <div class="column">
+    <div class="box avoid-page-break report-block">
+      <button class="button is-delete-report-block-button" type="button" title="Remove Notes section from the report">
+        <span class="icon is-small">
+          <i class="fa-solid fa-xmark"></i>
+        </span>
+      </button>
       <div class="field">
         <label class="label">Open Date/Time</label>
         <p>
@@ -116,25 +116,23 @@
         </p>
       </div>
     </div>
-    <div class="box avoid-page-break">
-      <div class="field">
-        <label class="label">Location Address</label>
-        <p>
-          <% if (workOrder.locationAddress1) { %>
-          <%= workOrder.locationAddress1 %><br />
-          <% } %>
-          <% if (workOrder.locationAddress2) { %>
-          <%= workOrder.locationAddress2 %><br />
-          <% } %>
-          <% if (workOrder.locationCityProvince) { %>
-          <%= workOrder.locationCityProvince %>
-          <% } %>
-          <% if (!workOrder.locationAddress1 && !workOrder.locationAddress2 && !workOrder.locationCityProvince) { %>
-          (No address)
-          <% } %>
-        </p>
-      </div>
+    <% if (thumbnailAttachment) { %>
+    <div class="box avoid-page-break report-block">
+      <button class="button is-delete-report-block-button" type="button" title="Remove Thumbnail Image section from the report">
+        <span class="icon is-small">
+          <i class="fa-solid fa-xmark"></i>
+        </span>
+      </button>
+      <label class="label">Thumbnail Image</label>
+      <figure class="image">
+        <img
+          src="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= thumbnailAttachment.workOrderAttachmentId %>/inline"
+          alt="<%= thumbnailAttachment.attachmentDescription || 'Thumbnail' %>"
+          style="max-width: 100%; height: auto;"
+        />
+      </figure>
     </div>
+    <% } %>
   </div>
 </div>
 

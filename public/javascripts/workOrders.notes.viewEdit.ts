@@ -1189,6 +1189,7 @@ declare const bulmaJS: BulmaJS
       (rawResponseJSON) => {
         const responseJSON =
           rawResponseJSON as unknown as DoGetNoteTypesResponse
+
         noteTypes = responseJSON.noteTypes
       }
     )
