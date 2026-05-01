@@ -187,7 +187,7 @@
                 {
                     data: tagCounts,
                     itemStyle: {
-                        color: function (parameters) {
+                        color(parameters) {
                             const colors = [
                                 '#48c774',
                                 '#3298dc',

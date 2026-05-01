@@ -167,9 +167,9 @@ declare const bulmaJS: BulmaJS
                 <br />
                 <small class="has-text-grey">
                   ${formatFileSize(attachment.attachmentFileSizeInBytes)} &bull;
-                  ${cityssm.escapeHTML(attachment.recordCreate_userName)} &bull;
+                  ${cityssm.escapeHTML(attachment.recordCreate_userName ?? '')} &bull;
                   ${cityssm.dateToString(
-                    new Date(attachment.recordCreate_dateTime)
+                    new Date(attachment.recordCreate_dateTime ?? '')
                   )}
                 </small>
                 ${
@@ -186,6 +186,7 @@ declare const bulmaJS: BulmaJS
                     <button
                       class="button is-small is-info is-light set-thumbnail"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
+                      type="button"
                     >
                       <span class="icon is-small">
                         <i class="fa-solid fa-image"></i>
@@ -471,6 +472,7 @@ declare const bulmaJS: BulmaJS
 
   function setThumbnail(workOrderAttachmentId: number): void {
     cityssm.postJSON(
+      // eslint-disable-next-line no-secrets/no-secrets
       `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doSetWorkOrderAttachmentThumbnail`,
       {
         workOrderAttachmentId

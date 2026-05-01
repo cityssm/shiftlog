@@ -27,6 +27,7 @@ export default async function handler(request, response) {
         isCreate: true,
         isEdit: true,
         workOrder,
+        workOrderTags: [],
         assignedToOptions,
         workOrderStatuses,
         workOrderPriorities,

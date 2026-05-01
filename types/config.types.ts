@@ -83,7 +83,7 @@ export interface Config {
   shifts?: ConfigSection
   timesheets?: ConfigSection
 
-  workOrders?: ConfigSection
+  workOrders?: ConfigWorkOrders
 
   employees?: ConfigEmployees
   equipment?: ConfigEquipment
@@ -92,6 +92,10 @@ export interface Config {
   notifications?: {
     protocols?: NotificationType[]
   }
+}
+
+export type ConfigWorkOrders = ConfigSection & {
+  hasCosts?: boolean
 }
 
 export type ConfigEmployees =

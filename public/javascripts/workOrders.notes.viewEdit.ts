@@ -1200,6 +1200,9 @@ declare const bulmaJS: BulmaJS
     ?.addEventListener('click', showAddNoteModal)
 
   // Load note types and notes initially
-  loadNoteTypes()
+  if (exports.isEdit) {
+    loadNoteTypes()
+  }
+
   loadNotes()
 })()

@@ -5,4 +5,8 @@ config.reverseProxy = {
     trafficIsForwarded: true,
     urlPrefix: '/itHelpdesk'
 };
+config.workOrders = {
+    ...config.workOrders,
+    hasCosts: false
+};
 export default config;

@@ -107,6 +107,8 @@ export const configDefaultValues = {
 
   'workOrders.iconClass': 'fa-hard-hat',
 
+  'workOrders.hasCosts': true,
+
   // Timesheets
 
   'timesheets.isEnabled': false,

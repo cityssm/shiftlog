@@ -1,25 +1,17 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
-
-interface WorkOrderTagWithColor {
-  workOrderId: number
-
-  tagName: string
-
-  tagBackgroundColor?: string
-  tagTextColor?: string
-}
+import type { WorkOrderTag } from '../../types/record.types.js'
 
 export default async function getWorkOrderTags(
   workOrderId: number | string
-): Promise<WorkOrderTagWithColor[]> {
+): Promise<WorkOrderTag[]> {
   const pool = await getShiftLogConnectionPool()
 
   const result = await pool
     .request()
     .input('instance', getConfigProperty('application.instance'))
     .input('workOrderId', workOrderId)
-    .query<WorkOrderTagWithColor>(/* sql */ `
+    .query<WorkOrderTag>(/* sql */ `
       SELECT
         wot.workOrderId,
         wot.tagName,
@@ -36,9 +28,12 @@ export default async function getWorkOrderTags(
         AND wo.instance = @instance
         AND wot.workOrderId = @workOrderId
       ORDER BY
-        case when t.tagBackgroundColor is null then 1 else 0 end,
+        CASE
+          WHEN t.tagBackgroundColor IS NULL THEN 1
+          ELSE 0
+        END,
         wot.tagName
     `)
 
-  return result.recordset as WorkOrderTagWithColor[]
+  return result.recordset as WorkOrderTag[]
 }

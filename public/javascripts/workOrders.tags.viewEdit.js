@@ -193,13 +193,7 @@
                 }
             });
         }
-        function getTags() {
-            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderTags`, {}, (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON;
-                renderTags(responseJSON.tags);
-            });
-        }
         document.querySelector('#button--addTag')?.addEventListener('click', addTag);
-        getTags();
+        renderTags(exports.workOrderTags);
     }
 })();

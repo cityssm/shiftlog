@@ -11,4 +11,9 @@ config.reverseProxy = {
   urlPrefix: '/itHelpdesk'
 }
 
+config.workOrders = {
+  ...config.workOrders,
+  hasCosts: false
+}
+
 export default config

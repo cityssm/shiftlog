@@ -838,6 +838,8 @@
     document
         .querySelector('#button--addNote')
         ?.addEventListener('click', showAddNoteModal);
-    loadNoteTypes();
+    if (exports.isEdit) {
+        loadNoteTypes();
+    }
     loadNotes();
 })();

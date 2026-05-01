@@ -110,8 +110,8 @@
                 <br />
                 <small class="has-text-grey">
                   ${formatFileSize(attachment.attachmentFileSizeInBytes)} &bull;
-                  ${cityssm.escapeHTML(attachment.recordCreate_userName)} &bull;
-                  ${cityssm.dateToString(new Date(attachment.recordCreate_dateTime))}
+                  ${cityssm.escapeHTML(attachment.recordCreate_userName ?? '')} &bull;
+                  ${cityssm.dateToString(new Date(attachment.recordCreate_dateTime ?? ''))}
                 </small>
                 ${attachment.attachmentDescription
                 ? `<br /><span class="is-size-7">${cityssm.escapeHTML(attachment.attachmentDescription)}</span>`
@@ -124,6 +124,7 @@
                     <button
                       class="button is-small is-info is-light set-thumbnail"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
+                      type="button"
                     >
                       <span class="icon is-small">
                         <i class="fa-solid fa-image"></i>

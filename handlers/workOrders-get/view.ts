@@ -1,6 +1,8 @@
+import { millisecondsInOneDay } from '@cityssm/to-millis'
 import type { Request, Response } from 'express'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
+import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js'
 import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js'
 import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
@@ -10,9 +12,6 @@ import type { WorkOrderType } from '../../types/record.types.js'
 import type { WorkOrderEditResponse } from './types.js'
 
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`
-
-// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
 
 export default async function handler(
   request: Request<
@@ -44,6 +43,8 @@ export default async function handler(
     request.params.workOrderId
   )
 
+  const workOrderTags = await getWorkOrderTags(request.params.workOrderId)
+
   // Check if work order can be reopened
   let canReopen = false
   if (
@@ -60,7 +61,7 @@ export default async function handler(
       const closeDateTime = new Date(workOrder.workOrderCloseDateTime)
       const now = new Date()
       const daysSinceClosed =
-        (now.getTime() - closeDateTime.getTime()) / MILLISECONDS_PER_DAY
+        (now.getTime() - closeDateTime.getTime()) / millisecondsInOneDay
 
       canReopen = daysSinceClosed <= reopenWindowDays
     }
@@ -78,6 +79,7 @@ export default async function handler(
     canReopen,
     workOrder,
     thumbnailAttachment,
+    workOrderTags,
 
     assignedToOptions: [],
     workOrderStatuses: [],

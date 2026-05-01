@@ -22,7 +22,9 @@ export default async function handler(request, response) {
     });
     const milestones = await getWorkOrderMilestones(request.params.workOrderId);
     const notes = await getWorkOrderNotes(request.params.workOrderId);
-    const costs = await getWorkOrderCosts(request.params.workOrderId);
+    const costs = getConfigProperty('workOrders.hasCosts')
+        ? await getWorkOrderCosts(request.params.workOrderId)
+        : [];
     const thumbnailAttachment = await getWorkOrderThumbnailAttachment(request.params.workOrderId);
     response.render('print/workOrder', {
         headTitle: `${getConfigProperty('workOrders.sectionNameSingular')} #${workOrder.workOrderNumber}`,

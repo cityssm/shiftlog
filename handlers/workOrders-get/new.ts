@@ -46,6 +46,7 @@ export default async function handler(
     isEdit: true,
 
     workOrder,
+    workOrderTags: [],
 
     assignedToOptions,
     workOrderStatuses,

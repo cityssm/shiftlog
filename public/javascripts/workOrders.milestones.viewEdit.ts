@@ -128,7 +128,7 @@ declare const Sortable: {
       const isOverdue =
         !isComplete &&
         milestone.milestoneDueDateTime !== null &&
-        new Date(milestone.milestoneDueDateTime) < new Date()
+        new Date(milestone.milestoneDueDateTime ?? '') < new Date()
 
       const canEditMilestone =
         exports.isEdit &&

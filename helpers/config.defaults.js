@@ -38,6 +38,7 @@ export const configDefaultValues = {
     'workOrders.sectionName': 'Work Orders',
     'workOrders.sectionNameSingular': 'Work Order',
     'workOrders.iconClass': 'fa-hard-hat',
+    'workOrders.hasCosts': true,
     'timesheets.isEnabled': false,
     'timesheets.router': 'timesheets',
     'timesheets.sectionName': 'Timesheets',

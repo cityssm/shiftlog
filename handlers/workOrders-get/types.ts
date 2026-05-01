@@ -1,8 +1,15 @@
-import type { AssignedTo, DataListItem, WorkOrder, WorkOrderAttachment, WorkOrderType } from '../../types/record.types.js'
+import type {
+  AssignedTo,
+  DataListItem,
+  WorkOrder,
+  WorkOrderAttachment,
+  WorkOrderTag,
+  WorkOrderType
+} from '../../types/record.types.js'
 
 export interface WorkOrderEditResponse {
   headTitle: string
-  section: 'workOrders',
+  section: 'workOrders'
 
   isCreate: boolean
   isEdit: boolean
@@ -15,4 +22,5 @@ export interface WorkOrderEditResponse {
   workOrderTypes: WorkOrderType[]
   workOrderStatuses: DataListItem[]
   workOrderPriorities: DataListItem[]
+  workOrderTags: WorkOrderTag[]
 }

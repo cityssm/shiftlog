@@ -719,6 +719,7 @@
             </div>
           </a>
         </li>
+        <% if (configFunctions.getConfigProperty('workOrders.hasCosts')) { %>
         <li>
           <a href="#tab--costs" title="Costs">
             <div class="columns is-mobile is-1">
@@ -732,6 +733,7 @@
             </div>
           </a>
         </li>
+        <% } %>
       </ul>  
     </div>
   </div>
@@ -754,9 +756,11 @@
       <div id="tab--subscribers" class="is-hidden">
         <%- await include('_edit-subscribers'); -%>
       </div>
+      <% if (configFunctions.getConfigProperty('workOrders.hasCosts')) { %>
       <div id="tab--costs" class="is-hidden">
         <%- await include('_edit-costs'); -%>
       </div>
+      <% } %>
     </div>
   </div>
 </div>
@@ -770,15 +774,19 @@
   exports.workOrderOpenDateTime = "<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>";
   exports.isEdit = <%= isEdit %>;
   exports.attachmentMaximumFileSizeBytes = <%= configFunctions.getConfigProperty('application.attachmentMaximumFileSizeBytes') %>;
+  exports.workOrderTags = <%- JSON.stringify(workOrderTags) %>;
 </script>
 
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>
-<script src="<%= urlPrefix %>/javascripts/workOrders.subscribers.viewEdit.js"></script>
-<script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.tags.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.notes.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.attachments.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.subscribers.viewEdit.js"></script>
+
+<% if (configFunctions.getConfigProperty('workOrders.hasCosts')) { %>
 <script src="<%= urlPrefix %>/javascripts/workOrders.costs.viewEdit.js"></script>
-<script src="<%= urlPrefix %>/javascripts/workOrders.tags.viewEdit.js"></script>
+<% } %>
 
 <% if (isEdit) { %>
 <script src="<%= urlPrefix %>/javascripts/workOrders.edit.js"></script>

@@ -1,10 +1,11 @@
+import { millisecondsInOneDay } from '@cityssm/to-millis';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
+import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js';
 import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js';
 import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js';
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 const redirectRoot = `${getConfigProperty('reverseProxy.urlPrefix')}/${getConfigProperty('workOrders.router')}`;
-const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 export default async function handler(request, response) {
     const workOrder = await getWorkOrder(request.params.workOrderId, request.session.user?.userName);
     if (workOrder === undefined) {
@@ -13,6 +14,7 @@ export default async function handler(request, response) {
     }
     const workOrderType = (await getWorkOrderType(workOrder.workOrderTypeId, request.session.user, true));
     const thumbnailAttachment = await getWorkOrderThumbnailAttachment(request.params.workOrderId);
+    const workOrderTags = await getWorkOrderTags(request.params.workOrderId);
     let canReopen = false;
     if (workOrder.workOrderCloseDateTime !== null &&
         workOrder.workOrderCloseDateTime !== undefined &&
@@ -21,7 +23,7 @@ export default async function handler(request, response) {
         if (reopenWindowDays > 0) {
             const closeDateTime = new Date(workOrder.workOrderCloseDateTime);
             const now = new Date();
-            const daysSinceClosed = (now.getTime() - closeDateTime.getTime()) / MILLISECONDS_PER_DAY;
+            const daysSinceClosed = (now.getTime() - closeDateTime.getTime()) / millisecondsInOneDay;
             canReopen = daysSinceClosed <= reopenWindowDays;
         }
     }
@@ -33,6 +35,7 @@ export default async function handler(request, response) {
         canReopen,
         workOrder,
         thumbnailAttachment,
+        workOrderTags,
         assignedToOptions: [],
         workOrderStatuses: [],
         workOrderPriorities: [],

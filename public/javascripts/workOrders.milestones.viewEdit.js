@@ -51,7 +51,7 @@
             const isComplete = milestone.milestoneCompleteDateTime !== null;
             const isOverdue = !isComplete &&
                 milestone.milestoneDueDateTime !== null &&
-                new Date(milestone.milestoneDueDateTime) < new Date();
+                new Date(milestone.milestoneDueDateTime ?? '') < new Date();
             const canEditMilestone = exports.isEdit &&
                 (exports.shiftLog.userCanManageWorkOrders ||
                     milestone.recordCreate_userName === exports.shiftLog.userName);

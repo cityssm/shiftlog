@@ -20,7 +20,9 @@ declare const L: typeof Leaflet & {
       gradient?: Record<number, string>
       radius?: number
     }
-  ) => L.Layer
+  ) => L.Layer & {
+    setLatLngs: (latlngs: Array<[number, number, number]>) => void
+  }
 }
 
 declare const echarts: {
@@ -101,7 +103,12 @@ interface WorkOrderAccomplishmentData {
   let tagCloudChart: EChartsType | undefined
 
   let hotZonesMap: L.Map | undefined
-  let hotZonesLayer: L.Layer | undefined
+
+  let hotZonesLayer:
+    | (L.Layer & {
+        setLatLngs: (latlngs: Array<[number, number, number]>) => void
+      })
+    | undefined
 
   // Initialize charts
   function initializeCharts(): void {
@@ -332,7 +339,7 @@ interface WorkOrderAccomplishmentData {
         {
           data: tagCounts,
           itemStyle: {
-            color: function (parameters: { dataIndex: number }): string {
+            color(parameters: { dataIndex: number }): string {
               const colors = [
                 '#48c774',
                 '#3298dc',

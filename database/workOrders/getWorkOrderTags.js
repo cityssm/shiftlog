@@ -23,7 +23,10 @@ export default async function getWorkOrderTags(workOrderId) {
         AND wo.instance = @instance
         AND wot.workOrderId = @workOrderId
       ORDER BY
-        case when t.tagBackgroundColor is null then 1 else 0 end,
+        CASE
+          WHEN t.tagBackgroundColor IS NULL THEN 1
+          ELSE 0
+        END,
         wot.tagName
     `);
     return result.recordset;
