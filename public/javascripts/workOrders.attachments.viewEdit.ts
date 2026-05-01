@@ -119,7 +119,7 @@ declare const bulmaJS: BulmaJS
                     <img
                       src="${exports.shiftLog.urlPrefix}/${
                         exports.shiftLog.workOrdersRouter
-                      }/attachments/${attachment.workOrderAttachmentId}/inline"
+                      }/attachments/${attachment.workOrderAttachmentId}/inline?maxWidth=96&maxHeight=96"
                       alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
                       style="object-fit: cover; width: 48px; height: 48px;"
                       loading="lazy"
@@ -503,6 +503,7 @@ declare const bulmaJS: BulmaJS
       (rawResponseJSON) => {
         const responseJSON =
           rawResponseJSON as DoGetWorkOrderAttachmentsResponse
+
         renderAttachments(responseJSON.attachments)
       }
     )

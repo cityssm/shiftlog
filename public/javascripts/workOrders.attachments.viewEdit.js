@@ -67,7 +67,7 @@
               ${isImage
                 ? `
                     <img
-                      src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline"
+                      src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline?maxWidth=96&maxHeight=96"
                       alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
                       style="object-fit: cover; width: 48px; height: 48px;"
                       loading="lazy"
