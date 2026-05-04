@@ -20,6 +20,7 @@ Built with the following use cases in mind:
 - Community Services and Public Works work order management
 - Accessibility complaint management
 - Freedom of information request tracking
+- IT help desk
 
 ## Features
 
@@ -31,16 +32,20 @@ Thanks to the powerful [Leaflet](https://leafletjs.com/) plugin
 and the community at [OpenStreetMap](https://www.openstreetmap.org/about),
 mapping does not need to come with a huge cost.
 
-### Notifications
+### Notifications and Subscriptions
 
 ![Notifications via ntfy](./docs/images/notification-ntfy.png)
 
-Includes basic notification functionality for:
+Includes basic high-level notification functionality for:
 
-- E-mail.
+- E-mail (via SMTP).
 - Microsoft Teams.
 - [ntfy](https://ntfy.sh/)
   (notifications for web browsers, and Android and iPhone devices).
+
+Also includes work order creating, updateing, and messaging via:
+
+- Microsoft Graph API.
 
 ### Integration Friendly
 
