@@ -4,7 +4,6 @@ export default async function handler(request, response) {
     const userName = request.session.user?.userName;
     const items = await getDataListItems(dataListKey, userName);
     response.json({
-        success: true,
         items
     });
 }

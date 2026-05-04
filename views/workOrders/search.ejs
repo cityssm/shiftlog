@@ -21,7 +21,7 @@
 
     <% if (error !== '') { %>
     <div class="notification is-danger is-light">
-      <button class="delete"></button>
+      <button class="delete" type="button"></button>
       <strong>Error:</strong>
       <% if (error === 'notFound') { %>
       <span>The requested <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular').toLowerCase() %> was not found.</span>
@@ -175,12 +175,15 @@
                     <option value="">(All Assignees)</option>
                     <option value="unassigned">(Unassigned)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
-                    <option
-                      value="<%= assignedToItem.assignedToId %>"
-                      <%= user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString() ? 'selected' : '' %>
-                    >
+                    <% if (user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString()) { %>
+                    <option value="<%= assignedToItem.assignedToId %>" selected>
                       <%= assignedToItem.assignedToName %>
                     </option>
+                    <% } else { %>
+                    <option value="<%= assignedToItem.assignedToId %>">
+                      <%= assignedToItem.assignedToName %>
+                    </option>
+                    <% } %>
                     <% }); %>
                   </select>
                 </div>

@@ -4,7 +4,6 @@ export default async function handler(request, response) {
     const apiKey = await updateApiKeyUserSetting(request.session.user?.userName ?? '');
     request.session.user.userSettings = await getUserSettings(request.session.user?.userName ?? '');
     response.json({
-        success: true,
         apiKey
     });
 }

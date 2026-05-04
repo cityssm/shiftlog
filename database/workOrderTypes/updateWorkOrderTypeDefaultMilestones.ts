@@ -1,3 +1,5 @@
+/* eslint-disable no-secrets/no-secrets */
+
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface DefaultMilestoneUpdate {
@@ -18,8 +20,9 @@ export default async function updateWorkOrderTypeDefaultMilestones(
     .request()
     .input('workOrderTypeId', workOrderTypeId)
     .query(/* sql */ `
-      delete from ShiftLog.WorkOrderTypeMilestones
-      where workOrderTypeId = @workOrderTypeId
+      DELETE FROM ShiftLog.WorkOrderTypeMilestones
+      WHERE
+        workOrderTypeId = @workOrderTypeId
     `)
 
   // Insert new default milestones
@@ -28,6 +31,7 @@ export default async function updateWorkOrderTypeDefaultMilestones(
     const trimmedDescription = milestone.milestoneDescription.trim()
 
     if (trimmedTitle !== '' && trimmedTitle.length <= 100) {
+      // eslint-disable-next-line no-await-in-loop
       await pool
         .request()
         .input('workOrderTypeId', workOrderTypeId)
@@ -36,20 +40,22 @@ export default async function updateWorkOrderTypeDefaultMilestones(
         .input('dueDays', milestone.dueDays ?? null)
         .input('orderNumber', milestone.orderNumber)
         .query(/* sql */ `
-          insert into ShiftLog.WorkOrderTypeMilestones (
-            workOrderTypeId,
-            milestoneTitle,
-            milestoneDescription,
-            dueDays,
-            orderNumber
-          )
-          values (
-            @workOrderTypeId,
-            @milestoneTitle,
-            @milestoneDescription,
-            @dueDays,
-            @orderNumber
-          )
+          INSERT INTO
+            ShiftLog.WorkOrderTypeMilestones (
+              workOrderTypeId,
+              milestoneTitle,
+              milestoneDescription,
+              dueDays,
+              orderNumber
+            )
+          VALUES
+            (
+              @workOrderTypeId,
+              @milestoneTitle,
+              @milestoneDescription,
+              @dueDays,
+              @orderNumber
+            )
         `)
     }
   }

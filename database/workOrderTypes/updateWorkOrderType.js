@@ -11,26 +11,31 @@ export default async function updateWorkOrderType(form, userName) {
         .input('workOrderNumberPrefix', form.workOrderNumberPrefix ?? '')
         .input('dueDays', form.dueDays === '' || form.dueDays === undefined ? null : form.dueDays)
         .input('userGroupId', form.userGroupId === '' ? null : (form.userGroupId ?? null))
-        .input('userName', userName).query(`
-      update ShiftLog.WorkOrderTypes
-      set
+        .input('userName', userName)
+        .query(`
+      UPDATE ShiftLog.WorkOrderTypes
+      SET
         workOrderType = @workOrderType,
         workOrderNumberPrefix = @workOrderNumberPrefix,
         dueDays = @dueDays,
         userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where instance = @instance
-        and workOrderTypeId = @workOrderTypeId
-        and recordDelete_dateTime is null
+      WHERE
+        instance = @instance
+        AND workOrderTypeId = @workOrderTypeId
+        AND recordDelete_dateTime IS NULL
     `);
     if (result.rowsAffected[0] === 0) {
         return false;
     }
-    await pool.request().input('workOrderTypeId', form.workOrderTypeId)
+    await pool
+        .request()
+        .input('workOrderTypeId', form.workOrderTypeId)
         .query(`
-      delete from ShiftLog.WorkOrderTypeMoreInfoForms
-      where workOrderTypeId = @workOrderTypeId
+      DELETE FROM ShiftLog.WorkOrderTypeMoreInfoForms
+      WHERE
+        workOrderTypeId = @workOrderTypeId
     `);
     let formNames = [];
     if (form.moreInfoFormNames !== undefined) {
@@ -43,9 +48,12 @@ export default async function updateWorkOrderType(form, userName) {
             await pool
                 .request()
                 .input('workOrderTypeId', form.workOrderTypeId)
-                .input('formName', formName.trim()).query(`
-          insert into ShiftLog.WorkOrderTypeMoreInfoForms (workOrderTypeId, formName)
-          values (@workOrderTypeId, @formName)
+                .input('formName', formName.trim())
+                .query(`
+          INSERT INTO
+            ShiftLog.WorkOrderTypeMoreInfoForms (workOrderTypeId, formName)
+          VALUES
+            (@workOrderTypeId, @formName)
         `);
         }
     }

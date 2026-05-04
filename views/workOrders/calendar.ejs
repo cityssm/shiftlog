@@ -26,7 +26,7 @@
 
     <% if (error !== '') { %>
     <div class="notification is-danger is-light">
-      <button class="delete"></button>
+      <button class="delete" type="button"></button>
       <strong>Error:</strong>
       <span>An unknown error occurred. (<%= error %>)</span>
     </div>
@@ -47,12 +47,15 @@
                   <select id="calendar--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
-                    <option
-                      value="<%= assignedToItem.assignedToId %>"
-                      <%= user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString() ? 'selected' : '' %>
-                    >
+                    <% if (user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString()) { %>
+                    <option value="<%= assignedToItem.assignedToId %>" selected>
                       <%= assignedToItem.assignedToName %>
                     </option>
+                    <% } else { %>
+                    <option value="<%= assignedToItem.assignedToId %>">
+                      <%= assignedToItem.assignedToName %>
+                    </option>
+                    <% } %>
                     <% }); %>
                   </select>
                 </div>
@@ -172,7 +175,7 @@
             <span class="tag is-success">
               <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i></span>
               <span class="icon is-small"><i class="fa-solid fa-play"></i></span>
-            </span> 
+            </span>
             <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Open Date
           </div>
           <div class="column">

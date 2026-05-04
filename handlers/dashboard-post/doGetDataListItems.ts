@@ -5,7 +5,6 @@ import type { DataListItem } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetDataListItemsResponse = {
-  success: true
   items: DataListItem[]
 }
 
@@ -19,7 +18,6 @@ export default async function handler(
   const items = await getDataListItems(dataListKey, userName)
 
   response.json({
-    success: true,
     items
   })
 }

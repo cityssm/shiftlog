@@ -84,28 +84,47 @@
         <div class="field">
           <label class="label" for="workOrder--workOrderTitle">Title</label>
           <div class="control">
-            <input
-              class="input"
-              id="workOrder--workOrderTitle"
-              name="workOrderTitle"
-              type="text"
-              value="<%= workOrder.workOrderTitle ?? '' %>"
-              maxlength="200"
-              <% if (isCreate) { %>autofocus<% } %>
-              <% if (!isEdit) { %>readonly<% } %>
-            />
+            <% 
+              let workOrderTitleInputHTML = /* html */ `
+                <input
+                  class="input"
+                  id="workOrder--workOrderTitle"
+                  name="workOrderTitle"
+                  type="text"
+                  value="${workOrder.workOrderTitle ?? ''}"
+                  maxlength="200"
+              `;
+
+              if (isCreate) {
+                workOrderTitleInputHTML += ' autofocus';
+              }
+
+              if (!isEdit) {
+                workOrderTitleInputHTML += ' readonly';
+              }
+  
+              workOrderTitleInputHTML += ' />';
+            %><%- workOrderTitleInputHTML %>
           </div>
         </div>
         <div class="field">
           <label class="label" for="workOrder--workOrderDetails">Details</label>
           <div class="control">
-            <textarea
-              class="textarea"
-              id="workOrder--workOrderDetails"
-              name="workOrderDetails"
-              rows="6"
-              <% if (!isEdit) { %>readonly<% } %>
-            ><%= workOrder.workOrderDetails ?? '' %></textarea>
+            <% 
+              let workOrderDetailsInputHTML = /* html */ `
+                <textarea
+                  class="textarea"
+                  id="workOrder--workOrderDetails"
+                  name="workOrderDetails"
+                  rows="6"
+              `;
+              
+              if (!isEdit) {
+                workOrderDetailsInputHTML += ' readonly';
+              }
+
+              workOrderDetailsInputHTML += `>${workOrder.workOrderDetails ?? ''}</textarea>`;
+            %><%- workOrderDetailsInputHTML %>
           </div>
         </div>
         <div class="columns">
@@ -262,6 +281,7 @@
                   type="text"
                   value="<%= workOrder.requestorContactInfo ?? '' %>"
                   maxlength="100"
+                  placeholder="Email or phone"
                   <% if (!isEdit) { %>readonly<% } %>
                 />
               </div>

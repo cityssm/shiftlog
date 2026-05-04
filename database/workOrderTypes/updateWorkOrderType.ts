@@ -1,3 +1,5 @@
+/* eslint-disable no-secrets/no-secrets */
+
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -35,18 +37,20 @@ export default async function updateWorkOrderType(
       'userGroupId',
       form.userGroupId === '' ? null : (form.userGroupId ?? null)
     )
-    .input('userName', userName).query(/* sql */ `
-      update ShiftLog.WorkOrderTypes
-      set
+    .input('userName', userName)
+    .query(/* sql */ `
+      UPDATE ShiftLog.WorkOrderTypes
+      SET
         workOrderType = @workOrderType,
         workOrderNumberPrefix = @workOrderNumberPrefix,
         dueDays = @dueDays,
         userGroupId = @userGroupId,
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
-      where instance = @instance
-        and workOrderTypeId = @workOrderTypeId
-        and recordDelete_dateTime is null
+      WHERE
+        instance = @instance
+        AND workOrderTypeId = @workOrderTypeId
+        AND recordDelete_dateTime IS NULL
     `)
 
   if (result.rowsAffected[0] === 0) {
@@ -55,10 +59,13 @@ export default async function updateWorkOrderType(
 
   // Update moreInfoFormNames
   // First, delete existing form associations
-  await pool.request().input('workOrderTypeId', form.workOrderTypeId)
+  await pool
+    .request()
+    .input('workOrderTypeId', form.workOrderTypeId)
     .query(/* sql */ `
-      delete from ShiftLog.WorkOrderTypeMoreInfoForms
-      where workOrderTypeId = @workOrderTypeId
+      DELETE FROM ShiftLog.WorkOrderTypeMoreInfoForms
+      WHERE
+        workOrderTypeId = @workOrderTypeId
     `)
 
   // Then, insert new form associations
@@ -75,9 +82,12 @@ export default async function updateWorkOrderType(
       await pool
         .request()
         .input('workOrderTypeId', form.workOrderTypeId)
-        .input('formName', formName.trim()).query(/* sql */ `
-          insert into ShiftLog.WorkOrderTypeMoreInfoForms (workOrderTypeId, formName)
-          values (@workOrderTypeId, @formName)
+        .input('formName', formName.trim())
+        .query(/* sql */ `
+          INSERT INTO
+            ShiftLog.WorkOrderTypeMoreInfoForms (workOrderTypeId, formName)
+          VALUES
+            (@workOrderTypeId, @formName)
         `)
     }
   }

@@ -56,14 +56,11 @@
     }
     function doResetApiKey() {
         cityssm.postJSON(`${shiftLog.urlPrefix}/dashboard/doResetApiKey`, {}, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            if (responseJSON.success) {
-                bulmaJS.alert({
-                    contextualColorName: 'success',
-                    title: 'API Key Reset Successfully',
-                    message: 'Remember to update any applications using your API key.'
-                });
-            }
+            bulmaJS.alert({
+                contextualColorName: 'success',
+                title: 'API Key Reset Successfully',
+                message: 'Remember to update any applications using your API key.'
+            });
         });
     }
     document

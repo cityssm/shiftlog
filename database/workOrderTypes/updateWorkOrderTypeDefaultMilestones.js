@@ -5,8 +5,9 @@ export default async function updateWorkOrderTypeDefaultMilestones(workOrderType
         .request()
         .input('workOrderTypeId', workOrderTypeId)
         .query(`
-      delete from ShiftLog.WorkOrderTypeMilestones
-      where workOrderTypeId = @workOrderTypeId
+      DELETE FROM ShiftLog.WorkOrderTypeMilestones
+      WHERE
+        workOrderTypeId = @workOrderTypeId
     `);
     for (const milestone of defaultMilestones) {
         const trimmedTitle = milestone.milestoneTitle.trim();
@@ -20,20 +21,22 @@ export default async function updateWorkOrderTypeDefaultMilestones(workOrderType
                 .input('dueDays', milestone.dueDays ?? null)
                 .input('orderNumber', milestone.orderNumber)
                 .query(`
-          insert into ShiftLog.WorkOrderTypeMilestones (
-            workOrderTypeId,
-            milestoneTitle,
-            milestoneDescription,
-            dueDays,
-            orderNumber
-          )
-          values (
-            @workOrderTypeId,
-            @milestoneTitle,
-            @milestoneDescription,
-            @dueDays,
-            @orderNumber
-          )
+          INSERT INTO
+            ShiftLog.WorkOrderTypeMilestones (
+              workOrderTypeId,
+              milestoneTitle,
+              milestoneDescription,
+              dueDays,
+              orderNumber
+            )
+          VALUES
+            (
+              @workOrderTypeId,
+              @milestoneTitle,
+              @milestoneDescription,
+              @dueDays,
+              @orderNumber
+            )
         `);
         }
     }

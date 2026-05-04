@@ -1,9 +1,9 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
-import type { DoResetApiKeyResponse } from '../../handlers/dashboard-post/doResetApiKey.js'
 import type { DoUpdateEmployeeContactResponse } from '../../handlers/dashboard-post/doUpdateEmployeeContact.js'
 import type { DoUpdateUserSettingResponse } from '../../handlers/dashboard-post/doUpdateUserSetting.js'
+
 import type { ShiftLogGlobal } from './types.js'
 
 declare const cityssm: cityssmGlobal
@@ -31,7 +31,8 @@ declare const exports: {
         `${shiftLog.urlPrefix}/dashboard/doUpdateEmployeeContact`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateEmployeeContactResponse
+          const responseJSON =
+            rawResponseJSON as DoUpdateEmployeeContactResponse
           if (responseJSON.success) {
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -102,15 +103,14 @@ declare const exports: {
       `${shiftLog.urlPrefix}/dashboard/doResetApiKey`,
       {},
       (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoResetApiKeyResponse
-        if (responseJSON.success) {
-          bulmaJS.alert({
-            contextualColorName: 'success',
-            title: 'API Key Reset Successfully',
+        // const responseJSON = rawResponseJSON as DoResetApiKeyResponse
 
-            message: 'Remember to update any applications using your API key.'
-          })
-        }
+        bulmaJS.alert({
+          contextualColorName: 'success',
+          title: 'API Key Reset Successfully',
+
+          message: 'Remember to update any applications using your API key.'
+        })
       }
     )
   }

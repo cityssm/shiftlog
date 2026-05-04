@@ -5,7 +5,6 @@ import { updateApiKeyUserSetting } from '../../database/users/updateUserSetting.
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoResetApiKeyResponse = {
-  success: true
   apiKey: string
 }
 
@@ -22,8 +21,6 @@ export default async function handler(
   )
 
   response.json({
-    success: true,
-
     apiKey
   })
 }

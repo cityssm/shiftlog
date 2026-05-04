@@ -161,6 +161,7 @@ export default async function addOrUpdateSyncedEquipment(
     partialEquipment.equipmentTypeDataListItemId === undefined &&
     (partialEquipment.equipmentTypeDataListItem ?? '') !== ''
   ) {
+    // eslint-disable-next-line require-atomic-updates
     partialEquipment.equipmentTypeDataListItemId = await getOrAddDataListItemId(
       'equipmentTypes',
       partialEquipment.equipmentTypeDataListItem ?? '',

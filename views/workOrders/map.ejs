@@ -60,12 +60,15 @@
                 <select id="workOrderMap--assignedToId">
                   <option value="">(All Assignees)</option>
                   <% assignedToItems.forEach(function(assignedToItem) { %>
-                  <option
-                    value="<%= assignedToItem.assignedToId %>"
-                    <%= user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString() ? 'selected' : '' %>
-                  >
+                  <% if (user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString()) { %>
+                  <option value="<%= assignedToItem.assignedToId %>" selected>
                     <%= assignedToItem.assignedToName %>
                   </option>
+                  <% } else { %>
+                  <option value="<%= assignedToItem.assignedToId %>">
+                    <%= assignedToItem.assignedToName %>
+                  </option>
+                  <% } %>
                   <% }); %>
                 </select>
               </div>
