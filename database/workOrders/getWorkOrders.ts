@@ -54,7 +54,28 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
       ' and (w.requestorName like @requestor or w.requestorContactInfo like @requestor)'
   }
 
-  if (filters.assignedToId !== undefined && filters.assignedToId !== '') {
+  if (
+    filters.assignedToId !== undefined &&
+    filters.assignedToId === 'unassigned'
+  ) {
+    whereClause += /* sql */ `
+      AND (
+        w.assignedToId IS NULL
+        OR w.workOrderId IN (
+          SELECT
+            workOrderId
+          FROM
+            ShiftLog.WorkOrderMilestones
+          WHERE
+            assignedToId IS NULL
+            AND recordDelete_dateTime IS NULL
+        )
+      )
+    `
+  } else if (
+    filters.assignedToId !== undefined &&
+    filters.assignedToId !== ''
+  ) {
     whereClause += /* sql */ `
       AND (
         w.assignedToId = @assignedToId
@@ -418,7 +439,10 @@ export default async function getWorkOrders(
           wot.workOrderId IN (${parameterNames.join(',')})
         ORDER BY
           wot.workOrderId,
-          case when t.tagBackgroundColor is null then 1 else 0 end,
+          CASE
+            WHEN t.tagBackgroundColor IS NULL THEN 1
+            ELSE 0
+          END,
           wot.tagName
       `)
 

@@ -173,6 +173,7 @@
                 <div class="select is-fullwidth">
                   <select id="workOrderSearch--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
+                    <option value="unassigned">(Unassigned)</option>
                     <% assignedToItems.forEach(function(assignedToItem) { %>
                     <option
                       value="<%= assignedToItem.assignedToId %>"
