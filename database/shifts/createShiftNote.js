@@ -49,9 +49,7 @@ export default async function createShiftNote(createShiftNoteForm, userName) {
         createShiftNoteForm.noteTypeId !== undefined &&
         createShiftNoteForm.fields !== undefined) {
         for (const [noteTypeFieldId, fieldValue] of Object.entries(createShiftNoteForm.fields)) {
-            if (fieldValue !== undefined &&
-                fieldValue !== null &&
-                fieldValue !== '') {
+            if ((fieldValue ?? '') !== '') {
                 await pool
                     .request()
                     .input('shiftId', createShiftNoteForm.shiftId)

@@ -74,11 +74,8 @@ export default async function createShiftNote(
     for (const [noteTypeFieldId, fieldValue] of Object.entries(
       createShiftNoteForm.fields
     )) {
-      if (
-        fieldValue !== undefined &&
-        fieldValue !== null &&
-        fieldValue !== ''
-      ) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if ((fieldValue ?? '') !== '') {
         // eslint-disable-next-line no-await-in-loop -- inserting field values sequentially
         await pool
           .request()

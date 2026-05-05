@@ -135,7 +135,12 @@
               </label>
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select id="workOrder--workOrderTypeId" name="workOrderTypeId" required <% if (!isEdit) { %>disabled<% } %>>
+                  <select
+                    id="workOrder--workOrderTypeId"
+                    name="workOrderTypeId"
+                    required
+                    <% if (!isEdit) { %>disabled<% } %>
+                  >
                     <% if (isCreate) { %>
                       <option value="">(Select Type)</option>
                       <% } %>

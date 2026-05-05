@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -47,6 +49,7 @@ export default async function updateShiftNote(
     for (const [noteTypeFieldId, fieldValue] of Object.entries(
       updateShiftNoteForm.fields
     )) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (fieldValue !== undefined && fieldValue !== null) {
         // Check if field value already exists
         const existingField = await pool
