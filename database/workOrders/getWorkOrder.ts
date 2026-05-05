@@ -31,6 +31,7 @@ async function _getWorkOrder(
       w.requestorName,
       w.requestorContactInfo,
       w.requestorIsSubscribed,
+      w.workOrderIsMuted,
       w.locationLatitude,
       w.locationLongitude,
       w.locationAddress1,

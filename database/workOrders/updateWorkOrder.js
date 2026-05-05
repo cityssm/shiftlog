@@ -40,6 +40,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .input('requestorName', updateWorkOrderForm.requestorName)
         .input('requestorContactInfo', updateWorkOrderForm.requestorContactInfo)
         .input('requestorIsSubscribed', updateWorkOrderForm.requestorIsSubscribed === '1')
+        .input('workOrderIsMuted', updateWorkOrderForm.workOrderIsMuted === '1')
         .input('locationLatitude', (updateWorkOrderForm.locationLatitude ?? '') === ''
         ? null
         : updateWorkOrderForm.locationLatitude)
@@ -68,6 +69,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         requestorName = @requestorName,
         requestorContactInfo = @requestorContactInfo,
         requestorIsSubscribed = @requestorIsSubscribed,
+        workOrderIsMuted = @workOrderIsMuted,
         locationLatitude = @locationLatitude,
         locationLongitude = @locationLongitude,
         locationAddress1 = @locationAddress1,
@@ -82,7 +84,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
     `);
-    if (result.rowsAffected[0] > 0) {
+    if (result.rowsAffected[0] > 0 && updateWorkOrderForm.workOrderIsMuted !== '1') {
         sendNotificationWorkerMessage('workOrder.update', typeof updateWorkOrderForm.workOrderId === 'string'
             ? Number.parseInt(updateWorkOrderForm.workOrderId, 10)
             : updateWorkOrderForm.workOrderId);
