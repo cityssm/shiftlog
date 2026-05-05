@@ -163,30 +163,21 @@ export async function sendEmail(): Promise<void> {
 
     messageToSend.appendToBody(
       /* html */ `
-        <h1>${workOrder.workOrderNumber}</h1>
-        <p>
-          <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
-          ${workOrder.workOrderType}
-        </p>
-        <p>
-          <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
-          ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
-        </p>
+        <div style="padding: 10px; border: 1px solid black; margin-top: 20px;">
+          <h1>${workOrder.workOrderNumber}</h1>
+          <p>
+            <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
+            ${workOrder.workOrderType}
+          </p>
+          <p>
+            <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
+            ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
+          </p>
+          ${workOrder.assignedToId === null ? '' : `<p><b>Assigned To:</b> ${workOrder.assignedToName}</p>`}
+        </div>
       `,
       'html'
     )
-
-    if (workOrder.assignedToId !== null) {
-      messageToSend.appendToBody(
-        /* html */ `
-          <p>
-            <b>Assigned To:</b>
-            ${workOrder.assignedToName}
-          </p>
-        `,
-        'html'
-      )
-    }
 
     /*
      * Send the email

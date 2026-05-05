@@ -91,24 +91,19 @@ export async function sendEmail() {
             }
         }
         messageToSend.appendToBody(`
-        <h1>${workOrder.workOrderNumber}</h1>
-        <p>
-          <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
-          ${workOrder.workOrderType}
-        </p>
-        <p>
-          <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
-          ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
-        </p>
-      `, 'html');
-        if (workOrder.assignedToId !== null) {
-            messageToSend.appendToBody(`
+        <div style="padding: 10px; border: 1px solid black; margin-top: 20px;">
+          <h1>${workOrder.workOrderNumber}</h1>
           <p>
-            <b>Assigned To:</b>
-            ${workOrder.assignedToName}
+            <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
+            ${workOrder.workOrderType}
           </p>
-        `, 'html');
-        }
+          <p>
+            <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
+            ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
+          </p>
+          ${workOrder.assignedToId === null ? '' : `<p><b>Assigned To:</b> ${workOrder.assignedToName}</p>`}
+        </div>
+      `, 'html');
         await msGraphApi.sendMessage(messageToSend.build());
     }
     debug('Send Email task completed');
