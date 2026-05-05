@@ -168,7 +168,7 @@ export async function sendEmail(): Promise<void> {
 
     messageToSend.appendToBody(
       /* html */ `
-        <div style="padding: 10px; border: 1px solid black; margin-top: 20px;">
+        <div style="padding: 10px; border: 1px solid #333; margin-top: 20px;">
           <h1>${workOrder.workOrderNumber}</h1>
           <p>
             <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
