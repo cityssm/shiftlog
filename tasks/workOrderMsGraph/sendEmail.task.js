@@ -41,6 +41,10 @@ export async function sendEmail() {
             debug(`Work order ID ${workOrderId} not found, skipping`);
             continue;
         }
+        if (workOrder.workOrderIsMuted) {
+            debug(`Work order ID ${workOrderId} is muted, skipping`);
+            continue;
+        }
         const bccEmailAddresses = new Set();
         if (workOrder.requestorIsSubscribed &&
             isEmailAddress(workOrder.requestorContactInfo)) {

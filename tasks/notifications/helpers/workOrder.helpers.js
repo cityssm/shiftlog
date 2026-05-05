@@ -9,6 +9,9 @@ export async function getWorkOrderToSend(workOrderId, notificationConfiguration)
             errorMessage: `${getConfigProperty('workOrders.sectionNameSingular')} ID ${workOrderId} not found`
         };
     }
+    if (workOrder.workOrderIsMuted) {
+        return undefined;
+    }
     let sendMessage = notificationConfiguration.assignedToId === null ||
         notificationConfiguration.assignedToId === undefined ||
         notificationConfiguration.assignedToId === workOrder.assignedToId;

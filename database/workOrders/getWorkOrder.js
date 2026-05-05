@@ -23,6 +23,7 @@ async function _getWorkOrder(workOrderIdField, workOrderIdOrNumber, userName) {
       w.requestorName,
       w.requestorContactInfo,
       w.requestorIsSubscribed,
+      w.workOrderIsMuted,
       w.locationLatitude,
       w.locationLongitude,
       w.locationAddress1,

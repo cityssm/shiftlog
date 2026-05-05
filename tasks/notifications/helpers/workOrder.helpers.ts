@@ -23,6 +23,10 @@ export async function getWorkOrderToSend(
     }
   }
 
+  if (workOrder.workOrderIsMuted) {
+    return undefined
+  }
+
   let sendMessage =
     notificationConfiguration.assignedToId === null ||
     notificationConfiguration.assignedToId === undefined ||

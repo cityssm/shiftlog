@@ -308,6 +308,22 @@
               </label>
             </div>
           </div>
+          <div class="column is-narrow">
+            <label class="label" for="workOrder--workOrderIsMuted">Muted</label>
+            <div class="control">
+              <label class="checkbox">
+                <input
+                  id="workOrder--workOrderIsMuted"
+                  name="workOrderIsMuted"
+                  type="checkbox"
+                  value="1"
+                  <% if (workOrder.workOrderIsMuted) { %>checked<% } %>
+                  <% if (!isEdit) { %>disabled<% } %>
+                />
+                Mute <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %>
+              </label>
+            </div>
+          </div>
         </div>
         <div class="field">
           <label class="label" for="workOrder--assignedToId">Assigned To</label>

@@ -31,6 +31,7 @@ export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
   requestorContactInfo: string
   requestorName: string
   requestorIsSubscribed?: '1'
+  workOrderIsMuted?: '1'
 
   locationLatitude?: number | string
   locationLongitude?: number | string
@@ -115,6 +116,7 @@ export default async function updateWorkOrder(
       'requestorIsSubscribed',
       updateWorkOrderForm.requestorIsSubscribed === '1'
     )
+    .input('workOrderIsMuted', updateWorkOrderForm.workOrderIsMuted === '1')
     .input(
       'locationLatitude',
       (updateWorkOrderForm.locationLatitude ?? '') === ''
@@ -152,6 +154,7 @@ export default async function updateWorkOrder(
         requestorName = @requestorName,
         requestorContactInfo = @requestorContactInfo,
         requestorIsSubscribed = @requestorIsSubscribed,
+        workOrderIsMuted = @workOrderIsMuted,
         locationLatitude = @locationLatitude,
         locationLongitude = @locationLongitude,
         locationAddress1 = @locationAddress1,
@@ -167,7 +170,7 @@ export default async function updateWorkOrder(
         AND recordDelete_dateTime IS NULL
     `)
 
-  if (result.rowsAffected[0] > 0) {
+  if (result.rowsAffected[0] > 0 && updateWorkOrderForm.workOrderIsMuted !== '1') {
     // Send Notification
     sendNotificationWorkerMessage(
       'workOrder.update',

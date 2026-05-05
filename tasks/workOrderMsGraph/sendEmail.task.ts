@@ -72,6 +72,11 @@ export async function sendEmail(): Promise<void> {
       continue
     }
 
+    if (workOrder.workOrderIsMuted) {
+      debug(`Work order ID ${workOrderId} is muted, skipping`)
+      continue
+    }
+
     const bccEmailAddresses = new Set<string>()
 
     if (
