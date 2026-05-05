@@ -43,7 +43,7 @@ Includes basic high-level notification functionality for:
 - [ntfy](https://ntfy.sh/)
   (notifications for web browsers, and Android and iPhone devices).
 
-Also includes work order creating, updateing, and messaging via:
+Also includes work order creating, updating, and messaging via:
 
 - Microsoft Graph API.
 
