@@ -12,12 +12,6 @@ export const sendWorkOrderCreateEmailNotification = async (notificationConfigura
         return workOrderToSend;
     }
     const workOrder = workOrderToSend.workOrder;
-    if (workOrder.workOrderIsMuted) {
-        return {
-            success: false,
-            errorMessage: 'Work order is muted'
-        };
-    }
     const emailSpecificConfig = JSON.parse(notificationConfiguration.notificationTypeFormJson);
     const transporter = nodemailer.createTransport({
         host: emailConnectorConfig.server,
