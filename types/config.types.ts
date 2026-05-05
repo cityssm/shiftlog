@@ -166,7 +166,11 @@ interface ConfigApplication {
   /** The maximum number of concurrent processes */
   maximumProcesses?: number
 
+  /** The background image for the application login screen */
   backgroundImage?: string
+
+  /** The HTML content for the welcome message on the login screen */
+  welcomeMessageHtml?: string
 
   attachmentMaximumFileSizeBytes?: number
   attachmentStoragePath?: string

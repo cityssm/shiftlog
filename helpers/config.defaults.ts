@@ -21,7 +21,9 @@ import type {
 export const configDefaultValues = {
   'application.applicationName': 'ShiftLog',
   'application.applicationUrl': undefined as string | undefined,
+
   'application.backgroundImage': 'background.jpg',
+  'application.welcomeMessageHtml': '',
 
   'application.instance': '',
 

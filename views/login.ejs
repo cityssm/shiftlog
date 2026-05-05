@@ -25,6 +25,13 @@
   <body>
     <div class="columns is-vcentered is-centered mx-0 my-0" style="min-height:100vh">
       <div class="column is-half-widescreen is-two-thirds-desktop is-three-quarters-tablet">
+        <% if (configFunctions.getConfigProperty("application.welcomeMessageHtml") !== "") { %>
+        <div class="box mx-3 my-3 py-5">
+          <div class="content">
+            <%- configFunctions.getConfigProperty("application.welcomeMessageHtml") %>
+          </div>
+        </div>
+        <% } %>
         <main class="box mx-3 my-3 py-5">
           <div class="columns is-vcentered">
             <div class="column has-text-centered">

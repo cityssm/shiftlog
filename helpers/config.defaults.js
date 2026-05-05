@@ -4,6 +4,7 @@ export const configDefaultValues = {
     'application.applicationName': 'ShiftLog',
     'application.applicationUrl': undefined,
     'application.backgroundImage': 'background.jpg',
+    'application.welcomeMessageHtml': '',
     'application.instance': '',
     'application.httpPort': 9000,
     'application.maximumProcesses': 4,
