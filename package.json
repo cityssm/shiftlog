@@ -1,6 +1,6 @@
 {
   "name": "@cityssm/shiftlog",
-  "version": "1.0.0-dev.8",
+  "version": "1.0.0-dev.9",
   "private": true,
   "description": "ShiftLog - A work management system with work order recording, shift activity logging, and timesheet tracking",
   "keywords": [
@@ -98,7 +98,7 @@
     "ejs": "^5.0.2",
     "exit-hook": "^5.1.0",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.4.1",
+    "express-rate-limit": "^8.5.0",
     "express-session": "^1.19.0",
     "flatpickr": "^4.6.13",
     "http-errors": "^2.0.1",
