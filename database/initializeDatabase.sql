@@ -418,6 +418,7 @@ CREATE TABLE ShiftLog.WorkOrders (
   requestorName VARCHAR(100) NOT NULL DEFAULT '',
   requestorContactInfo VARCHAR(100) NOT NULL DEFAULT '',
   requestorIsSubscribed BIT NOT NULL DEFAULT 0,
+  workOrderIsMuted BIT NOT NULL DEFAULT 0,
   locationLatitude DECIMAL(10, 7),
   locationLongitude DECIMAL(10, 7),
   locationAddress1 VARCHAR(100) NOT NULL DEFAULT '',
