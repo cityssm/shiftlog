@@ -80,13 +80,6 @@ export const sendWorkOrderUpdateNtfyNotification: NotificationFunction = async (
 
   const workOrder = workOrderToSend.workOrder
 
-  if (workOrder.workOrderIsMuted) {
-    return {
-      success: false,
-      errorMessage: 'Work order is muted'
-    }
-  }
-
   const ntfySpecificConfig = JSON.parse(
     notificationConfiguration.notificationTypeFormJson
   ) as NtfyNotificationConfig

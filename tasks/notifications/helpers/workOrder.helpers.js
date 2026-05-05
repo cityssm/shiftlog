@@ -10,7 +10,10 @@ export async function getWorkOrderToSend(workOrderId, notificationConfiguration)
         };
     }
     if (workOrder.workOrderIsMuted) {
-        return undefined;
+        return {
+            success: false,
+            errorMessage: 'Work order is muted'
+        };
     }
     let sendMessage = notificationConfiguration.assignedToId === null ||
         notificationConfiguration.assignedToId === undefined ||

@@ -91,13 +91,6 @@ export const sendWorkOrderUpdateEmailNotification: NotificationFunction =
 
     const workOrder = workOrderToSend.workOrder
 
-    if (workOrder.workOrderIsMuted) {
-      return {
-        success: false,
-        errorMessage: 'Work order is muted'
-      }
-    }
-
     const emailSpecificConfig = JSON.parse(
       notificationConfiguration.notificationTypeFormJson
     ) as EmailNotificationConfig

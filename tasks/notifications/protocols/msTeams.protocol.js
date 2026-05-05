@@ -40,12 +40,6 @@ export const sendWorkOrderUpdateMsTeamsNotification = async (notificationConfigu
         return workOrderToSend;
     }
     const workOrder = workOrderToSend.workOrder;
-    if (workOrder.workOrderIsMuted) {
-        return {
-            success: false,
-            errorMessage: 'Work order is muted'
-        };
-    }
     const msTeamsSpecificConfig = JSON.parse(notificationConfiguration.notificationTypeFormJson);
     await sendMessageToTeamsWebhook(msTeamsSpecificConfig.webhookUrl, [
         {

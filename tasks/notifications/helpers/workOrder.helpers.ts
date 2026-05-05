@@ -24,7 +24,10 @@ export async function getWorkOrderToSend(
   }
 
   if (workOrder.workOrderIsMuted) {
-    return undefined
+    return {
+      success: false,
+      errorMessage: 'Work order is muted'
+    }
   }
 
   let sendMessage =
