@@ -274,25 +274,23 @@
             <% } %>
           </div>
         </div>
-        <div class="columns is-vcentered">
-          <div class="column">
-            <div class="field mb-0">
-              <label class="label" for="workOrder--requestorContactInfo">Requestor Contact Info</label>
-              <div class="control">
-                <input
-                  class="input"
-                  id="workOrder--requestorContactInfo"
-                  name="requestorContactInfo"
-                  type="text"
-                  value="<%= workOrder.requestorContactInfo ?? '' %>"
-                  maxlength="100"
-                  placeholder="Email or phone"
-                  <% if (!isEdit) { %>readonly<% } %>
-                />
-              </div>
-            </div>
+        <div class="field">
+          <label class="label" for="workOrder--requestorContactInfo">Requestor Contact Info</label>
+          <div class="control">
+            <input
+              class="input"
+              id="workOrder--requestorContactInfo"
+              name="requestorContactInfo"
+              type="text"
+              value="<%= workOrder.requestorContactInfo ?? '' %>"
+              maxlength="100"
+              placeholder="Email or phone"
+              <% if (!isEdit) { %>readonly<% } %>
+            />
           </div>
-          <div class="column is-narrow">
+        </div>
+        <div class="columns">
+          <div class="column">
             <label class="label" for="workOrder--requestorIsSubscribed">Subscribed</label>
             <div class="control">
               <label class="checkbox">
@@ -308,7 +306,7 @@
               </label>
             </div>
           </div>
-          <div class="column is-narrow">
+          <div class="column">
             <label class="label" for="workOrder--workOrderIsMuted">Muted</label>
             <div class="control">
               <label class="checkbox">
