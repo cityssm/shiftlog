@@ -10,6 +10,12 @@ export const sendWorkOrderCreateNtfyNotification = async (notificationConfigurat
         return workOrderToSend;
     }
     const workOrder = workOrderToSend.workOrder;
+    if (workOrder.workOrderIsMuted) {
+        return {
+            success: false,
+            errorMessage: 'Work order is muted'
+        };
+    }
     const ntfySpecificConfig = JSON.parse(notificationConfiguration.notificationTypeFormJson);
     const success = await publishToNtfy({
         server: ntfyServerUrl,
@@ -33,6 +39,12 @@ export const sendWorkOrderUpdateNtfyNotification = async (notificationConfigurat
         return workOrderToSend;
     }
     const workOrder = workOrderToSend.workOrder;
+    if (workOrder.workOrderIsMuted) {
+        return {
+            success: false,
+            errorMessage: 'Work order is muted'
+        };
+    }
     const ntfySpecificConfig = JSON.parse(notificationConfiguration.notificationTypeFormJson);
     const success = await publishToNtfy({
         server: ntfyServerUrl,

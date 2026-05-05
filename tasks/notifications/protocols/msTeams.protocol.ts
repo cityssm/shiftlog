@@ -22,6 +22,13 @@ export const sendWorkOrderCreateMsTeamsNotification: NotificationFunction =
 
     const workOrder = workOrderToSend.workOrder
 
+    if (workOrder.workOrderIsMuted) {
+      return {
+        success: false,
+        errorMessage: 'Work order is muted'
+      }
+    }
+
     const msTeamsSpecificConfig = JSON.parse(
       notificationConfiguration.notificationTypeFormJson
     ) as MsTeamsNotificationConfig
@@ -64,6 +71,13 @@ export const sendWorkOrderUpdateMsTeamsNotification: NotificationFunction =
     }
 
     const workOrder = workOrderToSend.workOrder
+
+    if (workOrder.workOrderIsMuted) {
+      return {
+        success: false,
+        errorMessage: 'Work order is muted'
+      }
+    }
 
     const msTeamsSpecificConfig = JSON.parse(
       notificationConfiguration.notificationTypeFormJson
