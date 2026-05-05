@@ -26,6 +26,7 @@ export interface CreateWorkOrderForm {
   requestorName: string
   requestorContactInfo: string
   requestorIsSubscribed?: '1'
+  workOrderIsMuted?: '1'
 
   locationLatitude?: number | string
   locationLongitude?: number | string
@@ -131,6 +132,7 @@ export default async function createWorkOrder(
       'requestorIsSubscribed',
       createWorkOrderForm.requestorIsSubscribed === '1'
     )
+    .input('workOrderIsMuted', createWorkOrderForm.workOrderIsMuted === '1')
     .input(
       'locationLatitude',
       (createWorkOrderForm.locationLatitude ?? '') === ''
@@ -170,6 +172,7 @@ export default async function createWorkOrder(
           requestorName,
           requestorContactInfo,
           requestorIsSubscribed,
+          workOrderIsMuted,
           locationLatitude,
           locationLongitude,
           locationAddress1,
@@ -195,6 +198,7 @@ export default async function createWorkOrder(
           @requestorName,
           @requestorContactInfo,
           @requestorIsSubscribed,
+          @workOrderIsMuted,
           @locationLatitude,
           @locationLongitude,
           @locationAddress1,
@@ -260,7 +264,9 @@ export default async function createWorkOrder(
   }
 
   // Send notification
-  sendNotificationWorkerMessage('workOrder.create', workOrderId)
+  if (createWorkOrderForm.workOrderIsMuted !== '1') {
+    sendNotificationWorkerMessage('workOrder.create', workOrderId)
+  }
 
   return workOrderId
 }

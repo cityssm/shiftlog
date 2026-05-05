@@ -61,6 +61,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         .input('requestorName', createWorkOrderForm.requestorName)
         .input('requestorContactInfo', createWorkOrderForm.requestorContactInfo)
         .input('requestorIsSubscribed', createWorkOrderForm.requestorIsSubscribed === '1')
+        .input('workOrderIsMuted', createWorkOrderForm.workOrderIsMuted === '1')
         .input('locationLatitude', (createWorkOrderForm.locationLatitude ?? '') === ''
         ? null
         : createWorkOrderForm.locationLatitude)
@@ -91,6 +92,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           requestorName,
           requestorContactInfo,
           requestorIsSubscribed,
+          workOrderIsMuted,
           locationLatitude,
           locationLongitude,
           locationAddress1,
@@ -116,6 +118,7 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           @requestorName,
           @requestorContactInfo,
           @requestorIsSubscribed,
+          @workOrderIsMuted,
           @locationLatitude,
           @locationLongitude,
           @locationAddress1,
@@ -167,6 +170,8 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
           )
       `);
     }
-    sendNotificationWorkerMessage('workOrder.create', workOrderId);
+    if (createWorkOrderForm.workOrderIsMuted !== '1') {
+        sendNotificationWorkerMessage('workOrder.create', workOrderId);
+    }
     return workOrderId;
 }
