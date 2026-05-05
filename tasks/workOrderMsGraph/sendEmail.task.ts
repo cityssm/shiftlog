@@ -131,32 +131,6 @@ export async function sendEmail(): Promise<void> {
         `,
         'html'
       )
-      .appendToBody(
-        /* html */ `
-          <h1>${workOrder.workOrderNumber}</h1>
-          <p>
-            <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
-            ${workOrder.workOrderType}
-          </p>
-          <p>
-            <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
-            ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
-          </p>
-        `,
-        'html'
-      )
-
-    if (workOrder.assignedToId !== null) {
-      messageToSend.appendToBody(
-        /* html */ `
-          <p>
-            <b>Assigned To:</b>
-            ${workOrder.assignedToName}
-          </p>
-        `,
-        'html'
-      )
-    }
 
     if (workOrderNotes.length > 0) {
       messageToSend.appendToBody(
@@ -185,6 +159,33 @@ export async function sendEmail(): Promise<void> {
           messageToSend.appendToBody('<hr />', 'html')
         }
       }
+    }
+
+    messageToSend.appendToBody(
+      /* html */ `
+        <h1>${workOrder.workOrderNumber}</h1>
+        <p>
+          <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
+          ${workOrder.workOrderType}
+        </p>
+        <p>
+          <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
+          ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
+        </p>
+      `,
+      'html'
+    )
+
+    if (workOrder.assignedToId !== null) {
+      messageToSend.appendToBody(
+        /* html */ `
+          <p>
+            <b>Assigned To:</b>
+            ${workOrder.assignedToName}
+          </p>
+        `,
+        'html'
+      )
     }
 
     /*

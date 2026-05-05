@@ -69,26 +69,7 @@ export async function sendEmail() {
           <p style="font-style: italic; color: gray;">
             ${messageHeaderString}
           </p>
-        `, 'html')
-            .appendToBody(`
-          <h1>${workOrder.workOrderNumber}</h1>
-          <p>
-            <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
-            ${workOrder.workOrderType}
-          </p>
-          <p>
-            <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
-            ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
-          </p>
         `, 'html');
-        if (workOrder.assignedToId !== null) {
-            messageToSend.appendToBody(`
-          <p>
-            <b>Assigned To:</b>
-            ${workOrder.assignedToName}
-          </p>
-        `, 'html');
-        }
         if (workOrderNotes.length > 0) {
             messageToSend.appendToBody(`
           <h2>Notes:</h2>
@@ -108,6 +89,25 @@ export async function sendEmail() {
                     messageToSend.appendToBody('<hr />', 'html');
                 }
             }
+        }
+        messageToSend.appendToBody(`
+        <h1>${workOrder.workOrderNumber}</h1>
+        <p>
+          <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
+          ${workOrder.workOrderType}
+        </p>
+        <p>
+          <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
+          ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
+        </p>
+      `, 'html');
+        if (workOrder.assignedToId !== null) {
+            messageToSend.appendToBody(`
+          <p>
+            <b>Assigned To:</b>
+            ${workOrder.assignedToName}
+          </p>
+        `, 'html');
         }
         await msGraphApi.sendMessage(messageToSend.build());
     }
