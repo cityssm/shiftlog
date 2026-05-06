@@ -83,11 +83,34 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         workOrderId = @workOrderId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
+
+        and (
+          workOrderTypeId <> @workOrderTypeId
+          OR workOrderStatusDataListItemId <> @workOrderStatusDataListItemId
+          OR workOrderPriorityDataListItemId <> @workOrderPriorityDataListItemId
+          OR workOrderDetails <> @workOrderDetails
+          OR workOrderTitle <> @workOrderTitle
+          OR workOrderOpenDateTime <> @workOrderOpenDateTime
+          OR workOrderDueDateTime <> @workOrderDueDateTime
+          OR workOrderCloseDateTime <> @workOrderCloseDateTime
+          OR requestorName <> @requestorName
+          OR requestorContactInfo <> @requestorContactInfo
+          OR requestorIsSubscribed <> @requestorIsSubscribed
+          OR workOrderIsMuted <> @workOrderIsMuted
+          OR locationLatitude <> @locationLatitude
+          OR locationLongitude <> @locationLongitude
+          OR locationAddress1 <> @locationAddress1
+          OR locationAddress2 <> @locationAddress2
+          OR locationCityProvince <> @locationCityProvince
+          OR assignedToId <> @assignedToId
+          OR moreInfoFormDataJson <> @moreInfoFormDataJson
+        )
     `);
-    if (result.rowsAffected[0] > 0 && updateWorkOrderForm.workOrderIsMuted !== '1') {
+    if (result.rowsAffected[0] > 0 &&
+        updateWorkOrderForm.workOrderIsMuted !== '1') {
         sendNotificationWorkerMessage('workOrder.update', typeof updateWorkOrderForm.workOrderId === 'string'
             ? Number.parseInt(updateWorkOrderForm.workOrderId, 10)
             : updateWorkOrderForm.workOrderId);
     }
-    return result.rowsAffected[0] > 0;
+    return true;
 }

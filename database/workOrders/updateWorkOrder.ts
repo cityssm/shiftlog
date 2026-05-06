@@ -168,9 +168,34 @@ export default async function updateWorkOrder(
         workOrderId = @workOrderId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
+
+        and (
+          workOrderTypeId <> @workOrderTypeId
+          OR workOrderStatusDataListItemId <> @workOrderStatusDataListItemId
+          OR workOrderPriorityDataListItemId <> @workOrderPriorityDataListItemId
+          OR workOrderDetails <> @workOrderDetails
+          OR workOrderTitle <> @workOrderTitle
+          OR workOrderOpenDateTime <> @workOrderOpenDateTime
+          OR workOrderDueDateTime <> @workOrderDueDateTime
+          OR workOrderCloseDateTime <> @workOrderCloseDateTime
+          OR requestorName <> @requestorName
+          OR requestorContactInfo <> @requestorContactInfo
+          OR requestorIsSubscribed <> @requestorIsSubscribed
+          OR workOrderIsMuted <> @workOrderIsMuted
+          OR locationLatitude <> @locationLatitude
+          OR locationLongitude <> @locationLongitude
+          OR locationAddress1 <> @locationAddress1
+          OR locationAddress2 <> @locationAddress2
+          OR locationCityProvince <> @locationCityProvince
+          OR assignedToId <> @assignedToId
+          OR moreInfoFormDataJson <> @moreInfoFormDataJson
+        )
     `)
 
-  if (result.rowsAffected[0] > 0 && updateWorkOrderForm.workOrderIsMuted !== '1') {
+  if (
+    result.rowsAffected[0] > 0 &&
+    updateWorkOrderForm.workOrderIsMuted !== '1'
+  ) {
     // Send Notification
     sendNotificationWorkerMessage(
       'workOrder.update',
@@ -180,5 +205,5 @@ export default async function updateWorkOrder(
     )
   }
 
-  return result.rowsAffected[0] > 0
+  return true
 }
