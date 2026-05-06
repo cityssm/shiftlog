@@ -50,7 +50,6 @@ export async function checkEmail() {
             select: [
                 'id',
                 'receivedDateTime',
-                'hasAttachments',
                 'subject',
                 'body',
                 'from',
@@ -128,7 +127,7 @@ export async function checkEmail() {
                     recordCreate_dateTime: receivedDateTime
                 }, fromAddressLowerCase);
             }
-            if (workOrder !== undefined && (message.hasAttachments ?? false)) {
+            if (workOrder !== undefined) {
                 const attachments = await msGraphApi.listMessageAttachments(message.id);
                 for (const attachment of attachments) {
                     const storagePaths = getAttachmentStoragePathForFileName(attachment.name);

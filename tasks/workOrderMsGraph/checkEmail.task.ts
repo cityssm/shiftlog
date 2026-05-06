@@ -84,7 +84,6 @@ export async function checkEmail(): Promise<void> {
         select: [
           'id',
           'receivedDateTime',
-          'hasAttachments',
           'subject',
           'body',
           'from',
@@ -102,7 +101,6 @@ export async function checkEmail(): Promise<void> {
         | 'body'
         | 'ccRecipients'
         | 'from'
-        | 'hasAttachments'
         | 'id'
         | 'receivedDateTime'
         | 'subject'
@@ -254,7 +252,7 @@ export async function checkEmail(): Promise<void> {
        * Save any attachments to the work order
        */
 
-      if (workOrder !== undefined && (message.hasAttachments ?? false)) {
+      if (workOrder !== undefined) {
         const attachments = await msGraphApi.listMessageAttachments(message.id)
 
         for (const attachment of attachments) {
