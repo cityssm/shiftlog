@@ -196,6 +196,8 @@ export default async function getWorkOrderAccomplishmentStats(
         OR w.workOrderCloseDateTime > db.bucketDate
       )
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId ${userGroupFilter}
+    WHERE
+      db.bucketDate <= CAST(GETDATE() AS DATE)
     GROUP BY
       db.bucketDate
     ORDER BY
