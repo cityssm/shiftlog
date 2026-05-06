@@ -85,7 +85,23 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         AND recordDelete_dateTime IS NULL
         AND (
           workOrderTypeId <> @workOrderTypeId
+          OR (
+            workOrderStatusDataListItemId IS NULL
+            AND @workOrderStatusDataListItemId IS NOT NULL
+          )
+          OR (
+            workOrderStatusDataListItemId IS NOT NULL
+            AND @workOrderStatusDataListItemId IS NULL
+          )
           OR workOrderStatusDataListItemId <> @workOrderStatusDataListItemId
+          OR (
+            workOrderPriorityDataListItemId IS NULL
+            AND @workOrderPriorityDataListItemId IS NOT NULL
+          )
+          OR (
+            workOrderPriorityDataListItemId IS NOT NULL
+            AND @workOrderPriorityDataListItemId IS NULL
+          )
           OR workOrderPriorityDataListItemId <> @workOrderPriorityDataListItemId
           OR workOrderDetails <> @workOrderDetails
           OR workOrderTitle <> @workOrderTitle
