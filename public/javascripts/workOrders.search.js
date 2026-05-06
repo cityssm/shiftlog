@@ -218,5 +218,11 @@
     document
         .querySelector('#workOrderSearch--limit')
         ?.addEventListener('change', resetOffsetAndGetResults);
+    const doRefreshCheckbox = document.querySelector('#workOrderSearch--doRefresh');
+    setInterval(() => {
+        if (doRefreshCheckbox.checked) {
+            getSearchResults();
+        }
+    }, 60 * 1000);
     getSearchResults();
 })();

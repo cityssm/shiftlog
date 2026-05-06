@@ -94,7 +94,7 @@ declare const exports: {
       let extraDateHTML = ''
 
       if (workOrder.workOrderCloseDateTime !== null) {
-        extraDateHTML =  /* html */ `<i class="fa-solid fa-stop" title="Close Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderCloseDateTime ?? ''))}`
+        extraDateHTML = /* html */ `<i class="fa-solid fa-stop" title="Close Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderCloseDateTime ?? ''))}`
       } else if (workOrder.workOrderDueDateTime !== null) {
         extraDateHTML = /* html */ `<i class="fa-solid fa-exclamation-triangle" title="Due Date"></i> ${cityssm.dateToString(new Date(workOrder.workOrderDueDateTime ?? ''))}`
       }
@@ -295,6 +295,16 @@ declare const exports: {
   document
     .querySelector('#workOrderSearch--limit')
     ?.addEventListener('change', resetOffsetAndGetResults)
+
+  const doRefreshCheckbox = document.querySelector(
+    '#workOrderSearch--doRefresh'
+  ) as HTMLInputElement
+
+  setInterval(() => {
+    if (doRefreshCheckbox.checked) {
+      getSearchResults()
+    }
+  }, 60 * 1000)
 
   getSearchResults()
 })()

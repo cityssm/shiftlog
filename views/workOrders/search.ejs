@@ -37,8 +37,18 @@
           <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Search
         </h1>
       </div>
+      <div class="column is-narrow has-text-right">
+        <label class="checkbox">
+          <input
+            id="workOrderSearch--doRefresh"
+            name="doRefresh"
+            type="checkbox"
+          />
+          Auto Refresh (<small>60s</small>)
+        </label>
+      </div>
       <div class="column is-narrow">
-        <div class="field has-addons">
+        <div class="field has-addons is-justify-content-end">
           <div class="control">
             <label class="button is-small is-static" for="workOrderSearch--limit">Limit</label>
           </div>
