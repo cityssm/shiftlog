@@ -129,16 +129,16 @@ declare const exports: {
 
           const message =
             openMilestonesCount > 0
-              ? `This work order has ${openMilestonesCount} open milestone${openMilestonesCount > 1 ? 's' : ''}. Are you sure you want to close this work order?`
-              : 'Are you sure you want to close this work order?'
+              ? `This ${shiftLog.workOrdersSectionNameSingular.toLowerCase()} has ${openMilestonesCount} open milestone${openMilestonesCount > 1 ? 's' : ''}. Are you sure you want to close this ${shiftLog.workOrdersSectionNameSingular.toLowerCase()}?`
+              : `Are you sure you want to close this ${shiftLog.workOrdersSectionNameSingular.toLowerCase()}?`
 
           bulmaJS.confirm({
             contextualColorName: 'warning',
-            title: 'Close Work Order',
+            title: `Close ${shiftLog.workOrdersSectionNameSingular}`,
 
             message,
             okButton: {
-              text: 'Close Work Order',
+              text: `Close ${shiftLog.workOrdersSectionNameSingular}`,
 
               callbackFunction() {
                 submitWorkOrderUpdate()
@@ -180,7 +180,7 @@ declare const exports: {
             } else {
               bulmaJS.alert({
                 contextualColorName: 'success',
-                message: 'Updated Successfully'
+                message: `${shiftLog.workOrdersSectionNameSingular} Updated Successfully`
               })
             }
           } else {
@@ -707,12 +707,11 @@ declare const exports: {
 
       bulmaJS.confirm({
         contextualColorName: 'danger',
-        title: 'Delete Work Order',
+        title: `Delete ${shiftLog.workOrdersSectionNameSingular}`,
 
-        message:
-          'Are you sure you want to delete this work order? This action cannot be undone.',
+        message: `Are you sure you want to delete this ${shiftLog.workOrdersSectionNameSingular.toLowerCase()}? This action cannot be undone.`,
         okButton: {
-          text: 'Delete Work Order',
+          text: `Delete ${shiftLog.workOrdersSectionNameSingular}`,
 
           callbackFunction: () => {
             cityssm.postJSON(
