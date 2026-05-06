@@ -90,8 +90,24 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
           OR workOrderDetails <> @workOrderDetails
           OR workOrderTitle <> @workOrderTitle
           OR workOrderOpenDateTime <> @workOrderOpenDateTime
-          OR (workOrderDueDateTime is null and @workOrderDueDateTime is not null) OR (workOrderDueDateTime is not null and @workOrderDueDateTime is null) OR workOrderDueDateTime <> @workOrderDueDateTime
-          OR (workOrderCloseDateTime is null and @workOrderCloseDateTime is not null) OR (workOrderCloseDateTime is not null and @workOrderCloseDateTime is null) OR workOrderCloseDateTime <> @workOrderCloseDateTime
+          OR (
+            workOrderDueDateTime IS NULL
+            AND @workOrderDueDateTime IS NOT NULL
+          )
+          OR (
+            workOrderDueDateTime IS NOT NULL
+            AND @workOrderDueDateTime IS NULL
+          )
+          OR workOrderDueDateTime <> @workOrderDueDateTime
+          OR (
+            workOrderCloseDateTime IS NULL
+            AND @workOrderCloseDateTime IS NOT NULL
+          )
+          OR (
+            workOrderCloseDateTime IS NOT NULL
+            AND @workOrderCloseDateTime IS NULL
+          )
+          OR workOrderCloseDateTime <> @workOrderCloseDateTime
           OR requestorName <> @requestorName
           OR requestorContactInfo <> @requestorContactInfo
           OR requestorIsSubscribed <> @requestorIsSubscribed
