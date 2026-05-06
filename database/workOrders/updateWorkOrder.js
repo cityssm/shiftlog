@@ -83,16 +83,15 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         workOrderId = @workOrderId
         AND instance = @instance
         AND recordDelete_dateTime IS NULL
-
-        and (
+        AND (
           workOrderTypeId <> @workOrderTypeId
           OR workOrderStatusDataListItemId <> @workOrderStatusDataListItemId
           OR workOrderPriorityDataListItemId <> @workOrderPriorityDataListItemId
           OR workOrderDetails <> @workOrderDetails
           OR workOrderTitle <> @workOrderTitle
           OR workOrderOpenDateTime <> @workOrderOpenDateTime
-          OR workOrderDueDateTime <> @workOrderDueDateTime
-          OR workOrderCloseDateTime <> @workOrderCloseDateTime
+          OR (workOrderDueDateTime is null and @workOrderDueDateTime is not null) OR (workOrderDueDateTime is not null and @workOrderDueDateTime is null) OR workOrderDueDateTime <> @workOrderDueDateTime
+          OR (workOrderCloseDateTime is null and @workOrderCloseDateTime is not null) OR (workOrderCloseDateTime is not null and @workOrderCloseDateTime is null) OR workOrderCloseDateTime <> @workOrderCloseDateTime
           OR requestorName <> @requestorName
           OR requestorContactInfo <> @requestorContactInfo
           OR requestorIsSubscribed <> @requestorIsSubscribed
