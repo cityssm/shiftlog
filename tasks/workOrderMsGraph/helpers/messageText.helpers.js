@@ -14,8 +14,8 @@ export function messageBodyToText(messageBody) {
     if (messageBodyText.includes(messageHeaderString)) {
         messageBodyText = messageBodyText.split(messageHeaderString)[0].trim();
     }
-    if (messageBodyText.includes('---\n\n**From:**')) {
-        messageBodyText = messageBodyText.split('---\n\n**From:**')[0].trim();
+    if (messageBodyText.includes('\n\n**From:** ')) {
+        messageBodyText = messageBodyText.split('\n\n**From:** ')[0].trim();
     }
     return messageBodyText;
 }
