@@ -219,6 +219,14 @@
         .querySelector('#workOrderSearch--limit')
         ?.addEventListener('change', resetOffsetAndGetResults);
     const doRefreshCheckbox = document.querySelector('#workOrderSearch--doRefresh');
+    const doRefreshSessionStorageKey = 'workOrderSearch--doRefresh';
+    const savedDoRefresh = sessionStorage.getItem(doRefreshSessionStorageKey);
+    if (savedDoRefresh !== null) {
+        doRefreshCheckbox.checked = savedDoRefresh === 'true';
+    }
+    doRefreshCheckbox.addEventListener('change', () => {
+        sessionStorage.setItem(doRefreshSessionStorageKey, doRefreshCheckbox.checked.toString());
+    });
     setInterval(() => {
         if (doRefreshCheckbox.checked) {
             getSearchResults();
