@@ -202,6 +202,14 @@ export default async function updateWorkOrder(
           OR locationAddress1 <> @locationAddress1
           OR locationAddress2 <> @locationAddress2
           OR locationCityProvince <> @locationCityProvince
+          OR (
+            assignedToId IS NULL
+            AND @assignedToId IS NOT NULL
+          )
+          OR (
+            assignedToId IS NOT NULL
+            AND @assignedToId IS NULL
+          )
           OR assignedToId <> @assignedToId
           OR moreInfoFormDataJson <> @moreInfoFormDataJson
         )
