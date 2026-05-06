@@ -150,17 +150,19 @@
         <span class="has-text-weight-semibold mr-2">
           <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Highlights
         </span>
+        <% if (overdueWorkOrders.length > 0) { %>
+        <span class="tag is-danger" id="badge--overdueWorkOrderCount--summary"><%= overdueWorkOrders.length %> Overdue</span>
+        <% } %>
       </summary>
       <div class="panel-tabs">
         <a class="is-active" data-work-order-type="recent" href="#">
-          <span class="icon is-small"><i class="fa-solid fa-clock"></i></span>
+          <span class="icon"><i class="fa-solid fa-clock"></i></span>
           <span>Recently Updated</span>
         </a>
         <% if (overdueWorkOrders.length > 0) { %>
         <a data-work-order-type="overdue" href="#">
-          <span class="icon is-small"><i class="fa-solid fa-exclamation-triangle"></i></span>
+          <span class="icon"><i class="fa-solid fa-exclamation-triangle"></i></span>
           <span>Overdue</span>
-          <span class="tag is-danger ml-2" id="badge--overdueWorkOrderCount"><%= overdueWorkOrders.length %></span>
         </a>
         <% } %>
       </div>
