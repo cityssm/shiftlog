@@ -1,5 +1,5 @@
 import MsGraphMailApi, { MsGraphMailMessageBuilder } from '@cityssm/ms-graph-mail';
-import { minutesToMillis, secondsToMillis } from '@cityssm/to-millis';
+import { minutesToMillis } from '@cityssm/to-millis';
 import UniqueTimedEntryQueue from '@cityssm/unique-timed-entry-queue';
 import { dateToString, dateToTimePeriodString } from '@cityssm/utils-datetime';
 import { Sema } from 'async-sema';
@@ -10,11 +10,12 @@ import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js';
 import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { sendEmailIntervalMillis } from './constants.js';
 import { isEmailAddress } from './helpers/emailAddress.helpers.js';
 import { messageHeaderString } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:sendEmail`);
-const workOrderQueue = new UniqueTimedEntryQueue(secondsToMillis(30));
+const workOrderQueue = new UniqueTimedEntryQueue(sendEmailIntervalMillis);
 const notificationQueueTypes = new Set([
     'workOrder.create',
     'workOrder.update'
