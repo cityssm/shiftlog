@@ -61,5 +61,12 @@ export function messageSubjectToWorkOrderNumber(
     messageSubject
   )
 
-  return workOrderNumberMatch?.groups?.workOrderNumber
+  let workOrderNumber = workOrderNumberMatch?.groups?.workOrderNumber
+
+  if (workOrderNumber !== undefined) {
+    workOrderNumber = `${workOrderNumber.trim()}]`
+    return workOrderNumber.split(']')[0]
+  }
+
+  return undefined
 }

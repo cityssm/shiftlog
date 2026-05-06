@@ -32,5 +32,10 @@ export async function messageTextToLocation(messageText) {
 }
 export function messageSubjectToWorkOrderNumber(messageSubject) {
     const workOrderNumberMatch = /\[#(?<workOrderNumber>.{0,50})\]/.exec(messageSubject);
-    return workOrderNumberMatch?.groups?.workOrderNumber;
+    let workOrderNumber = workOrderNumberMatch?.groups?.workOrderNumber;
+    if (workOrderNumber !== undefined) {
+        workOrderNumber = `${workOrderNumber.trim()}]`;
+        return workOrderNumber.split(']')[0];
+    }
+    return undefined;
 }
