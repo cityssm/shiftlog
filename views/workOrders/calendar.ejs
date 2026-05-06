@@ -213,6 +213,10 @@
 
 <%- await include('../_footerA'); -%>
 
+<script>
+  exports.preferEdit = <%= user.userSettings['workOrders.preferEdit'] ? 'true' : 'false' %>;
+</script>
+
 <script src="<%= urlPrefix %>/javascripts/workOrders.calendar.js"></script>
 
 <%- await include('../_footerB'); -%>

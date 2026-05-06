@@ -42,7 +42,7 @@ const shadowSize = [41, 41];
     function buildWorkOrderPopupContent(workOrder, isOverdue) {
         const workOrderDiv = document.createElement('div');
         const titleLink = document.createElement('a');
-        titleLink.href = shiftLog.buildWorkOrderURL(workOrder.workOrderId);
+        titleLink.href = shiftLog.buildWorkOrderURL(workOrder.workOrderId, exports.preferEdit);
         titleLink.textContent = workOrder.workOrderNumber;
         titleLink.style.fontWeight = 'bold';
         const typeSpan = document.createElement('span');

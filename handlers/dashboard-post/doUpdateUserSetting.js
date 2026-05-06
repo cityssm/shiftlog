@@ -1,7 +1,8 @@
 import getUserSettings from '../../database/users/getUserSettings.js';
 import updateUserSetting from '../../database/users/updateUserSetting.js';
 const updatableUserSettingKeys = new Set([
-    'workOrders.defaultAssignedToId'
+    'workOrders.defaultAssignedToId',
+    'workOrders.preferEdit'
 ]);
 export default async function handler(request, response) {
     const success = updatableUserSettingKeys.has(request.body.settingKey)

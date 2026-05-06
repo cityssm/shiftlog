@@ -255,6 +255,10 @@
 
 <%- await include('../_footerA'); -%>
 
+<script>
+  exports.preferEdit = <%= user.userSettings['workOrders.preferEdit'] ? 'true' : 'false' %>;
+</script>
+
 <script src="<%= urlPrefix %>/javascripts/workOrders.search.js"></script>
 
 <%- await include('../_footerB'); -%>

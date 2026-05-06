@@ -8,6 +8,8 @@ declare const cityssm: cityssmGlobal
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
+  preferEdit: boolean
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -187,7 +189,7 @@ declare const exports: {
           }
         </td>
         <td>
-          <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
+          <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId, exports.preferEdit)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a>
           ${thumbnailIconHTML}

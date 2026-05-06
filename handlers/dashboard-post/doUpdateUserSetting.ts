@@ -1,5 +1,3 @@
-/* eslint-disable no-secrets/no-secrets */
-
 import type { Request, Response } from 'express'
 
 import getUserSettings from '../../database/users/getUserSettings.js'
@@ -7,7 +5,8 @@ import updateUserSetting from '../../database/users/updateUserSetting.js'
 import type { UserSettingKey } from '../../types/user.types.js'
 
 const updatableUserSettingKeys = new Set<UserSettingKey>([
-  'workOrders.defaultAssignedToId'
+  'workOrders.defaultAssignedToId',
+  'workOrders.preferEdit'
 ])
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.

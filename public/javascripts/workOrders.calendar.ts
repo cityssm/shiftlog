@@ -9,6 +9,8 @@ declare const cityssm: cityssmGlobal
 
 declare const exports: {
   shiftLog: ShiftLogGlobal
+
+  preferEdit: boolean
 }
 ;(() => {
   const shiftLog = exports.shiftLog
@@ -288,7 +290,7 @@ declare const exports: {
 
               // Create a tag with addons: left side has icons, right side has work order number
               const safeHref = encodeURI(
-                shiftLog.buildWorkOrderURL(event.workOrderId)
+                shiftLog.buildWorkOrderURL(event.workOrderId, exports.preferEdit)
               )
               // eslint-disable-next-line no-unsanitized/method -- URL is encoded, user content is escaped
               dayCell.insertAdjacentHTML(

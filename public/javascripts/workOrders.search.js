@@ -129,7 +129,7 @@
                 : ''}
         </td>
         <td>
-          <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
+          <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId, exports.preferEdit)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a>
           ${thumbnailIconHTML}

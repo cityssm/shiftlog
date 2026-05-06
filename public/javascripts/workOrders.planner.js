@@ -83,7 +83,7 @@
           ${milestonesHTML}
         </td>
         <td>
-          <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}">
+          <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId, exports.preferEdit)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a><br />
           ${workOrder.workOrderTitle ? `<span class="is-size-7 has-text-weight-semibold">${cityssm.escapeHTML(workOrder.workOrderTitle)}</span><br />` : ''}

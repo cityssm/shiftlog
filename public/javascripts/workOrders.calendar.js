@@ -174,7 +174,7 @@
                             const titleWithStatus = event.milestoneTitle
                                 ? `${event.workOrderNumber} - ${event.milestoneTitle} (${statusText})`
                                 : `${event.workOrderNumber} (${statusText})`;
-                            const safeHref = encodeURI(shiftLog.buildWorkOrderURL(event.workOrderId));
+                            const safeHref = encodeURI(shiftLog.buildWorkOrderURL(event.workOrderId, exports.preferEdit));
                             dayCell.insertAdjacentHTML('beforeend', `
                   <div class="tags has-addons mb-1">
                     <a class="tag ${eventClass}" href="${safeHref}" title="${cityssm.escapeHTML(titleWithStatus)}">
