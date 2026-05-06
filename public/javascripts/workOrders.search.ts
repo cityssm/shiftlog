@@ -302,6 +302,21 @@ declare const exports: {
     '#workOrderSearch--doRefresh'
   ) as HTMLInputElement
 
+  const doRefreshSessionStorageKey = 'workOrderSearch--doRefresh'
+
+  const savedDoRefresh = sessionStorage.getItem(doRefreshSessionStorageKey)
+
+  if (savedDoRefresh !== null) {
+    doRefreshCheckbox.checked = savedDoRefresh === 'true'
+  }
+
+  doRefreshCheckbox.addEventListener('change', () => {
+    sessionStorage.setItem(
+      doRefreshSessionStorageKey,
+      doRefreshCheckbox.checked.toString()
+    )
+  })
+
   setInterval(() => {
     if (doRefreshCheckbox.checked) {
       getSearchResults()
