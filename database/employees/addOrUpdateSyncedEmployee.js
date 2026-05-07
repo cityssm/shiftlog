@@ -126,18 +126,24 @@ async function updateSyncedEmployee(currentEmployee, partialEmployee, syncUserNa
     `);
 }
 export default async function addOrUpdateSyncedEmployee(partialEmployee, syncUserName) {
-    const currentEmployee = await getEmployee(partialEmployee.employeeNumber ?? '', true);
-    if (currentEmployee === undefined) {
-        debug('Adding new synced employee', partialEmployee.employeeNumber);
-        await addSyncedEmployee(partialEmployee, syncUserName);
+    try {
+        const currentEmployee = await getEmployee(partialEmployee.employeeNumber ?? '', true);
+        if (currentEmployee === undefined) {
+            debug('Adding new synced employee', partialEmployee.employeeNumber);
+            await addSyncedEmployee(partialEmployee, syncUserName);
+        }
+        else if (currentEmployee.recordSync_isSynced) {
+            debug('Updating synced employee', partialEmployee.employeeNumber);
+            await updateSyncedEmployee(currentEmployee, partialEmployee, syncUserName);
+        }
+        else {
+            debug('Skipping employee not synced', partialEmployee.employeeNumber);
+            return false;
+        }
+        return true;
     }
-    else if (currentEmployee.recordSync_isSynced) {
-        debug('Updating synced employee', partialEmployee.employeeNumber);
-        await updateSyncedEmployee(currentEmployee, partialEmployee, syncUserName);
-    }
-    else {
-        debug('Skipping employee not synced', partialEmployee.employeeNumber);
+    catch (error) {
+        debug('Error adding/updating synced employee', partialEmployee.employeeNumber, error);
         return false;
     }
-    return true;
 }

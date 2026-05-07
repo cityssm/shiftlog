@@ -28,6 +28,8 @@ export const configDefaultValues = {
     'connectors.ntfy.serverUrl': DEFAULT_NTFY_SERVER,
     'connectors.pearl': undefined,
     'connectors.email': undefined,
+    'connectors.employeeSync': undefined,
+    'connectors.equipmentSync': undefined,
     'connectors.msGraph': undefined,
     'shifts.isEnabled': false,
     'shifts.router': 'shifts',

@@ -24,6 +24,9 @@ let syncFunction:
 if (syncSource === 'pearl') {
   const importedModule = await import('./pearl.equipmentSync.js')
   syncFunction = importedModule.default
+} else if (syncSource === 'sql') {
+  const importedModule = await import('./sql.equipmentSync.js')
+  syncFunction = importedModule.default
 }
 
 async function runSync(): Promise<void> {

@@ -78,6 +78,9 @@ export interface Config {
 
     /** Used for creating work orders from email, and sending updates to subscribers */
     msGraph?: MsGraphMailApiConfig
+
+    employeeSync?: MSSQLConfig
+    equipmentSync?: MSSQLConfig
   }
 
   shifts?: ConfigSection
@@ -112,6 +115,11 @@ export type ConfigEmployees =
 
       filters?: GetEmployeesFilters
     }
+  | {
+      syncSource: 'sql'
+
+      sql: string
+    }
 
 export type ConfigEquipment =
   | {
@@ -121,6 +129,11 @@ export type ConfigEquipment =
       syncSource: 'pearl'
 
       filters?: GetEquipmentFilters
+    }
+  | {
+      syncSource: 'sql'
+
+      sql: string
     }
 
 export type ConfigLocations =

@@ -21,6 +21,11 @@ switch (syncSource) {
         syncFunction = importedModule.default;
         break;
     }
+    case 'sql': {
+        const importedModule = await import('./sql.employeeSync.js');
+        syncFunction = importedModule.default;
+        break;
+    }
     default: {
         syncFunction = undefined;
     }

@@ -85,6 +85,10 @@ export const configDefaultValues = {
 
   'connectors.email': undefined as unknown as ConfigEmail | undefined,
 
+  'connectors.employeeSync': undefined as unknown as MSSQLConfig | undefined,
+
+  'connectors.equipmentSync': undefined as unknown as MSSQLConfig | undefined,
+
   'connectors.msGraph': undefined as unknown as
     | MsGraphMailApiConfig
     | undefined,

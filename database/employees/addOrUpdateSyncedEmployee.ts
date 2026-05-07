@@ -195,22 +195,31 @@ export default async function addOrUpdateSyncedEmployee(
   partialEmployee: Partial<Employee>,
   syncUserName: string
 ): Promise<boolean> {
-  const currentEmployee = await getEmployee(
-    partialEmployee.employeeNumber ?? '',
-    true
-  )
+  try {
+    const currentEmployee = await getEmployee(
+      partialEmployee.employeeNumber ?? '',
+      true
+    )
 
-  if (currentEmployee === undefined) {
-    debug('Adding new synced employee', partialEmployee.employeeNumber)
-    await addSyncedEmployee(partialEmployee, syncUserName)
-  } else if (currentEmployee.recordSync_isSynced) {
-    debug('Updating synced employee', partialEmployee.employeeNumber)
-    await updateSyncedEmployee(currentEmployee, partialEmployee, syncUserName)
-  } else {
-    debug('Skipping employee not synced', partialEmployee.employeeNumber)
+    if (currentEmployee === undefined) {
+      debug('Adding new synced employee', partialEmployee.employeeNumber)
+      await addSyncedEmployee(partialEmployee, syncUserName)
+    } else if (currentEmployee.recordSync_isSynced) {
+      debug('Updating synced employee', partialEmployee.employeeNumber)
+      await updateSyncedEmployee(currentEmployee, partialEmployee, syncUserName)
+    } else {
+      debug('Skipping employee not synced', partialEmployee.employeeNumber)
 
+      return false
+    }
+
+    return true
+  } catch (error) {
+    debug(
+      'Error adding/updating synced employee',
+      partialEmployee.employeeNumber,
+      error
+    )
     return false
   }
-
-  return true
 }
