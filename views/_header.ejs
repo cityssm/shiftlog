@@ -59,7 +59,7 @@
           <div class="navbar-start">
             <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
             <a class="navbar-item <%= section === 'workOrders' ? 'has-background-grey-lighter' : '' %>" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>">
-              <span class="icon is-small">
+              <span class="icon">
                 <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
               </span>
               <span>
@@ -69,7 +69,7 @@
             <% } %>
             <% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canView) { %>
             <a class="navbar-item <%= section === 'shifts' ? 'has-background-grey-lighter' : '' %>" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>">
-              <span class="icon is-small">
+              <span class="icon">
                 <i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i>
               </span>
               <span>
@@ -79,7 +79,7 @@
             <% } %>
             <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canView) { %>
             <a class="navbar-item <%= section === 'timesheets' ? 'has-background-grey-lighter' : '' %>" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>">
-              <span class="icon is-small">
+              <span class="icon">
                 <i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
               </span>
               <span>
@@ -88,7 +88,7 @@
             </a>
             <% } %>
             <a class="navbar-item <%= section === 'reports' ? 'has-background-grey-lighter' : '' %>" href="<%= urlPrefix %>/dashboard/reports">
-              <span class="icon is-small">
+              <span class="icon">
                 <i class="fa-solid fa-file-lines"></i>
               </span>
               <span>
@@ -98,44 +98,78 @@
           </div>
           <div class="navbar-end">
             <% if (user.userProperties.workOrders.canUpdate || user.userProperties.shifts.canUpdate || user.userProperties.timesheets.canUpdate) { %>
-            <div class="navbar-item has-dropdown">
-              <a class="navbar-link" href="#">
-                <span class="icon is-small">
-                  <i class="fa-solid fa-plus-circle has-text-success-light" data-fa-glow="10" style="--fa-glow-color:var(--bulma-text)"></i>
-                </span>
-                <span>Create New</span>
-              </a>
-              <div class="navbar-dropdown is-right">
+            <!-- eslint-disable html/indent -->
+              <% 
+                const updateCount = (user.userProperties.workOrders.canUpdate ? 1 : 0)
+                  + (user.userProperties.shifts.canUpdate ? 1 : 0)
+                  + (user.userProperties.timesheets.canUpdate ? 1 : 0);
+              %>
+              <% if (updateCount > 1) { %>
+                <div class="navbar-item has-dropdown">
+                  <a class="navbar-link" href="#">
+                    <span class="icon">
+                      <i class="fa-solid fa-plus-circle has-text-success-light" data-fa-glow="10" style="--fa-glow-color:var(--bulma-text)"></i>
+                    </span>
+                    <span>Create New</span>
+                  </a>
+                  <div class="navbar-dropdown is-right">
+                    <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canUpdate) { %>
+                    <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/new">
+                      <span class="icon">
+                        <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+                      </span>
+                      <span>New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
+                    </a>
+                    <% } %>
+                    <% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canUpdate) { %>
+                    <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/new">
+                      <span class="icon">
+                        <i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i>
+                      </span>
+                      <span>New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
+                    </a>
+                    <% } %>
+                    <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canUpdate) { %>
+                    <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new">
+                      <span class="icon">
+                        <i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
+                      </span>
+                      <span>New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
+                    </a>
+                    <% } %>
+                  </div>
+                </div>
+              <% } else { %>
                 <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canUpdate) { %>
                 <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/new">
                   <span class="icon">
-                    <i class="fa-solid <%= configFunctions.getConfigProperty('workOrders.iconClass') %>"></i>
+                    <i class="fa-solid fa-plus-circle has-text-success-light" data-fa-glow="10" style="--fa-glow-color:var(--bulma-text)"></i>
                   </span>
-                  <span>New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
+                  <span>Create New <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %></span>
                 </a>
                 <% } %>
                 <% if (configFunctions.getConfigProperty('shifts.isEnabled') && user.userProperties.shifts.canUpdate) { %>
                 <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('shifts.router') %>/new">
                   <span class="icon">
-                    <i class="fa-solid <%= configFunctions.getConfigProperty('shifts.iconClass') %>"></i>
+                    <i class="fa-solid fa-plus-circle has-text-success-light" data-fa-glow="10" style="--fa-glow-color:var(--bulma-text)"></i>
                   </span>
-                  <span>New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
+                  <span>Create New <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %></span>
                 </a>
                 <% } %>
                 <% if (configFunctions.getConfigProperty('timesheets.isEnabled') && user.userProperties.timesheets.canUpdate) { %>
                 <a class="navbar-item" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('timesheets.router') %>/new">
                   <span class="icon">
-                    <i class="fa-solid <%= configFunctions.getConfigProperty('timesheets.iconClass') %>"></i>
+                    <i class="fa-solid fa-plus-circle has-text-success-light" data-fa-glow="10" style="--fa-glow-color:var(--bulma-text)"></i>
                   </span>
-                  <span>New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
+                  <span>Create New <%= configFunctions.getConfigProperty('timesheets.sectionNameSingular') %></span>
                 </a>
                 <% } %>
-              </div>
-            </div>
+              <% } %>
+            <!-- eslint-enable html/indent -->
             <% } %>
             <div class="navbar-item has-dropdown">
               <a class="navbar-link" href="#">
-                <span class="icon is-small">
+                <span class="icon">
                   <i class="fa-solid fa-user"></i>
                 </span>
                 <span><%= user.userName %></span>
