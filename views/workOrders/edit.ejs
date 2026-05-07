@@ -180,8 +180,8 @@
                       <option
                         value="<%= workOrderStatus.dataListItemId %>"
                         <% if (workOrder.workOrderStatusDataListItemId === workOrderStatus.dataListItemId) { %>
-                        <% workOrderStatusFound = true; %>
-                        selected
+                          <% workOrderStatusFound = true; %>
+                          selected
                         <% } %>
                       >
                         <%= workOrderStatus.dataListItem %>
@@ -210,24 +210,22 @@
                     <% let workOrderPriorityFound = false %>
                     <% for (const workOrderPriority of workOrderPriorities) { %>
                       <option
-                      value="<%= workOrderPriority.dataListItemId %>"
-                      <% if (workOrder.workOrderPriorityDataListItemId === workOrderPriority.dataListItemId) { %>
-                        <% workOrderPriorityFound = true; %>
-                        selected
+                        value="<%= workOrderPriority.dataListItemId %>"
+                        <% if (workOrder.workOrderPriorityDataListItemId === workOrderPriority.dataListItemId) { %>
+                          <% workOrderPriorityFound = true; %>
+                          selected
                         <% } %>
-                        >
+                      >
                         <%= workOrderPriority.dataListItem %>
                       </option>
-                      <% } %>
-                      <% if (!workOrderPriorityFound && workOrder.workOrderPriorityDataListItemId) { %>
-                        <option value="<%= workOrder.workOrderPriorityDataListItemId %>" selected>
-                          <%= workOrder.workOrderPriorityDataListItem %>
-                          <%= isEdit ? "(Inactive)" : "" %>
-                        </option>
-                        <% } %>
-                      </select>
-                    </div>
-                  </div>
+                    <% } %>
+                    <% if (!workOrderPriorityFound && workOrder.workOrderPriorityDataListItemId) { %>
+                      <option value="<%= workOrder.workOrderPriorityDataListItemId %>" selected>
+                        <%= workOrder.workOrderPriorityDataListItem %>
+                        <%= isEdit ? "(Inactive)" : "" %>
+                      </option>
+                    <% } %>
+                  </select>
                 </div>
               </div>
             </div>
