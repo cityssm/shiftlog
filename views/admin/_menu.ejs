@@ -207,7 +207,6 @@
       </a>
     </li>
   </ul>
-  <% if (configFunctions.getConfigProperty('shifts.isEnabled') || configFunctions.getConfigProperty('timesheets.isEnabled')) { %>
   <p class="menu-label is-hidden-touch">Resources</p>
   <ul class="menu-list">
     <li>
@@ -228,6 +227,7 @@
         </div>
       </a>
     </li>
+    <% if (configFunctions.getConfigProperty('shifts.isEnabled') || configFunctions.getConfigProperty('timesheets.isEnabled')) { %>
     <li>
       <a
         class="<%= headTitle === 'Employee List Management' ? 'is-active' : '' %>"
@@ -246,6 +246,7 @@
         </div>
       </a>
     </li>
+    <% } %>
     <li>
       <a
         class="<%= headTitle === 'Equipment Maintenance' ? 'is-active' : '' %>"
@@ -265,5 +266,4 @@
       </a>
     </li>
   </ul>
-  <% } %>
 </aside>

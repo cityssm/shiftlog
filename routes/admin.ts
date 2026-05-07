@@ -230,20 +230,30 @@ router
   .post('/doUpdateLocation', handler_doUpdateLocation)
   .post('/doDeleteLocation', handler_doDeleteLocation)
 
+/*
+ * Employees
+ */
+
+router
+  .get('/employees', handler_employees)
+  .post('/doAddEmployee', handler_doAddEmployee)
+  .post('/doUpdateEmployee', handler_doUpdateEmployee)
+  .post('/doDeleteEmployee', handler_doDeleteEmployee)
+
+/*
+ * Equipment Management
+ */
+
+router
+  .get('/equipment', handler_equipment)
+  .post('/doAddEquipment', handler_doAddEquipment)
+  .post('/doUpdateEquipment', handler_doUpdateEquipment)
+  .post('/doDeleteEquipment', handler_doDeleteEquipment)
+
 if (
   getConfigProperty('shifts.isEnabled') ||
   getConfigProperty('timesheets.isEnabled')
 ) {
-  /*
-   * Employees
-   */
-
-  router
-    .get('/employees', handler_employees)
-    .post('/doAddEmployee', handler_doAddEmployee)
-    .post('/doUpdateEmployee', handler_doUpdateEmployee)
-    .post('/doDeleteEmployee', handler_doDeleteEmployee)
-
   /*
    * Employee Lists
    */
@@ -258,16 +268,6 @@ if (
     .post('/doUpdateEmployeeListMember', handler_doUpdateEmployeeListMember)
     .post('/doDeleteEmployeeListMember', handler_doDeleteEmployeeListMember)
     .post('/doReorderEmployeeListMembers', handler_doReorderEmployeeListMembers)
-
-  /*
-   * Equipment Management
-   */
-
-  router
-    .get('/equipment', handler_equipment)
-    .post('/doAddEquipment', handler_doAddEquipment)
-    .post('/doUpdateEquipment', handler_doUpdateEquipment)
-    .post('/doDeleteEquipment', handler_doDeleteEquipment)
 }
 
 export default router

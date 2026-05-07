@@ -582,7 +582,7 @@
       </a>
     </details>
   </div>
-  <% if (configFunctions.getConfigProperty('shifts.isEnabled') || configFunctions.getConfigProperty('timesheets.isEnabled')) { %>
+  
   <div class="column">
     <details class="panel mb-5 collapsable-panel">
       <summary class="panel-heading is-clickable">
@@ -611,6 +611,7 @@
           </div>
         </div>
       </a>
+      <% if (configFunctions.getConfigProperty('shifts.isEnabled') || configFunctions.getConfigProperty('timesheets.isEnabled')) { %>
       <a class="panel-block" href="<%= urlPrefix %>/admin/employeeLists">
         <div class="media">
           <div class="media-left">
@@ -629,6 +630,7 @@
           </div>
         </div>
       </a>
+      <% } %>
       <a class="panel-block" href="<%= urlPrefix %>/admin/equipment">
         <div class="media">
           <div class="media-left">
@@ -649,7 +651,6 @@
       </a>
     </details>
   </div>
-  <% } %>
 </div>
 
 
