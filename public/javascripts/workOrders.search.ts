@@ -197,10 +197,8 @@ declare const exports: {
           <br />
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
-            -
-            ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem ?? '(No Status)')}
-            -
-            ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem ?? '(No Priority)')}
+            ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem === null ? '' : ` - ${workOrder.workOrderStatusDataListItem}`)}
+            ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem === null ? '' : ` - ${workOrder.workOrderPriorityDataListItem}`)}
           </span>
           ${tagsHTML}
         </td>

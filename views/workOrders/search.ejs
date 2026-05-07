@@ -76,8 +76,8 @@
           type="hidden"
           value="0"
         />
-        <div class="columns is-multiline">
-          <div class="column is-half-tablet is-one-quarter-desktop">
+        <div class="columns">
+          <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderNumber">
                 <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Number
@@ -95,7 +95,7 @@
               </div>
             </div>
           </div>
-          <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderTypeId">
                 <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Type
@@ -117,7 +117,8 @@
               </div>
             </div>
           </div>
-          <div class="column is-half-tablet is-one-quarter-desktop">
+          <% if (workOrderStatuses.length > 0) { %>
+          <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderStatusDataListItemId">Status</label>
               <div class="control has-icons-left">
@@ -137,7 +138,9 @@
               </div>
             </div>
           </div>
-          <div class="column is-half-tablet is-one-quarter-desktop">
+          <% } %>
+          <% if (workOrderPriorities.length > 0) { %>
+          <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderPriorityDataListItemId">Priority</label>
               <div class="control has-icons-left">
@@ -157,6 +160,7 @@
               </div>
             </div>
           </div>
+          <% } %>
         </div>
         <div class="columns">
           <div class="column">

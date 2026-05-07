@@ -100,13 +100,15 @@ export default async function createWorkOrder(
     .input('workOrderTypeId', createWorkOrderForm.workOrderTypeId)
     .input(
       'workOrderStatusDataListItemId',
-      createWorkOrderForm.workOrderStatusDataListItemId === ''
+      createWorkOrderForm.workOrderStatusDataListItemId === undefined ||
+        createWorkOrderForm.workOrderStatusDataListItemId === ''
         ? null
         : createWorkOrderForm.workOrderStatusDataListItemId
     )
     .input(
       'workOrderPriorityDataListItemId',
-      createWorkOrderForm.workOrderPriorityDataListItemId === ''
+      createWorkOrderForm.workOrderPriorityDataListItemId === undefined ||
+        createWorkOrderForm.workOrderPriorityDataListItemId === ''
         ? null
         : createWorkOrderForm.workOrderPriorityDataListItemId
     )
@@ -150,7 +152,8 @@ export default async function createWorkOrder(
     .input('locationCityProvince', createWorkOrderForm.locationCityProvince)
     .input(
       'assignedToId',
-      createWorkOrderForm.assignedToId === ''
+      createWorkOrderForm.assignedToId === undefined ||
+        createWorkOrderForm.assignedToId === ''
         ? null
         : createWorkOrderForm.assignedToId
     )

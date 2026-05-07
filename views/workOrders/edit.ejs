@@ -167,6 +167,7 @@
               </div>
             </div>
           </div>
+          <% if (workOrder.workOrderStatusDataListItemId || workOrderStatuses.length > 0) { %>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrder--workOrderStatusDataListItemId">Status</label>
@@ -197,6 +198,8 @@
               </div>
             </div>
           </div>
+          <% } %>
+          <% if (workOrder.workOrderPriorityDataListItemId || workOrderPriorities.length > 0) { %>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrder--workOrderPriorityDataListItemId">Priority</label>
@@ -227,6 +230,9 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <% } %>
         </div>
         <% if (!isCreate) { %>
           <div class="columns is-mobile mb-0">

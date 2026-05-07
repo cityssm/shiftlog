@@ -46,10 +46,12 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         .input('workOrderNumberYear', currentYear)
         .input('workOrderNumberSequence', nextSequence)
         .input('workOrderTypeId', createWorkOrderForm.workOrderTypeId)
-        .input('workOrderStatusDataListItemId', createWorkOrderForm.workOrderStatusDataListItemId === ''
+        .input('workOrderStatusDataListItemId', createWorkOrderForm.workOrderStatusDataListItemId === undefined ||
+        createWorkOrderForm.workOrderStatusDataListItemId === ''
         ? null
         : createWorkOrderForm.workOrderStatusDataListItemId)
-        .input('workOrderPriorityDataListItemId', createWorkOrderForm.workOrderPriorityDataListItemId === ''
+        .input('workOrderPriorityDataListItemId', createWorkOrderForm.workOrderPriorityDataListItemId === undefined ||
+        createWorkOrderForm.workOrderPriorityDataListItemId === ''
         ? null
         : createWorkOrderForm.workOrderPriorityDataListItemId)
         .input('workOrderDetails', createWorkOrderForm.workOrderDetails)
@@ -71,7 +73,8 @@ export default async function createWorkOrder(createWorkOrderForm, user) {
         .input('locationAddress1', createWorkOrderForm.locationAddress1)
         .input('locationAddress2', createWorkOrderForm.locationAddress2)
         .input('locationCityProvince', createWorkOrderForm.locationCityProvince)
-        .input('assignedToId', createWorkOrderForm.assignedToId === ''
+        .input('assignedToId', createWorkOrderForm.assignedToId === undefined ||
+        createWorkOrderForm.assignedToId === ''
         ? null
         : createWorkOrderForm.assignedToId)
         .input('userName', user.userName)

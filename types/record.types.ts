@@ -408,10 +408,10 @@ export interface WorkOrder extends BaseRecord {
   workOrderType?: string
 
   workOrderStatusDataListItemId?: number | null
-  workOrderStatusDataListItem?: string
+  workOrderStatusDataListItem?: string | null
 
   workOrderPriorityDataListItemId?: number | null
-  workOrderPriorityDataListItem?: string
+  workOrderPriorityDataListItem?: string | null
 
   workOrderDetails: string
   workOrderTitle: string

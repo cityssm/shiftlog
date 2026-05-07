@@ -76,13 +76,15 @@ export default async function updateWorkOrder(
     .input('workOrderTypeId', updateWorkOrderForm.workOrderTypeId)
     .input(
       'workOrderStatusDataListItemId',
-      updateWorkOrderForm.workOrderStatusDataListItemId === ''
+      updateWorkOrderForm.workOrderStatusDataListItemId === undefined ||
+        updateWorkOrderForm.workOrderStatusDataListItemId === ''
         ? null
         : updateWorkOrderForm.workOrderStatusDataListItemId
     )
     .input(
       'workOrderPriorityDataListItemId',
-      updateWorkOrderForm.workOrderPriorityDataListItemId === ''
+      updateWorkOrderForm.workOrderPriorityDataListItemId === undefined ||
+        updateWorkOrderForm.workOrderPriorityDataListItemId === ''
         ? null
         : updateWorkOrderForm.workOrderPriorityDataListItemId
     )
@@ -134,7 +136,8 @@ export default async function updateWorkOrder(
     .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
     .input(
       'assignedToId',
-      updateWorkOrderForm.assignedToId === ''
+      updateWorkOrderForm.assignedToId === undefined ||
+        updateWorkOrderForm.assignedToId === ''
         ? null
         : updateWorkOrderForm.assignedToId
     )

@@ -22,10 +22,12 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .input('instance', getConfigProperty('application.instance'))
         .input('workOrderId', updateWorkOrderForm.workOrderId)
         .input('workOrderTypeId', updateWorkOrderForm.workOrderTypeId)
-        .input('workOrderStatusDataListItemId', updateWorkOrderForm.workOrderStatusDataListItemId === ''
+        .input('workOrderStatusDataListItemId', updateWorkOrderForm.workOrderStatusDataListItemId === undefined ||
+        updateWorkOrderForm.workOrderStatusDataListItemId === ''
         ? null
         : updateWorkOrderForm.workOrderStatusDataListItemId)
-        .input('workOrderPriorityDataListItemId', updateWorkOrderForm.workOrderPriorityDataListItemId === ''
+        .input('workOrderPriorityDataListItemId', updateWorkOrderForm.workOrderPriorityDataListItemId === undefined ||
+        updateWorkOrderForm.workOrderPriorityDataListItemId === ''
         ? null
         : updateWorkOrderForm.workOrderPriorityDataListItemId)
         .input('workOrderDetails', updateWorkOrderForm.workOrderDetails)
@@ -50,7 +52,8 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         .input('locationAddress1', updateWorkOrderForm.locationAddress1)
         .input('locationAddress2', updateWorkOrderForm.locationAddress2)
         .input('locationCityProvince', updateWorkOrderForm.locationCityProvince)
-        .input('assignedToId', updateWorkOrderForm.assignedToId === ''
+        .input('assignedToId', updateWorkOrderForm.assignedToId === undefined ||
+        updateWorkOrderForm.assignedToId === ''
         ? null
         : updateWorkOrderForm.assignedToId)
         .input('moreInfoFormDataJson', moreInfoFormDataJson)
