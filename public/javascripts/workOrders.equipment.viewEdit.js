@@ -38,7 +38,13 @@
             const tableRowElement = document.createElement('tr');
             tableRowElement.innerHTML = `
         <td>
-          ${cityssm.escapeHTML(equipment.equipmentName ?? '')}
+          <button
+            class="button is-ghost has-text-left view-equipment"
+            style="height: auto; padding: 0; white-space: normal;"
+            type="button"
+          >
+            <span class="has-text-weight-semibold">${cityssm.escapeHTML(equipment.equipmentName ?? '')}</span>
+          </button>
           <div class="is-size-7 has-text-grey">
             ${cityssm.escapeHTML(equipment.equipmentNumber)}
           </div>
@@ -69,6 +75,10 @@
             `
                 : ''}
       `;
+            const viewButton = tableRowElement.querySelector('.view-equipment');
+            viewButton.addEventListener('click', () => {
+                showViewEquipmentModal(equipment);
+            });
             if (exports.isEdit) {
                 const editButton = tableRowElement.querySelector('.edit-equipment-note');
                 editButton.addEventListener('click', () => {
@@ -88,6 +98,44 @@
             const responseJSON = rawResponseJSON;
             availableEquipment = responseJSON.availableEquipment;
             renderEquipment(responseJSON.workOrderEquipment);
+        });
+    }
+    function showViewEquipmentModal(equipment) {
+        cityssm.openHtmlModal('workOrders-viewEquipment', {
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector('#viewWorkOrderEquipment--equipmentName').textContent = equipment.equipmentName ?? '';
+                modalElement.querySelector('#viewWorkOrderEquipment--equipmentNumber').textContent = equipment.equipmentNumber;
+                const typeContainer = modalElement.querySelector('#viewWorkOrderEquipment--equipmentTypeContainer');
+                const hasType = equipment.equipmentTypeDataListItem !== undefined &&
+                    equipment.equipmentTypeDataListItem !== '';
+                if (hasType) {
+                    ;
+                    modalElement.querySelector('#viewWorkOrderEquipment--equipmentTypeDataListItem').textContent = equipment.equipmentTypeDataListItem ?? '';
+                }
+                typeContainer.style.display = hasType ? 'block' : 'none';
+                const descriptionContainer = modalElement.querySelector('#viewWorkOrderEquipment--descriptionContainer');
+                const hasDescription = equipment.equipmentDescription !== undefined &&
+                    equipment.equipmentDescription !== '';
+                if (hasDescription) {
+                    ;
+                    modalElement.querySelector('#viewWorkOrderEquipment--equipmentDescription').textContent = equipment.equipmentDescription ?? '';
+                }
+                descriptionContainer.style.display = hasDescription ? 'block' : 'none';
+                const noteContainer = modalElement.querySelector('#viewWorkOrderEquipment--noteContainer');
+                const hasNote = equipment.workOrderEquipmentNote !== '';
+                if (hasNote) {
+                    ;
+                    modalElement.querySelector('#viewWorkOrderEquipment--workOrderEquipmentNote').textContent = equipment.workOrderEquipmentNote;
+                }
+                noteContainer.style.display = hasNote ? 'block' : 'none';
+            },
+            onshown(_modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+            },
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            }
         });
     }
     function showAddEquipmentModal(clickEvent) {

@@ -117,6 +117,13 @@
             </span>
           `
                 : '';
+            const equipmentIconHTML = workOrder.equipmentCount && workOrder.equipmentCount > 0
+                ? `
+            <span class="icon" title="${workOrder.equipmentCount} equipment item(s)">
+              <i class="fa-solid ${shiftLog.equipmentIconClass}"></i>
+            </span>
+          `
+                : '';
             tableRowElement.innerHTML = `
         <td class="has-text-centered">
           ${openClosedIconHTML}<br />
@@ -162,6 +169,7 @@
         </td>
         <td class="has-text-right">
           ${notesIconHTML}
+          ${equipmentIconHTML}
           ${attachmentIconHTML}
           ${costsIconHTML}
         </td>

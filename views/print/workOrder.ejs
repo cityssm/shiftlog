@@ -206,6 +206,39 @@
 </div>
 <% } %>
 
+<% if (equipment.length > 0) { %>
+<div class="box avoid-page-break report-block">
+  <button class="button is-delete-report-block-button" type="button" title="Remove Equipment section from the report">
+    <span class="icon is-small">
+      <i class="fa-solid fa-xmark"></i>
+    </span>
+  </button>
+  <h2 class="title is-4">Equipment</h2>
+  <table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const item of equipment) { %>
+      <tr>
+        <td>
+          <strong><%= item.equipmentName ?? '' %></strong><br />
+          <span class="is-size-7 has-text-grey"><%= item.equipmentNumber %></span>
+          <% if (item.equipmentTypeDataListItem) { %>
+          <br /><span class="is-size-7"><%= item.equipmentTypeDataListItem %></span>
+          <% } %>
+        </td>
+        <td><%= item.workOrderEquipmentNote %></td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
 <% if (notes.length > 0) { %>
 <div class="box report-block">
   <button class="button is-delete-report-block-button" type="button" title="Remove Notes section from the report">

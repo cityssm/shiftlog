@@ -265,6 +265,7 @@ export default async function getWorkOrders(
 
     applyParameters(workOrdersRequest, filters, user)
 
+    /* eslint-disable no-secrets/no-secrets */
     const workOrdersResult = await workOrdersRequest.query<WorkOrder>(
       /* sql */ `
         SELECT
@@ -302,6 +303,7 @@ export default async function getWorkOrders(
           attachments.attachmentsCount,
           thumbnails.thumbnailAttachmentId,
           notes.notesCount,
+          equipment.equipmentCount,
           costs.costsCount,
           costs.costsTotal
         FROM
@@ -362,6 +364,17 @@ export default async function getWorkOrders(
           LEFT JOIN (
             SELECT
               workOrderId,
+              count(*) AS equipmentCount
+            FROM
+              ShiftLog.WorkOrderEquipment
+            WHERE
+              recordDelete_dateTime IS NULL
+            GROUP BY
+              workOrderId
+          ) AS equipment ON equipment.workOrderId = w.workOrderId
+          LEFT JOIN (
+            SELECT
+              workOrderId,
               count(*) AS costsCount,
               sum(costAmount) AS costsTotal
             FROM
@@ -381,6 +394,7 @@ export default async function getWorkOrders(
             : ` fetch next ${limit} rows only`}
       `
     )
+    /* eslint-enable no-secrets/no-secrets */
 
     workOrders = workOrdersResult.recordset
 

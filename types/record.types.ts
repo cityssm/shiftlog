@@ -451,6 +451,7 @@ export interface WorkOrder extends BaseRecord {
   thumbnailAttachmentId?: number | null
 
   notesCount?: number
+  equipmentCount?: number
 
   costsCount?: number
   costsTotal?: number
@@ -507,6 +508,8 @@ export interface WorkOrderEquipment extends BaseRecord {
 
   equipmentNumber: string
   equipmentName?: string
+  equipmentDescription?: string
+  equipmentTypeDataListItem?: string
 
   workOrderEquipmentNote: string
   userGroupId?: number | null
