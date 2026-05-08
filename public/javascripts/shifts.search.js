@@ -64,7 +64,7 @@
             const equipmentIconHTML = (shift.equipmentCount ?? 0) > 0
                 ? `
             <span class="icon" title="${shift.equipmentCount} equipment">
-              <i class="fa-solid fa-truck"></i>
+              <i class="fa-solid ${shiftLog.equipmentIconClass}"></i>
             </span>
           `
                 : '';

@@ -332,7 +332,7 @@ declare const exports: {
         // Add icon
         const icon = document.createElement('span')
         icon.className = 'icon is-small'
-        icon.innerHTML = '<i class="fa-solid fa-truck"></i>'
+        icon.innerHTML = `<i class="fa-solid ${shiftLog.equipmentIconClass}"></i>`
         equipmentItem.append(icon, ' ')
 
         // Add equipment name with number in smaller text
@@ -933,7 +933,7 @@ declare const exports: {
           // Add icon
           const icon = document.createElement('span')
           icon.className = 'icon'
-          icon.innerHTML = '<i class="fa-solid fa-truck"></i>'
+          icon.innerHTML = `<i class="fa-solid ${shiftLog.equipmentIconClass}"></i>`
           itemBox.append(icon, ' ')
 
           // Add equipment name with number
