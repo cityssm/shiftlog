@@ -118,7 +118,6 @@ class TimesheetGrid {
             cityssm.openHtmlModal('timesheets-addRow', {
                 onshow: (modalElement) => {
                     this.shiftLog.populateSectionAliases(modalElement);
-                    ;
                     modalElement.querySelector('#addTimesheetRow--timesheetId').value = this.config.timesheetId.toString();
                     const rowTitleInput = modalElement.querySelector('#addTimesheetRow--rowTitle');
                     rowTitleInput.value = '';
@@ -666,7 +665,6 @@ class TimesheetGrid {
             cityssm.openHtmlModal('timesheets-editRow', {
                 onshow: (modalElement) => {
                     this.shiftLog.populateSectionAliases(modalElement);
-                    ;
                     modalElement.querySelector('#editTimesheetRow--timesheetRowId').value = row.timesheetRowId.toString();
                     modalElement.querySelector('#editTimesheetRow--rowTitle').value = row.rowTitle;
                     const employeeDisplay = modalElement.querySelector('#editTimesheetRow--employeeDisplay');

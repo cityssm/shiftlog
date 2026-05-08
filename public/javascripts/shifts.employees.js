@@ -476,7 +476,6 @@
         cityssm.openHtmlModal('shifts-addEquipment', {
             onshow(modalElement) {
                 shiftLog.populateSectionAliases(modalElement);
-                ;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 const equipmentNumberElement = modalElement.querySelector('select[name="equipmentNumber"]');
                 for (const equipment of availableEquipment) {
@@ -686,7 +685,6 @@
         cityssm.openHtmlModal('shifts-editEquipmentEmployee', {
             onshow(modalElement) {
                 shiftLog.populateSectionAliases(modalElement);
-                ;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
                 const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
@@ -742,7 +740,6 @@
         cityssm.openHtmlModal('shifts-editEquipmentNote', {
             onshow(modalElement) {
                 shiftLog.populateSectionAliases(modalElement);
-                ;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
                 modalElement.querySelector('textarea[name="shiftEquipmentNote"]').value = equipment.shiftEquipmentNote;
@@ -860,9 +857,9 @@
                                 title: 'Error',
                                 message: `Failed to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()}`
                             });
-            }
-        });
-    }
+                        }
+                    });
+                }
             }
         });
     }
@@ -915,11 +912,11 @@
                             counts.push(`${shift.crewsCount} crew${shift.crewsCount === 1 ? '' : 's'}`);
                         }
                         if ((shift.employeesCount ?? 0) > 0) {
-                        counts.push(`${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`);
-                    }
-                    if ((shift.equipmentCount ?? 0) > 0) {
-                        counts.push(`${shift.equipmentCount} ${shiftLog.equipmentSectionName.toLowerCase()}`);
-                    }
+                            counts.push(`${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`);
+                        }
+                        if ((shift.equipmentCount ?? 0) > 0) {
+                            counts.push(`${shift.equipmentCount} ${shiftLog.equipmentSectionName.toLowerCase()}`);
+                        }
                         const countsText = counts.length > 0 ? ` (${counts.join(', ')})` : '';
                         const shiftElement = document.createElement('a');
                         shiftElement.className = 'panel-block is-block';
