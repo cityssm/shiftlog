@@ -196,8 +196,7 @@ declare const bulmaJS: BulmaJS
               // eslint-disable-next-line no-secrets/no-secrets
               '#viewWorkOrderEquipment--equipmentTypeDataListItem'
             ) as HTMLElement
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          ).textContent = equipment.equipmentTypeDataListItem!
+          ).textContent = equipment.equipmentTypeDataListItem ?? ''
         }
 
         typeContainer.style.display = hasType ? 'block' : 'none'
@@ -215,8 +214,7 @@ declare const bulmaJS: BulmaJS
             modalElement.querySelector(
               '#viewWorkOrderEquipment--equipmentDescription'
             ) as HTMLElement
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          ).textContent = equipment.equipmentDescription!
+          ).textContent = equipment.equipmentDescription ?? ''
         }
 
         descriptionContainer.style.display = hasDescription ? 'block' : 'none'

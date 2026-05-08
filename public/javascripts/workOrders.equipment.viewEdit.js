@@ -109,14 +109,14 @@
                 const hasType = equipment.equipmentTypeDataListItem !== undefined &&
                     equipment.equipmentTypeDataListItem !== '';
                 if (hasType) {
-                    modalElement.querySelector('#viewWorkOrderEquipment--equipmentTypeDataListItem').textContent = equipment.equipmentTypeDataListItem;
+                    modalElement.querySelector('#viewWorkOrderEquipment--equipmentTypeDataListItem').textContent = equipment.equipmentTypeDataListItem ?? '';
                 }
                 typeContainer.style.display = hasType ? 'block' : 'none';
                 const descriptionContainer = modalElement.querySelector('#viewWorkOrderEquipment--descriptionContainer');
                 const hasDescription = equipment.equipmentDescription !== undefined &&
                     equipment.equipmentDescription !== '';
                 if (hasDescription) {
-                    modalElement.querySelector('#viewWorkOrderEquipment--equipmentDescription').textContent = equipment.equipmentDescription;
+                    modalElement.querySelector('#viewWorkOrderEquipment--equipmentDescription').textContent = equipment.equipmentDescription ?? '';
                 }
                 descriptionContainer.style.display = hasDescription ? 'block' : 'none';
                 const noteContainer = modalElement.querySelector('#viewWorkOrderEquipment--noteContainer');
