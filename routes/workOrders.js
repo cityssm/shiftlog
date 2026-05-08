@@ -92,11 +92,6 @@ router
     .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)
     .post('/doGetLocationSuggestions', handler_doGetLocationSuggestions);
 router
-    .post('/:workOrderId/doGetWorkOrderEquipment', handler_doGetWorkOrderEquipment)
-    .post('/doAddWorkOrderEquipment', updateHandler, handler_doAddWorkOrderEquipment)
-    .post('/doUpdateWorkOrderEquipmentNote', updateHandler, handler_doUpdateWorkOrderEquipmentNote)
-    .post('/doDeleteWorkOrderEquipment', updateHandler, handler_doDeleteWorkOrderEquipment);
-router
     .get('/new', updateHandler, handler_new)
     .post('/doCreateWorkOrder', updateHandler, handler_doCreateWorkOrder);
 router
@@ -118,6 +113,11 @@ router
 router
     .post('/doAddWorkOrderSubscriber', updateHandler, handler_doAddWorkOrderSubscriber)
     .post('/doDeleteWorkOrderSubscriber', updateHandler, handler_doDeleteWorkOrderSubscriber);
+router
+    .post('/:workOrderId/doGetWorkOrderEquipment', handler_doGetWorkOrderEquipment)
+    .post('/doAddWorkOrderEquipment', updateHandler, handler_doAddWorkOrderEquipment)
+    .post('/doUpdateWorkOrderEquipmentNote', updateHandler, handler_doUpdateWorkOrderEquipmentNote)
+    .post('/doDeleteWorkOrderEquipment', updateHandler, handler_doDeleteWorkOrderEquipment);
 router
     .post('/:workOrderId/doGetWorkOrderMilestones', handler_doGetWorkOrderMilestones)
     .post('/doCreateWorkOrderMilestone', updateHandler, handler_doCreateWorkOrderMilestone)
