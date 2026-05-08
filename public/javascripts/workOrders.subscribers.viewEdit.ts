@@ -3,7 +3,6 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddWorkOrderSubscriberResponse } from '../../handlers/workOrders-post/doAddWorkOrderSubscriber.js'
 import type { DoDeleteWorkOrderSubscriberResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderSubscriber.js'
-import type { DoGetWorkOrderSubscribersResponse } from '../../handlers/workOrders-post/doGetWorkOrderSubscribers.js'
 import type { WorkOrderSubscriber } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -12,6 +11,8 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 
   isEdit: boolean
+
+  workOrderSubscribers: WorkOrderSubscriber[]
 }
 
 declare const cityssm: cityssmGlobal
@@ -55,60 +56,72 @@ declare const bulmaJS: BulmaJS
       return
     }
 
-    subscribersContainerElement.innerHTML = ''
+    const tableElement = document.createElement('table')
+    tableElement.className = 'table is-fullwidth is-striped is-hoverable'
 
-    const listElement = document.createElement('div')
-    listElement.className = 'content'
+    // eslint-disable-next-line no-unsanitized/property
+    tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Email Address</th>
+          <th>Employee Name</th>
+          <th>Employee Phone</th>
+          ${exports.isEdit ? '<th class="is-hidden-print" style="width: 80px;"></th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `
 
-    const ulElement = document.createElement('ul')
-    ulElement.className = 'is-size-5'
+    subscribersContainerElement.replaceChildren(tableElement)
+
+    const tbodyElement = tableElement.querySelector(
+      'tbody'
+    ) as HTMLTableSectionElement
 
     for (const subscriber of subscribers) {
-      const liElement = document.createElement('li')
+      const trElement = document.createElement('tr')
 
-      const emailLinkElement = document.createElement('a')
-      emailLinkElement.href = `mailto:${subscriber.subscriberEmailAddress}`
-      emailLinkElement.textContent = subscriber.subscriberEmailAddress
+      const employeeNameHTML =
+        subscriber.firstName === null && subscriber.lastName === null
+          ? '<span class="has-text-grey-light">No employee record</span>'
+          : `${subscriber.firstName ?? ''} ${subscriber.lastName ?? ''}`.trim()
 
-      liElement.append(emailLinkElement)
+      // eslint-disable-next-line no-unsanitized/property
+      trElement.innerHTML = /* html */ `
+        <td>
+          <a class="has-text-weight-semibold" href="mailto:${subscriber.subscriberEmailAddress}">
+            ${subscriber.subscriberEmailAddress}
+          </a>
+        </td>
+        <td>
+          ${employeeNameHTML}
+        </td>
+        <td>
+          ${subscriber.phoneNumber ?? ''}
+        </td>
+        ${
+          exports.isEdit
+            ? `<td class="is-hidden-print">
+                <button class="button is-small is-danger is-light button--removeSubscriber" type="button" data-subscriber-sequence="${subscriber.subscriberSequence}" data-subscriber-email-address="${subscriber.subscriberEmailAddress}">
+                  <span class="icon is-small"><i class="fa-solid fa-trash"></i></span>
+                  <span>Remove</span>
+                </button>
+              </td>`
+            : ''
+        }
+      `
 
-      if (exports.isEdit) {
-        const removeButtonElement = document.createElement('button')
-        removeButtonElement.className =
-          'button is-small is-danger is-light ml-2'
-        removeButtonElement.type = 'button'
-        removeButtonElement.innerHTML = /* html */ `
-          <span class="icon is-small"><i class="fa-solid fa-xmark"></i></span>
-          <span>Remove</span>
-        `
-
-        removeButtonElement.addEventListener('click', () => {
+      trElement
+        .querySelector('.button--removeSubscriber')
+        ?.addEventListener('click', () => {
           deleteSubscriber(
             subscriber.subscriberSequence,
             subscriber.subscriberEmailAddress
           )
         })
 
-        liElement.append(removeButtonElement)
-      }
-
-      ulElement.append(liElement)
+      tbodyElement.append(trElement)
     }
-
-    listElement.append(ulElement)
-    subscribersContainerElement.append(listElement)
-  }
-
-  function getSubscribers(): void {
-    cityssm.postJSON(
-      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderSubscribers`,
-      {},
-      (rawResponseJSON) => {
-        const responseJSON =
-          rawResponseJSON as DoGetWorkOrderSubscribersResponse
-        renderSubscribers(responseJSON.subscribers)
-      }
-    )
   }
 
   function deleteSubscriber(
@@ -211,6 +224,7 @@ declare const bulmaJS: BulmaJS
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         exports.shiftLog.clearUnsavedChanges('modal')
         bulmaJS.toggleHtmlClipped()
@@ -222,5 +236,5 @@ declare const bulmaJS: BulmaJS
     .querySelector('#button--addSubscriber')
     ?.addEventListener('click', addSubscriber)
 
-  getSubscribers()
+  renderSubscribers(exports.workOrderSubscribers)
 })()

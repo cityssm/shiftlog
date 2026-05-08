@@ -4,6 +4,7 @@ import getAssignedToList from '../../database/assignedTo/getAssignedToList.js'
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
 import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js'
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js'
+import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js'
 import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js'
 import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js'
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js'
@@ -44,6 +45,8 @@ export default async function handler(
 
   const workOrderTags = await getWorkOrderTags(request.params.workOrderId)
 
+  const workOrderSubscribers = await getWorkOrderSubscribers(request.params.workOrderId)
+
   const workOrderTypes = await getWorkOrderTypes(request.session.user)
 
   const workOrderStatuses = await getWorkOrderStatusDataListItems(
@@ -69,6 +72,7 @@ export default async function handler(
 
     workOrder,
     thumbnailAttachment,
+    workOrderSubscribers,
     workOrderTags,
 
     assignedToOptions,

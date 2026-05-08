@@ -471,6 +471,11 @@ export interface WorkOrderSubscriber {
   workOrderId: number
   subscriberSequence: number
   subscriberEmailAddress: string
+
+  firstName?: string | null
+  lastName?: string | null
+  phoneNumber?: string | null
+  phoneNumberAlternate?: string | null
 }
 
 export interface WorkOrderMilestone extends BaseRecord {

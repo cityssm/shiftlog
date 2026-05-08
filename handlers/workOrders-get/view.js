@@ -1,5 +1,6 @@
 import { millisecondsInOneDay } from '@cityssm/to-millis';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
+import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js';
 import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js';
 import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js';
 import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js';
@@ -15,6 +16,7 @@ export default async function handler(request, response) {
     const workOrderType = (await getWorkOrderType(workOrder.workOrderTypeId, request.session.user, true));
     const thumbnailAttachment = await getWorkOrderThumbnailAttachment(request.params.workOrderId);
     const workOrderTags = await getWorkOrderTags(request.params.workOrderId);
+    const workOrderSubscribers = await getWorkOrderSubscribers(request.params.workOrderId);
     let canReopen = false;
     if (workOrder.workOrderCloseDateTime !== null &&
         workOrder.workOrderCloseDateTime !== undefined &&
@@ -35,6 +37,7 @@ export default async function handler(request, response) {
         canReopen,
         workOrder,
         thumbnailAttachment,
+        workOrderSubscribers,
         workOrderTags,
         assignedToOptions: [],
         workOrderStatuses: [],

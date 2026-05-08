@@ -2,6 +2,7 @@ import { millisecondsInOneDay } from '@cityssm/to-millis'
 import type { Request, Response } from 'express'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
+import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js'
 import getWorkOrderTags from '../../database/workOrders/getWorkOrderTags.js'
 import getWorkOrderThumbnailAttachment from '../../database/workOrders/getWorkOrderThumbnailAttachment.js'
 import getWorkOrderType from '../../database/workOrderTypes/getWorkOrderType.js'
@@ -45,6 +46,8 @@ export default async function handler(
 
   const workOrderTags = await getWorkOrderTags(request.params.workOrderId)
 
+  const workOrderSubscribers = await getWorkOrderSubscribers(request.params.workOrderId)
+
   // Check if work order can be reopened
   let canReopen = false
   if (
@@ -79,6 +82,7 @@ export default async function handler(
     canReopen,
     workOrder,
     thumbnailAttachment,
+    workOrderSubscribers,
     workOrderTags,
 
     assignedToOptions: [],

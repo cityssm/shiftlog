@@ -20,41 +20,54 @@
       `;
             return;
         }
-        subscribersContainerElement.innerHTML = '';
-        const listElement = document.createElement('div');
-        listElement.className = 'content';
-        const ulElement = document.createElement('ul');
-        ulElement.className = 'is-size-5';
+        const tableElement = document.createElement('table');
+        tableElement.className = 'table is-fullwidth is-striped is-hoverable';
+        tableElement.innerHTML = `
+      <thead>
+        <tr>
+          <th>Email Address</th>
+          <th>Employee Name</th>
+          <th>Employee Phone</th>
+          ${exports.isEdit ? '<th class="is-hidden-print" style="width: 80px;"></th>' : ''}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+        subscribersContainerElement.replaceChildren(tableElement);
+        const tbodyElement = tableElement.querySelector('tbody');
         for (const subscriber of subscribers) {
-            const liElement = document.createElement('li');
-            const emailLinkElement = document.createElement('a');
-            emailLinkElement.href = `mailto:${subscriber.subscriberEmailAddress}`;
-            emailLinkElement.textContent = subscriber.subscriberEmailAddress;
-            liElement.append(emailLinkElement);
-            if (exports.isEdit) {
-                const removeButtonElement = document.createElement('button');
-                removeButtonElement.className =
-                    'button is-small is-danger is-light ml-2';
-                removeButtonElement.type = 'button';
-                removeButtonElement.innerHTML = `
-          <span class="icon is-small"><i class="fa-solid fa-xmark"></i></span>
-          <span>Remove</span>
-        `;
-                removeButtonElement.addEventListener('click', () => {
-                    deleteSubscriber(subscriber.subscriberSequence, subscriber.subscriberEmailAddress);
-                });
-                liElement.append(removeButtonElement);
-            }
-            ulElement.append(liElement);
+            const trElement = document.createElement('tr');
+            const employeeNameHTML = subscriber.firstName === null && subscriber.lastName === null
+                ? '<span class="has-text-grey-light">No employee record</span>'
+                : `${subscriber.firstName ?? ''} ${subscriber.lastName ?? ''}`.trim();
+            trElement.innerHTML = `
+        <td>
+          <a class="has-text-weight-semibold" href="mailto:${subscriber.subscriberEmailAddress}">
+            ${subscriber.subscriberEmailAddress}
+          </a>
+        </td>
+        <td>
+          ${employeeNameHTML}
+        </td>
+        <td>
+          ${subscriber.phoneNumber ?? ''}
+        </td>
+        ${exports.isEdit
+                ? `<td class="is-hidden-print">
+                <button class="button is-small is-danger is-light button--removeSubscriber" type="button" data-subscriber-sequence="${subscriber.subscriberSequence}" data-subscriber-email-address="${subscriber.subscriberEmailAddress}">
+                  <span class="icon is-small"><i class="fa-solid fa-trash"></i></span>
+                  <span>Remove</span>
+                </button>
+              </td>`
+                : ''}
+      `;
+            trElement
+                .querySelector('.button--removeSubscriber')
+                ?.addEventListener('click', () => {
+                deleteSubscriber(subscriber.subscriberSequence, subscriber.subscriberEmailAddress);
+            });
+            tbodyElement.append(trElement);
         }
-        listElement.append(ulElement);
-        subscribersContainerElement.append(listElement);
-    }
-    function getSubscribers() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderSubscribers`, {}, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            renderSubscribers(responseJSON.subscribers);
-        });
     }
     function deleteSubscriber(subscriberSequence, subscriberEmailAddress) {
         bulmaJS.confirm({
@@ -135,5 +148,5 @@
     document
         .querySelector('#button--addSubscriber')
         ?.addEventListener('click', addSubscriber);
-    getSubscribers();
+    renderSubscribers(exports.workOrderSubscribers);
 })();
