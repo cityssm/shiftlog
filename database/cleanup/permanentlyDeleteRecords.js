@@ -157,6 +157,26 @@ export default async function permanentlyDeleteRecords() {
             deletedCount += costsResult.rowsAffected[0];
             debug(`Permanently deleted ${costsResult.rowsAffected[0]} WorkOrderCosts records`);
         }
+        const workOrderEquipmentResult = await pool
+            .request()
+            .input('cutoffDate', cutoffDate)
+            .query(`
+        DELETE FROM ShiftLog.WorkOrderEquipment
+        WHERE
+          workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+          )
+      `);
+        if (workOrderEquipmentResult.rowsAffected[0] > 0) {
+            deletedCount += workOrderEquipmentResult.rowsAffected[0];
+            debug(`Permanently deleted ${workOrderEquipmentResult.rowsAffected[0]} WorkOrderEquipment records`);
+        }
         const workOrdersResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
@@ -214,6 +234,14 @@ export default async function permanentlyDeleteRecords() {
               ShiftLog.WorkOrderCosts wc
             WHERE
               wc.workOrderId = wo.workOrderId
+          )
+          AND NOT EXISTS (
+            SELECT
+              1
+            FROM
+              ShiftLog.WorkOrderEquipment woe
+            WHERE
+              woe.workOrderId = wo.workOrderId
           )
       `);
         if (workOrdersResult.rowsAffected[0] > 0) {

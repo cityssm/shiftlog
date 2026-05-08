@@ -246,9 +246,10 @@ export default async function permanentlyDeleteRecords(): Promise<{
     }
 
     // WorkOrderEquipment - no foreign keys to check
-    const equipmentResult = await pool
+    const workOrderEquipmentResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      // eslint-disable-next-line no-secrets/no-secrets
       .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderEquipment
         WHERE
@@ -263,10 +264,10 @@ export default async function permanentlyDeleteRecords(): Promise<{
           )
       `)
 
-    if (equipmentResult.rowsAffected[0] > 0) {
-      deletedCount += equipmentResult.rowsAffected[0]
+    if (workOrderEquipmentResult.rowsAffected[0] > 0) {
+      deletedCount += workOrderEquipmentResult.rowsAffected[0]
       debug(
-        `Permanently deleted ${equipmentResult.rowsAffected[0]} WorkOrderEquipment records`
+        `Permanently deleted ${workOrderEquipmentResult.rowsAffected[0]} WorkOrderEquipment records`
       )
     }
 

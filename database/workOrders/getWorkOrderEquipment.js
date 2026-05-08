@@ -1,27 +1,14 @@
-import { getConfigProperty } from '../../helpers/config.helpers.js'
-import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
-import type { Equipment, WorkOrderEquipment } from '../../types/record.types.js'
-
-export interface AvailableWorkOrderEquipment
-  extends Pick<Equipment, 'equipmentName' | 'equipmentNumber'> {}
-
-export default async function getWorkOrderEquipment(
-  workOrderId: number | string,
-  user?: User
-): Promise<{
-  availableEquipment: AvailableWorkOrderEquipment[]
-  workOrderEquipment: WorkOrderEquipment[]
-}> {
-  const pool = await getShiftLogConnectionPool()
-  const instance = getConfigProperty('application.instance')
-
-  const workOrderEquipmentResult = await pool
-    .request()
-    .input('instance', instance)
-    .input('userName', user?.userName)
-    .input('workOrderId', workOrderId)
-    // eslint-disable-next-line no-secrets/no-secrets
-    .query<WorkOrderEquipment>(/* sql */ `
+import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+export default async function getWorkOrderEquipment(workOrderId, user) {
+    const pool = await getShiftLogConnectionPool();
+    const instance = getConfigProperty('application.instance');
+    const workOrderEquipmentResult = await pool
+        .request()
+        .input('instance', instance)
+        .input('userName', user?.userName)
+        .input('workOrderId', workOrderId)
+        .query(`
       SELECT
         woe.workOrderId,
         woe.equipmentNumber,
@@ -43,8 +30,8 @@ export default async function getWorkOrderEquipment(
         AND wo.instance = @instance
         AND woe.recordDelete_dateTime IS NULL
         AND eq.recordDelete_dateTime IS NULL ${user === undefined
-          ? ''
-          : /* sql */ `
+        ? ''
+        : `
               AND (
                 eq.userGroupId IS NULL
                 OR eq.userGroupId IN (
@@ -60,15 +47,13 @@ export default async function getWorkOrderEquipment(
       ORDER BY
         eq.equipmentName,
         eq.equipmentNumber
-    `)
-
-  const availableEquipmentResult = await pool
-    .request()
-    .input('instance', instance)
-    .input('userName', user?.userName)
-    .input('workOrderId', workOrderId)
-    // eslint-disable-next-line no-secrets/no-secrets
-    .query<AvailableWorkOrderEquipment>(/* sql */ `
+    `);
+    const availableEquipmentResult = await pool
+        .request()
+        .input('instance', instance)
+        .input('userName', user?.userName)
+        .input('workOrderId', workOrderId)
+        .query(`
       SELECT
         eq.equipmentNumber,
         eq.equipmentName
@@ -86,8 +71,8 @@ export default async function getWorkOrderEquipment(
             woe.workOrderId = @workOrderId
             AND woe.recordDelete_dateTime IS NULL
         ) ${user === undefined
-          ? ''
-          : /* sql */ `
+        ? ''
+        : `
               AND (
                 eq.userGroupId IS NULL
                 OR eq.userGroupId IN (
@@ -103,10 +88,9 @@ export default async function getWorkOrderEquipment(
       ORDER BY
         eq.equipmentName,
         eq.equipmentNumber
-    `)
-
-  return {
-    availableEquipment: availableEquipmentResult.recordset,
-    workOrderEquipment: workOrderEquipmentResult.recordset
-  }
+    `);
+    return {
+        availableEquipment: availableEquipmentResult.recordset,
+        workOrderEquipment: workOrderEquipmentResult.recordset
+    };
 }

@@ -17,6 +17,7 @@ export default async function deleteWorkOrderEquipment(
       .input('equipmentNumber', form.equipmentNumber)
       .input('instance', getConfigProperty('application.instance'))
       .input('workOrderId', form.workOrderId)
+      // eslint-disable-next-line no-secrets/no-secrets
       .query(/* sql */ `
         DELETE woe
         FROM

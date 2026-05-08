@@ -21,6 +21,7 @@ export default async function addWorkOrderEquipment(
       .input('userName', userName)
       .input('workOrderEquipmentNote', form.workOrderEquipmentNote ?? '')
       .input('workOrderId', form.workOrderId)
+      // eslint-disable-next-line no-secrets/no-secrets
       .query(/* sql */ `
         INSERT INTO
           ShiftLog.WorkOrderEquipment (

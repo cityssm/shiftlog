@@ -13,6 +13,7 @@ import handler_print from '../handlers/workOrders-get/print.js';
 import handler_recovery from '../handlers/workOrders-get/recovery.js';
 import handler_search from '../handlers/workOrders-get/search.js';
 import handler_view from '../handlers/workOrders-get/view.js';
+import handler_doAddWorkOrderEquipment from '../handlers/workOrders-post/doAddWorkOrderEquipment.js';
 import handler_doAddWorkOrderSubscriber from '../handlers/workOrders-post/doAddWorkOrderSubscriber.js';
 import handler_doAddWorkOrderTag from '../handlers/workOrders-post/doAddWorkOrderTag.js';
 import handler_doCreateWorkOrder from '../handlers/workOrders-post/doCreateWorkOrder.js';
@@ -22,6 +23,7 @@ import handler_doCreateWorkOrderNote from '../handlers/workOrders-post/doCreateW
 import handler_doDeleteWorkOrder from '../handlers/workOrders-post/doDeleteWorkOrder.js';
 import handler_doDeleteWorkOrderAttachment from '../handlers/workOrders-post/doDeleteWorkOrderAttachment.js';
 import handler_doDeleteWorkOrderCost from '../handlers/workOrders-post/doDeleteWorkOrderCost.js';
+import handler_doDeleteWorkOrderEquipment from '../handlers/workOrders-post/doDeleteWorkOrderEquipment.js';
 import handler_doDeleteWorkOrderMilestone from '../handlers/workOrders-post/doDeleteWorkOrderMilestone.js';
 import handler_doDeleteWorkOrderNote from '../handlers/workOrders-post/doDeleteWorkOrderNote.js';
 import handler_doDeleteWorkOrderSubscriber from '../handlers/workOrders-post/doDeleteWorkOrderSubscriber.js';
@@ -35,6 +37,7 @@ import handler_doGetSuggestedTags from '../handlers/workOrders-post/doGetSuggest
 import handler_doGetWorkOrderAccomplishmentData from '../handlers/workOrders-post/doGetWorkOrderAccomplishmentData.js';
 import handler_doGetWorkOrderAttachments from '../handlers/workOrders-post/doGetWorkOrderAttachments.js';
 import handler_doGetWorkOrderCosts from '../handlers/workOrders-post/doGetWorkOrderCosts.js';
+import handler_doGetWorkOrderEquipment from '../handlers/workOrders-post/doGetWorkOrderEquipment.js';
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js';
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js';
 import handler_doGetWorkOrdersForPlanner from '../handlers/workOrders-post/doGetWorkOrdersForPlanner.js';
@@ -46,6 +49,7 @@ import handler_doSetWorkOrderAttachmentThumbnail from '../handlers/workOrders-po
 import handler_doUpdateWorkOrder from '../handlers/workOrders-post/doUpdateWorkOrder.js';
 import handler_doUpdateWorkOrderAttachment from '../handlers/workOrders-post/doUpdateWorkOrderAttachment.js';
 import handler_doUpdateWorkOrderCost from '../handlers/workOrders-post/doUpdateWorkOrderCost.js';
+import handler_doUpdateWorkOrderEquipmentNote from '../handlers/workOrders-post/doUpdateWorkOrderEquipmentNote.js';
 import handler_doUpdateWorkOrderMilestone from '../handlers/workOrders-post/doUpdateWorkOrderMilestone.js';
 import handler_doUpdateWorkOrderMilestoneOrder from '../handlers/workOrders-post/doUpdateWorkOrderMilestoneOrder.js';
 import handler_doUpdateWorkOrderNote from '../handlers/workOrders-post/doUpdateWorkOrderNote.js';
@@ -88,6 +92,11 @@ router
 router
     .post('/doGetRequestorSuggestions', handler_doGetRequestorSuggestions)
     .post('/doGetLocationSuggestions', handler_doGetLocationSuggestions);
+router
+    .post('/:workOrderId/doGetWorkOrderEquipment', handler_doGetWorkOrderEquipment)
+    .post('/doAddWorkOrderEquipment', updateHandler, handler_doAddWorkOrderEquipment)
+    .post('/doUpdateWorkOrderEquipmentNote', updateHandler, handler_doUpdateWorkOrderEquipmentNote)
+    .post('/doDeleteWorkOrderEquipment', updateHandler, handler_doDeleteWorkOrderEquipment);
 router
     .get('/new', updateHandler, handler_new)
     .post('/doCreateWorkOrder', updateHandler, handler_doCreateWorkOrder);
