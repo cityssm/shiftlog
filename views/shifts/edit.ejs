@@ -327,13 +327,17 @@
     <div class="menu">
       <ul class="menu-list">
         <li>
-          <a class="is-active" href="#tab--employees" title="Employees and Equipment">
+          <a
+            class="is-active"
+            href="#tab--employees"
+            title="Employees and <%= configFunctions.getConfigProperty('equipment.sectionName') %>"
+          >
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-users"></i></span>
               </div>
               <div class="column is-hidden-touch">
-                Employees and Equipment
+                Employees and <%= configFunctions.getConfigProperty('equipment.sectionName') %>
               </div>
               <div class="column is-narrow is-hidden-touch">
                 <span class="icon has-text-success ml-2 is-hidden" id="icon--hasEmployeesEquipment">
