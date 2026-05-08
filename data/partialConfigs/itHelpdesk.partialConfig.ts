@@ -19,4 +19,9 @@ config.workOrders = {
   iconClass: 'fa-circle-exclamation'
 }
 
+config.equipment = {
+  iconClass: 'fa-computer',
+  syncSource: ''
+}
+
 export default config

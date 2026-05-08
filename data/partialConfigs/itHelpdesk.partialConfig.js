@@ -10,4 +10,8 @@ config.workOrders = {
     sectionNameSingular: 'Ticket',
     iconClass: 'fa-circle-exclamation'
 };
+config.equipment = {
+    iconClass: 'fa-computer',
+    syncSource: ''
+};
 export default config;

@@ -121,7 +121,9 @@ export type ConfigEmployees =
       sql: string
     }
 
-export type ConfigEquipment =
+export type ConfigEquipment = {
+  iconClass?: `fa-${string}`
+} & (
   | {
       syncSource: ''
     }
@@ -135,6 +137,7 @@ export type ConfigEquipment =
 
       sql: string
     }
+)
 
 export type ConfigLocations =
   | {
