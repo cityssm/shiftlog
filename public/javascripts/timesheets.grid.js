@@ -117,6 +117,7 @@ class TimesheetGrid {
             }
             cityssm.openHtmlModal('timesheets-addRow', {
                 onshow: (modalElement) => {
+                    this.shiftLog.populateSectionAliases(modalElement);
                     ;
                     modalElement.querySelector('#addTimesheetRow--timesheetId').value = this.config.timesheetId.toString();
                     const rowTitleInput = modalElement.querySelector('#addTimesheetRow--rowTitle');
@@ -356,7 +357,7 @@ class TimesheetGrid {
         const thCorner = document.createElement('th');
         thCorner.style.minWidth = '200px';
         const cornerTitle = document.createElement('div');
-        cornerTitle.textContent = 'Employee / Equipment';
+        cornerTitle.textContent = `Employee / ${this.shiftLog.equipmentSectionNameSingular}`;
         thCorner.append(cornerTitle);
         if (this.config.isEditable) {
             const addRowButton = document.createElement('button');
@@ -478,7 +479,7 @@ class TimesheetGrid {
             if (row.equipmentNumber) {
                 const equipmentInfo = document.createElement('small');
                 equipmentInfo.className = 'is-block has-text-grey';
-                equipmentInfo.textContent = `Equipment: ${row.equipmentNumber}`;
+                equipmentInfo.textContent = `${this.shiftLog.equipmentSectionNameSingular}: ${row.equipmentNumber}`;
                 tdLabel.append(document.createElement('br'), equipmentInfo);
             }
             if (this.config.isEditable) {
@@ -664,6 +665,7 @@ class TimesheetGrid {
             }
             cityssm.openHtmlModal('timesheets-editRow', {
                 onshow(modalElement) {
+                    this.shiftLog.populateSectionAliases(modalElement);
                     ;
                     modalElement.querySelector('#editTimesheetRow--timesheetRowId').value = row.timesheetRowId.toString();
                     modalElement.querySelector('#editTimesheetRow--rowTitle').value = row.rowTitle;

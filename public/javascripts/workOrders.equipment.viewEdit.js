@@ -169,7 +169,7 @@
                 modalElement.querySelector('#addWorkOrderEquipment--workOrderId').value = workOrderId;
                 const equipmentSelectElement = modalElement.querySelector('#addWorkOrderEquipment--equipmentNumber');
                 equipmentSelectElement.innerHTML =
-                    '<option value="">(Select Equipment)</option>';
+                    '<option value="">(Select)</option>';
                 for (const equipment of availableEquipment) {
                     equipmentSelectElement.append(new Option(`${equipment.equipmentName} (${equipment.equipmentNumber})`, equipment.equipmentNumber));
                 }

@@ -7,7 +7,9 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <div class="modal-card-head">
-      <p class="modal-card-title">Add Crew Equipment</p>
+      <p class="modal-card-title">
+        Add Crew <span data-section-alias="equipmentSectionNameSingular">Equipment</span>
+      </p>
       <button
         class="delete is-close-modal-button"
         type="button"
@@ -18,11 +20,13 @@
       <form id="form--addCrewEquipment">
         <input id="crewEquipmentAdd--crewId" name="crewId" type="hidden" />
         <div class="field">
-          <label class="label" for="crewEquipmentAdd--equipmentNumber">Equipment</label>
+          <label class="label" for="crewEquipmentAdd--equipmentNumber">
+            <span data-section-alias="equipmentSectionNameSingular">Equipment</span>
+          </label>
           <div class="control">
             <div class="select is-fullwidth">
               <select id="crewEquipmentAdd--equipmentNumber" name="equipmentNumber" required>
-                <option value="">(Select Equipment)</option>
+                <option value="">(Select)</option>
               </select>
             </div>
           </div>
@@ -47,7 +51,10 @@
           form="form--addCrewEquipment"
         >
           <span class="icon"><i class="fa-solid fa-plus"></i></span>
-          <span>Add Equipment</span>
+          <span>
+            Add
+            <span data-section-alias="equipmentSectionNameSingular">Equipment</span>
+          </span>
         </button>
         <button class="button is-close-modal-button" type="button">
           Cancel

@@ -223,6 +223,7 @@ class TimesheetGrid {
 
         cityssm.openHtmlModal('timesheets-addRow', {
           onshow: (modalElement) => {
+            this.shiftLog.populateSectionAliases(modalElement)
             // Set the timesheet ID
             ;(
               modalElement.querySelector(
@@ -621,7 +622,7 @@ class TimesheetGrid {
     thCorner.style.minWidth = '200px'
 
     const cornerTitle = document.createElement('div')
-    cornerTitle.textContent = 'Employee / Equipment'
+    cornerTitle.textContent = `Employee / ${this.shiftLog.equipmentSectionNameSingular}`
     thCorner.append(cornerTitle)
 
     if (this.config.isEditable) {
@@ -784,7 +785,7 @@ class TimesheetGrid {
       if (row.equipmentNumber) {
         const equipmentInfo = document.createElement('small')
         equipmentInfo.className = 'is-block has-text-grey'
-        equipmentInfo.textContent = `Equipment: ${row.equipmentNumber}`
+        equipmentInfo.textContent = `${this.shiftLog.equipmentSectionNameSingular}: ${row.equipmentNumber}`
         tdLabel.append(document.createElement('br'), equipmentInfo)
       }
 
@@ -1042,6 +1043,7 @@ class TimesheetGrid {
 
         cityssm.openHtmlModal('timesheets-editRow', {
           onshow(modalElement) {
+            this.shiftLog.populateSectionAliases(modalElement)
             // Set form values
             ;(
               modalElement.querySelector(

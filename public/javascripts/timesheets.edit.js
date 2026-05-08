@@ -163,6 +163,7 @@
                 let closeModalFunction;
                 cityssm.openHtmlModal('timesheets-copyFromShift', {
                     onshow(modalElement) {
+                        shiftLog.populateSectionAliases(modalElement);
                         const timesheetId = timesheetIdElement.value;
                         modalElement.querySelector('#copyFromShift--timesheetId').value = timesheetId;
                         const submitButton = modalElement.querySelector('#button--copyFromShift');

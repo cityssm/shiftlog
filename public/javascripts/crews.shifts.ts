@@ -401,6 +401,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('shifts-crews-addEquipment', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
         ;(
           modalElement.querySelector(
             '#crewEquipmentAdd--crewId'

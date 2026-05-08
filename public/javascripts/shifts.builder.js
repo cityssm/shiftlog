@@ -2666,6 +2666,7 @@
         let closeModalFunction;
         cityssm.openHtmlModal('shifts-builder-editEquipmentEmployeeNote', {
             onshow(modalElement) {
+                exports.shiftLog.populateSectionAliases(modalElement);
                 const formElement = modalElement.querySelector('#form--builderEditEquipmentEmployeeNote');
                 formElement.querySelector('[name="shiftId"]').value = shiftId.toString();
                 formElement.querySelector('[name="equipmentNumber"]').value = equipment.equipmentNumber;
@@ -2683,6 +2684,7 @@
                 }
                 ;
                 formElement.querySelector('[name="shiftEquipmentNote"]').value = equipment.shiftEquipmentNote;
+                formElement.querySelector('[name="shiftEquipmentNote"]').placeholder = `Optional note about this ${exports.shiftLog.equipmentSectionNameSingular.toLowerCase()} on the shift`;
                 formElement.addEventListener('submit', (submitEvent) => {
                     submitEvent.preventDefault();
                     const formData = new FormData(formElement);

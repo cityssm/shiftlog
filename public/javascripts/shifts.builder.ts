@@ -4125,6 +4125,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('shifts-builder-editEquipmentEmployeeNote', {
       onshow(modalElement) {
+        exports.shiftLog.populateSectionAliases(modalElement)
         const formElement = modalElement.querySelector(
           '#form--builderEditEquipmentEmployeeNote'
         ) as HTMLFormElement
@@ -4169,6 +4170,11 @@ declare const exports: {
             '[name="shiftEquipmentNote"]'
           ) as HTMLTextAreaElement
         ).value = equipment.shiftEquipmentNote
+        ;(
+          formElement.querySelector(
+            '[name="shiftEquipmentNote"]'
+          ) as HTMLTextAreaElement
+        ).placeholder = `Optional note about this ${exports.shiftLog.equipmentSectionNameSingular.toLowerCase()} on the shift`
 
         // Handle form submission
         formElement.addEventListener('submit', (submitEvent) => {

@@ -205,20 +205,22 @@
     }
     function renderShiftEquipment() {
         const containerElement = document.querySelector('#container--shiftEquipment');
-        if (shiftEquipment.length === 0) {
-            containerElement.innerHTML = `
+    if (shiftEquipment.length === 0) {
+        containerElement.innerHTML = `
         <div class="message">
-          <div class="message-body">No equipment assigned to this shift.</div>
+          <div class="message-body">
+            No ${cityssm.escapeHTML(shiftLog.equipmentSectionName.toLowerCase())} assigned to this shift.
+          </div>
         </div>
       `;
-            return;
+        return;
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
         tableElement.innerHTML = `
       <thead>
         <tr>
-          <th>Equipment</th>
+          <th>${cityssm.escapeHTML(shiftLog.equipmentSectionNameSingular)}</th>
           <th>Assigned Employee</th>
           <th>Note</th>
           ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
@@ -457,7 +459,7 @@
                     switchToTab('tab-content--equipment');
                     bulmaJS.alert({
                         contextualColorName: 'success',
-                        message: 'Equipment added successfully'
+                        message: `${shiftLog.equipmentSectionNameSingular} added successfully`
                     });
                     closeModalFunction();
                 }
@@ -465,13 +467,15 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error',
-                        message: responseJSON.message ?? 'Failed to add equipment'
+                        message: responseJSON.message ??
+                            `Failed to add ${shiftLog.equipmentSectionNameSingular.toLowerCase()}`
                     });
                 }
             });
         }
         cityssm.openHtmlModal('shifts-addEquipment', {
             onshow(modalElement) {
+                shiftLog.populateSectionAliases(modalElement);
                 ;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 const equipmentNumberElement = modalElement.querySelector('select[name="equipmentNumber"]');
@@ -681,6 +685,7 @@
         }
         cityssm.openHtmlModal('shifts-editEquipmentEmployee', {
             onshow(modalElement) {
+                shiftLog.populateSectionAliases(modalElement);
                 ;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
@@ -736,6 +741,7 @@
         }
         cityssm.openHtmlModal('shifts-editEquipmentNote', {
             onshow(modalElement) {
+                shiftLog.populateSectionAliases(modalElement);
                 ;
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
@@ -828,13 +834,13 @@
         const buttonElement = clickEvent.currentTarget;
         const equipmentNumber = buttonElement.dataset.equipmentNumber;
         const equipment = shiftEquipment.find((possibleEquipment) => possibleEquipment.equipmentNumber === equipmentNumber);
-        bulmaJS.confirm({
+    bulmaJS.confirm({
+        contextualColorName: 'warning',
+        title: `Delete ${shiftLog.equipmentSectionNameSingular}`,
+        message: `Are you sure you want to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()} "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
+        okButton: {
             contextualColorName: 'warning',
-            title: 'Delete Equipment',
-            message: `Are you sure you want to remove equipment "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
-            okButton: {
-                contextualColorName: 'warning',
-                text: 'Delete',
+            text: 'Delete',
                 callbackFunction: () => {
                     cityssm.postJSON(`${urlPrefix}/doDeleteShiftEquipment`, {
                         shiftId,
@@ -845,14 +851,14 @@
                             refreshData();
                             bulmaJS.alert({
                                 contextualColorName: 'success',
-                                message: 'Equipment removed successfully'
+                                message: `${shiftLog.equipmentSectionNameSingular} removed successfully`
                             });
                         }
                         else {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error',
-                                message: 'Failed to remove equipment'
+                                message: `Failed to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()}`
                             });
                         }
                     });
@@ -909,11 +915,11 @@
                             counts.push(`${shift.crewsCount} crew${shift.crewsCount === 1 ? '' : 's'}`);
                         }
                         if ((shift.employeesCount ?? 0) > 0) {
-                            counts.push(`${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`);
-                        }
-                        if ((shift.equipmentCount ?? 0) > 0) {
-                            counts.push(`${shift.equipmentCount} equipment`);
-                        }
+                        counts.push(`${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`);
+                    }
+                    if ((shift.equipmentCount ?? 0) > 0) {
+                        counts.push(`${shift.equipmentCount} ${shiftLog.equipmentSectionName.toLowerCase()}`);
+                    }
                         const countsText = counts.length > 0 ? ` (${counts.join(', ')})` : '';
                         const shiftElement = document.createElement('a');
                         shiftElement.className = 'panel-block is-block';

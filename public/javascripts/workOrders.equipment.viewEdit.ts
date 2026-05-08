@@ -296,7 +296,7 @@ declare const bulmaJS: BulmaJS
         ) as HTMLSelectElement
 
         equipmentSelectElement.innerHTML =
-          '<option value="">(Select Equipment)</option>'
+          '<option value="">(Select)</option>'
 
         for (const equipment of availableEquipment) {
           equipmentSelectElement.append(

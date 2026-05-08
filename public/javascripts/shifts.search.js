@@ -61,9 +61,9 @@
             </span>
           `
                 : '';
-            const equipmentIconHTML = (shift.equipmentCount ?? 0) > 0
-                ? `
-            <span class="icon" title="${shift.equipmentCount} equipment">
+        const equipmentIconHTML = (shift.equipmentCount ?? 0) > 0
+            ? `
+            <span class="icon" title="${shift.equipmentCount} ${cityssm.escapeHTML(shiftLog.equipmentSectionName.toLowerCase())}">
               <i class="fa-solid ${shiftLog.equipmentIconClass}"></i>
             </span>
           `

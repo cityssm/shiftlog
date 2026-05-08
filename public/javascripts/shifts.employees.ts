@@ -351,7 +351,9 @@ declare const exports: {
     if (shiftEquipment.length === 0) {
       containerElement.innerHTML = /* html */ `
         <div class="message">
-          <div class="message-body">No equipment assigned to this shift.</div>
+          <div class="message-body">
+            No ${cityssm.escapeHTML(shiftLog.equipmentSectionName.toLowerCase())} assigned to this shift.
+          </div>
         </div>
       `
       return
@@ -364,7 +366,7 @@ declare const exports: {
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
-          <th>Equipment</th>
+          <th>${cityssm.escapeHTML(shiftLog.equipmentSectionNameSingular)}</th>
           <th>Assigned Employee</th>
           <th>Note</th>
           ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
@@ -716,7 +718,7 @@ declare const exports: {
             switchToTab('tab-content--equipment')
             bulmaJS.alert({
               contextualColorName: 'success',
-              message: 'Equipment added successfully'
+              message: `${shiftLog.equipmentSectionNameSingular} added successfully`
             })
             closeModalFunction()
           } else {
@@ -724,7 +726,9 @@ declare const exports: {
               contextualColorName: 'danger',
               title: 'Error',
 
-              message: responseJSON.message ?? 'Failed to add equipment'
+              message:
+                responseJSON.message ??
+                `Failed to add ${shiftLog.equipmentSectionNameSingular.toLowerCase()}`
             })
           }
         }
@@ -733,6 +737,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('shifts-addEquipment', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
         ;(
           modalElement.querySelector(
             'input[name="shiftId"]'
@@ -1058,6 +1063,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('shifts-editEquipmentEmployee', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
         ;(
           modalElement.querySelector(
             'input[name="shiftId"]'
@@ -1144,6 +1150,7 @@ declare const exports: {
 
     cityssm.openHtmlModal('shifts-editEquipmentNote', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
         ;(
           modalElement.querySelector(
             'input[name="shiftId"]'
@@ -1277,9 +1284,9 @@ declare const exports: {
 
     bulmaJS.confirm({
       contextualColorName: 'warning',
-      title: 'Delete Equipment',
+      title: `Delete ${shiftLog.equipmentSectionNameSingular}`,
 
-      message: `Are you sure you want to remove equipment "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
+      message: `Are you sure you want to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()} "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
       okButton: {
         contextualColorName: 'warning',
         text: 'Delete',
@@ -1297,14 +1304,14 @@ declare const exports: {
                 refreshData()
                 bulmaJS.alert({
                   contextualColorName: 'success',
-                  message: 'Equipment removed successfully'
+                  message: `${shiftLog.equipmentSectionNameSingular} removed successfully`
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error',
 
-                  message: 'Failed to remove equipment'
+                  message: `Failed to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()}`
                 })
               }
             }
@@ -1392,7 +1399,9 @@ declare const exports: {
               }
 
               if ((shift.equipmentCount ?? 0) > 0) {
-                counts.push(`${shift.equipmentCount} equipment`)
+                counts.push(
+                  `${shift.equipmentCount} ${shiftLog.equipmentSectionName.toLowerCase()}`
+                )
               }
 
               const countsText =
