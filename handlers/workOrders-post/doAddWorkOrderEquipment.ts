@@ -12,6 +12,7 @@ interface AddWorkOrderEquipmentForm {
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoAddWorkOrderEquipmentResponse = {
   success: boolean
+
   errorMessage?: string
 }
 
@@ -24,6 +25,7 @@ export default async function handler(
   if (userName === undefined || userName === '') {
     response.json({
       success: false,
+
       errorMessage: `Failed to add equipment to ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
     })
     return

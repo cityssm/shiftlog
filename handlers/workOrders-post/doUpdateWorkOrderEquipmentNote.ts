@@ -12,6 +12,7 @@ interface UpdateWorkOrderEquipmentNoteForm {
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoUpdateWorkOrderEquipmentNoteResponse = {
   success: boolean
+
   errorMessage?: string
 }
 
@@ -24,6 +25,7 @@ export default async function handler(
   if (userName === undefined || userName === '') {
     response.json({
       success: false,
+
       errorMessage: `Failed to update equipment note for ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}.`
     })
     return
