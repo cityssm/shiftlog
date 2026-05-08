@@ -10,10 +10,17 @@ export default async function getWorkOrderSubscribers(workOrderId) {
       SELECT
         wos.workOrderId,
         wos.subscriberSequence,
-        wos.subscriberEmailAddress
+        wos.subscriberEmailAddress,
+        e.firstName,
+        e.lastName,
+        e.phoneNumber,
+        e.phoneNumberAlternate
       FROM
         ShiftLog.WorkOrderSubscribers wos
         INNER JOIN ShiftLog.WorkOrders wo ON wos.workOrderId = wo.workOrderId
+        LEFT JOIN ShiftLog.Employees e ON wo.instance = e.instance
+        AND wos.subscriberEmailAddress = e.emailAddress
+        AND e.recordDelete_dateTime IS NULL
       WHERE
         wo.instance = @instance
         AND wo.recordDelete_dateTime IS NULL
