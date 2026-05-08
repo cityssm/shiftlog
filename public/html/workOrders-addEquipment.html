@@ -1,0 +1,63 @@
+<div
+  class="modal"
+  id="modal--addWorkOrderEquipment"
+  role="dialog"
+  aria-label="Add Equipment"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Equipment</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addWorkOrderEquipment">
+        <input id="addWorkOrderEquipment--workOrderId" name="workOrderId" type="hidden" />
+        <div class="field">
+          <label class="label" for="addWorkOrderEquipment--equipmentNumber">
+            Equipment
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                id="addWorkOrderEquipment--equipmentNumber"
+                name="equipmentNumber"
+                required
+              >
+                <option value="">(Select Equipment)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addWorkOrderEquipment--workOrderEquipmentNote">
+            Note
+          </label>
+          <div class="control">
+            <textarea
+              class="textarea"
+              id="addWorkOrderEquipment--workOrderEquipmentNote"
+              name="workOrderEquipmentNote"
+              maxlength="200"
+            ></textarea>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-success" type="submit" form="form--addWorkOrderEquipment">
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Add Equipment</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -737,6 +737,19 @@
           </a>
         </li>
         <li>
+          <a href="#tab--equipment" title="Equipment">
+            <div class="columns is-mobile is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-truck"></i></span>
+              </div>
+              <div class="column is-hidden-touch">
+                Equipment
+                <span class="tag is-rounded ml-2" id="equipmentCount">0</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
           <a href="#tab--milestones" title="Milestones">
             <div class="columns is-mobile is-1">
               <div class="column is-narrow">
@@ -793,6 +806,9 @@
       <div id="tab--attachments" class="is-hidden">
         <%- await include('_edit-attachments'); -%>
       </div>
+      <div id="tab--equipment" class="is-hidden">
+        <%- await include('_edit-equipment'); -%>
+      </div>
       <div id="tab--milestones" class="is-hidden">
         <%- await include('_edit-milestones'); -%>
       </div>
@@ -824,6 +840,7 @@
 <script src="<%= urlPrefix %>/javascripts/workOrders.tags.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.notes.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.attachments.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.equipment.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.subscribers.viewEdit.js"></script>
 
