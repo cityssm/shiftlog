@@ -57,10 +57,7 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetColumn`,
         addForm,
-        (result: {
-          success: boolean
-          timesheetColumnId?: number
-        }) => {
+        (result: { success: boolean; timesheetColumnId?: number }) => {
           if (result.success) {
             closeModalFunction()
             this.loadData()
@@ -161,10 +158,7 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`,
         requestData,
-        (result: {
-          success: boolean
-          timesheetRowId?: number
-        }) => {
+        (result: { success: boolean; timesheetRowId?: number }) => {
           if (result.success) {
             closeModalFunction()
             this.loadData()
@@ -374,10 +368,7 @@ class TimesheetGrid {
             {
               timesheetColumnId: column.timesheetColumnId
             },
-            (result: {
-              success: boolean
-              totalHours?: number
-            }) => {
+            (result: { success: boolean; totalHours?: number }) => {
               if (result.success) {
                 this.loadData()
                   .then(() => {
@@ -519,9 +510,7 @@ class TimesheetGrid {
               cityssm.postJSON(
                 `${timesheetUrlPrefix}/doGetTimesheetCells`,
                 { timesheetId: this.config.timesheetId },
-                (cellsData: {
-                  cells: TimesheetCell[]
-                }) => {
+                (cellsData: { cells: TimesheetCell[] }) => {
                   this.cells.clear()
                   for (const cell of cellsData.cells) {
                     const key = TimesheetGrid.getCellKey(

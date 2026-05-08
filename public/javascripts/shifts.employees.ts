@@ -513,7 +513,8 @@ declare const exports: {
       `${urlPrefix}/doGetAvailableCrewsEmployeesEquipment`,
       {},
       (rawResponseJSON) => {
-        const responseJSON = rawResponseJSON as DoGetAvailableCrewsEmployeesEquipmentResponse
+        const responseJSON =
+          rawResponseJSON as DoGetAvailableCrewsEmployeesEquipmentResponse
         availableCrews = responseJSON.crews
         availableEmployees = responseJSON.employees
         availableEquipment = responseJSON.equipment
@@ -975,7 +976,8 @@ declare const exports: {
         `${urlPrefix}/doUpdateShiftEmployeeNote`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateShiftEmployeeNoteResponse
+          const responseJSON =
+            rawResponseJSON as DoUpdateShiftEmployeeNoteResponse
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -1132,7 +1134,8 @@ declare const exports: {
         `${urlPrefix}/doUpdateShiftEquipmentNote`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoUpdateShiftEquipmentNoteResponse
+          const responseJSON =
+            rawResponseJSON as DoUpdateShiftEquipmentNoteResponse
           if (responseJSON.success) {
             refreshData()
             closeModalFunction()
@@ -1251,7 +1254,8 @@ declare const exports: {
               employeeNumber
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteShiftEmployeeResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteShiftEmployeeResponse
               if (responseJSON.success) {
                 refreshData()
                 bulmaJS.alert({
@@ -1299,7 +1303,8 @@ declare const exports: {
               equipmentNumber
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteShiftEquipmentResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteShiftEquipmentResponse
               if (responseJSON.success) {
                 refreshData()
                 bulmaJS.alert({
@@ -1335,7 +1340,8 @@ declare const exports: {
         `${urlPrefix}/doCopyFromPreviousShift`,
         formElement,
         (rawResponseJSON) => {
-          const responseJSON = rawResponseJSON as DoCopyFromPreviousShiftResponse
+          const responseJSON =
+            rawResponseJSON as DoCopyFromPreviousShiftResponse
           if (responseJSON.success) {
             refreshData()
             bulmaJS.alert({

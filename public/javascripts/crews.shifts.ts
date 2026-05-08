@@ -694,7 +694,7 @@ declare const exports: {
 
         const icon = document.createElement('span')
         icon.className = 'panel-icon'
-        icon.innerHTML = `<i class="fa-solid ${shiftLog.equipmentIconClass}"></i>`
+        icon.innerHTML = `<i class="fa-solid ${cityssm.escapeHTML(shiftLog.equipmentIconClass)}"></i>`
         leftColumn.append(icon)
 
         const equipmentNameText = document.createTextNode(

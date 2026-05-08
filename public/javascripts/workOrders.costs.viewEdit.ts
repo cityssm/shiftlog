@@ -171,7 +171,8 @@ declare const bulmaJS: BulmaJS
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUpdateWorkOrderCost`,
           formElement,
           (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoUpdateWorkOrderCostResponse
+            const responseJSON =
+              rawResponseJSON as DoUpdateWorkOrderCostResponse
             if (responseJSON.success) {
               closeModalFunction()
               loadCosts()
@@ -232,7 +233,8 @@ declare const bulmaJS: BulmaJS
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doCreateWorkOrderCost`,
           formElement,
           (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoCreateWorkOrderCostResponse
+            const responseJSON =
+              rawResponseJSON as DoCreateWorkOrderCostResponse
             if (responseJSON.success) {
               closeModalFunction()
               formElement.reset()
@@ -295,7 +297,8 @@ declare const bulmaJS: BulmaJS
                 workOrderCostId
               },
               (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoDeleteWorkOrderCostResponse
+                const responseJSON =
+                  rawResponseJSON as DoDeleteWorkOrderCostResponse
                 if (responseJSON.success) {
                   loadCosts()
                 } else {
