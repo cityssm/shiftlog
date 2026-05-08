@@ -1,6 +1,8 @@
 <div class="columns">
   <div class="column">
-    <h2 class="title is-4">Employees and Equipment</h2>
+    <h2 class="title is-4">
+      Employees and <%= configFunctions.getConfigProperty('equipment.sectionName') %>
+    </h2>
   </div>
   <% if (isEdit) { %>
   <div class="column is-narrow">
@@ -32,7 +34,9 @@
             </a>
             <a class="dropdown-item" id="button--addEquipment" href="#">
               <span class="icon"><i class="fa-solid <%= configFunctions.getConfigProperty('equipment.iconClass') %>"></i></span>
-              <span>Add Equipment</span>
+              <span>
+                Add <%= configFunctions.getConfigProperty('equipment.sectionNameSingular') %>
+              </span>
             </a>
             <hr class="dropdown-divider" />
             <a class="dropdown-item" id="button--importFromPreviousShift" href="#">
@@ -66,7 +70,7 @@
     <li>
       <a href="#tab-content--equipment">
         <span class="icon is-small"><i class="fa-solid <%= configFunctions.getConfigProperty('equipment.iconClass') %>"></i></span>
-        <span>Equipment</span>
+        <span><%= configFunctions.getConfigProperty('equipment.sectionName') %></span>
         <span class="tag is-rounded ml-2" id="equipmentCount">0</span>
       </a>
     </li>

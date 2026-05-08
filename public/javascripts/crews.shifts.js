@@ -242,7 +242,7 @@
         let closeModalFunction;
         cityssm.openHtmlModal('shifts-crews-addEquipment', {
             onshow(modalElement) {
-                ;
+                shiftLog.populateSectionAliases(modalElement);
                 modalElement.querySelector('#crewEquipmentAdd--crewId').value = crewId.toString();
                 const equipmentSelectElement = modalElement.querySelector('#crewEquipmentAdd--equipmentNumber');
                 const employeeSelectElement = modalElement.querySelector('#crewEquipmentAdd--employeeNumber');
@@ -426,7 +426,7 @@
                 leftColumn.className = 'column';
                 const icon = document.createElement('span');
                 icon.className = 'panel-icon';
-                icon.innerHTML = `<i class="fa-solid ${shiftLog.equipmentIconClass}"></i>`;
+                icon.innerHTML = `<i class="fa-solid ${cityssm.escapeHTML(shiftLog.equipmentIconClass)}"></i>`;
                 leftColumn.append(icon);
                 const equipmentNameText = document.createTextNode(`${equipmentItem.equipmentName ?? ''} (${equipmentItem.equipmentNumber})`);
                 leftColumn.append(equipmentNameText);

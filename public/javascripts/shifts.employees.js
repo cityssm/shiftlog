@@ -208,7 +208,9 @@
         if (shiftEquipment.length === 0) {
             containerElement.innerHTML = `
         <div class="message">
-          <div class="message-body">No equipment assigned to this shift.</div>
+          <div class="message-body">
+            No ${cityssm.escapeHTML(shiftLog.equipmentSectionName.toLowerCase())} assigned to this shift.
+          </div>
         </div>
       `;
             return;
@@ -218,7 +220,7 @@
         tableElement.innerHTML = `
       <thead>
         <tr>
-          <th>Equipment</th>
+          <th>${cityssm.escapeHTML(shiftLog.equipmentSectionNameSingular)}</th>
           <th>Assigned Employee</th>
           <th>Note</th>
           ${isEdit ? '<th class="has-text-right">Actions</th>' : ''}
@@ -457,7 +459,7 @@
                     switchToTab('tab-content--equipment');
                     bulmaJS.alert({
                         contextualColorName: 'success',
-                        message: 'Equipment added successfully'
+                        message: `${shiftLog.equipmentSectionNameSingular} added successfully`
                     });
                     closeModalFunction();
                 }
@@ -465,14 +467,15 @@
                     bulmaJS.alert({
                         contextualColorName: 'danger',
                         title: 'Error',
-                        message: responseJSON.message ?? 'Failed to add equipment'
+                        message: responseJSON.message ??
+                            `Failed to add ${shiftLog.equipmentSectionNameSingular.toLowerCase()}`
                     });
                 }
             });
         }
         cityssm.openHtmlModal('shifts-addEquipment', {
             onshow(modalElement) {
-                ;
+                shiftLog.populateSectionAliases(modalElement);
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 const equipmentNumberElement = modalElement.querySelector('select[name="equipmentNumber"]');
                 for (const equipment of availableEquipment) {
@@ -681,7 +684,7 @@
         }
         cityssm.openHtmlModal('shifts-editEquipmentEmployee', {
             onshow(modalElement) {
-                ;
+                shiftLog.populateSectionAliases(modalElement);
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
                 const employeeNumberElement = modalElement.querySelector('select[name="employeeNumber"]');
@@ -736,7 +739,7 @@
         }
         cityssm.openHtmlModal('shifts-editEquipmentNote', {
             onshow(modalElement) {
-                ;
+                shiftLog.populateSectionAliases(modalElement);
                 modalElement.querySelector('input[name="shiftId"]').value = shiftId;
                 modalElement.querySelector('input[name="equipmentNumber"]').value = equipmentNumber ?? '';
                 modalElement.querySelector('textarea[name="shiftEquipmentNote"]').value = equipment.shiftEquipmentNote;
@@ -830,8 +833,8 @@
         const equipment = shiftEquipment.find((possibleEquipment) => possibleEquipment.equipmentNumber === equipmentNumber);
         bulmaJS.confirm({
             contextualColorName: 'warning',
-            title: 'Delete Equipment',
-            message: `Are you sure you want to remove equipment "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
+            title: `Delete ${shiftLog.equipmentSectionNameSingular}`,
+            message: `Are you sure you want to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()} "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
             okButton: {
                 contextualColorName: 'warning',
                 text: 'Delete',
@@ -845,14 +848,14 @@
                             refreshData();
                             bulmaJS.alert({
                                 contextualColorName: 'success',
-                                message: 'Equipment removed successfully'
+                                message: `${shiftLog.equipmentSectionNameSingular} removed successfully`
                             });
                         }
                         else {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
                                 title: 'Error',
-                                message: 'Failed to remove equipment'
+                                message: `Failed to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()}`
                             });
                         }
                     });
@@ -912,7 +915,7 @@
                             counts.push(`${shift.employeesCount} employee${shift.employeesCount === 1 ? '' : 's'}`);
                         }
                         if ((shift.equipmentCount ?? 0) > 0) {
-                            counts.push(`${shift.equipmentCount} equipment`);
+                            counts.push(`${shift.equipmentCount} ${shiftLog.equipmentSectionName.toLowerCase()}`);
                         }
                         const countsText = counts.length > 0 ? ` (${counts.join(', ')})` : '';
                         const shiftElement = document.createElement('a');

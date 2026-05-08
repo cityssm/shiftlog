@@ -308,6 +308,7 @@ declare const exports: {
 
         cityssm.openHtmlModal('timesheets-copyFromShift', {
           onshow(modalElement) {
+            shiftLog.populateSectionAliases(modalElement)
             const timesheetId = timesheetIdElement.value
             ;(
               modalElement.querySelector(

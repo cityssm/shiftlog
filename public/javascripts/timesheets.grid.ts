@@ -57,10 +57,7 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetColumn`,
         addForm,
-        (result: {
-          success: boolean
-          timesheetColumnId?: number
-        }) => {
+        (result: { success: boolean; timesheetColumnId?: number }) => {
           if (result.success) {
             closeModalFunction()
             this.loadData()
@@ -161,10 +158,7 @@ class TimesheetGrid {
       cityssm.postJSON(
         `${this.shiftLog.urlPrefix}/${this.shiftLog.timesheetsRouter}/doAddTimesheetRow`,
         requestData,
-        (result: {
-          success: boolean
-          timesheetRowId?: number
-        }) => {
+        (result: { success: boolean; timesheetRowId?: number }) => {
           if (result.success) {
             closeModalFunction()
             this.loadData()
@@ -223,6 +217,7 @@ class TimesheetGrid {
 
         cityssm.openHtmlModal('timesheets-addRow', {
           onshow: (modalElement) => {
+            this.shiftLog.populateSectionAliases(modalElement)
             // Set the timesheet ID
             ;(
               modalElement.querySelector(
@@ -373,10 +368,7 @@ class TimesheetGrid {
             {
               timesheetColumnId: column.timesheetColumnId
             },
-            (result: {
-              success: boolean
-              totalHours?: number
-            }) => {
+            (result: { success: boolean; totalHours?: number }) => {
               if (result.success) {
                 this.loadData()
                   .then(() => {
@@ -518,9 +510,7 @@ class TimesheetGrid {
               cityssm.postJSON(
                 `${timesheetUrlPrefix}/doGetTimesheetCells`,
                 { timesheetId: this.config.timesheetId },
-                (cellsData: {
-                  cells: TimesheetCell[]
-                }) => {
+                (cellsData: { cells: TimesheetCell[] }) => {
                   this.cells.clear()
                   for (const cell of cellsData.cells) {
                     const key = TimesheetGrid.getCellKey(
@@ -621,7 +611,7 @@ class TimesheetGrid {
     thCorner.style.minWidth = '200px'
 
     const cornerTitle = document.createElement('div')
-    cornerTitle.textContent = 'Employee / Equipment'
+    cornerTitle.textContent = `Employee / ${this.shiftLog.equipmentSectionNameSingular}`
     thCorner.append(cornerTitle)
 
     if (this.config.isEditable) {
@@ -784,7 +774,7 @@ class TimesheetGrid {
       if (row.equipmentNumber) {
         const equipmentInfo = document.createElement('small')
         equipmentInfo.className = 'is-block has-text-grey'
-        equipmentInfo.textContent = `Equipment: ${row.equipmentNumber}`
+        equipmentInfo.textContent = `${this.shiftLog.equipmentSectionNameSingular}: ${row.equipmentNumber}`
         tdLabel.append(document.createElement('br'), equipmentInfo)
       }
 
@@ -1041,7 +1031,8 @@ class TimesheetGrid {
         }
 
         cityssm.openHtmlModal('timesheets-editRow', {
-          onshow(modalElement) {
+          onshow: (modalElement) => {
+            this.shiftLog.populateSectionAliases(modalElement)
             // Set form values
             ;(
               modalElement.querySelector(
