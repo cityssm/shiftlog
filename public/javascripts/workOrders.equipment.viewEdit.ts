@@ -68,8 +68,6 @@ declare const bulmaJS: BulmaJS
         <tr>
           <th>Equipment</th>
           <th>Note</th>
-          <th class="is-hidden-touch">Added By</th>
-          <th class="is-hidden-touch">Added On</th>
           ${exports.isEdit ? '<th class="is-hidden-print" style="width: 120px;"></th>' : ''}
         </tr>
       </thead>
@@ -92,8 +90,6 @@ declare const bulmaJS: BulmaJS
           </div>
         </td>
         <td>${cityssm.escapeHTML(equipment.workOrderEquipmentNote)}</td>
-        <td class="is-hidden-touch">${cityssm.escapeHTML(equipment.recordCreate_userName ?? '')}</td>
-        <td class="is-hidden-touch">${cityssm.dateToString(new Date(equipment.recordCreate_dateTime ?? ''))}</td>
         ${
           exports.isEdit
             ? /* html */ `
