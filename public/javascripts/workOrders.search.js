@@ -108,19 +108,19 @@
             </span>
           `
                 : '';
-            const equipmentIconHTML = workOrder.equipmentCount && workOrder.equipmentCount > 0
-                ? `
-            <span class="icon" title="${workOrder.equipmentCount} equipment item(s)">
-              <i class="fa-solid ${shiftLog.equipmentIconClass}"></i>
-            </span>
-          `
-                : '';
             const costsIconHTML = workOrder.costsCount &&
                 workOrder.costsCount > 0 &&
                 workOrder.costsTotal !== undefined
                 ? `
             <span class="icon" title="Total Cost: $${workOrder.costsTotal.toFixed(2)}">
               <i class="fa-solid fa-dollar-sign"></i>
+            </span>
+          `
+                : '';
+            const equipmentIconHTML = workOrder.equipmentCount && workOrder.equipmentCount > 0
+                ? `
+            <span class="icon" title="${workOrder.equipmentCount} equipment item(s)">
+              <i class="fa-solid ${shiftLog.equipmentIconClass}"></i>
             </span>
           `
                 : '';

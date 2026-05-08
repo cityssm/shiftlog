@@ -75,6 +75,10 @@
             `
                 : ''}
       `;
+            const viewButton = tableRowElement.querySelector('.view-equipment');
+            viewButton.addEventListener('click', () => {
+                showViewEquipmentModal(equipment);
+            });
             if (exports.isEdit) {
                 const editButton = tableRowElement.querySelector('.edit-equipment-note');
                 editButton.addEventListener('click', () => {
@@ -85,10 +89,6 @@
                     deleteEquipment(equipment.equipmentNumber);
                 });
             }
-            const viewButton = tableRowElement.querySelector('.view-equipment');
-            viewButton.addEventListener('click', () => {
-                showViewEquipmentModal(equipment);
-            });
             tableBodyElement.append(tableRowElement);
         }
         equipmentContainerElement.replaceChildren(tableElement);
@@ -103,12 +103,14 @@
     function showViewEquipmentModal(equipment) {
         cityssm.openHtmlModal('workOrders-viewEquipment', {
             onshow(modalElement) {
+                ;
                 modalElement.querySelector('#viewWorkOrderEquipment--equipmentName').textContent = equipment.equipmentName ?? '';
                 modalElement.querySelector('#viewWorkOrderEquipment--equipmentNumber').textContent = equipment.equipmentNumber;
                 const typeContainer = modalElement.querySelector('#viewWorkOrderEquipment--equipmentTypeContainer');
                 const hasType = equipment.equipmentTypeDataListItem !== undefined &&
                     equipment.equipmentTypeDataListItem !== '';
                 if (hasType) {
+                    ;
                     modalElement.querySelector('#viewWorkOrderEquipment--equipmentTypeDataListItem').textContent = equipment.equipmentTypeDataListItem ?? '';
                 }
                 typeContainer.style.display = hasType ? 'block' : 'none';
@@ -116,12 +118,14 @@
                 const hasDescription = equipment.equipmentDescription !== undefined &&
                     equipment.equipmentDescription !== '';
                 if (hasDescription) {
+                    ;
                     modalElement.querySelector('#viewWorkOrderEquipment--equipmentDescription').textContent = equipment.equipmentDescription ?? '';
                 }
                 descriptionContainer.style.display = hasDescription ? 'block' : 'none';
                 const noteContainer = modalElement.querySelector('#viewWorkOrderEquipment--noteContainer');
                 const hasNote = equipment.workOrderEquipmentNote !== '';
                 if (hasNote) {
+                    ;
                     modalElement.querySelector('#viewWorkOrderEquipment--workOrderEquipmentNote').textContent = equipment.workOrderEquipmentNote;
                 }
                 noteContainer.style.display = hasNote ? 'block' : 'none';

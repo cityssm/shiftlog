@@ -169,7 +169,6 @@ export default async function getWorkOrders(filters, options, user) {
     if (totalCount > 0 || limit === -1) {
         const workOrdersRequest = pool.request();
         applyParameters(workOrdersRequest, filters, user);
-        /* eslint-disable no-secrets/no-secrets */
         const workOrdersResult = await workOrdersRequest.query(`
         SELECT
           w.workOrderId,
@@ -296,7 +295,6 @@ export default async function getWorkOrders(filters, options, user) {
             ? ''
             : ` fetch next ${limit} rows only`}
       `);
-        /* eslint-enable no-secrets/no-secrets */
         workOrders = workOrdersResult.recordset;
         if (limit === -1) {
             totalCount = workOrders.length;
