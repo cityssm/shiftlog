@@ -85,7 +85,7 @@ declare const bulmaJS: BulmaJS
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
         <td>
-          <span class="icon">
+          <span class="icon" title="${cityssm.escapeHTML(equipment.equipmentTypeDataListItem ?? '')}">
             <i class="fa-solid fa-${equipment.equipmentTypeIconClass ?? ''}" style="color: #${equipment.equipmentTypeColorHex ?? '000000'};"></i>
           </span>
         </td>

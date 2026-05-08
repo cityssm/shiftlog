@@ -39,7 +39,7 @@
             const tableRowElement = document.createElement('tr');
             tableRowElement.innerHTML = `
         <td>
-          <span class="icon">
+          <span class="icon" title="${cityssm.escapeHTML(equipment.equipmentTypeDataListItem ?? '')}">
             <i class="fa-solid fa-${equipment.equipmentTypeIconClass ?? ''}" style="color: #${equipment.equipmentTypeColorHex ?? '000000'};"></i>
           </span>
         </td>
