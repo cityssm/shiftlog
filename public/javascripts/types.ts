@@ -35,6 +35,8 @@ export interface ShiftLogGlobal {
   timesheetsSectionNameSingular: string
 
   equipmentIconClass: string
+  equipmentSectionName: string
+  equipmentSectionNameSingular: string
 
   buildTimesheetURL: (timesheetId: number, edit?: boolean) => string
 

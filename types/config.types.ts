@@ -122,6 +122,9 @@ export type ConfigEmployees =
     }
 
 export type ConfigEquipment = {
+  sectionName?: string
+  sectionNameSingular?: string
+
   iconClass?: `fa-${string}`
 } & (
   | {

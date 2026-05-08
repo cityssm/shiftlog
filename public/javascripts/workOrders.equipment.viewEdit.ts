@@ -53,7 +53,7 @@ declare const bulmaJS: BulmaJS
     if (workOrderEquipment.length === 0) {
       equipmentContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
-          <p class="message-body">No equipment has been added yet.</p>
+          <p class="message-body">No ${cityssm.escapeHTML(exports.shiftLog.equipmentSectionName.toLowerCase())} has been added yet.</p>
         </div>
       `
       return
@@ -67,7 +67,7 @@ declare const bulmaJS: BulmaJS
       <thead>
         <tr>
           <th class="has-width-1"></th>
-          <th>Equipment</th>
+          <th>${cityssm.escapeHTML(exports.shiftLog.equipmentSectionName)}</th>
           <th>Note</th>
           ${exports.isEdit ? '<th class="is-hidden-print"></th>' : ''}
         </tr>
@@ -172,6 +172,7 @@ declare const bulmaJS: BulmaJS
   function showViewEquipmentModal(equipment: WorkOrderEquipment): void {
     cityssm.openHtmlModal('workOrders-viewEquipment', {
       onshow(modalElement) {
+        exports.shiftLog.populateSectionAliases(modalElement)
         ;(
           modalElement.querySelector(
             '#viewWorkOrderEquipment--equipmentName'
@@ -269,11 +270,11 @@ declare const bulmaJS: BulmaJS
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              title: 'Error Adding Equipment',
+              title: `Error Adding ${exports.shiftLog.equipmentSectionNameSingular}`,
 
               message:
                 responseJSON.errorMessage ??
-                'An error occurred while adding equipment to this work order.'
+                `An error occurred while adding the ${exports.shiftLog.equipmentSectionNameSingular.toLowerCase()} to this work order.`
             })
           }
         }
@@ -283,6 +284,7 @@ declare const bulmaJS: BulmaJS
     cityssm.openHtmlModal('workOrders-addEquipment', {
       onshow(modalElement) {
         exports.shiftLog.setUnsavedChanges('modal')
+        exports.shiftLog.populateSectionAliases(modalElement)
         ;(
           modalElement.querySelector(
             '#addWorkOrderEquipment--workOrderId'
@@ -348,7 +350,7 @@ declare const bulmaJS: BulmaJS
 
               message:
                 responseJSON.errorMessage ??
-                'An error occurred while updating the equipment note.'
+                `An error occurred while updating the ${exports.shiftLog.equipmentSectionNameSingular.toLowerCase()} note.`
             })
           }
         }
@@ -358,6 +360,7 @@ declare const bulmaJS: BulmaJS
     cityssm.openHtmlModal('workOrders-editEquipmentNote', {
       onshow(modalElement) {
         exports.shiftLog.setUnsavedChanges('modal')
+        exports.shiftLog.populateSectionAliases(modalElement)
         ;(
           modalElement.querySelector(
             '#editWorkOrderEquipmentNote--workOrderId'
@@ -397,9 +400,9 @@ declare const bulmaJS: BulmaJS
   function deleteEquipment(equipmentNumber: string): void {
     bulmaJS.confirm({
       contextualColorName: 'danger',
-      title: 'Delete Equipment',
+      title: `Delete ${exports.shiftLog.equipmentSectionNameSingular}`,
 
-      message: 'Are you sure you want to remove this equipment?',
+      message: `Are you sure you want to remove this ${exports.shiftLog.equipmentSectionNameSingular.toLowerCase()}?`,
 
       okButton: {
         text: 'Delete',
@@ -420,11 +423,11 @@ declare const bulmaJS: BulmaJS
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Deleting Equipment',
+                  title: `Error Deleting ${exports.shiftLog.equipmentSectionNameSingular}`,
 
                   message:
                     responseJSON.errorMessage ??
-                    'An error occurred while deleting the equipment.'
+                    `An error occurred while deleting the ${exports.shiftLog.equipmentSectionNameSingular.toLowerCase()}.`
                 })
               }
             }

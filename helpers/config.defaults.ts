@@ -138,7 +138,11 @@ export const configDefaultValues = {
     syncSource: ''
   } as unknown as ConfigEquipment,
 
+  'equipment.sectionName': 'Equipment',
+  'equipment.sectionNameSingular': 'Equipment',
+
   'equipment.iconClass': 'fa-truck',
+
   'equipment.syncSource': '',
 
   // Locations

@@ -21,6 +21,8 @@ config.workOrders = {
 
 config.equipment = {
   iconClass: 'fa-computer',
+  sectionName: 'Assets',
+  sectionNameSingular: 'Asset',
   syncSource: ''
 }
 

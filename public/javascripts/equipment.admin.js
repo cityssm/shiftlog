@@ -16,11 +16,11 @@
         }
         bulmaJS.confirm({
             contextualColorName: 'warning',
-            title: 'Delete Equipment',
-            message: 'Are you sure you want to delete this equipment?',
+            title: `Delete ${shiftLog.equipmentSectionNameSingular}`,
+            message: `Are you sure you want to delete this ${shiftLog.equipmentSectionNameSingular.toLowerCase()}?`,
             okButton: {
                 contextualColorName: 'warning',
-                text: 'Delete Equipment',
+                text: `Delete ${shiftLog.equipmentSectionNameSingular}`,
                 callbackFunction() {
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteEquipment`, {
                         equipmentNumber
@@ -33,15 +33,15 @@
                             renderEquipmentWithPagination(responseJSON.equipment);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
-                                title: 'Equipment Deleted',
-                                message: 'Equipment has been successfully deleted.'
+                                title: `${shiftLog.equipmentSectionNameSingular} Deleted`,
+                                message: `${shiftLog.equipmentSectionNameSingular} has been successfully deleted.`
                             });
                         }
                         else {
                             bulmaJS.alert({
                                 contextualColorName: 'danger',
-                                title: 'Error Deleting Equipment',
-                                message: 'Please try again.'
+                                title: `Error Deleting ${shiftLog.equipmentSectionNameSingular}`,
+                                message: `There was an error deleting the ${shiftLog.equipmentSectionNameSingular.toLowerCase()}. Please try again.`
                             });
                         }
                     });
@@ -73,22 +73,22 @@
                     renderEquipmentWithPagination(responseJSON.equipment);
                     bulmaJS.alert({
                         contextualColorName: 'success',
-                        title: 'Equipment Updated',
-                        message: 'Equipment has been successfully updated.'
+                        title: `${shiftLog.equipmentSectionNameSingular} Updated`,
+                        message: `${shiftLog.equipmentSectionNameSingular} has been successfully updated.`
                     });
                 }
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        title: 'Error Updating Equipment',
-                        message: 'Please try again.'
+                        title: `Error Updating ${shiftLog.equipmentSectionNameSingular}`,
+                        message: `There was an error updating the ${shiftLog.equipmentSectionNameSingular.toLowerCase()}. Please try again.`
                     });
                 }
             });
         }
         cityssm.openHtmlModal('adminEquipment-edit', {
             onshow(modalElement) {
-                ;
+                shiftLog.populateSectionAliases(modalElement);
                 modalElement.querySelector('[name="equipmentNumber"]').value = equipment.equipmentNumber;
                 modalElement.querySelector('[name="recordSync_isSynced"]').checked = equipment.recordSync_isSynced;
                 modalElement.querySelector('[name="equipmentName"]').value = equipment.equipmentName;
@@ -136,7 +136,7 @@
             equipmentContainerElement.innerHTML = `
         <div class="message is-info">
           <div class="message-body">
-            No equipment records available.
+            No ${cityssm.escapeHTML(shiftLog.equipmentSectionName.toLowerCase())} records available.
           </div>
         </div>
       `;
@@ -151,8 +151,8 @@
           <th>
             <span class="is-sr-only">Sync Status</span>
           </th>
-          <th>Equipment Number</th>
-          <th>Equipment Name</th>
+          <th>${cityssm.escapeHTML(shiftLog.equipmentSectionNameSingular)} Number</th>
+          <th>${cityssm.escapeHTML(shiftLog.equipmentSectionNameSingular)} Name</th>
           <th>Description</th>
           <th>Type</th>
           <th>User Group</th>
@@ -248,22 +248,22 @@
                     renderEquipmentWithPagination(responseJSON.equipment);
                     bulmaJS.alert({
                         contextualColorName: 'success',
-                        title: 'Equipment Added',
-                        message: 'Equipment has been successfully added.'
+                        title: `${shiftLog.equipmentSectionNameSingular} Added`,
+                        message: `${shiftLog.equipmentSectionNameSingular} has been successfully added.`
                     });
                 }
                 else {
                     bulmaJS.alert({
                         contextualColorName: 'danger',
-                        title: 'Error Adding Equipment',
-                        message: 'Please check the equipment number is unique and try again.'
+                        title: `Error Adding ${shiftLog.equipmentSectionNameSingular}`,
+                        message: `Please check the ${shiftLog.equipmentSectionNameSingular.toLowerCase()} number is unique and try again.`
                     });
                 }
             });
         }
         cityssm.openHtmlModal('adminEquipment-add', {
             onshow(modalElement) {
-                ;
+                shiftLog.populateSectionAliases(modalElement);
                 modalElement.querySelector('[name="equipmentNumber"]').value = '';
                 modalElement.querySelector('[name="equipmentName"]').value = '';
                 modalElement.querySelector('[name="equipmentDescription"]').value = '';

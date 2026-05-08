@@ -54,6 +54,8 @@ export const configDefaultValues = {
     equipment: {
         syncSource: ''
     },
+    'equipment.sectionName': 'Equipment',
+    'equipment.sectionNameSingular': 'Equipment',
     'equipment.iconClass': 'fa-truck',
     'equipment.syncSource': '',
     locations: {

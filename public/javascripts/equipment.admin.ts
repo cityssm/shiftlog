@@ -53,12 +53,12 @@ declare const exports: {
 
     bulmaJS.confirm({
       contextualColorName: 'warning',
-      title: 'Delete Equipment',
+      title: `Delete ${shiftLog.equipmentSectionNameSingular}`,
 
-      message: 'Are you sure you want to delete this equipment?',
+      message: `Are you sure you want to delete this ${shiftLog.equipmentSectionNameSingular.toLowerCase()}?`,
       okButton: {
         contextualColorName: 'warning',
-        text: 'Delete Equipment',
+        text: `Delete ${shiftLog.equipmentSectionNameSingular}`,
 
         callbackFunction() {
           cityssm.postJSON(
@@ -77,16 +77,16 @@ declare const exports: {
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
-                  title: 'Equipment Deleted',
+                  title: `${shiftLog.equipmentSectionNameSingular} Deleted`,
 
-                  message: 'Equipment has been successfully deleted.'
+                  message: `${shiftLog.equipmentSectionNameSingular} has been successfully deleted.`
                 })
               } else {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
-                  title: 'Error Deleting Equipment',
+                  title: `Error Deleting ${shiftLog.equipmentSectionNameSingular}`,
 
-                  message: 'Please try again.'
+                  message: `There was an error deleting the ${shiftLog.equipmentSectionNameSingular.toLowerCase()}. Please try again.`
                 })
               }
             }
@@ -135,16 +135,16 @@ declare const exports: {
 
             bulmaJS.alert({
               contextualColorName: 'success',
-              title: 'Equipment Updated',
+              title: `${shiftLog.equipmentSectionNameSingular} Updated`,
 
-              message: 'Equipment has been successfully updated.'
+              message: `${shiftLog.equipmentSectionNameSingular} has been successfully updated.`
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              title: 'Error Updating Equipment',
+              title: `Error Updating ${shiftLog.equipmentSectionNameSingular}`,
 
-              message: 'Please try again.'
+              message: `There was an error updating the ${shiftLog.equipmentSectionNameSingular.toLowerCase()}. Please try again.`
             })
           }
         }
@@ -153,6 +153,8 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminEquipment-edit', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
+
         ;(
           modalElement.querySelector(
             '[name="equipmentNumber"]'
@@ -237,7 +239,7 @@ declare const exports: {
       equipmentContainerElement.innerHTML = /* html */ `
         <div class="message is-info">
           <div class="message-body">
-            No equipment records available.
+            No ${cityssm.escapeHTML(shiftLog.equipmentSectionName.toLowerCase())} records available.
           </div>
         </div>
       `
@@ -254,8 +256,8 @@ declare const exports: {
           <th>
             <span class="is-sr-only">Sync Status</span>
           </th>
-          <th>Equipment Number</th>
-          <th>Equipment Name</th>
+          <th>${cityssm.escapeHTML(shiftLog.equipmentSectionNameSingular)} Number</th>
+          <th>${cityssm.escapeHTML(shiftLog.equipmentSectionNameSingular)} Name</th>
           <th>Description</th>
           <th>Type</th>
           <th>User Group</th>
@@ -384,17 +386,16 @@ declare const exports: {
 
             bulmaJS.alert({
               contextualColorName: 'success',
-              title: 'Equipment Added',
+              title: `${shiftLog.equipmentSectionNameSingular} Added`,
 
-              message: 'Equipment has been successfully added.'
+              message: `${shiftLog.equipmentSectionNameSingular} has been successfully added.`
             })
           } else {
             bulmaJS.alert({
               contextualColorName: 'danger',
-              title: 'Error Adding Equipment',
+              title: `Error Adding ${shiftLog.equipmentSectionNameSingular}`,
 
-              message:
-                'Please check the equipment number is unique and try again.'
+              message: `Please check the ${shiftLog.equipmentSectionNameSingular.toLowerCase()} number is unique and try again.`
             })
           }
         }
@@ -403,6 +404,8 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminEquipment-add', {
       onshow(modalElement) {
+        shiftLog.populateSectionAliases(modalElement)
+
         ;(
           modalElement.querySelector(
             '[name="equipmentNumber"]'

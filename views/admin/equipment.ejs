@@ -18,7 +18,7 @@
             </li>
             <li class="is-active">
               <a href="#" aria-current="page">
-                Equipment Maintenance
+                <%= configFunctions.getConfigProperty('equipment.sectionNameSingular') %> Maintenance
               </a>
             </li>
           </ul>
@@ -42,7 +42,7 @@
     <div class="columns is-vcentered">
       <div class="column">
         <h1 class="title is-1">
-          Equipment Maintenance
+          <%= configFunctions.getConfigProperty('equipment.sectionNameSingular') %> Maintenance
         </h1>
       </div>
       <div class="column is-narrow">
@@ -52,8 +52,8 @@
               class="input"
               id="filter--equipment"
               type="text"
-              aria-label="Filter equipment"
-              placeholder="Filter equipment..."
+              aria-label="Filter <%= configFunctions.getConfigProperty('equipment.sectionName') %>"
+              placeholder="Filter <%= configFunctions.getConfigProperty('equipment.sectionName') %>..."
             />
             <span class="icon is-small is-left">
               <i class="fa-solid fa-magnifying-glass"></i>
@@ -66,14 +66,17 @@
           <span class="icon">
             <i class="fa-solid fa-plus"></i>
           </span>
-          <span>Add Equipment</span>
+          <span>Add <%= configFunctions.getConfigProperty('equipment.sectionNameSingular') %></span>
         </button>
       </div>
     </div>
 
     <div class="message is-info">
       <div class="message-body">
-        Manage equipment records including vehicles, tools, and machinery that can be associated with work. Track equipment names, serial numbers, and other identifying details.
+        Manage <%= configFunctions.getConfigProperty('equipment.sectionNameSingular') %> records
+        including vehicles, tools, and machinery that can be associated with work.
+        Track <%= configFunctions.getConfigProperty('equipment.sectionNameSingular').toLowerCase() %> names,
+        serial numbers, and other identifying details.
       </div>
     </div>
 

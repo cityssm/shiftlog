@@ -7,7 +7,10 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <div class="modal-card-head">
-      <p class="modal-card-title">Edit Equipment</p>
+      <p class="modal-card-title">
+        Edit
+        <span data-section-alias="equipmentSectionNameSingular">Equipment</span>
+      </p>
       <button
         class="delete is-close-modal-button"
         type="button"
@@ -20,7 +23,7 @@
           <div class="column">
             <div class="field">
               <label class="label" for="edit-equipmentNumber">
-                Equipment Number
+                <span data-section-alias="equipmentSectionNameSingular">Equipment</span> Number
               </label>
               <div class="control">
                 <input
@@ -52,7 +55,9 @@
           </div>
         </div>
         <div class="field">
-          <label class="label" for="edit-equipmentName">Equipment Name</label>
+          <label class="label" for="edit-equipmentName">
+            <span data-section-alias="equipmentSectionNameSingular">Equipment</span> Name
+          </label>
           <div class="control">
             <input
               class="input"
@@ -79,7 +84,7 @@
         </div>
         <div class="field">
           <label class="label" for="edit-equipmentTypeDataListItemId">
-            Equipment Type
+            <span data-section-alias="equipmentSectionNameSingular">Equipment</span> Type
           </label>
           <div class="control">
             <div class="select is-fullwidth">
@@ -88,7 +93,7 @@
                 name="equipmentTypeDataListItemId"
                 required
               >
-                <option value="">(Select Equipment Type)</option>
+                <option value="">(Select Type)</option>
               </select>
             </div>
           </div>
@@ -104,7 +109,10 @@
               </select>
             </div>
           </div>
-          <p class="help">Optional. Employee list for this equipment.</p>
+          <p class="help">
+            Optional. Employee list for this
+            <span data-section-alias="equipmentSectionNameSingular" data-section-alias-transform="lowerCase">equipment</span>.
+          </p>
         </div>
         <div class="field">
           <label class="label" for="edit-userGroupId">
@@ -128,7 +136,10 @@
           form="form--editEquipment"
         >
           <span class="icon"><i class="fa-solid fa-save"></i></span>
-          <span>Update Equipment</span>
+          <span>
+            Update
+            <span data-section-alias="equipmentSectionNameSingular">Equipment</span>
+          </span>
         </button>
         <button class="button is-close-modal-button" type="button">
           Cancel

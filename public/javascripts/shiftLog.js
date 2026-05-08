@@ -62,6 +62,16 @@
         for (const sectionAliasElement of sectionAliasElements) {
             const sectionAlias = sectionAliasElement.dataset.sectionAlias;
             switch (sectionAlias) {
+                case 'equipmentSectionName': {
+                    sectionAliasElement.textContent =
+                        exports.shiftLog.equipmentSectionName ?? '';
+                    break;
+                }
+                case 'equipmentSectionNameSingular': {
+                    sectionAliasElement.textContent =
+                        exports.shiftLog.equipmentSectionNameSingular ?? '';
+                    break;
+                }
                 case 'shiftsSectionName': {
                     sectionAliasElement.textContent =
                         exports.shiftLog.shiftsSectionName ?? '';

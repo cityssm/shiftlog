@@ -178,7 +178,7 @@ declare const exports: {
       const equipmentIconHTML =
         workOrder.equipmentCount && workOrder.equipmentCount > 0
           ? /* html */ `
-            <span class="icon" title="${workOrder.equipmentCount} equipment item(s)">
+            <span class="icon" title="${workOrder.equipmentCount} ${cityssm.escapeHTML(shiftLog.equipmentSectionName.toLowerCase())}">
               <i class="fa-solid ${shiftLog.equipmentIconClass}"></i>
             </span>
           `

@@ -7,7 +7,7 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <div class="modal-card-head">
-      <p class="modal-card-title">Add Equipment</p>
+      <p class="modal-card-title">Add <span data-section-alias="equipmentSectionNameSingular">Equipment</span></p>
       <button
         class="delete is-close-modal-button"
         type="button"
@@ -19,7 +19,7 @@
         <input id="addWorkOrderEquipment--workOrderId" name="workOrderId" type="hidden" />
         <div class="field">
           <label class="label" for="addWorkOrderEquipment--equipmentNumber">
-            Equipment
+            <span data-section-alias="equipmentSectionNameSingular">Equipment</span>
           </label>
           <div class="control">
             <div class="select is-fullwidth">
@@ -28,7 +28,7 @@
                 name="equipmentNumber"
                 required
               >
-                <option value="">(Select Equipment)</option>
+                <option value="">(Select)</option>
               </select>
             </div>
           </div>
@@ -52,7 +52,10 @@
       <div class="buttons">
         <button class="button is-success" type="submit" form="form--addWorkOrderEquipment">
           <span class="icon"><i class="fa-solid fa-plus"></i></span>
-          <span>Add Equipment</span>
+          <span>
+            Add
+            <span data-section-alias="equipmentSectionNameSingular">Equipment</span>
+          </span>
         </button>
         <button class="button is-close-modal-button" type="button">
           Cancel

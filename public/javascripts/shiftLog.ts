@@ -133,6 +133,18 @@ declare const exports: {
       const sectionAlias = sectionAliasElement.dataset.sectionAlias
 
       switch (sectionAlias) {
+        case 'equipmentSectionName': {
+          sectionAliasElement.textContent =
+            exports.shiftLog.equipmentSectionName ?? ''
+          break
+        }
+
+        case 'equipmentSectionNameSingular': {
+          sectionAliasElement.textContent =
+            exports.shiftLog.equipmentSectionNameSingular ?? ''
+          break
+        }
+
         case 'shiftsSectionName': {
           sectionAliasElement.textContent =
             exports.shiftLog.shiftsSectionName ?? ''
@@ -163,6 +175,7 @@ declare const exports: {
           break
         }
 
+        // eslint-disable-next-line no-secrets/no-secrets
         case 'workOrdersSectionNameSingular': {
           sectionAliasElement.textContent =
             exports.shiftLog.workOrdersSectionNameSingular ?? ''

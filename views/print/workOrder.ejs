@@ -208,16 +208,16 @@
 
 <% if (equipment.length > 0) { %>
 <div class="box avoid-page-break report-block">
-  <button class="button is-delete-report-block-button" type="button" title="Remove Equipment section from the report">
+  <button class="button is-delete-report-block-button" type="button" title="Remove <%= configFunctions.getConfigProperty('equipment.sectionNameSingular') %> section from the report">
     <span class="icon is-small">
       <i class="fa-solid fa-xmark"></i>
     </span>
   </button>
-  <h2 class="title is-4">Equipment</h2>
+  <h2 class="title is-4"><%= configFunctions.getConfigProperty('equipment.sectionName') %></h2>
   <table class="table is-fullwidth">
     <thead>
       <tr>
-        <th>Equipment</th>
+        <th><%= configFunctions.getConfigProperty('equipment.sectionNameSingular') %></th>
         <th>Note</th>
       </tr>
     </thead>
