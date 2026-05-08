@@ -20,6 +20,8 @@ export default async function getWorkOrderEquipment(workOrderId, user) {
         eq.equipmentName,
         eq.equipmentDescription,
         eqType.dataListItem AS equipmentTypeDataListItem,
+        eqType.colorHex AS equipmentTypeColorHex,
+        eqType.iconClass AS equipmentTypeIconClass,
         eq.userGroupId
       FROM
         ShiftLog.WorkOrderEquipment woe

@@ -509,7 +509,10 @@ export interface WorkOrderEquipment extends BaseRecord {
   equipmentNumber: string
   equipmentName?: string
   equipmentDescription?: string
+
   equipmentTypeDataListItem?: string
+  equipmentTypeColorHex?: string
+  equipmentTypeIconClass?: string
 
   workOrderEquipmentNote: string
   userGroupId?: number | null

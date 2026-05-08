@@ -26,9 +26,10 @@
         tableElement.innerHTML = `
       <thead>
         <tr>
+          <th class="has-width-1"></th>
           <th>Equipment</th>
           <th>Note</th>
-          ${exports.isEdit ? '<th class="is-hidden-print" style="width: 120px;"></th>' : ''}
+          ${exports.isEdit ? '<th class="is-hidden-print"></th>' : ''}
         </tr>
       </thead>
       <tbody></tbody>
@@ -38,13 +39,12 @@
             const tableRowElement = document.createElement('tr');
             tableRowElement.innerHTML = `
         <td>
-          <button
-            class="button is-ghost has-text-left view-equipment"
-            style="height: auto; padding: 0; white-space: normal;"
-            type="button"
-          >
-            <span class="has-text-weight-semibold">${cityssm.escapeHTML(equipment.equipmentName ?? '')}</span>
-          </button>
+          <span class="icon">
+            <i class="fa-solid fa-${equipment.equipmentTypeIconClass ?? ''}" style="color: #${equipment.equipmentTypeColorHex ?? '000000'};"></i>
+          </span>
+        </td>
+        <td>
+          <a class="has-text-weight-semibold view-equipment" href="#">${cityssm.escapeHTML(equipment.equipmentName ?? '')}</a><br />
           <div class="is-size-7 has-text-grey">
             ${cityssm.escapeHTML(equipment.equipmentNumber)}
           </div>
@@ -52,7 +52,7 @@
         <td>${cityssm.escapeHTML(equipment.workOrderEquipmentNote)}</td>
         ${exports.isEdit
                 ? `
-              <td class="is-hidden-print">
+              <td class="is-hidden-print is-nowrap" style="width: 120px;">
                 <div class="buttons are-small is-justify-content-end">
                   <button
                     class="button edit-equipment-note"
@@ -76,7 +76,8 @@
                 : ''}
       `;
             const viewButton = tableRowElement.querySelector('.view-equipment');
-            viewButton.addEventListener('click', () => {
+            viewButton.addEventListener('click', (clickEvent) => {
+                clickEvent.preventDefault();
                 showViewEquipmentModal(equipment);
             });
             if (exports.isEdit) {

@@ -66,9 +66,10 @@ declare const bulmaJS: BulmaJS
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
+          <th class="has-width-1"></th>
           <th>Equipment</th>
           <th>Note</th>
-          ${exports.isEdit ? '<th class="is-hidden-print" style="width: 120px;"></th>' : ''}
+          ${exports.isEdit ? '<th class="is-hidden-print"></th>' : ''}
         </tr>
       </thead>
       <tbody></tbody>
@@ -84,13 +85,12 @@ declare const bulmaJS: BulmaJS
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
         <td>
-          <button
-            class="button is-ghost has-text-left view-equipment"
-            style="height: auto; padding: 0; white-space: normal;"
-            type="button"
-          >
-            <span class="has-text-weight-semibold">${cityssm.escapeHTML(equipment.equipmentName ?? '')}</span>
-          </button>
+          <span class="icon">
+            <i class="fa-solid fa-${equipment.equipmentTypeIconClass ?? ''}" style="color: #${equipment.equipmentTypeColorHex ?? '000000'};"></i>
+          </span>
+        </td>
+        <td>
+          <a class="has-text-weight-semibold view-equipment" href="#">${cityssm.escapeHTML(equipment.equipmentName ?? '')}</a><br />
           <div class="is-size-7 has-text-grey">
             ${cityssm.escapeHTML(equipment.equipmentNumber)}
           </div>
@@ -99,7 +99,7 @@ declare const bulmaJS: BulmaJS
         ${
           exports.isEdit
             ? /* html */ `
-              <td class="is-hidden-print">
+              <td class="is-hidden-print is-nowrap" style="width: 120px;">
                 <div class="buttons are-small is-justify-content-end">
                   <button
                     class="button edit-equipment-note"
@@ -128,7 +128,8 @@ declare const bulmaJS: BulmaJS
         '.view-equipment'
       ) as HTMLButtonElement
 
-      viewButton.addEventListener('click', () => {
+      viewButton.addEventListener('click', (clickEvent) => {
+        clickEvent.preventDefault()
         showViewEquipmentModal(equipment)
       })
 
