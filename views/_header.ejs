@@ -99,7 +99,7 @@
           <div class="navbar-end">
             <% if (user.userProperties.workOrders.canUpdate || user.userProperties.shifts.canUpdate || user.userProperties.timesheets.canUpdate) { %>
             <!-- eslint-disable html/indent -->
-              <% 
+              <%
                 const updateCount = (user.userProperties.workOrders.canUpdate ? 1 : 0)
                   + (user.userProperties.shifts.canUpdate ? 1 : 0)
                   + (user.userProperties.timesheets.canUpdate ? 1 : 0);
