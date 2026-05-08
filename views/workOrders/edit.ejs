@@ -817,7 +817,9 @@
   exports.workOrderOpenDateTime = "<%= workOrder.workOrderOpenDateTime ? dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) + 'T' + dateTimeFunctions.dateToTimeString(workOrder.workOrderOpenDateTime) : '' %>";
   exports.isEdit = <%= isEdit %>;
   exports.attachmentMaximumFileSizeBytes = <%= configFunctions.getConfigProperty('application.attachmentMaximumFileSizeBytes') %>;
+
   exports.workOrderTags = <%- JSON.stringify(workOrderTags) %>;
+  exports.workOrderSubscribers = <%- JSON.stringify(workOrderSubscribers) %>;
 </script>
 
 <script src="<%= urlPrefix %>/javascripts/workOrders.viewEdit.js"></script>

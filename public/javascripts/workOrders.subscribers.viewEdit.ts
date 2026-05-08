@@ -3,7 +3,6 @@ import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddWorkOrderSubscriberResponse } from '../../handlers/workOrders-post/doAddWorkOrderSubscriber.js'
 import type { DoDeleteWorkOrderSubscriberResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderSubscriber.js'
-import type { DoGetWorkOrderSubscribersResponse } from '../../handlers/workOrders-post/doGetWorkOrderSubscribers.js'
 import type { WorkOrderSubscriber } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -12,6 +11,8 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 
   isEdit: boolean
+
+  workOrderSubscribers: WorkOrderSubscriber[]
 }
 
 declare const cityssm: cityssmGlobal
@@ -97,18 +98,6 @@ declare const bulmaJS: BulmaJS
 
     listElement.append(ulElement)
     subscribersContainerElement.append(listElement)
-  }
-
-  function getSubscribers(): void {
-    cityssm.postJSON(
-      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderSubscribers`,
-      {},
-      (rawResponseJSON) => {
-        const responseJSON =
-          rawResponseJSON as DoGetWorkOrderSubscribersResponse
-        renderSubscribers(responseJSON.subscribers)
-      }
-    )
   }
 
   function deleteSubscriber(
@@ -211,6 +200,7 @@ declare const bulmaJS: BulmaJS
           ) as HTMLInputElement
         ).focus()
       },
+
       onremoved() {
         exports.shiftLog.clearUnsavedChanges('modal')
         bulmaJS.toggleHtmlClipped()
@@ -222,5 +212,5 @@ declare const bulmaJS: BulmaJS
     .querySelector('#button--addSubscriber')
     ?.addEventListener('click', addSubscriber)
 
-  getSubscribers()
+  renderSubscribers(exports.workOrderSubscribers)
 })()

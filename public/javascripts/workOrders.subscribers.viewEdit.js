@@ -50,12 +50,6 @@
         listElement.append(ulElement);
         subscribersContainerElement.append(listElement);
     }
-    function getSubscribers() {
-        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderSubscribers`, {}, (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON;
-            renderSubscribers(responseJSON.subscribers);
-        });
-    }
     function deleteSubscriber(subscriberSequence, subscriberEmailAddress) {
         bulmaJS.confirm({
             contextualColorName: 'warning',
@@ -135,5 +129,5 @@
     document
         .querySelector('#button--addSubscriber')
         ?.addEventListener('click', addSubscriber);
-    getSubscribers();
+    renderSubscribers(exports.workOrderSubscribers);
 })();

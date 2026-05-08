@@ -3,6 +3,7 @@ import type {
   DataListItem,
   WorkOrder,
   WorkOrderAttachment,
+  WorkOrderSubscriber,
   WorkOrderTag,
   WorkOrderType
 } from '../../types/record.types.js'
@@ -19,8 +20,10 @@ export interface WorkOrderEditResponse {
   thumbnailAttachment?: WorkOrderAttachment
 
   assignedToOptions: AssignedTo[]
-  workOrderTypes: WorkOrderType[]
-  workOrderStatuses: DataListItem[]
   workOrderPriorities: DataListItem[]
+  workOrderStatuses: DataListItem[]
+  workOrderTypes: WorkOrderType[]
+
+  workOrderSubscribers: WorkOrderSubscriber[]
   workOrderTags: WorkOrderTag[]
 }

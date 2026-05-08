@@ -40,7 +40,6 @@ import handler_doGetWorkOrderCosts from '../handlers/workOrders-post/doGetWorkOr
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js'
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import handler_doGetWorkOrdersForPlanner from '../handlers/workOrders-post/doGetWorkOrdersForPlanner.js'
-import handler_doGetWorkOrderSubscribers from '../handlers/workOrders-post/doGetWorkOrderSubscribers.js'
 import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js'
 import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkOrder.js'
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js'
@@ -134,10 +133,6 @@ router
   .post('/doDeleteWorkOrderNote', updateHandler, handler_doDeleteWorkOrderNote)
 
 router
-  .post(
-    '/:workOrderId/doGetWorkOrderSubscribers',
-    handler_doGetWorkOrderSubscribers
-  )
   .post(
     '/doAddWorkOrderSubscriber',
     updateHandler,
