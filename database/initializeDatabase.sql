@@ -543,6 +543,21 @@ CREATE TABLE ShiftLog.WorkOrderCosts (
   FOREIGN KEY (workOrderId) REFERENCES ShiftLog.WorkOrders (workOrderId)
 )
 GO
+CREATE TABLE ShiftLog.WorkOrderEquipment (
+  workOrderId INT NOT NULL,
+  instance VARCHAR(20) NOT NULL,
+  equipmentNumber VARCHAR(20) NOT NULL,
+  workOrderEquipmentNote NVARCHAR(200) NOT NULL,
+  recordCreate_userName VARCHAR(30) NOT NULL,
+  recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordUpdate_userName VARCHAR(30) NOT NULL,
+  recordUpdate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordDelete_userName VARCHAR(30),
+  recordDelete_dateTime datetime,
+  PRIMARY KEY (workOrderId, equipmentNumber),
+  FOREIGN KEY (instance, equipmentNumber) REFERENCES ShiftLog.Equipment (instance, equipmentNumber)
+)
+GO
 --
 -- SHIFTS
 --
