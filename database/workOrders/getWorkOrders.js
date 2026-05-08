@@ -169,6 +169,7 @@ export default async function getWorkOrders(filters, options, user) {
     if (totalCount > 0 || limit === -1) {
         const workOrdersRequest = pool.request();
         applyParameters(workOrdersRequest, filters, user);
+        /* eslint-disable no-secrets/no-secrets */
         const workOrdersResult = await workOrdersRequest.query(`
         SELECT
           w.workOrderId,
@@ -205,6 +206,7 @@ export default async function getWorkOrders(filters, options, user) {
           attachments.attachmentsCount,
           thumbnails.thumbnailAttachmentId,
           notes.notesCount,
+          equipment.equipmentCount,
           costs.costsCount,
           costs.costsTotal
         FROM
@@ -265,6 +267,17 @@ export default async function getWorkOrders(filters, options, user) {
           LEFT JOIN (
             SELECT
               workOrderId,
+              count(*) AS equipmentCount
+            FROM
+              ShiftLog.WorkOrderEquipment
+            WHERE
+              recordDelete_dateTime IS NULL
+            GROUP BY
+              workOrderId
+          ) AS equipment ON equipment.workOrderId = w.workOrderId
+          LEFT JOIN (
+            SELECT
+              workOrderId,
               count(*) AS costsCount,
               sum(costAmount) AS costsTotal
             FROM
@@ -283,6 +296,7 @@ export default async function getWorkOrders(filters, options, user) {
             ? ''
             : ` fetch next ${limit} rows only`}
       `);
+        /* eslint-enable no-secrets/no-secrets */
         workOrders = workOrdersResult.recordset;
         if (limit === -1) {
             totalCount = workOrders.length;

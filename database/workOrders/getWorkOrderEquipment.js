@@ -18,12 +18,15 @@ export default async function getWorkOrderEquipment(workOrderId, user) {
         woe.recordUpdate_userName,
         woe.recordUpdate_dateTime,
         eq.equipmentName,
+        eq.equipmentDescription,
+        eqType.dataListItem AS equipmentTypeDataListItem,
         eq.userGroupId
       FROM
         ShiftLog.WorkOrderEquipment woe
         INNER JOIN ShiftLog.WorkOrders wo ON woe.workOrderId = wo.workOrderId
         INNER JOIN ShiftLog.Equipment eq ON woe.instance = eq.instance
         AND woe.equipmentNumber = eq.equipmentNumber
+        LEFT JOIN ShiftLog.DataListItems eqType ON eq.equipmentTypeDataListItemId = eqType.dataListItemId
       WHERE
         woe.workOrderId = @workOrderId
         AND wo.recordDelete_dateTime IS NULL

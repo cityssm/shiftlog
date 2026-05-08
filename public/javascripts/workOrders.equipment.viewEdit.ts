@@ -84,7 +84,13 @@ declare const bulmaJS: BulmaJS
       // eslint-disable-next-line no-unsanitized/property
       tableRowElement.innerHTML = /* html */ `
         <td>
-          ${cityssm.escapeHTML(equipment.equipmentName ?? '')}
+          <button
+            class="button is-ghost has-text-left view-equipment"
+            style="height: auto; padding: 0; white-space: normal;"
+            type="button"
+          >
+            <span class="has-text-weight-semibold">${cityssm.escapeHTML(equipment.equipmentName ?? '')}</span>
+          </button>
           <div class="is-size-7 has-text-grey">
             ${cityssm.escapeHTML(equipment.equipmentNumber)}
           </div>
@@ -117,6 +123,14 @@ declare const bulmaJS: BulmaJS
             : ''
         }
       `
+
+      const viewButton = tableRowElement.querySelector(
+        '.view-equipment'
+      ) as HTMLButtonElement
+
+      viewButton.addEventListener('click', () => {
+        showViewEquipmentModal(equipment)
+      })
 
       if (exports.isEdit) {
         const editButton = tableRowElement.querySelector(
@@ -152,6 +166,85 @@ declare const bulmaJS: BulmaJS
         renderEquipment(responseJSON.workOrderEquipment)
       }
     )
+  }
+
+  function showViewEquipmentModal(equipment: WorkOrderEquipment): void {
+    cityssm.openHtmlModal('workOrders-viewEquipment', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector(
+            '#viewWorkOrderEquipment--equipmentName'
+          ) as HTMLElement
+        ).textContent = equipment.equipmentName ?? ''
+        ;(
+          modalElement.querySelector(
+            '#viewWorkOrderEquipment--equipmentNumber'
+          ) as HTMLElement
+        ).textContent = equipment.equipmentNumber
+
+        const typeContainer = modalElement.querySelector(
+          '#viewWorkOrderEquipment--equipmentTypeContainer'
+        ) as HTMLElement
+
+        const hasType =
+          equipment.equipmentTypeDataListItem !== undefined &&
+          equipment.equipmentTypeDataListItem !== ''
+
+        if (hasType) {
+          ;(
+            modalElement.querySelector(
+              // eslint-disable-next-line no-secrets/no-secrets
+              '#viewWorkOrderEquipment--equipmentTypeDataListItem'
+            ) as HTMLElement
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          ).textContent = equipment.equipmentTypeDataListItem!
+        }
+
+        typeContainer.style.display = hasType ? 'block' : 'none'
+
+        const descriptionContainer = modalElement.querySelector(
+          '#viewWorkOrderEquipment--descriptionContainer'
+        ) as HTMLElement
+
+        const hasDescription =
+          equipment.equipmentDescription !== undefined &&
+          equipment.equipmentDescription !== ''
+
+        if (hasDescription) {
+          ;(
+            modalElement.querySelector(
+              '#viewWorkOrderEquipment--equipmentDescription'
+            ) as HTMLElement
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          ).textContent = equipment.equipmentDescription!
+        }
+
+        descriptionContainer.style.display = hasDescription ? 'block' : 'none'
+
+        const noteContainer = modalElement.querySelector(
+          '#viewWorkOrderEquipment--noteContainer'
+        ) as HTMLElement
+
+        const hasNote = equipment.workOrderEquipmentNote !== ''
+
+        if (hasNote) {
+          ;(
+            modalElement.querySelector(
+              '#viewWorkOrderEquipment--workOrderEquipmentNote'
+            ) as HTMLElement
+          ).textContent = equipment.workOrderEquipmentNote
+        }
+
+        noteContainer.style.display = hasNote ? 'block' : 'none'
+      },
+      onshown(_modalElement, _closeModalFunction) {
+        bulmaJS.toggleHtmlClipped()
+      },
+
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
   }
 
   function showAddEquipmentModal(clickEvent?: Event): void {
