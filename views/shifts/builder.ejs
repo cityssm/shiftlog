@@ -24,9 +24,13 @@
 <div class="message is-info">
   <div class="message-body">
     Use the <%= configFunctions.getConfigProperty('shifts.sectionNameSingular') %> Builder to quickly organize shifts for a date,
-    manage staff and equipment assignments, and organize work orders across multiple shifts.
+    manage staff and
+    <%= configFunctions.getConfigProperty('equipment.sectionName').toLowerCase() %>
+    assignments, and organize work orders across multiple shifts.
     <% if (user.userProperties.shifts.canManage) { %>
-    You can drag and drop employees, equipment, crews, and work orders between shifts.
+    You can drag and drop employees,
+    <%= configFunctions.getConfigProperty('equipment.sectionName').toLowerCase() %>,
+    crews, and work orders between shifts.
     <% } else { %>
     You are viewing in read-only mode.
     <% } %>
@@ -61,7 +65,9 @@
         <div class="control has-icons-left">
           <div class="select is-fullwidth">
             <select id="builder--viewMode" name="viewMode">
-              <option value="employees">Employees and Equipment</option>
+              <option value="employees">
+                Employees and <%= configFunctions.getConfigProperty('equipment.sectionName') %>
+              </option>
               <option value="tasks">Tasks</option>
             </select>
           </div>
@@ -152,11 +158,13 @@
           <span class="icon is-small">
             <i class="fa-solid fa-chevron-down"></i>
           </span>
-          <span>Equipment</span>
+          <span><%= configFunctions.getConfigProperty('equipment.sectionName') %></span>
           <span class="tag is-info is-light ml-2" id="equipment-count">0</span>
         </h4>
         <div class="available-resources-list resource-section-content" data-resource-type="equipment">
-          <p class="has-text-grey-light is-size-7">No available equipment</p>
+          <p class="has-text-grey-light is-size-7">
+            No available <%= configFunctions.getConfigProperty('equipment.sectionName').toLowerCase() %>
+          </p>
         </div>
       </div>
     </div>
