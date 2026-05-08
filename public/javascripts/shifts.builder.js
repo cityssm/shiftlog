@@ -2682,9 +2682,9 @@
                     }
                     employeeSelect.append(option);
                 }
-                ;
-                formElement.querySelector('[name="shiftEquipmentNote"]').value = equipment.shiftEquipmentNote;
-                formElement.querySelector('[name="shiftEquipmentNote"]').placeholder = `Optional note about this ${exports.shiftLog.equipmentSectionNameSingular.toLowerCase()} on the shift`;
+                const shiftEquipmentNoteElement = formElement.querySelector('[name="shiftEquipmentNote"]');
+                shiftEquipmentNoteElement.value = equipment.shiftEquipmentNote;
+                shiftEquipmentNoteElement.placeholder = `Optional note about this ${exports.shiftLog.equipmentSectionNameSingular.toLowerCase()} on the shift`;
                 formElement.addEventListener('submit', (submitEvent) => {
                     submitEvent.preventDefault();
                     const formData = new FormData(formElement);

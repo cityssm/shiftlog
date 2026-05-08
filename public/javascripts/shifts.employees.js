@@ -205,15 +205,15 @@
     }
     function renderShiftEquipment() {
         const containerElement = document.querySelector('#container--shiftEquipment');
-    if (shiftEquipment.length === 0) {
-        containerElement.innerHTML = `
+        if (shiftEquipment.length === 0) {
+            containerElement.innerHTML = `
         <div class="message">
           <div class="message-body">
             No ${cityssm.escapeHTML(shiftLog.equipmentSectionName.toLowerCase())} assigned to this shift.
           </div>
         </div>
       `;
-        return;
+            return;
         }
         const tableElement = document.createElement('table');
         tableElement.className = 'table is-fullwidth is-striped is-hoverable';
@@ -834,13 +834,13 @@
         const buttonElement = clickEvent.currentTarget;
         const equipmentNumber = buttonElement.dataset.equipmentNumber;
         const equipment = shiftEquipment.find((possibleEquipment) => possibleEquipment.equipmentNumber === equipmentNumber);
-    bulmaJS.confirm({
-        contextualColorName: 'warning',
-        title: `Delete ${shiftLog.equipmentSectionNameSingular}`,
-        message: `Are you sure you want to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()} "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
-        okButton: {
+        bulmaJS.confirm({
             contextualColorName: 'warning',
-            text: 'Delete',
+            title: `Delete ${shiftLog.equipmentSectionNameSingular}`,
+            message: `Are you sure you want to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()} "${cityssm.escapeHTML(equipment?.equipmentName ?? '')}" from this shift?`,
+            okButton: {
+                contextualColorName: 'warning',
+                text: 'Delete',
                 callbackFunction: () => {
                     cityssm.postJSON(`${urlPrefix}/doDeleteShiftEquipment`, {
                         shiftId,
@@ -860,9 +860,9 @@
                                 title: 'Error',
                                 message: `Failed to remove ${shiftLog.equipmentSectionNameSingular.toLowerCase()}`
                             });
-                        }
-                    });
-                }
+            }
+        });
+    }
             }
         });
     }
