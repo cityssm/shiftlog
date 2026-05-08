@@ -67,6 +67,7 @@ export default async function addWorkOrderEquipment(form, userName) {
                 @userName
               )
           END
+        END
       `);
         return result.rowsAffected[0] > 0;
     }

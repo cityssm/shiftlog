@@ -79,7 +79,8 @@ export default async function addWorkOrderEquipment(
                 @userName
               )
           END
-        `)
+        END
+      `)
 
     return result.rowsAffected[0] > 0
   } catch {
