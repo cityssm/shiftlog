@@ -7,7 +7,8 @@ interface DeleteWorkOrderEquipmentForm {
 }
 
 export default async function deleteWorkOrderEquipment(
-  form: DeleteWorkOrderEquipmentForm
+  form: DeleteWorkOrderEquipmentForm,
+  userName: string
 ): Promise<boolean> {
   const pool = await getShiftLogConnectionPool()
 
@@ -16,10 +17,16 @@ export default async function deleteWorkOrderEquipment(
       .request()
       .input('equipmentNumber', form.equipmentNumber)
       .input('instance', getConfigProperty('application.instance'))
+      .input('userName', userName)
       .input('workOrderId', form.workOrderId)
       // eslint-disable-next-line no-secrets/no-secrets
       .query(/* sql */ `
-        DELETE woe
+        UPDATE woe
+        SET
+          recordDelete_userName = @userName,
+          recordDelete_dateTime = getdate(),
+          recordUpdate_userName = @userName,
+          recordUpdate_dateTime = getdate()
         FROM
           ShiftLog.WorkOrderEquipment woe
           INNER JOIN ShiftLog.WorkOrders wo ON woe.workOrderId = wo.workOrderId
@@ -27,6 +34,8 @@ export default async function deleteWorkOrderEquipment(
           woe.workOrderId = @workOrderId
           AND woe.equipmentNumber = @equipmentNumber
           AND wo.instance = @instance
+          AND wo.recordDelete_dateTime IS NULL
+          AND woe.recordDelete_dateTime IS NULL
       `)
 
     return result.rowsAffected[0] > 0

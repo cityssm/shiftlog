@@ -11,33 +11,62 @@ export default async function addWorkOrderEquipment(form, userName) {
             .input('workOrderEquipmentNote', form.workOrderEquipmentNote ?? '')
             .input('workOrderId', form.workOrderId)
             .query(`
-        INSERT INTO
-          ShiftLog.WorkOrderEquipment (
-            workOrderId,
-            instance,
-            equipmentNumber,
-            workOrderEquipmentNote,
-            recordCreate_userName,
-            recordUpdate_userName
-          )
-        SELECT
-          @workOrderId,
-          @instance,
-          @equipmentNumber,
-          @workOrderEquipmentNote,
-          @userName,
-          @userName
-        WHERE
-          EXISTS (
+        IF EXISTS (
+          SELECT
+            1
+          FROM
+            ShiftLog.WorkOrders wo
+            INNER JOIN ShiftLog.Equipment eq ON wo.instance = eq.instance
+          WHERE
+            wo.workOrderId = @workOrderId
+            AND wo.instance = @instance
+            AND wo.recordDelete_dateTime IS NULL
+            AND eq.equipmentNumber = @equipmentNumber
+            AND eq.recordDelete_dateTime IS NULL
+        )
+        BEGIN
+          IF EXISTS (
             SELECT
               1
             FROM
-              ShiftLog.WorkOrders
+              ShiftLog.WorkOrderEquipment
             WHERE
               workOrderId = @workOrderId
-              AND instance = @instance
-              AND recordDelete_dateTime IS NULL
+              AND equipmentNumber = @equipmentNumber
           )
+          BEGIN
+            UPDATE ShiftLog.WorkOrderEquipment
+            SET
+              workOrderEquipmentNote = @workOrderEquipmentNote,
+              recordUpdate_userName = @userName,
+              recordUpdate_dateTime = getdate(),
+              recordDelete_userName = NULL,
+              recordDelete_dateTime = NULL
+            WHERE
+              workOrderId = @workOrderId
+              AND equipmentNumber = @equipmentNumber
+          END
+          ELSE
+          BEGIN
+            INSERT INTO
+              ShiftLog.WorkOrderEquipment (
+                workOrderId,
+                instance,
+                equipmentNumber,
+                workOrderEquipmentNote,
+                recordCreate_userName,
+                recordUpdate_userName
+              )
+            VALUES
+              (
+                @workOrderId,
+                @instance,
+                @equipmentNumber,
+                @workOrderEquipmentNote,
+                @userName,
+                @userName
+              )
+          END
       `);
         return result.rowsAffected[0] > 0;
     }
