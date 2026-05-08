@@ -699,7 +699,7 @@
         <% if (hasMoreInfoForm) { %>
         <li>
           <a class="is-active" href="#tab--moreInfo" title="More Info">
-            <div class="columns is-mobile is-1">
+            <div class="columns is-mobile is-variable is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-info-circle"></i></span>
               </div>
@@ -712,7 +712,7 @@
         <% } %>
         <li>
           <a class="<%= hasMoreInfoForm ? '' : 'is-active' %>" href="#tab--notes" title="Notes">
-            <div class="columns is-mobile is-1">
+            <div class="columns is-mobile is-variable is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-note-sticky"></i></span>
               </div>
@@ -725,7 +725,7 @@
         </li>
         <li>
           <a href="#tab--attachments" title="Attachments">
-            <div class="columns is-mobile is-1">
+            <div class="columns is-mobile is-variable is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-paperclip"></i></span>
               </div>
@@ -737,8 +737,21 @@
           </a>
         </li>
         <li>
+          <a href="#tab--equipment" title="Equipment">
+            <div class="columns is-mobile is-variable is-1">
+              <div class="column is-narrow">
+                <span class="icon"><i class="fa-solid fa-truck"></i></span>
+              </div>
+              <div class="column is-hidden-touch">
+                Equipment
+                <span class="tag is-rounded ml-2" id="equipmentCount">0</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
           <a href="#tab--milestones" title="Milestones">
-            <div class="columns is-mobile is-1">
+            <div class="columns is-mobile is-variable is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-list-check"></i></span>
               </div>
@@ -751,7 +764,7 @@
         </li> 
         <li>
           <a href="#tab--subscribers" title="Subscribers">
-            <div class="columns is-mobile is-1">
+            <div class="columns is-mobile is-variable is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-users"></i></span>
               </div>
@@ -765,7 +778,7 @@
         <% if (configFunctions.getConfigProperty('workOrders.hasCosts')) { %>
         <li>
           <a href="#tab--costs" title="Costs">
-            <div class="columns is-mobile is-1">
+            <div class="columns is-mobile is-variable is-1">
               <div class="column is-narrow">
                 <span class="icon"><i class="fa-solid fa-dollar-sign"></i></span>
               </div>
@@ -792,6 +805,9 @@
       </div>
       <div id="tab--attachments" class="is-hidden">
         <%- await include('_edit-attachments'); -%>
+      </div>
+      <div id="tab--equipment" class="is-hidden">
+        <%- await include('_edit-equipment'); -%>
       </div>
       <div id="tab--milestones" class="is-hidden">
         <%- await include('_edit-milestones'); -%>
@@ -826,6 +842,7 @@
 <script src="<%= urlPrefix %>/javascripts/workOrders.tags.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.notes.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.attachments.viewEdit.js"></script>
+<script src="<%= urlPrefix %>/javascripts/workOrders.equipment.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.milestones.viewEdit.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.subscribers.viewEdit.js"></script>
 

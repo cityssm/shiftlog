@@ -1,0 +1,34 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+export default async function deleteWorkOrderEquipment(form, userName) {
+    const pool = await getShiftLogConnectionPool();
+    try {
+        const result = await pool
+            .request()
+            .input('equipmentNumber', form.equipmentNumber)
+            .input('instance', getConfigProperty('application.instance'))
+            .input('userName', userName)
+            .input('workOrderId', form.workOrderId)
+            .query(`
+        UPDATE woe
+        SET
+          recordDelete_userName = @userName,
+          recordDelete_dateTime = getdate(),
+          recordUpdate_userName = @userName,
+          recordUpdate_dateTime = getdate()
+        FROM
+          ShiftLog.WorkOrderEquipment woe
+          INNER JOIN ShiftLog.WorkOrders wo ON woe.workOrderId = wo.workOrderId
+        WHERE
+          woe.workOrderId = @workOrderId
+          AND woe.equipmentNumber = @equipmentNumber
+          AND wo.instance = @instance
+          AND wo.recordDelete_dateTime IS NULL
+          AND woe.recordDelete_dateTime IS NULL
+      `);
+        return result.rowsAffected[0] > 0;
+    }
+    catch {
+        return false;
+    }
+}

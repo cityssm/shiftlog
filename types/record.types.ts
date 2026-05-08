@@ -502,6 +502,16 @@ export interface WorkOrderCost extends BaseRecord {
   costDescription: string
 }
 
+export interface WorkOrderEquipment extends BaseRecord {
+  workOrderId: number
+
+  equipmentNumber: string
+  equipmentName?: string
+
+  workOrderEquipmentNote: string
+  userGroupId?: number | null
+}
+
 export interface WorkOrderAttachment extends BaseRecord {
   workOrderAttachmentId: number
   workOrderId: number
