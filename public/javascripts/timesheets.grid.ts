@@ -1042,7 +1042,7 @@ class TimesheetGrid {
         }
 
         cityssm.openHtmlModal('timesheets-editRow', {
-          onshow(modalElement) {
+          onshow: (modalElement) => {
             this.shiftLog.populateSectionAliases(modalElement)
             // Set form values
             ;(

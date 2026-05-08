@@ -664,7 +664,7 @@ class TimesheetGrid {
                 return;
             }
             cityssm.openHtmlModal('timesheets-editRow', {
-                onshow(modalElement) {
+                onshow: (modalElement) => {
                     this.shiftLog.populateSectionAliases(modalElement);
                     ;
                     modalElement.querySelector('#editTimesheetRow--timesheetRowId').value = row.timesheetRowId.toString();
