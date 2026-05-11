@@ -82,13 +82,10 @@ const shadowSize = [41, 41];
             openSpan.style.color = '#48c774';
             statusLine.append(openSpan);
         }
-        if (workOrder.workOrderOpenDateTime !== null &&
-            workOrder.workOrderOpenDateTime !== undefined) {
-            const openDateSpan = document.createElement('span');
-            openDateSpan.textContent = ` - Opened: ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}`;
-            openDateSpan.style.fontSize = '0.9em';
-            statusLine.append(openDateSpan);
-        }
+        const openDateSpan = document.createElement('span');
+        openDateSpan.textContent = ` - Opened: ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}`;
+        openDateSpan.style.fontSize = '0.9em';
+        statusLine.append(openDateSpan);
         const addressLine = document.createElement('div');
         addressLine.style.marginTop = '0.5em';
         addressLine.textContent =

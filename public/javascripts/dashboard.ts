@@ -143,15 +143,10 @@ interface WorkOrderWithOverdue {
       statusLine.append(openSpan)
     }
 
-    if (
-      workOrder.workOrderOpenDateTime !== null &&
-      workOrder.workOrderOpenDateTime !== undefined
-    ) {
-      const openDateSpan = document.createElement('span')
-      openDateSpan.textContent = ` - Opened: ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime as string))}`
-      openDateSpan.style.fontSize = '0.9em'
-      statusLine.append(openDateSpan)
-    }
+    const openDateSpan = document.createElement('span')
+    openDateSpan.textContent = ` - Opened: ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime as string))}`
+    openDateSpan.style.fontSize = '0.9em'
+    statusLine.append(openDateSpan)
 
     const addressLine = document.createElement('div')
     addressLine.style.marginTop = '0.5em'

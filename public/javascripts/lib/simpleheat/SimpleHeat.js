@@ -75,8 +75,8 @@ SimpleHeat.prototype = {
             this.gradient(this.defaultGradient);
         const context = this._ctx;
         context.clearRect(0, 0, this._width, this._height);
-        for (let i = 0, len = this._data.length, p; i < len; i += 1) {
-            p = this._data[i];
+        for (let dataIndex = 0, dataLength = this._data.length, p; dataIndex < dataLength; dataIndex += 1) {
+            p = this._data[dataIndex];
             context.globalAlpha = Math.min(Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity), 1);
             context.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
@@ -88,7 +88,7 @@ SimpleHeat.prototype = {
         return this;
     },
     _colorize(pixels, gradient) {
-        for (let index = 0, len = pixels.length, j; index < len; index += 4) {
+        for (let index = 0, pixelsLength = pixels.length, j; index < pixelsLength; index += 4) {
             j = pixels[index + 3] * 4;
             if (j) {
                 pixels[index] = gradient[j];

@@ -38,14 +38,14 @@ export default async function handler(request, response) {
     if (success) {
         const noteTypes = await getNoteTypes();
         response.json({
-            noteTypes,
-            success: true
+            success: true,
+            noteTypes
         });
     }
     else {
         response.json({
-            message: 'Field could not be added.',
-            success: false
+            success: false,
+            message: 'Field could not be added.'
         });
     }
 }

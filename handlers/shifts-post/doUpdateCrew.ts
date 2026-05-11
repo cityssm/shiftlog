@@ -8,8 +8,9 @@ import type { Crew } from '../../types/record.types.js'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoUpdateCrewResponse = {
   success: boolean
-  message?: string
+
   crews?: Crew[]
+  message?: string
 }
 
 export default async function handler(
@@ -33,6 +34,7 @@ export default async function handler(
     if (crew === undefined || crew.recordCreate_userName !== user.userName) {
       response.status(403).json({
         success: false,
+
         message: 'You do not have permission to update this crew.'
       })
       return

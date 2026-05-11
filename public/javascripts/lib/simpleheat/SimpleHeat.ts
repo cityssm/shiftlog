@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/filename-case */
+
 function SimpleHeat(canvas) {
   if (!(this instanceof SimpleHeat)) return new SimpleHeat(canvas)
 
@@ -100,8 +102,12 @@ SimpleHeat.prototype = {
     context.clearRect(0, 0, this._width, this._height)
 
     // draw a grayscale heatmap by putting a blurred circle at each data point
-    for (let i = 0, len = this._data.length, p; i < len; i += 1) {
-      p = this._data[i]
+    for (
+      let dataIndex = 0, dataLength = this._data.length, p;
+      dataIndex < dataLength;
+      dataIndex += 1
+    ) {
+      p = this._data[dataIndex]
       context.globalAlpha = Math.min(
         Math.max(
           p[2] / this._max,
@@ -123,7 +129,11 @@ SimpleHeat.prototype = {
   },
 
   _colorize(pixels, gradient) {
-    for (let index = 0, len = pixels.length, j; index < len; index += 4) {
+    for (
+      let index = 0, pixelsLength = pixels.length, j;
+      index < pixelsLength;
+      index += 4
+    ) {
       j = pixels[index + 3] * 4 // get gradient color from opacity value
 
       if (j) {

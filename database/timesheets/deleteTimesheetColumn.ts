@@ -33,7 +33,8 @@ export default async function deleteTimesheetColumn(
         )
     `)
 
-  const totalHours = hoursResult.recordset[0]?.totalHours ?? 0
+  const totalHours =
+    hoursResult.recordset.length > 0 ? hoursResult.recordset[0].totalHours : 0
 
   // Delete cells first
   await pool

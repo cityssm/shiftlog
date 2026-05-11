@@ -1,3 +1,7 @@
+/* eslint-disable unicorn/filename-case */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable no-multi-assign */
+
 /*
  * (c) 2014, Vladimir Agafonkin
  * Leaflet.heat, a tiny and fast heatmap plugin for Leaflet.
@@ -39,6 +43,7 @@ const HeatLayer = L.Layer.extend({
     if (this._heat) {
       this._updateOptions()
     }
+
     return this.redraw()
   },
 
@@ -144,8 +149,7 @@ const HeatLayer = L.Layer.extend({
       this.options.maxZoom === undefined
         ? this._map.getMaxZoom()
         : this.options.maxZoom
-    const v =
-      1 / Math.pow(2, Math.max(0, Math.min(maxZoom - this._map.getZoom(), 12)))
+    const v = 1 / 2 ** Math.max(0, Math.min(maxZoom - this._map.getZoom(), 12))
     const cellSize = r / 2
     const grid = []
     const panePos = this._map._getMapPanePos()
@@ -159,19 +163,23 @@ const HeatLayer = L.Layer.extend({
     let k
 
     // console.time('process');
-    for (let i = 0, len = this._latlngs.length; i < len; i += 1) {
-      p = this._map.latLngToContainerPoint(this._latlngs[i])
+    for (
+      let latLngIndex = 0, latLngLength = this._latlngs.length;
+      latLngIndex < latLngLength;
+      latLngIndex += 1
+    ) {
+      p = this._map.latLngToContainerPoint(this._latlngs[latLngIndex])
 
       if (bounds.contains(p)) {
         x = Math.floor((p.x - offsetX) / cellSize) + 2
         y = Math.floor((p.y - offsetY) / cellSize) + 2
 
         const alt =
-          this._latlngs[i].alt !== undefined
-            ? this._latlngs[i].alt
-            : this._latlngs[i][2] !== undefined
-              ? +this._latlngs[i][2]
-              : 1
+          this._latlngs[latLngIndex].alt === undefined
+            ? this._latlngs[latLngIndex][2] === undefined
+              ? 1
+              : +this._latlngs[latLngIndex][2]
+            : this._latlngs[latLngIndex].alt
         k = alt * v
 
         grid[y] = grid[y] || []
@@ -187,10 +195,14 @@ const HeatLayer = L.Layer.extend({
       }
     }
 
-    for (let i = 0, len = grid.length; i < len; i += 1) {
-      if (grid[i]) {
-        for (let j = 0, len2 = grid[i].length; j < len2; j += 1) {
-          cell = grid[i][j]
+    for (
+      let gridIndex = 0, gridLength = grid.length;
+      gridIndex < gridLength;
+      gridIndex += 1
+    ) {
+      if (grid[gridIndex]) {
+        for (let j = 0, len2 = grid[gridIndex].length; j < len2; j += 1) {
+          cell = grid[gridIndex][j]
           if (cell) {
             data.push([
               Math.round(cell[0]),

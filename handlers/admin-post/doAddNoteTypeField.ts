@@ -6,13 +6,14 @@ import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.j
 
 export type DoAddNoteTypeFieldResponse =
   | {
-      message: string
       success: false
+
+      message: string
     }
   | {
-      message?: undefined
-      noteTypes: NoteTypeWithFields[]
       success: true
+
+      noteTypes: NoteTypeWithFields[]
     }
 
 export default async function handler(
@@ -83,13 +84,15 @@ export default async function handler(
     const noteTypes = await getNoteTypes()
 
     response.json({
-      noteTypes,
-      success: true
+      success: true,
+
+      noteTypes
     })
   } else {
     response.json({
-      message: 'Field could not be added.',
-      success: false
+      success: false,
+
+      message: 'Field could not be added.'
     })
   }
 }

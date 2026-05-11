@@ -22,7 +22,7 @@ export default async function deleteTimesheetColumn(timesheetColumnId) {
             instance = @instance
         )
     `);
-    const totalHours = hoursResult.recordset[0]?.totalHours ?? 0;
+    const totalHours = hoursResult.recordset.length > 0 ? hoursResult.recordset[0].totalHours : 0;
     await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
