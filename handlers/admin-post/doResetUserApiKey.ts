@@ -7,21 +7,23 @@ import type { DatabaseUser } from '../../types/record.types.js'
 
 export type DoResetUserApiKeyResponse =
   | {
-      message: string
       success: false
+
+      message: string
     }
   | {
-      message: string
       success: true
-      users: DatabaseUser[]
+
       apiKey: string
+      message: string
+      users: DatabaseUser[]
     }
 
 export default async function handler(
-  request: Request<unknown, unknown, { userName: string }>,
+  request: Request<unknown, unknown, { userName?: string }>,
   response: Response<DoResetUserApiKeyResponse>
 ): Promise<void> {
-  if (!request.body.userName?.trim()) {
+  if ((request.body.userName ?? '').trim() === '') {
     response.status(400).json({
       message: 'User name is required',
       success: false
@@ -32,12 +34,12 @@ export default async function handler(
 
   try {
     // Generate and update the API key
-    const newApiKey = await updateApiKeyUserSetting(request.body.userName)
+    const newApiKey = await updateApiKeyUserSetting(request.body.userName ?? '')
 
     // If the reset user is the current user in the session, update the session
     if (request.session.user?.userName === request.body.userName) {
       ;(request.session.user as User).userSettings = await getUserSettings(
-        request.body.userName
+        request.body.userName ?? ''
       )
     }
 
@@ -45,15 +47,17 @@ export default async function handler(
     const users = await getUsers()
 
     response.json({
-      message: 'API key reset successfully',
       success: true,
-      users,
-      apiKey: newApiKey
+
+      apiKey: newApiKey,
+      message: 'API key reset successfully',
+      users
     })
   } catch {
     response.status(500).json({
-      message: 'Failed to reset API key',
-      success: false
+      success: false,
+
+      message: 'Failed to reset API key'
     })
   }
 }
