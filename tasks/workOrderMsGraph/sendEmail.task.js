@@ -101,7 +101,7 @@ export async function sendEmail() {
         <div style="padding: 10px; border: 1px solid #333; margin-top: 20px;">
           <h1>${workOrder.workOrderNumber}</h1>
           ${workOrder.workOrderCloseDateTime === null
-            ? `<p style="color: green; font-weight: bold;">OPEN</p>`
+            ? ''
             : `<p style="color: red; font-weight: bold;">CLOSED</p>`}
           <p>
             <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>

@@ -180,7 +180,7 @@ export async function sendEmail(): Promise<void> {
           <h1>${workOrder.workOrderNumber}</h1>
           ${
             workOrder.workOrderCloseDateTime === null
-              ? `<p style="color: green; font-weight: bold;">OPEN</p>`
+              ? '' // `<p style="color: green; font-weight: bold;">OPEN</p>`
               : `<p style="color: red; font-weight: bold;">CLOSED</p>`
           }
           <p>
