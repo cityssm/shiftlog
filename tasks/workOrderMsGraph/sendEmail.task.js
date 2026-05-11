@@ -9,9 +9,10 @@ import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js';
 import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
+import { getWorkOrderUrl } from '../../helpers/application.helpers.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { sendEmailIntervalMillis } from './constants.js';
-import { isEmailAddress } from './helpers/emailAddress.helpers.js';
+import { isEmailAddress, isNoReplyEmailAddress } from './helpers/emailAddress.helpers.js';
 import { messageHeaderString } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:sendEmail`);
@@ -53,7 +54,8 @@ export async function sendEmail() {
         }
         const workOrderSubscribers = await getWorkOrderSubscribers(workOrderId);
         for (const subscriber of workOrderSubscribers) {
-            if (isEmailAddress(subscriber.subscriberEmailAddress)) {
+            if (isEmailAddress(subscriber.subscriberEmailAddress) &&
+                !isNoReplyEmailAddress(subscriber.subscriberEmailAddress)) {
                 bccEmailAddresses.add(subscriber.subscriberEmailAddress);
             }
         }
@@ -98,6 +100,9 @@ export async function sendEmail() {
         messageToSend.appendToBody(`
         <div style="padding: 10px; border: 1px solid #333; margin-top: 20px;">
           <h1>${workOrder.workOrderNumber}</h1>
+          ${workOrder.workOrderCloseDateTime === null
+            ? `<p style="color: green; font-weight: bold;">OPEN</p>`
+            : `<p style="color: red; font-weight: bold;">CLOSED</p>`}
           <p>
             <b>${getConfigProperty('workOrders.sectionNameSingular')} Type:</b>
             ${workOrder.workOrderType}
@@ -107,6 +112,11 @@ export async function sendEmail() {
             ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
           </p>
           ${workOrder.assignedToId === null ? '' : `<p><b>Assigned To:</b> ${workOrder.assignedToName}</p>`}
+          <p>
+            <a href="${getWorkOrderUrl(workOrder.workOrderId)}" rel="noopener noreferrer" target="_blank">
+              View ${getConfigProperty('workOrders.sectionNameSingular')}
+            </a>
+          </p>
         </div>
       `, 'html');
         await msGraphApi.sendMessage(messageToSend.build());
