@@ -10,22 +10,22 @@ export default async function handler(request, response) {
     ]);
     response.json({
         success: true,
-        employees: employees.map((e) => ({
-            employeeNumber: e.employeeNumber,
-            firstName: e.firstName,
-            lastName: e.lastName
+        employees: employees.map((employeeItem) => ({
+            employeeNumber: employeeItem.employeeNumber,
+            firstName: employeeItem.firstName,
+            lastName: employeeItem.lastName
         })),
-        equipment: equipment.map((e) => ({
-            equipmentNumber: e.equipmentNumber,
-            equipmentName: e.equipmentName
+        equipment: equipment.map((equipmentItem) => ({
+            equipmentNumber: equipmentItem.equipmentNumber,
+            equipmentName: equipmentItem.equipmentName
         })),
-        jobClassifications: jobClassifications.map((j) => ({
-            dataListItemId: j.dataListItemId,
-            dataListItem: j.dataListItem
+        jobClassifications: jobClassifications.map((jobClassificationItem) => ({
+            dataListItemId: jobClassificationItem.dataListItemId,
+            dataListItem: jobClassificationItem.dataListItem
         })),
-        timeCodes: timeCodes.map((t) => ({
-            dataListItemId: t.dataListItemId,
-            dataListItem: t.dataListItem
+        timeCodes: timeCodes.map((timeCodeItem) => ({
+            dataListItemId: timeCodeItem.dataListItemId,
+            dataListItem: timeCodeItem.dataListItem
         }))
     });
 }
