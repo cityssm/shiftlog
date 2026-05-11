@@ -27,7 +27,10 @@ import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helper
 import type { WorkOrderType } from '../../types/record.types.js'
 
 import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js'
-import { getSubscriberEmailAddresses } from './helpers/emailAddress.helpers.js'
+import {
+  getSubscriberEmailAddresses,
+  isNoReplyEmailAddress
+} from './helpers/emailAddress.helpers.js'
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js'
 import {
   messageBodyToText,
@@ -208,7 +211,12 @@ export async function checkEmail(): Promise<void> {
             workOrderTitle: message.subject ?? 'No Subject',
 
             requestorContactInfo: fromAddressLowerCase,
-            requestorIsSubscribed: '1',
+            requestorIsSubscribed: isNoReplyEmailAddress(
+              fromAddressLowerCase,
+              message.from?.emailAddress.name
+            )
+              ? undefined
+              : '1',
             requestorName: message.from?.emailAddress.name ?? '',
 
             locationAddress1: workOrderLocation?.address1 ?? '',
@@ -229,11 +237,13 @@ export async function checkEmail(): Promise<void> {
         const subscribersEmailAddresses = getSubscriberEmailAddresses(message)
 
         for (const subscriberEmailAddress of subscribersEmailAddresses) {
-          await addWorkOrderSubscriber(
-            workOrderId,
-            subscriberEmailAddress,
-            systemUser.userName
-          )
+          if (!isNoReplyEmailAddress(subscriberEmailAddress)) {
+            await addWorkOrderSubscriber(
+              workOrderId,
+              subscriberEmailAddress,
+              systemUser.userName
+            )
+          }
         }
       } else {
         await createWorkOrderNote(

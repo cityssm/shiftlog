@@ -12,7 +12,7 @@ import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
 import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
-import { getSubscriberEmailAddresses } from './helpers/emailAddress.helpers.js';
+import { getSubscriberEmailAddresses, isNoReplyEmailAddress } from './helpers/emailAddress.helpers.js';
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js';
 import { messageBodyToText, messageSubjectToWorkOrderNumber, messageTextToLocation } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
@@ -104,7 +104,9 @@ export async function checkEmail() {
                     workOrderDetails: messageBodyText,
                     workOrderTitle: message.subject ?? 'No Subject',
                     requestorContactInfo: fromAddressLowerCase,
-                    requestorIsSubscribed: '1',
+                    requestorIsSubscribed: isNoReplyEmailAddress(fromAddressLowerCase, message.from?.emailAddress.name)
+                        ? undefined
+                        : '1',
                     requestorName: message.from?.emailAddress.name ?? '',
                     locationAddress1: workOrderLocation?.address1 ?? '',
                     locationAddress2: workOrderLocation?.address2 ?? '',
@@ -117,7 +119,9 @@ export async function checkEmail() {
                 workOrder = await getWorkOrder(workOrderId);
                 const subscribersEmailAddresses = getSubscriberEmailAddresses(message);
                 for (const subscriberEmailAddress of subscribersEmailAddresses) {
-                    await addWorkOrderSubscriber(workOrderId, subscriberEmailAddress, systemUser.userName);
+                    if (!isNoReplyEmailAddress(subscriberEmailAddress)) {
+                        await addWorkOrderSubscriber(workOrderId, subscriberEmailAddress, systemUser.userName);
+                    }
                 }
             }
             else {

@@ -6,8 +6,9 @@ const msGraphEmailAddress = (
   getConfigProperty('connectors.msGraph')?.targetUser ?? ''
 ).toLowerCase()
 
+const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/
+
 export function isEmailAddress(value: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/
   return emailRegex.test(value)
 }
 
@@ -35,4 +36,22 @@ export function getSubscriberEmailAddresses(
   }
 
   return emailAddresses
+}
+
+export function isNoReplyEmailAddress(
+  emailAddress: string,
+  name = ''
+): boolean {
+  const lowercaseEmail = emailAddress.toLowerCase()
+  const lowercaseName = name.toLowerCase()
+
+  return (
+    (isEmailAddress(lowercaseEmail) &&
+      (lowercaseEmail.includes('noreply') ||
+        lowercaseEmail.includes('no-reply'))) ||
+    lowercaseName.includes('noreply') ||
+    lowercaseName.includes('no-reply') ||
+    lowercaseName.includes('do not reply') ||
+    lowercaseName.includes('donotreply')
+  )
 }

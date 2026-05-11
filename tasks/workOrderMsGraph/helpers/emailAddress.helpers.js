@@ -1,7 +1,7 @@
 import { getConfigProperty } from '../../../helpers/config.helpers.js';
 const msGraphEmailAddress = (getConfigProperty('connectors.msGraph')?.targetUser ?? '').toLowerCase();
+const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
 export function isEmailAddress(value) {
-    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
     return emailRegex.test(value);
 }
 export function getSubscriberEmailAddresses(message) {
@@ -19,4 +19,15 @@ export function getSubscriberEmailAddresses(message) {
         }
     }
     return emailAddresses;
+}
+export function isNoReplyEmailAddress(emailAddress, name = '') {
+    const lowercaseEmail = emailAddress.toLowerCase();
+    const lowercaseName = name.toLowerCase();
+    return ((isEmailAddress(lowercaseEmail) &&
+        (lowercaseEmail.includes('noreply') ||
+            lowercaseEmail.includes('no-reply'))) ||
+        lowercaseName.includes('noreply') ||
+        lowercaseName.includes('no-reply') ||
+        lowercaseName.includes('do not reply') ||
+        lowercaseName.includes('donotreply'));
 }
