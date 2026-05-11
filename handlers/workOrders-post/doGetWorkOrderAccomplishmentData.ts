@@ -9,15 +9,16 @@ interface RequestBody {
   year: string
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetWorkOrderAccomplishmentDataResponse =
   | {
-      success: true
-      data: WorkOrderAccomplishmentData
+      success: false
+
+      errorMessage: string
     }
   | {
-      success: false
-      errorMessage: string
+      success: true
+
+      data: WorkOrderAccomplishmentData
     }
 
 export default async function handler(

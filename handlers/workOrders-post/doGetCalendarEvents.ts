@@ -37,7 +37,8 @@ export default async function handler(
   const assignedToId =
     request.body.assignedToId === undefined || request.body.assignedToId === ''
       ? undefined
-      : typeof request.body.assignedToId === 'number'
+      : // eslint-disable-next-line unicorn/no-nested-ternary, sonarjs/no-nested-conditional
+        typeof request.body.assignedToId === 'number'
         ? request.body.assignedToId
         : Number.parseInt(request.body.assignedToId as string, 10)
 

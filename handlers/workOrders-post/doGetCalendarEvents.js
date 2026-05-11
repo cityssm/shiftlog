@@ -8,9 +8,10 @@ export default async function handler(request, response) {
         : Number.parseInt(request.body.month, 10);
     const assignedToId = request.body.assignedToId === undefined || request.body.assignedToId === ''
         ? undefined
-        : typeof request.body.assignedToId === 'number'
-            ? request.body.assignedToId
-            : Number.parseInt(request.body.assignedToId, 10);
+        :
+            typeof request.body.assignedToId === 'number'
+                ? request.body.assignedToId
+                : Number.parseInt(request.body.assignedToId, 10);
     const showOpenDates = typeof request.body.showOpenDates === 'boolean'
         ? request.body.showOpenDates
         : request.body.showOpenDates === 'true';

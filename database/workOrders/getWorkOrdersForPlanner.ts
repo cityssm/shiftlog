@@ -203,6 +203,7 @@ function applyParameters(
       'daysThreshold',
       filters.daysThreshold === undefined
         ? null
+        // eslint-disable-next-line unicorn/no-nested-ternary, sonarjs/no-nested-conditional
         : typeof filters.daysThreshold === 'string'
           ? Number.parseInt(filters.daysThreshold, 10)
           : filters.daysThreshold
