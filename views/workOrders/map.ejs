@@ -111,6 +111,7 @@
   exports.preferEdit = <%= user.userSettings['workOrders.preferEdit'] ? 'true' : 'false' %>;
 </script>
 
+<script src="<%= urlPrefix %>/lib/leaflet/leaflet-global.js"></script>
 <script src="<%= urlPrefix %>/javascripts/workOrders.map.js"></script>
 
 <%- await include('../_footerB'); -%>

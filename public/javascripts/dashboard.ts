@@ -12,8 +12,9 @@
 
     const target = event.currentTarget as HTMLAnchorElement
 
-    const panelTabElements =
-      workOrderHighlightsPanelElement.querySelectorAll('.panel-tabs a')
+    const panelTabElements = workOrderHighlightsPanelElement?.querySelectorAll(
+      '.panel-tabs a'
+    ) as NodeListOf<HTMLAnchorElement>
 
     for (const panelTabElement of panelTabElements) {
       panelTabElement.classList.remove('is-active')
@@ -24,14 +25,15 @@
     const workOrderType = target.dataset.workOrderType ?? 'recent'
 
     const panelBlockElements =
-      workOrderHighlightsPanelElement.querySelectorAll(
+      workOrderHighlightsPanelElement?.querySelectorAll(
         '.panel-block[data-work-order-type]'
-      )
+      ) as NodeListOf<HTMLElement>
 
     for (const panelBlockElement of panelBlockElements) {
       panelBlockElement.classList.toggle(
         'is-hidden',
-        (panelBlockElement as HTMLElement).dataset.workOrderType !== workOrderType
+        (panelBlockElement as HTMLElement).dataset.workOrderType !==
+          workOrderType
       )
     }
   }
