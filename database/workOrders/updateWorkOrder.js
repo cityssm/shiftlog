@@ -131,7 +131,23 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
           OR requestorContactInfo <> @requestorContactInfo
           OR requestorIsSubscribed <> @requestorIsSubscribed
           OR workOrderIsMuted <> @workOrderIsMuted
+          OR (
+            locationLatitude IS NULL
+            AND @locationLatitude IS NOT NULL
+          )
+          OR (
+            locationLatitude IS NOT NULL
+            AND @locationLatitude IS NULL
+          )
           OR locationLatitude <> @locationLatitude
+          OR (
+            locationLongitude IS NULL
+            AND @locationLongitude IS NOT NULL
+          )
+          OR (
+            locationLongitude IS NOT NULL
+            AND @locationLongitude IS NULL
+          )
           OR locationLongitude <> @locationLongitude
           OR locationAddress1 <> @locationAddress1
           OR locationAddress2 <> @locationAddress2
