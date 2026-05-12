@@ -193,7 +193,7 @@
                 equipmentItem.dataset.equipmentNumber = equipment.equipmentNumber;
                 const icon = document.createElement('span');
                 icon.className = 'icon is-small';
-                icon.innerHTML = `<i class="fa-solid ${shiftLog.equipmentIconClass}"></i>`;
+                icon.innerHTML = `<i class="fa-solid ${cityssm.escapeHTML(shiftLog.equipmentIconClass)}"></i>`;
                 equipmentItem.append(icon, ' ');
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = `${equipment.equipmentName} `;
@@ -610,7 +610,7 @@
                     itemBox.dataset.fromAvailable = 'true';
                     const icon = document.createElement('span');
                     icon.className = 'icon';
-                    icon.innerHTML = `<i class="fa-solid ${shiftLog.equipmentIconClass}"></i>`;
+                    icon.innerHTML = `<i class="fa-solid ${cityssm.escapeHTML(shiftLog.equipmentIconClass)}"></i>`;
                     itemBox.append(icon, ' ');
                     const itemText = document.createElement('span');
                     itemText.className = 'is-size-7';

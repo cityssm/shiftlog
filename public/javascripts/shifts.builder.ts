@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-loop-func */
+/* eslint-disable max-nested-callbacks */
 /* eslint-disable max-lines */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
@@ -332,7 +334,7 @@ declare const exports: {
         // Add icon
         const icon = document.createElement('span')
         icon.className = 'icon is-small'
-        icon.innerHTML = `<i class="fa-solid ${shiftLog.equipmentIconClass}"></i>`
+        icon.innerHTML = `<i class="fa-solid ${cityssm.escapeHTML(shiftLog.equipmentIconClass)}"></i>`
         equipmentItem.append(icon, ' ')
 
         // Add equipment name with number in smaller text
@@ -933,7 +935,7 @@ declare const exports: {
           // Add icon
           const icon = document.createElement('span')
           icon.className = 'icon'
-          icon.innerHTML = `<i class="fa-solid ${shiftLog.equipmentIconClass}"></i>`
+          icon.innerHTML = `<i class="fa-solid ${cityssm.escapeHTML(shiftLog.equipmentIconClass)}"></i>`
           itemBox.append(icon, ' ')
 
           // Add equipment name with number
@@ -1696,7 +1698,6 @@ declare const exports: {
                       employeeNumber: employee.employeeNumber,
                       shiftId: draggedData.fromShiftId
                     },
-                    // eslint-disable-next-line @typescript-eslint/no-loop-func
                     (rawEmpResponseJSON) => {
                       const empResponse =
                         rawEmpResponseJSON as DoDeleteShiftEmployeeResponse
@@ -1737,7 +1738,6 @@ declare const exports: {
                                 equipmentNumber: equipment.equipmentNumber,
                                 shiftId: draggedData.fromShiftId
                               },
-                              // eslint-disable-next-line @typescript-eslint/no-loop-func
                               (rawEquipResponseJSON) => {
                                 const equipmentResponse =
                                   rawEquipResponseJSON as DoDeleteShiftEquipmentResponse
