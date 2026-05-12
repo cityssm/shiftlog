@@ -26,29 +26,16 @@ export default async function getRecentWorkOrders(limit, user) {
         .query(`
       SELECT
         TOP (@limit) w.workOrderId,
-        w.workOrderNumberYear,
-        w.workOrderNumberSequence,
-        isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear AS VARCHAR(4)) + '-' + right(
-          '000000' + cast(w.workOrderNumberSequence AS VARCHAR(6)),
-          6
-        ) AS workOrderNumber,
-        w.workOrderTypeId,
+        w.workOrderNumber,
         wType.workOrderType,
-        w.workOrderStatusDataListItemId,
         wStatus.dataListItem AS workOrderStatusDataListItem,
         w.workOrderTitle,
-        w.workOrderDetails,
         w.workOrderOpenDateTime,
         w.workOrderDueDateTime,
         w.workOrderCloseDateTime,
         w.requestorName,
-        w.requestorContactInfo,
-        w.locationLatitude,
-        w.locationLongitude,
         w.locationAddress1,
         w.locationAddress2,
-        w.locationCityProvince,
-        w.assignedToId,
         assignedTo.assignedToName,
         cast(
           CASE

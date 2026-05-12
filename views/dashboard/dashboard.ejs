@@ -177,10 +177,12 @@
             <% } %>
           </div>
           <div class="media-content">
-            #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderType %><br />
+            <strong>#<%= workOrder.workOrderNumber %></strong><br />
+            <strong><%= workOrder.workOrderTitle ?? '(No Title)' %></strong><br />
             <small>
+              <%= workOrder.workOrderType %>
               <% if (workOrder.locationAddress1) { %>
-              <strong>Location:</strong> <%= workOrder.locationAddress1 %>
+              | <strong>Location:</strong> <%= workOrder.locationAddress1 %>
               <% } %>
               | <strong>Opened:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) %>
               <% if (workOrder.workOrderDueDateTime) { %>
@@ -204,10 +206,12 @@
             <i class="fa-solid fa-2x fa-exclamation-triangle has-text-danger"></i>
           </div>
           <div class="media-content">
-            #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderType %><br />
+            <strong>#<%= workOrder.workOrderNumber %></strong><br />
+            <strong><%= workOrder.workOrderTitle ?? '(No Title)' %></strong><br />
             <small>
+              <%= workOrder.workOrderType %>
               <% if (workOrder.locationAddress1) { %>
-              <strong>Location:</strong> <%= workOrder.locationAddress1 %>
+              | <strong>Location:</strong> <%= workOrder.locationAddress1 %>
               <% } %>
               <% if (workOrder.workOrderDueDateTime) { %>
               | <strong>Due:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>

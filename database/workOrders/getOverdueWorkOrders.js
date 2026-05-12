@@ -32,28 +32,16 @@ export default async function getOverdueWorkOrders(limit, user) {
         .query(`
       SELECT
         TOP (@limit) w.workOrderId,
-        w.workOrderNumberYear,
-        w.workOrderNumberSequence,
-        isnull(wType.workOrderNumberPrefix, '') + cast(w.workOrderNumberYear AS VARCHAR(4)) + '-' + right(
-          '000000' + cast(w.workOrderNumberSequence AS VARCHAR(6)),
-          6
-        ) AS workOrderNumber,
-        w.workOrderTypeId,
+        w.workOrderNumber,
         wType.workOrderType,
-        w.workOrderStatusDataListItemId,
         wStatus.dataListItem AS workOrderStatusDataListItem,
-        w.workOrderDetails,
         w.workOrderOpenDateTime,
         w.workOrderDueDateTime,
         w.workOrderCloseDateTime,
         w.requestorName,
-        w.requestorContactInfo,
-        w.locationLatitude,
-        w.locationLongitude,
         w.locationAddress1,
         w.locationAddress2,
         w.locationCityProvince,
-        w.assignedToId,
         assignedTo.assignedToName
       FROM
         ShiftLog.WorkOrders w
@@ -62,8 +50,7 @@ export default async function getOverdueWorkOrders(limit, user) {
         LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId ${whereClause}
       ORDER BY
         w.workOrderDueDateTime ASC,
-        w.workOrderNumberYear DESC,
-        w.workOrderNumberSequence DESC
+        w.workOrderNumber DESC
     `);
     return result.recordset;
 }
