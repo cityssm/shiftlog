@@ -2,9 +2,95 @@
     const shiftLog = exports.shiftLog;
     const filtersFormElement = document.querySelector('#form--workOrderSearch');
     const offsetInputElement = document.querySelector('#workOrderSearch--offset');
+    const orderByInputElement = document.querySelector('#workOrderSearch--orderBy');
     const resultsContainerElement = document.querySelector('#container--workOrderSearchResults');
+    const sortableColumns = {
+        assignedToName: {
+            defaultDirection: 'asc',
+            label: 'Assigned To'
+        },
+        locationAddress1: {
+            defaultDirection: 'asc',
+            label: 'Location'
+        },
+        requestorName: {
+            defaultDirection: 'asc',
+            label: 'Requestor'
+        },
+        workOrderNumber: {
+            defaultDirection: 'desc',
+            label: shiftLog.workOrdersSectionNameSingular
+        },
+        workOrderOpenDateTime: {
+            defaultDirection: 'desc',
+            label: 'Open Date'
+        }
+    };
     function isValidHex(color) {
         return color !== undefined && /^[0-9a-f]{6}$/i.test(color);
+    }
+    function getCurrentSort() {
+        const [column, direction = 'asc'] = orderByInputElement.value
+            .trim()
+            .split(/\s+/);
+        if (Object.hasOwn(sortableColumns, column) &&
+            (direction === 'asc' || direction === 'desc')) {
+            return {
+                column,
+                direction
+            };
+        }
+        return {
+            column: 'workOrderOpenDateTime',
+            direction: sortableColumns.workOrderOpenDateTime.defaultDirection
+        };
+    }
+    function buildSortableHeaderHTML(column) {
+        const currentSort = getCurrentSort();
+        const isCurrentSort = currentSort.column === column;
+        let ariaSort = 'none';
+        let iconClass = 'fa-sort';
+        if (isCurrentSort) {
+            if (currentSort.direction === 'asc') {
+                ariaSort = 'ascending';
+                iconClass = 'fa-sort-up';
+            }
+            else {
+                ariaSort = 'descending';
+                iconClass = 'fa-sort-down';
+            }
+        }
+        let nextDirection = sortableColumns[column].defaultDirection;
+        if (isCurrentSort) {
+            nextDirection = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        }
+        const directionLabel = nextDirection === 'asc' ? 'ascending' : 'descending';
+        const label = sortableColumns[column].label;
+        return `
+      <th aria-sort="${ariaSort}">
+        <button
+          class="button is-ghost is-small"
+          type="button"
+          data-order-by-column="${column}"
+          title="Sort by ${cityssm.escapeHTML(label)} ${directionLabel}"
+          aria-label="Sort by ${cityssm.escapeHTML(label)} ${directionLabel}"
+        >
+          <span>${cityssm.escapeHTML(label)}</span>
+          <span class="icon is-small" aria-hidden="true">
+            <i class="fa-solid ${iconClass}"></i>
+          </span>
+        </button>
+      </th>
+    `;
+    }
+    function setSortOrder(column) {
+        const currentSort = getCurrentSort();
+        let nextDirection = sortableColumns[column].defaultDirection;
+        if (currentSort.column === column) {
+            nextDirection = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        }
+        orderByInputElement.value = `${column} ${nextDirection}`;
+        resetOffsetAndGetResults();
     }
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {
@@ -18,19 +104,18 @@
         const tableElement = document.createElement('table');
         tableElement.className =
             'table is-fullwidth is-striped is-hoverable is-narrow';
+        // eslint-disable-next-line no-unsanitized/property
         tableElement.innerHTML = `
       <thead>
         <tr>
           <th class="has-width-1">
             <span class="is-sr-only">Open / Closed</span>
           </th>
-          <th>
-            ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)}
-          </th>
-          <th>Location</th>
-          <th>Open Date</th>
-          <th>Requestor</th>
-          <th>Assigned To</th>
+          ${buildSortableHeaderHTML('workOrderNumber')}
+          ${buildSortableHeaderHTML('locationAddress1')}
+          ${buildSortableHeaderHTML('workOrderOpenDateTime')}
+          ${buildSortableHeaderHTML('requestorName')}
+          ${buildSortableHeaderHTML('assignedToName')}
           <th>
             <span class="is-sr-only">Properties</span>
           </th>
@@ -184,8 +269,18 @@
             <span class="icon is-small"><i class="fa-solid fa-print"></i></span>
           </a>
         </td>
-      `;
+        `;
             tableBodyElement.append(tableRowElement);
+        }
+        const sortButtons = tableElement.querySelectorAll('[data-order-by-column]');
+        for (const sortButton of sortButtons) {
+            sortButton.addEventListener('click', () => {
+                const sortColumn = sortButton.dataset.orderByColumn;
+                if (sortColumn !== undefined &&
+                    Object.hasOwn(sortableColumns, sortColumn)) {
+                    setSortOrder(sortColumn);
+                }
+            });
         }
         resultsContainerElement.replaceChildren(tableElement);
         resultsContainerElement.append(shiftLog.buildPaginationControls({

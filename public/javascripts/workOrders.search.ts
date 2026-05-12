@@ -22,13 +22,123 @@ declare const exports: {
     '#workOrderSearch--offset'
   ) as HTMLInputElement
 
+  const orderByInputElement = document.querySelector(
+    '#workOrderSearch--orderBy'
+  ) as HTMLInputElement
+
   const resultsContainerElement = document.querySelector(
     '#container--workOrderSearchResults'
   ) as HTMLDivElement
 
+  const sortableColumns = {
+    assignedToName: {
+      defaultDirection: 'asc',
+      label: 'Assigned To'
+    },
+    locationAddress1: {
+      defaultDirection: 'asc',
+      label: 'Location'
+    },
+    requestorName: {
+      defaultDirection: 'asc',
+      label: 'Requestor'
+    },
+    workOrderNumber: {
+      defaultDirection: 'desc',
+      label: shiftLog.workOrdersSectionNameSingular
+    },
+    workOrderOpenDateTime: {
+      defaultDirection: 'desc',
+      label: 'Open Date'
+    }
+  } as const
+
+  type SortColumn = keyof typeof sortableColumns
+  type SortDirection = 'asc' | 'desc'
+
   // Validate hex color format (6 characters, alphanumeric)
   function isValidHex(color?: string): boolean {
     return color !== undefined && /^[0-9a-f]{6}$/i.test(color)
+  }
+
+  function getCurrentSort(): {
+    column: SortColumn
+    direction: SortDirection
+  } {
+    const [column, direction = 'asc'] = orderByInputElement.value
+      .trim()
+      .split(/\s+/)
+
+    if (
+      Object.hasOwn(sortableColumns, column) &&
+      (direction === 'asc' || direction === 'desc')
+    ) {
+      return {
+        column: column as SortColumn,
+        direction
+      }
+    }
+
+    return {
+      column: 'workOrderOpenDateTime',
+      direction: sortableColumns.workOrderOpenDateTime.defaultDirection
+    }
+  }
+
+  function buildSortableHeaderHTML(column: SortColumn): string {
+    const currentSort = getCurrentSort()
+    const isCurrentSort = currentSort.column === column
+    let ariaSort = 'none'
+    let iconClass = 'fa-sort'
+
+    if (isCurrentSort) {
+      if (currentSort.direction === 'asc') {
+        ariaSort = 'ascending'
+        iconClass = 'fa-sort-up'
+      } else {
+        ariaSort = 'descending'
+        iconClass = 'fa-sort-down'
+      }
+    }
+
+    let nextDirection = sortableColumns[column].defaultDirection
+
+    if (isCurrentSort) {
+      nextDirection = currentSort.direction === 'asc' ? 'desc' : 'asc'
+    }
+
+    const directionLabel = nextDirection === 'asc' ? 'ascending' : 'descending'
+    const label = sortableColumns[column].label
+
+    return /* html */ `
+      <th aria-sort="${ariaSort}">
+        <button
+          class="button is-ghost is-small"
+          type="button"
+          data-order-by-column="${column}"
+          title="Sort by ${cityssm.escapeHTML(label)} ${directionLabel}"
+          aria-label="Sort by ${cityssm.escapeHTML(label)} ${directionLabel}"
+        >
+          <span>${cityssm.escapeHTML(label)}</span>
+          <span class="icon is-small" aria-hidden="true">
+            <i class="fa-solid ${iconClass}"></i>
+          </span>
+        </button>
+      </th>
+    `
+  }
+
+  function setSortOrder(column: SortColumn): void {
+    const currentSort = getCurrentSort()
+    let nextDirection = sortableColumns[column].defaultDirection
+
+    if (currentSort.column === column) {
+      nextDirection = currentSort.direction === 'asc' ? 'desc' : 'asc'
+    }
+
+    orderByInputElement.value = `${column} ${nextDirection}`
+
+    resetOffsetAndGetResults()
   }
 
   function renderWorkOrdersTable(data: DoSearchWorkOrdersResponse): void {
@@ -47,19 +157,18 @@ declare const exports: {
     tableElement.className =
       'table is-fullwidth is-striped is-hoverable is-narrow'
 
+    // eslint-disable-next-line no-unsanitized/property
     tableElement.innerHTML = /* html */ `
       <thead>
         <tr>
           <th class="has-width-1">
             <span class="is-sr-only">Open / Closed</span>
           </th>
-          <th>
-            ${cityssm.escapeHTML(shiftLog.workOrdersSectionNameSingular)}
-          </th>
-          <th>Location</th>
-          <th>Open Date</th>
-          <th>Requestor</th>
-          <th>Assigned To</th>
+          ${buildSortableHeaderHTML('workOrderNumber')}
+          ${buildSortableHeaderHTML('locationAddress1')}
+          ${buildSortableHeaderHTML('workOrderOpenDateTime')}
+          ${buildSortableHeaderHTML('requestorName')}
+          ${buildSortableHeaderHTML('assignedToName')}
           <th>
             <span class="is-sr-only">Properties</span>
           </th>
@@ -251,6 +360,23 @@ declare const exports: {
       `
 
       tableBodyElement.append(tableRowElement)
+    }
+
+    const sortButtons = tableElement.querySelectorAll(
+      '[data-order-by-column]'
+    ) as NodeListOf<HTMLButtonElement>
+
+    for (const sortButton of sortButtons) {
+      sortButton.addEventListener('click', () => {
+        const sortColumn = sortButton.dataset.orderByColumn
+
+        if (
+          sortColumn !== undefined &&
+          Object.hasOwn(sortableColumns, sortColumn)
+        ) {
+          setSortOrder(sortColumn as SortColumn)
+        }
+      })
     }
 
     resultsContainerElement.replaceChildren(tableElement)

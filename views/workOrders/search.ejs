@@ -76,6 +76,31 @@
           type="hidden"
           value="0"
         />
+        <input
+          id="workOrderSearch--orderBy"
+          name="orderBy"
+          type="hidden"
+          value="workOrderOpenDateTime desc"
+        />
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="workOrderSearch--searchString">Search Text</label>
+              <div class="control has-icons-left">
+                <input
+                  class="input"
+                  id="workOrderSearch--searchString"
+                  name="searchString"
+                  type="search"
+                  placeholder="Title, details, or note text"
+                />
+                <span class="icon is-small is-left">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="columns">
           <div class="column">
             <div class="field">
@@ -190,13 +215,22 @@
                     <option value="unassigned">(Unassigned)</option>
                     <% const currentUserEmailAddress = user.emailAddress.toLowerCase(); %>
                     <% for (const assignedToItem of assignedToItems) { %>
+                    <% const isDefaultAssignedTo = user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString(); %>
+                    <% const isCurrentUserAssignee = currentUserEmailAddress !== '' && assignedToItem.assignedToEmailAddress.toLowerCase() === currentUserEmailAddress; %>
 
-                    <% if (user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString()) { %>
-                    <option class="has-text-weight-bold" value="<%= assignedToItem.assignedToId %>" selected>
+                    <% if (isDefaultAssignedTo) { %>
+                    <option
+                      class="<%= isCurrentUserAssignee ? 'has-text-weight-bold' : '' %>"
+                      value="<%= assignedToItem.assignedToId %>"
+                      selected
+                    >
                       <%= assignedToItem.assignedToName %>
                     </option>
                     <% } else { %>
-                    <option class="<%= currentUserEmailAddress !== '' && assignedToItem.assignedToEmailAddress.toLowerCase() === currentUserEmailAddress ? 'has-text-weight-bold' : '' %>" value="<%= assignedToItem.assignedToId %>">
+                    <option
+                      class="<%= isCurrentUserAssignee ? 'has-text-weight-bold' : '' %>"
+                      value="<%= assignedToItem.assignedToId %>"
+                    >
                       <%= assignedToItem.assignedToName %>
                     </option>
                     <% } %>
