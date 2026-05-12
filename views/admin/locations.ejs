@@ -88,6 +88,8 @@
   exports.locations = <%- JSON.stringify(locations) %>;
   exports.defaultCityProvince = <%- JSON.stringify(defaultCityProvince) %>;
 </script>
+
+<script src="<%= urlPrefix %>/lib/leaflet/leaflet-global.js"></script>
 <script src="<%= urlPrefix %>/javascripts/locations.admin.js"></script>
 
 <%- await include('../_footerB'); -%>
