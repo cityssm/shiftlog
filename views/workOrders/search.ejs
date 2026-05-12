@@ -300,7 +300,7 @@
 <%- await include('../_footerA'); -%>
 
 <script>
-  exports.preferEdit = <%= user.userSettings['workOrders.preferEdit'] ? 'true' : 'false' %>;
+  exports.preferEdit = <%= user.userProperties.workOrders.canUpdate && user.userSettings['workOrders.preferEdit'] ? 'true' : 'false' %>;
 </script>
 
 <script src="<%= urlPrefix %>/javascripts/workOrders.search.js"></script>
