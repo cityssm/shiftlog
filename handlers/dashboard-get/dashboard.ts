@@ -36,7 +36,7 @@ export default async function handler(
   const recentWorkOrders =
     getConfigProperty('workOrders.isEnabled') &&
     (request.session.user?.userProperties.workOrders.canView ?? false)
-      ? await getRecentWorkOrders(10, request.session.user)
+      ? await getRecentWorkOrders(5, request.session.user)
       : []
 
   const overdueWorkOrders =

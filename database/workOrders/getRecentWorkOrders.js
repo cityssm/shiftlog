@@ -49,7 +49,13 @@ export default async function getRecentWorkOrders(limit, user) {
         w.locationAddress2,
         w.locationCityProvince,
         w.assignedToId,
-        assignedTo.assignedToName
+        assignedTo.assignedToName,
+        cast(
+          CASE
+            WHEN w.recordCreate_dateTime = w.recordUpdate_dateTime THEN 0
+            ELSE 1
+          END AS BIT
+        ) AS isUpdated
       FROM
         ShiftLog.WorkOrders w
         LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId

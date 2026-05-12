@@ -142,18 +142,10 @@
 <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
 <div class="columns">
   <div class="column">
-    <details class="panel collapsable-panel is-info" id="panel--workOrderHighlights">
-      <summary class="panel-heading is-clickable">
-        <span class="icon">
-          <i class="fa-solid fa-chevron-right details-chevron"></i>
-        </span>
-        <span class="has-text-weight-semibold mr-2">
-          <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Highlights
-        </span>
-        <% if (overdueWorkOrders.length > 0) { %>
-        <span class="tag is-danger" id="badge--overdueWorkOrderCount--summary"><%= overdueWorkOrders.length %> Overdue</span>
-        <% } %>
-      </summary>
+    <div class="panel  is-info" id="panel--workOrderHighlights">
+      <div class="panel-heading has-text-weight-semibold">
+        <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Highlights
+      </div>
       <div class="panel-tabs">
         <a class="is-active" data-work-order-type="recent" href="#">
           <span class="icon"><i class="fa-solid fa-clock"></i></span>
@@ -163,33 +155,47 @@
         <a data-work-order-type="overdue" href="#">
           <span class="icon"><i class="fa-solid fa-exclamation-triangle"></i></span>
           <span>Overdue</span>
+          <% if (overdueWorkOrders.length > 0) { %>
+          <span class="tag is-danger" id="badge--overdueWorkOrderCount--summary"><%= overdueWorkOrders.length %></span>
+          <% } %>
         </a>
         <% } %>
       </div>
-      <div class="panel-block is-block" data-work-order-type="recent">
-        <div class="columns is-vcentered is-mobile is-size-7 mb-0">
-          <div class="column is-narrow">
-            <span class="icon has-text-success"><i class="fa-solid fa-circle"></i></span>
-            <span class="has-text-grey">Open</span>
+      <% if (recentWorkOrders.length > 0) { %>
+      <% for (const workOrder of recentWorkOrders) { %>
+      <a class="panel-block" data-work-order-type="recent" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
+        <div class="media">
+          <div class="media-left">
+            <% if (workOrder.workOrderCloseDateTime) { %>
+            <span title="Closed"><i class="fa-solid fa-2x fa-stop has-text-grey"></i></span>
+            <% } else if (workOrder.workOrderDueDateTime && new Date(workOrder.workOrderDueDateTime) < new Date()) { %>
+            <span title="Overdue"><i class="fa-solid fa-2x fa-exclamation-triangle has-text-danger"></i></span>
+            <% } else if (workOrder.isUpdated) { %>
+            <span title="Open"><i class="fa-solid fa-2x fa-play has-text-success"></i></span>
+            <% } else { %>
+            <span title="New"><i class="fa-solid fa-2x fa-star has-text-warning"></i></span>
+            <% } %>
           </div>
-          <div class="column is-narrow">
-            <span class="icon has-text-grey"><i class="fa-solid fa-circle"></i></span>
-            <span class="has-text-grey">Closed</span>
-          </div>
-          <div class="column is-narrow">
-            <span class="icon has-text-danger"><i class="fa-solid fa-circle"></i></span>
-            <span class="has-text-grey">Overdue</span>
-          </div>
-          <div class="column is-narrow">
-            <span class="icon has-text-warning"><i class="fa-solid fa-circle"></i></span>
-            <span class="has-text-grey">Multiple at Location</span>
+          <div class="media-content">
+            #<%= workOrder.workOrderNumber %> - <%= workOrder.workOrderType %><br />
+            <small>
+              <% if (workOrder.locationAddress1) { %>
+              <strong>Location:</strong> <%= workOrder.locationAddress1 %>
+              <% } %>
+              | <strong>Opened:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderOpenDateTime) %>
+              <% if (workOrder.workOrderDueDateTime) { %>
+              | <strong>Due:</strong> <%= dateTimeFunctions.dateToString(workOrder.workOrderDueDateTime) %>
+              <% } %>
+            </small>
           </div>
         </div>
-        <p class="has-text-right has-text-grey is-size-7" id="container--workOrderCount">Loading...</p>
+      </a>
+      <% } %>
+      <% } else { %>
+      <div class="panel-block" data-work-order-type="recent">
+        <p>No recently updated <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %> found.</p>
       </div>
-      <div class="panel-block is-block" data-work-order-type="recent">
-        <div class="has-background-grey-lighter" id="map--dashboardWorkOrders" style="height: 400px;"></div>
-      </div>
+      <% } %>
       <% if (overdueWorkOrders.length > 0) { %>
       <% for (const workOrder of overdueWorkOrders) { %>
       <a class="panel-block is-hidden" data-work-order-type="overdue" href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= workOrder.workOrderId %>">
@@ -212,7 +218,7 @@
       </a>
       <% } %>
       <% } %>
-    </details>
+    </div>
   </div>
   <div class="column">
     <div class="panel">
@@ -658,12 +664,6 @@
 
 
 <%- await include('../_footerA'); -%>
-
-<script>
-  (() => {
-    exports.recentWorkOrders = <%- JSON.stringify(recentWorkOrders) %>;
-  })();
-</script>
 
 <script src="<%= urlPrefix %>/javascripts/dashboard.js"></script>
 

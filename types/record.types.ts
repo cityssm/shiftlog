@@ -458,6 +458,8 @@ export interface WorkOrder extends BaseRecord {
   costsTotal?: number
 
   tags?: WorkOrderTag[]
+
+  isUpdated?: boolean
 }
 
 export interface WorkOrderTag {

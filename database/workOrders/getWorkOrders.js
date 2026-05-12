@@ -213,7 +213,13 @@ export default async function getWorkOrders(filters, options, user) {
           assignedTo.assignedToEmailAddress,
           ${options.includeMoreInfoFormData === true
             ? 'w.moreInfoFormDataJson,'
-            : ''} milestones.milestonesCount,
+            : ''} cast(
+            CASE
+              WHEN w.recordCreate_dateTime = w.recordUpdate_dateTime THEN 0
+              ELSE 1
+            END AS BIT
+          ) AS isUpdated,
+          milestones.milestonesCount,
           milestones.milestonesCompletedCount,
           attachments.attachmentsCount,
           thumbnails.thumbnailAttachmentId,
