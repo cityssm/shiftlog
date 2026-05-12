@@ -500,6 +500,7 @@ export default async function getWorkOrders(
 
   return {
     workOrders,
+
     totalCount
   }
 }

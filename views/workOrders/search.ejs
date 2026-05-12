@@ -213,7 +213,7 @@
                   <select id="workOrderSearch--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
                     <option value="unassigned">(Unassigned)</option>
-                    <% const currentUserEmailAddress = user.emailAddress.toLowerCase(); %>
+                    <% const currentUserEmailAddress = user.emailAddress?.toLowerCase() ?? ''; %>
                     <% for (const assignedToItem of assignedToItems) { %>
                     <% const isDefaultAssignedTo = user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString(); %>
                     <% const isCurrentUserAssignee = currentUserEmailAddress !== '' && assignedToItem.assignedToEmailAddress.toLowerCase() === currentUserEmailAddress; %>

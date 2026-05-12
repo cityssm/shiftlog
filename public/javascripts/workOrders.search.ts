@@ -113,9 +113,9 @@ declare const exports: {
     return /* html */ `
       <th aria-sort="${ariaSort}">
         <button
-          class="button is-ghost is-small"
-          type="button"
+          class="button is-ghost has-text-weight-bold p-0"
           data-order-by-column="${column}"
+          type="button"
           title="Sort by ${cityssm.escapeHTML(label)} ${directionLabel}"
           aria-label="Sort by ${cityssm.escapeHTML(label)} ${directionLabel}"
         >
