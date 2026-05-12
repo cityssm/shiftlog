@@ -4,6 +4,8 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrder } from '../../types/record.types.js'
 
+import { buildGetWorkOrdersOrderByClause } from './getWorkOrdersOrderBy.helpers.js'
+
 export interface GetWorkOrdersFilters {
   assignedToId?: number | string
   openClosedFilter?: '' | 'closed' | 'open' | 'overdue'
@@ -23,6 +25,7 @@ export interface GetWorkOrdersOptions {
   offset: number | string
 
   includeMoreInfoFormData?: boolean
+  orderBy?: string
 }
 
 function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
@@ -139,6 +142,16 @@ function buildWhereClause(filters: GetWorkOrdersFilters, user?: User): string {
         OR w.workOrderDetails LIKE @searchString
         OR w.locationAddress1 LIKE @searchString
         OR w.locationAddress2 LIKE @searchString
+        OR EXISTS (
+          SELECT
+            1
+          FROM
+            ShiftLog.WorkOrderNotes wn
+          WHERE
+            wn.workOrderId = w.workOrderId
+            AND wn.recordDelete_dateTime IS NULL
+            AND wn.noteText LIKE @searchString
+        )
       )
     `
   }
@@ -221,6 +234,7 @@ export default async function getWorkOrders(
   const pool = await getShiftLogConnectionPool()
 
   const whereClause = buildWhereClause(filters, user)
+  const orderByClause = buildGetWorkOrdersOrderByClause(options)
 
   const limit =
     typeof options.limit === 'string'
@@ -386,9 +400,7 @@ export default async function getWorkOrders(
               workOrderId
           ) AS costs ON costs.workOrderId = w.workOrderId ${whereClause}
         ORDER BY
-          w.workOrderOpenDateTime DESC,
-          w.workOrderNumberYear DESC,
-          w.workOrderNumberSequence DESC ${limit === -1
+          ${orderByClause} ${limit === -1
             ? ''
             : ` offset ${offset} rows`} ${limit === -1
             ? ''

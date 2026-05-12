@@ -1,5 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { buildGetWorkOrdersOrderByClause } from './getWorkOrdersOrderBy.helpers.js';
 function buildWhereClause(filters, user) {
     let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
     if (filters.workOrderNumber !== undefined && filters.workOrderNumber !== '') {
@@ -95,6 +96,16 @@ function buildWhereClause(filters, user) {
         OR w.workOrderDetails LIKE @searchString
         OR w.locationAddress1 LIKE @searchString
         OR w.locationAddress2 LIKE @searchString
+        OR EXISTS (
+          SELECT
+            1
+          FROM
+            ShiftLog.WorkOrderNotes wn
+          WHERE
+            wn.workOrderId = w.workOrderId
+            AND wn.recordDelete_dateTime IS NULL
+            AND wn.noteText LIKE @searchString
+        )
       )
     `;
     }
@@ -145,6 +156,7 @@ function applyParameters(sqlRequest, filters, user) {
 export default async function getWorkOrders(filters, options, user) {
     const pool = await getShiftLogConnectionPool();
     const whereClause = buildWhereClause(filters, user);
+    const orderByClause = buildGetWorkOrdersOrderByClause(options);
     const limit = typeof options.limit === 'string'
         ? Number.parseInt(options.limit, 10)
         : options.limit;
@@ -288,9 +300,7 @@ export default async function getWorkOrders(filters, options, user) {
               workOrderId
           ) AS costs ON costs.workOrderId = w.workOrderId ${whereClause}
         ORDER BY
-          w.workOrderOpenDateTime DESC,
-          w.workOrderNumberYear DESC,
-          w.workOrderNumberSequence DESC ${limit === -1
+          ${orderByClause} ${limit === -1
             ? ''
             : ` offset ${offset} rows`} ${limit === -1
             ? ''
