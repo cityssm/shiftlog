@@ -247,7 +247,10 @@
           </span>
         </td>
         <td>
-          ${cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName)}
+          ${cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName)}<br />
+          <span class="is-size-7 has-text-grey">
+            ${cityssm.escapeHTML(workOrder.requestorContactInfo.trim())}
+          </span>
         </td>
         <td class="${currentUserEmailAddress !== '' && workOrder.assignedToEmailAddress?.toLowerCase() === currentUserEmailAddress ? 'has-background-primary-light' : ''}">
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
