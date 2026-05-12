@@ -109,7 +109,8 @@ export async function sendEmail(): Promise<void> {
     if (
       bccEmailAddresses.size > 0 &&
       workOrder.assignedToEmailAddress !== undefined &&
-      isEmailAddress(workOrder.assignedToEmailAddress)
+      isEmailAddress(workOrder.assignedToEmailAddress) &&
+      !isNoReplyEmailAddress(workOrder.assignedToEmailAddress)
     ) {
       bccEmailAddresses.add(workOrder.assignedToEmailAddress)
     }

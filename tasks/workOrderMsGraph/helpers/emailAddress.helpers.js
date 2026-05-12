@@ -25,7 +25,8 @@ export function isNoReplyEmailAddress(emailAddress, name = '') {
     const lowercaseName = name.toLowerCase();
     return ((isEmailAddress(lowercaseEmail) &&
         (lowercaseEmail.includes('noreply') ||
-            lowercaseEmail.includes('no-reply'))) ||
+            lowercaseEmail.includes('no-reply') ||
+            lowercaseEmail === msGraphEmailAddress)) ||
         lowercaseName.includes('noreply') ||
         lowercaseName.includes('no-reply') ||
         lowercaseName.includes('do not reply') ||

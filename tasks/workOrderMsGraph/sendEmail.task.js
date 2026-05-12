@@ -61,7 +61,8 @@ export async function sendEmail() {
         }
         if (bccEmailAddresses.size > 0 &&
             workOrder.assignedToEmailAddress !== undefined &&
-            isEmailAddress(workOrder.assignedToEmailAddress)) {
+            isEmailAddress(workOrder.assignedToEmailAddress) &&
+            !isNoReplyEmailAddress(workOrder.assignedToEmailAddress)) {
             bccEmailAddresses.add(workOrder.assignedToEmailAddress);
         }
         if (bccEmailAddresses.size === 0) {
