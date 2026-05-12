@@ -141,6 +141,10 @@ declare const exports: {
     resetOffsetAndGetResults()
   }
 
+  const showWorkOrderType =
+    filtersFormElement.querySelector('#workOrderSearch--workOrderTypeId') !==
+    null
+
   function renderWorkOrdersTable(data: DoSearchWorkOrdersResponse): void {
     if (data.workOrders.length === 0) {
       resultsContainerElement.innerHTML = /* html */ `
@@ -317,7 +321,7 @@ declare const exports: {
           ${workOrder.workOrderTitle ? `<br /><span class="is-size-7 has-text-weight-semibold">${cityssm.escapeHTML(workOrder.workOrderTitle)}</span>` : ''}
           <br />
           <span class="is-size-7">
-            ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
+            ${cityssm.escapeHTML(showWorkOrderType || workOrder.workOrderStatusDataListItem !== null || workOrder.workOrderPriorityDataListItem !== null ? (workOrder.workOrderType ?? '-') : '')}
             ${cityssm.escapeHTML(workOrder.workOrderStatusDataListItem === null ? '' : ` - ${workOrder.workOrderStatusDataListItem}`)}
             ${cityssm.escapeHTML(workOrder.workOrderPriorityDataListItem === null ? '' : ` - ${workOrder.workOrderPriorityDataListItem}`)}
           </span>

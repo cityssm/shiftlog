@@ -120,6 +120,7 @@
               </div>
             </div>
           </div>
+          <% if (workOrderTypes.length > 1) { %>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderTypeId">
@@ -142,7 +143,8 @@
               </div>
             </div>
           </div>
-          <% if (workOrderStatuses.length > 0) { %>
+          <% } %>
+          <% if (workOrderStatuses.length > 1) { %>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderStatusDataListItemId">Status</label>
@@ -164,7 +166,7 @@
             </div>
           </div>
           <% } %>
-          <% if (workOrderPriorities.length > 0) { %>
+          <% if (workOrderPriorities.length > 1) { %>
           <div class="column">
             <div class="field">
               <label class="label" for="workOrderSearch--workOrderPriorityDataListItemId">Priority</label>
@@ -213,6 +215,7 @@
                   <select id="workOrderSearch--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
                     <option value="unassigned">(Unassigned)</option>
+                    <hr />
                     <% const currentUserEmailAddress = user.emailAddress?.toLowerCase() ?? ''; %>
                     <% for (const assignedToItem of assignedToItems) { %>
                     <% const isDefaultAssignedTo = user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString(); %>
