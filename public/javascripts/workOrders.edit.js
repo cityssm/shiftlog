@@ -340,7 +340,9 @@
             defaultLng = Number.parseFloat(longitudeInput.value);
             defaultZoom = 15;
         }
-        const map = new L.Map('map--locationPicker').setView([defaultLat, defaultLng], defaultZoom);
+        const map = new L.Map('map--locationPicker', {
+            scrollWheelZoom: false
+        }).setView([defaultLat, defaultLng], defaultZoom);
         new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);

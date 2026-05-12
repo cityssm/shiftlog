@@ -617,7 +617,9 @@ declare const exports: {
       defaultZoom = 15
     }
 
-    const map = new L.Map('map--locationPicker').setView(
+    const map = new L.Map('map--locationPicker', {
+      scrollWheelZoom: false
+    }).setView(
       [defaultLat, defaultLng],
       defaultZoom
     )
