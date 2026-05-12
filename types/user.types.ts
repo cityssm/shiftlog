@@ -4,6 +4,7 @@ declare global {
   export interface User {
     userName: string
 
+    emailAddress: string
     employeeNumber: string
     firstName: string
     lastName: string

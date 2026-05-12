@@ -57,6 +57,7 @@
 
     isAdmin: <%- JSON.stringify(user.userProperties.isAdmin) %>,
     userName: <%- JSON.stringify(user.userName) %>,
+    emailAddress: <%- JSON.stringify(user.emailAddress ?? '') %>,
     userCanManageWorkOrders: <%- JSON.stringify(user.userProperties.workOrders.canManage) %>,
     userCanUpdateWorkOrders: <%- JSON.stringify(user.userProperties.workOrders.canUpdate) %>
   };

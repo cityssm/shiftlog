@@ -32,6 +32,7 @@ export interface Setting {
 export interface DatabaseUser extends BaseRecord {
   userName: string
 
+  emailAddress?: string | null
   employeeNumber?: string | null
   firstName?: string | null
   lastName?: string | null

@@ -296,6 +296,7 @@ export default async function getWorkOrders(
           w.locationCityProvince,
           w.assignedToId,
           assignedTo.assignedToName,
+          assignedTo.assignedToEmailAddress,
           ${options.includeMoreInfoFormData === true
             ? 'w.moreInfoFormDataJson,'
             : ''} milestones.milestonesCount,

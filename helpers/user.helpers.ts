@@ -17,6 +17,7 @@ export interface UserRequest {
 export const SYSTEM_USER: User = {
   userName: 'system',
 
+  emailAddress: '',
   employeeNumber: '',
   firstName: '',
   lastName: '',
@@ -56,6 +57,7 @@ export async function getUser(userName: string): Promise<User | undefined> {
     return {
       userName: userNameLowerCase,
 
+      emailAddress: localUser?.emailAddress ?? '',
       employeeNumber: localUser?.employeeNumber ?? '',
       firstName: localUser?.firstName ?? '',
       lastName: localUser?.lastName ?? '',

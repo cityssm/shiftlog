@@ -20,6 +20,7 @@ const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:checkEmail`);
 const systemUser = {
     userName: 'system',
     employeeNumber: '',
+    emailAddress: '',
     firstName: 'System',
     lastName: 'User',
     userProperties: {

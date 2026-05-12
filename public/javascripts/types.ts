@@ -40,6 +40,7 @@ export interface ShiftLogGlobal {
 
   buildTimesheetURL: (timesheetId: number, edit?: boolean) => string
 
+  emailAddress: string
   isAdmin: boolean
   userName: string
 

@@ -20,6 +20,7 @@ export async function _getUser(
       e.employeeNumber,
       e.firstName,
       e.lastName,
+      e.emailAddress,
       u.shifts_canView,
       u.shifts_canUpdate,
       u.shifts_canManage,

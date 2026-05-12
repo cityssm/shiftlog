@@ -188,17 +188,20 @@
                   <select id="workOrderSearch--assignedToId" name="assignedToId">
                     <option value="">(All Assignees)</option>
                     <option value="unassigned">(Unassigned)</option>
-                    <% assignedToItems.forEach(function(assignedToItem) { %>
+                    <% const currentUserEmailAddress = user.emailAddress.toLowerCase(); %>
+                    <% for (const assignedToItem of assignedToItems) { %>
+
                     <% if (user.userSettings['workOrders.defaultAssignedToId'] === assignedToItem.assignedToId.toString()) { %>
-                    <option value="<%= assignedToItem.assignedToId %>" selected>
+                    <option class="has-text-weight-bold" value="<%= assignedToItem.assignedToId %>" selected>
                       <%= assignedToItem.assignedToName %>
                     </option>
                     <% } else { %>
-                    <option value="<%= assignedToItem.assignedToId %>">
+                    <option class="<%= currentUserEmailAddress !== '' && assignedToItem.assignedToEmailAddress.toLowerCase() === currentUserEmailAddress ? 'has-text-weight-bold' : '' %>" value="<%= assignedToItem.assignedToId %>">
                       <%= assignedToItem.assignedToName %>
                     </option>
                     <% } %>
-                    <% }); %>
+
+                    <% } %>
                   </select>
                 </div>
                 <span class="icon is-small is-left">

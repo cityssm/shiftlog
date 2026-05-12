@@ -42,6 +42,7 @@
       <tbody></tbody>
     `;
         const tableBodyElement = tableElement.querySelector('tbody');
+        const currentUserEmailAddress = shiftLog.emailAddress.toLowerCase();
         for (const workOrder of data.workOrders) {
             const tableRowElement = document.createElement('tr');
             let openClosedIconHTML = '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>';
@@ -164,7 +165,7 @@
         <td>
           ${cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName)}
         </td>
-        <td>
+        <td class="${currentUserEmailAddress !== '' && workOrder.assignedToEmailAddress?.toLowerCase() === currentUserEmailAddress ? 'has-background-primary-light' : ''}">
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
         </td>
         <td class="has-text-right">

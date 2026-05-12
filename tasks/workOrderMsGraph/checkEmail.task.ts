@@ -47,6 +47,7 @@ const systemUser: User = {
 
   employeeNumber: '',
 
+  emailAddress: '',
   firstName: 'System',
   lastName: 'User',
 

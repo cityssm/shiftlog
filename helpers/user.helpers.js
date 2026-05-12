@@ -2,6 +2,7 @@ import getUserFromDatabase from '../database/users/getUser.js';
 import { getUserNameFromApiKey } from './cache/apiKeys.cache.js';
 export const SYSTEM_USER = {
     userName: 'system',
+    emailAddress: '',
     employeeNumber: '',
     firstName: '',
     lastName: '',
@@ -30,6 +31,7 @@ export async function getUser(userName) {
     if (localUser?.isActive ?? false) {
         return {
             userName: userNameLowerCase,
+            emailAddress: localUser?.emailAddress ?? '',
             employeeNumber: localUser?.employeeNumber ?? '',
             firstName: localUser?.firstName ?? '',
             lastName: localUser?.lastName ?? '',

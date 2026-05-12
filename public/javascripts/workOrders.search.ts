@@ -75,6 +75,8 @@ declare const exports: {
       'tbody'
     ) as HTMLTableSectionElement
 
+    const currentUserEmailAddress = shiftLog.emailAddress.toLowerCase()
+
     for (const workOrder of data.workOrders) {
       const tableRowElement = document.createElement('tr')
 
@@ -227,7 +229,7 @@ declare const exports: {
         <td>
           ${cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName)}
         </td>
-        <td>
+        <td class="${currentUserEmailAddress !== '' && workOrder.assignedToEmailAddress?.toLowerCase() === currentUserEmailAddress ? 'has-background-primary-light' : ''}">
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
         </td>
         <td class="has-text-right">
