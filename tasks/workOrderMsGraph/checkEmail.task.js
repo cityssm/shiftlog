@@ -86,7 +86,7 @@ export async function checkEmail() {
                     workOrder = undefined;
                 }
             }
-            const messageBodyText = messageBodyToText(message.body);
+            const messageBodyText = messageBodyToText(message.body, workOrder !== undefined);
             const receivedDateTime = new Date(message.receivedDateTime);
             const receivedDateTimeString = `${dateToString(receivedDateTime)} ${dateToTimeString(receivedDateTime)}`;
             if (workOrder === undefined) {

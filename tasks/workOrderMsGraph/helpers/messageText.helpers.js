@@ -5,7 +5,7 @@ const htmlToTextConverter = new NodeHtmlMarkdown({
     useLinkReferenceDefinitions: true
 });
 export const messageHeaderString = 'When replying to work order emails, please do not change the email subject line or the text below. This text is used by the system to link your email reply to the correct work order. If you change or delete this text, your email reply may not be processed correctly.';
-export function messageBodyToText(messageBody) {
+export function messageBodyToText(messageBody, truncateAfterFromHeader = true) {
     const messageBodyTextUnsanitized = messageBody?.content ?? '';
     let messageBodyText = messageBody?.contentType === 'html' ||
         messageBodyTextUnsanitized.includes('<')
@@ -14,7 +14,7 @@ export function messageBodyToText(messageBody) {
     if (messageBodyText.includes(messageHeaderString)) {
         messageBodyText = messageBodyText.split(messageHeaderString)[0].trim();
     }
-    if (messageBodyText.includes('\n\n**From:** ')) {
+    if (truncateAfterFromHeader && messageBodyText.includes('\n\n**From:** ')) {
         messageBodyText = messageBodyText.split('\n\n**From:** ')[0].trim();
     }
     return messageBodyText;

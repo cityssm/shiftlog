@@ -176,7 +176,10 @@ export async function checkEmail(): Promise<void> {
        * Sanitize the email body
        */
 
-      const messageBodyText = messageBodyToText(message.body)
+      const messageBodyText = messageBodyToText(
+        message.body,
+        workOrder !== undefined
+      )
 
       const receivedDateTime = new Date(message.receivedDateTime as string)
 
