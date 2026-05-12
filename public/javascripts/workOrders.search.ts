@@ -193,19 +193,23 @@ declare const exports: {
     for (const workOrder of data.workOrders) {
       const tableRowElement = document.createElement('tr')
 
-      let openClosedIconHTML =
-        /* html */ '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>'
+      let openClosedIconHTML: string
 
       if (workOrder.workOrderCloseDateTime !== null) {
         openClosedIconHTML =
           /* html */ '<span class="icon has-text-grey" title="Closed"><i class="fa-solid fa-stop"></i></span>'
-      } else if (workOrder.workOrderDueDateTime !== null) {
-        const dueDateTime = new Date(workOrder.workOrderDueDateTime as string)
-        const now = new Date()
-        if (dueDateTime < now) {
-          openClosedIconHTML =
-            /* html */ '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>'
-        }
+      } else if (
+        workOrder.workOrderDueDateTime !== null &&
+        new Date(workOrder.workOrderDueDateTime as string) < new Date()
+      ) {
+        openClosedIconHTML =
+          /* html */ '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>'
+      } else if (workOrder.isUpdated ?? false) {
+        openClosedIconHTML =
+          '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>'
+      } else {
+        openClosedIconHTML =
+          /* html */ '<span class="icon has-text-warning" title="New"><i class="fa-solid fa-star"></i></span>'
       }
 
       let extraDateHTML = ''

@@ -1,3 +1,4 @@
+"use strict";
 ;
 (() => {
     const workOrderHighlightsPanelElement = document.querySelector('#panel--workOrderHighlights');

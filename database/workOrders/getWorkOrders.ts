@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import type { mssql } from '@cityssm/mssql-multi-pool'
 
 import { getConfigProperty } from '../../helpers/config.helpers.js'
@@ -313,7 +315,13 @@ export default async function getWorkOrders(
           assignedTo.assignedToEmailAddress,
           ${options.includeMoreInfoFormData === true
             ? 'w.moreInfoFormDataJson,'
-            : ''} milestones.milestonesCount,
+            : ''} cast(
+            CASE
+              WHEN w.recordCreate_dateTime = w.recordUpdate_dateTime THEN 0
+              ELSE 1
+            END AS BIT
+          ) AS isUpdated,
+          milestones.milestonesCount,
           milestones.milestonesCompletedCount,
           attachments.attachmentsCount,
           thumbnails.thumbnailAttachmentId,

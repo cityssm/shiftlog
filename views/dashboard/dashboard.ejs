@@ -142,18 +142,10 @@
 <% if (configFunctions.getConfigProperty('workOrders.isEnabled') && user.userProperties.workOrders.canView) { %>
 <div class="columns">
   <div class="column">
-    <details class="panel collapsable-panel is-info" id="panel--workOrderHighlights">
-      <summary class="panel-heading is-clickable">
-        <span class="icon">
-          <i class="fa-solid fa-chevron-right details-chevron"></i>
-        </span>
-        <span class="has-text-weight-semibold mr-2">
-          <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Highlights
-        </span>
-        <% if (overdueWorkOrders.length > 0) { %>
-        <span class="tag is-danger" id="badge--overdueWorkOrderCount--summary"><%= overdueWorkOrders.length %> Overdue</span>
-        <% } %>
-      </summary>
+    <div class="panel  is-info" id="panel--workOrderHighlights">
+      <div class="panel-heading has-text-weight-semibold">
+        <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular') %> Highlights
+      </div>
       <div class="panel-tabs">
         <a class="is-active" data-work-order-type="recent" href="#">
           <span class="icon"><i class="fa-solid fa-clock"></i></span>
@@ -163,6 +155,9 @@
         <a data-work-order-type="overdue" href="#">
           <span class="icon"><i class="fa-solid fa-exclamation-triangle"></i></span>
           <span>Overdue</span>
+          <% if (overdueWorkOrders.length > 0) { %>
+          <span class="tag is-danger" id="badge--overdueWorkOrderCount--summary"><%= overdueWorkOrders.length %></span>
+          <% } %>
         </a>
         <% } %>
       </div>
@@ -172,11 +167,13 @@
         <div class="media">
           <div class="media-left">
             <% if (workOrder.workOrderCloseDateTime) { %>
-            <i class="fa-solid fa-2x fa-circle-check has-text-grey"></i>
+            <span title="Closed"><i class="fa-solid fa-2x fa-stop has-text-grey"></i></span>
             <% } else if (workOrder.workOrderDueDateTime && new Date(workOrder.workOrderDueDateTime) < new Date()) { %>
-            <i class="fa-solid fa-2x fa-exclamation-circle has-text-danger"></i>
+            <span title="Overdue"><i class="fa-solid fa-2x fa-exclamation-triangle has-text-danger"></i></span>
+            <% } else if (workOrder.isUpdated) { %>
+            <span title="Open"><i class="fa-solid fa-2x fa-play has-text-success"></i></span>
             <% } else { %>
-            <i class="fa-solid fa-2x fa-clock-rotate-left has-text-success"></i>
+            <span title="New"><i class="fa-solid fa-2x fa-star has-text-warning"></i></span>
             <% } %>
           </div>
           <div class="media-content">
@@ -221,7 +218,7 @@
       </a>
       <% } %>
       <% } %>
-    </details>
+    </div>
   </div>
   <div class="column">
     <div class="panel">
