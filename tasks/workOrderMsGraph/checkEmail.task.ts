@@ -1,9 +1,12 @@
 /* eslint-disable no-await-in-loop */
+
+import NodeCache from '@cacheable/node-cache'
 import MsGraphMailApi, {
   type MsGraphMailApiConfig,
   type MsGraphMailMessage,
   wellKnownFolderNames
 } from '@cityssm/ms-graph-mail'
+import { minutesToSeconds, secondsInOneHour } from '@cityssm/to-millis'
 import {
   type DateString,
   type TimeString,
@@ -41,6 +44,11 @@ import {
 const msGraphMailConfig = getConfigProperty('connectors.msGraph')
 
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:checkEmail`)
+
+const messageIdCache = new NodeCache({
+  checkperiod: minutesToSeconds(10),
+  stdTTL: secondsInOneHour
+})
 
 const systemUser: User = {
   userName: 'system',
@@ -118,6 +126,22 @@ export async function checkEmail(): Promise<void> {
 
     for (const message of messages) {
       await msGraphApi.markMessageAsRead(message.id)
+
+      /* Archive the message if it has already been processed.
+       * This can happen if the same message is returned by the API in multiple runs of this task before it is archived.
+       */
+
+      if (messageIdCache.has(message.id)) {
+        debug(
+          `Archiving message that has already been processed: ${message.id}`
+        )
+
+        await msGraphApi.archiveMessage(message.id)
+
+        messageIdCache.take(message.id)
+
+        continue
+      }
 
       /*
        * Verify that the message is from an allowed email address before doing any further processing.
@@ -262,6 +286,8 @@ export async function checkEmail(): Promise<void> {
         )
       }
 
+      messageIdCache.set(message.id, true)
+
       /*
        * Save any attachments to the work order
        */
@@ -295,6 +321,8 @@ export async function checkEmail(): Promise<void> {
 
       // Archive the message after processing
       await msGraphApi.archiveMessage(message.id)
+
+      messageIdCache.take(message.id)
     }
   } catch (error) {
     debug('Error checking email:', error)

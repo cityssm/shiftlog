@@ -1,4 +1,6 @@
+import NodeCache from '@cacheable/node-cache';
 import MsGraphMailApi, { wellKnownFolderNames } from '@cityssm/ms-graph-mail';
+import { minutesToSeconds, secondsInOneHour } from '@cityssm/to-millis';
 import { dateToString, dateToTimeString } from '@cityssm/utils-datetime';
 import Debug from 'debug';
 import addWorkOrderSubscriber from '../../database/workOrders/addWorkOrderSubscriber.js';
@@ -17,6 +19,10 @@ import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js';
 import { messageBodyToText, messageSubjectToWorkOrderNumber, messageTextToLocation } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:checkEmail`);
+const messageIdCache = new NodeCache({
+    checkperiod: minutesToSeconds(10),
+    stdTTL: secondsInOneHour
+});
 const systemUser = {
     userName: 'system',
     employeeNumber: '',
@@ -64,6 +70,12 @@ export async function checkEmail() {
         let workOrderType;
         for (const message of messages) {
             await msGraphApi.markMessageAsRead(message.id);
+            if (messageIdCache.has(message.id)) {
+                debug(`Archiving message that has already been processed: ${message.id}`);
+                await msGraphApi.archiveMessage(message.id);
+                messageIdCache.take(message.id);
+                continue;
+            }
             const fromAddressLowerCase = message.from?.emailAddress.address.toLowerCase() ?? '';
             if (fromAddressLowerCase === '' ||
                 !(await fromEmailAddressIsAllowed(fromAddressLowerCase))) {
@@ -132,6 +144,7 @@ export async function checkEmail() {
                     recordCreate_dateTime: receivedDateTime
                 }, fromAddressLowerCase);
             }
+            messageIdCache.set(message.id, true);
             if (workOrder !== undefined) {
                 const attachments = await msGraphApi.listMessageAttachments(message.id);
                 for (const attachment of attachments) {
@@ -148,6 +161,7 @@ export async function checkEmail() {
                 }
             }
             await msGraphApi.archiveMessage(message.id);
+            messageIdCache.take(message.id);
         }
     }
     catch (error) {
