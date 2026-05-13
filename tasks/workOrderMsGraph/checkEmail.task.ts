@@ -16,6 +16,7 @@ import {
 import Debug from 'debug'
 
 import addWorkOrderSubscriber from '../../database/workOrders/addWorkOrderSubscriber.js'
+import checkWorkOrderAttachmentChecksum from '../../database/workOrders/checkWorkOrderAttachmentChecksum.js'
 import createWorkOrder from '../../database/workOrders/createWorkOrder.js'
 import createWorkOrderAttachment from '../../database/workOrders/createWorkOrderAttachment.js'
 import createWorkOrderNote from '../../database/workOrders/createWorkOrderNote.js'
@@ -29,7 +30,12 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
-import { getAttachmentFileNameFromFileName, writeAttachmentToFileSystem } from './helpers/attachment.helpers.js'
+import {
+  attachmentContentBytesToBuffer,
+  attachmentContentBytesToChecksum,
+  getAttachmentFileNameFromFileName,
+  writeAttachmentToFileSystem
+} from './helpers/attachment.helpers.js'
 import {
   getSubscriberEmailAddresses,
   isNoReplyEmailAddress
@@ -299,19 +305,40 @@ export async function checkEmail(): Promise<void> {
           )
 
           for (const attachment of attachments) {
+            const attachmentContentBuffer = attachmentContentBytesToBuffer(
+              attachment.contentBytes
+            )
+
+            const attachmentChecksum = attachmentContentBytesToChecksum(
+              attachmentContentBuffer
+            )
+
+            const attachmentAlreadyExists =
+              await checkWorkOrderAttachmentChecksum(
+                workOrder.workOrderId,
+                attachmentChecksum
+              )
+
+            // eslint-disable-next-line max-depth
+            if (attachmentAlreadyExists) {
+              debug(
+                `Attachment with checksum ${attachmentChecksum} already exists for work order ${workOrder.workOrderId}. Skipping attachment.`
+              )
+
+              continue
+            }
+
             const attachmentFileName = getAttachmentFileNameFromFileName(
               attachment.name
             )
 
-            const storagePaths = getAttachmentStoragePathForFileName(
-              attachmentFileName
-            )
+            const storagePaths =
+              getAttachmentStoragePathForFileName(attachmentFileName)
 
             const fileSize = await writeAttachmentToFileSystem(
               storagePaths.filePath,
-              attachment.contentBytes
+              attachmentContentBuffer
             )
-
 
             await createWorkOrderAttachment(
               {
@@ -320,7 +347,8 @@ export async function checkEmail(): Promise<void> {
                 attachmentFileType: attachment.contentType,
                 attachmentFileSizeInBytes: fileSize,
                 attachmentDescription: `Attachment from email received on ${receivedDateTimeString}`,
-                fileSystemPath: storagePaths.fileSystemPath
+                fileSystemPath: storagePaths.fileSystemPath,
+                fileChecksum: attachmentChecksum
               },
               fromAddressLowerCase
             )

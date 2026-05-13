@@ -1,10 +1,28 @@
+import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
+
+export function attachmentContentBytesToBuffer(
+  attachmentContentBytes: string
+): Buffer {
+  return Buffer.from(attachmentContentBytes, 'base64')
+}
+
+export function attachmentContentBytesToChecksum(
+  attachmentContentBuffer: Buffer
+): string {
+  const checksum = crypto
+    .createHash('sha256')
+    .update(attachmentContentBuffer)
+    .digest('hex')
+
+  return checksum
+}
 
 export async function writeAttachmentToFileSystem(
   filePath: string,
-  attachmentContentBytes: string
+  attachmentContentBuffer: Buffer
 ): Promise<number> {
-  const attachmentContentBuffer = Buffer.from(attachmentContentBytes, 'base64')
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   await fs.writeFile(filePath, attachmentContentBuffer)
 
   const stats = await fs.stat(filePath)

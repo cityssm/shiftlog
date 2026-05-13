@@ -11,6 +11,8 @@ export interface CreateWorkOrderAttachmentForm {
   attachmentFileSizeInBytes: number
   attachmentDescription?: string
   fileSystemPath: string
+
+  fileChecksum?: string
 }
 
 export default async function createWorkOrderAttachment(
@@ -33,6 +35,7 @@ export default async function createWorkOrderAttachment(
     .input('attachmentFileSizeInBytes', form.attachmentFileSizeInBytes)
     .input('attachmentDescription', form.attachmentDescription ?? '')
     .input('fileSystemPath', form.fileSystemPath)
+    .input('fileChecksum', form.fileChecksum ?? '')
     .input('userName', userName)
     // eslint-disable-next-line no-secrets/no-secrets
     .query<{ workOrderAttachmentId: number }>(/* sql */ `
@@ -44,6 +47,7 @@ export default async function createWorkOrderAttachment(
           attachmentFileSizeInBytes,
           attachmentDescription,
           fileSystemPath,
+          fileChecksum,
           recordCreate_userName,
           recordUpdate_userName
         ) output inserted.workOrderAttachmentId
@@ -55,6 +59,7 @@ export default async function createWorkOrderAttachment(
           @attachmentFileSizeInBytes,
           @attachmentDescription,
           @fileSystemPath,
+          @fileChecksum,
           @userName,
           @userName
         )

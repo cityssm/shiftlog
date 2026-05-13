@@ -15,6 +15,7 @@ export default async function createWorkOrderAttachment(form, userName) {
         .input('attachmentFileSizeInBytes', form.attachmentFileSizeInBytes)
         .input('attachmentDescription', form.attachmentDescription ?? '')
         .input('fileSystemPath', form.fileSystemPath)
+        .input('fileChecksum', form.fileChecksum ?? '')
         .input('userName', userName)
         .query(`
       INSERT INTO
@@ -25,6 +26,7 @@ export default async function createWorkOrderAttachment(form, userName) {
           attachmentFileSizeInBytes,
           attachmentDescription,
           fileSystemPath,
+          fileChecksum,
           recordCreate_userName,
           recordUpdate_userName
         ) output inserted.workOrderAttachmentId
@@ -36,6 +38,7 @@ export default async function createWorkOrderAttachment(form, userName) {
           @attachmentFileSizeInBytes,
           @attachmentDescription,
           @fileSystemPath,
+          @fileChecksum,
           @userName,
           @userName
         )

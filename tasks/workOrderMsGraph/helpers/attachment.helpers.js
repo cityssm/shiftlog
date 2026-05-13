@@ -1,6 +1,16 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
-export async function writeAttachmentToFileSystem(filePath, attachmentContentBytes) {
-    const attachmentContentBuffer = Buffer.from(attachmentContentBytes, 'base64');
+export function attachmentContentBytesToBuffer(attachmentContentBytes) {
+    return Buffer.from(attachmentContentBytes, 'base64');
+}
+export function attachmentContentBytesToChecksum(attachmentContentBuffer) {
+    const checksum = crypto
+        .createHash('sha256')
+        .update(attachmentContentBuffer)
+        .digest('hex');
+    return checksum;
+}
+export async function writeAttachmentToFileSystem(filePath, attachmentContentBuffer) {
     await fs.writeFile(filePath, attachmentContentBuffer);
     const stats = await fs.stat(filePath);
     return stats.size;
