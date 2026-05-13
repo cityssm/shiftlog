@@ -5,7 +5,6 @@ import type { WorkOrderMilestone } from '../../types/record.types.js'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Works on client side.
 export type DoGetWorkOrderMilestonesResponse = {
-  success: true
   milestones: WorkOrderMilestone[]
 }
 
@@ -16,7 +15,6 @@ export default async function handler(
   const milestones = await getWorkOrderMilestones(request.params.workOrderId)
 
   response.json({
-    success: true,
     milestones
   })
 }
