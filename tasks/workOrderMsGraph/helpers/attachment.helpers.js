@@ -5,3 +5,11 @@ export async function writeAttachmentToFileSystem(filePath, attachmentContentByt
     const stats = await fs.stat(filePath);
     return stats.size;
 }
+export function getAttachmentFileNameFromFileName(fileName) {
+    if (fileName.length > 500) {
+        const extensionIndex = fileName.lastIndexOf('.');
+        const extension = extensionIndex === -1 ? '' : fileName.slice(Math.max(0, extensionIndex));
+        return fileName.slice(0, Math.max(0, 500 - extension.length)) + extension;
+    }
+    return fileName;
+}

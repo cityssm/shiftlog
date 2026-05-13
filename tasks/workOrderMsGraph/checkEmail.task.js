@@ -13,7 +13,7 @@ import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.j
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
-import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
+import { getAttachmentFileNameFromFileName, writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
 import { getSubscriberEmailAddresses, isNoReplyEmailAddress } from './helpers/emailAddress.helpers.js';
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js';
 import { messageBodyToText, messageSubjectToWorkOrderNumber, messageTextToLocation } from './helpers/messageText.helpers.js';
@@ -149,11 +149,12 @@ export async function checkEmail() {
                 try {
                     const attachments = await msGraphApi.listMessageAttachments(message.id);
                     for (const attachment of attachments) {
-                        const storagePaths = getAttachmentStoragePathForFileName(attachment.name);
+                        const attachmentFileName = getAttachmentFileNameFromFileName(attachment.name);
+                        const storagePaths = getAttachmentStoragePathForFileName(attachmentFileName);
                         const fileSize = await writeAttachmentToFileSystem(storagePaths.filePath, attachment.contentBytes);
                         await createWorkOrderAttachment({
                             workOrderId: workOrder.workOrderId,
-                            attachmentFileName: attachment.name,
+                            attachmentFileName: attachmentFileName,
                             attachmentFileType: attachment.contentType,
                             attachmentFileSizeInBytes: fileSize,
                             attachmentDescription: `Attachment from email received on ${receivedDateTimeString}`,

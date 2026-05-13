@@ -29,7 +29,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
 
-import { writeAttachmentToFileSystem } from './helpers/attachment.helpers.js'
+import { getAttachmentFileNameFromFileName, writeAttachmentToFileSystem } from './helpers/attachment.helpers.js'
 import {
   getSubscriberEmailAddresses,
   isNoReplyEmailAddress
@@ -299,8 +299,12 @@ export async function checkEmail(): Promise<void> {
           )
 
           for (const attachment of attachments) {
-            const storagePaths = getAttachmentStoragePathForFileName(
+            const attachmentFileName = getAttachmentFileNameFromFileName(
               attachment.name
+            )
+
+            const storagePaths = getAttachmentStoragePathForFileName(
+              attachmentFileName
             )
 
             const fileSize = await writeAttachmentToFileSystem(
@@ -308,10 +312,11 @@ export async function checkEmail(): Promise<void> {
               attachment.contentBytes
             )
 
+
             await createWorkOrderAttachment(
               {
                 workOrderId: workOrder.workOrderId,
-                attachmentFileName: attachment.name,
+                attachmentFileName: attachmentFileName,
                 attachmentFileType: attachment.contentType,
                 attachmentFileSizeInBytes: fileSize,
                 attachmentDescription: `Attachment from email received on ${receivedDateTimeString}`,
