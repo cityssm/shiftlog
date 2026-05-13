@@ -146,18 +146,23 @@ export async function checkEmail() {
             }
             messageIdCache.set(message.id, true);
             if (workOrder !== undefined) {
-                const attachments = await msGraphApi.listMessageAttachments(message.id);
-                for (const attachment of attachments) {
-                    const storagePaths = getAttachmentStoragePathForFileName(attachment.name);
-                    const fileSize = await writeAttachmentToFileSystem(storagePaths.filePath, attachment.contentBytes);
-                    await createWorkOrderAttachment({
-                        workOrderId: workOrder.workOrderId,
-                        attachmentFileName: attachment.name,
-                        attachmentFileType: attachment.contentType,
-                        attachmentFileSizeInBytes: fileSize,
-                        attachmentDescription: `Attachment from email received on ${receivedDateTimeString}`,
-                        fileSystemPath: storagePaths.fileSystemPath
-                    }, fromAddressLowerCase);
+                try {
+                    const attachments = await msGraphApi.listMessageAttachments(message.id);
+                    for (const attachment of attachments) {
+                        const storagePaths = getAttachmentStoragePathForFileName(attachment.name);
+                        const fileSize = await writeAttachmentToFileSystem(storagePaths.filePath, attachment.contentBytes);
+                        await createWorkOrderAttachment({
+                            workOrderId: workOrder.workOrderId,
+                            attachmentFileName: attachment.name,
+                            attachmentFileType: attachment.contentType,
+                            attachmentFileSizeInBytes: fileSize,
+                            attachmentDescription: `Attachment from email received on ${receivedDateTimeString}`,
+                            fileSystemPath: storagePaths.fileSystemPath
+                        }, fromAddressLowerCase);
+                    }
+                }
+                catch (error) {
+                    debug(`Error processing attachments for message ${message.id}:`, error);
                 }
             }
             await msGraphApi.archiveMessage(message.id);
