@@ -79,6 +79,10 @@ declare const bulmaJS: BulmaJS
     return 'fa-file'
   }
 
+  function hasFileChecksum(fileChecksum: string): boolean {
+    return fileChecksum.trim() !== ''
+  }
+
   function renderAttachments(attachments: WorkOrderAttachment[]): void {
     // Update attachments count
     const attachmentsCountElement = document.querySelector('#attachmentsCount')
@@ -115,6 +119,7 @@ declare const bulmaJS: BulmaJS
         attachment.ignoredAttachmentNoteText !== undefined &&
         attachment.ignoredAttachmentNoteText !== null &&
         attachment.ignoredAttachmentNoteText !== ''
+      const hasChecksum = hasFileChecksum(attachment.fileChecksum)
 
       const ignoredAttachmentTagHTML = hasIgnoredAttachmentNote
         ? /* html */ `
@@ -137,7 +142,7 @@ declare const bulmaJS: BulmaJS
 
       if (
         userCanIgnoreAttachmentsInFuture &&
-        attachment.fileChecksum !== '' &&
+        hasChecksum &&
         !hasIgnoredAttachmentNote
       ) {
         ignoreAttachmentButtonHTML = /* html */ `
@@ -361,9 +366,13 @@ declare const bulmaJS: BulmaJS
     function doIgnoreAttachment(submitEvent: Event): void {
       submitEvent.preventDefault()
       const formElement = submitEvent.currentTarget as HTMLFormElement
-      const submitButton = formElement.querySelector(
-        'button[type="submit"]'
-      ) as HTMLButtonElement
+      const submitButton = document.querySelector(
+        '#button--submitIgnoreAttachment'
+      ) as HTMLButtonElement | null
+
+      if (submitButton === null) {
+        return
+      }
 
       submitButton.disabled = true
       submitButton.classList.add('is-loading')

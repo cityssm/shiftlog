@@ -1,6 +1,7 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
+import type { DoAddIgnoredAttachmentChecksumResponse } from '../../handlers/admin-post/doAddIgnoredAttachmentChecksum.js'
 import type { DoDeleteIgnoredAttachmentChecksumResponse } from '../../handlers/admin-post/doDeleteIgnoredAttachmentChecksum.js'
 
 import type { ShiftLogGlobal } from './types.js'
@@ -13,6 +14,51 @@ declare const exports: {
 }
 
 ;(() => {
+  function addIgnoredAttachment(submitEvent: Event): void {
+    submitEvent.preventDefault()
+
+    const formElement = submitEvent.currentTarget as HTMLFormElement
+    const submitButton = document.querySelector(
+      '#button--submitAddIgnoredAttachment'
+    ) as HTMLButtonElement | null
+
+    if (submitButton === null) {
+      return
+    }
+
+    submitButton.disabled = true
+    submitButton.classList.add('is-loading')
+
+    cityssm.postJSON(
+      `${exports.shiftLog.urlPrefix}/admin/doAddIgnoredAttachmentChecksum`,
+      formElement,
+      (rawResponseJSON) => {
+        const responseJSON =
+          rawResponseJSON as DoAddIgnoredAttachmentChecksumResponse
+
+        submitButton.disabled = false
+        submitButton.classList.remove('is-loading')
+
+        if (responseJSON.success) {
+          bulmaJS.alert({
+            contextualColorName: 'success',
+            message: 'Checksum added to ignored attachments.',
+            okButton: {
+              callbackFunction() {
+                globalThis.location.reload()
+              }
+            }
+          })
+        } else {
+          bulmaJS.alert({
+            contextualColorName: 'danger',
+            message: responseJSON.message
+          })
+        }
+      }
+    )
+  }
+
   function removeIgnoredAttachment(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
     const fileChecksum = buttonElement.dataset.fileChecksum
@@ -83,4 +129,8 @@ declare const exports: {
   )) {
     buttonElement.addEventListener('click', removeIgnoredAttachment)
   }
+
+  document
+    .querySelector('#form--addIgnoredAttachment')
+    ?.addEventListener('submit', addIgnoredAttachment)
 })()

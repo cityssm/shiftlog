@@ -37,6 +37,9 @@
         }
         return 'fa-file';
     }
+    function hasFileChecksum(fileChecksum) {
+        return fileChecksum.trim() !== '';
+    }
     function renderAttachments(attachments) {
         const attachmentsCountElement = document.querySelector('#attachmentsCount');
         if (attachmentsCountElement !== null) {
@@ -64,6 +67,7 @@
             const hasIgnoredAttachmentNote = attachment.ignoredAttachmentNoteText !== undefined &&
                 attachment.ignoredAttachmentNoteText !== null &&
                 attachment.ignoredAttachmentNoteText !== '';
+            const hasChecksum = hasFileChecksum(attachment.fileChecksum);
             const ignoredAttachmentTagHTML = hasIgnoredAttachmentNote
                 ? `
           <button
@@ -82,7 +86,7 @@
                 : '';
             let ignoreAttachmentButtonHTML = '';
             if (userCanIgnoreAttachmentsInFuture &&
-                attachment.fileChecksum !== '' &&
+                hasChecksum &&
                 !hasIgnoredAttachmentNote) {
                 ignoreAttachmentButtonHTML = `
           <div class="dropdown is-right">
@@ -264,7 +268,10 @@
         function doIgnoreAttachment(submitEvent) {
             submitEvent.preventDefault();
             const formElement = submitEvent.currentTarget;
-            const submitButton = formElement.querySelector('button[type="submit"]');
+            const submitButton = document.querySelector('#button--submitIgnoreAttachment');
+            if (submitButton === null) {
+                return;
+            }
             submitButton.disabled = true;
             submitButton.classList.add('is-loading');
             cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doIgnoreWorkOrderAttachment`, formElement, (rawResponseJSON) => {

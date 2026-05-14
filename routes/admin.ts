@@ -22,6 +22,7 @@ import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js'
 import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.js'
 import handler_doAddEmployeeListMember from '../handlers/admin-post/doAddEmployeeListMember.js'
 import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js'
+import handler_doAddIgnoredAttachmentChecksum from '../handlers/admin-post/doAddIgnoredAttachmentChecksum.js'
 import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js'
 import handler_doAddMultipleDataListItems from '../handlers/admin-post/doAddMultipleDataListItems.js'
 import handler_doAddNoteType from '../handlers/admin-post/doAddNoteType.js'
@@ -168,6 +169,10 @@ if (getConfigProperty('workOrders.isEnabled')) {
     .post('/doDeleteWorkOrderType', handler_doDeleteWorkOrderType)
     .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes)
     .get('/ignoredAttachments', handler_ignoredAttachments)
+    .post(
+      '/doAddIgnoredAttachmentChecksum',
+      handler_doAddIgnoredAttachmentChecksum
+    )
     .post(
       '/doDeleteIgnoredAttachmentChecksum',
       handler_doDeleteIgnoredAttachmentChecksum

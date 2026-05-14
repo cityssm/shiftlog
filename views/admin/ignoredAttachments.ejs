@@ -35,6 +35,63 @@
       </div>
     </div>
 
+    <form id="form--addIgnoredAttachment" class="box">
+      <h2 class="title is-4">Add Ignored Attachment Checksum</h2>
+      <div class="columns is-multiline">
+        <div class="column is-full-tablet is-two-thirds-desktop">
+          <div class="field">
+            <label class="label" for="addIgnoredAttachment--fileChecksum">
+              Checksum
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="addIgnoredAttachment--fileChecksum"
+                name="fileChecksum"
+                type="text"
+                maxlength="64"
+                minlength="64"
+                pattern="[A-Fa-f\d]{64}"
+                autocomplete="off"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        <div class="column is-full-tablet is-one-third-desktop">
+          <div class="field">
+            <label class="label" for="addIgnoredAttachment--noteText">Note</label>
+            <div class="control">
+              <input
+                class="input"
+                id="addIgnoredAttachment--noteText"
+                name="noteText"
+                type="text"
+                maxlength="4000"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        <div class="column is-full">
+          <div class="field">
+            <div class="control">
+              <button
+                class="button is-primary"
+                id="button--submitAddIgnoredAttachment"
+                type="submit"
+              >
+                <span class="icon is-small">
+                  <i class="fa-solid fa-plus"></i>
+                </span>
+                <span>Add Ignored Checksum</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
     <div id="container--ignoredAttachments">
       <% if (ignoredAttachmentChecksums.length === 0) { %>
       <div class="message is-info" id="message--noIgnoredAttachments">
