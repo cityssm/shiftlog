@@ -35,6 +35,8 @@ export default async function ignoreWorkOrderAttachment(workOrderAttachmentId, n
         FROM
           ShiftLog.IgnoredAttachmentChecksums
         WHERE
+          instance = @instance
+          AND
           fileChecksum = @fileChecksum
       )
       BEGIN
@@ -46,12 +48,15 @@ export default async function ignoreWorkOrderAttachment(workOrderAttachmentId, n
           recordDelete_userName = NULL,
           recordDelete_dateTime = NULL
         WHERE
+          instance = @instance
+          AND
           fileChecksum = @fileChecksum
       END
       ELSE
       BEGIN
         INSERT INTO
           ShiftLog.IgnoredAttachmentChecksums (
+            instance,
             fileChecksum,
             noteText,
             recordCreate_userName,
@@ -61,6 +66,7 @@ export default async function ignoreWorkOrderAttachment(workOrderAttachmentId, n
           )
         VALUES
           (
+            @instance,
             @fileChecksum,
             @noteText,
             @userName,

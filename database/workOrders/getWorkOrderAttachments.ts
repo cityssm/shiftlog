@@ -34,6 +34,7 @@ export default async function getWorkOrderAttachments(
         ShiftLog.WorkOrderAttachments wao
         LEFT OUTER JOIN ShiftLog.IgnoredAttachmentChecksums iac ON
           wao.fileChecksum = iac.fileChecksum
+          AND iac.instance = @instance
           AND iac.recordDelete_dateTime IS NULL
       WHERE
         wao.workOrderId = @workOrderId

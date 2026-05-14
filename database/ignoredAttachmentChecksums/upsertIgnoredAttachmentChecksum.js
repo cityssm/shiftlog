@@ -1,9 +1,11 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function upsertIgnoredAttachmentChecksum(fileChecksum, noteText, userName) {
     const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
         .input('fileChecksum', fileChecksum)
+        .input('instance', getConfigProperty('application.instance'))
         .input('noteText', noteText)
         .input('userName', userName)
         .query(`
@@ -13,6 +15,8 @@ export default async function upsertIgnoredAttachmentChecksum(fileChecksum, note
         FROM
           ShiftLog.IgnoredAttachmentChecksums
         WHERE
+          instance = @instance
+          AND
           fileChecksum = @fileChecksum
       )
       BEGIN
@@ -24,12 +28,15 @@ export default async function upsertIgnoredAttachmentChecksum(fileChecksum, note
           recordDelete_userName = NULL,
           recordDelete_dateTime = NULL
         WHERE
+          instance = @instance
+          AND
           fileChecksum = @fileChecksum
       END
       ELSE
       BEGIN
         INSERT INTO
           ShiftLog.IgnoredAttachmentChecksums (
+            instance,
             fileChecksum,
             noteText,
             recordCreate_userName,
@@ -39,6 +46,7 @@ export default async function upsertIgnoredAttachmentChecksum(fileChecksum, note
           )
         VALUES
           (
+            @instance,
             @fileChecksum,
             @noteText,
             @userName,

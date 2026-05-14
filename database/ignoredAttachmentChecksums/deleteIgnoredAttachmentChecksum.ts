@@ -1,3 +1,4 @@
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export default async function deleteIgnoredAttachmentChecksum(
@@ -9,6 +10,7 @@ export default async function deleteIgnoredAttachmentChecksum(
   const result = await pool
     .request()
     .input('fileChecksum', fileChecksum)
+    .input('instance', getConfigProperty('application.instance'))
     .input('userName', userName)
     // eslint-disable-next-line no-secrets/no-secrets
     .query(/* sql */ `
@@ -19,6 +21,8 @@ export default async function deleteIgnoredAttachmentChecksum(
         recordUpdate_userName = @userName,
         recordUpdate_dateTime = getdate()
       WHERE
+        instance = @instance
+        AND
         fileChecksum = @fileChecksum
         AND recordDelete_dateTime IS NULL
     `)
