@@ -65,7 +65,10 @@ declare const bulmaJS: BulmaJS
 
   if (workOrderDetailsTextareaElement !== null) {
     shiftLog.initializeMarkdownTextarea(workOrderDetailsTextareaElement, {
-      showMarkdownTab: workOrderDetailsTextareaElement.readOnly
+      showMarkdownTab:
+        (document
+          .querySelector('#workOrder--workOrderId')
+          ?.getAttribute('value') ?? '') !== ''
     })
   }
 
@@ -94,7 +97,8 @@ declare const bulmaJS: BulmaJS
                 workOrderId: workOrderIdElement.value
               },
               (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoReopenWorkOrderResponse
+                const responseJSON =
+                  rawResponseJSON as DoReopenWorkOrderResponse
                 if (responseJSON.success) {
                   globalThis.location.href = responseJSON.redirectUrl
                 } else {

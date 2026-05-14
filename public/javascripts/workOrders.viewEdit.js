@@ -25,7 +25,9 @@
     const workOrderDetailsTextareaElement = document.querySelector('#workOrder--workOrderDetails');
     if (workOrderDetailsTextareaElement !== null) {
         shiftLog.initializeMarkdownTextarea(workOrderDetailsTextareaElement, {
-            showMarkdownTab: workOrderDetailsTextareaElement.readOnly
+            showMarkdownTab: (document
+                .querySelector('#workOrder--workOrderId')
+                ?.getAttribute('value') ?? '') !== ''
         });
     }
     const reopenWorkOrderButton = document.querySelector('#button--reopenWorkOrder');
