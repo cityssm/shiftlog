@@ -14,11 +14,11 @@ export default async function getWorkOrderAttachmentsByChecksums(
   const request = pool.request().input('instance', getConfigProperty('application.instance'))
 
   // Add each checksum as a parameter
-  const paramNames: string[] = []
+  const parameterNames: string[] = []
   for (const [index, checksum] of fileChecksums.entries()) {
-    const paramName = `checksum${index}`
-    request.input(paramName, checksum)
-    paramNames.push(`@${paramName}`)
+    const parameterName = `checksum${index}`
+    request.input(parameterName, checksum)
+    parameterNames.push(`@${parameterName}`)
   }
 
   const result = await request.query<WorkOrderAttachment>(/* sql */ `
@@ -41,7 +41,7 @@ export default async function getWorkOrderAttachmentsByChecksums(
     FROM
       ShiftLog.WorkOrderAttachments
     WHERE
-      fileChecksum IN (${paramNames.join(', ')})
+      fileChecksum IN (${parameterNames.join(', ')})
       AND recordDelete_dateTime IS NULL
       AND workOrderId IN (
         SELECT
