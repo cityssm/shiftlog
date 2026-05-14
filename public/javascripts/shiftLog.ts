@@ -372,10 +372,11 @@ declare const exports: {
     const previewPanelId = `${textareaId}--previewPanel`
 
     const tabsElement = document.createElement('div')
-    tabsElement.className = 'tabs is-boxed is-small mb-0'
+    tabsElement.className = 'tabs is-boxed is-small is-centered mb-0'
+
     // eslint-disable-next-line no-unsanitized/property
     tabsElement.innerHTML = /* html */ `
-      <ul>
+      <ul style="border-bottom: 0">
         <li class="${showMarkdownTab ? '' : 'is-active'}" data-panel-id="${textPanelId}">
           <a href="#">
             <span class="icon is-small"><i class="fa-solid fa-pencil"></i></span>
@@ -400,8 +401,8 @@ declare const exports: {
       textareaParentElement.classList.add('is-hidden')
     }
 
-    textareaParentElement.insertAdjacentElement('beforebegin', tabsElement)
-    textareaParentElement.insertAdjacentElement('afterend', previewPanelElement)
+    textareaParentElement.before(tabsElement)
+    textareaParentElement.after(previewPanelElement)
 
     if (showMarkdownTab) {
       previewPanelElement.innerHTML = DOMPurify.sanitize(
