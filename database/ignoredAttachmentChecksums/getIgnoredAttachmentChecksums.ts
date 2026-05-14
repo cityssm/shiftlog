@@ -8,6 +8,7 @@ export default async function getIgnoredAttachmentChecksums(): Promise<
 
   const result = await pool
     .request()
+    // eslint-disable-next-line no-secrets/no-secrets
     .query<IgnoredAttachmentChecksum>(/* sql */ `
       SELECT
         fileChecksum,

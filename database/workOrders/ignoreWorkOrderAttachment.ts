@@ -14,6 +14,7 @@ export default async function ignoreWorkOrderAttachment(
     .input('noteText', noteText)
     .input('userName', userName)
     .input('workOrderAttachmentId', workOrderAttachmentId)
+    // eslint-disable-next-line no-secrets/no-secrets
     .query<{ success: boolean }>(/* sql */ `
       DECLARE @fileChecksum CHAR(64)
 
@@ -79,5 +80,5 @@ export default async function ignoreWorkOrderAttachment(
       SELECT CAST(1 AS bit) AS success
     `)
 
-  return Boolean(result.recordset[0]?.success)
+  return result.recordset[0].success
 }

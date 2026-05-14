@@ -10,6 +10,7 @@ export default async function deleteIgnoredAttachmentChecksum(
     .request()
     .input('fileChecksum', fileChecksum)
     .input('userName', userName)
+    // eslint-disable-next-line no-secrets/no-secrets
     .query(/* sql */ `
       UPDATE ShiftLog.IgnoredAttachmentChecksums
       SET

@@ -11,6 +11,7 @@ export default async function getWorkOrderAttachments(
     .request()
     .input('workOrderId', workOrderId)
     .input('instance', getConfigProperty('application.instance'))
+    // eslint-disable-next-line no-secrets/no-secrets
     .query<WorkOrderAttachment>(/* sql */ `
       SELECT
         workOrderAttachmentId,

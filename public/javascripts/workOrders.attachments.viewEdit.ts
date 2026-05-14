@@ -111,6 +111,67 @@ declare const bulmaJS: BulmaJS
 
       const fileIcon = getFileIcon(attachment.attachmentFileType)
       const isImage = attachment.attachmentFileType.startsWith('image/')
+      const hasIgnoredAttachmentNote =
+        attachment.ignoredAttachmentNoteText !== undefined &&
+        attachment.ignoredAttachmentNoteText !== null &&
+        attachment.ignoredAttachmentNoteText !== ''
+
+       
+      const ignoredAttachmentTagHTML = hasIgnoredAttachmentNote
+        ? /* html */ `
+          <button
+            class="tag is-warning is-light ml-1 ignored-attachment-tag"
+            data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
+            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
+            type="button"
+            title="Attachment is ignored in future imports"
+          >
+            <span class="icon is-small">
+              <i class="fa-solid fa-ban"></i>
+            </span>
+            <span>Ignored in Future</span>
+          </button>
+        `
+        : ''
+
+      let ignoreAttachmentButtonHTML = ''
+
+      if (
+        userCanIgnoreAttachmentsInFuture &&
+        attachment.fileChecksum !== '' &&
+        !hasIgnoredAttachmentNote
+      ) {
+         
+        ignoreAttachmentButtonHTML = /* html */ `
+          <div class="dropdown is-right is-hoverable">
+            <div class="dropdown-trigger">
+              <button
+                class="button is-small is-light"
+                type="button"
+                title="More Actions"
+              >
+                <span class="icon is-small">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu">
+              <div class="dropdown-content">
+                <button
+                  class="dropdown-item ignore-attachment"
+                  data-attachment-id="${attachment.workOrderAttachmentId}"
+                  type="button"
+                >
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-ban"></i>
+                  </span>
+                  <span>Ignore Attachment in Future</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `
+      }
 
       // eslint-disable-next-line no-unsanitized/property
       attachmentElement.innerHTML = /* html */ `
@@ -167,24 +228,7 @@ declare const bulmaJS: BulmaJS
                       `
                       : ''
                   }
-                  ${
-                    attachment.ignoredAttachmentNoteText
-                      ? /* html */ `
-                          <button
-                            class="tag is-warning is-light ml-1 ignored-attachment-tag"
-                            data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
-                            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
-                            type="button"
-                            title="Attachment is ignored in future imports"
-                          >
-                            <span class="icon is-small">
-                              <i class="fa-solid fa-ban"></i>
-                            </span>
-                            <span>Ignored in Future</span>
-                          </button>
-                        `
-                      : ''
-                  }
+                  ${ignoredAttachmentTagHTML}
                 </strong>
                 <br />
                 <small class="has-text-grey">
@@ -236,41 +280,7 @@ declare const bulmaJS: BulmaJS
                       </span>
                       <span>Edit Description</span>
                     </button>
-                     ${
-                       userCanIgnoreAttachmentsInFuture &&
-                       attachment.fileChecksum !== '' &&
-                       !attachment.ignoredAttachmentNoteText
-                         ? /* html */ `
-                             <div class="dropdown is-right is-hoverable">
-                               <div class="dropdown-trigger">
-                                 <button
-                                   class="button is-small is-light"
-                                   type="button"
-                                   title="More Actions"
-                                 >
-                                   <span class="icon is-small">
-                                     <i class="fa-solid fa-ellipsis-vertical"></i>
-                                   </span>
-                                 </button>
-                               </div>
-                               <div class="dropdown-menu">
-                                 <div class="dropdown-content">
-                                   <button
-                                     class="dropdown-item ignore-attachment"
-                                     data-attachment-id="${attachment.workOrderAttachmentId}"
-                                     type="button"
-                                   >
-                                     <span class="icon is-small">
-                                       <i class="fa-solid fa-ban"></i>
-                                     </span>
-                                     <span>Ignore Attachment in Future</span>
-                                   </button>
-                                 </div>
-                               </div>
-                             </div>
-                           `
-                         : ''
-                     }
+                    ${ignoreAttachmentButtonHTML}
                     <button
                       class="button is-small is-light is-danger delete-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
@@ -279,9 +289,9 @@ declare const bulmaJS: BulmaJS
                     >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
                     </button>
-                   </div>
-                 </div>
-               `
+                  </div>
+                </div>
+              `
               : ''
           }
         </article>
@@ -423,12 +433,16 @@ declare const bulmaJS: BulmaJS
   }
 
   function showIgnoredAttachmentModal(noteText: string, fileChecksum: string): void {
+    // eslint-disable-next-line no-secrets/no-secrets
+    const fileChecksumSelector = '#viewIgnoredWorkOrderAttachment--fileChecksum'
+
     cityssm.openHtmlModal('workOrders-viewIgnoredAttachment', {
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      },
       onshow(modalElement) {
         ;(
-          modalElement.querySelector(
-            '#viewIgnoredWorkOrderAttachment--fileChecksum'
-          ) as HTMLElement
+          modalElement.querySelector(fileChecksumSelector) as HTMLElement
         ).textContent = fileChecksum
 
         ;(
@@ -438,9 +452,6 @@ declare const bulmaJS: BulmaJS
         ).textContent = noteText
       },
       onshown() {
-        bulmaJS.toggleHtmlClipped()
-      },
-      onremoved() {
         bulmaJS.toggleHtmlClipped()
       }
     })
@@ -485,8 +496,8 @@ declare const bulmaJS: BulmaJS
         .fetch(
           `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUploadWorkOrderAttachment`,
           {
-            method: 'POST',
-            body: formData
+            body: formData,
+            method: 'POST'
           }
         )
         .then(
