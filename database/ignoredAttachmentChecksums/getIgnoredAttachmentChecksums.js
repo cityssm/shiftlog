@@ -17,8 +17,7 @@ export default async function getIgnoredAttachmentChecksums() {
         ShiftLog.IgnoredAttachmentChecksums
       WHERE
         instance = @instance
-        AND
-        recordDelete_dateTime IS NULL
+        AND recordDelete_dateTime IS NULL
       ORDER BY
         recordUpdate_dateTime DESC
     `);

@@ -11,7 +11,9 @@ export default async function getWorkOrderAttachmentsByChecksums(
 
   const pool = await getShiftLogConnectionPool()
 
-  const request = pool.request().input('instance', getConfigProperty('application.instance'))
+  const request = pool
+    .request()
+    .input('instance', getConfigProperty('application.instance'))
 
   // Add each checksum as a parameter
   const parameterNames: string[] = []
@@ -53,7 +55,8 @@ export default async function getWorkOrderAttachmentsByChecksums(
           AND instance = @instance
       )
     ORDER BY
-      fileChecksum, recordCreate_dateTime DESC
+      fileChecksum,
+      recordCreate_dateTime DESC
   `)
 
   // Create a map indexed by checksum, keeping only the first (most recent) attachment per checksum
