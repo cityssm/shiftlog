@@ -4,6 +4,7 @@
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
     const attachmentsContainerElement = document.querySelector('#container--attachments');
+    const userCanIgnoreAttachmentsInFuture = exports.shiftLog.isAdmin && exports.shiftLog.userCanManageWorkOrders;
     if (attachmentsContainerElement === null) {
         return;
     }
@@ -36,6 +37,9 @@
         }
         return 'fa-file';
     }
+    function hasFileChecksum(fileChecksum) {
+        return fileChecksum.trim() !== '';
+    }
     function renderAttachments(attachments) {
         const attachmentsCountElement = document.querySelector('#attachmentsCount');
         if (attachmentsCountElement !== null) {
@@ -60,6 +64,60 @@
                     attachment.recordCreate_userName === exports.shiftLog.userName);
             const fileIcon = getFileIcon(attachment.attachmentFileType);
             const isImage = attachment.attachmentFileType.startsWith('image/');
+            const hasIgnoredAttachmentNote = attachment.ignoredAttachmentNoteText !== undefined &&
+                attachment.ignoredAttachmentNoteText !== null &&
+                attachment.ignoredAttachmentNoteText !== '';
+            const hasChecksum = hasFileChecksum(attachment.fileChecksum);
+            const ignoredAttachmentTagHTML = hasIgnoredAttachmentNote
+                ? `
+          <button
+            class="tag is-warning is-light ml-1 ignored-attachment-tag"
+            data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
+            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
+            type="button"
+            title="Attachment is ignored in future imports"
+          >
+            <span class="icon is-small">
+              <i class="fa-solid fa-ban"></i>
+            </span>
+            <span>Ignored in Future</span>
+          </button>
+        `
+                : '';
+            let ignoreAttachmentButtonHTML = '';
+            if (userCanIgnoreAttachmentsInFuture &&
+                hasChecksum &&
+                !hasIgnoredAttachmentNote) {
+                ignoreAttachmentButtonHTML = `
+          <div class="dropdown is-right">
+            <div class="dropdown-trigger">
+              <button
+                class="button is-small"
+                type="button"
+                title="More Actions"
+              >
+                <span class="icon is-small">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu">
+              <div class="dropdown-content">
+                <button
+                  class="dropdown-item ignore-attachment"
+                  data-attachment-id="${attachment.workOrderAttachmentId}"
+                  type="button"
+                >
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-ban"></i>
+                  </span>
+                  <span>Ignore Attachment in Future</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+            }
             attachmentElement.innerHTML = `
         <article class="media">
           <figure class="media-left">
@@ -106,6 +164,7 @@
                         </span>
                       `
                 : ''}
+                  ${ignoredAttachmentTagHTML}
                 </strong>
                 <br />
                 <small class="has-text-grey">
@@ -150,6 +209,7 @@
                       </span>
                       <span>Edit Description</span>
                     </button>
+                    ${ignoreAttachmentButtonHTML}
                     <button
                       class="button is-small is-light is-danger delete-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
@@ -184,9 +244,92 @@
                         setThumbnail(attachment.workOrderAttachmentId);
                     });
                 }
+                const ignoreAttachmentLink = attachmentElement.querySelector('.ignore-attachment');
+                if (ignoreAttachmentLink !== null) {
+                    ignoreAttachmentLink.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        showIgnoreAttachmentModal(attachment);
+                    });
+                }
+            }
+            const ignoredAttachmentTag = attachmentElement.querySelector('.ignored-attachment-tag');
+            if (ignoredAttachmentTag !== null) {
+                ignoredAttachmentTag.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    showIgnoredAttachmentModal(attachment.ignoredAttachmentNoteText ?? '', attachment.fileChecksum);
+                });
             }
             attachmentsContainerElement.append(attachmentElement);
         }
+        bulmaJS.init(attachmentsContainerElement);
+    }
+    function showIgnoreAttachmentModal(attachment) {
+        let closeModalFunction;
+        function doIgnoreAttachment(submitEvent) {
+            submitEvent.preventDefault();
+            const formElement = submitEvent.currentTarget;
+            const submitButton = document.querySelector('#button--submitIgnoreAttachment');
+            if (submitButton === null) {
+                return;
+            }
+            submitButton.disabled = true;
+            submitButton.classList.add('is-loading');
+            cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doIgnoreWorkOrderAttachment`, formElement, (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON;
+                submitButton.disabled = false;
+                submitButton.classList.remove('is-loading');
+                if (responseJSON.success) {
+                    closeModalFunction();
+                    loadAttachments();
+                    bulmaJS.alert({
+                        contextualColorName: 'success',
+                        message: 'Attachment checksum added to ignored attachments.'
+                    });
+                }
+                else {
+                    bulmaJS.alert({
+                        contextualColorName: 'danger',
+                        message: responseJSON.message
+                    });
+                }
+            });
+        }
+        cityssm.openHtmlModal('workOrders-ignoreAttachment', {
+            onshow(modalElement) {
+                exports.shiftLog.setUnsavedChanges('modal');
+                modalElement.querySelector('#ignoreWorkOrderAttachment--workOrderAttachmentId').value = attachment.workOrderAttachmentId.toString();
+                modalElement.querySelector('#ignoreWorkOrderAttachment--attachmentFileName').textContent = attachment.attachmentFileName;
+                modalElement.querySelector('#ignoreWorkOrderAttachment--fileChecksum').textContent = attachment.fileChecksum;
+            },
+            onshown(modalElement, _closeModalFunction) {
+                bulmaJS.toggleHtmlClipped();
+                closeModalFunction = _closeModalFunction;
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', doIgnoreAttachment);
+            },
+            onremoved() {
+                exports.shiftLog.clearUnsavedChanges('modal');
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
+    }
+    function showIgnoredAttachmentModal(noteText, fileChecksum) {
+        const fileChecksumFieldKey = 'fileChecksum';
+        const fileChecksumSelector = `#viewIgnoredWorkOrderAttachment--${fileChecksumFieldKey}`;
+        cityssm.openHtmlModal('workOrders-viewIgnoredAttachment', {
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            },
+            onshow(modalElement) {
+                ;
+                modalElement.querySelector(fileChecksumSelector).textContent = fileChecksum;
+                modalElement.querySelector('#viewIgnoredWorkOrderAttachment--noteText').textContent = noteText;
+            },
+            onshown() {
+                bulmaJS.toggleHtmlClipped();
+            }
+        });
     }
     function showAddAttachmentModal() {
         let closeModalFunction;
@@ -215,8 +358,8 @@
             const formData = new FormData(formElement);
             globalThis
                 .fetch(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUploadWorkOrderAttachment`, {
-                method: 'POST',
-                body: formData
+                body: formData,
+                method: 'POST'
             })
                 .then(async (response) => (await response.json()))
                 .then((responseJSON) => {

@@ -41,6 +41,7 @@ import handler_doGetWorkOrderEquipment from '../handlers/workOrders-post/doGetWo
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js';
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js';
 import handler_doGetWorkOrdersForPlanner from '../handlers/workOrders-post/doGetWorkOrdersForPlanner.js';
+import handler_doIgnoreWorkOrderAttachment from '../handlers/workOrders-post/doIgnoreWorkOrderAttachment.js';
 import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js';
 import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkOrder.js';
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js';
@@ -70,6 +71,15 @@ function updateHandler(request, response, next) {
 }
 function manageHandler(request, response, next) {
     if (request.session.user?.userProperties.workOrders.canManage ?? false) {
+        next();
+    }
+    else {
+        response.status(403).send('Forbidden');
+    }
+}
+function manageAndAdminHandler(request, response, next) {
+    if ((request.session.user?.userProperties.workOrders.canManage ?? false) &&
+        (request.session.user?.userProperties.isAdmin ?? false)) {
         next();
     }
     else {
@@ -129,7 +139,8 @@ router
     .post('/doUploadWorkOrderAttachment', updateHandler, upload.single('attachmentFile'), handler_doUploadWorkOrderAttachment)
     .post('/doUpdateWorkOrderAttachment', updateHandler, handler_doUpdateWorkOrderAttachment)
     .post('/doDeleteWorkOrderAttachment', updateHandler, handler_doDeleteWorkOrderAttachment)
-    .post('/doSetWorkOrderAttachmentThumbnail', updateHandler, handler_doSetWorkOrderAttachmentThumbnail);
+    .post('/doSetWorkOrderAttachmentThumbnail', updateHandler, handler_doSetWorkOrderAttachmentThumbnail)
+    .post('/doIgnoreWorkOrderAttachment', manageAndAdminHandler, handler_doIgnoreWorkOrderAttachment);
 router
     .post('/:workOrderId/doGetSuggestedTags', handler_doGetSuggestedTags)
     .post('/doAddWorkOrderTag', updateHandler, handler_doAddWorkOrderTag)

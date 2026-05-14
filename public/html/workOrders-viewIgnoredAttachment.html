@@ -1,0 +1,37 @@
+<div
+  class="modal"
+  id="modal--viewIgnoredWorkOrderAttachment"
+  role="dialog"
+  aria-label="Ignored Attachment"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Ignored Attachment</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <div class="field">
+        <label class="label">Checksum</label>
+        <p>
+          <code id="viewIgnoredWorkOrderAttachment--fileChecksum"></code>
+        </p>
+      </div>
+      <div class="field">
+        <label class="label">Note</label>
+        <div class="content">
+          <p id="viewIgnoredWorkOrderAttachment--noteText"></p>
+        </div>
+      </div>
+    </section>
+    <div class="modal-card-foot is-justify-content-right">
+      <button class="button is-close-modal-button" type="button">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

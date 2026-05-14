@@ -16,18 +16,23 @@ export default async function getWorkOrderAttachments(workOrderId) {
         attachmentDescription,
         isWorkOrderThumbnail,
         fileSystemPath,
-        recordCreate_userName,
-        recordCreate_dateTime,
-        recordUpdate_userName,
-        recordUpdate_dateTime,
-        recordDelete_userName,
-        recordDelete_dateTime
+        wao.fileChecksum,
+        iac.noteText AS ignoredAttachmentNoteText,
+        wao.recordCreate_userName,
+        wao.recordCreate_dateTime,
+        wao.recordUpdate_userName,
+        wao.recordUpdate_dateTime,
+        wao.recordDelete_userName,
+        wao.recordDelete_dateTime
       FROM
-        ShiftLog.WorkOrderAttachments
+        ShiftLog.WorkOrderAttachments wao
+        LEFT OUTER JOIN ShiftLog.IgnoredAttachmentChecksums iac ON wao.fileChecksum = iac.fileChecksum
+        AND iac.instance = @instance
+        AND iac.recordDelete_dateTime IS NULL
       WHERE
-        workOrderId = @workOrderId
-        AND recordDelete_dateTime IS NULL
-        AND workOrderId IN (
+        wao.workOrderId = @workOrderId
+        AND wao.recordDelete_dateTime IS NULL
+        AND wao.workOrderId IN (
           SELECT
             workOrderId
           FROM
@@ -37,7 +42,7 @@ export default async function getWorkOrderAttachments(workOrderId) {
             AND instance = @instance
         )
       ORDER BY
-        recordCreate_dateTime DESC
+        wao.recordCreate_dateTime DESC
     `);
     return result.recordset;
 }

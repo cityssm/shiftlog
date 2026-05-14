@@ -1,0 +1,155 @@
+<%- await include('../_header'); -%>
+
+<div class="columns is-mobile">
+  <div class="column is-2-desktop is-narrow-touch is-hidden-print">
+    <%- await include('_menu'); -%>
+  </div>
+  <div class="column">
+    <div class="columns is-mobile is-vcentered">
+      <div class="column">
+        <nav class="breadcrumb">
+          <ul>
+            <li><a href="<%= urlPrefix %>/dashboard">Home</a></li>
+            <li>
+              <a href="#">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-cog"></i>
+                </span>
+                <span>Administrator Tools</span>
+              </a>
+            </li>
+            <li class="is-active">
+              <a href="#" aria-current="page"> Ignored Attachment Management </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <h1 class="title is-1">Ignored Attachment Management</h1>
+
+    <div class="message is-info">
+      <div class="message-body">
+        Manage checksums of attachments that should be ignored in future imports.
+        Remove checksums from this list to resume normal attachment processing.
+      </div>
+    </div>
+
+    <form class="box" id="form--addIgnoredAttachment">
+      <h2 class="title is-4">Add Ignored Attachment Checksum</h2>
+      <div class="columns is-multiline">
+        <div class="column is-full-tablet is-two-thirds-desktop">
+          <div class="field">
+            <label class="label" for="addIgnoredAttachment--fileChecksum">
+              Checksum
+            </label>
+            <div class="control">
+              <input
+                class="input"
+                id="addIgnoredAttachment--fileChecksum"
+                name="fileChecksum"
+                type="text"
+                minlength="64"
+                maxlength="64"
+                autocomplete="off"
+                pattern="[A-Fa-f\d]{64}"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        <div class="column is-full-tablet is-one-third-desktop">
+          <div class="field">
+            <label class="label" for="addIgnoredAttachment--noteText">Note</label>
+            <div class="control">
+              <input
+                class="input"
+                id="addIgnoredAttachment--noteText"
+                name="noteText"
+                type="text"
+                maxlength="4000"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        <div class="column is-full">
+          <div class="field">
+            <div class="control has-text-right">
+              <button
+                class="button is-primary"
+                id="button--submitAddIgnoredAttachment"
+                type="submit"
+              >
+                <span class="icon is-small">
+                  <i class="fa-solid fa-plus"></i>
+                </span>
+                <span>Add Ignored Checksum</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div id="container--ignoredAttachments">
+      <% if (ignoredAttachmentChecksums.length === 0) { %>
+      <div class="message is-info" id="message--noIgnoredAttachments">
+        <div class="message-body">
+          There are no ignored attachment checksums.
+        </div>
+      </div>
+      <% } else { %>
+      <table class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th>Checksum</th>
+            <th>Note</th>
+            <th>Updated By</th>
+            <th>Updated On</th>
+            <th>
+              <span class="is-sr-only">Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (const ignoredAttachment of ignoredAttachmentChecksums) { %>
+          <tr data-file-checksum="<%= ignoredAttachment.fileChecksum %>">
+            <td>
+              <% if (ignoredAttachment.attachment) { %>
+              <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= ignoredAttachment.attachment.workOrderAttachmentId %>/download">
+                <code><%= ignoredAttachment.fileChecksum %></code>
+              </a>
+              <% } else { %>
+              <code><%= ignoredAttachment.fileChecksum %></code>
+              <% } %>
+            </td>
+            <td><%= ignoredAttachment.noteText %></td>
+            <td><%= ignoredAttachment.recordUpdate_userName %></td>
+            <td><%= dateTimeFunctions.dateToString(ignoredAttachment.recordUpdate_dateTime) %></td>
+            <td class="has-text-right">
+              <button
+                class="button is-small is-danger button--deleteIgnoredAttachment"
+                data-file-checksum="<%= ignoredAttachment.fileChecksum %>"
+                type="button"
+              >
+                <span class="icon is-small">
+                  <i class="fa-solid fa-trash"></i>
+                </span>
+                <span>Remove</span>
+              </button>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- await include('../_footerA'); -%>
+
+<script src="<%= urlPrefix %>/javascripts/ignoredAttachments.admin.js"></script>
+
+<%- await include('../_footerB'); -%>

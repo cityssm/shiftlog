@@ -5,6 +5,7 @@ import handler_dataLists from '../handlers/admin-get/dataLists.js';
 import handler_employeeLists from '../handlers/admin-get/employeeLists.js';
 import handler_employees from '../handlers/admin-get/employees.js';
 import handler_equipment from '../handlers/admin-get/equipment.js';
+import handler_ignoredAttachments from '../handlers/admin-get/ignoredAttachments.js';
 import handler_locations from '../handlers/admin-get/locations.js';
 import handler_noteTypes from '../handlers/admin-get/noteTypes.js';
 import handler_notificationConfigurations from '../handlers/admin-get/notificationConfigurations.js';
@@ -20,6 +21,7 @@ import handler_doAddEmployee from '../handlers/admin-post/doAddEmployee.js';
 import handler_doAddEmployeeList from '../handlers/admin-post/doAddEmployeeList.js';
 import handler_doAddEmployeeListMember from '../handlers/admin-post/doAddEmployeeListMember.js';
 import handler_doAddEquipment from '../handlers/admin-post/doAddEquipment.js';
+import handler_doAddIgnoredAttachmentChecksum from '../handlers/admin-post/doAddIgnoredAttachmentChecksum.js';
 import handler_doAddLocation from '../handlers/admin-post/doAddLocation.js';
 import handler_doAddMultipleDataListItems from '../handlers/admin-post/doAddMultipleDataListItems.js';
 import handler_doAddNoteType from '../handlers/admin-post/doAddNoteType.js';
@@ -38,6 +40,7 @@ import handler_doDeleteEmployee from '../handlers/admin-post/doDeleteEmployee.js
 import handler_doDeleteEmployeeList from '../handlers/admin-post/doDeleteEmployeeList.js';
 import handler_doDeleteEmployeeListMember from '../handlers/admin-post/doDeleteEmployeeListMember.js';
 import handler_doDeleteEquipment from '../handlers/admin-post/doDeleteEquipment.js';
+import handler_doDeleteIgnoredAttachmentChecksum from '../handlers/admin-post/doDeleteIgnoredAttachmentChecksum.js';
 import handler_doDeleteLocation from '../handlers/admin-post/doDeleteLocation.js';
 import handler_doDeleteNoteType from '../handlers/admin-post/doDeleteNoteType.js';
 import handler_doDeleteNoteTypeField from '../handlers/admin-post/doDeleteNoteTypeField.js';
@@ -117,7 +120,10 @@ if (getConfigProperty('workOrders.isEnabled')) {
         .post('/doAddWorkOrderType', handler_doAddWorkOrderType)
         .post('/doUpdateWorkOrderType', handler_doUpdateWorkOrderType)
         .post('/doDeleteWorkOrderType', handler_doDeleteWorkOrderType)
-        .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes);
+        .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes)
+        .get('/ignoredAttachments', handler_ignoredAttachments)
+        .post('/doAddIgnoredAttachmentChecksum', handler_doAddIgnoredAttachmentChecksum)
+        .post('/doDeleteIgnoredAttachmentChecksum', handler_doDeleteIgnoredAttachmentChecksum);
 }
 router
     .get('/assignedTo', handler_assignedTo)
