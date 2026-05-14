@@ -226,7 +226,7 @@
     `;
         const previewPanelElement = document.createElement('div');
         previewPanelElement.id = previewPanelId;
-        previewPanelElement.className = `content box${showMarkdownTab ? '' : ' is-hidden'}`;
+        previewPanelElement.className = `content box shiftlog-markdown-preview${showMarkdownTab ? '' : ' is-hidden'}`;
         textareaParentElement.id = textPanelId;
         if (showMarkdownTab) {
             textareaParentElement.classList.add('is-hidden');
