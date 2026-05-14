@@ -77,6 +77,14 @@
 }
 
 /*
+ * Markdown Preview
+ */
+
+.shiftlog-markdown-preview {
+  overflow-x: auto;
+}
+
+/*
  * Login page
  */
 
