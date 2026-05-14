@@ -351,15 +351,23 @@ declare const exports: {
    * Markdown Textarea
    */
 
+  let markdownTextareaCounter = 0
+
   function initializeMarkdownTextarea(
     textareaElement: HTMLTextAreaElement,
     options?: { showMarkdownTab?: boolean }
   ): void {
     const showMarkdownTab = options?.showMarkdownTab ?? false
 
-    const textareaParentElement = textareaElement.parentElement as HTMLElement
+    const textareaParentElement = textareaElement.parentElement
 
-    const textareaId = textareaElement.id || 'markdownTextarea'
+    if (textareaParentElement === null) {
+      return
+    }
+
+    markdownTextareaCounter += 1
+    const textareaId =
+      textareaElement.id || `markdownTextarea-${markdownTextareaCounter.toString()}`
     const textPanelId = `${textareaId}--textPanel`
     const previewPanelId = `${textareaId}--previewPanel`
 

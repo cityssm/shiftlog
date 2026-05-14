@@ -195,10 +195,15 @@
         }
         return paginationElement;
     }
+    let markdownTextareaCounter = 0;
     function initializeMarkdownTextarea(textareaElement, options) {
         const showMarkdownTab = options?.showMarkdownTab ?? false;
         const textareaParentElement = textareaElement.parentElement;
-        const textareaId = textareaElement.id || 'markdownTextarea';
+        if (textareaParentElement === null) {
+            return;
+        }
+        markdownTextareaCounter += 1;
+        const textareaId = textareaElement.id || `markdownTextarea-${markdownTextareaCounter.toString()}`;
         const textPanelId = `${textareaId}--textPanel`;
         const previewPanelId = `${textareaId}--previewPanel`;
         const tabsElement = document.createElement('div');
