@@ -91,7 +91,7 @@ const systemUser: User = {
 }
 
 export async function checkEmail(): Promise<void> {
-  if ((await getCachedSettingValue('msGraph.enabled')) !== 'true') {
+  if (await getCachedSettingValue('msGraph.enabled') !== 'true') {
     debug('Microsoft Graph integration is disabled. Skipping email check.')
     return
   }
@@ -336,7 +336,6 @@ export async function checkEmail(): Promise<void> {
             }
 
             const attachmentIsIgnored = await checkIgnoredAttachmentChecksum(
-              workOrder.workOrderId,
               attachmentChecksum
             )
 
