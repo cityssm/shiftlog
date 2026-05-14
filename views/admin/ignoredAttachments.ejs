@@ -75,7 +75,7 @@
         </div>
         <div class="column is-full">
           <div class="field">
-            <div class="control">
+            <div class="control has-text-right">
               <button
                 class="button is-primary"
                 id="button--submitAddIgnoredAttachment"
@@ -116,7 +116,13 @@
           <% for (const ignoredAttachment of ignoredAttachmentChecksums) { %>
           <tr data-file-checksum="<%= ignoredAttachment.fileChecksum %>">
             <td>
-              <code><%= ignoredAttachment.fileChecksum %></code>
+              <% if (ignoredAttachment.attachment) { %>
+                <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= ignoredAttachment.attachment.workOrderAttachmentId %>/download">
+                  <code><%= ignoredAttachment.fileChecksum %></code>
+                </a>
+              <% } else { %>
+                <code><%= ignoredAttachment.fileChecksum %></code>
+              <% } %>
             </td>
             <td><%= ignoredAttachment.noteText %></td>
             <td><%= ignoredAttachment.recordUpdate_userName %></td>
