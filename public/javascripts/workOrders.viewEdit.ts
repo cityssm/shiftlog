@@ -56,6 +56,23 @@ declare const bulmaJS: BulmaJS
   }
 
   /*
+   * Work Order Details - Markdown Preview
+   */
+
+  const workOrderDetailsTextareaElement = document.querySelector(
+    '#workOrder--workOrderDetails'
+  ) as HTMLTextAreaElement | null
+
+  if (workOrderDetailsTextareaElement !== null) {
+    shiftLog.initializeMarkdownTextarea(workOrderDetailsTextareaElement, {
+      showMarkdownTab:
+        (document
+          .querySelector('#workOrder--workOrderId')
+          ?.getAttribute('value') ?? '') !== ''
+    })
+  }
+
+  /*
    * Reopen work order
    */
   const reopenWorkOrderButton = document.querySelector(
@@ -80,7 +97,8 @@ declare const bulmaJS: BulmaJS
                 workOrderId: workOrderIdElement.value
               },
               (rawResponseJSON) => {
-                const responseJSON = rawResponseJSON as DoReopenWorkOrderResponse
+                const responseJSON =
+                  rawResponseJSON as DoReopenWorkOrderResponse
                 if (responseJSON.success) {
                   globalThis.location.href = responseJSON.redirectUrl
                 } else {

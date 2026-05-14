@@ -50,6 +50,11 @@ export interface ShiftLogGlobal {
 
   initializeRecordTabs: (tabsContainerElement: HTMLElement) => void
 
+  initializeMarkdownTextarea: (
+    textareaElement: HTMLTextAreaElement,
+    options?: { showMarkdownTab?: boolean }
+  ) => void
+
   buildPaginationControls: (options: {
     totalCount: number
     currentPageOrOffset: number
