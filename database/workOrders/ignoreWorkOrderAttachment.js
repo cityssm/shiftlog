@@ -72,5 +72,5 @@ export default async function ignoreWorkOrderAttachment(workOrderAttachmentId, n
 
       SELECT CAST(1 AS bit) AS success
     `);
-    return Boolean(result.recordset[0]?.success);
+    return result.recordset[0].success;
 }

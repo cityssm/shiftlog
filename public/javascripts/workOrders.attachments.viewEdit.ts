@@ -433,8 +433,8 @@ declare const bulmaJS: BulmaJS
   }
 
   function showIgnoredAttachmentModal(noteText: string, fileChecksum: string): void {
-    // eslint-disable-next-line no-secrets/no-secrets
-    const fileChecksumSelector = '#viewIgnoredWorkOrderAttachment--fileChecksum'
+    const fileChecksumFieldKey = 'fileChecksum'
+    const fileChecksumSelector = `#viewIgnoredWorkOrderAttachment--${fileChecksumFieldKey}`
 
     cityssm.openHtmlModal('workOrders-viewIgnoredAttachment', {
       onremoved() {

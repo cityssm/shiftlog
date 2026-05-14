@@ -301,9 +301,11 @@
         });
     }
     function showIgnoredAttachmentModal(noteText, fileChecksum) {
+        const fileChecksumFieldKey = 'fileChecksum';
+        const fileChecksumSelector = `#viewIgnoredWorkOrderAttachment--${fileChecksumFieldKey}`;
         cityssm.openHtmlModal('workOrders-viewIgnoredAttachment', {
             onshow(modalElement) {
-                modalElement.querySelector('#viewIgnoredWorkOrderAttachment--fileChecksum').textContent = fileChecksum;
+                modalElement.querySelector(fileChecksumSelector).textContent = fileChecksum;
                 modalElement.querySelector('#viewIgnoredWorkOrderAttachment--noteText').textContent = noteText;
             },
             onshown() {
