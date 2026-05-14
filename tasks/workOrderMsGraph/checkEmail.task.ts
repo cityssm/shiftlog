@@ -336,7 +336,6 @@ export async function checkEmail(): Promise<void> {
             }
 
             const attachmentIsIgnored = await checkIgnoredAttachmentChecksum(
-              workOrder.workOrderId,
               attachmentChecksum
             )
 

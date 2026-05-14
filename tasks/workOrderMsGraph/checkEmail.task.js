@@ -163,7 +163,7 @@ export async function checkEmail() {
                             debug(`Attachment with checksum ${attachmentChecksum} already exists for work order ${workOrder.workOrderId}. Skipping attachment.`);
                             continue;
                         }
-                        const attachmentIsIgnored = await checkIgnoredAttachmentChecksum(workOrder.workOrderId, attachmentChecksum);
+                        const attachmentIsIgnored = await checkIgnoredAttachmentChecksum(attachmentChecksum);
                         if (attachmentIsIgnored) {
                             debug(`Attachment with checksum ${attachmentChecksum} is marked as ignored for work order ${workOrder.workOrderId}. Skipping attachment.`);
                             continue;
