@@ -203,7 +203,8 @@
             return;
         }
         markdownTextareaCounter += 1;
-        const textareaId = textareaElement.id || `markdownTextarea-${markdownTextareaCounter.toString()}`;
+        const textareaId = textareaElement.id ||
+            `markdownTextarea-${markdownTextareaCounter.toString()}`;
         const textPanelId = `${textareaId}--textPanel`;
         const previewPanelId = `${textareaId}--previewPanel`;
         const tabsElement = document.createElement('div');
@@ -227,6 +228,7 @@
         const previewPanelElement = document.createElement('div');
         previewPanelElement.id = previewPanelId;
         previewPanelElement.className = `content box shiftlog-markdown-preview${showMarkdownTab ? '' : ' is-hidden'}`;
+        previewPanelElement.style.maxWidth = `${textareaElement.clientWidth.toString()}px`;
         textareaParentElement.id = textPanelId;
         if (showMarkdownTab) {
             textareaParentElement.classList.add('is-hidden');
@@ -238,13 +240,18 @@
         }
         const tabListItems = tabsElement.querySelectorAll('li');
         for (const tabListItem of tabListItems) {
-            tabListItem.querySelector('a')?.addEventListener('click', (clickEvent) => {
+            tabListItem
+                .querySelector('a')
+                ?.addEventListener('click', (clickEvent) => {
                 clickEvent.preventDefault();
                 for (const item of tabListItems) {
                     item.classList.remove('is-active');
                 }
                 tabListItem.classList.add('is-active');
                 if (tabListItem.dataset.panelId === previewPanelId) {
+                    if (textareaElement.clientWidth > 0) {
+                        previewPanelElement.style.maxWidth = `${textareaElement.clientWidth.toString()}px`;
+                    }
                     textareaParentElement.classList.add('is-hidden');
                     previewPanelElement.classList.remove('is-hidden');
                     previewPanelElement.innerHTML = DOMPurify.sanitize(marked.parse(textareaElement.value));

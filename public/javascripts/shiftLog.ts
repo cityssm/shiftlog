@@ -367,7 +367,9 @@ declare const exports: {
 
     markdownTextareaCounter += 1
     const textareaId =
-      textareaElement.id || `markdownTextarea-${markdownTextareaCounter.toString()}`
+      textareaElement.id ||
+      `markdownTextarea-${markdownTextareaCounter.toString()}`
+
     const textPanelId = `${textareaId}--textPanel`
     const previewPanelId = `${textareaId}--previewPanel`
 
@@ -395,6 +397,7 @@ declare const exports: {
     const previewPanelElement = document.createElement('div')
     previewPanelElement.id = previewPanelId
     previewPanelElement.className = `content box shiftlog-markdown-preview${showMarkdownTab ? '' : ' is-hidden'}`
+    previewPanelElement.style.maxWidth = `${textareaElement.clientWidth.toString()}px`
 
     textareaParentElement.id = textPanelId
     if (showMarkdownTab) {
@@ -413,25 +416,32 @@ declare const exports: {
     const tabListItems = tabsElement.querySelectorAll<HTMLLIElement>('li')
 
     for (const tabListItem of tabListItems) {
-      tabListItem.querySelector('a')?.addEventListener('click', (clickEvent) => {
-        clickEvent.preventDefault()
+      tabListItem
+        .querySelector('a')
+        ?.addEventListener('click', (clickEvent) => {
+          clickEvent.preventDefault()
 
-        for (const item of tabListItems) {
-          item.classList.remove('is-active')
-        }
-        tabListItem.classList.add('is-active')
+          for (const item of tabListItems) {
+            item.classList.remove('is-active')
+          }
 
-        if (tabListItem.dataset.panelId === previewPanelId) {
-          textareaParentElement.classList.add('is-hidden')
-          previewPanelElement.classList.remove('is-hidden')
-          previewPanelElement.innerHTML = DOMPurify.sanitize(
-            marked.parse(textareaElement.value)
-          )
-        } else {
-          previewPanelElement.classList.add('is-hidden')
-          textareaParentElement.classList.remove('is-hidden')
-        }
-      })
+          tabListItem.classList.add('is-active')
+
+          if (tabListItem.dataset.panelId === previewPanelId) {
+            if (textareaElement.clientWidth > 0) {
+              previewPanelElement.style.maxWidth = `${textareaElement.clientWidth.toString()}px`
+            }
+
+            textareaParentElement.classList.add('is-hidden')
+            previewPanelElement.classList.remove('is-hidden')
+            previewPanelElement.innerHTML = DOMPurify.sanitize(
+              marked.parse(textareaElement.value)
+            )
+          } else {
+            previewPanelElement.classList.add('is-hidden')
+            textareaParentElement.classList.remove('is-hidden')
+          }
+        })
     }
   }
 
