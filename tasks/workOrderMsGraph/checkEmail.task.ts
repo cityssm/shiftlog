@@ -15,6 +15,7 @@ import {
 } from '@cityssm/utils-datetime'
 import Debug from 'debug'
 
+import checkIgnoredAttachmentChecksum from '../../database/ignoredAttachmentChecksums/checkIgnoredAttachmentChecksum.js'
 import addWorkOrderSubscriber from '../../database/workOrders/addWorkOrderSubscriber.js'
 import checkWorkOrderAttachmentChecksum from '../../database/workOrders/checkWorkOrderAttachmentChecksum.js'
 import createWorkOrder from '../../database/workOrders/createWorkOrder.js'
@@ -90,7 +91,7 @@ const systemUser: User = {
 }
 
 export async function checkEmail(): Promise<void> {
-  if (await getCachedSettingValue('msGraph.enabled') !== 'true') {
+  if ((await getCachedSettingValue('msGraph.enabled')) !== 'true') {
     debug('Microsoft Graph integration is disabled. Skipping email check.')
     return
   }
@@ -329,6 +330,20 @@ export async function checkEmail(): Promise<void> {
             if (attachmentAlreadyExists) {
               debug(
                 `Attachment with checksum ${attachmentChecksum} already exists for work order ${workOrder.workOrderId}. Skipping attachment.`
+              )
+
+              continue
+            }
+
+            const attachmentIsIgnored = await checkIgnoredAttachmentChecksum(
+              workOrder.workOrderId,
+              attachmentChecksum
+            )
+
+            // eslint-disable-next-line max-depth
+            if (attachmentIsIgnored) {
+              debug(
+                `Attachment with checksum ${attachmentChecksum} is marked as ignored for work order ${workOrder.workOrderId}. Skipping attachment.`
               )
 
               continue

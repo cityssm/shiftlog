@@ -3,6 +3,7 @@ import MsGraphMailApi, { wellKnownFolderNames } from '@cityssm/ms-graph-mail';
 import { minutesToSeconds, secondsInOneHour } from '@cityssm/to-millis';
 import { dateToString, dateToTimeString } from '@cityssm/utils-datetime';
 import Debug from 'debug';
+import checkIgnoredAttachmentChecksum from '../../database/ignoredAttachmentChecksums/checkIgnoredAttachmentChecksum.js';
 import addWorkOrderSubscriber from '../../database/workOrders/addWorkOrderSubscriber.js';
 import checkWorkOrderAttachmentChecksum from '../../database/workOrders/checkWorkOrderAttachmentChecksum.js';
 import createWorkOrder from '../../database/workOrders/createWorkOrder.js';
@@ -52,7 +53,7 @@ const systemUser = {
     userSettings: {}
 };
 export async function checkEmail() {
-    if (await getCachedSettingValue('msGraph.enabled') !== 'true') {
+    if ((await getCachedSettingValue('msGraph.enabled')) !== 'true') {
         debug('Microsoft Graph integration is disabled. Skipping email check.');
         return;
     }
@@ -160,6 +161,11 @@ export async function checkEmail() {
                         const attachmentAlreadyExists = await checkWorkOrderAttachmentChecksum(workOrder.workOrderId, attachmentChecksum);
                         if (attachmentAlreadyExists) {
                             debug(`Attachment with checksum ${attachmentChecksum} already exists for work order ${workOrder.workOrderId}. Skipping attachment.`);
+                            continue;
+                        }
+                        const attachmentIsIgnored = await checkIgnoredAttachmentChecksum(workOrder.workOrderId, attachmentChecksum);
+                        if (attachmentIsIgnored) {
+                            debug(`Attachment with checksum ${attachmentChecksum} is marked as ignored for work order ${workOrder.workOrderId}. Skipping attachment.`);
                             continue;
                         }
                         const attachmentFileName = getAttachmentFileNameFromFileName(attachment.name);
