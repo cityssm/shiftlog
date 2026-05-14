@@ -56,6 +56,14 @@ export const settingProperties = [
         isUserConfigurable: true
     },
     {
+        settingKey: 'msGraph.enabled',
+        settingName: 'Microsoft Graph - Enabled',
+        description: 'Whether to enable Microsoft Graph integration for creating work orders from emails. When enabled, the system will process incoming emails via Microsoft Graph to create work orders based on email content.',
+        type: 'boolean',
+        defaultValue: 'true',
+        isUserConfigurable: true
+    },
+    {
         settingKey: 'msGraph.from.allowedDomains',
         settingName: 'Microsoft Graph - Allowed From Domains',
         description: 'Comma-separated list of email domains that are allowed in the "From" field when creating work orders via Microsoft Graph. If empty, all domains are allowed.',

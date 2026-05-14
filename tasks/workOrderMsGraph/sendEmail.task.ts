@@ -14,6 +14,7 @@ import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js'
 import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js'
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
 import { getWorkOrderUrl } from '../../helpers/application.helpers.js'
+import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type {
   SendNotificationWorkerMessage,
@@ -43,6 +44,12 @@ const isRunningSemaphore = new Sema(1)
 let runAgain = false
 
 export async function sendEmail(): Promise<void> {
+  if ((await getCachedSettingValue('msGraph.enabled')) !== 'true') {
+    debug('Microsoft Graph integration is disabled. Skipping email send.')
+    workOrderQueue.clear()
+    return
+  }
+
   if (isRunningSemaphore.tryAcquire() === undefined) {
     debug('Previous sendEmail task still running, skipping this run')
     runAgain = true
@@ -231,6 +238,7 @@ process.on('message', (message: WorkerMessage) => {
     debug(
       `Queuing notification for work order ID ${(message as SendNotificationWorkerMessage).recordId}`
     )
+
     workOrderQueue.enqueue((message as SendNotificationWorkerMessage).recordId)
   }
 })
