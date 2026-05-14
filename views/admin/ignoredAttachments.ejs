@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <form id="form--addIgnoredAttachment" class="box">
+    <form class="box" id="form--addIgnoredAttachment">
       <h2 class="title is-4">Add Ignored Attachment Checksum</h2>
       <div class="columns is-multiline">
         <div class="column is-full-tablet is-two-thirds-desktop">
@@ -49,10 +49,10 @@
                 id="addIgnoredAttachment--fileChecksum"
                 name="fileChecksum"
                 type="text"
-                maxlength="64"
                 minlength="64"
-                pattern="[A-Fa-f\d]{64}"
+                maxlength="64"
                 autocomplete="off"
+                pattern="[A-Fa-f\d]{64}"
                 required
               />
             </div>
@@ -117,11 +117,11 @@
           <tr data-file-checksum="<%= ignoredAttachment.fileChecksum %>">
             <td>
               <% if (ignoredAttachment.attachment) { %>
-                <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= ignoredAttachment.attachment.workOrderAttachmentId %>/download">
-                  <code><%= ignoredAttachment.fileChecksum %></code>
-                </a>
-              <% } else { %>
+              <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= ignoredAttachment.attachment.workOrderAttachmentId %>/download">
                 <code><%= ignoredAttachment.fileChecksum %></code>
+              </a>
+              <% } else { %>
+              <code><%= ignoredAttachment.fileChecksum %></code>
               <% } %>
             </td>
             <td><%= ignoredAttachment.noteText %></td>
