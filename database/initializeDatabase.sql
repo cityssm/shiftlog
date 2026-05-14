@@ -133,6 +133,20 @@ CREATE TABLE ShiftLog.DataListItems (
 )
 GO
 --
+-- IGNORED ATTACHMENTS
+--
+CREATE TABLE ShiftLog.IgnoredAttachmentChecksums (
+  fileChecksum CHAR(64) PRIMARY KEY,
+  noteText NVARCHAR(max) NOT NULL DEFAULT '',
+  [recordCreate_userName] [varchar] (30) NOT NULL,
+  [recordCreate_dateTime] [datetime] NOT NULL,
+  [recordUpdate_userName] [varchar] (30) NOT NULL,
+  [recordUpdate_dateTime] [datetime] NOT NULL,
+  [recordDelete_userName] [varchar] (30) NULL,
+  [recordDelete_dateTime] [datetime] NULL
+)
+GO
+--
 -- NOTE TYPES
 --
 CREATE TABLE ShiftLog.NoteTypes (
