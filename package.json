@@ -99,7 +99,7 @@
     "ejs": "^5.0.2",
     "exit-hook": "^5.1.0",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.5.1",
+    "express-rate-limit": "^8.5.2",
     "express-session": "^1.19.0",
     "flatpickr": "^4.6.13",
     "http-errors": "^2.0.1",
