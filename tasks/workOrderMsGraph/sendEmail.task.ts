@@ -7,7 +7,10 @@ import UniqueTimedEntryQueue from '@cityssm/unique-timed-entry-queue'
 import { dateToString, dateToTimePeriodString } from '@cityssm/utils-datetime'
 import { Sema } from 'async-sema'
 import Debug from 'debug'
+import createDOMPurify from 'dompurify'
 import { asyncExitHook } from 'exit-hook'
+import { JSDOM } from 'jsdom'
+import { marked } from 'marked'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
 import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js'
@@ -30,6 +33,8 @@ import {
 import { messageHeaderString } from './helpers/messageText.helpers.js'
 
 const msGraphMailConfig = getConfigProperty('connectors.msGraph')
+
+const DOMPurify = createDOMPurify(new JSDOM('').window)
 
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:sendEmail`)
 
@@ -169,9 +174,9 @@ export async function sendEmail(): Promise<void> {
               ${dateToString(note.recordCreate_dateTime)}
               ${dateToTimePeriodString(note.recordCreate_dateTime)}:
             </h3>
-            <p>
-              ${note.noteText.replaceAll('\n', '<br />')}
-            </p>
+            <div>
+              ${DOMPurify.sanitize(await marked.parse(note.noteText))}
+            </div>
           `,
           'html'
         )
@@ -197,7 +202,7 @@ export async function sendEmail(): Promise<void> {
           </p>
           <p>
             <b>${getConfigProperty('workOrders.sectionNameSingular')} Details:</b><br />
-            ${workOrder.workOrderDetails.replaceAll('\n', '<br />')}
+            ${DOMPurify.sanitize(await marked.parse(workOrder.workOrderDetails))}
           </p>
           ${workOrder.assignedToId === null ? '' : `<p><b>Assigned To:</b> ${workOrder.assignedToName}</p>`}
           <p>
