@@ -25,6 +25,8 @@ declare const exports: {
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const DOMPurify: { sanitize: (html: string) => string }
+declare const marked: { parse: (markdownString: string) => string }
 ;(() => {
   const workOrderFormElement = document.querySelector(
     '#form--workOrder'
@@ -278,11 +280,12 @@ declare const bulmaJS: BulmaJS
           noteTypeContainer.style.display = 'none'
         }
 
+        // eslint-disable-next-line no-unsanitized/property
         ;(
           modalElement.querySelector(
             '#viewWorkOrderNote--noteText'
           ) as HTMLElement
-        ).textContent = note.noteText
+        ).innerHTML = DOMPurify.sanitize(marked.parse(note.noteText))
 
         // Render fields if present
         const fieldsContainer = modalElement.querySelector(
@@ -776,6 +779,11 @@ declare const bulmaJS: BulmaJS
         modalElement
           .querySelector('form')
           ?.addEventListener('submit', doUpdateNote)
+        exports.shiftLog.initializeMarkdownTextarea(
+          modalElement.querySelector(
+            '#editWorkOrderNote--noteText'
+          ) as HTMLTextAreaElement
+        )
       },
 
       onremoved() {
@@ -1123,11 +1131,13 @@ declare const bulmaJS: BulmaJS
         modalElement
           .querySelector('form')
           ?.addEventListener('submit', doAddNote)
-        ;(
-          modalElement.querySelector(
-            '#addWorkOrderNote--noteText'
-          ) as HTMLTextAreaElement
-        ).focus()
+
+        const addNoteTextareaElement = modalElement.querySelector(
+          '#addWorkOrderNote--noteText'
+        ) as HTMLTextAreaElement
+
+        exports.shiftLog.initializeMarkdownTextarea(addNoteTextareaElement)
+        addNoteTextareaElement.focus()
       },
 
       onremoved() {

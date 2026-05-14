@@ -167,7 +167,8 @@
                     noteTypeContainer.style.display = 'none';
                 }
                 ;
-                modalElement.querySelector('#viewWorkOrderNote--noteText').textContent = note.noteText;
+                // eslint-disable-next-line no-unsanitized/property
+                modalElement.querySelector('#viewWorkOrderNote--noteText').innerHTML = DOMPurify.sanitize(marked.parse(note.noteText));
                 const fieldsContainer = modalElement.querySelector('#viewWorkOrderNote--fieldsContainer');
                 fieldsContainer.innerHTML = '';
                 if (note.fields !== undefined && note.fields.length > 0) {
@@ -531,6 +532,7 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateNote);
+                exports.shiftLog.initializeMarkdownTextarea(modalElement.querySelector('#editWorkOrderNote--noteText'));
             },
             onremoved() {
                 exports.shiftLog.clearUnsavedChanges('modal');
@@ -788,7 +790,9 @@
                 modalElement
                     .querySelector('form')
                     ?.addEventListener('submit', doAddNote);
-                modalElement.querySelector('#addWorkOrderNote--noteText').focus();
+                const addNoteTextareaElement = modalElement.querySelector('#addWorkOrderNote--noteText');
+                exports.shiftLog.initializeMarkdownTextarea(addNoteTextareaElement);
+                addNoteTextareaElement.focus();
             },
             onremoved() {
                 exports.shiftLog.clearUnsavedChanges('modal');
