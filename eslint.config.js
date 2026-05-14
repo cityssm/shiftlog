@@ -5,6 +5,7 @@ import eslintPluginNoUnsanitized from 'eslint-plugin-no-unsanitized';
 const escapedMethods = [
     'cityssm.dateToString',
     'cityssm.escapeHTML',
+    'DOMPurify.sanitize',
     'exports.shiftLog.buildShiftURL',
     'exports.shiftLog.buildWorkOrderURL',
     'exports.shiftLog.buildTimesheetURL'

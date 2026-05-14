@@ -22,6 +22,12 @@
             }
         }
     }
+    const workOrderDetailsTextareaElement = document.querySelector('#workOrder--workOrderDetails');
+    if (workOrderDetailsTextareaElement !== null) {
+        shiftLog.initializeMarkdownTextarea(workOrderDetailsTextareaElement, {
+            showMarkdownTab: workOrderDetailsTextareaElement.readOnly
+        });
+    }
     const reopenWorkOrderButton = document.querySelector('#button--reopenWorkOrder');
     if (reopenWorkOrderButton !== null) {
         reopenWorkOrderButton.addEventListener('click', () => {

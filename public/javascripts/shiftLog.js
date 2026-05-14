@@ -195,6 +195,63 @@
         }
         return paginationElement;
     }
+    function initializeMarkdownTextarea(textareaElement, options) {
+        const showMarkdownTab = options?.showMarkdownTab ?? false;
+        const textareaParentElement = textareaElement.parentElement;
+        const textareaId = textareaElement.id || 'markdownTextarea';
+        const textPanelId = `${textareaId}--textPanel`;
+        const previewPanelId = `${textareaId}--previewPanel`;
+        const tabsElement = document.createElement('div');
+        tabsElement.className = 'tabs is-boxed is-small mb-0';
+        // eslint-disable-next-line no-unsanitized/property
+        tabsElement.innerHTML = `
+      <ul>
+        <li class="${showMarkdownTab ? '' : 'is-active'}" data-panel-id="${textPanelId}">
+          <a href="#">
+            <span class="icon is-small"><i class="fa-solid fa-pencil"></i></span>
+            <span>Text</span>
+          </a>
+        </li>
+        <li class="${showMarkdownTab ? 'is-active' : ''}" data-panel-id="${previewPanelId}">
+          <a href="#">
+            <span class="icon is-small"><i class="fa-solid fa-eye"></i></span>
+            <span>Preview</span>
+          </a>
+        </li>
+      </ul>
+    `;
+        const previewPanelElement = document.createElement('div');
+        previewPanelElement.id = previewPanelId;
+        previewPanelElement.className = `content box${showMarkdownTab ? '' : ' is-hidden'}`;
+        textareaParentElement.id = textPanelId;
+        if (showMarkdownTab) {
+            textareaParentElement.classList.add('is-hidden');
+        }
+        textareaParentElement.insertAdjacentElement('beforebegin', tabsElement);
+        textareaParentElement.insertAdjacentElement('afterend', previewPanelElement);
+        if (showMarkdownTab) {
+            previewPanelElement.innerHTML = DOMPurify.sanitize(marked.parse(textareaElement.value));
+        }
+        const tabListItems = tabsElement.querySelectorAll('li');
+        for (const tabListItem of tabListItems) {
+            tabListItem.querySelector('a')?.addEventListener('click', (clickEvent) => {
+                clickEvent.preventDefault();
+                for (const item of tabListItems) {
+                    item.classList.remove('is-active');
+                }
+                tabListItem.classList.add('is-active');
+                if (tabListItem.dataset.panelId === previewPanelId) {
+                    textareaParentElement.classList.add('is-hidden');
+                    previewPanelElement.classList.remove('is-hidden');
+                    previewPanelElement.innerHTML = DOMPurify.sanitize(marked.parse(textareaElement.value));
+                }
+                else {
+                    previewPanelElement.classList.add('is-hidden');
+                    textareaParentElement.classList.remove('is-hidden');
+                }
+            });
+        }
+    }
     exports.shiftLog = {
         ...exports.shiftLog,
         daysOfWeek: [
@@ -214,6 +271,7 @@
         buildWorkOrderURL,
         populateSectionAliases,
         initializeRecordTabs,
-        buildPaginationControls
+        buildPaginationControls,
+        initializeMarkdownTextarea
     };
 })();

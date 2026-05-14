@@ -56,6 +56,20 @@ declare const bulmaJS: BulmaJS
   }
 
   /*
+   * Work Order Details - Markdown Preview
+   */
+
+  const workOrderDetailsTextareaElement = document.querySelector(
+    '#workOrder--workOrderDetails'
+  ) as HTMLTextAreaElement | null
+
+  if (workOrderDetailsTextareaElement !== null) {
+    shiftLog.initializeMarkdownTextarea(workOrderDetailsTextareaElement, {
+      showMarkdownTab: workOrderDetailsTextareaElement.readOnly
+    })
+  }
+
+  /*
    * Reopen work order
    */
   const reopenWorkOrderButton = document.querySelector(
