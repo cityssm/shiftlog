@@ -165,11 +165,16 @@ app
     express.static('node_modules/@cityssm/bulma-webapp-js/dist')
   )
   .use(
+    `${urlPrefix}/lib/dompurify`,
+    express.static('node_modules/dompurify/dist')
+  )
+  .use(`${urlPrefix}/lib/echarts`, express.static('node_modules/echarts/dist'))
+  .use(
     `${urlPrefix}/lib/fa`,
     express.static('node_modules/@fortawesome/fontawesome-free')
   )
-  .use(`${urlPrefix}/lib/echarts`, express.static('node_modules/echarts/dist'))
   .use(`${urlPrefix}/lib/leaflet`, express.static('node_modules/leaflet/dist'))
+  .use(`${urlPrefix}/lib/marked`, express.static('node_modules/marked/lib'))
   .use(`${urlPrefix}/lib/sortablejs`, express.static('node_modules/sortablejs'))
 
 /*
