@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
 import getIgnoredAttachmentChecksums from '../../database/ignoredAttachmentChecksums/getIgnoredAttachmentChecksums.js'
-import getWorkOrderAttachmentByChecksum from '../../database/workOrders/getWorkOrderAttachmentByChecksum.js'
+import getWorkOrderAttachmentsByChecksums from '../../database/workOrders/getWorkOrderAttachmentsByChecksums.js'
 
 export default async function handler(
   _request: Request,
@@ -9,16 +9,14 @@ export default async function handler(
 ): Promise<void> {
   const ignoredAttachmentChecksums = await getIgnoredAttachmentChecksums()
 
-  // Fetch attachment info for each checksum
-  const ignoredAttachmentsWithInfo = await Promise.all(
-    ignoredAttachmentChecksums.map(async (ignoredAttachment) => {
-      const attachment = await getWorkOrderAttachmentByChecksum(
-        ignoredAttachment.fileChecksum
-      )
-      return {
-        ...ignoredAttachment,
-        attachment
-      }
+  // Fetch all attachment info in a single batch query
+  const checksums = ignoredAttachmentChecksums.map((item) => item.fileChecksum)
+  const attachmentMap = await getWorkOrderAttachmentsByChecksums(checksums)
+
+  const ignoredAttachmentsWithInfo = ignoredAttachmentChecksums.map(
+    (ignoredAttachment) => ({
+      ...ignoredAttachment,
+      attachment: attachmentMap.get(ignoredAttachment.fileChecksum)
     })
   )
 
