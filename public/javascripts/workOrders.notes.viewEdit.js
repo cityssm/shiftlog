@@ -185,11 +185,11 @@
                             ? ` ${cityssm.escapeHTML(field.fieldUnitSuffix)}`
                             : '';
                         return `
-                    <tr>
-                      <th style="width: 40%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
-                      <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
-                    </tr>
-                  `;
+                        <tr>
+                          <th style="width: 40%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
+                          <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
+                        </tr>
+                      `;
                     })
                         .join('')}
                 </tbody>

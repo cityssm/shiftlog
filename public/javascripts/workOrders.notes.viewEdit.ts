@@ -280,7 +280,6 @@ declare const marked: { parse: (markdownString: string) => string }
           noteTypeContainer.style.display = 'none'
         }
 
-        // eslint-disable-next-line no-unsanitized/property
         ;(
           modalElement.querySelector(
             '#viewWorkOrderNote--noteText'
@@ -291,7 +290,9 @@ declare const marked: { parse: (markdownString: string) => string }
         const fieldsContainer = modalElement.querySelector(
           '#viewWorkOrderNote--fieldsContainer'
         ) as HTMLElement
+
         fieldsContainer.innerHTML = ''
+
         if (note.fields !== undefined && note.fields.length > 0) {
           // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
           fieldsContainer.innerHTML = `
@@ -305,16 +306,18 @@ declare const marked: { parse: (markdownString: string) => string }
                         field.fieldUnitPrefix && field.fieldUnitPrefix !== ''
                           ? `${cityssm.escapeHTML(field.fieldUnitPrefix)} `
                           : ''
+
                       const suffix =
                         field.fieldUnitSuffix && field.fieldUnitSuffix !== ''
                           ? ` ${cityssm.escapeHTML(field.fieldUnitSuffix)}`
                           : ''
-                      return `
-                    <tr>
-                      <th style="width: 40%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
-                      <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
-                    </tr>
-                  `
+
+                      return /* html */ `
+                        <tr>
+                          <th style="width: 40%;">${cityssm.escapeHTML(field.fieldLabel)}</th>
+                          <td>${prefix}${cityssm.escapeHTML(field.fieldValue)}${suffix}</td>
+                        </tr>
+                      `
                     })
                     .join('')}
                 </tbody>
