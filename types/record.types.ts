@@ -534,6 +534,14 @@ export interface WorkOrderAttachment extends BaseRecord {
   isWorkOrderThumbnail: boolean
 
   fileSystemPath: string
+  fileChecksum: string
+
+  ignoredAttachmentNoteText?: string | null
+}
+
+export interface IgnoredAttachmentChecksum extends BaseRecord {
+  fileChecksum: string
+  noteText: string
 }
 
 // Ad Hoc Tasks

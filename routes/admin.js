@@ -8,6 +8,7 @@ import handler_equipment from '../handlers/admin-get/equipment.js';
 import handler_locations from '../handlers/admin-get/locations.js';
 import handler_noteTypes from '../handlers/admin-get/noteTypes.js';
 import handler_notificationConfigurations from '../handlers/admin-get/notificationConfigurations.js';
+import handler_ignoredAttachments from '../handlers/admin-get/ignoredAttachments.js';
 import handler_settings from '../handlers/admin-get/settings.js';
 import handler_tags from '../handlers/admin-get/tags.js';
 import handler_userGroups from '../handlers/admin-get/userGroups.js';
@@ -38,6 +39,7 @@ import handler_doDeleteEmployee from '../handlers/admin-post/doDeleteEmployee.js
 import handler_doDeleteEmployeeList from '../handlers/admin-post/doDeleteEmployeeList.js';
 import handler_doDeleteEmployeeListMember from '../handlers/admin-post/doDeleteEmployeeListMember.js';
 import handler_doDeleteEquipment from '../handlers/admin-post/doDeleteEquipment.js';
+import handler_doDeleteIgnoredAttachmentChecksum from '../handlers/admin-post/doDeleteIgnoredAttachmentChecksum.js';
 import handler_doDeleteLocation from '../handlers/admin-post/doDeleteLocation.js';
 import handler_doDeleteNoteType from '../handlers/admin-post/doDeleteNoteType.js';
 import handler_doDeleteNoteTypeField from '../handlers/admin-post/doDeleteNoteTypeField.js';
@@ -117,7 +119,9 @@ if (getConfigProperty('workOrders.isEnabled')) {
         .post('/doAddWorkOrderType', handler_doAddWorkOrderType)
         .post('/doUpdateWorkOrderType', handler_doUpdateWorkOrderType)
         .post('/doDeleteWorkOrderType', handler_doDeleteWorkOrderType)
-        .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes);
+        .post('/doReorderWorkOrderTypes', handler_doReorderWorkOrderTypes)
+        .get('/ignoredAttachments', handler_ignoredAttachments)
+        .post('/doDeleteIgnoredAttachmentChecksum', handler_doDeleteIgnoredAttachmentChecksum);
 }
 router
     .get('/assignedTo', handler_assignedTo)

@@ -43,6 +43,7 @@ import handler_doGetWorkOrderEquipment from '../handlers/workOrders-post/doGetWo
 import handler_doGetWorkOrderMilestones from '../handlers/workOrders-post/doGetWorkOrderMilestones.js'
 import handler_doGetWorkOrderNotes from '../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import handler_doGetWorkOrdersForPlanner from '../handlers/workOrders-post/doGetWorkOrdersForPlanner.js'
+import handler_doIgnoreWorkOrderAttachment from '../handlers/workOrders-post/doIgnoreWorkOrderAttachment.js'
 import handler_doRecoverWorkOrder from '../handlers/workOrders-post/doRecoverWorkOrder.js'
 import handler_doReopenWorkOrder from '../handlers/workOrders-post/doReopenWorkOrder.js'
 import handler_doSearchWorkOrders from '../handlers/workOrders-post/doSearchWorkOrders.js'
@@ -82,6 +83,21 @@ function manageHandler(
   next: NextFunction
 ): void {
   if (request.session.user?.userProperties.workOrders.canManage ?? false) {
+    next()
+  } else {
+    response.status(403).send('Forbidden')
+  }
+}
+
+function manageAndAdminHandler(
+  request: Request<unknown, unknown, unknown, { error?: string }>,
+  response: Response,
+  next: NextFunction
+): void {
+  if (
+    (request.session.user?.userProperties.workOrders.canManage ?? false) &&
+    (request.session.user?.userProperties.isAdmin ?? false)
+  ) {
     next()
   } else {
     response.status(403).send('Forbidden')
@@ -220,6 +236,11 @@ router
     '/doSetWorkOrderAttachmentThumbnail', // eslint-disable-line no-secrets/no-secrets -- false positive, this is a route name
     updateHandler,
     handler_doSetWorkOrderAttachmentThumbnail
+  )
+  .post(
+    '/doIgnoreWorkOrderAttachment',
+    manageAndAdminHandler,
+    handler_doIgnoreWorkOrderAttachment
   )
 
 router

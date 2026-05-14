@@ -117,6 +117,24 @@
     </li>
     <li>
       <a
+        class="<%= headTitle === 'Ignored Attachment Management' ? 'is-active' : '' %>"
+        href="<%= urlPrefix %>/admin/ignoredAttachments"
+        title="Ignored Attachment Management"
+      >
+        <div class="columns is-mobile is-1">
+          <div class="column is-narrow">
+            <span class="icon">
+              <i class="fa-solid fa-paperclip"></i>
+            </span>
+          </div>
+          <div class="column is-hidden-touch">
+            Ignored Attachments
+          </div>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
         class="<%= headTitle === 'Assigned To Management' ? 'is-active' : '' %>"
         href="<%= urlPrefix %>/admin/assignedTo"
         title="Assigned To Management"

@@ -16,6 +16,7 @@ export default async function getWorkOrderAttachment(workOrderAttachmentId) {
         attachmentDescription,
         isWorkOrderThumbnail,
         fileSystemPath,
+        fileChecksum,
         recordCreate_userName,
         recordCreate_dateTime,
         recordUpdate_userName,
