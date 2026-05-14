@@ -141,10 +141,10 @@ declare const bulmaJS: BulmaJS
         !hasIgnoredAttachmentNote
       ) {
         ignoreAttachmentButtonHTML = /* html */ `
-          <div class="dropdown is-right is-hoverable">
+          <div class="dropdown is-right">
             <div class="dropdown-trigger">
               <button
-                class="button is-small is-light"
+                class="button is-small"
                 type="button"
                 title="More Actions"
               >
@@ -351,6 +351,8 @@ declare const bulmaJS: BulmaJS
 
       attachmentsContainerElement.append(attachmentElement)
     }
+
+    bulmaJS.init(attachmentsContainerElement)
   }
 
   function showIgnoreAttachmentModal(attachment: WorkOrderAttachment): void {

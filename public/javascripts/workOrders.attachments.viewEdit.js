@@ -61,6 +61,59 @@
                     attachment.recordCreate_userName === exports.shiftLog.userName);
             const fileIcon = getFileIcon(attachment.attachmentFileType);
             const isImage = attachment.attachmentFileType.startsWith('image/');
+            const hasIgnoredAttachmentNote = attachment.ignoredAttachmentNoteText !== undefined &&
+                attachment.ignoredAttachmentNoteText !== null &&
+                attachment.ignoredAttachmentNoteText !== '';
+            const ignoredAttachmentTagHTML = hasIgnoredAttachmentNote
+                ? `
+          <button
+            class="tag is-warning is-light ml-1 ignored-attachment-tag"
+            data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
+            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
+            type="button"
+            title="Attachment is ignored in future imports"
+          >
+            <span class="icon is-small">
+              <i class="fa-solid fa-ban"></i>
+            </span>
+            <span>Ignored in Future</span>
+          </button>
+        `
+                : '';
+            let ignoreAttachmentButtonHTML = '';
+            if (userCanIgnoreAttachmentsInFuture &&
+                attachment.fileChecksum !== '' &&
+                !hasIgnoredAttachmentNote) {
+                ignoreAttachmentButtonHTML = `
+          <div class="dropdown is-right">
+            <div class="dropdown-trigger">
+              <button
+                class="button is-small"
+                type="button"
+                title="More Actions"
+              >
+                <span class="icon is-small">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu">
+              <div class="dropdown-content">
+                <button
+                  class="dropdown-item ignore-attachment"
+                  data-attachment-id="${attachment.workOrderAttachmentId}"
+                  type="button"
+                >
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-ban"></i>
+                  </span>
+                  <span>Ignore Attachment in Future</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+            }
             attachmentElement.innerHTML = `
         <article class="media">
           <figure class="media-left">
@@ -107,22 +160,7 @@
                         </span>
                       `
                 : ''}
-                  ${attachment.ignoredAttachmentNoteText
-                ? `
-                          <button
-                            class="tag is-warning is-light ml-1 ignored-attachment-tag"
-                            data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
-                            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
-                            type="button"
-                            title="Attachment is ignored in future imports"
-                          >
-                            <span class="icon is-small">
-                              <i class="fa-solid fa-ban"></i>
-                            </span>
-                            <span>Ignored in Future</span>
-                          </button>
-                        `
-                : ''}
+                  ${ignoredAttachmentTagHTML}
                 </strong>
                 <br />
                 <small class="has-text-grey">
@@ -167,39 +205,7 @@
                       </span>
                       <span>Edit Description</span>
                     </button>
-                     ${userCanIgnoreAttachmentsInFuture &&
-                attachment.fileChecksum !== '' &&
-                !attachment.ignoredAttachmentNoteText
-                ? `
-                             <div class="dropdown is-right is-hoverable">
-                               <div class="dropdown-trigger">
-                                 <button
-                                   class="button is-small is-light"
-                                   type="button"
-                                   title="More Actions"
-                                 >
-                                   <span class="icon is-small">
-                                     <i class="fa-solid fa-ellipsis-vertical"></i>
-                                   </span>
-                                 </button>
-                               </div>
-                               <div class="dropdown-menu">
-                                 <div class="dropdown-content">
-                                   <button
-                                     class="dropdown-item ignore-attachment"
-                                     data-attachment-id="${attachment.workOrderAttachmentId}"
-                                     type="button"
-                                   >
-                                     <span class="icon is-small">
-                                       <i class="fa-solid fa-ban"></i>
-                                     </span>
-                                     <span>Ignore Attachment in Future</span>
-                                   </button>
-                                 </div>
-                   </div>
-                 </div>
-               `
-                : ''}
+                    ${ignoreAttachmentButtonHTML}
                     <button
                       class="button is-small is-light is-danger delete-attachment"
                       data-attachment-id="${attachment.workOrderAttachmentId}"
@@ -208,8 +214,8 @@
                     >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
                     </button>
-                   </div>
-                 </div>
+                  </div>
+                </div>
               `
                 : ''}
         </article>
@@ -251,6 +257,7 @@
             }
             attachmentsContainerElement.append(attachmentElement);
         }
+        bulmaJS.init(attachmentsContainerElement);
     }
     function showIgnoreAttachmentModal(attachment) {
         let closeModalFunction;
@@ -304,14 +311,15 @@
         const fileChecksumFieldKey = 'fileChecksum';
         const fileChecksumSelector = `#viewIgnoredWorkOrderAttachment--${fileChecksumFieldKey}`;
         cityssm.openHtmlModal('workOrders-viewIgnoredAttachment', {
+            onremoved() {
+                bulmaJS.toggleHtmlClipped();
+            },
             onshow(modalElement) {
+                ;
                 modalElement.querySelector(fileChecksumSelector).textContent = fileChecksum;
                 modalElement.querySelector('#viewIgnoredWorkOrderAttachment--noteText').textContent = noteText;
             },
             onshown() {
-                bulmaJS.toggleHtmlClipped();
-            },
-            onremoved() {
                 bulmaJS.toggleHtmlClipped();
             }
         });
@@ -343,8 +351,8 @@
             const formData = new FormData(formElement);
             globalThis
                 .fetch(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doUploadWorkOrderAttachment`, {
-                method: 'POST',
-                body: formData
+                body: formData,
+                method: 'POST'
             })
                 .then(async (response) => (await response.json()))
                 .then((responseJSON) => {
