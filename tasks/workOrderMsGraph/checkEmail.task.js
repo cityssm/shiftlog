@@ -53,7 +53,7 @@ const systemUser = {
     userSettings: {}
 };
 export async function checkEmail() {
-    if ((await getCachedSettingValue('msGraph.enabled')) !== 'true') {
+    if (await getCachedSettingValue('msGraph.enabled') !== 'true') {
         debug('Microsoft Graph integration is disabled. Skipping email check.');
         return;
     }
