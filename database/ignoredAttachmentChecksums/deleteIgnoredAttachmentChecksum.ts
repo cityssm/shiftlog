@@ -22,8 +22,7 @@ export default async function deleteIgnoredAttachmentChecksum(
         recordUpdate_dateTime = getdate()
       WHERE
         instance = @instance
-        AND
-        fileChecksum = @fileChecksum
+        AND fileChecksum = @fileChecksum
         AND recordDelete_dateTime IS NULL
     `)
 
