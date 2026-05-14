@@ -196,9 +196,9 @@
                                      <span>Ignore Attachment in Future</span>
                                    </button>
                                  </div>
-                               </div>
-                             </div>
-                           `
+                   </div>
+                 </div>
+               `
                 : ''}
                     <button
                       class="button is-small is-light is-danger delete-attachment"

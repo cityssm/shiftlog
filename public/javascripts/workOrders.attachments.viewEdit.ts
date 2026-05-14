@@ -116,7 +116,6 @@ declare const bulmaJS: BulmaJS
         attachment.ignoredAttachmentNoteText !== null &&
         attachment.ignoredAttachmentNoteText !== ''
 
-       
       const ignoredAttachmentTagHTML = hasIgnoredAttachmentNote
         ? /* html */ `
           <button
@@ -141,7 +140,6 @@ declare const bulmaJS: BulmaJS
         attachment.fileChecksum !== '' &&
         !hasIgnoredAttachmentNote
       ) {
-         
         ignoreAttachmentButtonHTML = /* html */ `
           <div class="dropdown is-right is-hoverable">
             <div class="dropdown-trigger">
