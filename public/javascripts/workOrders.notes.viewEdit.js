@@ -167,7 +167,6 @@
                     noteTypeContainer.style.display = 'none';
                 }
                 ;
-                // eslint-disable-next-line no-unsanitized/property
                 modalElement.querySelector('#viewWorkOrderNote--noteText').innerHTML = DOMPurify.sanitize(marked.parse(note.noteText));
                 const fieldsContainer = modalElement.querySelector('#viewWorkOrderNote--fieldsContainer');
                 fieldsContainer.innerHTML = '';
