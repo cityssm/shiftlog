@@ -54,7 +54,7 @@
         const tableBodyElement = tableElement.querySelector('tbody');
         for (const workOrder of data.workOrders) {
             const tableRowElement = document.createElement('tr');
-            let priorityIconHTML = '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-circle"></i></span>';
+            let priorityIconHTML = '<span class="icon has-text-success" title="Open"><i class="fa-solid fa-play"></i></span>';
             const now = new Date();
             const isOverdue = workOrder.workOrderDueDateTime !== null &&
                 new Date(workOrder.workOrderDueDateTime) < now;
@@ -70,9 +70,10 @@
             const dueDateHTML = workOrder.workOrderDueDateTime === null
                 ? '-'
                 : cityssm.dateToString(new Date(workOrder.workOrderDueDateTime));
-            const milestonesHTML = workOrder.milestonesCount && workOrder.milestonesCount > 0
+            const milestonesTagClass = (workOrder.overdueMilestonesCount ?? 0) > 0 ? 'is-danger' : 'is-info';
+            const milestonesHTML = (workOrder.milestonesCount ?? 0) > 0
                 ? `
-            <span class="tag ${workOrder.overdueMilestonesCount && workOrder.overdueMilestonesCount > 0 ? 'is-danger' : 'is-info'}">
+            <span class="tag ${milestonesTagClass}">
               ${workOrder.milestonesCompletedCount} / ${workOrder.milestonesCount}
             </span>
           `
@@ -86,7 +87,7 @@
           <a class="has-text-weight-semibold" href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId, exports.preferEdit)}">
             ${cityssm.escapeHTML(workOrder.workOrderNumber)}
           </a><br />
-          ${workOrder.workOrderTitle ? `<span class="is-size-7 has-text-weight-semibold">${cityssm.escapeHTML(workOrder.workOrderTitle)}</span><br />` : ''}
+          ${workOrder.workOrderTitle === '' ? '' : `<span class="is-size-7 has-text-weight-semibold">${cityssm.escapeHTML(workOrder.workOrderTitle)}</span><br />`}
           <span class="is-size-7">
             ${cityssm.escapeHTML(workOrder.workOrderType ?? '-')}
           </span>
