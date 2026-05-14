@@ -436,11 +436,34 @@ declare const exports: {
     getSearchResults()
   }
 
-  const formElements = filtersFormElement.querySelectorAll('input, select')
+  const filterElements = filtersFormElement.querySelectorAll(
+    'input, select'
+  ) as NodeListOf<HTMLInputElement | HTMLSelectElement>
 
-  for (const formElement of formElements) {
-    formElement.addEventListener('change', resetOffsetAndGetResults)
+  function applyFilterHighlighting(): void {
+    for (const filterElement of filterElements) {
+      filterElement.classList.toggle(
+        'has-background-primary-light',
+        filterElement.value.trim() !== ''
+      )
+
+      if (filterElement instanceof HTMLSelectElement) {
+        filterElement
+          .closest('.select')
+          ?.classList.toggle('is-primary', filterElement.value.trim() !== '')
+      } else {
+        filterElement.classList.toggle(
+          'is-primary',
+          filterElement.value.trim() !== ''
+        )
+      }
+    }
   }
+
+  filtersFormElement.addEventListener('change', () => {
+    applyFilterHighlighting()
+    resetOffsetAndGetResults()
+  })
 
   document
     .querySelector('#workOrderSearch--limit')
@@ -471,5 +494,6 @@ declare const exports: {
     }
   }, 60 * 1000)
 
+  applyFilterHighlighting()
   getSearchResults()
 })()

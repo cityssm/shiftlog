@@ -322,10 +322,24 @@
         offsetInputElement.value = '0';
         getSearchResults();
     }
-    const formElements = filtersFormElement.querySelectorAll('input, select');
-    for (const formElement of formElements) {
-        formElement.addEventListener('change', resetOffsetAndGetResults);
+    const filterElements = filtersFormElement.querySelectorAll('input, select');
+    function applyFilterHighlighting() {
+        for (const filterElement of filterElements) {
+            filterElement.classList.toggle('has-background-primary-light', filterElement.value.trim() !== '');
+            if (filterElement instanceof HTMLSelectElement) {
+                filterElement
+                    .closest('.select')
+                    ?.classList.toggle('is-primary', filterElement.value.trim() !== '');
+            }
+            else {
+                filterElement.classList.toggle('is-primary', filterElement.value.trim() !== '');
+            }
+        }
     }
+    filtersFormElement.addEventListener('change', () => {
+        applyFilterHighlighting();
+        resetOffsetAndGetResults();
+    });
     document
         .querySelector('#workOrderSearch--limit')
         ?.addEventListener('change', resetOffsetAndGetResults);
@@ -343,5 +357,6 @@
             getSearchResults();
         }
     }, 60 * 1000);
+    applyFilterHighlighting();
     getSearchResults();
 })();
