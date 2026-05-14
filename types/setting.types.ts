@@ -7,6 +7,7 @@ export type SettingKey =
   | 'locations.defaultCityProvince'
   | 'locations.defaultLatitude'
   | 'locations.defaultLongitude'
+  | 'msGraph.enabled'
   | 'msGraph.from.allowedDomains'
   | 'msGraph.from.allowedEmailAddresses'
   | 'msGraph.from.blockedDomains'
@@ -85,6 +86,15 @@ export const settingProperties: SettingProperties[] = [
       'The number of days after closing a work order that it can be reopened by users with update permissions. Set to 0 to disable reopening.',
     type: 'number',
     defaultValue: '7',
+    isUserConfigurable: true
+  },
+  {
+    settingKey: 'msGraph.enabled',
+    settingName: 'Microsoft Graph - Enabled',
+    description:
+      'Whether to enable Microsoft Graph integration for creating work orders from emails. When enabled, the system will process incoming emails via Microsoft Graph to create work orders based on email content.',
+    type: 'boolean',
+    defaultValue: 'true',
     isUserConfigurable: true
   },
   {

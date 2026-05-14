@@ -12,6 +12,7 @@ import getWorkOrder, { getWorkOrderByWorkOrderNumber } from '../../database/work
 import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js';
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
+import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
 import { attachmentContentBytesToBuffer, attachmentContentBytesToChecksum, getAttachmentFileNameFromFileName, writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
@@ -51,6 +52,10 @@ const systemUser = {
     userSettings: {}
 };
 export async function checkEmail() {
+    if (await getCachedSettingValue('msGraph.enabled') !== 'true') {
+        debug('Microsoft Graph integration is disabled. Skipping email check.');
+        return;
+    }
     debug('Checking email for new messages...');
     const msGraphApi = new MsGraphMailApi(msGraphMailConfig);
     try {
