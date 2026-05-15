@@ -41,6 +41,8 @@ export const config = defineConfig(configWebApp, {
                         'datediff',
                         'datefromparts',
                         'eomonth',
+                        'ltrim',
+                        'rtrim',
                         'maint',
                         'shiftlog',
                         'timesheet',

@@ -176,7 +176,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     const byRequestorResult = await byRequestorRequest.query(`
     SELECT
       TOP 10 COALESCE(
-        NULLIF(TRIM(w.requestorName), ''),
+        NULLIF(LTRIM(RTRIM(w.requestorName)), ''),
         '(Not Provided)'
       ) AS requestorName,
       COUNT(*) AS openedCount,
@@ -199,7 +199,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
       ) ${userGroupFilter}
     GROUP BY
       COALESCE(
-        NULLIF(TRIM(w.requestorName), ''),
+        NULLIF(LTRIM(RTRIM(w.requestorName)), ''),
         '(Not Provided)'
       )
     ORDER BY
