@@ -16,6 +16,18 @@ const orderByOptions = {
       w.workOrderId DESC
     `
     },
+    lastUpdate_dateTime: {
+        asc: `
+      lastUpdate_dateTime ASC,
+      w.workOrderOpenDateTime DESC,
+      w.workOrderId DESC
+    `,
+        desc: `
+      lastUpdate_dateTime DESC,
+      w.workOrderOpenDateTime DESC,
+      w.workOrderId DESC
+    `
+    },
     locationAddress1: {
         asc: `
       w.locationAddress1 ASC,

@@ -9,6 +9,10 @@
             defaultDirection: 'asc',
             label: 'Assigned To'
         },
+        lastUpdate_dateTime: {
+            defaultDirection: 'desc',
+            label: 'Last Updated'
+        },
         locationAddress1: {
             defaultDirection: 'asc',
             label: 'Location'
@@ -94,6 +98,7 @@
     }
     const showWorkOrderType = filtersFormElement.querySelector('#workOrderSearch--workOrderTypeId') !==
         null;
+    const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {
             resultsContainerElement.innerHTML = `
@@ -117,6 +122,7 @@
           ${buildSortableHeaderHTML('workOrderOpenDateTime')}
           ${buildSortableHeaderHTML('requestorName')}
           ${buildSortableHeaderHTML('assignedToName')}
+          ${buildSortableHeaderHTML('lastUpdate_dateTime')}
           <th>
             <span class="is-sr-only">Properties</span>
           </th>
@@ -140,6 +146,14 @@
                 new Date(workOrder.workOrderDueDateTime) < new Date()) {
                 openClosedIconHTML =
                     '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>';
+            }
+            else if ((workOrder.isUpdated ?? false) &&
+                workOrder.lastUpdate_dateTime !== undefined &&
+                workOrder.lastUpdate_dateTime !== null &&
+                new Date(workOrder.lastUpdate_dateTime) >
+                    new Date(Date.now() - threeHoursInMilliseconds)) {
+                openClosedIconHTML =
+                    '<span class="icon has-text-info" title="Recently Updated"><i class="fa-solid fa-pencil"></i></span>';
             }
             else if (workOrder.isUpdated ?? false) {
                 openClosedIconHTML =
@@ -261,6 +275,11 @@
         </td>
         <td class="${currentUserEmailAddress !== '' && workOrder.assignedToEmailAddress?.toLowerCase() === currentUserEmailAddress ? 'has-background-primary-light' : ''}">
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
+        </td>
+        <td>
+          ${workOrder.lastUpdate_dateTime === undefined || workOrder.lastUpdate_dateTime === null
+                ? '-'
+                : `${cityssm.dateToString(new Date(workOrder.lastUpdate_dateTime))}<br /><span class="is-size-7 has-text-grey">${cityssm.dateToTimeString(new Date(workOrder.lastUpdate_dateTime))}</span>`}
         </td>
         <td class="has-text-right">
           ${notesIconHTML}
