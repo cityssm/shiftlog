@@ -60,18 +60,7 @@
             }
         }
         if (timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
-            timeSeriesChart.clear();
-            timeSeriesChart.setOption({
-                title: {
-                    text: 'No data available',
-                    left: 'center',
-                    top: 'middle',
-                    textStyle: {
-                        color: '#999',
-                        fontSize: 16
-                    }
-                }
-            });
+            setNoDataChart(timeSeriesChart);
             return;
         }
         const categories = timeSeries.map((item) => item.periodLabel);
@@ -196,18 +185,7 @@
             }
         }
         if (tags.length === 0) {
-            tagCloudChart.clear();
-            tagCloudChart.setOption({
-                title: {
-                    text: 'No data available',
-                    left: 'center',
-                    top: 'middle',
-                    textStyle: {
-                        color: '#999',
-                        fontSize: 16
-                    }
-                }
-            });
+            setNoDataChart(tagCloudChart);
             return;
         }
         const topTags = tags.slice(0, 20);

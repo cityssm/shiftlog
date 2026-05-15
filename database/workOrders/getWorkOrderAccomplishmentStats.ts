@@ -74,18 +74,18 @@ export default async function getWorkOrderAccomplishmentStats(
     user === undefined
       ? ''
       : /* sql */ `
-        AND (
-          wType.userGroupId IS NULL
-          OR wType.userGroupId IN (
-            SELECT
-              userGroupId
-            FROM
-              ShiftLog.UserGroupMembers
-            WHERE
-              userName = @userName
+          AND (
+            wType.userGroupId IS NULL
+            OR wType.userGroupId IN (
+              SELECT
+                userGroupId
+              FROM
+                ShiftLog.UserGroupMembers
+              WHERE
+                userName = @userName
+            )
           )
-        )
-      `
+        `
 
   // 1. Get overall statistics
   const statsRequest = pool.request()
@@ -172,22 +172,22 @@ export default async function getWorkOrderAccomplishmentStats(
       DateBuckets AS (
         SELECT
           ${filterType === 'month'
-          ? /* sql */ `
-              CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
-              FROM
-                master..spt_values
-              WHERE
-              TYPE = 'P'
-              AND DATEADD(day, number, @startDate) <= @endDate
-            `
-          : /* sql */ `
-              CAST(DATEADD(day, number * 7, @startDate) AS DATE) AS bucketDate
-              FROM
-                master..spt_values
-              WHERE
-              TYPE = 'P'
-              AND CAST(DATEADD(day, number * 7, @startDate) AS DATE) <= @endDate
-            `}
+            ? /* sql */ `
+                CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
+                FROM
+                  master..spt_values
+                WHERE
+                TYPE = 'P'
+                AND DATEADD(day, number, @startDate) <= @endDate
+              `
+            : /* sql */ `
+                CAST(DATEADD(day, number * 7, @startDate) AS DATE) AS bucketDate
+                FROM
+                  master..spt_values
+                WHERE
+                TYPE = 'P'
+                AND CAST(DATEADD(day, number * 7, @startDate) AS DATE) <= @endDate
+              `}
       )
     SELECT
       FORMAT(db.bucketDate, 'yyyy-MM-dd') AS periodLabel,
@@ -272,7 +272,10 @@ export default async function getWorkOrderAccomplishmentStats(
     requestorName: string | null
   }>(/* sql */ `
     SELECT
-      TOP 10 COALESCE(NULLIF(TRIM(w.requestorName), ''), '(Not Provided)') AS requestorName,
+      TOP 10 COALESCE(
+        NULLIF(TRIM(w.requestorName), ''),
+        '(Not Provided)'
+      ) AS requestorName,
       COUNT(*) AS openedCount,
       SUM(
         CASE
@@ -292,7 +295,10 @@ export default async function getWorkOrderAccomplishmentStats(
         OR w.workOrderCloseDateTime >= @startDate
       ) ${userGroupFilter}
     GROUP BY
-      COALESCE(NULLIF(TRIM(w.requestorName), ''), '(Not Provided)')
+      COALESCE(
+        NULLIF(TRIM(w.requestorName), ''),
+        '(Not Provided)'
+      )
     ORDER BY
       openedCount DESC
   `)

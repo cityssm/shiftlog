@@ -172,7 +172,6 @@ interface WorkOrderAccomplishmentData {
     ;(
       document.querySelector('#kpi--completionRate') as HTMLElement
     ).textContent = `${stats.percentClosed.toFixed(1)}%`
-
     ;(
       document.querySelector('#kpi--averageTurnaround') as HTMLElement
     ).textContent =
@@ -313,29 +312,27 @@ interface WorkOrderAccomplishmentData {
     return chart
   }
 
-  function updateByAssignedToChart(byAssignedTo: WorkOrderByAssignedTo[]): void {
-    byAssignedToChart = updateOpenedClosedBarChart(
-      {
-        categories: byAssignedTo.map((item) => item.assignedToName).toReversed(),
-        chart: byAssignedToChart,
-        chartSelector: '#chart--byAssignedTo',
-        closedData: byAssignedTo.map((item) => item.closedCount).toReversed(),
-        openedData: byAssignedTo.map((item) => item.openedCount).toReversed()
-      }
-    )
+  function updateByAssignedToChart(
+    byAssignedTo: WorkOrderByAssignedTo[]
+  ): void {
+    byAssignedToChart = updateOpenedClosedBarChart({
+      categories: byAssignedTo.map((item) => item.assignedToName).toReversed(),
+      chart: byAssignedToChart,
+      chartSelector: '#chart--byAssignedTo',
+      closedData: byAssignedTo.map((item) => item.closedCount).toReversed(),
+      openedData: byAssignedTo.map((item) => item.openedCount).toReversed()
+    })
   }
 
   function updateByRequestorChart(byRequestor: WorkOrderByRequestor[]): void {
-    byRequestorChart = updateOpenedClosedBarChart(
-      {
-        categories: byRequestor.map((item) => item.requestorName).toReversed(),
-        chart: byRequestorChart,
-        chartSelector: '#chart--byRequestor',
-        closedData: byRequestor.map((item) => item.closedCount).toReversed(),
-        hasTruncatedLabels: true,
-        openedData: byRequestor.map((item) => item.openedCount).toReversed()
-      }
-    )
+    byRequestorChart = updateOpenedClosedBarChart({
+      categories: byRequestor.map((item) => item.requestorName).toReversed(),
+      chart: byRequestorChart,
+      chartSelector: '#chart--byRequestor',
+      closedData: byRequestor.map((item) => item.closedCount).toReversed(),
+      hasTruncatedLabels: true,
+      openedData: byRequestor.map((item) => item.openedCount).toReversed()
+    })
   }
 
   // Update tag cloud chart
