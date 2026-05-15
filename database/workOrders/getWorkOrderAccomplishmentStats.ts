@@ -273,7 +273,7 @@ export default async function getWorkOrderAccomplishmentStats(
   }>(/* sql */ `
     SELECT
       TOP 10 COALESCE(
-        NULLIF(TRIM(w.requestorName), ''),
+        NULLIF(LTRIM(RTRIM(w.requestorName)), ''),
         '(Not Provided)'
       ) AS requestorName,
       COUNT(*) AS openedCount,
@@ -296,7 +296,7 @@ export default async function getWorkOrderAccomplishmentStats(
       ) ${userGroupFilter}
     GROUP BY
       COALESCE(
-        NULLIF(TRIM(w.requestorName), ''),
+        NULLIF(LTRIM(RTRIM(w.requestorName)), ''),
         '(Not Provided)'
       )
     ORDER BY
