@@ -23,6 +23,20 @@
             }).addTo(hotZonesMap);
         }
     }
+    function setNoDataChart(chart) {
+        chart.clear();
+        chart.setOption({
+            title: {
+                text: 'No data available',
+                left: 'center',
+                top: 'middle',
+                textStyle: {
+                    color: '#999',
+                    fontSize: 16
+                }
+            }
+        });
+    }
     function updateKPIs(stats) {
         const totalOpened = stats.totalOpen + stats.totalClosed;
         document.querySelector('#kpi--totalOpened').textContent =
@@ -91,41 +105,25 @@
             }
         });
     }
-    function updateByAssignedToChart(byAssignedTo) {
-        if (byAssignedToChart === undefined) {
-            const byAssignedToElement = document.querySelector('#chart--byAssignedTo');
-            if (byAssignedToElement === null) {
-                return;
+    function updateOpenedClosedBarChart(parameters) {
+        const { categories, chartSelector, closedData, hasTruncatedLabels = false, openedData } = parameters;
+        let { chart } = parameters;
+        if (chart === undefined) {
+            const chartElement = document.querySelector(chartSelector);
+            if (chartElement === null) {
+                return undefined;
             }
             else {
-                byAssignedToChart = echarts.init(byAssignedToElement);
+                chart = echarts.init(chartElement);
             }
         }
-        if (byAssignedTo.length === 0) {
-            byAssignedToChart.clear();
-            byAssignedToChart.setOption({
-                title: {
-                    text: 'No data available',
-                    left: 'center',
-                    top: 'middle',
-                    textStyle: {
-                        color: '#999',
-                        fontSize: 16
-                    }
-                }
-            });
-            return;
+        if (categories.length === 0) {
+            setNoDataChart(chart);
+            return chart;
         }
-        const categories = byAssignedTo
-            .map((item) => item.assignedToName)
-            .toReversed();
-        const openedData = byAssignedTo.map((item) => item.openedCount).toReversed();
-        const closedData = byAssignedTo.map((item) => item.closedCount).toReversed();
-        byAssignedToChart.setOption({
+        chart.setOption({
             title: { show: false },
-            legend: {
-                data: ['Opened', 'Closed']
-            },
+            legend: { data: ['Opened', 'Closed'] },
             series: [
                 {
                     data: openedData,
@@ -141,9 +139,7 @@
                 }
             ],
             tooltip: {
-                axisPointer: {
-                    type: 'shadow'
-                },
+                axisPointer: { type: 'shadow' },
                 trigger: 'axis'
             },
             xAxis: {
@@ -151,81 +147,42 @@
                 show: true,
                 type: 'value'
             },
-            yAxis: {
-                data: categories,
-                show: true,
-                type: 'category'
-            }
+            yAxis: hasTruncatedLabels
+                ? {
+                    axisLabel: {
+                        interval: 0,
+                        overflow: 'truncate',
+                        width: 120
+                    },
+                    data: categories,
+                    show: true,
+                    type: 'category'
+                }
+                : {
+                    data: categories,
+                    show: true,
+                    type: 'category'
+                }
+        });
+        return chart;
+    }
+    function updateByAssignedToChart(byAssignedTo) {
+        byAssignedToChart = updateOpenedClosedBarChart({
+            categories: byAssignedTo.map((item) => item.assignedToName).toReversed(),
+            chart: byAssignedToChart,
+            chartSelector: '#chart--byAssignedTo',
+            closedData: byAssignedTo.map((item) => item.closedCount).toReversed(),
+            openedData: byAssignedTo.map((item) => item.openedCount).toReversed()
         });
     }
     function updateByRequestorChart(byRequestor) {
-        if (byRequestorChart === undefined) {
-            const byRequestorElement = document.querySelector('#chart--byRequestor');
-            if (byRequestorElement === null) {
-                return;
-            }
-            else {
-                byRequestorChart = echarts.init(byRequestorElement);
-            }
-        }
-        if (byRequestor.length === 0) {
-            byRequestorChart.clear();
-            byRequestorChart.setOption({
-                title: {
-                    text: 'No data available',
-                    left: 'center',
-                    top: 'middle',
-                    textStyle: {
-                        color: '#999',
-                        fontSize: 16
-                    }
-                }
-            });
-            return;
-        }
-        const categories = byRequestor.map((item) => item.requestorName).toReversed();
-        const openedData = byRequestor.map((item) => item.openedCount).toReversed();
-        const closedData = byRequestor.map((item) => item.closedCount).toReversed();
-        byRequestorChart.setOption({
-            title: { show: false },
-            legend: {
-                data: ['Opened', 'Closed']
-            },
-            series: [
-                {
-                    data: openedData,
-                    itemStyle: { color: '#48c774' },
-                    name: 'Opened',
-                    type: 'bar'
-                },
-                {
-                    data: closedData,
-                    itemStyle: { color: '#3298dc' },
-                    name: 'Closed',
-                    type: 'bar'
-                }
-            ],
-            tooltip: {
-                axisPointer: {
-                    type: 'shadow'
-                },
-                trigger: 'axis'
-            },
-            xAxis: {
-                minInterval: 1,
-                show: true,
-                type: 'value'
-            },
-            yAxis: {
-                axisLabel: {
-                    interval: 0,
-                    overflow: 'truncate',
-                    width: 120
-                },
-                data: categories,
-                show: true,
-                type: 'category'
-            }
+        byRequestorChart = updateOpenedClosedBarChart({
+            categories: byRequestor.map((item) => item.requestorName).toReversed(),
+            chart: byRequestorChart,
+            chartSelector: '#chart--byRequestor',
+            closedData: byRequestor.map((item) => item.closedCount).toReversed(),
+            hasTruncatedLabels: true,
+            openedData: byRequestor.map((item) => item.openedCount).toReversed()
         });
     }
     function updateTagCloudChart(tags) {

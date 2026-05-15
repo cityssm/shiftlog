@@ -70,8 +70,10 @@ export default async function getWorkOrderAccomplishmentStats(
   const endDateString = dateToString(endDate)
 
   // Build user group filter
-  const userGroupFilter = user
-    ? /* sql */ `
+  const userGroupFilter =
+    user === undefined
+      ? ''
+      : /* sql */ `
         AND (
           wType.userGroupId IS NULL
           OR wType.userGroupId IN (
@@ -84,7 +86,6 @@ export default async function getWorkOrderAccomplishmentStats(
           )
         )
       `
-    : ''
 
   // 1. Get overall statistics
   const statsRequest = pool.request()
@@ -189,9 +190,7 @@ export default async function getWorkOrderAccomplishmentStats(
             `}
       )
     SELECT
-      ${filterType === 'month'
-        ? "FORMAT(db.bucketDate, 'yyyy-MM-dd')"
-        : "FORMAT(db.bucketDate, 'yyyy-MM-dd')"} AS periodLabel,
+      FORMAT(db.bucketDate, 'yyyy-MM-dd') AS periodLabel,
       COUNT(w.workOrderId) AS openWorkOrdersCount
     FROM
       DateBuckets db
@@ -273,7 +272,7 @@ export default async function getWorkOrderAccomplishmentStats(
     requestorName: string | null
   }>(/* sql */ `
     SELECT
-      TOP 10 COALESCE(NULLIF(LTRIM(RTRIM(w.requestorName)), ''), '(Not Provided)') AS requestorName,
+      TOP 10 COALESCE(NULLIF(TRIM(w.requestorName), ''), '(Not Provided)') AS requestorName,
       COUNT(*) AS openedCount,
       SUM(
         CASE
@@ -293,7 +292,7 @@ export default async function getWorkOrderAccomplishmentStats(
         OR w.workOrderCloseDateTime >= @startDate
       ) ${userGroupFilter}
     GROUP BY
-      COALESCE(NULLIF(LTRIM(RTRIM(w.requestorName)), ''), '(Not Provided)')
+      COALESCE(NULLIF(TRIM(w.requestorName), ''), '(Not Provided)')
     ORDER BY
       openedCount DESC
   `)

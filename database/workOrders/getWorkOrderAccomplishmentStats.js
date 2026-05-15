@@ -6,8 +6,9 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     const instance = getConfigProperty('application.instance');
     const startDateString = dateToString(startDate);
     const endDateString = dateToString(endDate);
-    const userGroupFilter = user
-        ? `
+    const userGroupFilter = user === undefined
+        ? ''
+        : `
         AND (
           wType.userGroupId IS NULL
           OR wType.userGroupId IN (
@@ -19,8 +20,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
               userName = @userName
           )
         )
-      `
-        : '';
+      `;
     const statsRequest = pool.request();
     statsRequest
         .input('instance', instance)
@@ -109,9 +109,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
             `}
       )
     SELECT
-      ${filterType === 'month'
-        ? "FORMAT(db.bucketDate, 'yyyy-MM-dd')"
-        : "FORMAT(db.bucketDate, 'yyyy-MM-dd')"} AS periodLabel,
+      FORMAT(db.bucketDate, 'yyyy-MM-dd') AS periodLabel,
       COUNT(w.workOrderId) AS openWorkOrdersCount
     FROM
       DateBuckets db
@@ -177,7 +175,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         .input('userName', user?.userName);
     const byRequestorResult = await byRequestorRequest.query(`
     SELECT
-      TOP 10 COALESCE(NULLIF(LTRIM(RTRIM(w.requestorName)), ''), '(Not Provided)') AS requestorName,
+      TOP 10 COALESCE(NULLIF(TRIM(w.requestorName), ''), '(Not Provided)') AS requestorName,
       COUNT(*) AS openedCount,
       SUM(
         CASE
@@ -197,7 +195,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         OR w.workOrderCloseDateTime >= @startDate
       ) ${userGroupFilter}
     GROUP BY
-      COALESCE(NULLIF(LTRIM(RTRIM(w.requestorName)), ''), '(Not Provided)')
+      COALESCE(NULLIF(TRIM(w.requestorName), ''), '(Not Provided)')
     ORDER BY
       openedCount DESC
   `);
