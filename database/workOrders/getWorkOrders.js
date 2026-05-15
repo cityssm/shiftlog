@@ -1,5 +1,5 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
-import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { buildGreatestSql, getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { buildGetWorkOrdersOrderByClause } from './getWorkOrdersOrderBy.helpers.js';
 function buildWhereClause(filters, user) {
     let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
@@ -181,150 +181,152 @@ export default async function getWorkOrders(filters, options, user) {
     if (totalCount > 0 || limit === -1) {
         const workOrdersRequest = pool.request();
         applyParameters(workOrdersRequest, filters, user);
-        const workOrdersResult = await workOrdersRequest.query(`
-        SELECT
-          w.workOrderId,
-          w.workOrderNumberPrefix,
-          w.workOrderNumberYear,
-          w.workOrderNumberSequence,
-          w.workOrderNumberOverride,
-          w.workOrderNumber,
-          w.workOrderTypeId,
-          wType.workOrderType,
-          w.workOrderStatusDataListItemId,
-          wStatus.dataListItem AS workOrderStatusDataListItem,
-          w.workOrderPriorityDataListItemId,
-          wPriority.dataListItem AS workOrderPriorityDataListItem,
-          w.workOrderTitle,
-          w.workOrderDetails,
-          w.workOrderOpenDateTime,
-          w.workOrderDueDateTime,
-          w.workOrderCloseDateTime,
-          w.requestorName,
-          w.requestorContactInfo,
-          w.requestorIsSubscribed,
-          w.locationLatitude,
-          w.locationLongitude,
-          w.locationAddress1,
-          w.locationAddress2,
-          w.locationCityProvince,
-          w.assignedToId,
-          greatest(
-            w.recordUpdate_dateTime,
-            milestones.milestonesLastUpdateDateTime,
-            attachments.attachmentsLastUpdateDateTime,
-            notes.notesLastUpdateDateTime,
-            equipment.equipmentLastUpdateDateTime,
-            costs.costsLastUpdateDateTime
-          ) AS lastUpdate_dateTime,
-          assignedTo.assignedToName,
-          assignedTo.assignedToEmailAddress,
-          ${options.includeMoreInfoFormData === true
+        const workOrdersSql = `
+      SELECT
+        w.workOrderId,
+        w.workOrderNumberPrefix,
+        w.workOrderNumberYear,
+        w.workOrderNumberSequence,
+        w.workOrderNumberOverride,
+        w.workOrderNumber,
+        w.workOrderTypeId,
+        wType.workOrderType,
+        w.workOrderStatusDataListItemId,
+        wStatus.dataListItem AS workOrderStatusDataListItem,
+        w.workOrderPriorityDataListItemId,
+        wPriority.dataListItem AS workOrderPriorityDataListItem,
+        w.workOrderTitle,
+        w.workOrderDetails,
+        w.workOrderOpenDateTime,
+        w.workOrderDueDateTime,
+        w.workOrderCloseDateTime,
+        w.requestorName,
+        w.requestorContactInfo,
+        w.requestorIsSubscribed,
+        w.locationLatitude,
+        w.locationLongitude,
+        w.locationAddress1,
+        w.locationAddress2,
+        w.locationCityProvince,
+        w.assignedToId,
+        ${buildGreatestSql([
+            'w.recordUpdate_dateTime',
+            'milestones.milestonesLastUpdateDateTime',
+            'attachments.attachmentsLastUpdateDateTime',
+            'notes.notesLastUpdateDateTime',
+            'equipment.equipmentLastUpdateDateTime',
+            'costs.costsLastUpdateDateTime'
+        ], 'lastUpdate_dateTime')},
+        assignedTo.assignedToName,
+        assignedTo.assignedToEmailAddress,
+        ${options.includeMoreInfoFormData === true
             ? 'w.moreInfoFormDataJson,'
-            : ''} cast(
-            CASE
-              WHEN w.recordCreate_dateTime = w.recordUpdate_dateTime THEN 0
-              ELSE 1
-            END AS BIT
-          ) AS isUpdated,
-          milestones.milestonesCount,
-          milestones.milestonesCompletedCount,
-          attachments.attachmentsCount,
-          thumbnails.thumbnailAttachmentId,
-          notes.notesCount,
-          equipment.equipmentCount,
-          costs.costsCount,
-          costs.costsTotal
-        FROM
-          ShiftLog.WorkOrders w
-          LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
-          LEFT JOIN ShiftLog.DataListItems wStatus ON w.workOrderStatusDataListItemId = wStatus.dataListItemId
-          LEFT JOIN ShiftLog.DataListItems wPriority ON w.workOrderPriorityDataListItemId = wPriority.dataListItemId
-          LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
-          LEFT JOIN (
-            SELECT
-              workOrderId,
-              count(*) AS milestonesCount,
-              max(recordUpdate_dateTime) AS milestonesLastUpdateDateTime,
-              sum(
-                CASE
-                  WHEN milestoneCompleteDateTime IS NULL THEN 0
-                  ELSE 1
-                END
-              ) AS milestonesCompletedCount
-            FROM
-              ShiftLog.WorkOrderMilestones
-            WHERE
-              recordDelete_dateTime IS NULL
-            GROUP BY
-              workOrderId
-          ) AS milestones ON milestones.workOrderId = w.workOrderId
-          LEFT JOIN (
-            SELECT
-              workOrderId,
-              count(*) AS attachmentsCount,
-              max(recordUpdate_dateTime) AS attachmentsLastUpdateDateTime
-            FROM
-              ShiftLog.WorkOrderAttachments
-            WHERE
-              recordDelete_dateTime IS NULL
-            GROUP BY
-              workOrderId
-          ) AS attachments ON attachments.workOrderId = w.workOrderId
-          LEFT JOIN (
-            SELECT
-              workOrderId,
-              workOrderAttachmentId AS thumbnailAttachmentId
-            FROM
-              ShiftLog.WorkOrderAttachments
-            WHERE
-              recordDelete_dateTime IS NULL
-              AND isWorkOrderThumbnail = 1
-          ) AS thumbnails ON thumbnails.workOrderId = w.workOrderId
-          LEFT JOIN (
-            SELECT
-              workOrderId,
-              count(*) AS notesCount,
-              max(recordUpdate_dateTime) AS notesLastUpdateDateTime
-            FROM
-              ShiftLog.WorkOrderNotes
-            WHERE
-              recordDelete_dateTime IS NULL
-            GROUP BY
-              workOrderId
-          ) AS notes ON notes.workOrderId = w.workOrderId
-          LEFT JOIN (
-            SELECT
-              workOrderId,
-              count(*) AS equipmentCount,
-              max(recordUpdate_dateTime) AS equipmentLastUpdateDateTime
-            FROM
-              ShiftLog.WorkOrderEquipment
-            WHERE
-              recordDelete_dateTime IS NULL
-            GROUP BY
-              workOrderId
-          ) AS equipment ON equipment.workOrderId = w.workOrderId
-          LEFT JOIN (
-            SELECT
-              workOrderId,
-              count(*) AS costsCount,
-              max(recordUpdate_dateTime) AS costsLastUpdateDateTime,
-              sum(costAmount) AS costsTotal
-            FROM
-              ShiftLog.WorkOrderCosts
-            WHERE
-              recordDelete_dateTime IS NULL
-            GROUP BY
-              workOrderId
-          ) AS costs ON costs.workOrderId = w.workOrderId ${whereClause}
-        ORDER BY
-          ${orderByClause} ${limit === -1
+            :
+                ''} cast(
+          CASE
+            WHEN w.recordCreate_dateTime = w.recordUpdate_dateTime THEN 0
+            ELSE 1
+          END AS BIT
+        ) AS isUpdated,
+        milestones.milestonesCount,
+        milestones.milestonesCompletedCount,
+        attachments.attachmentsCount,
+        thumbnails.thumbnailAttachmentId,
+        notes.notesCount,
+        equipment.equipmentCount,
+        costs.costsCount,
+        costs.costsTotal
+      FROM
+        ShiftLog.WorkOrders w
+        LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+        LEFT JOIN ShiftLog.DataListItems wStatus ON w.workOrderStatusDataListItemId = wStatus.dataListItemId
+        LEFT JOIN ShiftLog.DataListItems wPriority ON w.workOrderPriorityDataListItemId = wPriority.dataListItemId
+        LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
+        LEFT JOIN (
+          SELECT
+            workOrderId,
+            count(*) AS milestonesCount,
+            max(recordUpdate_dateTime) AS milestonesLastUpdateDateTime,
+            sum(
+              CASE
+                WHEN milestoneCompleteDateTime IS NULL THEN 0
+                ELSE 1
+              END
+            ) AS milestonesCompletedCount
+          FROM
+            ShiftLog.WorkOrderMilestones
+          WHERE
+            recordDelete_dateTime IS NULL
+          GROUP BY
+            workOrderId
+        ) AS milestones ON milestones.workOrderId = w.workOrderId
+        LEFT JOIN (
+          SELECT
+            workOrderId,
+            count(*) AS attachmentsCount,
+            max(recordUpdate_dateTime) AS attachmentsLastUpdateDateTime
+          FROM
+            ShiftLog.WorkOrderAttachments
+          WHERE
+            recordDelete_dateTime IS NULL
+          GROUP BY
+            workOrderId
+        ) AS attachments ON attachments.workOrderId = w.workOrderId
+        LEFT JOIN (
+          SELECT
+            workOrderId,
+            workOrderAttachmentId AS thumbnailAttachmentId
+          FROM
+            ShiftLog.WorkOrderAttachments
+          WHERE
+            recordDelete_dateTime IS NULL
+            AND isWorkOrderThumbnail = 1
+        ) AS thumbnails ON thumbnails.workOrderId = w.workOrderId
+        LEFT JOIN (
+          SELECT
+            workOrderId,
+            count(*) AS notesCount,
+            max(recordUpdate_dateTime) AS notesLastUpdateDateTime
+          FROM
+            ShiftLog.WorkOrderNotes
+          WHERE
+            recordDelete_dateTime IS NULL
+          GROUP BY
+            workOrderId
+        ) AS notes ON notes.workOrderId = w.workOrderId
+        LEFT JOIN (
+          SELECT
+            workOrderId,
+            count(*) AS equipmentCount,
+            max(recordUpdate_dateTime) AS equipmentLastUpdateDateTime
+          FROM
+            ShiftLog.WorkOrderEquipment
+          WHERE
+            recordDelete_dateTime IS NULL
+          GROUP BY
+            workOrderId
+        ) AS equipment ON equipment.workOrderId = w.workOrderId
+        LEFT JOIN (
+          SELECT
+            workOrderId,
+            count(*) AS costsCount,
+            max(recordUpdate_dateTime) AS costsLastUpdateDateTime,
+            sum(costAmount) AS costsTotal
+          FROM
+            ShiftLog.WorkOrderCosts
+          WHERE
+            recordDelete_dateTime IS NULL
+          GROUP BY
+            workOrderId
+        ) AS costs ON costs.workOrderId = w.workOrderId ${whereClause}
+      ORDER BY
+        ${orderByClause} ${limit === -1
             ? ''
             : ` offset ${offset} rows`} ${limit === -1
             ? ''
             : ` fetch next ${limit} rows only`}
-      `);
+    `;
+        const workOrdersResult = await workOrdersRequest.query(workOrdersSql);
         workOrders = workOrdersResult.recordset;
         if (limit === -1) {
             totalCount = workOrders.length;
