@@ -444,14 +444,15 @@ export interface WorkOrder extends BaseRecord {
   userGroupId?: number | null
   userGroupName?: string
 
-  milestonesCount?: number
   milestonesCompletedCount?: number
+  milestonesCount?: number
   overdueMilestonesCount?: number
 
   attachmentsCount?: number
   thumbnailAttachmentId?: number | null
 
   notesCount?: number
+
   equipmentCount?: number
 
   costsCount?: number
@@ -460,6 +461,7 @@ export interface WorkOrder extends BaseRecord {
   tags?: WorkOrderTag[]
 
   isUpdated?: boolean
+  lastUpdate_dateTime?: Date
 }
 
 export interface WorkOrderTag {

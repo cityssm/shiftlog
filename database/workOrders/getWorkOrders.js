@@ -209,6 +209,14 @@ export default async function getWorkOrders(filters, options, user) {
           w.locationAddress2,
           w.locationCityProvince,
           w.assignedToId,
+          greatest(
+            w.recordUpdate_dateTime,
+            milestones.milestonesLastUpdateDateTime,
+            attachments.attachmentsLastUpdateDateTime,
+            notes.notesLastUpdateDateTime,
+            equipment.equipmentLastUpdateDateTime,
+            costs.costsLastUpdateDateTime
+          ) AS lastUpdate_dateTime,
           assignedTo.assignedToName,
           assignedTo.assignedToEmailAddress,
           ${options.includeMoreInfoFormData === true
@@ -237,6 +245,7 @@ export default async function getWorkOrders(filters, options, user) {
             SELECT
               workOrderId,
               count(*) AS milestonesCount,
+              max(recordUpdate_dateTime) AS milestonesLastUpdateDateTime,
               sum(
                 CASE
                   WHEN milestoneCompleteDateTime IS NULL THEN 0
@@ -253,7 +262,8 @@ export default async function getWorkOrders(filters, options, user) {
           LEFT JOIN (
             SELECT
               workOrderId,
-              count(*) AS attachmentsCount
+              count(*) AS attachmentsCount,
+              max(recordUpdate_dateTime) AS attachmentsLastUpdateDateTime
             FROM
               ShiftLog.WorkOrderAttachments
             WHERE
@@ -274,7 +284,8 @@ export default async function getWorkOrders(filters, options, user) {
           LEFT JOIN (
             SELECT
               workOrderId,
-              count(*) AS notesCount
+              count(*) AS notesCount,
+              max(recordUpdate_dateTime) AS notesLastUpdateDateTime
             FROM
               ShiftLog.WorkOrderNotes
             WHERE
@@ -285,7 +296,8 @@ export default async function getWorkOrders(filters, options, user) {
           LEFT JOIN (
             SELECT
               workOrderId,
-              count(*) AS equipmentCount
+              count(*) AS equipmentCount,
+              max(recordUpdate_dateTime) AS equipmentLastUpdateDateTime
             FROM
               ShiftLog.WorkOrderEquipment
             WHERE
@@ -297,6 +309,7 @@ export default async function getWorkOrders(filters, options, user) {
             SELECT
               workOrderId,
               count(*) AS costsCount,
+              max(recordUpdate_dateTime) AS costsLastUpdateDateTime,
               sum(costAmount) AS costsTotal
             FROM
               ShiftLog.WorkOrderCosts
