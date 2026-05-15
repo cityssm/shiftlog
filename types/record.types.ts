@@ -461,7 +461,7 @@ export interface WorkOrder extends BaseRecord {
   tags?: WorkOrderTag[]
 
   isUpdated?: boolean
-  lastUpdate_dateTime?: Date
+  lastUpdate_dateTime?: Date | string
 }
 
 export interface WorkOrderTag {

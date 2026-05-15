@@ -9,6 +9,10 @@
             defaultDirection: 'asc',
             label: 'Assigned To'
         },
+        lastUpdate_dateTime: {
+            defaultDirection: 'desc',
+            label: 'Last Updated'
+        },
         locationAddress1: {
             defaultDirection: 'asc',
             label: 'Location'
@@ -94,6 +98,31 @@
     }
     const showWorkOrderType = filtersFormElement.querySelector('#workOrderSearch--workOrderTypeId') !==
         null;
+    const secondsInMilliseconds = 1000;
+    const minutesInMilliseconds = 60 * secondsInMilliseconds;
+    const hoursInMilliseconds = 60 * minutesInMilliseconds;
+    const daysInMilliseconds = 24 * hoursInMilliseconds;
+    const threeHoursInMilliseconds = 3 * hoursInMilliseconds;
+    function relativeTimeString(date) {
+        const elapsedMilliseconds = Date.now() - date.getTime();
+        if (elapsedMilliseconds < 0) {
+            return 'just now';
+        }
+        else if (elapsedMilliseconds < minutesInMilliseconds) {
+            const seconds = Math.floor(elapsedMilliseconds / secondsInMilliseconds);
+            return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
+        }
+        else if (elapsedMilliseconds < hoursInMilliseconds) {
+            const minutes = Math.floor(elapsedMilliseconds / minutesInMilliseconds);
+            return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+        }
+        else if (elapsedMilliseconds < daysInMilliseconds) {
+            const hours = Math.floor(elapsedMilliseconds / hoursInMilliseconds);
+            return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+        }
+        const days = Math.floor(elapsedMilliseconds / daysInMilliseconds);
+        return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+    }
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {
             resultsContainerElement.innerHTML = `
@@ -117,6 +146,7 @@
           ${buildSortableHeaderHTML('workOrderOpenDateTime')}
           ${buildSortableHeaderHTML('requestorName')}
           ${buildSortableHeaderHTML('assignedToName')}
+          ${buildSortableHeaderHTML('lastUpdate_dateTime')}
           <th>
             <span class="is-sr-only">Properties</span>
           </th>
@@ -129,6 +159,7 @@
     `;
         const tableBodyElement = tableElement.querySelector('tbody');
         const currentUserEmailAddress = shiftLog.emailAddress.toLowerCase();
+        const threeHoursAgoDate = new Date(Date.now() - threeHoursInMilliseconds);
         for (const workOrder of data.workOrders) {
             const tableRowElement = document.createElement('tr');
             let openClosedIconHTML;
@@ -140,6 +171,12 @@
                 new Date(workOrder.workOrderDueDateTime) < new Date()) {
                 openClosedIconHTML =
                     '<span class="icon has-text-danger" title="Overdue"><i class="fa-solid fa-exclamation-triangle"></i></span>';
+            }
+            else if ((workOrder.isUpdated ?? false) &&
+                workOrder.lastUpdate_dateTime !== undefined &&
+                new Date(workOrder.lastUpdate_dateTime) > threeHoursAgoDate) {
+                openClosedIconHTML =
+                    '<span class="icon has-text-info" title="Recently Updated"><i class="fa-solid fa-pencil"></i></span>';
             }
             else if (workOrder.isUpdated ?? false) {
                 openClosedIconHTML =
@@ -216,6 +253,7 @@
             </span>
           `
                 : '';
+            const lastUpdateDate = new Date(workOrder.lastUpdate_dateTime);
             tableRowElement.innerHTML = `
         <td class="has-text-centered">
           ${openClosedIconHTML}<br />
@@ -261,6 +299,12 @@
         </td>
         <td class="${currentUserEmailAddress !== '' && workOrder.assignedToEmailAddress?.toLowerCase() === currentUserEmailAddress ? 'has-background-primary-light' : ''}">
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
+        </td>
+        <td>
+          ${cityssm.escapeHTML(cityssm.dateToString(lastUpdateDate))}<br />
+          <span class="is-size-7 has-text-grey">
+            ${cityssm.escapeHTML(relativeTimeString(lastUpdateDate))}
+          </span>
         </td>
         <td class="has-text-right">
           ${notesIconHTML}
