@@ -98,7 +98,28 @@
     }
     const showWorkOrderType = filtersFormElement.querySelector('#workOrderSearch--workOrderTypeId') !==
         null;
-    const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
+    const secondsInMilliseconds = 1000;
+    const minutesInMilliseconds = 60 * secondsInMilliseconds;
+    const hoursInMilliseconds = 60 * minutesInMilliseconds;
+    const daysInMilliseconds = 24 * hoursInMilliseconds;
+    const threeHoursInMilliseconds = 3 * hoursInMilliseconds;
+    function relativeTimeString(date) {
+        const elapsedMilliseconds = Date.now() - date.getTime();
+        if (elapsedMilliseconds < minutesInMilliseconds) {
+            const seconds = Math.floor(elapsedMilliseconds / secondsInMilliseconds);
+            return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
+        }
+        else if (elapsedMilliseconds < hoursInMilliseconds) {
+            const minutes = Math.floor(elapsedMilliseconds / minutesInMilliseconds);
+            return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+        }
+        else if (elapsedMilliseconds < daysInMilliseconds) {
+            const hours = Math.floor(elapsedMilliseconds / hoursInMilliseconds);
+            return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+        }
+        const days = Math.floor(elapsedMilliseconds / daysInMilliseconds);
+        return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+    }
     function renderWorkOrdersTable(data) {
         if (data.workOrders.length === 0) {
             resultsContainerElement.innerHTML = `
@@ -279,7 +300,7 @@
         <td>
           ${workOrder.lastUpdate_dateTime === undefined || workOrder.lastUpdate_dateTime === null
                 ? '-'
-                : `${cityssm.dateToString(new Date(workOrder.lastUpdate_dateTime))}<br /><span class="is-size-7 has-text-grey">${cityssm.dateToTimeString(new Date(workOrder.lastUpdate_dateTime))}</span>`}
+                : `<span title="${cityssm.escapeHTML(`${cityssm.dateToString(new Date(workOrder.lastUpdate_dateTime))} ${cityssm.dateToTimeString(new Date(workOrder.lastUpdate_dateTime))}`)}">${cityssm.escapeHTML(relativeTimeString(new Date(workOrder.lastUpdate_dateTime)))}</span>`}
         </td>
         <td class="has-text-right">
           ${notesIconHTML}
