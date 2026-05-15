@@ -239,8 +239,16 @@ export async function sendEmail(): Promise<void> {
      * Send the email
      */
 
-    // eslint-disable-next-line no-await-in-loop
-    await msGraphApi.sendMessage(messageToSend.build())
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await msGraphApi.sendMessage(messageToSend.build())
+    } catch (error) {
+      debug(
+        `Error sending email for work order ID ${workOrderId}: ${
+          (error as Error).message
+        }`
+      )
+    }
   }
 
   debug('Send Email task completed')

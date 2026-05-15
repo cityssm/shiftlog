@@ -137,7 +137,12 @@ export async function sendEmail() {
             workOrder.assignedToUserName !== lastUpdateUser) {
             messageToSend.addBccRecipient(workOrder.assignedToEmailAddress);
         }
-        await msGraphApi.sendMessage(messageToSend.build());
+        try {
+            await msGraphApi.sendMessage(messageToSend.build());
+        }
+        catch (error) {
+            debug(`Error sending email for work order ID ${workOrderId}: ${error.message}`);
+        }
     }
     debug('Send Email task completed');
     isRunningSemaphore.release();
