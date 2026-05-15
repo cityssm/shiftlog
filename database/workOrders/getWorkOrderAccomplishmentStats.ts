@@ -4,6 +4,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 export interface WorkOrderAccomplishmentStats {
+  averageTurnaroundDays: number | null
   percentClosed: number
   totalClosed: number
   totalOpen: number
@@ -18,6 +19,12 @@ export interface WorkOrderByAssignedTo {
   assignedToName: string
   closedCount: number
   openedCount: number
+}
+
+export interface WorkOrderByRequestor {
+  closedCount: number
+  openedCount: number
+  requestorName: string
 }
 
 export interface WorkOrderTagStatistic {
@@ -35,6 +42,7 @@ export interface WorkOrderHotZone {
 
 export interface WorkOrderAccomplishmentData {
   byAssignedTo: WorkOrderByAssignedTo[]
+  byRequestor: WorkOrderByRequestor[]
   hotZones: WorkOrderHotZone[]
   stats: WorkOrderAccomplishmentStats
   tags: WorkOrderTagStatistic[]
@@ -62,21 +70,22 @@ export default async function getWorkOrderAccomplishmentStats(
   const endDateString = dateToString(endDate)
 
   // Build user group filter
-  const userGroupFilter = user
-    ? /* sql */ `
-        AND (
-          wType.userGroupId IS NULL
-          OR wType.userGroupId IN (
-            SELECT
-              userGroupId
-            FROM
-              ShiftLog.UserGroupMembers
-            WHERE
-              userName = @userName
+  const userGroupFilter =
+    user === undefined
+      ? ''
+      : /* sql */ `
+          AND (
+            wType.userGroupId IS NULL
+            OR wType.userGroupId IN (
+              SELECT
+                userGroupId
+              FROM
+                ShiftLog.UserGroupMembers
+              WHERE
+                userName = @userName
+            )
           )
-        )
-      `
-    : ''
+        `
 
   // 1. Get overall statistics
   const statsRequest = pool.request()
@@ -87,6 +96,7 @@ export default async function getWorkOrderAccomplishmentStats(
     .input('userName', user?.userName)
 
   const statsResult = await statsRequest.query<{
+    averageTurnaroundDays: number | null
     totalClosed: number
     totalOpen: number
   }>(/* sql */ `
@@ -108,7 +118,16 @@ export default async function getWorkOrderAccomplishmentStats(
           END
         ),
         0
-      ) AS totalClosed
+      ) AS totalClosed,
+      AVG(
+        CASE
+          WHEN w.workOrderCloseDateTime IS NOT NULL THEN DATEDIFF(
+            minute,
+            w.workOrderOpenDateTime,
+            w.workOrderCloseDateTime
+          ) / 1440.0
+        END
+      ) AS averageTurnaroundDays
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
@@ -130,6 +149,7 @@ export default async function getWorkOrderAccomplishmentStats(
   const stats = statsResult.recordset[0]
   const totalOpen = stats.totalOpen
   const totalClosed = stats.totalClosed
+  const averageTurnaroundDays = stats.averageTurnaroundDays
   const total = totalOpen + totalClosed
   const hundredPercent = 100
   const percentClosed = total > 0 ? (totalClosed / total) * hundredPercent : 0
@@ -143,7 +163,7 @@ export default async function getWorkOrderAccomplishmentStats(
     .input('userName', user?.userName)
 
   // Generate time buckets and count open work orders at each point
-  // For month: daily buckets, For year: monthly buckets (using last day of month)
+  // For month: daily buckets, For year: weekly buckets
   const timeSeriesResult = await timeSeriesRequest.query<{
     openWorkOrdersCount: number
     periodLabel: string
@@ -152,39 +172,25 @@ export default async function getWorkOrderAccomplishmentStats(
       DateBuckets AS (
         SELECT
           ${filterType === 'month'
-          ? /* sql */ `
-              CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
-              FROM
-                master..spt_values
-              WHERE
-              TYPE = 'P'
-              AND DATEADD(day, number, @startDate) <= @endDate
-            `
-          : /* sql */ `
-              EOMONTH(
-                DATEFROMPARTS(
-                  YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12,
-                  ((MONTH(@startDate) + number - 1) % 12) + 1,
-                  1
-                )
-              ) AS bucketDate
-              FROM
-                master..spt_values
-              WHERE
-              TYPE = 'P'
-              AND EOMONTH(
-                DATEFROMPARTS(
-                  YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12,
-                  ((MONTH(@startDate) + number - 1) % 12) + 1,
-                  1
-                )
-              ) <= @endDate
-            `}
+            ? /* sql */ `
+                CAST(DATEADD(day, number, @startDate) AS DATE) AS bucketDate
+                FROM
+                  master..spt_values
+                WHERE
+                TYPE = 'P'
+                AND DATEADD(day, number, @startDate) <= @endDate
+              `
+            : /* sql */ `
+                CAST(DATEADD(day, number * 7, @startDate) AS DATE) AS bucketDate
+                FROM
+                  master..spt_values
+                WHERE
+                TYPE = 'P'
+                AND CAST(DATEADD(day, number * 7, @startDate) AS DATE) <= @endDate
+              `}
       )
     SELECT
-      ${filterType === 'month'
-        ? "FORMAT(db.bucketDate, 'yyyy-MM-dd')"
-        : "FORMAT(db.bucketDate, 'yyyy-MM')"} AS periodLabel,
+      FORMAT(db.bucketDate, 'yyyy-MM-dd') AS periodLabel,
       COUNT(w.workOrderId) AS openWorkOrdersCount
     FROM
       DateBuckets db
@@ -252,7 +258,58 @@ export default async function getWorkOrderAccomplishmentStats(
     openedCount: row.openedCount
   }))
 
-  // 4. Get tag statistics
+  // 4. Get work orders by requestor
+  const byRequestorRequest = pool.request()
+  byRequestorRequest
+    .input('instance', instance)
+    .input('startDate', startDateString)
+    .input('endDate', endDateString)
+    .input('userName', user?.userName)
+
+  const byRequestorResult = await byRequestorRequest.query<{
+    closedCount: number
+    openedCount: number
+    requestorName: string | null
+  }>(/* sql */ `
+    SELECT
+      TOP 10 COALESCE(
+        NULLIF(TRIM(w.requestorName), ''),
+        '(Not Provided)'
+      ) AS requestorName,
+      COUNT(*) AS openedCount,
+      SUM(
+        CASE
+          WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1
+          ELSE 0
+        END
+      ) AS closedCount
+    FROM
+      ShiftLog.WorkOrders w
+      LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+    WHERE
+      w.instance = @instance
+      AND w.recordDelete_dateTime IS NULL
+      AND w.workOrderOpenDateTime < DATEADD(day, 1, @endDate)
+      AND (
+        w.workOrderCloseDateTime IS NULL
+        OR w.workOrderCloseDateTime >= @startDate
+      ) ${userGroupFilter}
+    GROUP BY
+      COALESCE(
+        NULLIF(TRIM(w.requestorName), ''),
+        '(Not Provided)'
+      )
+    ORDER BY
+      openedCount DESC
+  `)
+
+  const byRequestor = byRequestorResult.recordset.map((row) => ({
+    closedCount: row.closedCount,
+    openedCount: row.openedCount,
+    requestorName: row.requestorName ?? '(Not Provided)'
+  }))
+
+  // 5. Get tag statistics
   const tagsRequest = pool.request()
   tagsRequest
     .input('instance', instance)
@@ -287,7 +344,7 @@ export default async function getWorkOrderAccomplishmentStats(
 
   const tags = tagsResult.recordset
 
-  // 5. Get hot zones (work orders grouped by location)
+  // 6. Get hot zones (work orders grouped by location)
   const hotZonesRequest = pool.request()
   hotZonesRequest
     .input('instance', instance)
@@ -344,8 +401,10 @@ export default async function getWorkOrderAccomplishmentStats(
 
   return {
     byAssignedTo,
+    byRequestor,
     hotZones,
     stats: {
+      averageTurnaroundDays,
       percentClosed,
       totalClosed,
       totalOpen

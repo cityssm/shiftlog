@@ -10,6 +10,7 @@
     monthElement.value = currentMonth.toString();
     let timeSeriesChart;
     let byAssignedToChart;
+    let byRequestorChart;
     let tagCloudChart;
     let hotZonesMap;
     let hotZonesLayer;
@@ -22,6 +23,20 @@
             }).addTo(hotZonesMap);
         }
     }
+    function setNoDataChart(chart) {
+        chart.clear();
+        chart.setOption({
+            title: {
+                text: 'No data available',
+                left: 'center',
+                top: 'middle',
+                textStyle: {
+                    color: '#999',
+                    fontSize: 16
+                }
+            }
+        });
+    }
     function updateKPIs(stats) {
         const totalOpened = stats.totalOpen + stats.totalClosed;
         document.querySelector('#kpi--totalOpened').textContent =
@@ -29,6 +44,10 @@
         document.querySelector('#kpi--totalClosed').textContent =
             stats.totalClosed.toString();
         document.querySelector('#kpi--completionRate').textContent = `${stats.percentClosed.toFixed(1)}%`;
+        document.querySelector('#kpi--averageTurnaround').textContent =
+            stats.averageTurnaroundDays === null
+                ? '-'
+                : `${stats.averageTurnaroundDays.toFixed(1)} days`;
     }
     function updateTimeSeriesChart(timeSeries) {
         if (timeSeriesChart === undefined) {
@@ -41,18 +60,7 @@
             }
         }
         if (timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
-            timeSeriesChart.clear();
-            timeSeriesChart.setOption({
-                title: {
-                    text: 'No data available',
-                    left: 'center',
-                    top: 'middle',
-                    textStyle: {
-                        color: '#999',
-                        fontSize: 16
-                    }
-                }
-            });
+            setNoDataChart(timeSeriesChart);
             return;
         }
         const categories = timeSeries.map((item) => item.periodLabel);
@@ -86,41 +94,25 @@
             }
         });
     }
-    function updateByAssignedToChart(byAssignedTo) {
-        if (byAssignedToChart === undefined) {
-            const byAssignedToElement = document.querySelector('#chart--byAssignedTo');
-            if (byAssignedToElement === null) {
-                return;
+    function updateOpenedClosedBarChart(parameters) {
+        const { categories, chartSelector, closedData, hasTruncatedLabels = false, openedData } = parameters;
+        let { chart } = parameters;
+        if (chart === undefined) {
+            const chartElement = document.querySelector(chartSelector);
+            if (chartElement === null) {
+                return undefined;
             }
             else {
-                byAssignedToChart = echarts.init(byAssignedToElement);
+                chart = echarts.init(chartElement);
             }
         }
-        if (byAssignedTo.length === 0) {
-            byAssignedToChart.clear();
-            byAssignedToChart.setOption({
-                title: {
-                    text: 'No data available',
-                    left: 'center',
-                    top: 'middle',
-                    textStyle: {
-                        color: '#999',
-                        fontSize: 16
-                    }
-                }
-            });
-            return;
+        if (categories.length === 0) {
+            setNoDataChart(chart);
+            return chart;
         }
-        const categories = byAssignedTo
-            .map((item) => item.assignedToName)
-            .toReversed();
-        const openedData = byAssignedTo.map((item) => item.openedCount).toReversed();
-        const closedData = byAssignedTo.map((item) => item.closedCount).toReversed();
-        byAssignedToChart.setOption({
+        chart.setOption({
             title: { show: false },
-            legend: {
-                data: ['Opened', 'Closed']
-            },
+            legend: { data: ['Opened', 'Closed'] },
             series: [
                 {
                     data: openedData,
@@ -136,9 +128,7 @@
                 }
             ],
             tooltip: {
-                axisPointer: {
-                    type: 'shadow'
-                },
+                axisPointer: { type: 'shadow' },
                 trigger: 'axis'
             },
             xAxis: {
@@ -146,11 +136,42 @@
                 show: true,
                 type: 'value'
             },
-            yAxis: {
-                data: categories,
-                show: true,
-                type: 'category'
-            }
+            yAxis: hasTruncatedLabels
+                ? {
+                    axisLabel: {
+                        interval: 0,
+                        overflow: 'truncate',
+                        width: 120
+                    },
+                    data: categories,
+                    show: true,
+                    type: 'category'
+                }
+                : {
+                    data: categories,
+                    show: true,
+                    type: 'category'
+                }
+        });
+        return chart;
+    }
+    function updateByAssignedToChart(byAssignedTo) {
+        byAssignedToChart = updateOpenedClosedBarChart({
+            categories: byAssignedTo.map((item) => item.assignedToName).toReversed(),
+            chart: byAssignedToChart,
+            chartSelector: '#chart--byAssignedTo',
+            closedData: byAssignedTo.map((item) => item.closedCount).toReversed(),
+            openedData: byAssignedTo.map((item) => item.openedCount).toReversed()
+        });
+    }
+    function updateByRequestorChart(byRequestor) {
+        byRequestorChart = updateOpenedClosedBarChart({
+            categories: byRequestor.map((item) => item.requestorName).toReversed(),
+            chart: byRequestorChart,
+            chartSelector: '#chart--byRequestor',
+            closedData: byRequestor.map((item) => item.closedCount).toReversed(),
+            hasTruncatedLabels: true,
+            openedData: byRequestor.map((item) => item.openedCount).toReversed()
         });
     }
     function updateTagCloudChart(tags) {
@@ -164,18 +185,7 @@
             }
         }
         if (tags.length === 0) {
-            tagCloudChart.clear();
-            tagCloudChart.setOption({
-                title: {
-                    text: 'No data available',
-                    left: 'center',
-                    top: 'middle',
-                    textStyle: {
-                        color: '#999',
-                        fontSize: 16
-                    }
-                }
-            });
+            setNoDataChart(tagCloudChart);
             return;
         }
         const topTags = tags.slice(0, 20);
@@ -299,6 +309,7 @@
                 updateKPIs(data.stats);
                 updateTimeSeriesChart(data.timeSeries);
                 updateByAssignedToChart(data.byAssignedTo);
+                updateByRequestorChart(data.byRequestor);
                 updateTagCloudChart(data.tags);
                 updateHotZonesMap(data.hotZones);
             }

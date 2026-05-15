@@ -36,6 +36,7 @@ declare const exports: {
 }
 
 interface WorkOrderAccomplishmentStats {
+  averageTurnaroundDays: number | null
   percentClosed: number
   totalClosed: number
   totalOpen: number
@@ -50,6 +51,12 @@ interface WorkOrderByAssignedTo {
   assignedToName: string
   closedCount: number
   openedCount: number
+}
+
+interface WorkOrderByRequestor {
+  closedCount: number
+  openedCount: number
+  requestorName: string
 }
 
 interface WorkOrderTagStatistic {
@@ -67,6 +74,7 @@ interface WorkOrderHotZone {
 
 interface WorkOrderAccomplishmentData {
   byAssignedTo: WorkOrderByAssignedTo[]
+  byRequestor: WorkOrderByRequestor[]
   hotZones: WorkOrderHotZone[]
   stats: WorkOrderAccomplishmentStats
   tags: WorkOrderTagStatistic[]
@@ -100,6 +108,7 @@ interface WorkOrderAccomplishmentData {
   // Chart instances
   let timeSeriesChart: EChartsType | undefined
   let byAssignedToChart: EChartsType | undefined
+  let byRequestorChart: EChartsType | undefined
   let tagCloudChart: EChartsType | undefined
 
   let hotZonesMap: L.Map | undefined
@@ -135,6 +144,23 @@ interface WorkOrderAccomplishmentData {
     }
   }
 
+  function setNoDataChart(chart: EChartsType): void {
+    chart.clear()
+    chart.setOption({
+      title: {
+        text: 'No data available',
+
+        left: 'center',
+        top: 'middle',
+
+        textStyle: {
+          color: '#999',
+          fontSize: 16
+        }
+      }
+    })
+  }
+
   // Update KPIs
   function updateKPIs(stats: WorkOrderAccomplishmentStats): void {
     const totalOpened = stats.totalOpen + stats.totalClosed
@@ -146,6 +172,12 @@ interface WorkOrderAccomplishmentData {
     ;(
       document.querySelector('#kpi--completionRate') as HTMLElement
     ).textContent = `${stats.percentClosed.toFixed(1)}%`
+    ;(
+      document.querySelector('#kpi--averageTurnaround') as HTMLElement
+    ).textContent =
+      stats.averageTurnaroundDays === null
+        ? '-'
+        : `${stats.averageTurnaroundDays.toFixed(1)} days`
   }
 
   // Update time series chart
@@ -162,21 +194,7 @@ interface WorkOrderAccomplishmentData {
 
     // Check if there's any data
     if (timeSeries.every((item) => item.openWorkOrdersCount === 0)) {
-      // Clear the chart before showing no-data message
-      timeSeriesChart.clear()
-      timeSeriesChart.setOption({
-        title: {
-          text: 'No data available',
-
-          left: 'center',
-          top: 'middle',
-
-          textStyle: {
-            color: '#999',
-            fontSize: 16
-          }
-        }
-      })
+      setNoDataChart(timeSeriesChart)
       return
     }
 
@@ -215,53 +233,41 @@ interface WorkOrderAccomplishmentData {
     })
   }
 
-  // Update by assigned to chart
-  function updateByAssignedToChart(
-    byAssignedTo: WorkOrderByAssignedTo[]
-  ): void {
-    // Initialize chart on first use
-    if (byAssignedToChart === undefined) {
-      const byAssignedToElement = document.querySelector('#chart--byAssignedTo')
-      if (byAssignedToElement === null) {
-        return
+  function updateOpenedClosedBarChart(parameters: {
+    categories: string[]
+    chart: EChartsType | undefined
+    chartSelector: string
+    closedData: number[]
+    hasTruncatedLabels?: boolean
+    openedData: number[]
+  }): EChartsType | undefined {
+    const {
+      categories,
+      chartSelector,
+      closedData,
+      hasTruncatedLabels = false,
+      openedData
+    } = parameters
+
+    let { chart } = parameters
+
+    if (chart === undefined) {
+      const chartElement = document.querySelector(chartSelector)
+      if (chartElement === null) {
+        return undefined
       } else {
-        byAssignedToChart = echarts.init(byAssignedToElement as HTMLElement)
+        chart = echarts.init(chartElement as HTMLElement)
       }
     }
 
-    // Check if there's any data
-    if (byAssignedTo.length === 0) {
-      // Clear the chart before showing no-data message
-      byAssignedToChart.clear()
-      byAssignedToChart.setOption({
-        title: {
-          text: 'No data available',
-
-          left: 'center',
-          top: 'middle',
-
-          textStyle: {
-            color: '#999',
-            fontSize: 16
-          }
-        }
-      })
-      return
+    if (categories.length === 0) {
+      setNoDataChart(chart)
+      return chart
     }
 
-    const categories = byAssignedTo
-      .map((item) => item.assignedToName)
-      .toReversed()
-    const openedData = byAssignedTo.map((item) => item.openedCount).toReversed()
-    const closedData = byAssignedTo.map((item) => item.closedCount).toReversed()
-
-    byAssignedToChart.setOption({
+    chart.setOption({
       title: { show: false },
-
-      legend: {
-        data: ['Opened', 'Closed']
-      },
-
+      legend: { data: ['Opened', 'Closed'] },
       series: [
         {
           data: openedData,
@@ -277,9 +283,7 @@ interface WorkOrderAccomplishmentData {
         }
       ],
       tooltip: {
-        axisPointer: {
-          type: 'shadow'
-        },
+        axisPointer: { type: 'shadow' },
         trigger: 'axis'
       },
       xAxis: {
@@ -287,11 +291,47 @@ interface WorkOrderAccomplishmentData {
         show: true,
         type: 'value'
       },
-      yAxis: {
-        data: categories,
-        show: true,
-        type: 'category'
-      }
+      yAxis: hasTruncatedLabels
+        ? {
+            axisLabel: {
+              interval: 0,
+              overflow: 'truncate',
+              width: 120
+            },
+            data: categories,
+            show: true,
+            type: 'category'
+          }
+        : {
+            data: categories,
+            show: true,
+            type: 'category'
+          }
+    })
+
+    return chart
+  }
+
+  function updateByAssignedToChart(
+    byAssignedTo: WorkOrderByAssignedTo[]
+  ): void {
+    byAssignedToChart = updateOpenedClosedBarChart({
+      categories: byAssignedTo.map((item) => item.assignedToName).toReversed(),
+      chart: byAssignedToChart,
+      chartSelector: '#chart--byAssignedTo',
+      closedData: byAssignedTo.map((item) => item.closedCount).toReversed(),
+      openedData: byAssignedTo.map((item) => item.openedCount).toReversed()
+    })
+  }
+
+  function updateByRequestorChart(byRequestor: WorkOrderByRequestor[]): void {
+    byRequestorChart = updateOpenedClosedBarChart({
+      categories: byRequestor.map((item) => item.requestorName).toReversed(),
+      chart: byRequestorChart,
+      chartSelector: '#chart--byRequestor',
+      closedData: byRequestor.map((item) => item.closedCount).toReversed(),
+      hasTruncatedLabels: true,
+      openedData: byRequestor.map((item) => item.openedCount).toReversed()
     })
   }
 
@@ -309,21 +349,7 @@ interface WorkOrderAccomplishmentData {
 
     // Check if there's any data
     if (tags.length === 0) {
-      // Clear the chart completely before showing no-data message
-      tagCloudChart.clear()
-      tagCloudChart.setOption({
-        title: {
-          text: 'No data available',
-
-          left: 'center',
-          top: 'middle',
-
-          textStyle: {
-            color: '#999',
-            fontSize: 16
-          }
-        }
-      })
+      setNoDataChart(tagCloudChart)
       return
     }
 
@@ -498,6 +524,7 @@ interface WorkOrderAccomplishmentData {
           // Update charts (lazy initialization happens here)
           updateTimeSeriesChart(data.timeSeries)
           updateByAssignedToChart(data.byAssignedTo)
+          updateByRequestorChart(data.byRequestor)
           updateTagCloudChart(data.tags)
           updateHotZonesMap(data.hotZones)
         } else {
