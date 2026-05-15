@@ -400,8 +400,7 @@ declare const exports: {
             }
             const lastUpdateDate = new Date(workOrder.lastUpdate_dateTime as string)
             return `<span title="${cityssm.escapeHTML(`${cityssm.dateToString(lastUpdateDate)} ${cityssm.dateToTimeString(lastUpdateDate)}`)}">
-                ${cityssm.escapeHTML(relativeTimeString(lastUpdateDate))}
-              </span>`
+                ${cityssm.escapeHTML(relativeTimeString(lastUpdateDate))}</span>`
           })()}
         </td>
         <td class="has-text-right">
