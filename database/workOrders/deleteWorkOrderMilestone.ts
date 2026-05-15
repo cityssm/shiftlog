@@ -1,6 +1,5 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
-import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js'
 
 export default async function deleteWorkOrderMilestone(
   workOrderMilestoneId: number | string,
@@ -32,6 +31,7 @@ export default async function deleteWorkOrderMilestone(
         )
     `)
 
+  /*
   if (result.rowsAffected[0] > 0) {
     // Send Notification
     sendNotificationWorkerMessage(
@@ -41,6 +41,7 @@ export default async function deleteWorkOrderMilestone(
         : result.recordset[0].workOrderId
     )
   }
+  */
 
   return result.rowsAffected[0] > 0
 }

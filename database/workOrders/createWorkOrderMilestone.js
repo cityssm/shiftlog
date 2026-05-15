@@ -1,5 +1,4 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js';
 import getWorkOrder from './getWorkOrder.js';
 export default async function createWorkOrderMilestone(form, userName) {
     const workOrder = await getWorkOrder(form.workOrderId);
@@ -60,10 +59,5 @@ export default async function createWorkOrderMilestone(form, userName) {
           @userName
         )
     `);
-    if (result.rowsAffected[0] > 0) {
-        sendNotificationWorkerMessage('workOrder.update', typeof form.workOrderId === 'string'
-            ? Number.parseInt(form.workOrderId, 10)
-            : form.workOrderId);
-    }
     return result.recordset[0].workOrderMilestoneId;
 }
