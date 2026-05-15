@@ -98,7 +98,8 @@ export async function sendEmail(): Promise<void> {
 
     if (
       workOrder.requestorIsSubscribed &&
-      isEmailAddress(workOrder.requestorContactInfo)
+      isEmailAddress(workOrder.requestorContactInfo) &&
+      !isNoReplyEmailAddress(workOrder.requestorContactInfo)
     ) {
       bccEmailAddresses.add(workOrder.requestorContactInfo)
     }
@@ -118,21 +119,21 @@ export async function sendEmail(): Promise<void> {
       }
     }
 
-    if (
-      bccEmailAddresses.size > 0 &&
-      workOrder.assignedToEmailAddress !== undefined &&
-      isEmailAddress(workOrder.assignedToEmailAddress) &&
-      !isNoReplyEmailAddress(workOrder.assignedToEmailAddress)
-    ) {
-      bccEmailAddresses.add(workOrder.assignedToEmailAddress)
-    }
-
     if (bccEmailAddresses.size === 0) {
       debug(
         `No valid email addresses to send notification for work order ID ${workOrderId}, skipping`
       )
       continue
     }
+
+    /*
+     * Track the last updater
+     */
+
+    let lastUpdateUser = workOrder.recordUpdate_userName as string
+    let lastUpdateDateTimeMillis = (
+      workOrder.recordUpdate_dateTime as Date
+    ).getTime()
 
     /*
      * Get the work order notes to include in the email
@@ -145,7 +146,6 @@ export async function sendEmail(): Promise<void> {
      */
 
     const messageToSend = new MsGraphMailMessageBuilder()
-      .addBccRecipients([...bccEmailAddresses])
       .withSubject(
         `[#${workOrder.workOrderNumber}]: ${workOrder.workOrderTitle}`
       )
@@ -184,6 +184,11 @@ export async function sendEmail(): Promise<void> {
         if (index < workOrderNotes.length - 1) {
           messageToSend.appendToBody('<hr />', 'html')
         }
+
+        if (note.recordUpdate_dateTime.getTime() > lastUpdateDateTimeMillis) {
+          lastUpdateDateTimeMillis = note.recordUpdate_dateTime.getTime()
+          lastUpdateUser = note.recordUpdate_userName
+        }
       }
     }
 
@@ -214,6 +219,22 @@ export async function sendEmail(): Promise<void> {
       `,
       'html'
     )
+
+    /*
+     * Include the assigned user's email address in BCC if it's valid
+     * and the assigned to wasn't the last person to update the work order.
+     */
+
+    if (
+      workOrder.assignedToEmailAddress !== undefined &&
+      isEmailAddress(workOrder.assignedToEmailAddress) &&
+      !isNoReplyEmailAddress(workOrder.assignedToEmailAddress) &&
+      workOrder.assignedToUserName !== lastUpdateUser
+    ) {
+      bccEmailAddresses.add(workOrder.assignedToEmailAddress)
+    }
+
+    messageToSend.addBccRecipients([...bccEmailAddresses])
 
     /*
      * Send the email

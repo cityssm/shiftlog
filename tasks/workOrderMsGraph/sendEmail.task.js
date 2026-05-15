@@ -59,7 +59,8 @@ export async function sendEmail() {
         }
         const bccEmailAddresses = new Set();
         if (workOrder.requestorIsSubscribed &&
-            isEmailAddress(workOrder.requestorContactInfo)) {
+            isEmailAddress(workOrder.requestorContactInfo) &&
+            !isNoReplyEmailAddress(workOrder.requestorContactInfo)) {
             bccEmailAddresses.add(workOrder.requestorContactInfo);
         }
         const workOrderSubscribers = await getWorkOrderSubscribers(workOrderId);
@@ -69,19 +70,14 @@ export async function sendEmail() {
                 bccEmailAddresses.add(subscriber.subscriberEmailAddress);
             }
         }
-        if (bccEmailAddresses.size > 0 &&
-            workOrder.assignedToEmailAddress !== undefined &&
-            isEmailAddress(workOrder.assignedToEmailAddress) &&
-            !isNoReplyEmailAddress(workOrder.assignedToEmailAddress)) {
-            bccEmailAddresses.add(workOrder.assignedToEmailAddress);
-        }
         if (bccEmailAddresses.size === 0) {
             debug(`No valid email addresses to send notification for work order ID ${workOrderId}, skipping`);
             continue;
         }
+        let lastUpdateUser = workOrder.recordUpdate_userName;
+        let lastUpdateDateTimeMillis = workOrder.recordUpdate_dateTime.getTime();
         const workOrderNotes = await getWorkOrderNotes(workOrderId);
         const messageToSend = new MsGraphMailMessageBuilder()
-            .addBccRecipients([...bccEmailAddresses])
             .withSubject(`[#${workOrder.workOrderNumber}]: ${workOrder.workOrderTitle}`)
             .withBody(`
           <p style="font-style: italic; color: gray;">
@@ -105,6 +101,10 @@ export async function sendEmail() {
           `, 'html');
                 if (index < workOrderNotes.length - 1) {
                     messageToSend.appendToBody('<hr />', 'html');
+                }
+                if (note.recordUpdate_dateTime.getTime() > lastUpdateDateTimeMillis) {
+                    lastUpdateDateTimeMillis = note.recordUpdate_dateTime.getTime();
+                    lastUpdateUser = note.recordUpdate_userName;
                 }
             }
         }
@@ -130,6 +130,13 @@ export async function sendEmail() {
           </p>
         </div>
       `, 'html');
+        if (workOrder.assignedToEmailAddress !== undefined &&
+            isEmailAddress(workOrder.assignedToEmailAddress) &&
+            !isNoReplyEmailAddress(workOrder.assignedToEmailAddress) &&
+            workOrder.assignedToUserName !== lastUpdateUser) {
+            bccEmailAddresses.add(workOrder.assignedToEmailAddress);
+        }
+        messageToSend.addBccRecipients([...bccEmailAddresses]);
         await msGraphApi.sendMessage(messageToSend.build());
     }
     debug('Send Email task completed');

@@ -32,13 +32,18 @@ async function _getWorkOrder(workOrderIdField, workOrderIdOrNumber, userName) {
       w.assignedToId,
       assignedTo.assignedToName,
       assignedTo.assignedToEmailAddress,
-      moreInfoFormDataJson
+      e.userName as assignedToUserName,
+      moreInfoFormDataJson,
+      w.recordUpdate_dateTime,
+      w.recordUpdate_userName
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
       LEFT JOIN ShiftLog.DataListItems wStatus ON w.workOrderStatusDataListItemId = wStatus.dataListItemId
       LEFT JOIN ShiftLog.DataListItems wPriority ON w.workOrderPriorityDataListItemId = wPriority.dataListItemId
       LEFT JOIN ShiftLog.AssignedTo assignedTo ON w.assignedToId = assignedTo.assignedToId
+      LEFT JOIN ShiftLog.Employees e ON assignedTo.assignedToEmailAddress = e.emailAddress
+      AND e.recordDelete_dateTime IS NULL
     WHERE
       w.recordDelete_dateTime IS NULL
       AND w.${workOrderIdField} = @workOrderIdOrNumber

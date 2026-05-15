@@ -437,6 +437,7 @@ export interface WorkOrder extends BaseRecord {
   assignedToId?: number | null
   assignedToName?: string
   assignedToEmailAddress?: string
+  assignedToUserName?: string | null
 
   moreInfoFormDataJson?: string
   moreInfoFormData?: Record<string, unknown>
