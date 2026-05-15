@@ -134,9 +134,8 @@ export async function sendEmail() {
             isEmailAddress(workOrder.assignedToEmailAddress) &&
             !isNoReplyEmailAddress(workOrder.assignedToEmailAddress) &&
             workOrder.assignedToUserName !== lastUpdateUser) {
-            bccEmailAddresses.add(workOrder.assignedToEmailAddress);
+            messageToSend.addBccRecipient(workOrder.assignedToEmailAddress);
         }
-        messageToSend.addBccRecipients([...bccEmailAddresses]);
         await msGraphApi.sendMessage(messageToSend.build());
     }
     debug('Send Email task completed');

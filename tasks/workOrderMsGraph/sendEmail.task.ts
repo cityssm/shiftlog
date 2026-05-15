@@ -231,10 +231,8 @@ export async function sendEmail(): Promise<void> {
       !isNoReplyEmailAddress(workOrder.assignedToEmailAddress) &&
       workOrder.assignedToUserName !== lastUpdateUser
     ) {
-      bccEmailAddresses.add(workOrder.assignedToEmailAddress)
+      messageToSend.addBccRecipient(workOrder.assignedToEmailAddress)
     }
-
-    messageToSend.addBccRecipients([...bccEmailAddresses])
 
     /*
      * Send the email
