@@ -146,6 +146,7 @@ export async function sendEmail(): Promise<void> {
      */
 
     const messageToSend = new MsGraphMailMessageBuilder()
+      .addBccRecipients([...bccEmailAddresses])
       .withSubject(
         `[#${workOrder.workOrderNumber}]: ${workOrder.workOrderTitle}`
       )

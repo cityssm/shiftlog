@@ -78,6 +78,7 @@ export async function sendEmail() {
         let lastUpdateDateTimeMillis = workOrder.recordUpdate_dateTime.getTime();
         const workOrderNotes = await getWorkOrderNotes(workOrderId);
         const messageToSend = new MsGraphMailMessageBuilder()
+            .addBccRecipients([...bccEmailAddresses])
             .withSubject(`[#${workOrder.workOrderNumber}]: ${workOrder.workOrderTitle}`)
             .withBody(`
           <p style="font-style: italic; color: gray;">
