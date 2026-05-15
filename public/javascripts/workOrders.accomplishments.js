@@ -10,6 +10,7 @@
     monthElement.value = currentMonth.toString();
     let timeSeriesChart;
     let byAssignedToChart;
+    let byRequestorChart;
     let tagCloudChart;
     let hotZonesMap;
     let hotZonesLayer;
@@ -29,6 +30,10 @@
         document.querySelector('#kpi--totalClosed').textContent =
             stats.totalClosed.toString();
         document.querySelector('#kpi--completionRate').textContent = `${stats.percentClosed.toFixed(1)}%`;
+        document.querySelector('#kpi--averageTurnaround').textContent =
+            stats.averageTurnaroundDays === null
+                ? '-'
+                : `${stats.averageTurnaroundDays.toFixed(1)} days`;
     }
     function updateTimeSeriesChart(timeSeries) {
         if (timeSeriesChart === undefined) {
@@ -147,6 +152,76 @@
                 type: 'value'
             },
             yAxis: {
+                data: categories,
+                show: true,
+                type: 'category'
+            }
+        });
+    }
+    function updateByRequestorChart(byRequestor) {
+        if (byRequestorChart === undefined) {
+            const byRequestorElement = document.querySelector('#chart--byRequestor');
+            if (byRequestorElement === null) {
+                return;
+            }
+            else {
+                byRequestorChart = echarts.init(byRequestorElement);
+            }
+        }
+        if (byRequestor.length === 0) {
+            byRequestorChart.clear();
+            byRequestorChart.setOption({
+                title: {
+                    text: 'No data available',
+                    left: 'center',
+                    top: 'middle',
+                    textStyle: {
+                        color: '#999',
+                        fontSize: 16
+                    }
+                }
+            });
+            return;
+        }
+        const categories = byRequestor.map((item) => item.requestorName).toReversed();
+        const openedData = byRequestor.map((item) => item.openedCount).toReversed();
+        const closedData = byRequestor.map((item) => item.closedCount).toReversed();
+        byRequestorChart.setOption({
+            title: { show: false },
+            legend: {
+                data: ['Opened', 'Closed']
+            },
+            series: [
+                {
+                    data: openedData,
+                    itemStyle: { color: '#48c774' },
+                    name: 'Opened',
+                    type: 'bar'
+                },
+                {
+                    data: closedData,
+                    itemStyle: { color: '#3298dc' },
+                    name: 'Closed',
+                    type: 'bar'
+                }
+            ],
+            tooltip: {
+                axisPointer: {
+                    type: 'shadow'
+                },
+                trigger: 'axis'
+            },
+            xAxis: {
+                minInterval: 1,
+                show: true,
+                type: 'value'
+            },
+            yAxis: {
+                axisLabel: {
+                    interval: 0,
+                    overflow: 'truncate',
+                    width: 120
+                },
                 data: categories,
                 show: true,
                 type: 'category'
@@ -299,6 +374,7 @@
                 updateKPIs(data.stats);
                 updateTimeSeriesChart(data.timeSeries);
                 updateByAssignedToChart(data.byAssignedTo);
+                updateByRequestorChart(data.byRequestor);
                 updateTagCloudChart(data.tags);
                 updateHotZonesMap(data.hotZones);
             }

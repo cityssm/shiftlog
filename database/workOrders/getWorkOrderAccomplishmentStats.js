@@ -46,7 +46,16 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
           END
         ),
         0
-      ) AS totalClosed
+      ) AS totalClosed,
+      AVG(
+        CASE
+          WHEN w.workOrderCloseDateTime IS NOT NULL THEN DATEDIFF(
+            minute,
+            w.workOrderOpenDateTime,
+            w.workOrderCloseDateTime
+          ) / 1440.0
+        END
+      ) AS averageTurnaroundDays
     FROM
       ShiftLog.WorkOrders w
       LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
@@ -67,6 +76,7 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     const stats = statsResult.recordset[0];
     const totalOpen = stats.totalOpen;
     const totalClosed = stats.totalClosed;
+    const averageTurnaroundDays = stats.averageTurnaroundDays;
     const total = totalOpen + totalClosed;
     const hundredPercent = 100;
     const percentClosed = total > 0 ? (totalClosed / total) * hundredPercent : 0;
@@ -90,30 +100,18 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
               AND DATEADD(day, number, @startDate) <= @endDate
             `
         : `
-              EOMONTH(
-                DATEFROMPARTS(
-                  YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12,
-                  ((MONTH(@startDate) + number - 1) % 12) + 1,
-                  1
-                )
-              ) AS bucketDate
+              CAST(DATEADD(day, number * 7, @startDate) AS DATE) AS bucketDate
               FROM
                 master..spt_values
               WHERE
               TYPE = 'P'
-              AND EOMONTH(
-                DATEFROMPARTS(
-                  YEAR(@startDate) + (MONTH(@startDate) + number - 1) / 12,
-                  ((MONTH(@startDate) + number - 1) % 12) + 1,
-                  1
-                )
-              ) <= @endDate
+              AND CAST(DATEADD(day, number * 7, @startDate) AS DATE) <= @endDate
             `}
       )
     SELECT
       ${filterType === 'month'
         ? "FORMAT(db.bucketDate, 'yyyy-MM-dd')"
-        : "FORMAT(db.bucketDate, 'yyyy-MM')"} AS periodLabel,
+        : "FORMAT(db.bucketDate, 'yyyy-MM-dd')"} AS periodLabel,
       COUNT(w.workOrderId) AS openWorkOrdersCount
     FROM
       DateBuckets db
@@ -170,6 +168,43 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
         assignedToName: row.assignedToName ?? '(Unassigned)',
         closedCount: row.closedCount,
         openedCount: row.openedCount
+    }));
+    const byRequestorRequest = pool.request();
+    byRequestorRequest
+        .input('instance', instance)
+        .input('startDate', startDateString)
+        .input('endDate', endDateString)
+        .input('userName', user?.userName);
+    const byRequestorResult = await byRequestorRequest.query(`
+    SELECT
+      TOP 10 COALESCE(NULLIF(LTRIM(RTRIM(w.requestorName)), ''), '(Not Provided)') AS requestorName,
+      COUNT(*) AS openedCount,
+      SUM(
+        CASE
+          WHEN w.workOrderCloseDateTime IS NOT NULL THEN 1
+          ELSE 0
+        END
+      ) AS closedCount
+    FROM
+      ShiftLog.WorkOrders w
+      LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId
+    WHERE
+      w.instance = @instance
+      AND w.recordDelete_dateTime IS NULL
+      AND w.workOrderOpenDateTime < DATEADD(day, 1, @endDate)
+      AND (
+        w.workOrderCloseDateTime IS NULL
+        OR w.workOrderCloseDateTime >= @startDate
+      ) ${userGroupFilter}
+    GROUP BY
+      COALESCE(NULLIF(LTRIM(RTRIM(w.requestorName)), ''), '(Not Provided)')
+    ORDER BY
+      openedCount DESC
+  `);
+    const byRequestor = byRequestorResult.recordset.map((row) => ({
+        closedCount: row.closedCount,
+        openedCount: row.openedCount,
+        requestorName: row.requestorName ?? '(Not Provided)'
     }));
     const tagsRequest = pool.request();
     tagsRequest
@@ -246,8 +281,10 @@ export default async function getWorkOrderAccomplishmentStats(startDate, endDate
     const hotZones = hotZonesResult.recordset;
     return {
         byAssignedTo,
+        byRequestor,
         hotZones,
         stats: {
+            averageTurnaroundDays,
             percentClosed,
             totalClosed,
             totalOpen
