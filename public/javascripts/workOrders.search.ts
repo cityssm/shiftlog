@@ -197,6 +197,8 @@ declare const exports: {
 
     const currentUserEmailAddress = shiftLog.emailAddress.toLowerCase()
 
+    const threeHoursAgoDate = new Date(Date.now() - threeHoursInMilliseconds)
+
     for (const workOrder of data.workOrders) {
       const tableRowElement = document.createElement('tr')
 
@@ -215,8 +217,7 @@ declare const exports: {
         (workOrder.isUpdated ?? false) &&
         workOrder.lastUpdate_dateTime !== undefined &&
         workOrder.lastUpdate_dateTime !== null &&
-        new Date(workOrder.lastUpdate_dateTime as string) >
-          new Date(Date.now() - threeHoursInMilliseconds)
+        new Date(workOrder.lastUpdate_dateTime as string) > threeHoursAgoDate
       ) {
         openClosedIconHTML =
           '<span class="icon has-text-info" title="Recently Updated"><i class="fa-solid fa-pencil"></i></span>'
