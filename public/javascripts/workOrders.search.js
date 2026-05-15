@@ -174,7 +174,6 @@
             }
             else if ((workOrder.isUpdated ?? false) &&
                 workOrder.lastUpdate_dateTime !== undefined &&
-                workOrder.lastUpdate_dateTime !== null &&
                 new Date(workOrder.lastUpdate_dateTime) > threeHoursAgoDate) {
                 openClosedIconHTML =
                     '<span class="icon has-text-info" title="Recently Updated"><i class="fa-solid fa-pencil"></i></span>';
@@ -254,6 +253,7 @@
             </span>
           `
                 : '';
+            const lastUpdateDate = new Date(workOrder.lastUpdate_dateTime);
             tableRowElement.innerHTML = `
         <td class="has-text-centered">
           ${openClosedIconHTML}<br />
@@ -301,14 +301,10 @@
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
         </td>
         <td>
-          ${(() => {
-                if (workOrder.lastUpdate_dateTime === undefined || workOrder.lastUpdate_dateTime === null) {
-                    return '-';
-                }
-                const lastUpdateDate = new Date(workOrder.lastUpdate_dateTime);
-                return `<span title="${cityssm.escapeHTML(`${cityssm.dateToString(lastUpdateDate)} ${cityssm.dateToTimeString(lastUpdateDate)}`)}">
-                ${cityssm.escapeHTML(relativeTimeString(lastUpdateDate))}</span>`;
-            })()}
+          ${cityssm.escapeHTML(cityssm.dateToString(lastUpdateDate))}<br />
+          <span class="is-size-7 has-text-grey">
+            ${cityssm.escapeHTML(relativeTimeString(lastUpdateDate))}
+          </span>
         </td>
         <td class="has-text-right">
           ${notesIconHTML}
