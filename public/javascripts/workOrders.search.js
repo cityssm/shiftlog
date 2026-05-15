@@ -105,7 +105,10 @@
     const threeHoursInMilliseconds = 3 * hoursInMilliseconds;
     function relativeTimeString(date) {
         const elapsedMilliseconds = Date.now() - date.getTime();
-        if (elapsedMilliseconds < minutesInMilliseconds) {
+        if (elapsedMilliseconds < 0) {
+            return 'just now';
+        }
+        else if (elapsedMilliseconds < minutesInMilliseconds) {
             const seconds = Math.floor(elapsedMilliseconds / secondsInMilliseconds);
             return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
         }
@@ -298,9 +301,15 @@
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
         </td>
         <td>
-          ${workOrder.lastUpdate_dateTime === undefined || workOrder.lastUpdate_dateTime === null
-                ? '-'
-                : `<span title="${cityssm.escapeHTML(`${cityssm.dateToString(new Date(workOrder.lastUpdate_dateTime))} ${cityssm.dateToTimeString(new Date(workOrder.lastUpdate_dateTime))}`)}">${cityssm.escapeHTML(relativeTimeString(new Date(workOrder.lastUpdate_dateTime)))}</span>`}
+          ${(() => {
+                if (workOrder.lastUpdate_dateTime === undefined || workOrder.lastUpdate_dateTime === null) {
+                    return '-';
+                }
+                const lastUpdateDate = new Date(workOrder.lastUpdate_dateTime);
+                return `<span title="${cityssm.escapeHTML(`${cityssm.dateToString(lastUpdateDate)} ${cityssm.dateToTimeString(lastUpdateDate)}`)}">
+                ${cityssm.escapeHTML(relativeTimeString(lastUpdateDate))}
+              </span>`;
+            })()}
         </td>
         <td class="has-text-right">
           ${notesIconHTML}
