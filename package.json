@@ -94,7 +94,7 @@
     "cross-env": "^10.1.0",
     "csrf-csrf": "^4.0.3",
     "debug": "^4.4.3",
-    "dompurify": "^3.4.3",
+    "dompurify": "^3.4.4",
     "echarts": "^6.0.0",
     "ejs": "^5.0.2",
     "exit-hook": "^5.1.0",
