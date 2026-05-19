@@ -7,27 +7,33 @@
     const sortableColumns = {
         assignedToName: {
             defaultDirection: 'asc',
-            label: 'Assigned To'
+            label: 'Assigned To',
+            thClass: ''
         },
         lastUpdate_dateTime: {
             defaultDirection: 'desc',
-            label: 'Last Updated'
+            label: 'Last Updated',
+            thClass: 'is-hidden-mobile'
         },
         locationAddress1: {
             defaultDirection: 'asc',
-            label: 'Location'
+            label: 'Location',
+            thClass: 'is-hidden-mobile'
         },
         requestorName: {
             defaultDirection: 'asc',
-            label: 'Requestor'
+            label: 'Requestor',
+            thClass: ''
         },
         workOrderNumber: {
             defaultDirection: 'desc',
-            label: shiftLog.workOrdersSectionNameSingular
+            label: shiftLog.workOrdersSectionNameSingular,
+            thClass: ''
         },
         workOrderOpenDateTime: {
             defaultDirection: 'desc',
-            label: 'Open Date'
+            label: 'Open Date',
+            thClass: 'is-hidden-mobile'
         }
     };
     function isValidHex(color) {
@@ -71,9 +77,9 @@
         const directionLabel = nextDirection === 'asc' ? 'ascending' : 'descending';
         const label = sortableColumns[column].label;
         return `
-      <th aria-sort="${ariaSort}">
+      <th class="${sortableColumns[column].thClass}" aria-sort="${ariaSort}">
         <button
-          class="button is-ghost has-text-weight-bold p-0"
+          class="button is-ghost is-normal is-responsive has-text-weight-bold p-0"
           data-order-by-column="${column}"
           type="button"
           title="Sort by ${cityssm.escapeHTML(label)} ${directionLabel}"
@@ -134,7 +140,7 @@
         }
         const tableElement = document.createElement('table');
         tableElement.className =
-            'table is-fullwidth is-striped is-hoverable is-narrow';
+            'table is-fullwidth is-striped is-hoverable is-narrow is-size-7-touch';
         tableElement.innerHTML = `
       <thead>
         <tr>
@@ -150,7 +156,7 @@
           <th>
             <span class="is-sr-only">Properties</span>
           </th>
-          <th class="has-width-1 is-hidden-print">
+          <th class="has-width-1 is-hidden-print is-hidden-mobile">
             <span class="is-sr-only">Actions</span>
           </th>
         </tr>
@@ -279,13 +285,13 @@
           </span>
           ${tagsHTML}
         </td>
-        <td>
+        <td class="is-hidden-mobile">
           ${cityssm.escapeHTML(workOrder.locationAddress1 === '' ? '-' : workOrder.locationAddress1)}<br />
           <span class="is-size-7 has-text-grey">
             ${cityssm.escapeHTML(workOrder.locationAddress2)}
           </span>
         </td>
-        <td>
+        <td class="is-hidden-mobile">
           ${cityssm.dateToString(new Date(workOrder.workOrderOpenDateTime))}<br />
           <span class="is-size-7 has-text-grey">
             ${extraDateHTML}
@@ -293,14 +299,14 @@
         </td>
         <td>
           ${cityssm.escapeHTML(workOrder.requestorName.trim() === '' ? '-' : workOrder.requestorName)}<br />
-          <span class="is-size-7 has-text-grey">
+          <span class="is-size-7 has-text-grey is-hidden-mobile">
             ${cityssm.escapeHTML(workOrder.requestorContactInfo.trim())}
           </span>
         </td>
         <td class="${currentUserEmailAddress !== '' && workOrder.assignedToEmailAddress?.toLowerCase() === currentUserEmailAddress ? 'has-background-primary-light' : ''}">
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
         </td>
-        <td>
+        <td class="is-hidden-mobile">
           ${cityssm.escapeHTML(cityssm.dateToString(lastUpdateDate))}<br />
           <span class="is-size-7 has-text-grey">
             ${cityssm.escapeHTML(relativeTimeString(lastUpdateDate))}
@@ -312,7 +318,7 @@
           ${attachmentIconHTML}
           ${costsIconHTML}
         </td>
-        <td class="is-hidden-print">
+        <td class="is-hidden-print is-hidden-mobile">
           <a
             class="button is-small is-info is-light"
             href="${shiftLog.buildWorkOrderURL(workOrder.workOrderId)}/print"

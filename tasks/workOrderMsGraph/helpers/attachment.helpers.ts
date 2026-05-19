@@ -25,6 +25,7 @@ export async function writeAttachmentToFileSystem(
   // eslint-disable-next-line security/detect-non-literal-fs-filename
   await fs.writeFile(filePath, attachmentContentBuffer)
 
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   const stats = await fs.stat(filePath)
 
   return stats.size
