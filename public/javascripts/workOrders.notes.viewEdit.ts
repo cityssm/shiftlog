@@ -133,6 +133,7 @@ declare const marked: { parse: (markdownString: string) => string }
           note.recordCreate_userName === exports.shiftLog.userName)
 
       const truncatedText = truncateText(note.noteText, 200)
+      const markdownPreviewHTML = DOMPurify.sanitize(marked.parse(truncatedText))
 
       const noteTypeLabel =
         note.noteType !== null && note.noteType !== undefined
@@ -170,7 +171,7 @@ declare const marked: { parse: (markdownString: string) => string }
         `
       }
 
-      // eslint-disable-next-line no-unsanitized/property -- content is sanitized via cityssm.escapeHTML
+      // eslint-disable-next-line no-unsanitized/property -- markdown preview is sanitized with DOMPurify; all other interpolated content uses cityssm.escapeHTML
       noteElement.innerHTML = /* html */ `
         <article class="media">
           <div class="media-content">
@@ -184,18 +185,25 @@ declare const marked: { parse: (markdownString: string) => string }
                     ? ''
                     : '<small class="has-text-grey">(edited)</small>'
                 }
-                <br />
-                <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
-                <a class="view-full-note" data-note-sequence="${note.noteSequence}" href="#">View Full Note</a>
               </p>
+              <div class="note-text content is-size-7">${markdownPreviewHTML}</div>
               ${fieldsHTML}
             </div>
           </div>
-          ${
-            canEdit
-              ? /* html */ `
-                <div class="media-right">
-                  <div class="buttons">
+          <div class="media-right">
+            <div class="buttons">
+              <button
+                class="button is-small view-full-note"
+                data-note-sequence="${note.noteSequence}"
+                type="button"
+                title="View Full Note"
+              >
+                <span class="icon is-small"><i class="fa-regular fa-note-sticky"></i></span>
+                <span>View Full Note</span>
+              </button>
+              ${
+                canEdit
+                  ? /* html */ `
                     <button
                       class="button is-small edit-note"
                       data-note-sequence="${note.noteSequence}"
@@ -213,11 +221,11 @@ declare const marked: { parse: (markdownString: string) => string }
                     >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
                     </button>
-                  </div>
-                </div>
-              `
-              : ''
-          }
+                  `
+                  : ''
+              }
+            </div>
+          </div>
         </article>
       `
 
