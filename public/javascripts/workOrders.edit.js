@@ -87,6 +87,11 @@
                             contextualColorName: 'success',
                             message: `${shiftLog.workOrdersSectionNameSingular} Updated Successfully`
                         });
+                        document.dispatchEvent(new CustomEvent('workOrderUpdated', {
+                            detail: {
+                                workOrderId: Number(workOrderId)
+                            }
+                        }));
                     }
                 }
                 else {

@@ -845,4 +845,7 @@
         loadNoteTypes();
     }
     loadNotes();
+    document.addEventListener('workOrderUpdated', () => {
+        loadNotes();
+    });
 })();

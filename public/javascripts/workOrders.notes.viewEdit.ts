@@ -1219,4 +1219,8 @@ declare const marked: { parse: (markdownString: string) => string }
   }
 
   loadNotes()
+
+  document.addEventListener('workOrderUpdated', () => {
+    loadNotes()
+  })
 })()
