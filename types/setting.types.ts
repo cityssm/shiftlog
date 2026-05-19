@@ -12,6 +12,7 @@ export type SettingKey =
   | 'msGraph.from.allowedEmailAddresses'
   | 'msGraph.from.blockedDomains'
   | 'msGraph.from.blockedEmailAddresses'
+  | 'msGraph.to.blockedDomains'
   | 'workOrders.reopenWindowDays'
 
 export interface SettingProperties {
@@ -129,6 +130,15 @@ export const settingProperties: SettingProperties[] = [
     settingName: 'Microsoft Graph - Blocked From Email Addresses',
     description:
       'Comma-separated list of specific email addresses that are blocked in the "From" field when creating work orders via Microsoft Graph. If empty, no email addresses are blocked.',
+    type: 'string',
+    defaultValue: '',
+    isUserConfigurable: true
+  },
+  {
+    settingKey: 'msGraph.to.blockedDomains',
+    settingName: 'Microsoft Graph - Blocked To Domains',
+    description:
+      'Comma-separated list of email domains that are blocked in the "To" field when creating work orders via Microsoft Graph. Helpful for defining "no reply" domains. If empty, no domains are blocked.',
     type: 'string',
     defaultValue: '',
     isUserConfigurable: true

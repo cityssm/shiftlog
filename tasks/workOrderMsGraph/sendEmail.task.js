@@ -16,7 +16,7 @@ import { getWorkOrderUrl } from '../../helpers/application.helpers.js';
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { sendEmailIntervalMillis } from './constants.js';
-import { isEmailAddress, isNoReplyEmailAddress } from './helpers/emailAddress.helpers.js';
+import { isBlockedToEmailAddress, isEmailAddress, isNoReplyEmailAddress } from './helpers/emailAddress.helpers.js';
 import { messageHeaderString } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
 const DOMPurify = createDOMPurify(new JSDOM('').window);
@@ -66,7 +66,8 @@ export async function sendEmail() {
         const workOrderSubscribers = await getWorkOrderSubscribers(workOrderId);
         for (const subscriber of workOrderSubscribers) {
             if (isEmailAddress(subscriber.subscriberEmailAddress) &&
-                !isNoReplyEmailAddress(subscriber.subscriberEmailAddress)) {
+                !isNoReplyEmailAddress(subscriber.subscriberEmailAddress) &&
+                !(await isBlockedToEmailAddress(subscriber.subscriberEmailAddress))) {
                 bccEmailAddresses.add(subscriber.subscriberEmailAddress);
             }
         }
@@ -134,11 +135,18 @@ export async function sendEmail() {
         if (workOrder.assignedToEmailAddress !== undefined &&
             isEmailAddress(workOrder.assignedToEmailAddress) &&
             !isNoReplyEmailAddress(workOrder.assignedToEmailAddress) &&
+            !(await isBlockedToEmailAddress(workOrder.assignedToEmailAddress)) &&
             workOrder.assignedToUserName !== lastUpdateUser) {
             messageToSend.addBccRecipient(workOrder.assignedToEmailAddress);
         }
         try {
-            await msGraphApi.sendMessage(messageToSend.build());
+            const message = messageToSend.build();
+            if (message.bccRecipients === undefined ||
+                message.bccRecipients.length === 0) {
+                debug(`No BCC recipients for work order ID ${workOrderId} after building message, skipping send`);
+                continue;
+            }
+            await msGraphApi.sendMessage(message);
         }
         catch (error) {
             debug(`Error sending email for work order ID ${workOrderId}: ${error.message}`);

@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+
 import MsGraphMailApi, {
   type MsGraphMailApiConfig,
   MsGraphMailMessageBuilder
@@ -27,6 +29,7 @@ import type { NotificationQueueType } from '../notifications/types.js'
 
 import { sendEmailIntervalMillis } from './constants.js'
 import {
+  isBlockedToEmailAddress,
   isEmailAddress,
   isNoReplyEmailAddress
 } from './helpers/emailAddress.helpers.js'
@@ -113,7 +116,8 @@ export async function sendEmail(): Promise<void> {
     for (const subscriber of workOrderSubscribers) {
       if (
         isEmailAddress(subscriber.subscriberEmailAddress) &&
-        !isNoReplyEmailAddress(subscriber.subscriberEmailAddress)
+        !isNoReplyEmailAddress(subscriber.subscriberEmailAddress) &&
+        !(await isBlockedToEmailAddress(subscriber.subscriberEmailAddress))
       ) {
         bccEmailAddresses.add(subscriber.subscriberEmailAddress)
       }
@@ -230,6 +234,7 @@ export async function sendEmail(): Promise<void> {
       workOrder.assignedToEmailAddress !== undefined &&
       isEmailAddress(workOrder.assignedToEmailAddress) &&
       !isNoReplyEmailAddress(workOrder.assignedToEmailAddress) &&
+      !(await isBlockedToEmailAddress(workOrder.assignedToEmailAddress)) &&
       workOrder.assignedToUserName !== lastUpdateUser
     ) {
       messageToSend.addBccRecipient(workOrder.assignedToEmailAddress)
@@ -240,8 +245,19 @@ export async function sendEmail(): Promise<void> {
      */
 
     try {
-      // eslint-disable-next-line no-await-in-loop
-      await msGraphApi.sendMessage(messageToSend.build())
+      const message = messageToSend.build()
+
+      if (
+        message.bccRecipients === undefined ||
+        message.bccRecipients.length === 0
+      ) {
+        debug(
+          `No BCC recipients for work order ID ${workOrderId} after building message, skipping send`
+        )
+        continue
+      }
+
+      await msGraphApi.sendMessage(message)
     } catch (error) {
       debug(
         `Error sending email for work order ID ${workOrderId}: ${

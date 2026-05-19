@@ -94,5 +94,13 @@ export const settingProperties = [
         type: 'string',
         defaultValue: '',
         isUserConfigurable: true
+    },
+    {
+        settingKey: 'msGraph.to.blockedDomains',
+        settingName: 'Microsoft Graph - Blocked To Domains',
+        description: 'Comma-separated list of email domains that are blocked in the "To" field when creating work orders via Microsoft Graph. Helpful for defining "no reply" domains. If empty, no domains are blocked.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
     }
 ];

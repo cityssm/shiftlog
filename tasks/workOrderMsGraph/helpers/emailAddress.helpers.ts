@@ -1,5 +1,8 @@
 import type { MsGraphMailMessage } from '@cityssm/ms-graph-mail'
 
+import {
+  getCachedSettingValue
+} from '../../../helpers/cache/settings.cache.js'
 import { getConfigProperty } from '../../../helpers/config.helpers.js'
 
 const msGraphEmailAddress = (
@@ -54,5 +57,26 @@ export function isNoReplyEmailAddress(
     lowercaseName.includes('no-reply') ||
     lowercaseName.includes('do not reply') ||
     lowercaseName.includes('donotreply')
+  )
+}
+
+export async function isBlockedToEmailAddress(
+  emailAddress: string
+): Promise<boolean> {
+  const blockedEmailAddressDomainsSetting = await getCachedSettingValue(
+    'msGraph.to.blockedDomains'
+  )
+
+  if (blockedEmailAddressDomainsSetting === '') {
+    return false
+  }
+
+  const lowercaseEmail = emailAddress.toLowerCase()
+  const blockedEmailAddressDomains = blockedEmailAddressDomainsSetting
+    .split(',')
+    .map((domain) => domain.trim().toLowerCase())
+
+  return blockedEmailAddressDomains.some((blockedDomain) =>
+    lowercaseEmail.endsWith(`@${blockedDomain}`)
   )
 }
