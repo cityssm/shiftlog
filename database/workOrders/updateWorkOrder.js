@@ -2,6 +2,8 @@ import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { dateTimeInputToSqlDateTime } from '../../helpers/dateTime.helpers.js';
 import { sendNotificationWorkerMessage } from '../../helpers/notification.helpers.js';
+import getAssignedToItem from '../assignedTo/getAssignedToItem.js';
+import createWorkOrderNote from './createWorkOrderNote.js';
 function buildMoreInfoFormDataJson(updateWorkOrderForm) {
     const moreInfoFormData = {};
     for (const [key, value] of Object.entries(updateWorkOrderForm)) {
@@ -81,7 +83,8 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         assignedToId = @assignedToId,
         moreInfoFormDataJson = @moreInfoFormDataJson,
         recordUpdate_userName = @userName,
-        recordUpdate_dateTime = getdate()
+        recordUpdate_dateTime = getdate() OUTPUT deleted.assignedToId AS deletedAssignedToId,
+        inserted.assignedToId AS insertedAssignedToId
       WHERE
         workOrderId = @workOrderId
         AND instance = @instance
@@ -164,6 +167,23 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
           OR moreInfoFormDataJson <> @moreInfoFormDataJson
         )
     `);
+    if (result.recordset.length > 0 &&
+        result.recordset[0].deletedAssignedToId !==
+            result.recordset[0].insertedAssignedToId) {
+        if (result.recordset[0].insertedAssignedToId === null) {
+            await createWorkOrderNote({
+                workOrderId: updateWorkOrderForm.workOrderId,
+                noteText: `Unassigned`
+            }, userName);
+        }
+        else {
+            const assignedTo = await getAssignedToItem(result.recordset[0].insertedAssignedToId);
+            await createWorkOrderNote({
+                workOrderId: updateWorkOrderForm.workOrderId,
+                noteText: `Assigned to "${assignedTo?.assignedToName ?? 'Unknown'}"`
+            }, userName);
+        }
+    }
     if (result.rowsAffected[0] > 0 &&
         updateWorkOrderForm.workOrderIsMuted !== '1') {
         sendNotificationWorkerMessage('workOrder.update', typeof updateWorkOrderForm.workOrderId === 'string'
