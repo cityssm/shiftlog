@@ -2,8 +2,11 @@ import { unlink } from 'node:fs/promises';
 import Debug from 'debug';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:database:cleanup`);
+const instance = getConfigProperty('application.instance');
+export const deleteUserName = 'system.databaseCleanup';
 export default async function permanentlyDeleteRecords() {
     const errors = [];
     let deletedCount = 0;
@@ -36,9 +39,11 @@ export default async function permanentlyDeleteRecords() {
         else {
             debug('API audit log cleanup is disabled (retention days set to 0)');
         }
+        debug('Starting cleanup of WorkOrderAttachments');
         const attachmentsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         SELECT
           workOrderAttachmentId,
@@ -49,6 +54,14 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
       `);
         for (const attachment of attachmentsResult.recordset) {
             try {
@@ -78,9 +91,35 @@ export default async function permanentlyDeleteRecords() {
                 errors.push(errorMessage);
             }
         }
+        await pool
+            .request()
+            .input('deleteUserName', deleteUserName)
+            .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
+            .query(`
+        UPDATE ShiftLog.WorkOrderAttachments
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `);
+        debug('Completed cleanup of WorkOrderAttachments');
+        debug('Starting cleanup of WorkOrderTags');
         const tagsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE FROM ShiftLog.WorkOrderTags
         WHERE
@@ -92,19 +131,50 @@ export default async function permanentlyDeleteRecords() {
             WHERE
               recordDelete_dateTime IS NOT NULL
               AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
           )
       `);
         if (tagsResult.rowsAffected[0] > 0) {
             deletedCount += tagsResult.rowsAffected[0];
             debug(`Permanently deleted ${tagsResult.rowsAffected[0]} WorkOrderTags records`);
         }
+        debug('Completed cleanup of WorkOrderTags');
+        debug('Starting cleanup of WorkOrderSubscribers');
         const subscriberResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE FROM ShiftLog.WorkOrderSubscribers
         WHERE
-          workOrderId IN (
+          recordDelete_dateTime IS NOT NULL
+          AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
+      `);
+        if (subscriberResult.rowsAffected[0] > 0) {
+            deletedCount += subscriberResult.rowsAffected[0];
+            debug(`Permanently deleted ${subscriberResult.rowsAffected[0]} WorkOrderSubscribers records`);
+        }
+        await pool
+            .request()
+            .input('deleteUserName', deleteUserName)
+            .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
+            .query(`
+        UPDATE ShiftLog.WorkOrderSubscribers
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
             SELECT
               workOrderId
             FROM
@@ -112,54 +182,156 @@ export default async function permanentlyDeleteRecords() {
             WHERE
               recordDelete_dateTime IS NOT NULL
               AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
           )
       `);
-        if (subscriberResult.rowsAffected[0] > 0) {
-            deletedCount += subscriberResult.rowsAffected[0];
-            debug(`Permanently deleted ${subscriberResult.rowsAffected[0]} WorkOrderSubscribers records`);
-        }
+        debug('Completed cleanup of WorkOrderSubscribers');
+        debug('Starting cleanup of WorkOrderNotes');
         const notesResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE FROM ShiftLog.WorkOrderNotes
         WHERE
           recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
       `);
         if (notesResult.rowsAffected[0] > 0) {
             deletedCount += notesResult.rowsAffected[0];
             debug(`Permanently deleted ${notesResult.rowsAffected[0]} WorkOrderNotes records`);
         }
+        await pool
+            .request()
+            .input('deleteUserName', deleteUserName)
+            .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
+            .query(`
+        UPDATE ShiftLog.WorkOrderNotes
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `);
+        debug('Completed cleanup of WorkOrderNotes');
+        debug('Starting cleanup of WorkOrderMilestones');
         const milestonesResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE FROM ShiftLog.WorkOrderMilestones
         WHERE
           recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
       `);
         if (milestonesResult.rowsAffected[0] > 0) {
             deletedCount += milestonesResult.rowsAffected[0];
             debug(`Permanently deleted ${milestonesResult.rowsAffected[0]} WorkOrderMilestones records`);
         }
+        await pool
+            .request()
+            .input('deleteUserName', deleteUserName)
+            .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
+            .query(`
+        UPDATE ShiftLog.WorkOrderMilestones
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `);
+        debug('Completed cleanup of WorkOrderMilestones');
+        debug('Starting cleanup of WorkOrderCosts');
         const costsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE FROM ShiftLog.WorkOrderCosts
         WHERE
           recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
       `);
         if (costsResult.rowsAffected[0] > 0) {
             deletedCount += costsResult.rowsAffected[0];
             debug(`Permanently deleted ${costsResult.rowsAffected[0]} WorkOrderCosts records`);
         }
+        await pool
+            .request()
+            .input('deleteUserName', deleteUserName)
+            .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
+            .query(`
+        UPDATE ShiftLog.WorkOrderCosts
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `);
+        debug('Completed cleanup of WorkOrderCosts');
+        debug('Starting cleanup of WorkOrderEquipment');
         const workOrderEquipmentResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE FROM ShiftLog.WorkOrderEquipment
         WHERE
@@ -171,15 +343,41 @@ export default async function permanentlyDeleteRecords() {
             WHERE
               recordDelete_dateTime IS NOT NULL
               AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
           )
       `);
         if (workOrderEquipmentResult.rowsAffected[0] > 0) {
             deletedCount += workOrderEquipmentResult.rowsAffected[0];
             debug(`Permanently deleted ${workOrderEquipmentResult.rowsAffected[0]} WorkOrderEquipment records`);
         }
+        await pool
+            .request()
+            .input('deleteUserName', deleteUserName)
+            .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
+            .query(`
+        UPDATE ShiftLog.WorkOrderEquipment
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `);
+        debug('Completed cleanup of WorkOrderEquipment');
         const workOrdersResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE wo
         FROM
@@ -187,6 +385,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           wo.recordDelete_dateTime IS NOT NULL
           AND wo.recordDelete_dateTime < @cutoffDate
+          AND wo.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -251,6 +450,7 @@ export default async function permanentlyDeleteRecords() {
         const locationsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE l
         FROM
@@ -258,6 +458,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           l.recordDelete_dateTime IS NOT NULL
           AND l.recordDelete_dateTime < @cutoffDate
+          AND l.instance = @instance
       `);
         if (locationsResult.rowsAffected[0] > 0) {
             deletedCount += locationsResult.rowsAffected[0];
@@ -266,6 +467,7 @@ export default async function permanentlyDeleteRecords() {
         const workOrderTypesResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE wot
         FROM
@@ -273,6 +475,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           wot.recordDelete_dateTime IS NOT NULL
           AND wot.recordDelete_dateTime < @cutoffDate
+          AND wot.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -289,6 +492,7 @@ export default async function permanentlyDeleteRecords() {
         const dataListItemsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE dli
         FROM
@@ -296,6 +500,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           dli.recordDelete_dateTime IS NOT NULL
           AND dli.recordDelete_dateTime < @cutoffDate
+          AND dli.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -304,16 +509,7 @@ export default async function permanentlyDeleteRecords() {
             WHERE
               (
                 wo.workOrderStatusDataListItemId = dli.dataListItemId
-                OR wo.assignedToDataListItemId = dli.dataListItemId
               )
-          )
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
-              ShiftLog.WorkOrderMilestones wm
-            WHERE
-              wm.assignedToDataListItemId = dli.dataListItemId
           )
           AND NOT EXISTS (
             SELECT
@@ -342,6 +538,7 @@ export default async function permanentlyDeleteRecords() {
         const dataListsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE dl
         FROM
@@ -349,6 +546,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           dl.recordDelete_dateTime IS NOT NULL
           AND dl.recordDelete_dateTime < @cutoffDate
+          AND dl.instance = @instance
           AND dl.isSystemList = 0
           AND NOT EXISTS (
             SELECT
@@ -367,6 +565,7 @@ export default async function permanentlyDeleteRecords() {
         const crewsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE c
         FROM
@@ -374,6 +573,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           c.recordDelete_dateTime IS NOT NULL
           AND c.recordDelete_dateTime < @cutoffDate
+          AND c.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -406,6 +606,7 @@ export default async function permanentlyDeleteRecords() {
         const employeesResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE e
         FROM
@@ -413,6 +614,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           e.recordDelete_dateTime IS NOT NULL
           AND e.recordDelete_dateTime < @cutoffDate
+          AND e.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -457,6 +659,7 @@ export default async function permanentlyDeleteRecords() {
         const equipmentResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE eq
         FROM
@@ -464,6 +667,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           eq.recordDelete_dateTime IS NOT NULL
           AND eq.recordDelete_dateTime < @cutoffDate
+          AND eq.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -481,6 +685,7 @@ export default async function permanentlyDeleteRecords() {
         const shiftsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE s
         FROM
@@ -488,6 +693,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           s.recordDelete_dateTime IS NOT NULL
           AND s.recordDelete_dateTime < @cutoffDate
+          AND s.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -520,6 +726,7 @@ export default async function permanentlyDeleteRecords() {
         const timesheetsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE t
         FROM
@@ -527,6 +734,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           t.recordDelete_dateTime IS NOT NULL
           AND t.recordDelete_dateTime < @cutoffDate
+          AND t.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -551,6 +759,7 @@ export default async function permanentlyDeleteRecords() {
         const userGroupsResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE ug
         FROM
@@ -558,6 +767,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           ug.recordDelete_dateTime IS NOT NULL
           AND ug.recordDelete_dateTime < @cutoffDate
+          AND ug.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -594,14 +804,6 @@ export default async function permanentlyDeleteRecords() {
             SELECT
               1
             FROM
-              ShiftLog.Locations l
-            WHERE
-              l.userGroupId = ug.userGroupId
-          )
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
               ShiftLog.WorkOrderTypes wot
             WHERE
               wot.userGroupId = ug.userGroupId
@@ -614,6 +816,7 @@ export default async function permanentlyDeleteRecords() {
         const usersResult = await pool
             .request()
             .input('cutoffDate', cutoffDate)
+            .input('instance', instance)
             .query(`
         DELETE u
         FROM
@@ -621,6 +824,7 @@ export default async function permanentlyDeleteRecords() {
         WHERE
           u.recordDelete_dateTime IS NOT NULL
           AND u.recordDelete_dateTime < @cutoffDate
+          AND u.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -653,8 +857,8 @@ export default async function permanentlyDeleteRecords() {
     }
     catch (error) {
         const errorMessage = `Cleanup task failed: ${error instanceof Error ? error.message : String(error)}`;
-        debug(errorMessage);
         errors.push(errorMessage);
+        debug(error);
         return {
             success: false,
             deletedCount,

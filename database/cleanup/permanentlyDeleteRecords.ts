@@ -1,3 +1,4 @@
+/* eslint-disable no-secrets/no-secrets */
 /* eslint-disable max-lines */
 /* eslint-disable no-await-in-loop */
 
@@ -7,15 +8,20 @@ import Debug from 'debug'
 
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
+import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 const debug = Debug(`${DEBUG_NAMESPACE}:database:cleanup`)
+
+const instance = getConfigProperty('application.instance')
 
 interface DeletedAttachment {
   workOrderAttachmentId: number
   fileSystemPath: string
   recordDelete_dateTime: Date
 }
+
+export const deleteUserName = 'system.databaseCleanup'
 
 /**
  * Permanently deletes records that have been marked as deleted for a minimum number of days
@@ -24,6 +30,7 @@ interface DeletedAttachment {
  */
 export default async function permanentlyDeleteRecords(): Promise<{
   success: boolean
+
   deletedCount: number
   errors: string[]
 }> {
@@ -77,6 +84,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
 
       if (apiAuditLogsResult.rowsAffected[0] > 0) {
         deletedCount += apiAuditLogsResult.rowsAffected[0]
+
         debug(
           `Permanently deleted ${apiAuditLogsResult.rowsAffected[0]} API audit log records older than ${apiAuditLogRetentionDays} days`
         )
@@ -85,10 +93,16 @@ export default async function permanentlyDeleteRecords(): Promise<{
       debug('API audit log cleanup is disabled (retention days set to 0)')
     }
 
-    // Step 1: Handle WorkOrderAttachments - delete files first, then records
+    /*
+     * Step 1: Handle WorkOrderAttachments - delete files first, then records
+     */
+
+    debug('Starting cleanup of WorkOrderAttachments')
+
     const attachmentsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query<DeletedAttachment>(/* sql */ `
         SELECT
           workOrderAttachmentId,
@@ -99,6 +113,14 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
       `)
 
     for (const attachment of attachmentsResult.recordset) {
@@ -140,11 +162,44 @@ export default async function permanentlyDeleteRecords(): Promise<{
       }
     }
 
-    // Step 2: Clean up child records of WorkOrders
+    await pool
+      .request()
+      .input('deleteUserName', deleteUserName)
+      .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
+      .query(/* sql */ `
+        UPDATE ShiftLog.WorkOrderAttachments
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `)
+
+    debug('Completed cleanup of WorkOrderAttachments')
+
+    /*
+     * Step 2: Clean up child records of WorkOrders
+     */
+
     // WorkOrderTags - no foreign keys to check
+
+    debug('Starting cleanup of WorkOrderTags')
+
     const tagsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderTags
         WHERE
@@ -156,6 +211,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
             WHERE
               recordDelete_dateTime IS NOT NULL
               AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
           )
       `)
 
@@ -166,21 +222,28 @@ export default async function permanentlyDeleteRecords(): Promise<{
       )
     }
 
+    debug('Completed cleanup of WorkOrderTags')
+
     // WorkOrderSubscribers - no foreign keys to check
+
+    debug('Starting cleanup of WorkOrderSubscribers')
+
     const subscriberResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderSubscribers
         WHERE
-          workOrderId IN (
+          recordDelete_dateTime IS NOT NULL
+          AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
             SELECT
               workOrderId
             FROM
               ShiftLog.WorkOrders
             WHERE
-              recordDelete_dateTime IS NOT NULL
-              AND recordDelete_dateTime < @cutoffDate
+              instance = @instance
           )
       `)
 
@@ -191,15 +254,53 @@ export default async function permanentlyDeleteRecords(): Promise<{
       )
     }
 
+    await pool
+      .request()
+      .input('deleteUserName', deleteUserName)
+      .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
+      .query(/* sql */ `
+        UPDATE ShiftLog.WorkOrderSubscribers
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `)
+
+    debug('Completed cleanup of WorkOrderSubscribers')
+
     // WorkOrderNotes - no foreign keys to check
+
+    debug('Starting cleanup of WorkOrderNotes')
+
     const notesResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderNotes
         WHERE
           recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
       `)
 
     if (notesResult.rowsAffected[0] > 0) {
@@ -209,15 +310,53 @@ export default async function permanentlyDeleteRecords(): Promise<{
       )
     }
 
+    await pool
+      .request()
+      .input('deleteUserName', deleteUserName)
+      .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
+      .query(/* sql */ `
+        UPDATE ShiftLog.WorkOrderNotes
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `)
+
+    debug('Completed cleanup of WorkOrderNotes')
+
     // WorkOrderMilestones - no foreign keys to check
+
+    debug('Starting cleanup of WorkOrderMilestones')
+
     const milestonesResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderMilestones
         WHERE
           recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
       `)
 
     if (milestonesResult.rowsAffected[0] > 0) {
@@ -227,15 +366,53 @@ export default async function permanentlyDeleteRecords(): Promise<{
       )
     }
 
+    await pool
+      .request()
+      .input('deleteUserName', deleteUserName)
+      .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
+      .query(/* sql */ `
+        UPDATE ShiftLog.WorkOrderMilestones
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `)
+
+    debug('Completed cleanup of WorkOrderMilestones')
+
     // WorkOrderCosts - no foreign keys to check
+
+    debug('Starting cleanup of WorkOrderCosts')
+
     const costsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderCosts
         WHERE
           recordDelete_dateTime IS NOT NULL
           AND recordDelete_dateTime < @cutoffDate
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              instance = @instance
+          )
       `)
 
     if (costsResult.rowsAffected[0] > 0) {
@@ -245,11 +422,40 @@ export default async function permanentlyDeleteRecords(): Promise<{
       )
     }
 
+    await pool
+      .request()
+      .input('deleteUserName', deleteUserName)
+      .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
+      .query(/* sql */ `
+        UPDATE ShiftLog.WorkOrderCosts
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `)
+
+    debug('Completed cleanup of WorkOrderCosts')
+
     // WorkOrderEquipment - no foreign keys to check
+
+    debug('Starting cleanup of WorkOrderEquipment')
+
     const workOrderEquipmentResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
-      // eslint-disable-next-line no-secrets/no-secrets
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE FROM ShiftLog.WorkOrderEquipment
         WHERE
@@ -261,6 +467,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
             WHERE
               recordDelete_dateTime IS NOT NULL
               AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
           )
       `)
 
@@ -271,11 +478,40 @@ export default async function permanentlyDeleteRecords(): Promise<{
       )
     }
 
-    // Step 3: Clean up WorkOrders that have no active child records
+    await pool
+      .request()
+      .input('deleteUserName', deleteUserName)
+      .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
+      .query(/* sql */ `
+        UPDATE ShiftLog.WorkOrderEquipment
+        SET
+          recordDelete_userName = @deleteUserName,
+          recordDelete_dateTime = GETDATE()
+        WHERE
+          recordDelete_dateTime IS NULL
+          AND workOrderId IN (
+            SELECT
+              workOrderId
+            FROM
+              ShiftLog.WorkOrders
+            WHERE
+              recordDelete_dateTime IS NOT NULL
+              AND recordDelete_dateTime < @cutoffDate
+              AND instance = @instance
+          )
+      `)
+
+    debug('Completed cleanup of WorkOrderEquipment')
+
+    /*
+     * Step 3: Clean up WorkOrders that have no active child records
+     */
+
     const workOrdersResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
-      // eslint-disable-next-line no-secrets/no-secrets
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE wo
         FROM
@@ -283,6 +519,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           wo.recordDelete_dateTime IS NOT NULL
           AND wo.recordDelete_dateTime < @cutoffDate
+          AND wo.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -353,6 +590,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const locationsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE l
         FROM
@@ -360,6 +598,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           l.recordDelete_dateTime IS NOT NULL
           AND l.recordDelete_dateTime < @cutoffDate
+          AND l.instance = @instance
       `)
 
     if (locationsResult.rowsAffected[0] > 0) {
@@ -373,6 +612,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const workOrderTypesResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE wot
         FROM
@@ -380,6 +620,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           wot.recordDelete_dateTime IS NOT NULL
           AND wot.recordDelete_dateTime < @cutoffDate
+          AND wot.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -401,6 +642,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const dataListItemsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE dli
         FROM
@@ -408,6 +650,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           dli.recordDelete_dateTime IS NOT NULL
           AND dli.recordDelete_dateTime < @cutoffDate
+          AND dli.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -416,16 +659,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
             WHERE
               (
                 wo.workOrderStatusDataListItemId = dli.dataListItemId
-                OR wo.assignedToDataListItemId = dli.dataListItemId
               )
-          )
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
-              ShiftLog.WorkOrderMilestones wm
-            WHERE
-              wm.assignedToDataListItemId = dli.dataListItemId
           )
           AND NOT EXISTS (
             SELECT
@@ -459,6 +693,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const dataListsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE dl
         FROM
@@ -466,6 +701,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           dl.recordDelete_dateTime IS NOT NULL
           AND dl.recordDelete_dateTime < @cutoffDate
+          AND dl.instance = @instance
           AND dl.isSystemList = 0
           AND NOT EXISTS (
             SELECT
@@ -489,6 +725,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const crewsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE c
         FROM
@@ -496,6 +733,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           c.recordDelete_dateTime IS NOT NULL
           AND c.recordDelete_dateTime < @cutoffDate
+          AND c.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -531,6 +769,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const employeesResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE e
         FROM
@@ -538,6 +777,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           e.recordDelete_dateTime IS NOT NULL
           AND e.recordDelete_dateTime < @cutoffDate
+          AND e.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -587,6 +827,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const equipmentResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE eq
         FROM
@@ -594,6 +835,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           eq.recordDelete_dateTime IS NOT NULL
           AND eq.recordDelete_dateTime < @cutoffDate
+          AND eq.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -616,6 +858,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const shiftsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE s
         FROM
@@ -623,6 +866,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           s.recordDelete_dateTime IS NOT NULL
           AND s.recordDelete_dateTime < @cutoffDate
+          AND s.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -660,6 +904,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const timesheetsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE t
         FROM
@@ -667,6 +912,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           t.recordDelete_dateTime IS NOT NULL
           AND t.recordDelete_dateTime < @cutoffDate
+          AND t.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -696,6 +942,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const userGroupsResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE ug
         FROM
@@ -703,6 +950,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           ug.recordDelete_dateTime IS NOT NULL
           AND ug.recordDelete_dateTime < @cutoffDate
+          AND ug.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -739,14 +987,6 @@ export default async function permanentlyDeleteRecords(): Promise<{
             SELECT
               1
             FROM
-              ShiftLog.Locations l
-            WHERE
-              l.userGroupId = ug.userGroupId
-          )
-          AND NOT EXISTS (
-            SELECT
-              1
-            FROM
               ShiftLog.WorkOrderTypes wot
             WHERE
               wot.userGroupId = ug.userGroupId
@@ -764,6 +1004,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
     const usersResult = await pool
       .request()
       .input('cutoffDate', cutoffDate)
+      .input('instance', instance)
       .query(/* sql */ `
         DELETE u
         FROM
@@ -771,6 +1012,7 @@ export default async function permanentlyDeleteRecords(): Promise<{
         WHERE
           u.recordDelete_dateTime IS NOT NULL
           AND u.recordDelete_dateTime < @cutoffDate
+          AND u.instance = @instance
           AND NOT EXISTS (
             SELECT
               1
@@ -806,8 +1048,9 @@ export default async function permanentlyDeleteRecords(): Promise<{
     }
   } catch (error) {
     const errorMessage = `Cleanup task failed: ${error instanceof Error ? error.message : String(error)}`
-    debug(errorMessage)
     errors.push(errorMessage)
+
+    debug(error)
 
     return {
       success: false,
