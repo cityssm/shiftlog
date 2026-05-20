@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import getTagAliases from '../../database/tagAliases/getTagAliases.js'
-import updateTagAlias from '../../database/tagAliases/updateTagAlias.js'
+import getTagAliases from '../../database/tags/getTagAliases.js'
+import updateTagAlias from '../../database/tags/updateTagAlias.js'
 import type { TagAlias } from '../../types/record.types.js'
 
 export type DoUpdateTagAliasResponse =

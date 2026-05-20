@@ -1,5 +1,5 @@
-import addTagAlias from '../../database/tagAliases/addTagAlias.js';
-import getTagAliases from '../../database/tagAliases/getTagAliases.js';
+import addTagAlias from '../../database/tags/addTagAlias.js';
+import getTagAliases from '../../database/tags/getTagAliases.js';
 export default async function handler(request, response) {
     const tagNameAlias = request.body.tagNameAlias ?? '';
     const tagName = request.body.tagName ?? '';

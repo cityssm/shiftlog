@@ -1,5 +1,5 @@
-import deleteTagAlias from '../../database/tagAliases/deleteTagAlias.js';
-import getTagAliases from '../../database/tagAliases/getTagAliases.js';
+import deleteTagAlias from '../../database/tags/deleteTagAlias.js';
+import getTagAliases from '../../database/tags/getTagAliases.js';
 export default async function handler(request, response) {
     const tagNameAlias = request.body.tagNameAlias ?? '';
     const success = await deleteTagAlias(tagNameAlias, request.session.user);

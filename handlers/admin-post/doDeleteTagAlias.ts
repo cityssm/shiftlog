@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import deleteTagAlias from '../../database/tagAliases/deleteTagAlias.js'
-import getTagAliases from '../../database/tagAliases/getTagAliases.js'
+import deleteTagAlias from '../../database/tags/deleteTagAlias.js'
+import getTagAliases from '../../database/tags/getTagAliases.js'
 import type { TagAlias } from '../../types/record.types.js'
 
 export type DoDeleteTagAliasResponse =
@@ -20,7 +20,10 @@ export default async function handler(
 ): Promise<void> {
   const tagNameAlias = request.body.tagNameAlias ?? ''
 
-  const success = await deleteTagAlias(tagNameAlias, request.session.user as User)
+  const success = await deleteTagAlias(
+    tagNameAlias,
+    request.session.user as User
+  )
 
   if (success) {
     const tagAliases = await getTagAliases()

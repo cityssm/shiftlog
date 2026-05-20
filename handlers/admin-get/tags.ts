@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 
-import getTagAliases from '../../database/tagAliases/getTagAliases.js'
+import getTagAliases from '../../database/tags/getTagAliases.js'
 import { getCachedTags } from '../../helpers/cache/tags.cache.js'
 
 export default async function handler(

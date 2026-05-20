@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import addTagAlias from '../../database/tagAliases/addTagAlias.js'
-import getTagAliases from '../../database/tagAliases/getTagAliases.js'
+import addTagAlias from '../../database/tags/addTagAlias.js'
+import getTagAliases from '../../database/tags/getTagAliases.js'
 import type { TagAlias } from '../../types/record.types.js'
 
 export type DoAddTagAliasResponse =
@@ -15,7 +15,11 @@ export type DoAddTagAliasResponse =
     }
 
 export default async function handler(
-  request: Request<unknown, unknown, { tagNameAlias?: string; tagName?: string }>,
+  request: Request<
+    unknown,
+    unknown,
+    { tagNameAlias?: string; tagName?: string }
+  >,
   response: Response<DoAddTagAliasResponse>
 ): Promise<void> {
   const tagNameAlias = request.body.tagNameAlias ?? ''

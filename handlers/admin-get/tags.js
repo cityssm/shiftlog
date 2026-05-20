@@ -1,4 +1,4 @@
-import getTagAliases from '../../database/tagAliases/getTagAliases.js';
+import getTagAliases from '../../database/tags/getTagAliases.js';
 import { getCachedTags } from '../../helpers/cache/tags.cache.js';
 export default async function handler(_request, response) {
     const tags = await getCachedTags();

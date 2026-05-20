@@ -22,7 +22,9 @@ export default async function addWorkOrderTag(workOrderId, tagName) {
           AND tagNameAlias = @tagNameAlias
           AND recordDelete_dateTime IS NULL
       `);
-        const tagNameToAdd = aliasResult.recordset.length > 0 ? aliasResult.recordset[0].tagName : tagName;
+        const tagNameToAdd = aliasResult.recordset.length > 0
+            ? aliasResult.recordset[0].tagName
+            : tagName;
         await pool
             .request()
             .input('workOrderId', workOrderId)

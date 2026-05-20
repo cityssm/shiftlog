@@ -15,11 +15,6 @@
         const b = bigint & 255;
         return { r, g, b };
     }
-    /**
-     * Validates a six-character hex colour value (without a leading #).
-     * @param colorHex A six-character hex colour string.
-     * @returns True when the value is a valid hex colour.
-     */
     function isValidColorHex(colorHex) {
         return /^[\dA-F]{6}$/i.test(colorHex);
     }
@@ -365,9 +360,6 @@
         currentAliasesPage = 1;
         renderTagAliasesWithPagination(tagAliases);
     }
-    /**
-     * Rebuilds the tag alias list using the current filter input value.
-     */
     function refreshTagAliasesTable() {
         const tagAliasesFilterInput = document.querySelector('#filter--tagAliases');
         const filterValue = tagAliasesFilterInput.value.toLowerCase();
@@ -375,10 +367,6 @@
             tagAlias.tagName.toLowerCase().includes(filterValue));
         renderTagAliasesWithPagination(currentFilteredTagAliases);
     }
-    /**
-     * Updates tag state and re-renders both tag and tag alias tables.
-     * @param tags Tag records returned from the server.
-     */
     function setTags(tags) {
         exports.tags = tags;
         currentFilteredTags = tags;
@@ -386,11 +374,6 @@
         renderTagsWithPagination(tags);
         refreshTagAliasesTable();
     }
-    /**
-     * Populates a modal datalist with current tag names.
-     * @param modalElement The currently open modal element.
-     * @param datalistSelector The selector for the datalist to populate.
-     */
     function setTagSuggestionsList(modalElement, datalistSelector) {
         const tagNameSuggestionsElement = modalElement.querySelector(datalistSelector);
         tagNameSuggestionsElement.replaceChildren();
@@ -452,7 +435,6 @@
         cityssm.openHtmlModal('adminTagAliases-edit', {
             onshow(modalElement) {
                 setTagSuggestionsList(modalElement, '#editTagAlias--tagNameSuggestions');
-                ;
                 modalElement.querySelector('#editTagAlias--oldTagNameAlias').value = tagAlias.tagNameAlias;
                 modalElement.querySelector('#editTagAlias--tagNameAlias').value = tagAlias.tagNameAlias;
                 modalElement.querySelector('#editTagAlias--tagName').value =

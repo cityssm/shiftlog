@@ -31,7 +31,9 @@ export default async function addWorkOrderTag(
       `)
 
     const tagNameToAdd =
-      aliasResult.recordset.length > 0 ? aliasResult.recordset[0].tagName : tagName
+      aliasResult.recordset.length > 0
+        ? aliasResult.recordset[0].tagName
+        : tagName
 
     await pool
       .request()
