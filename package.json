@@ -1,6 +1,6 @@
 {
   "name": "@cityssm/shiftlog",
-  "version": "1.0.0-alpha.13",
+  "version": "1.0.0-alpha.14",
   "private": true,
   "description": "ShiftLog - A work management system with work order recording, shift activity logging, and timesheet tracking",
   "keywords": [
