@@ -8,7 +8,7 @@ export default async function getOrphanedTags() {
         .query(`
       SELECT
         tagName,
-        sum(usageCount) AS usageCount
+        SUM(usageCount) AS usageCount
       FROM
         (
           SELECT
