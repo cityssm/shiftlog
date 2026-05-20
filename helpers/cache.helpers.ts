@@ -10,6 +10,7 @@ import type {
 
 import { clearApiKeysCache, getCachedApiKeys } from './cache/apiKeys.cache.js'
 import { clearSettingsCache } from './cache/settings.cache.js'
+import { clearTagAliasesCache } from './cache/tagAliases.cache.js'
 import { clearTagsCache } from './cache/tags.cache.js'
 
 const debug = Debug(
@@ -26,7 +27,7 @@ export function preloadCaches(): void {
   debug('Caches preloaded')
 }
 
-export const cacheTableNames = ['ApplicationSettings', 'UserSettings', 'Tags'] as const
+export const cacheTableNames = ['ApplicationSettings', 'UserSettings', 'Tags', 'TagAliases'] as const
 
 export type CacheTableNames = (typeof cacheTableNames)[number]
 
@@ -37,6 +38,11 @@ export function clearCacheByTableName(
   switch (tableName) {
     case 'ApplicationSettings': {
       clearSettingsCache()
+      break
+    }
+
+    case 'TagAliases': {
+      clearTagAliasesCache()
       break
     }
 
