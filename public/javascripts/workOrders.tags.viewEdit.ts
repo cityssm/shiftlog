@@ -181,7 +181,7 @@ declare const bulmaJS: BulmaJS
             tagElement.style.color = `#${suggestedTag.tagTextColor}`
           }
 
-          tagElement.textContent = suggestedTag.tagName
+          tagElement.innerHTML = `<span class="icon"><i class="fa-solid fa-plus-circle"></i></span> <span>${cityssm.escapeHTML(suggestedTag.tagName)}</span>`
 
           const addSuggestedTag = (): void => {
             cityssm.postJSON(
@@ -283,7 +283,9 @@ declare const bulmaJS: BulmaJS
           if (suggestedTagsContainer !== null) {
             cityssm.postJSON(
               `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`,
-              {},
+              {
+                workOrderId
+              },
               (rawResponseJSON) => {
                 const responseJSON =
                   rawResponseJSON as DoGetSuggestedTagsResponse

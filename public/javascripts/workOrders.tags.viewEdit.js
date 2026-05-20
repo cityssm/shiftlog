@@ -102,7 +102,7 @@
                         tagElement.style.backgroundColor = `#${suggestedTag.tagBackgroundColor}`;
                         tagElement.style.color = `#${suggestedTag.tagTextColor}`;
                     }
-                    tagElement.textContent = suggestedTag.tagName;
+                    tagElement.innerHTML = `<span class="icon"><i class="fa-solid fa-plus-circle"></i></span> <span>${cityssm.escapeHTML(suggestedTag.tagName)}</span>`;
                     const addSuggestedTag = () => {
                         cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/doAddWorkOrderTag`, {
                             tagName: suggestedTag.tagName,
@@ -176,7 +176,9 @@
                         ?.addEventListener('submit', doAddTag);
                     const suggestedTagsContainer = modalElement.querySelector('#container--suggestedTags');
                     if (suggestedTagsContainer !== null) {
-                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`, {}, (rawResponseJSON) => {
+                        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetSuggestedTags`, {
+                            workOrderId
+                        }, (rawResponseJSON) => {
                             const responseJSON = rawResponseJSON;
                             renderSuggestedTags(suggestedTagsContainer, responseJSON.suggestedTags, () => closeModalFunction);
                         });

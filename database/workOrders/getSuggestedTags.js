@@ -9,30 +9,39 @@ export default async function getSuggestedTags(workOrderId, limit = defaultLimit
         .input('workOrderId', workOrderId)
         .input('limit', limit)
         .query(`
-      SELECT TOP (@limit)
-        wot.tagName,
+      SELECT
+        TOP (@limit) wot.tagName,
         t.tagBackgroundColor,
         t.tagTextColor,
-        COUNT(*) as usageCount
+        COUNT(*) AS usageCount
       FROM
         ShiftLog.WorkOrderTags wot
         LEFT JOIN ShiftLog.Tags t ON wot.tagName = t.tagName
-          AND t.instance = @instance
-          AND t.recordDelete_dateTime IS NULL
+        AND t.instance = @instance
+        AND t.recordDelete_dateTime IS NULL
         INNER JOIN ShiftLog.WorkOrders wo ON wot.workOrderId = wo.workOrderId
+        LEFT JOIN ShiftLog.WorkOrders currentWo ON currentWo.workOrderId = @workOrderId
       WHERE
         wo.instance = @instance
         AND wo.recordDelete_dateTime IS NULL
         AND wot.tagName NOT IN (
-          SELECT tagName
-          FROM ShiftLog.WorkOrderTags
-          WHERE workOrderId = @workOrderId
+          SELECT
+            tagName
+          FROM
+            ShiftLog.WorkOrderTags
+          WHERE
+            workOrderId = @workOrderId
         )
       GROUP BY
         wot.tagName,
         t.tagBackgroundColor,
-        t.tagTextColor
+        t.tagTextColor,
+        currentWo.workOrderDetails
       ORDER BY
+        CASE
+          WHEN currentWo.workOrderDetails LIKE '%' + wot.tagName + '%' THEN 0
+          ELSE 1
+        END,
         COUNT(*) DESC,
         wot.tagName
     `);
