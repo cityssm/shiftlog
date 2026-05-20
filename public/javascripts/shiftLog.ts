@@ -357,6 +357,8 @@ declare const exports: {
     textareaElement: HTMLTextAreaElement,
     options?: { showMarkdownTab?: boolean }
   ): void {
+    textareaElement.classList.add('is-family-monospace')
+
     const showMarkdownTab = options?.showMarkdownTab ?? false
 
     const textareaParentElement = textareaElement.parentElement

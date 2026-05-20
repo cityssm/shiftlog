@@ -197,6 +197,7 @@
     }
     let markdownTextareaCounter = 0;
     function initializeMarkdownTextarea(textareaElement, options) {
+        textareaElement.classList.add('is-family-monospace');
         const showMarkdownTab = options?.showMarkdownTab ?? false;
         const textareaParentElement = textareaElement.parentElement;
         if (textareaParentElement === null) {
