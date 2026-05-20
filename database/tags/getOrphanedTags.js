@@ -7,23 +7,44 @@ export default async function getOrphanedTags() {
         .input('instance', getConfigProperty('application.instance'))
         .query(`
       SELECT
-        wot.tagName,
-        COUNT(*) AS usageCount
+        tagName,
+        sum(usageCount) AS usageCount
       FROM
-        ShiftLog.WorkOrderTags wot
-        INNER JOIN ShiftLog.WorkOrders w ON wot.workOrderId = w.workOrderId
-        AND w.instance = @instance
-        AND w.recordDelete_dateTime IS NULL
-        LEFT JOIN ShiftLog.Tags t ON wot.tagName = t.tagName
-        AND t.instance = @instance
-        AND t.recordDelete_dateTime IS NULL
-      WHERE
-        t.tagName IS NULL
+        (
+          SELECT
+            a.tagName,
+            1 AS usageCount
+          FROM
+            ShiftLog.TagAliases a
+            LEFT JOIN ShiftLog.Tags t ON a.tagName = t.tagName
+            AND a.instance = t.instance
+            AND t.recordDelete_dateTime IS NULL
+          WHERE
+            a.instance = @instance
+            AND a.recordDelete_dateTime IS NULL
+            AND t.tagName IS NULL
+          UNION
+          SELECT
+            wot.tagName,
+            COUNT(*) AS usageCount
+          FROM
+            ShiftLog.WorkOrderTags wot
+            INNER JOIN ShiftLog.WorkOrders w ON wot.workOrderId = w.workOrderId
+            AND w.instance = @instance
+            AND w.recordDelete_dateTime IS NULL
+            LEFT JOIN ShiftLog.Tags t ON wot.tagName = t.tagName
+            AND t.instance = @instance
+            AND t.recordDelete_dateTime IS NULL
+          WHERE
+            t.tagName IS NULL
+          GROUP BY
+            wot.tagName
+        ) AS orphanedTags
       GROUP BY
-        wot.tagName
+        tagName
       ORDER BY
-        COUNT(*) DESC,
-        wot.tagName
+        usageCount DESC,
+        tagName
     `);
     return result.recordset;
 }
