@@ -53,7 +53,7 @@ const systemUser = {
     userSettings: {}
 };
 export async function checkEmail() {
-    if (await getCachedSettingValue('msGraph.enabled') !== 'true') {
+    if ((await getCachedSettingValue('msGraph.enabled')) !== 'true') {
         debug('Microsoft Graph integration is disabled. Skipping email check.');
         return;
     }
@@ -94,15 +94,18 @@ export async function checkEmail() {
             let workOrder = workOrderNumber === undefined
                 ? undefined
                 : await getWorkOrderByWorkOrderNumber(workOrderNumber);
-            if (workOrder !== undefined &&
-                (workOrder.requestorContactInfo.toLowerCase() !==
+            if (workOrder !== undefined) {
+                if (workOrder.assignedToEmailAddress?.toLowerCase() ===
                     fromAddressLowerCase ||
-                    !workOrder.requestorIsSubscribed)) {
-                const subscribers = await getWorkOrderSubscribers(workOrder.workOrderId);
-                const isSubscriber = subscribers.some((subscriber) => subscriber.subscriberEmailAddress.toLowerCase() ===
-                    fromAddressLowerCase);
-                if (!isSubscriber) {
-                    workOrder = undefined;
+                    workOrder.requestorContactInfo.toLowerCase() === fromAddressLowerCase) {
+                }
+                else {
+                    const subscribers = await getWorkOrderSubscribers(workOrder.workOrderId);
+                    const isSubscriber = subscribers.some((subscriber) => subscriber.subscriberEmailAddress.toLowerCase() ===
+                        fromAddressLowerCase);
+                    if (!isSubscriber) {
+                        workOrder = undefined;
+                    }
                 }
             }
             const messageBodyText = messageBodyToText(message.body, workOrder !== undefined);

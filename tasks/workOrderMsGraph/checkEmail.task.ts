@@ -91,7 +91,7 @@ const systemUser: User = {
 }
 
 export async function checkEmail(): Promise<void> {
-  if (await getCachedSettingValue('msGraph.enabled') !== 'true') {
+  if ((await getCachedSettingValue('msGraph.enabled')) !== 'true') {
     debug('Microsoft Graph integration is disabled. Skipping email check.')
     return
   }
@@ -190,22 +190,27 @@ export async function checkEmail(): Promise<void> {
           ? undefined
           : await getWorkOrderByWorkOrderNumber(workOrderNumber)
 
-      if (
-        workOrder !== undefined &&
-        (workOrder.requestorContactInfo.toLowerCase() !==
-          fromAddressLowerCase ||
-          !workOrder.requestorIsSubscribed)
-      ) {
-        const subscribers = await getWorkOrderSubscribers(workOrder.workOrderId)
+      if (workOrder !== undefined) {
+        if (
+          workOrder.assignedToEmailAddress?.toLowerCase() ===
+            fromAddressLowerCase ||
+          workOrder.requestorContactInfo.toLowerCase() === fromAddressLowerCase
+        ) {
+          // email accepted, continue processing
+        } else {
+          const subscribers = await getWorkOrderSubscribers(
+            workOrder.workOrderId
+          )
 
-        const isSubscriber = subscribers.some(
-          (subscriber) =>
-            subscriber.subscriberEmailAddress.toLowerCase() ===
-            fromAddressLowerCase
-        )
+          const isSubscriber = subscribers.some(
+            (subscriber) =>
+              subscriber.subscriberEmailAddress.toLowerCase() ===
+              fromAddressLowerCase
+          )
 
-        if (!isSubscriber) {
-          workOrder = undefined
+          if (!isSubscriber) {
+            workOrder = undefined
+          }
         }
       }
 
@@ -335,9 +340,8 @@ export async function checkEmail(): Promise<void> {
               continue
             }
 
-            const attachmentIsIgnored = await checkIgnoredAttachmentChecksum(
-              attachmentChecksum
-            )
+            const attachmentIsIgnored =
+              await checkIgnoredAttachmentChecksum(attachmentChecksum)
 
             // eslint-disable-next-line max-depth
             if (attachmentIsIgnored) {
