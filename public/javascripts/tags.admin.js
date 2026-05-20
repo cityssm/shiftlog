@@ -15,6 +15,14 @@
         const b = bigint & 255;
         return { r, g, b };
     }
+    /**
+     * Validates a six-character hex colour value (without a leading #).
+     * @param colorHex A six-character hex colour string.
+     * @returns True when the value is a valid hex colour.
+     */
+    function isValidColorHex(colorHex) {
+        return /^[\dA-F]{6}$/i.test(colorHex);
+    }
     function getRelativeLuminance(rgb) {
         const rsRGB = rgb.r / 255;
         const gsRGB = rgb.g / 255;
@@ -357,16 +365,35 @@
         currentAliasesPage = 1;
         renderTagAliasesWithPagination(tagAliases);
     }
+    /**
+     * Rebuilds the tag alias list using the current filter input value.
+     */
+    function refreshTagAliasesTable() {
+        const tagAliasesFilterInput = document.querySelector('#filter--tagAliases');
+        const filterValue = tagAliasesFilterInput.value.toLowerCase();
+        currentFilteredTagAliases = exports.tagAliases.filter((tagAlias) => tagAlias.tagNameAlias.toLowerCase().includes(filterValue) ||
+            tagAlias.tagName.toLowerCase().includes(filterValue));
+        renderTagAliasesWithPagination(currentFilteredTagAliases);
+    }
+    /**
+     * Updates tag state and re-renders both tag and tag alias tables.
+     * @param tags Tag records returned from the server.
+     */
     function setTags(tags) {
         exports.tags = tags;
         currentFilteredTags = tags;
         currentPage = 1;
         renderTagsWithPagination(tags);
-        renderTagAliasesWithPagination(currentFilteredTagAliases);
+        refreshTagAliasesTable();
     }
+    /**
+     * Populates a modal datalist with current tag names.
+     * @param modalElement The currently open modal element.
+     * @param datalistSelector The selector for the datalist to populate.
+     */
     function setTagSuggestionsList(modalElement, datalistSelector) {
         const tagNameSuggestionsElement = modalElement.querySelector(datalistSelector);
-        tagNameSuggestionsElement.textContent = '';
+        tagNameSuggestionsElement.replaceChildren();
         for (const tag of exports.tags) {
             const optionElement = document.createElement('option');
             optionElement.value = tag.tagName;
@@ -559,9 +586,15 @@
       `;
             const mappedTagElement = tr.querySelector('.js-tag-alias-mapped-tag');
             mappedTagElement.textContent = tagAlias.tagName;
-            if (mappedTag !== undefined) {
+            const canApplyMappedTagColors = mappedTag !== undefined &&
+                isValidColorHex(mappedTag.tagBackgroundColor) &&
+                isValidColorHex(mappedTag.tagTextColor);
+            if (canApplyMappedTagColors) {
                 mappedTagElement.style.backgroundColor = `#${mappedTag.tagBackgroundColor}`;
                 mappedTagElement.style.color = `#${mappedTag.tagTextColor}`;
+            }
+            else {
+                mappedTagElement.classList.add('is-info', 'is-light');
             }
             tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias);
             tr
@@ -770,11 +803,8 @@
     });
     const tagAliasesFilterInput = document.querySelector('#filter--tagAliases');
     tagAliasesFilterInput.addEventListener('keyup', () => {
-        const filterValue = tagAliasesFilterInput.value.toLowerCase();
-        currentFilteredTagAliases = exports.tagAliases.filter((tagAlias) => tagAlias.tagNameAlias.toLowerCase().includes(filterValue) ||
-            tagAlias.tagName.toLowerCase().includes(filterValue));
         currentAliasesPage = 1;
-        renderTagAliasesWithPagination(currentFilteredTagAliases);
+        refreshTagAliasesTable();
     });
     document.querySelector('#button--addTag')?.addEventListener('click', addTag);
     document

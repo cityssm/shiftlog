@@ -55,6 +55,15 @@ declare const exports: {
   }
 
   /**
+   * Validates a six-character hex colour value (without a leading #).
+   * @param colorHex A six-character hex colour string.
+   * @returns True when the value is a valid hex colour.
+   */
+  function isValidColorHex(colorHex: string): boolean {
+    return /^[\dA-F]{6}$/i.test(colorHex)
+  }
+
+  /**
    * Calculate relative luminance according to WCAG 2.0
    */
   function getRelativeLuminance(rgb: {
@@ -603,14 +612,41 @@ declare const exports: {
     renderTagAliasesWithPagination(tagAliases)
   }
 
+  /**
+   * Rebuilds the tag alias list using the current filter input value.
+   */
+  function refreshTagAliasesTable(): void {
+    const tagAliasesFilterInput = document.querySelector(
+      '#filter--tagAliases'
+    ) as HTMLInputElement
+    const filterValue = tagAliasesFilterInput.value.toLowerCase()
+
+    currentFilteredTagAliases = exports.tagAliases.filter(
+      (tagAlias) =>
+        tagAlias.tagNameAlias.toLowerCase().includes(filterValue) ||
+        tagAlias.tagName.toLowerCase().includes(filterValue)
+    )
+
+    renderTagAliasesWithPagination(currentFilteredTagAliases)
+  }
+
+  /**
+   * Updates tag state and re-renders both tag and tag alias tables.
+   * @param tags Tag records returned from the server.
+   */
   function setTags(tags: Tag[]): void {
     exports.tags = tags
     currentFilteredTags = tags
     currentPage = 1
     renderTagsWithPagination(tags)
-    renderTagAliasesWithPagination(currentFilteredTagAliases)
+    refreshTagAliasesTable()
   }
 
+  /**
+   * Populates a modal datalist with current tag names.
+   * @param modalElement The currently open modal element.
+   * @param datalistSelector The selector for the datalist to populate.
+   */
   function setTagSuggestionsList(
     modalElement: HTMLElement,
     datalistSelector: string
@@ -619,7 +655,7 @@ declare const exports: {
       datalistSelector
     ) as HTMLDataListElement
 
-    tagNameSuggestionsElement.textContent = ''
+    tagNameSuggestionsElement.replaceChildren()
 
     for (const tag of exports.tags) {
       const optionElement = document.createElement('option')
@@ -872,9 +908,16 @@ declare const exports: {
       ) as HTMLSpanElement
       mappedTagElement.textContent = tagAlias.tagName
 
-      if (mappedTag !== undefined) {
+      const canApplyMappedTagColors =
+        mappedTag !== undefined &&
+        isValidColorHex(mappedTag.tagBackgroundColor) &&
+        isValidColorHex(mappedTag.tagTextColor)
+
+      if (canApplyMappedTagColors) {
         mappedTagElement.style.backgroundColor = `#${mappedTag.tagBackgroundColor}`
         mappedTagElement.style.color = `#${mappedTag.tagTextColor}`
+      } else {
+        mappedTagElement.classList.add('is-info', 'is-light')
       }
 
       tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias)
@@ -1158,15 +1201,8 @@ declare const exports: {
   ) as HTMLInputElement
 
   tagAliasesFilterInput.addEventListener('keyup', () => {
-    const filterValue = tagAliasesFilterInput.value.toLowerCase()
-    currentFilteredTagAliases = exports.tagAliases.filter(
-      (tagAlias) =>
-        tagAlias.tagNameAlias.toLowerCase().includes(filterValue) ||
-        tagAlias.tagName.toLowerCase().includes(filterValue)
-    )
-
     currentAliasesPage = 1
-    renderTagAliasesWithPagination(currentFilteredTagAliases)
+    refreshTagAliasesTable()
   })
 
   // Add tag button
