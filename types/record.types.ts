@@ -155,6 +155,11 @@ export interface Tag extends BaseRecord {
   tagTextColor: string
 }
 
+export interface TagAlias extends BaseRecord {
+  tagNameAlias: string
+  tagName: string
+}
+
 export interface NoteType extends BaseRecord {
   noteTypeId: number
   noteType: string

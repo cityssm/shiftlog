@@ -82,6 +82,21 @@ Tags created in the Tag Management interface can be applied to work orders:
 - **Ad-hoc Tags**: Tags that don't exist in the system display with default
   styling.
 
+## Tag Aliases
+
+Tag aliases map one tag value to another when users add tags to work orders.
+When an alias is entered, ShiftLog stores the mapped tag instead.
+
+1. Navigate to **Administrator Tools** > **Tags**.
+2. Open the **Tag Aliases** tab.
+3. Click **Add Tag Alias**.
+4. Enter:
+   - **Alias**: The value users may type.
+   - **Related Tag**: The tag that should be stored.
+5. Save the alias.
+
+The related tag does not need to exist in the **Tags** tab.
+
 ---
 
 ## Best Practices

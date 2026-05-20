@@ -133,6 +133,45 @@
       <div id="container--tags"></div>
     </div>
     <div class="is-hidden" id="tab-tagAliases">
+      <div class="columns is-vcentered">
+        <div class="column">
+          <div class="message is-info">
+            <div class="message-body">
+              Map alternate terms to a related tag. When a mapped alias is added to a <%= configFunctions.getConfigProperty('workOrders.sectionNameSingular').toLowerCase() %>, the related tag will be stored instead.
+            </div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div class="field">
+            <div class="control has-icons-left">
+              <input
+                class="input"
+                id="filter--tagAliases"
+                type="text"
+                aria-label="Filter tag aliases"
+                placeholder="Filter aliases..."
+              />
+              <span class="icon is-small is-left">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <button
+            class="button is-success"
+            id="button--addTagAlias"
+            type="button"
+          >
+            <span class="icon">
+              <i class="fa-solid fa-plus"></i>
+            </span>
+            <span>Add Tag Alias</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="container--tagAliases"></div>
     </div>
   </div>
 </div>
@@ -141,6 +180,7 @@
 
 <script>
   exports.tags = <%- JSON.stringify(tags) %>;
+  exports.tagAliases = <%- JSON.stringify(tagAliases) %>;
 </script>
 <script src="<%= urlPrefix %>/javascripts/tags.admin.js"></script>
 

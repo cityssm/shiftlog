@@ -4,10 +4,13 @@ import type { BulmaJS } from '@cityssm/bulma-js/types.js'
 import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddTagResponse } from '../../handlers/admin-post/doAddTag.js'
+import type { DoAddTagAliasResponse } from '../../handlers/admin-post/doAddTagAlias.js'
 import type { DoDeleteTagResponse } from '../../handlers/admin-post/doDeleteTag.js'
+import type { DoDeleteTagAliasResponse } from '../../handlers/admin-post/doDeleteTagAlias.js'
 import type { DoGetOrphanedTagsResponse } from '../../handlers/admin-post/doGetOrphanedTags.js'
 import type { DoUpdateTagResponse } from '../../handlers/admin-post/doUpdateTag.js'
-import type { Tag } from '../../types/record.types.js'
+import type { DoUpdateTagAliasResponse } from '../../handlers/admin-post/doUpdateTagAlias.js'
+import type { Tag, TagAlias } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -17,11 +20,15 @@ declare const bulmaJS: BulmaJS
 declare const exports: {
   shiftLog: ShiftLogGlobal
   tags: Tag[]
+  tagAliases: TagAlias[]
 }
 ;(() => {
   const shiftLog = exports.shiftLog
   const tagsContainerElement = document.querySelector(
     '#container--tags'
+  ) as HTMLDivElement
+  const tagAliasesContainerElement = document.querySelector(
+    '#container--tagAliases'
   ) as HTMLDivElement
 
   // WCAG Contrast Calculation Functions
@@ -145,10 +152,17 @@ declare const exports: {
   const ITEMS_PER_PAGE = 20
   let currentPage = 1
   let currentFilteredTags: Tag[] = exports.tags
+  let currentAliasesPage = 1
+  let currentFilteredTagAliases: TagAlias[] = exports.tagAliases
 
   function pageSelect(pageNumber: number): void {
     currentPage = pageNumber
     renderTagsWithPagination(currentFilteredTags)
+  }
+
+  function aliasesPageSelect(pageNumber: number): void {
+    currentAliasesPage = pageNumber
+    renderTagAliasesWithPagination(currentFilteredTagAliases)
   }
 
   function deleteTag(clickEvent: Event): void {
@@ -591,6 +605,298 @@ declare const exports: {
     }
   }
 
+  function setTagAliases(tagAliases: TagAlias[]): void {
+    exports.tagAliases = tagAliases
+    currentFilteredTagAliases = tagAliases
+    currentAliasesPage = 1
+    renderTagAliasesWithPagination(tagAliases)
+  }
+
+  function deleteTagAlias(clickEvent: Event): void {
+    const buttonElement = clickEvent.currentTarget as HTMLButtonElement
+    const tagNameAlias = buttonElement.dataset.tagNameAlias
+
+    if (tagNameAlias === undefined) {
+      return
+    }
+
+    bulmaJS.confirm({
+      contextualColorName: 'warning',
+      title: 'Delete Tag Alias',
+      message: `Are you sure you want to delete tag alias "${tagNameAlias}"?`,
+      okButton: {
+        contextualColorName: 'warning',
+        text: 'Delete Tag Alias',
+
+        callbackFunction() {
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/admin/doDeleteTagAlias`,
+            { tagNameAlias },
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoDeleteTagAliasResponse
+
+              if (responseJSON.success) {
+                setTagAliases(responseJSON.tagAliases)
+
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  title: 'Tag Alias Deleted',
+                  message: 'Tag alias has been successfully deleted.'
+                })
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  title: 'Error Deleting Tag Alias',
+                  message:
+                    'message' in responseJSON
+                      ? responseJSON.message
+                      : 'Please try again.'
+                })
+              }
+            }
+          )
+        }
+      }
+    })
+  }
+
+  function editTagAlias(clickEvent: Event): void {
+    const buttonElement = clickEvent.currentTarget as HTMLButtonElement
+    const tagNameAlias = buttonElement.dataset.tagNameAlias
+
+    if (tagNameAlias === undefined) {
+      return
+    }
+
+    const tagAlias = exports.tagAliases.find(
+      (possibleTagAlias) => possibleTagAlias.tagNameAlias === tagNameAlias
+    )
+
+    if (tagAlias === undefined) {
+      return
+    }
+
+    let closeModalFunction: () => void
+
+    cityssm.openHtmlModal('adminTagAliases-edit', {
+      onshow(modalElement) {
+        ;(
+          modalElement.querySelector('#editTagAlias--oldTagNameAlias') as HTMLInputElement
+        ).value = tagAlias.tagNameAlias
+
+        ;(
+          modalElement.querySelector('#editTagAlias--tagNameAlias') as HTMLInputElement
+        ).value = tagAlias.tagNameAlias
+
+        ;(modalElement.querySelector('#editTagAlias--tagName') as HTMLInputElement).value =
+          tagAlias.tagName
+
+        modalElement.querySelector('form')?.addEventListener('submit', (event) => {
+          event.preventDefault()
+
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/admin/doUpdateTagAlias`,
+            event.currentTarget as HTMLFormElement,
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoUpdateTagAliasResponse
+
+              if (responseJSON.success) {
+                closeModalFunction()
+                setTagAliases(responseJSON.tagAliases)
+
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  title: 'Tag Alias Updated',
+                  message: 'Tag alias has been successfully updated.'
+                })
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  title: 'Error Updating Tag Alias',
+                  message:
+                    'message' in responseJSON
+                      ? responseJSON.message
+                      : 'Please try again.'
+                })
+              }
+            }
+          )
+        })
+      },
+      onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+
+        ;(
+          modalElement.querySelector('#editTagAlias--tagNameAlias') as HTMLInputElement
+        ).focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function addTagAlias(): void {
+    let closeModalFunction: () => void
+
+    cityssm.openHtmlModal('adminTagAliases-add', {
+      onshow(modalElement) {
+        modalElement.querySelector('form')?.addEventListener('submit', (event) => {
+          event.preventDefault()
+
+          cityssm.postJSON(
+            `${shiftLog.urlPrefix}/admin/doAddTagAlias`,
+            event.currentTarget as HTMLFormElement,
+            (rawResponseJSON) => {
+              const responseJSON = rawResponseJSON as DoAddTagAliasResponse
+
+              if (responseJSON.success) {
+                closeModalFunction()
+                setTagAliases(responseJSON.tagAliases)
+
+                bulmaJS.alert({
+                  contextualColorName: 'success',
+                  title: 'Tag Alias Added',
+                  message: 'Tag alias has been successfully added.'
+                })
+              } else {
+                bulmaJS.alert({
+                  contextualColorName: 'danger',
+                  title: 'Error Adding Tag Alias',
+                  message:
+                    'message' in responseJSON
+                      ? responseJSON.message
+                      : 'Please try again.'
+                })
+              }
+            }
+          )
+        })
+      },
+      onshown(modalElement, closeFunction) {
+        bulmaJS.toggleHtmlClipped()
+        closeModalFunction = closeFunction
+
+        ;(
+          modalElement.querySelector('#addTagAlias--tagNameAlias') as HTMLInputElement
+        ).focus()
+      },
+      onremoved() {
+        bulmaJS.toggleHtmlClipped()
+      }
+    })
+  }
+
+  function renderTagAliasesWithPagination(tagAliases: TagAlias[]): void {
+    const totalItems = tagAliases.length
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
+    const startIndex = (currentAliasesPage - 1) * ITEMS_PER_PAGE
+    const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems)
+
+    tagAliasesContainerElement.innerHTML = ''
+
+    if (tagAliases.length === 0) {
+      tagAliasesContainerElement.innerHTML = `
+        <div class="message is-info">
+          <p class="message-body">
+            No tag aliases found.
+          </p>
+        </div>
+      `
+      return
+    }
+
+    const tableElement = document.createElement('table')
+    tableElement.className = 'table is-striped is-hoverable is-fullwidth'
+    tableElement.innerHTML = /* html */ `
+      <thead>
+        <tr>
+          <th>Alias</th>
+          <th>Maps to Tag</th>
+          <th><span class="is-sr-only">Actions</span></th>
+        </tr>
+      </thead>
+    `
+
+    const tbody = document.createElement('tbody')
+
+    for (let index = startIndex; index < endIndex; index += 1) {
+      const tagAlias = tagAliases[index]
+      const tr = document.createElement('tr')
+
+      tr.innerHTML = /* html */ `
+        <td>
+          <span class="tag is-light">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
+        </td>
+        <td>
+          <span class="tag is-info is-light">${cityssm.escapeHTML(tagAlias.tagName)}</span>
+        </td>
+        <td class="has-text-right">
+          <div class="buttons are-small is-right">
+            <button class="button is-info" data-tag-name-alias="${cityssm.escapeHTML(tagAlias.tagNameAlias)}" type="button">
+              <span class="icon"><i class="fa-solid fa-pencil"></i></span>
+              <span>Edit</span>
+            </button>
+            <button class="button is-danger" data-tag-name-alias="${cityssm.escapeHTML(tagAlias.tagNameAlias)}" type="button">
+              <span class="icon"><i class="fa-solid fa-trash"></i></span>
+              <span>Delete</span>
+            </button>
+          </div>
+        </td>
+      `
+
+      tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias)
+      tr
+        .querySelector('.button.is-danger')
+        ?.addEventListener('click', deleteTagAlias)
+
+      tbody.append(tr)
+    }
+
+    tableElement.append(tbody)
+    tagAliasesContainerElement.append(tableElement)
+
+    if (totalPages > 1) {
+      const paginationElement = document.createElement('nav')
+      paginationElement.className = 'pagination is-centered'
+      paginationElement.setAttribute('role', 'navigation')
+      paginationElement.setAttribute('aria-label', 'pagination')
+
+      let paginationHTML = '<ul class="pagination-list">'
+
+      for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+        paginationHTML += /* html */ `
+          <li>
+            <a class="pagination-link ${pageNumber === currentAliasesPage ? 'is-current' : ''}"
+              data-page="${pageNumber}"
+              aria-label="Page ${pageNumber}"
+            >
+              ${pageNumber}
+            </a>
+          </li>
+        `
+      }
+
+      paginationHTML += '</ul>'
+
+      // eslint-disable-next-line no-unsanitized/property
+      paginationElement.innerHTML = paginationHTML
+
+      for (const link of paginationElement.querySelectorAll(
+        '.pagination-link'
+      )) {
+        link.addEventListener('click', (clickEvent) => {
+          const target = clickEvent.currentTarget as HTMLAnchorElement
+          const pageNumber = Number(target.dataset.page)
+          aliasesPageSelect(pageNumber)
+        })
+      }
+
+      tagAliasesContainerElement.append(paginationElement)
+    }
+  }
+
   function addTagFromWorkOrder(event: Event): void {
     event.preventDefault()
 
@@ -776,7 +1082,34 @@ declare const exports: {
     })
   }
 
-  // Filter functionality
+  // Tab functionality
+  const tabLinks = document.querySelectorAll('.tabs a')
+  const tabContents = document.querySelectorAll('[id^="tab-"]')
+
+  for (const tabLink of tabLinks) {
+    tabLink.addEventListener('click', (event) => {
+      event.preventDefault()
+
+      const clickedLink = event.currentTarget as HTMLAnchorElement
+      const tabId = clickedLink.getAttribute('href')
+
+      if (tabId === null) {
+        return
+      }
+
+      for (const tabParent of document.querySelectorAll('.tabs li')) {
+        tabParent.classList.remove('is-active')
+      }
+
+      clickedLink.closest('li')?.classList.add('is-active')
+
+      for (const tabContent of tabContents) {
+        tabContent.classList.toggle('is-hidden', `#${tabContent.id}` !== tabId)
+      }
+    })
+  }
+
+  // Filter functionality (Tags)
   const filterInput = document.querySelector(
     '#filter--tags'
   ) as HTMLInputElement
@@ -791,8 +1124,30 @@ declare const exports: {
     renderTagsWithPagination(currentFilteredTags)
   })
 
+  // Filter functionality (Tag Aliases)
+  const tagAliasesFilterInput = document.querySelector(
+    '#filter--tagAliases'
+  ) as HTMLInputElement
+
+  tagAliasesFilterInput.addEventListener('keyup', () => {
+    const filterValue = tagAliasesFilterInput.value.toLowerCase()
+    currentFilteredTagAliases = exports.tagAliases.filter(
+      (tagAlias) =>
+        tagAlias.tagNameAlias.toLowerCase().includes(filterValue) ||
+        tagAlias.tagName.toLowerCase().includes(filterValue)
+    )
+
+    currentAliasesPage = 1
+    renderTagAliasesWithPagination(currentFilteredTagAliases)
+  })
+
   // Add tag button
   document.querySelector('#button--addTag')?.addEventListener('click', addTag)
+
+  // Add tag alias button
+  document
+    .querySelector('#button--addTagAlias')
+    ?.addEventListener('click', addTagAlias)
 
   // Add tag from work order button
   document
@@ -801,4 +1156,5 @@ declare const exports: {
 
   // Initial render
   renderTagsWithPagination(exports.tags)
+  renderTagAliasesWithPagination(exports.tagAliases)
 })()

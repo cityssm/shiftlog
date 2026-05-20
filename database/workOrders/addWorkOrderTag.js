@@ -1,4 +1,5 @@
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { getConfigProperty } from '../../helpers/config.helpers.js';
 import getWorkOrder from './getWorkOrder.js';
 export default async function addWorkOrderTag(workOrderId, tagName) {
     try {
@@ -7,10 +8,25 @@ export default async function addWorkOrderTag(workOrderId, tagName) {
             return false;
         }
         const pool = await getShiftLogConnectionPool();
+        const aliasResult = await pool
+            .request()
+            .input('instance', getConfigProperty('application.instance'))
+            .input('tagNameAlias', tagName)
+            .query(`
+        SELECT
+          tagName
+        FROM
+          ShiftLog.TagAliases
+        WHERE
+          instance = @instance
+          AND tagNameAlias = @tagNameAlias
+          AND recordDelete_dateTime IS NULL
+      `);
+        const tagNameToAdd = aliasResult.recordset[0]?.tagName ?? tagName;
         await pool
             .request()
             .input('workOrderId', workOrderId)
-            .input('tagName', tagName)
+            .input('tagName', tagNameToAdd)
             .query(`
         INSERT INTO
           ShiftLog.WorkOrderTags (workOrderId, tagName)
