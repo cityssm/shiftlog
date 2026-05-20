@@ -132,7 +132,7 @@ declare const marked: { parse: (markdownString: string) => string }
         (exports.shiftLog.userCanManageWorkOrders ||
           note.recordCreate_userName === exports.shiftLog.userName)
 
-      const truncatedText = truncateText(note.noteText, 200)
+      const truncatedText = truncateText(note.noteText.trim(), 200)
       const markdownPreviewHTML = DOMPurify.sanitize(marked.parse(truncatedText))
 
       const noteTypeLabel =

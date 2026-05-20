@@ -54,7 +54,7 @@
             const canEdit = exports.isEdit &&
                 (exports.shiftLog.userCanManageWorkOrders ||
                     note.recordCreate_userName === exports.shiftLog.userName);
-            const truncatedText = truncateText(note.noteText, 200);
+            const truncatedText = truncateText(note.noteText.trim(), 200);
             const markdownPreviewHTML = DOMPurify.sanitize(marked.parse(truncatedText));
             const noteTypeLabel = note.noteType !== null && note.noteType !== undefined
                 ? `<span class="tag is-info is-light">${cityssm.escapeHTML(note.noteType)}</span>`
@@ -114,7 +114,7 @@
                 <span>View Full Note</span>
               </button>
               ${canEdit
-                    ? `
+                ? `
                     <button
                       class="button is-small edit-note"
                       data-note-sequence="${note.noteSequence}"
@@ -133,7 +133,7 @@
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
                     </button>
                   `
-                    : ''}
+                : ''}
             </div>
           </div>
         </article>
