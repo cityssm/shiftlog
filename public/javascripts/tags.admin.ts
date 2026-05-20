@@ -699,6 +699,7 @@ declare const exports: {
                 bulmaJS.alert({
                   contextualColorName: 'danger',
                   title: 'Error Deleting Tag Alias',
+
                   message:
                     'message' in responseJSON
                       ? responseJSON.message
@@ -884,7 +885,7 @@ declare const exports: {
 
       tr.innerHTML = /* html */ `
         <td>
-          <span class="tag is-light">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
+          <span class="tag">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
         </td>
         <td>
           <span class="tag js-tag-alias-mapped-tag"></span>
@@ -916,8 +917,6 @@ declare const exports: {
       if (canApplyMappedTagColors) {
         mappedTagElement.style.backgroundColor = `#${mappedTag.tagBackgroundColor}`
         mappedTagElement.style.color = `#${mappedTag.tagTextColor}`
-      } else {
-        mappedTagElement.classList.add('is-info', 'is-light')
       }
 
       tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias)

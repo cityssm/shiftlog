@@ -548,7 +548,7 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
         <td>
-          <span class="tag is-light">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
+          <span class="tag">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
         </td>
         <td>
           <span class="tag js-tag-alias-mapped-tag"></span>
@@ -574,9 +574,6 @@
             if (canApplyMappedTagColors) {
                 mappedTagElement.style.backgroundColor = `#${mappedTag.tagBackgroundColor}`;
                 mappedTagElement.style.color = `#${mappedTag.tagTextColor}`;
-            }
-            else {
-                mappedTagElement.classList.add('is-info', 'is-light');
             }
             tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias);
             tr
