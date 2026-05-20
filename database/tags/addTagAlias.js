@@ -26,43 +26,41 @@ export default async function addTagAlias(tagAliasFields, user) {
           AND tagNameAlias = @tagNameAlias
           AND recordDelete_dateTime IS NOT NULL
       `);
-        if (restoreResult.rowsAffected[0] === NO_ROWS_AFFECTED) {
-            const insertResult = await pool
-                .request()
-                .input('instance', instance)
-                .input('tagNameAlias', tagAliasFields.tagNameAlias)
-                .input('tagName', tagAliasFields.tagName)
-                .input('recordCreate_userName', user.userName)
-                .input('recordCreate_dateTime', currentDate)
-                .input('recordUpdate_userName', user.userName)
-                .input('recordUpdate_dateTime', currentDate)
-                .query(`
-          INSERT INTO
-            ShiftLog.TagAliases (
-              instance,
-              tagNameAlias,
-              tagName,
-              recordCreate_userName,
-              recordCreate_dateTime,
-              recordUpdate_userName,
-              recordUpdate_dateTime
-            )
-          VALUES
-            (
-              @instance,
-              @tagNameAlias,
-              @tagName,
-              @recordCreate_userName,
-              @recordCreate_dateTime,
-              @recordUpdate_userName,
-              @recordUpdate_dateTime
-            )
-        `);
-            if (insertResult.rowsAffected[0] === NO_ROWS_AFFECTED) {
-                return false;
-            }
+        if (restoreResult.rowsAffected[0] > NO_ROWS_AFFECTED) {
+            return true;
         }
-        return true;
+        const insertResult = await pool
+            .request()
+            .input('instance', instance)
+            .input('tagNameAlias', tagAliasFields.tagNameAlias)
+            .input('tagName', tagAliasFields.tagName)
+            .input('recordCreate_userName', user.userName)
+            .input('recordCreate_dateTime', currentDate)
+            .input('recordUpdate_userName', user.userName)
+            .input('recordUpdate_dateTime', currentDate)
+            .query(`
+        INSERT INTO
+          ShiftLog.TagAliases (
+            instance,
+            tagNameAlias,
+            tagName,
+            recordCreate_userName,
+            recordCreate_dateTime,
+            recordUpdate_userName,
+            recordUpdate_dateTime
+          )
+        VALUES
+          (
+            @instance,
+            @tagNameAlias,
+            @tagName,
+            @recordCreate_userName,
+            @recordCreate_dateTime,
+            @recordUpdate_userName,
+            @recordUpdate_dateTime
+          )
+      `);
+        return insertResult.rowsAffected[0] > NO_ROWS_AFFECTED;
     }
     catch {
         return false;
