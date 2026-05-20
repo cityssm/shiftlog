@@ -6,6 +6,8 @@ interface AddTagAliasForm {
   tagName: string
 }
 
+const NO_ROWS_AFFECTED = 0
+
 export default async function addTagAlias(
   tagAliasFields: AddTagAliasForm,
   user: User
@@ -37,7 +39,7 @@ export default async function addTagAlias(
           AND recordDelete_dateTime IS NOT NULL
       `)
 
-    if (restoreResult.rowsAffected[0] === 0) {
+    if (restoreResult.rowsAffected[0] === NO_ROWS_AFFECTED) {
       const insertResult = await pool
         .request()
         .input('instance', instance)
@@ -70,7 +72,7 @@ export default async function addTagAlias(
             )
         `)
 
-      if (insertResult.rowsAffected[0] === 0) {
+      if (insertResult.rowsAffected[0] === NO_ROWS_AFFECTED) {
         return false
       }
     }

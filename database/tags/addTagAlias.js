@@ -1,5 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+const NO_ROWS_AFFECTED = 0;
 export default async function addTagAlias(tagAliasFields, user) {
     const currentDate = new Date();
     try {
@@ -25,7 +26,7 @@ export default async function addTagAlias(tagAliasFields, user) {
           AND tagNameAlias = @tagNameAlias
           AND recordDelete_dateTime IS NOT NULL
       `);
-        if (restoreResult.rowsAffected[0] === 0) {
+        if (restoreResult.rowsAffected[0] === NO_ROWS_AFFECTED) {
             const insertResult = await pool
                 .request()
                 .input('instance', instance)
@@ -57,7 +58,7 @@ export default async function addTagAlias(tagAliasFields, user) {
               @recordUpdate_dateTime
             )
         `);
-            if (insertResult.rowsAffected[0] === 0) {
+            if (insertResult.rowsAffected[0] === NO_ROWS_AFFECTED) {
                 return false;
             }
         }
