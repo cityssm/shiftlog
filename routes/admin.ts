@@ -30,6 +30,7 @@ import handler_doAddNoteTypeField from '../handlers/admin-post/doAddNoteTypeFiel
 import handler_doAddNoteTypeFromTemplate from '../handlers/admin-post/doAddNoteTypeFromTemplate.js'
 import handler_doAddNotificationConfiguration from '../handlers/admin-post/doAddNotificationConfiguration.js'
 import handler_doAddTag from '../handlers/admin-post/doAddTag.js'
+import handler_doAddTagAlias from '../handlers/admin-post/doAddTagAlias.js'
 import handler_doAddUser from '../handlers/admin-post/doAddUser.js'
 import handler_doAddUserGroup from '../handlers/admin-post/doAddUserGroup.js'
 import handler_doAddUserGroupMember from '../handlers/admin-post/doAddUserGroupMember.js'
@@ -47,6 +48,7 @@ import handler_doDeleteNoteType from '../handlers/admin-post/doDeleteNoteType.js
 import handler_doDeleteNoteTypeField from '../handlers/admin-post/doDeleteNoteTypeField.js'
 import handler_doDeleteNotificationConfiguration from '../handlers/admin-post/doDeleteNotificationConfiguration.js'
 import handler_doDeleteTag from '../handlers/admin-post/doDeleteTag.js'
+import handler_doDeleteTagAlias from '../handlers/admin-post/doDeleteTagAlias.js'
 import handler_doDeleteUser from '../handlers/admin-post/doDeleteUser.js'
 import handler_doDeleteUserGroup from '../handlers/admin-post/doDeleteUserGroup.js'
 import handler_doDeleteUserGroupMember from '../handlers/admin-post/doDeleteUserGroupMember.js'
@@ -78,6 +80,7 @@ import handler_doUpdateNoteTypeField from '../handlers/admin-post/doUpdateNoteTy
 import handler_doUpdateNotificationConfiguration from '../handlers/admin-post/doUpdateNotificationConfiguration.js'
 import handler_doUpdateSetting from '../handlers/admin-post/doUpdateSetting.js'
 import handler_doUpdateTag from '../handlers/admin-post/doUpdateTag.js'
+import handler_doUpdateTagAlias from '../handlers/admin-post/doUpdateTagAlias.js'
 import handler_doUpdateUser from '../handlers/admin-post/doUpdateUser.js'
 import handler_doUpdateUserGroup from '../handlers/admin-post/doUpdateUserGroup.js'
 import handler_doUpdateUserSettings from '../handlers/admin-post/doUpdateUserSettings.js'
@@ -197,8 +200,11 @@ router
 router
   .get('/tags', handler_tags)
   .post('/doAddTag', handler_doAddTag)
+  .post('/doAddTagAlias', handler_doAddTagAlias)
   .post('/doUpdateTag', handler_doUpdateTag)
+  .post('/doUpdateTagAlias', handler_doUpdateTagAlias)
   .post('/doDeleteTag', handler_doDeleteTag)
+  .post('/doDeleteTagAlias', handler_doDeleteTagAlias)
   .post('/doGetOrphanedTags', handler_doGetOrphanedTags)
 
 /*

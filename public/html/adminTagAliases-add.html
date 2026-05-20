@@ -1,0 +1,65 @@
+<div
+  class="modal"
+  id="modal--addTagAlias"
+  role="dialog"
+  aria-label="Add Tag Alias"
+>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <p class="modal-card-title">Add Tag Alias</p>
+      <button
+        class="delete is-close-modal-button"
+        type="button"
+        aria-label="close"
+      ></button>
+    </div>
+    <section class="modal-card-body">
+      <form id="form--addTagAlias">
+        <div class="field">
+          <label class="label" for="addTagAlias--tagNameAlias">
+            Alias
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addTagAlias--tagNameAlias"
+              name="tagNameAlias"
+              type="text"
+              maxlength="50"
+              required
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="addTagAlias--tagName">
+            Related Tag
+          </label>
+          <div class="control">
+            <input
+              class="input"
+              id="addTagAlias--tagName"
+              name="tagName"
+              type="text"
+              maxlength="50"
+              list="tagNameSuggestions"
+              required
+            />
+          </div>
+          <p class="help">The related tag does not need to exist in Tag Management.</p>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot is-justify-content-right">
+      <div class="buttons">
+        <button class="button is-success" type="submit" form="form--addTagAlias">
+          <span class="icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Add Tag Alias</span>
+        </button>
+        <button class="button is-close-modal-button" type="button">
+          Cancel
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

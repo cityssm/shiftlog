@@ -20,7 +20,7 @@ export default async function getOrphanedTags(): Promise<OrphanedTag[]> {
     .query<OrphanedTag>(/* sql */ `
       SELECT
         tagName,
-        sum(usageCount) AS usageCount
+        SUM(usageCount) AS usageCount
       FROM
         (
           SELECT

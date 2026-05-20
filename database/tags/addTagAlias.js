@@ -2,7 +2,7 @@ import { clearCacheByTableName } from '../../helpers/cache.helpers.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 const NO_ROWS_AFFECTED = 0;
-export default async function addTag(tagFields, user) {
+export default async function addTagAlias(tagAliasFields, user) {
     const currentDate = new Date();
     try {
         const pool = await getShiftLogConnectionPool();
@@ -10,46 +10,41 @@ export default async function addTag(tagFields, user) {
         const restoreResult = await pool
             .request()
             .input('instance', instance)
-            .input('tagName', tagFields.tagName)
-            .input('tagBackgroundColor', tagFields.tagBackgroundColor)
-            .input('tagTextColor', tagFields.tagTextColor)
+            .input('tagNameAlias', tagAliasFields.tagNameAlias)
+            .input('tagName', tagAliasFields.tagName)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
             .query(`
-        UPDATE ShiftLog.Tags
+        UPDATE ShiftLog.TagAliases
         SET
-          tagBackgroundColor = @tagBackgroundColor,
-          tagTextColor = @tagTextColor,
+          tagName = @tagName,
           recordUpdate_userName = @recordUpdate_userName,
           recordUpdate_dateTime = @recordUpdate_dateTime,
           recordDelete_userName = NULL,
           recordDelete_dateTime = NULL
         WHERE
           instance = @instance
-          AND tagName = @tagName
+          AND tagNameAlias = @tagNameAlias
           AND recordDelete_dateTime IS NOT NULL
       `);
         if (restoreResult.rowsAffected[0] > NO_ROWS_AFFECTED) {
-            clearCacheByTableName('Tags');
             return true;
         }
         const insertResult = await pool
             .request()
             .input('instance', instance)
-            .input('tagName', tagFields.tagName)
-            .input('tagBackgroundColor', tagFields.tagBackgroundColor)
-            .input('tagTextColor', tagFields.tagTextColor)
+            .input('tagNameAlias', tagAliasFields.tagNameAlias)
+            .input('tagName', tagAliasFields.tagName)
             .input('recordCreate_userName', user.userName)
             .input('recordCreate_dateTime', currentDate)
             .input('recordUpdate_userName', user.userName)
             .input('recordUpdate_dateTime', currentDate)
             .query(`
         INSERT INTO
-          ShiftLog.Tags (
+          ShiftLog.TagAliases (
             instance,
+            tagNameAlias,
             tagName,
-            tagBackgroundColor,
-            tagTextColor,
             recordCreate_userName,
             recordCreate_dateTime,
             recordUpdate_userName,
@@ -58,16 +53,15 @@ export default async function addTag(tagFields, user) {
         VALUES
           (
             @instance,
+            @tagNameAlias,
             @tagName,
-            @tagBackgroundColor,
-            @tagTextColor,
             @recordCreate_userName,
             @recordCreate_dateTime,
             @recordUpdate_userName,
             @recordUpdate_dateTime
           )
       `);
-        clearCacheByTableName('Tags');
+        clearCacheByTableName('TagAliases');
         return insertResult.rowsAffected[0] > NO_ROWS_AFFECTED;
     }
     catch {
