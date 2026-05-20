@@ -478,6 +478,8 @@ declare const exports: {
   }
 
   function renderTagsWithPagination(tags: Tag[]): void {
+    refreshTagSuggestionsList()
+
     const totalItems = tags.length
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
@@ -643,18 +645,12 @@ declare const exports: {
   }
 
   /**
-   * Populates a modal datalist with current tag names.
-   * @param modalElement The currently open modal element.
-   * @param datalistSelector The selector for the datalist to populate.
+   * Refreshes the shared tag suggestions datalist on the main page.
    */
-  function setTagSuggestionsList(
-    modalElement: HTMLElement,
-    datalistSelector: string
-  ): void {
-    const tagNameSuggestionsElement = modalElement.querySelector(
-      datalistSelector
+  function refreshTagSuggestionsList(): void {
+    const tagNameSuggestionsElement = document.querySelector(
+      '#tagNameSuggestions'
     ) as HTMLDataListElement
-
     tagNameSuggestionsElement.replaceChildren()
 
     for (const tag of exports.tags) {
@@ -733,8 +729,6 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTagAliases-edit', {
       onshow(modalElement) {
-        setTagSuggestionsList(modalElement, '#editTagAlias--tagNameSuggestions')
-
         ;(
           modalElement.querySelector('#editTagAlias--oldTagNameAlias') as HTMLInputElement
         ).value = tagAlias.tagNameAlias
@@ -797,8 +791,6 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTagAliases-add', {
       onshow(modalElement) {
-        setTagSuggestionsList(modalElement, '#addTagAlias--tagNameSuggestions')
-
         modalElement.querySelector('form')?.addEventListener('submit', (event) => {
           event.preventDefault()
 

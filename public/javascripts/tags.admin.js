@@ -256,6 +256,7 @@
         });
     }
     function renderTagsWithPagination(tags) {
+        refreshTagSuggestionsList();
         const totalItems = tags.length;
         const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -374,8 +375,8 @@
         renderTagsWithPagination(tags);
         refreshTagAliasesTable();
     }
-    function setTagSuggestionsList(modalElement, datalistSelector) {
-        const tagNameSuggestionsElement = modalElement.querySelector(datalistSelector);
+    function refreshTagSuggestionsList() {
+        const tagNameSuggestionsElement = document.querySelector('#tagNameSuggestions');
         tagNameSuggestionsElement.replaceChildren();
         for (const tag of exports.tags) {
             const optionElement = document.createElement('option');
@@ -434,7 +435,6 @@
         let closeModalFunction;
         cityssm.openHtmlModal('adminTagAliases-edit', {
             onshow(modalElement) {
-                setTagSuggestionsList(modalElement, '#editTagAlias--tagNameSuggestions');
                 modalElement.querySelector('#editTagAlias--oldTagNameAlias').value = tagAlias.tagNameAlias;
                 modalElement.querySelector('#editTagAlias--tagNameAlias').value = tagAlias.tagNameAlias;
                 modalElement.querySelector('#editTagAlias--tagName').value =
@@ -478,7 +478,6 @@
         let closeModalFunction;
         cityssm.openHtmlModal('adminTagAliases-add', {
             onshow(modalElement) {
-                setTagSuggestionsList(modalElement, '#addTagAlias--tagNameSuggestions');
                 modalElement.querySelector('form')?.addEventListener('submit', (event) => {
                     event.preventDefault();
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTagAlias`, event.currentTarget, (rawResponseJSON) => {
