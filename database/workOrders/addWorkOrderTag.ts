@@ -1,5 +1,5 @@
-import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
+import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
 import getWorkOrder from './getWorkOrder.js'
 
@@ -30,7 +30,8 @@ export default async function addWorkOrderTag(
           AND recordDelete_dateTime IS NULL
       `)
 
-    const tagNameToAdd = aliasResult.recordset[0]?.tagName ?? tagName
+    const tagNameToAdd =
+      aliasResult.recordset.length > 0 ? aliasResult.recordset[0].tagName : tagName
 
     await pool
       .request()
