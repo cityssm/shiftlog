@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
 import addTag from '../../database/tags/addTag.js'
-import getTags from '../../database/tags/getTags.js'
+import { getCachedTags } from '../../helpers/cache/tags.cache.js'
 import type { Tag } from '../../types/record.types.js'
 
 export type DoAddTagResponse =
@@ -42,7 +42,7 @@ export default async function handler(
   )
 
   if (success) {
-    const tags = await getTags()
+    const tags = await getCachedTags()
 
     response.json({
       success: true,
@@ -51,6 +51,7 @@ export default async function handler(
   } else {
     response.json({
       success: false,
+
       message: 'Tag could not be added. Tag name may already exist.'
     })
   }

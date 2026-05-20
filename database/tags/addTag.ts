@@ -1,3 +1,4 @@
+import { clearCacheByTableName } from '../../helpers/cache.helpers.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -50,6 +51,8 @@ export default async function addTag(
             @recordUpdate_dateTime
           )
       `)
+
+    clearCacheByTableName('Tags')
 
     return true
   } catch {

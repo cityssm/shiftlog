@@ -5,6 +5,7 @@ import { dateToString, dateToTimeString } from '@cityssm/utils-datetime';
 import Debug from 'debug';
 import checkIgnoredAttachmentChecksum from '../../database/ignoredAttachmentChecksums/checkIgnoredAttachmentChecksum.js';
 import addWorkOrderSubscriber from '../../database/workOrders/addWorkOrderSubscriber.js';
+import addWorkOrderTag from '../../database/workOrders/addWorkOrderTag.js';
 import checkWorkOrderAttachmentChecksum from '../../database/workOrders/checkWorkOrderAttachmentChecksum.js';
 import createWorkOrder from '../../database/workOrders/createWorkOrder.js';
 import createWorkOrderAttachment from '../../database/workOrders/createWorkOrderAttachment.js';
@@ -15,6 +16,7 @@ import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.j
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
+import { getTagsInText } from '../../helpers/tag.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
 import { attachmentContentBytesToBuffer, attachmentContentBytesToChecksum, getAttachmentFileNameFromFileName, writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
 import { getSubscriberEmailAddresses, isNoReplyEmailAddress } from './helpers/emailAddress.helpers.js';
@@ -145,6 +147,10 @@ export async function checkEmail() {
                     if (!isNoReplyEmailAddress(subscriberEmailAddress)) {
                         await addWorkOrderSubscriber(workOrderId, subscriberEmailAddress, systemUser.userName);
                     }
+                }
+                const workOrderTags = await getTagsInText(`${message.subject ?? ''} ${messageBodyText}`);
+                for (const workOrderTag of workOrderTags) {
+                    await addWorkOrderTag(workOrderId, workOrderTag);
                 }
             }
             else {

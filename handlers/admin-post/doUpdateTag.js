@@ -1,9 +1,9 @@
-import getTags from '../../database/tags/getTags.js';
 import updateTag from '../../database/tags/updateTag.js';
+import { getCachedTags } from '../../helpers/cache/tags.cache.js';
 export default async function handler(request, response) {
-    const tagName = request.body.tagName || '';
-    let tagBackgroundColor = request.body.tagBackgroundColor || '000000';
-    let tagTextColor = request.body.tagTextColor || 'FFFFFF';
+    const tagName = request.body.tagName ?? '';
+    let tagBackgroundColor = request.body.tagBackgroundColor ?? '000000';
+    let tagTextColor = request.body.tagTextColor ?? 'FFFFFF';
     if (tagBackgroundColor.startsWith('#')) {
         tagBackgroundColor = tagBackgroundColor.slice(1);
     }
@@ -12,7 +12,7 @@ export default async function handler(request, response) {
     }
     const success = await updateTag({ tagName, tagBackgroundColor, tagTextColor }, request.session.user);
     if (success) {
-        const tags = await getTags();
+        const tags = await getCachedTags();
         response.json({
             success: true,
             tags

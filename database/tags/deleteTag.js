@@ -1,3 +1,4 @@
+import { clearCacheByTableName } from '../../helpers/cache.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 export default async function deleteTag(tagName, user) {
     const currentDate = new Date();
@@ -17,6 +18,7 @@ export default async function deleteTag(tagName, user) {
           tagName = @tagName
           AND recordDelete_dateTime IS NULL
       `);
+        clearCacheByTableName('Tags');
         return result.rowsAffected[0] > 0;
     }
     catch {

@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express'
 
 import getAssignedToList from '../../database/assignedTo/getAssignedToList.js'
-import getTags from '../../database/tags/getTags.js'
 import getWorkOrderPriorityDataListItems from '../../database/workOrders/getWorkOrderPriorityDataListItems.js'
 import getWorkOrderStatusDataListItems from '../../database/workOrders/getWorkOrderStatusDataListItems.js'
 import getWorkOrderTypes from '../../database/workOrderTypes/getWorkOrderTypes.js'
+import { getCachedTags } from '../../helpers/cache/tags.cache.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 
 export default async function handler(
@@ -23,7 +23,7 @@ export default async function handler(
 
   const workOrderTypes = await getWorkOrderTypes(request.session.user)
 
-  const tags = await getTags()
+  const tags = await getCachedTags()
 
   response.render('workOrders/search', {
     headTitle: `${getConfigProperty('workOrders.sectionName')} - Search`,

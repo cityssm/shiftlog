@@ -3,17 +3,22 @@ import Debug from 'debug';
 import { DEBUG_NAMESPACE, PROCESS_ID_MAX_DIGITS } from '../debug.config.js';
 import { clearApiKeysCache, getCachedApiKeys } from './cache/apiKeys.cache.js';
 import { clearSettingsCache } from './cache/settings.cache.js';
+import { clearTagsCache } from './cache/tags.cache.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:helpers.cache:${process.pid.toString().padEnd(PROCESS_ID_MAX_DIGITS)}`);
 export function preloadCaches() {
     debug('Preloading caches');
     void getCachedApiKeys();
     debug('Caches preloaded');
 }
-export const cacheTableNames = ['ApplicationSettings', 'UserSettings'];
+export const cacheTableNames = ['ApplicationSettings', 'UserSettings', 'Tags'];
 export function clearCacheByTableName(tableName, relayMessage = true) {
     switch (tableName) {
         case 'ApplicationSettings': {
             clearSettingsCache();
+            break;
+        }
+        case 'Tags': {
+            clearTagsCache();
             break;
         }
         case 'UserSettings': {
@@ -45,6 +50,8 @@ export function clearCacheByTableName(tableName, relayMessage = true) {
 }
 export function clearCaches() {
     clearApiKeysCache();
+    clearTagsCache();
+    clearSettingsCache();
     debug('Caches cleared');
 }
 process.on('message', (message) => {
