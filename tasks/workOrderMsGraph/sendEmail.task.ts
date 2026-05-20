@@ -235,7 +235,8 @@ export async function sendEmail(): Promise<void> {
       isEmailAddress(workOrder.assignedToEmailAddress) &&
       !isNoReplyEmailAddress(workOrder.assignedToEmailAddress) &&
       !(await isBlockedToEmailAddress(workOrder.assignedToEmailAddress)) &&
-      workOrder.assignedToUserName !== lastUpdateUser
+      workOrder.assignedToUserName !== lastUpdateUser &&
+      workOrder.assignedToEmailAddress !== lastUpdateUser
     ) {
       messageToSend.addBccRecipient(workOrder.assignedToEmailAddress)
     }
