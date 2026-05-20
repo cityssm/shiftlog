@@ -55,6 +55,7 @@
                 (exports.shiftLog.userCanManageWorkOrders ||
                     note.recordCreate_userName === exports.shiftLog.userName);
             const truncatedText = truncateText(note.noteText, 200);
+            const markdownPreviewHTML = DOMPurify.sanitize(marked.parse(truncatedText));
             const noteTypeLabel = note.noteType !== null && note.noteType !== undefined
                 ? `<span class="tag is-info is-light">${cityssm.escapeHTML(note.noteType)}</span>`
                 : '';
@@ -96,17 +97,24 @@
                 ${note.recordUpdate_dateTime === note.recordCreate_dateTime
                 ? ''
                 : '<small class="has-text-grey">(edited)</small>'}
-                <br />
-                <span class="note-text">${cityssm.escapeHTML(truncatedText)}</span>
-                <a class="view-full-note" data-note-sequence="${note.noteSequence}" href="#">View Full Note</a>
               </p>
+              <div class="note-text content is-size-7">${markdownPreviewHTML}</div>
               ${fieldsHTML}
             </div>
           </div>
-          ${canEdit
-                ? `
-                <div class="media-right">
-                  <div class="buttons">
+          <div class="media-right">
+            <div class="buttons">
+              <button
+                class="button is-small view-full-note"
+                data-note-sequence="${note.noteSequence}"
+                type="button"
+                title="View Full Note"
+              >
+                <span class="icon is-small"><i class="fa-regular fa-note-sticky"></i></span>
+                <span>View Full Note</span>
+              </button>
+              ${canEdit
+                    ? `
                     <button
                       class="button is-small edit-note"
                       data-note-sequence="${note.noteSequence}"
@@ -124,10 +132,10 @@
                     >
                       <span class="icon"><i class="fa-solid fa-trash"></i></span>
                     </button>
-                  </div>
-                </div>
-              `
-                : ''}
+                  `
+                    : ''}
+            </div>
+          </div>
         </article>
       `;
             noteElement
