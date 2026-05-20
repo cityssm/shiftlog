@@ -90,10 +90,7 @@
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doDeleteTag`, { tagName }, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
-                            exports.tags = responseJSON.tags;
-                            currentFilteredTags = responseJSON.tags;
-                            currentPage = 1;
-                            renderTagsWithPagination(responseJSON.tags);
+                            setTags(responseJSON.tags);
                             bulmaJS.alert({
                                 contextualColorName: 'success',
                                 title: 'Tag Deleted',
@@ -132,10 +129,7 @@
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
-                    exports.tags = responseJSON.tags;
-                    currentFilteredTags = responseJSON.tags;
-                    currentPage = 1;
-                    renderTagsWithPagination(responseJSON.tags);
+                    setTags(responseJSON.tags);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Tag Updated',
@@ -224,10 +218,7 @@
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success) {
                     closeModalFunction();
-                    exports.tags = responseJSON.tags;
-                    currentFilteredTags = responseJSON.tags;
-                    currentPage = 1;
-                    renderTagsWithPagination(responseJSON.tags);
+                    setTags(responseJSON.tags);
                     bulmaJS.alert({
                         contextualColorName: 'success',
                         title: 'Tag Added',
@@ -366,6 +357,22 @@
         currentAliasesPage = 1;
         renderTagAliasesWithPagination(tagAliases);
     }
+    function setTags(tags) {
+        exports.tags = tags;
+        currentFilteredTags = tags;
+        currentPage = 1;
+        renderTagsWithPagination(tags);
+        renderTagAliasesWithPagination(currentFilteredTagAliases);
+    }
+    function setTagSuggestionsList(modalElement, datalistSelector) {
+        const tagNameSuggestionsElement = modalElement.querySelector(datalistSelector);
+        tagNameSuggestionsElement.textContent = '';
+        for (const tag of exports.tags) {
+            const optionElement = document.createElement('option');
+            optionElement.value = tag.tagName;
+            tagNameSuggestionsElement.append(optionElement);
+        }
+    }
     function deleteTagAlias(clickEvent) {
         const buttonElement = clickEvent.currentTarget;
         const tagNameAlias = buttonElement.dataset.tagNameAlias;
@@ -417,6 +424,7 @@
         let closeModalFunction;
         cityssm.openHtmlModal('adminTagAliases-edit', {
             onshow(modalElement) {
+                setTagSuggestionsList(modalElement, '#editTagAlias--tagNameSuggestions');
                 ;
                 modalElement.querySelector('#editTagAlias--oldTagNameAlias').value = tagAlias.tagNameAlias;
                 modalElement.querySelector('#editTagAlias--tagNameAlias').value = tagAlias.tagNameAlias;
@@ -461,6 +469,7 @@
         let closeModalFunction;
         cityssm.openHtmlModal('adminTagAliases-add', {
             onshow(modalElement) {
+                setTagSuggestionsList(modalElement, '#addTagAlias--tagNameSuggestions');
                 modalElement.querySelector('form')?.addEventListener('submit', (event) => {
                     event.preventDefault();
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTagAlias`, event.currentTarget, (rawResponseJSON) => {
@@ -526,13 +535,14 @@
         const tbody = document.createElement('tbody');
         for (let index = startIndex; index < endIndex; index += 1) {
             const tagAlias = tagAliases[index];
+            const mappedTag = exports.tags.find((tag) => tag.tagName === tagAlias.tagName);
             const tr = document.createElement('tr');
             tr.innerHTML = `
         <td>
           <span class="tag is-light">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
         </td>
         <td>
-          <span class="tag is-info is-light">${cityssm.escapeHTML(tagAlias.tagName)}</span>
+          <span class="tag js-tag-alias-mapped-tag"></span>
         </td>
         <td class="has-text-right">
           <div class="buttons are-small is-right">
@@ -547,6 +557,12 @@
           </div>
         </td>
       `;
+            const mappedTagElement = tr.querySelector('.js-tag-alias-mapped-tag');
+            mappedTagElement.textContent = tagAlias.tagName;
+            if (mappedTag !== undefined) {
+                mappedTagElement.style.backgroundColor = `#${mappedTag.tagBackgroundColor}`;
+                mappedTagElement.style.color = `#${mappedTag.tagTextColor}`;
+            }
             tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias);
             tr
                 .querySelector('.button.is-danger')
@@ -612,10 +628,7 @@
                             const responseJSON = rawResponseJSON;
                             if (responseJSON.success) {
                                 closeAddModalFunction();
-                                exports.tags = responseJSON.tags;
-                                currentFilteredTags = responseJSON.tags;
-                                currentPage = 1;
-                                renderTagsWithPagination(responseJSON.tags);
+                                setTags(responseJSON.tags);
                                 bulmaJS.alert({
                                     contextualColorName: 'success',
                                     title: 'Tag Added',

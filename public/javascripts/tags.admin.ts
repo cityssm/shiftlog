@@ -193,10 +193,7 @@ declare const exports: {
             (rawResponseJSON) => {
               const responseJSON = rawResponseJSON as DoDeleteTagResponse
               if (responseJSON.success) {
-                exports.tags = responseJSON.tags
-                currentFilteredTags = responseJSON.tags
-                currentPage = 1
-                renderTagsWithPagination(responseJSON.tags)
+                setTags(responseJSON.tags)
 
                 bulmaJS.alert({
                   contextualColorName: 'success',
@@ -251,10 +248,7 @@ declare const exports: {
           const responseJSON = rawResponseJSON as DoUpdateTagResponse
           if (responseJSON.success) {
             closeModalFunction()
-            exports.tags = responseJSON.tags
-            currentFilteredTags = responseJSON.tags
-            currentPage = 1
-            renderTagsWithPagination(responseJSON.tags)
+            setTags(responseJSON.tags)
 
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -428,10 +422,7 @@ declare const exports: {
           const responseJSON = rawResponseJSON as DoAddTagResponse
           if (responseJSON.success) {
             closeModalFunction()
-            exports.tags = responseJSON.tags
-            currentFilteredTags = responseJSON.tags
-            currentPage = 1
-            renderTagsWithPagination(responseJSON.tags)
+            setTags(responseJSON.tags)
 
             bulmaJS.alert({
               contextualColorName: 'success',
@@ -612,6 +603,31 @@ declare const exports: {
     renderTagAliasesWithPagination(tagAliases)
   }
 
+  function setTags(tags: Tag[]): void {
+    exports.tags = tags
+    currentFilteredTags = tags
+    currentPage = 1
+    renderTagsWithPagination(tags)
+    renderTagAliasesWithPagination(currentFilteredTagAliases)
+  }
+
+  function setTagSuggestionsList(
+    modalElement: HTMLElement,
+    datalistSelector: string
+  ): void {
+    const tagNameSuggestionsElement = modalElement.querySelector(
+      datalistSelector
+    ) as HTMLDataListElement
+
+    tagNameSuggestionsElement.textContent = ''
+
+    for (const tag of exports.tags) {
+      const optionElement = document.createElement('option')
+      optionElement.value = tag.tagName
+      tagNameSuggestionsElement.append(optionElement)
+    }
+  }
+
   function deleteTagAlias(clickEvent: Event): void {
     const buttonElement = clickEvent.currentTarget as HTMLButtonElement
     const tagNameAlias = buttonElement.dataset.tagNameAlias
@@ -680,6 +696,8 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTagAliases-edit', {
       onshow(modalElement) {
+        setTagSuggestionsList(modalElement, '#editTagAlias--tagNameSuggestions')
+
         ;(
           modalElement.querySelector('#editTagAlias--oldTagNameAlias') as HTMLInputElement
         ).value = tagAlias.tagNameAlias
@@ -742,6 +760,8 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTagAliases-add', {
       onshow(modalElement) {
+        setTagSuggestionsList(modalElement, '#addTagAlias--tagNameSuggestions')
+
         modalElement.querySelector('form')?.addEventListener('submit', (event) => {
           event.preventDefault()
 
@@ -823,6 +843,7 @@ declare const exports: {
 
     for (let index = startIndex; index < endIndex; index += 1) {
       const tagAlias = tagAliases[index]
+      const mappedTag = exports.tags.find((tag) => tag.tagName === tagAlias.tagName)
       const tr = document.createElement('tr')
 
       tr.innerHTML = /* html */ `
@@ -830,7 +851,7 @@ declare const exports: {
           <span class="tag is-light">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
         </td>
         <td>
-          <span class="tag is-info is-light">${cityssm.escapeHTML(tagAlias.tagName)}</span>
+          <span class="tag js-tag-alias-mapped-tag"></span>
         </td>
         <td class="has-text-right">
           <div class="buttons are-small is-right">
@@ -845,6 +866,16 @@ declare const exports: {
           </div>
         </td>
       `
+
+      const mappedTagElement = tr.querySelector(
+        '.js-tag-alias-mapped-tag'
+      ) as HTMLSpanElement
+      mappedTagElement.textContent = tagAlias.tagName
+
+      if (mappedTag !== undefined) {
+        mappedTagElement.style.backgroundColor = `#${mappedTag.tagBackgroundColor}`
+        mappedTagElement.style.color = `#${mappedTag.tagTextColor}`
+      }
 
       tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias)
       tr
@@ -943,10 +974,7 @@ declare const exports: {
                   const responseJSON = rawResponseJSON as DoAddTagResponse
                   if (responseJSON.success) {
                     closeAddModalFunction()
-                    exports.tags = responseJSON.tags
-                    currentFilteredTags = responseJSON.tags
-                    currentPage = 1
-                    renderTagsWithPagination(responseJSON.tags)
+                    setTags(responseJSON.tags)
 
                     bulmaJS.alert({
                       contextualColorName: 'success',
