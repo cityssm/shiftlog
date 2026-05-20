@@ -208,6 +208,19 @@ CREATE TABLE ShiftLog.Tags (
   PRIMARY KEY (instance, tagName)
 )
 GO
+CREATE TABLE ShiftLog.TagAliases (
+  tagNameAlias NVARCHAR(50) NOT NULL,
+  instance VARCHAR(20) NOT NULL,
+  tagName NVARCHAR(50) NOT NULL,
+  recordCreate_userName VARCHAR(30) NOT NULL,
+  recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordUpdate_userName VARCHAR(30) NOT NULL,
+  recordUpdate_dateTime datetime NOT NULL DEFAULT getdate(),
+  recordDelete_userName VARCHAR(30),
+  recordDelete_dateTime datetime,
+  PRIMARY KEY (instance, tagNameAlias)
+)
+GO
 --
 -- EQUIPMENT
 --
