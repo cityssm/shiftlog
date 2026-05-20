@@ -585,7 +585,7 @@
             tagAliasesContainerElement.append(paginationElement);
         }
     }
-    function addTagFromWorkOrder(event) {
+    function addUsedTags(event) {
         event.preventDefault();
         let closeModalFunction = () => {
         };
@@ -643,7 +643,7 @@
                 }
             });
         }
-        cityssm.openHtmlModal('adminTags-addFromWorkOrder', {
+        cityssm.openHtmlModal('adminTags-addUsedTags', {
             onshow(modalElement) {
                 shiftLog.populateSectionAliases(modalElement);
                 const containerElement = modalElement.querySelector('#container--orphanedTags');
@@ -663,7 +663,7 @@
                   <div class="message is-success">
                     <p class="message-body">
                       <span class="icon"><i class="fa-solid fa-check"></i></span>
-                      All work order tags have system records.
+                      All used tags have system records.
                     </p>
                   </div>
                 `;
@@ -768,8 +768,8 @@
         .querySelector('#button--addTagAlias')
         ?.addEventListener('click', addTagAlias);
     document
-        .querySelector('#button--addTagFromWorkOrder')
-        ?.addEventListener('click', addTagFromWorkOrder);
+        .querySelector('#button--addUsedTags')
+        ?.addEventListener('click', addUsedTags);
     renderTagsWithPagination(exports.tags);
     renderTagAliasesWithPagination(exports.tagAliases);
 })();

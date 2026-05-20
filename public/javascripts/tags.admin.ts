@@ -897,7 +897,7 @@ declare const exports: {
     }
   }
 
-  function addTagFromWorkOrder(event: Event): void {
+  function addUsedTags(event: Event): void {
     event.preventDefault()
 
     let closeModalFunction: () => void = () => {
@@ -978,7 +978,7 @@ declare const exports: {
       })
     }
 
-    cityssm.openHtmlModal('adminTags-addFromWorkOrder', {
+    cityssm.openHtmlModal('adminTags-addUsedTags', {
       onshow(modalElement) {
         shiftLog.populateSectionAliases(modalElement)
 
@@ -1006,7 +1006,7 @@ declare const exports: {
                   <div class="message is-success">
                     <p class="message-body">
                       <span class="icon"><i class="fa-solid fa-check"></i></span>
-                      All work order tags have system records.
+                      All used tags have system records.
                     </p>
                   </div>
                 `
@@ -1149,10 +1149,10 @@ declare const exports: {
     .querySelector('#button--addTagAlias')
     ?.addEventListener('click', addTagAlias)
 
-  // Add tag from work order button
+  // Add used tags button
   document
-    .querySelector('#button--addTagFromWorkOrder')
-    ?.addEventListener('click', addTagFromWorkOrder)
+    .querySelector('#button--addUsedTags')
+    ?.addEventListener('click', addUsedTags)
 
   // Initial render
   renderTagsWithPagination(exports.tags)
