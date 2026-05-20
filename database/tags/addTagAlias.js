@@ -1,3 +1,4 @@
+import { clearCacheByTableName } from '../../helpers/cache.helpers.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 const NO_ROWS_AFFECTED = 0;
@@ -60,6 +61,7 @@ export default async function addTagAlias(tagAliasFields, user) {
             @recordUpdate_dateTime
           )
       `);
+        clearCacheByTableName('TagAliases');
         return insertResult.rowsAffected[0] > NO_ROWS_AFFECTED;
     }
     catch {

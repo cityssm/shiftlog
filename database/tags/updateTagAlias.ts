@@ -1,3 +1,4 @@
+import { clearCacheByTableName } from '../../helpers/cache.helpers.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 
@@ -36,6 +37,8 @@ export default async function updateTagAlias(
           AND instance = @instance
           AND recordDelete_dateTime IS NULL
       `)
+
+    clearCacheByTableName('TagAliases')
 
     return result.rowsAffected[0] > 0
   } catch {

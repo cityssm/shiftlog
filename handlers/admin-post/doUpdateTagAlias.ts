@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 
-import getTagAliases from '../../database/tags/getTagAliases.js'
 import updateTagAlias from '../../database/tags/updateTagAlias.js'
+import { getCachedTagAliases } from '../../helpers/cache/tagAliases.cache.js'
 import type { TagAlias } from '../../types/record.types.js'
 
 export type DoUpdateTagAliasResponse =
@@ -32,7 +32,7 @@ export default async function handler(
   )
 
   if (success) {
-    const tagAliases = await getTagAliases()
+    const tagAliases = await getCachedTagAliases()
 
     response.json({
       success: true,
