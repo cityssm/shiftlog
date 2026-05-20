@@ -435,11 +435,13 @@
         let closeModalFunction;
         cityssm.openHtmlModal('adminTagAliases-edit', {
             onshow(modalElement) {
+                ;
                 modalElement.querySelector('#editTagAlias--oldTagNameAlias').value = tagAlias.tagNameAlias;
                 modalElement.querySelector('#editTagAlias--tagNameAlias').value = tagAlias.tagNameAlias;
-                modalElement.querySelector('#editTagAlias--tagName').value =
-                    tagAlias.tagName;
-                modalElement.querySelector('form')?.addEventListener('submit', (event) => {
+                modalElement.querySelector('#editTagAlias--tagName').value = tagAlias.tagName;
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', (event) => {
                     event.preventDefault();
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doUpdateTagAlias`, event.currentTarget, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
@@ -478,7 +480,9 @@
         let closeModalFunction;
         cityssm.openHtmlModal('adminTagAliases-add', {
             onshow(modalElement) {
-                modalElement.querySelector('form')?.addEventListener('submit', (event) => {
+                modalElement
+                    .querySelector('form')
+                    ?.addEventListener('submit', (event) => {
                     event.preventDefault();
                     cityssm.postJSON(`${shiftLog.urlPrefix}/admin/doAddTagAlias`, event.currentTarget, (rawResponseJSON) => {
                         const responseJSON = rawResponseJSON;
@@ -547,7 +551,7 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
         <td>
-          <span class="tag is-light">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
+          <span class="tag">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
         </td>
         <td>
           <span class="tag js-tag-alias-mapped-tag"></span>
@@ -574,13 +578,8 @@
                 mappedTagElement.style.backgroundColor = `#${mappedTag.tagBackgroundColor}`;
                 mappedTagElement.style.color = `#${mappedTag.tagTextColor}`;
             }
-            else {
-                mappedTagElement.classList.add('is-info', 'is-light');
-            }
             tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias);
-            tr
-                .querySelector('.button.is-danger')
-                ?.addEventListener('click', deleteTagAlias);
+            tr.querySelector('.button.is-danger')?.addEventListener('click', deleteTagAlias);
             tbody.append(tr);
         }
         tableElement.append(tbody);

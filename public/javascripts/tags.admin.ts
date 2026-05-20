@@ -729,54 +729,62 @@ declare const exports: {
     cityssm.openHtmlModal('adminTagAliases-edit', {
       onshow(modalElement) {
         ;(
-          modalElement.querySelector('#editTagAlias--oldTagNameAlias') as HTMLInputElement
+          modalElement.querySelector(
+            '#editTagAlias--oldTagNameAlias'
+          ) as HTMLInputElement
         ).value = tagAlias.tagNameAlias
-
         ;(
-          modalElement.querySelector('#editTagAlias--tagNameAlias') as HTMLInputElement
+          modalElement.querySelector(
+            '#editTagAlias--tagNameAlias'
+          ) as HTMLInputElement
         ).value = tagAlias.tagNameAlias
+        ;(
+          modalElement.querySelector(
+            '#editTagAlias--tagName'
+          ) as HTMLInputElement
+        ).value = tagAlias.tagName
 
-        ;(modalElement.querySelector('#editTagAlias--tagName') as HTMLInputElement).value =
-          tagAlias.tagName
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', (event) => {
+            event.preventDefault()
 
-        modalElement.querySelector('form')?.addEventListener('submit', (event) => {
-          event.preventDefault()
+            cityssm.postJSON(
+              `${shiftLog.urlPrefix}/admin/doUpdateTagAlias`,
+              event.currentTarget as HTMLFormElement,
+              (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON as DoUpdateTagAliasResponse
 
-          cityssm.postJSON(
-            `${shiftLog.urlPrefix}/admin/doUpdateTagAlias`,
-            event.currentTarget as HTMLFormElement,
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoUpdateTagAliasResponse
+                if (responseJSON.success) {
+                  closeModalFunction()
+                  setTagAliases(responseJSON.tagAliases)
 
-              if (responseJSON.success) {
-                closeModalFunction()
-                setTagAliases(responseJSON.tagAliases)
-
-                bulmaJS.alert({
-                  contextualColorName: 'success',
-                  title: 'Tag Alias Updated',
-                  message: 'Tag alias has been successfully updated.'
-                })
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error Updating Tag Alias',
-                  message:
-                    'message' in responseJSON
-                      ? responseJSON.message
-                      : 'Please try again.'
-                })
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    title: 'Tag Alias Updated',
+                    message: 'Tag alias has been successfully updated.'
+                  })
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Error Updating Tag Alias',
+                    message:
+                      'message' in responseJSON
+                        ? responseJSON.message
+                        : 'Please try again.'
+                  })
+                }
               }
-            }
-          )
-        })
+            )
+          })
       },
       onshown(modalElement, closeFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
-
         ;(
-          modalElement.querySelector('#editTagAlias--tagNameAlias') as HTMLInputElement
+          modalElement.querySelector(
+            '#editTagAlias--tagNameAlias'
+          ) as HTMLInputElement
         ).focus()
       },
       onremoved() {
@@ -790,44 +798,47 @@ declare const exports: {
 
     cityssm.openHtmlModal('adminTagAliases-add', {
       onshow(modalElement) {
-        modalElement.querySelector('form')?.addEventListener('submit', (event) => {
-          event.preventDefault()
+        modalElement
+          .querySelector('form')
+          ?.addEventListener('submit', (event) => {
+            event.preventDefault()
 
-          cityssm.postJSON(
-            `${shiftLog.urlPrefix}/admin/doAddTagAlias`,
-            event.currentTarget as HTMLFormElement,
-            (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoAddTagAliasResponse
+            cityssm.postJSON(
+              `${shiftLog.urlPrefix}/admin/doAddTagAlias`,
+              event.currentTarget as HTMLFormElement,
+              (rawResponseJSON) => {
+                const responseJSON = rawResponseJSON as DoAddTagAliasResponse
 
-              if (responseJSON.success) {
-                closeModalFunction()
-                setTagAliases(responseJSON.tagAliases)
+                if (responseJSON.success) {
+                  closeModalFunction()
+                  setTagAliases(responseJSON.tagAliases)
 
-                bulmaJS.alert({
-                  contextualColorName: 'success',
-                  title: 'Tag Alias Added',
-                  message: 'Tag alias has been successfully added.'
-                })
-              } else {
-                bulmaJS.alert({
-                  contextualColorName: 'danger',
-                  title: 'Error Adding Tag Alias',
-                  message:
-                    'message' in responseJSON
-                      ? responseJSON.message
-                      : 'Please try again.'
-                })
+                  bulmaJS.alert({
+                    contextualColorName: 'success',
+                    title: 'Tag Alias Added',
+                    message: 'Tag alias has been successfully added.'
+                  })
+                } else {
+                  bulmaJS.alert({
+                    contextualColorName: 'danger',
+                    title: 'Error Adding Tag Alias',
+                    message:
+                      'message' in responseJSON
+                        ? responseJSON.message
+                        : 'Please try again.'
+                  })
+                }
               }
-            }
-          )
-        })
+            )
+          })
       },
       onshown(modalElement, closeFunction) {
         bulmaJS.toggleHtmlClipped()
         closeModalFunction = closeFunction
-
         ;(
-          modalElement.querySelector('#addTagAlias--tagNameAlias') as HTMLInputElement
+          modalElement.querySelector(
+            '#addTagAlias--tagNameAlias'
+          ) as HTMLInputElement
         ).focus()
       },
       onremoved() {
@@ -871,12 +882,14 @@ declare const exports: {
 
     for (let index = startIndex; index < endIndex; index += 1) {
       const tagAlias = tagAliases[index]
-      const mappedTag = exports.tags.find((tag) => tag.tagName === tagAlias.tagName)
+      const mappedTag = exports.tags.find(
+        (tag) => tag.tagName === tagAlias.tagName
+      )
       const tr = document.createElement('tr')
 
       tr.innerHTML = /* html */ `
         <td>
-          <span class="tag is-light">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
+          <span class="tag">${cityssm.escapeHTML(tagAlias.tagNameAlias)}</span>
         </td>
         <td>
           <span class="tag js-tag-alias-mapped-tag"></span>
@@ -908,14 +921,16 @@ declare const exports: {
       if (canApplyMappedTagColors) {
         mappedTagElement.style.backgroundColor = `#${mappedTag.tagBackgroundColor}`
         mappedTagElement.style.color = `#${mappedTag.tagTextColor}`
-      } else {
-        mappedTagElement.classList.add('is-info', 'is-light')
       }
 
-      tr.querySelector('.button.is-info')?.addEventListener('click', editTagAlias)
-      tr
-        .querySelector('.button.is-danger')
-        ?.addEventListener('click', deleteTagAlias)
+      tr.querySelector('.button.is-info')?.addEventListener(
+        'click',
+        editTagAlias
+      )
+      tr.querySelector('.button.is-danger')?.addEventListener(
+        'click',
+        deleteTagAlias
+      )
 
       tbody.append(tr)
     }
