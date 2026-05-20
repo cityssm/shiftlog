@@ -39,77 +39,101 @@
       </div>
     </div>
 
-    <div class="columns is-vcentered">
-      <div class="column">
-        <h1 class="title is-1">Tag Management</h1>
-      </div>
-      <div class="column is-narrow">
-        <div class="field">
-          <div class="control has-icons-left">
-            <input
-              class="input"
-              id="filter--tags"
-              type="text"
-              aria-label="Filter tags"
-              placeholder="Filter tags..."
-            />
-            <span class="icon is-small is-left">
-              <i class="fa-solid fa-magnifying-glass"></i>
+    <h1 class="title is-1">Tag Management</h1>
+
+    <div class="tabs is-boxed">
+      <ul>
+        <li class="is-active">
+          <a href="#tab-tags">
+            <span class="icon">
+              <i class="fa-solid fa-tags"></i>
             </span>
+            <span>Tags</span>
+          </a>
+        </li>
+        <li>
+          <a href="#tab-tagAliases">
+            <span class="icon">
+              <i class="fa-solid fa-list"></i>
+            </span>
+            <span>Tag Aliases</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div id="tab-tags">
+      <div class="columns is-vcentered">
+        <div class="column">
+          <div class="message is-info">
+            <div class="message-body">
+              Create and manage color-coded tags for categorizing and organizing <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
+              Configure custom colors for visual identification and promote ad-hoc tags to system tags.
+            </div>
           </div>
         </div>
-      </div>
-      <div class="column is-narrow">
-        <div class="field has-addons">
-          <div class="control">
-            <button class="button is-success" id="button--addTag" type="button">
-              <span class="icon">
-                <i class="fa-solid fa-plus"></i>
+        <div class="column is-narrow">
+          <div class="field">
+            <div class="control has-icons-left">
+              <input
+                class="input"
+                id="filter--tags"
+                type="text"
+                aria-label="Filter tags"
+                placeholder="Filter tags..."
+              />
+              <span class="icon is-small is-left">
+                <i class="fa-solid fa-magnifying-glass"></i>
               </span>
-              <span>Add Tag</span>
-            </button>
+            </div>
           </div>
-          <div class="control">
-            <div class="dropdown is-right">
-              <div class="dropdown-trigger">
-                <button class="button is-success" type="button">
-                  <span class="icon">
-                    <i class="fa-solid fa-angle-down"></i>
-                  </span>
-                </button>
-              </div>
-              <div class="dropdown-menu">
-                <div class="dropdown-content">
-                  <a
-                    class="dropdown-item"
-                    id="button--addTagFromWorkOrder"
-                    href="#"
-                  >
+        </div>
+        <div class="column is-narrow">
+          <div class="field has-addons">
+            <div class="control">
+              <button class="button is-success" id="button--addTag" type="button">
+                <span class="icon">
+                  <i class="fa-solid fa-plus"></i>
+                </span>
+                <span>Add Tag</span>
+              </button>
+            </div>
+            <div class="control">
+              <div class="dropdown is-right">
+                <div class="dropdown-trigger">
+                  <button class="button is-success" type="button">
                     <span class="icon">
-                      <i class="fa-solid fa-file-import"></i>
+                      <i class="fa-solid fa-angle-down"></i>
                     </span>
-                    <span>
-                      Add Tags from <%=
-                      configFunctions.getConfigProperty('workOrders.sectionNameSingular')
-                      %>
-                    </span>
-                  </a>
+                  </button>
+                </div>
+                <div class="dropdown-menu">
+                  <div class="dropdown-content">
+                    <a
+                      class="dropdown-item"
+                      id="button--addTagFromWorkOrder"
+                      href="#"
+                    >
+                      <span class="icon">
+                        <i class="fa-solid fa-file-import"></i>
+                      </span>
+                      <span>
+                        Add Tags from <%=
+                        configFunctions.getConfigProperty('workOrders.sectionNameSingular')
+                        %>
+                      </span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div id="container--tags"></div>
     </div>
-
-    <div class="message is-info">
-      <div class="message-body">
-        Create and manage color-coded tags for categorizing and organizing <%= configFunctions.getConfigProperty('workOrders.sectionName').toLowerCase() %>.
-        Configure custom colors for visual identification and promote ad-hoc tags to system tags.
-      </div>
+    <div class="is-hidden" id="tab-tagAliases">
     </div>
-
-    <div id="container--tags"></div>
   </div>
 </div>
 
