@@ -773,4 +773,3 @@
     renderTagsWithPagination(exports.tags);
     renderTagAliasesWithPagination(exports.tagAliases);
 })();
-export {};
