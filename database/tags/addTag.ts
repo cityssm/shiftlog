@@ -83,13 +83,9 @@ export default async function addTag(
           )
       `)
 
-    if (insertResult.rowsAffected[0] === NO_ROWS_AFFECTED) {
-      return false
-    }
-
     clearCacheByTableName('Tags')
 
-    return true
+    return insertResult.rowsAffected[0] > NO_ROWS_AFFECTED
   } catch {
     return false
   }
