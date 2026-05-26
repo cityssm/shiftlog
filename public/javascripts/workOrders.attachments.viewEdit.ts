@@ -74,7 +74,7 @@ declare const marked: { parse: (markdownString: string) => string }
       return 'fa-file-audio'
     } else if (fileType === 'application/pdf') {
       return 'fa-file-pdf'
-    } else if (fileType.includes('word') || fileType.includes('document')) {
+    } else if (fileType.includes('word')) {
       return 'fa-file-word'
     } else if (
       fileType.includes('powerpoint') ||

@@ -29,7 +29,7 @@
         else if (fileType === 'application/pdf') {
             return 'fa-file-pdf';
         }
-        else if (fileType.includes('word') || fileType.includes('document')) {
+        else if (fileType.includes('word')) {
             return 'fa-file-word';
         }
         else if (fileType.includes('powerpoint') || fileType.includes('presentation')) {
