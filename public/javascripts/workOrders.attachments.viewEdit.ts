@@ -160,15 +160,19 @@ declare const marked: { parse: (markdownString: string) => string }
 
       const fileIcon = getFileIcon(attachment.attachmentFileType)
       const isImage = attachment.attachmentFileType.startsWith('image/')
+
       const attachmentDescriptionClassName =
         'content is-size-7 mt-1 shiftlog-markdown-preview'
+
       const attachmentDescriptionHTML = attachment.attachmentDescription
         ? DOMPurify.sanitize(marked.parse(attachment.attachmentDescription))
         : ''
+
       const hasIgnoredAttachmentNote =
         attachment.ignoredAttachmentNoteText !== undefined &&
         attachment.ignoredAttachmentNoteText !== null &&
         attachment.ignoredAttachmentNoteText !== ''
+
       const hasChecksum = hasFileChecksum(attachment.fileChecksum)
 
       const ignoredAttachmentTagHTML = hasIgnoredAttachmentNote
@@ -176,7 +180,7 @@ declare const marked: { parse: (markdownString: string) => string }
           <button
             class="tag is-warning is-light ml-1 ignored-attachment-tag"
             data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
-            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
+            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText ?? '')}"
             type="button"
             title="Attachment is ignored in future imports"
           >
@@ -293,7 +297,7 @@ declare const marked: { parse: (markdownString: string) => string }
                 </small>
                 ${
                   attachmentDescriptionHTML
-                    ? `<div class="${attachmentDescriptionClassName}">${attachmentDescriptionHTML}</div>`
+                    ? `<div class="${attachmentDescriptionClassName}" style="max-width:40vw">${attachmentDescriptionHTML}</div>`
                     : ''
                 }
               </p>
@@ -462,13 +466,11 @@ declare const marked: { parse: (markdownString: string) => string }
             '#ignoreWorkOrderAttachment--workOrderAttachmentId'
           ) as HTMLInputElement
         ).value = attachment.workOrderAttachmentId.toString()
-
         ;(
           modalElement.querySelector(
             '#ignoreWorkOrderAttachment--attachmentFileName'
           ) as HTMLParagraphElement
         ).textContent = attachment.attachmentFileName
-
         ;(
           modalElement.querySelector(
             '#ignoreWorkOrderAttachment--fileChecksum'
@@ -491,7 +493,10 @@ declare const marked: { parse: (markdownString: string) => string }
     })
   }
 
-  function showIgnoredAttachmentModal(noteText: string, fileChecksum: string): void {
+  function showIgnoredAttachmentModal(
+    noteText: string,
+    fileChecksum: string
+  ): void {
     const fileChecksumFieldKey = 'fileChecksum'
     const fileChecksumSelector = `#viewIgnoredWorkOrderAttachment--${fileChecksumFieldKey}`
 
@@ -503,7 +508,6 @@ declare const marked: { parse: (markdownString: string) => string }
         ;(
           modalElement.querySelector(fileChecksumSelector) as HTMLElement
         ).textContent = fileChecksum
-
         ;(
           modalElement.querySelector(
             '#viewIgnoredWorkOrderAttachment--noteText'
@@ -681,10 +685,12 @@ declare const marked: { parse: (markdownString: string) => string }
         ).value = attachment.attachmentDescription
 
         setupTranscriptionControls(modalElement, {
-          descriptionSelector: '#editWorkOrderAttachment--attachmentDescription',
+          descriptionSelector:
+            '#editWorkOrderAttachment--attachmentDescription',
           fieldSelector:
             '#field--editWorkOrderAttachment--generateWithTranscription',
-          checkboxSelector: '#editWorkOrderAttachment--generateWithTranscription'
+          checkboxSelector:
+            '#editWorkOrderAttachment--generateWithTranscription'
         })
       },
       onshown(modalElement, _closeModalFunction) {

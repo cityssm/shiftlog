@@ -32,7 +32,8 @@
         else if (fileType.includes('word')) {
             return 'fa-file-word';
         }
-        else if (fileType.includes('powerpoint') || fileType.includes('presentation')) {
+        else if (fileType.includes('powerpoint') ||
+            fileType.includes('presentation')) {
             return 'fa-file-powerpoint';
         }
         else if (fileType.includes('excel') || fileType.includes('spreadsheet')) {
@@ -104,7 +105,7 @@
           <button
             class="tag is-warning is-light ml-1 ignored-attachment-tag"
             data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
-            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
+            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText ?? '')}"
             type="button"
             title="Attachment is ignored in future imports"
           >
@@ -204,7 +205,7 @@
                   ${cityssm.dateToString(new Date(attachment.recordCreate_dateTime ?? ''))}
                 </small>
                 ${attachmentDescriptionHTML
-                ? `<div class="${attachmentDescriptionClassName}">${attachmentDescriptionHTML}</div>`
+                ? `<div class="${attachmentDescriptionClassName}" style="max-width:40vw">${attachmentDescriptionHTML}</div>`
                 : ''}
               </p>
             </div>
