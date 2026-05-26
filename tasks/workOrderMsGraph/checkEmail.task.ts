@@ -33,6 +33,7 @@ import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getTagsInText } from '../../helpers/tag.helpers.js'
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js'
 import type { WorkOrderType } from '../../types/record.types.js'
+import { TRANSCRIPTION_IN_PROGRESS } from '../transcriptions/constants.js'
 
 import {
   attachmentContentBytesToBuffer,
@@ -52,6 +53,7 @@ import {
 } from './helpers/messageText.helpers.js'
 
 const msGraphMailConfig = getConfigProperty('connectors.msGraph')
+const transcriptionEnabled = getConfigProperty('transcriptions.isEnabled')
 
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:checkEmail`)
 
@@ -374,13 +376,17 @@ export async function checkEmail(): Promise<void> {
               attachmentContentBuffer
             )
 
+            const attachmentDescription = transcriptionEnabled
+              ? TRANSCRIPTION_IN_PROGRESS
+              : `Attachment from email received on ${receivedDateTimeString}`
+
             await createWorkOrderAttachment(
               {
                 workOrderId: workOrder.workOrderId,
                 attachmentFileName: attachmentFileName,
                 attachmentFileType: attachment.contentType,
                 attachmentFileSizeInBytes: fileSize,
-                attachmentDescription: `Attachment from email received on ${receivedDateTimeString}`,
+                attachmentDescription,
                 fileSystemPath: storagePaths.fileSystemPath,
                 fileChecksum: attachmentChecksum
               },

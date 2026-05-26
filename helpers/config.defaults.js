@@ -62,6 +62,7 @@ export const configDefaultValues = {
         syncSource: ''
     },
     'locations.syncSource': '',
-    'notifications.protocols': []
+    'notifications.protocols': [],
+    'transcriptions.isEnabled': false
 };
 export default configDefaultValues;

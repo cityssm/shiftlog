@@ -18,11 +18,13 @@ import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getTagsInText } from '../../helpers/tag.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
+import { TRANSCRIPTION_IN_PROGRESS } from '../transcriptions/constants.js';
 import { attachmentContentBytesToBuffer, attachmentContentBytesToChecksum, getAttachmentFileNameFromFileName, writeAttachmentToFileSystem } from './helpers/attachment.helpers.js';
 import { getSubscriberEmailAddresses, isNoReplyEmailAddress } from './helpers/emailAddress.helpers.js';
 import { fromEmailAddressIsAllowed } from './helpers/messageFrom.helpers.js';
 import { messageBodyToText, messageSubjectToWorkOrderNumber, messageTextToLocation } from './helpers/messageText.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
+const transcriptionEnabled = getConfigProperty('transcriptions.isEnabled');
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:checkEmail`);
 const messageIdCache = new NodeCache({
     checkperiod: minutesToSeconds(10),
@@ -180,12 +182,15 @@ export async function checkEmail() {
                         const attachmentFileName = getAttachmentFileNameFromFileName(attachment.name);
                         const storagePaths = getAttachmentStoragePathForFileName(attachmentFileName);
                         const fileSize = await writeAttachmentToFileSystem(storagePaths.filePath, attachmentContentBuffer);
+                        const attachmentDescription = transcriptionEnabled
+                            ? TRANSCRIPTION_IN_PROGRESS
+                            : `Attachment from email received on ${receivedDateTimeString}`;
                         await createWorkOrderAttachment({
                             workOrderId: workOrder.workOrderId,
                             attachmentFileName: attachmentFileName,
                             attachmentFileType: attachment.contentType,
                             attachmentFileSizeInBytes: fileSize,
-                            attachmentDescription: `Attachment from email received on ${receivedDateTimeString}`,
+                            attachmentDescription,
                             fileSystemPath: storagePaths.fileSystemPath,
                             fileChecksum: attachmentChecksum
                         }, fromAddressLowerCase);

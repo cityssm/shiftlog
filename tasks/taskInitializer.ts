@@ -8,6 +8,7 @@ type OptionalTaskName =
   | 'equipmentSync'
   | 'locationSync'
   | 'notifications'
+  | 'transcriptions'
   | 'workOrderMsGraph'
 
 type RequiredTaskName = 'databaseCleanup'
@@ -74,6 +75,20 @@ export function initializeTasks(): InitializeTasksReturn {
     })
 
     childProcesses.notifications = notificationTask
+  }
+
+  /*
+   * Transcriptions Task
+   */
+
+  if (getConfigProperty('transcriptions.isEnabled')) {
+    const transcriptionsTask = fork('./tasks/transcriptions/task.js', {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: 'inherit'
+    })
+
+    childProcesses.transcriptions = transcriptionsTask
   }
 
   /*

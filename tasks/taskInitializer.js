@@ -34,6 +34,14 @@ export function initializeTasks() {
         });
         childProcesses.notifications = notificationTask;
     }
+    if (getConfigProperty('transcriptions.isEnabled')) {
+        const transcriptionsTask = fork('./tasks/transcriptions/task.js', {
+            cwd: process.cwd(),
+            env: process.env,
+            stdio: 'inherit'
+        });
+        childProcesses.transcriptions = transcriptionsTask;
+    }
     if (getConfigProperty('connectors.msGraph') !== undefined) {
         const msGraphTask = fork('./tasks/workOrderMsGraph/task.js', {
             cwd: process.cwd(),

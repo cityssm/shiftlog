@@ -153,7 +153,11 @@ export const configDefaultValues = {
 
   // Notifications
 
-  'notifications.protocols': [] as NotificationType[]
+  'notifications.protocols': [] as NotificationType[],
+
+  // Transcriptions
+
+  'transcriptions.isEnabled': false
 }
 
 export default configDefaultValues

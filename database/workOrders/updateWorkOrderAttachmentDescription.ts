@@ -6,7 +6,7 @@ export interface UpdateWorkOrderAttachmentForm {
   workOrderAttachmentId: number | string
 }
 
-export default async function updateWorkOrderAttachment(
+export default async function updateWorkOrderAttachmentDescription(
   updateWorkOrderAttachmentForm: UpdateWorkOrderAttachmentForm,
   userName: string
 ): Promise<boolean> {

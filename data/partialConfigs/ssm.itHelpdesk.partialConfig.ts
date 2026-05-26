@@ -18,4 +18,8 @@ config.workOrders = {
   hasCosts: false
 }
 
+config.transcriptions = {
+  isEnabled: true
+}
+
 export default config

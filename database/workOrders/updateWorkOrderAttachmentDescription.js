@@ -1,6 +1,6 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-export default async function updateWorkOrderAttachment(updateWorkOrderAttachmentForm, userName) {
+export default async function updateWorkOrderAttachmentDescription(updateWorkOrderAttachmentForm, userName) {
     const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()

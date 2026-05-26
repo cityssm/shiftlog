@@ -95,6 +95,10 @@ export interface Config {
   notifications?: {
     protocols?: NotificationType[]
   }
+
+  transcriptions?: {
+    isEnabled?: boolean
+  }
 }
 
 export type ConfigWorkOrders = ConfigSection & {

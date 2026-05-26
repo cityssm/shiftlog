@@ -4,6 +4,7 @@
   },
   "ignore": ["cypress/*", "data/sessions/*", "public/javascripts/*"],
   "env": {
-    "NODE_ENV": "development"
+    "NODE_ENV": "development",
+    "DEBUG": "shiftlog:*,file-to-text:*,whisper-speech-to-text:*"
   }
 }
