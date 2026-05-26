@@ -18,10 +18,13 @@ declare const exports: {
 
   attachmentMaximumFileSizeBytes: number
   isEdit: boolean
+  transcriptionsEnabled: boolean
 }
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const DOMPurify: { sanitize: (html: string) => string }
+declare const marked: { parse: (markdownString: string) => string }
 ;(() => {
   const workOrderFormElement = document.querySelector(
     '#form--workOrder'
@@ -115,6 +118,9 @@ declare const bulmaJS: BulmaJS
 
       const fileIcon = getFileIcon(attachment.attachmentFileType)
       const isImage = attachment.attachmentFileType.startsWith('image/')
+      const attachmentDescriptionHTML = attachment.attachmentDescription
+        ? DOMPurify.sanitize(marked.parse(attachment.attachmentDescription))
+        : ''
       const hasIgnoredAttachmentNote =
         attachment.ignoredAttachmentNoteText !== undefined &&
         attachment.ignoredAttachmentNoteText !== null &&
@@ -242,8 +248,8 @@ declare const bulmaJS: BulmaJS
                   )}
                 </small>
                 ${
-                  attachment.attachmentDescription
-                    ? `<br /><span class="is-size-7">${cityssm.escapeHTML(attachment.attachmentDescription)}</span>`
+                  attachmentDescriptionHTML
+                    ? `<div class="content is-size-7 mt-1">${attachmentDescriptionHTML}</div>`
                     : ''
                 }
               </p>
@@ -566,6 +572,30 @@ declare const bulmaJS: BulmaJS
               ? fileInput.files[0].name
               : 'No file selected'
         })
+
+        const descriptionTextarea = modalElement.querySelector(
+          '#addWorkOrderAttachment--attachmentDescription'
+        ) as HTMLTextAreaElement
+        const transcriptionField = modalElement.querySelector(
+          '#field--addWorkOrderAttachment--generateWithTranscription'
+        ) as HTMLElement
+        const transcriptionCheckbox = modalElement.querySelector(
+          '#addWorkOrderAttachment--generateWithTranscription'
+        ) as HTMLInputElement
+
+        if (exports.transcriptionsEnabled) {
+          transcriptionField.classList.remove('is-hidden')
+          const toggleDescriptionState = (): void => {
+            descriptionTextarea.disabled = transcriptionCheckbox.checked
+          }
+
+          transcriptionCheckbox.addEventListener('change', toggleDescriptionState)
+          toggleDescriptionState()
+        } else {
+          transcriptionField.classList.add('is-hidden')
+          transcriptionCheckbox.checked = false
+          descriptionTextarea.disabled = false
+        }
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -620,8 +650,32 @@ declare const bulmaJS: BulmaJS
         ;(
           modalElement.querySelector(
             '#editWorkOrderAttachment--attachmentDescription'
-          ) as HTMLInputElement
+          ) as HTMLTextAreaElement
         ).value = attachment.attachmentDescription
+
+        const descriptionTextarea = modalElement.querySelector(
+          '#editWorkOrderAttachment--attachmentDescription'
+        ) as HTMLTextAreaElement
+        const transcriptionField = modalElement.querySelector(
+          '#field--editWorkOrderAttachment--generateWithTranscription'
+        ) as HTMLElement
+        const transcriptionCheckbox = modalElement.querySelector(
+          '#editWorkOrderAttachment--generateWithTranscription'
+        ) as HTMLInputElement
+
+        if (exports.transcriptionsEnabled) {
+          transcriptionField.classList.remove('is-hidden')
+          const toggleDescriptionState = (): void => {
+            descriptionTextarea.disabled = transcriptionCheckbox.checked
+          }
+
+          transcriptionCheckbox.addEventListener('change', toggleDescriptionState)
+          toggleDescriptionState()
+        } else {
+          transcriptionField.classList.add('is-hidden')
+          transcriptionCheckbox.checked = false
+          descriptionTextarea.disabled = false
+        }
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()

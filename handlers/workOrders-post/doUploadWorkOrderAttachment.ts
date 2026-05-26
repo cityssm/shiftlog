@@ -7,6 +7,7 @@ import createWorkOrderAttachment from '../../database/workOrders/createWorkOrder
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js'
+import { TRANSCRIPTION_IN_PROGRESS } from '../../tasks/transcriptions/constants.js'
 
 const debug = Debug(
   `${DEBUG_NAMESPACE}:workOrders-post:doUploadWorkOrderAttachment`
@@ -39,8 +40,12 @@ export default async function handler(
   }
 
   const workOrderId = request.body.workOrderId as string
-  const attachmentDescription = (request.body.attachmentDescription ??
-    '') as string
+  const generateWithTranscription =
+    getConfigProperty('transcriptions.isEnabled') &&
+    request.body.generateWithTranscription !== undefined
+  const attachmentDescription = generateWithTranscription
+    ? TRANSCRIPTION_IN_PROGRESS
+    : ((request.body.attachmentDescription ?? '') as string)
 
   const { filePath, fileSystemPath } = getAttachmentStoragePathForFileName(
     file.originalname

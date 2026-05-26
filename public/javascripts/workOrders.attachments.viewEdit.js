@@ -64,6 +64,9 @@
                     attachment.recordCreate_userName === exports.shiftLog.userName);
             const fileIcon = getFileIcon(attachment.attachmentFileType);
             const isImage = attachment.attachmentFileType.startsWith('image/');
+            const attachmentDescriptionHTML = attachment.attachmentDescription
+                ? DOMPurify.sanitize(marked.parse(attachment.attachmentDescription))
+                : '';
             const hasIgnoredAttachmentNote = attachment.ignoredAttachmentNoteText !== undefined &&
                 attachment.ignoredAttachmentNoteText !== null &&
                 attachment.ignoredAttachmentNoteText !== '';
@@ -172,8 +175,8 @@
                   ${cityssm.escapeHTML(attachment.recordCreate_userName ?? '')} &bull;
                   ${cityssm.dateToString(new Date(attachment.recordCreate_dateTime ?? ''))}
                 </small>
-                ${attachment.attachmentDescription
-                ? `<br /><span class="is-size-7">${cityssm.escapeHTML(attachment.attachmentDescription)}</span>`
+                ${attachmentDescriptionHTML
+                ? `<div class="content is-size-7 mt-1">${attachmentDescriptionHTML}</div>`
                 : ''}
               </p>
             </div>
@@ -399,6 +402,22 @@
                             ? fileInput.files[0].name
                             : 'No file selected';
                 });
+                const descriptionTextarea = modalElement.querySelector('#addWorkOrderAttachment--attachmentDescription');
+                const transcriptionField = modalElement.querySelector('#field--addWorkOrderAttachment--generateWithTranscription');
+                const transcriptionCheckbox = modalElement.querySelector('#addWorkOrderAttachment--generateWithTranscription');
+                if (exports.transcriptionsEnabled) {
+                    transcriptionField.classList.remove('is-hidden');
+                    const toggleDescriptionState = () => {
+                        descriptionTextarea.disabled = transcriptionCheckbox.checked;
+                    };
+                    transcriptionCheckbox.addEventListener('change', toggleDescriptionState);
+                    toggleDescriptionState();
+                }
+                else {
+                    transcriptionField.classList.add('is-hidden');
+                    transcriptionCheckbox.checked = false;
+                    descriptionTextarea.disabled = false;
+                }
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -437,6 +456,22 @@
                 exports.shiftLog.setUnsavedChanges('modal');
                 modalElement.querySelector('#editWorkOrderAttachment--workOrderAttachmentId').value = attachment.workOrderAttachmentId.toString();
                 modalElement.querySelector('#editWorkOrderAttachment--attachmentDescription').value = attachment.attachmentDescription;
+                const descriptionTextarea = modalElement.querySelector('#editWorkOrderAttachment--attachmentDescription');
+                const transcriptionField = modalElement.querySelector('#field--editWorkOrderAttachment--generateWithTranscription');
+                const transcriptionCheckbox = modalElement.querySelector('#editWorkOrderAttachment--generateWithTranscription');
+                if (exports.transcriptionsEnabled) {
+                    transcriptionField.classList.remove('is-hidden');
+                    const toggleDescriptionState = () => {
+                        descriptionTextarea.disabled = transcriptionCheckbox.checked;
+                    };
+                    transcriptionCheckbox.addEventListener('change', toggleDescriptionState);
+                    toggleDescriptionState();
+                }
+                else {
+                    transcriptionField.classList.add('is-hidden');
+                    transcriptionCheckbox.checked = false;
+                    descriptionTextarea.disabled = false;
+                }
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
