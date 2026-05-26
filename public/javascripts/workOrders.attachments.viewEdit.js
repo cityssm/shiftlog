@@ -91,6 +91,7 @@
                     attachment.recordCreate_userName === exports.shiftLog.userName);
             const fileIcon = getFileIcon(attachment.attachmentFileType);
             const isImage = attachment.attachmentFileType.startsWith('image/');
+            const attachmentDescriptionClassName = 'content is-size-7 mt-1 shiftlog-markdown-preview';
             const attachmentDescriptionHTML = attachment.attachmentDescription
                 ? DOMPurify.sanitize(marked.parse(attachment.attachmentDescription))
                 : '';
@@ -203,7 +204,7 @@
                   ${cityssm.dateToString(new Date(attachment.recordCreate_dateTime ?? ''))}
                 </small>
                 ${attachmentDescriptionHTML
-                ? `<div class="content is-size-7 mt-1 shiftlog-markdown-preview">${attachmentDescriptionHTML}</div>`
+                ? `<div class="${attachmentDescriptionClassName}">${attachmentDescriptionHTML}</div>`
                 : ''}
               </p>
             </div>
