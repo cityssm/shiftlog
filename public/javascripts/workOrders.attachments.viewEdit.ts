@@ -291,7 +291,7 @@ declare const marked: { parse: (markdownString: string) => string }
                 </small>
                 ${
                   attachmentDescriptionHTML
-                    ? `<div class="content is-size-7 mt-1">${attachmentDescriptionHTML}</div>`
+                    ? `<div class="content is-size-7 mt-1 shiftlog-markdown-preview">${attachmentDescriptionHTML}</div>`
                     : ''
                 }
               </p>

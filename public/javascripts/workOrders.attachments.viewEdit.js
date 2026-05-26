@@ -203,7 +203,7 @@
                   ${cityssm.dateToString(new Date(attachment.recordCreate_dateTime ?? ''))}
                 </small>
                 ${attachmentDescriptionHTML
-                ? `<div class="content is-size-7 mt-1">${attachmentDescriptionHTML}</div>`
+                ? `<div class="content is-size-7 mt-1 shiftlog-markdown-preview">${attachmentDescriptionHTML}</div>`
                 : ''}
               </p>
             </div>
