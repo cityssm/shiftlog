@@ -40,6 +40,24 @@
     function hasFileChecksum(fileChecksum) {
         return fileChecksum.trim() !== '';
     }
+    function setupTranscriptionControls(modalElement, selectors) {
+        const descriptionTextarea = modalElement.querySelector(selectors.descriptionSelector);
+        const transcriptionField = modalElement.querySelector(selectors.fieldSelector);
+        const transcriptionCheckbox = modalElement.querySelector(selectors.checkboxSelector);
+        if (exports.transcriptionsEnabled) {
+            transcriptionField.classList.remove('is-hidden');
+            const toggleDescriptionState = () => {
+                descriptionTextarea.disabled = transcriptionCheckbox.checked;
+            };
+            transcriptionCheckbox.addEventListener('change', toggleDescriptionState);
+            toggleDescriptionState();
+        }
+        else {
+            transcriptionField.classList.add('is-hidden');
+            transcriptionCheckbox.checked = false;
+            descriptionTextarea.disabled = false;
+        }
+    }
     function renderAttachments(attachments) {
         const attachmentsCountElement = document.querySelector('#attachmentsCount');
         if (attachmentsCountElement !== null) {
@@ -402,22 +420,11 @@
                             ? fileInput.files[0].name
                             : 'No file selected';
                 });
-                const descriptionTextarea = modalElement.querySelector('#addWorkOrderAttachment--attachmentDescription');
-                const transcriptionField = modalElement.querySelector('#field--addWorkOrderAttachment--generateWithTranscription');
-                const transcriptionCheckbox = modalElement.querySelector('#addWorkOrderAttachment--generateWithTranscription');
-                if (exports.transcriptionsEnabled) {
-                    transcriptionField.classList.remove('is-hidden');
-                    const toggleDescriptionState = () => {
-                        descriptionTextarea.disabled = transcriptionCheckbox.checked;
-                    };
-                    transcriptionCheckbox.addEventListener('change', toggleDescriptionState);
-                    toggleDescriptionState();
-                }
-                else {
-                    transcriptionField.classList.add('is-hidden');
-                    transcriptionCheckbox.checked = false;
-                    descriptionTextarea.disabled = false;
-                }
+                setupTranscriptionControls(modalElement, {
+                    descriptionSelector: '#addWorkOrderAttachment--attachmentDescription',
+                    fieldSelector: '#field--addWorkOrderAttachment--generateWithTranscription',
+                    checkboxSelector: '#addWorkOrderAttachment--generateWithTranscription'
+                });
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -456,22 +463,11 @@
                 exports.shiftLog.setUnsavedChanges('modal');
                 modalElement.querySelector('#editWorkOrderAttachment--workOrderAttachmentId').value = attachment.workOrderAttachmentId.toString();
                 modalElement.querySelector('#editWorkOrderAttachment--attachmentDescription').value = attachment.attachmentDescription;
-                const descriptionTextarea = modalElement.querySelector('#editWorkOrderAttachment--attachmentDescription');
-                const transcriptionField = modalElement.querySelector('#field--editWorkOrderAttachment--generateWithTranscription');
-                const transcriptionCheckbox = modalElement.querySelector('#editWorkOrderAttachment--generateWithTranscription');
-                if (exports.transcriptionsEnabled) {
-                    transcriptionField.classList.remove('is-hidden');
-                    const toggleDescriptionState = () => {
-                        descriptionTextarea.disabled = transcriptionCheckbox.checked;
-                    };
-                    transcriptionCheckbox.addEventListener('change', toggleDescriptionState);
-                    toggleDescriptionState();
-                }
-                else {
-                    transcriptionField.classList.add('is-hidden');
-                    transcriptionCheckbox.checked = false;
-                    descriptionTextarea.disabled = false;
-                }
+                setupTranscriptionControls(modalElement, {
+                    descriptionSelector: '#editWorkOrderAttachment--attachmentDescription',
+                    fieldSelector: '#field--editWorkOrderAttachment--generateWithTranscription',
+                    checkboxSelector: '#editWorkOrderAttachment--generateWithTranscription'
+                });
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();

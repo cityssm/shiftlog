@@ -86,6 +86,39 @@ declare const marked: { parse: (markdownString: string) => string }
     return fileChecksum.trim() !== ''
   }
 
+  function setupTranscriptionControls(
+    modalElement: HTMLElement,
+    selectors: {
+      checkboxSelector: string
+      descriptionSelector: string
+      fieldSelector: string
+    }
+  ): void {
+    const descriptionTextarea = modalElement.querySelector(
+      selectors.descriptionSelector
+    ) as HTMLTextAreaElement
+    const transcriptionField = modalElement.querySelector(
+      selectors.fieldSelector
+    ) as HTMLElement
+    const transcriptionCheckbox = modalElement.querySelector(
+      selectors.checkboxSelector
+    ) as HTMLInputElement
+
+    if (exports.transcriptionsEnabled) {
+      transcriptionField.classList.remove('is-hidden')
+      const toggleDescriptionState = (): void => {
+        descriptionTextarea.disabled = transcriptionCheckbox.checked
+      }
+
+      transcriptionCheckbox.addEventListener('change', toggleDescriptionState)
+      toggleDescriptionState()
+    } else {
+      transcriptionField.classList.add('is-hidden')
+      transcriptionCheckbox.checked = false
+      descriptionTextarea.disabled = false
+    }
+  }
+
   function renderAttachments(attachments: WorkOrderAttachment[]): void {
     // Update attachments count
     const attachmentsCountElement = document.querySelector('#attachmentsCount')
@@ -573,29 +606,12 @@ declare const marked: { parse: (markdownString: string) => string }
               : 'No file selected'
         })
 
-        const descriptionTextarea = modalElement.querySelector(
-          '#addWorkOrderAttachment--attachmentDescription'
-        ) as HTMLTextAreaElement
-        const transcriptionField = modalElement.querySelector(
-          '#field--addWorkOrderAttachment--generateWithTranscription'
-        ) as HTMLElement
-        const transcriptionCheckbox = modalElement.querySelector(
-          '#addWorkOrderAttachment--generateWithTranscription'
-        ) as HTMLInputElement
-
-        if (exports.transcriptionsEnabled) {
-          transcriptionField.classList.remove('is-hidden')
-          const toggleDescriptionState = (): void => {
-            descriptionTextarea.disabled = transcriptionCheckbox.checked
-          }
-
-          transcriptionCheckbox.addEventListener('change', toggleDescriptionState)
-          toggleDescriptionState()
-        } else {
-          transcriptionField.classList.add('is-hidden')
-          transcriptionCheckbox.checked = false
-          descriptionTextarea.disabled = false
-        }
+        setupTranscriptionControls(modalElement, {
+          descriptionSelector: '#addWorkOrderAttachment--attachmentDescription',
+          fieldSelector:
+            '#field--addWorkOrderAttachment--generateWithTranscription',
+          checkboxSelector: '#addWorkOrderAttachment--generateWithTranscription'
+        })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -653,29 +669,12 @@ declare const marked: { parse: (markdownString: string) => string }
           ) as HTMLTextAreaElement
         ).value = attachment.attachmentDescription
 
-        const descriptionTextarea = modalElement.querySelector(
-          '#editWorkOrderAttachment--attachmentDescription'
-        ) as HTMLTextAreaElement
-        const transcriptionField = modalElement.querySelector(
-          '#field--editWorkOrderAttachment--generateWithTranscription'
-        ) as HTMLElement
-        const transcriptionCheckbox = modalElement.querySelector(
-          '#editWorkOrderAttachment--generateWithTranscription'
-        ) as HTMLInputElement
-
-        if (exports.transcriptionsEnabled) {
-          transcriptionField.classList.remove('is-hidden')
-          const toggleDescriptionState = (): void => {
-            descriptionTextarea.disabled = transcriptionCheckbox.checked
-          }
-
-          transcriptionCheckbox.addEventListener('change', toggleDescriptionState)
-          toggleDescriptionState()
-        } else {
-          transcriptionField.classList.add('is-hidden')
-          transcriptionCheckbox.checked = false
-          descriptionTextarea.disabled = false
-        }
+        setupTranscriptionControls(modalElement, {
+          descriptionSelector: '#editWorkOrderAttachment--attachmentDescription',
+          fieldSelector:
+            '#field--editWorkOrderAttachment--generateWithTranscription',
+          checkboxSelector: '#editWorkOrderAttachment--generateWithTranscription'
+        })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
