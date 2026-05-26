@@ -68,10 +68,19 @@ declare const marked: { parse: (markdownString: string) => string }
   function getFileIcon(fileType: string): string {
     if (fileType.startsWith('image/')) {
       return 'fa-file-image'
+    } else if (fileType.startsWith('video/')) {
+      return 'fa-file-video'
+    } else if (fileType.startsWith('audio/')) {
+      return 'fa-file-audio'
     } else if (fileType === 'application/pdf') {
       return 'fa-file-pdf'
     } else if (fileType.includes('word') || fileType.includes('document')) {
       return 'fa-file-word'
+    } else if (
+      fileType.includes('powerpoint') ||
+      fileType.includes('presentation')
+    ) {
+      return 'fa-file-powerpoint'
     } else if (fileType.includes('excel') || fileType.includes('spreadsheet')) {
       return 'fa-file-excel'
     } else if (fileType.includes('zip') || fileType.includes('archive')) {
