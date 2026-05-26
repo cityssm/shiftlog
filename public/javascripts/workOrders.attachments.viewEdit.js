@@ -20,11 +20,21 @@
         if (fileType.startsWith('image/')) {
             return 'fa-file-image';
         }
+        else if (fileType.startsWith('video/')) {
+            return 'fa-file-video';
+        }
+        else if (fileType.startsWith('audio/')) {
+            return 'fa-file-audio';
+        }
         else if (fileType === 'application/pdf') {
             return 'fa-file-pdf';
         }
-        else if (fileType.includes('word') || fileType.includes('document')) {
+        else if (fileType.includes('word')) {
             return 'fa-file-word';
+        }
+        else if (fileType.includes('powerpoint') ||
+            fileType.includes('presentation')) {
+            return 'fa-file-powerpoint';
         }
         else if (fileType.includes('excel') || fileType.includes('spreadsheet')) {
             return 'fa-file-excel';
@@ -39,6 +49,24 @@
     }
     function hasFileChecksum(fileChecksum) {
         return fileChecksum.trim() !== '';
+    }
+    function setupTranscriptionControls(modalElement, selectors) {
+        const descriptionTextarea = modalElement.querySelector(selectors.descriptionSelector);
+        const transcriptionField = modalElement.querySelector(selectors.fieldSelector);
+        const transcriptionCheckbox = modalElement.querySelector(selectors.checkboxSelector);
+        if (exports.transcriptionsEnabled) {
+            transcriptionField.classList.remove('is-hidden');
+            const toggleDescriptionState = () => {
+                descriptionTextarea.disabled = transcriptionCheckbox.checked;
+            };
+            transcriptionCheckbox.addEventListener('change', toggleDescriptionState);
+            toggleDescriptionState();
+        }
+        else {
+            transcriptionField.classList.add('is-hidden');
+            transcriptionCheckbox.checked = false;
+            descriptionTextarea.disabled = false;
+        }
     }
     function renderAttachments(attachments) {
         const attachmentsCountElement = document.querySelector('#attachmentsCount');
@@ -64,6 +92,10 @@
                     attachment.recordCreate_userName === exports.shiftLog.userName);
             const fileIcon = getFileIcon(attachment.attachmentFileType);
             const isImage = attachment.attachmentFileType.startsWith('image/');
+            const attachmentDescriptionClassName = 'content is-size-7 mt-1 shiftlog-markdown-preview';
+            const attachmentDescriptionHTML = attachment.attachmentDescription
+                ? DOMPurify.sanitize(marked.parse(attachment.attachmentDescription))
+                : '';
             const hasIgnoredAttachmentNote = attachment.ignoredAttachmentNoteText !== undefined &&
                 attachment.ignoredAttachmentNoteText !== null &&
                 attachment.ignoredAttachmentNoteText !== '';
@@ -73,7 +105,7 @@
           <button
             class="tag is-warning is-light ml-1 ignored-attachment-tag"
             data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
-            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
+            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText ?? '')}"
             type="button"
             title="Attachment is ignored in future imports"
           >
@@ -172,8 +204,8 @@
                   ${cityssm.escapeHTML(attachment.recordCreate_userName ?? '')} &bull;
                   ${cityssm.dateToString(new Date(attachment.recordCreate_dateTime ?? ''))}
                 </small>
-                ${attachment.attachmentDescription
-                ? `<br /><span class="is-size-7">${cityssm.escapeHTML(attachment.attachmentDescription)}</span>`
+                ${attachmentDescriptionHTML
+                ? `<div class="${attachmentDescriptionClassName}" style="max-width:40vw">${attachmentDescriptionHTML}</div>`
                 : ''}
               </p>
             </div>
@@ -399,6 +431,11 @@
                             ? fileInput.files[0].name
                             : 'No file selected';
                 });
+                setupTranscriptionControls(modalElement, {
+                    descriptionSelector: '#addWorkOrderAttachment--attachmentDescription',
+                    fieldSelector: '#field--addWorkOrderAttachment--generateWithTranscription',
+                    checkboxSelector: '#addWorkOrderAttachment--generateWithTranscription'
+                });
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -437,6 +474,11 @@
                 exports.shiftLog.setUnsavedChanges('modal');
                 modalElement.querySelector('#editWorkOrderAttachment--workOrderAttachmentId').value = attachment.workOrderAttachmentId.toString();
                 modalElement.querySelector('#editWorkOrderAttachment--attachmentDescription').value = attachment.attachmentDescription;
+                setupTranscriptionControls(modalElement, {
+                    descriptionSelector: '#editWorkOrderAttachment--attachmentDescription',
+                    fieldSelector: '#field--editWorkOrderAttachment--generateWithTranscription',
+                    checkboxSelector: '#editWorkOrderAttachment--generateWithTranscription'
+                });
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();

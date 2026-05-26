@@ -4,6 +4,7 @@ import createWorkOrderAttachment from '../../database/workOrders/createWorkOrder
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getAttachmentStoragePathForFileName } from '../../helpers/upload.helpers.js';
+import { TRANSCRIPTION_IN_PROGRESS } from '../../tasks/transcriptions/constants.js';
 const debug = Debug(`${DEBUG_NAMESPACE}:workOrders-post:doUploadWorkOrderAttachment`);
 export default async function handler(request, response) {
     const file = request.file;
@@ -15,8 +16,11 @@ export default async function handler(request, response) {
         return;
     }
     const workOrderId = request.body.workOrderId;
-    const attachmentDescription = (request.body.attachmentDescription ??
-        '');
+    const generateWithTranscription = getConfigProperty('transcriptions.isEnabled') &&
+        request.body.generateWithTranscription !== undefined;
+    const attachmentDescription = generateWithTranscription
+        ? TRANSCRIPTION_IN_PROGRESS
+        : (request.body.attachmentDescription ?? '');
     const { filePath, fileSystemPath } = getAttachmentStoragePathForFileName(file.originalname);
     try {
         fs.renameSync(file.path, filePath);

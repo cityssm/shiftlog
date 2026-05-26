@@ -57,13 +57,25 @@
             Description (Optional)
           </label>
           <div class="control">
-            <input
-              class="input"
+            <textarea
+              class="textarea"
               id="addWorkOrderAttachment--attachmentDescription"
               name="attachmentDescription"
-              type="text"
               placeholder="Enter a description for this attachment..."
-            />
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        <div class="field is-hidden" id="field--addWorkOrderAttachment--generateWithTranscription">
+          <div class="control">
+            <label class="checkbox">
+              <input
+                id="addWorkOrderAttachment--generateWithTranscription"
+                name="generateWithTranscription"
+                type="checkbox"
+              />
+              Generate with transcription
+            </label>
           </div>
         </div>
       </form>

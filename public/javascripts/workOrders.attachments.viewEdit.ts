@@ -18,10 +18,13 @@ declare const exports: {
 
   attachmentMaximumFileSizeBytes: number
   isEdit: boolean
+  transcriptionsEnabled: boolean
 }
 
 declare const cityssm: cityssmGlobal
 declare const bulmaJS: BulmaJS
+declare const DOMPurify: { sanitize: (html: string) => string }
+declare const marked: { parse: (markdownString: string) => string }
 ;(() => {
   const workOrderFormElement = document.querySelector(
     '#form--workOrder'
@@ -65,10 +68,19 @@ declare const bulmaJS: BulmaJS
   function getFileIcon(fileType: string): string {
     if (fileType.startsWith('image/')) {
       return 'fa-file-image'
+    } else if (fileType.startsWith('video/')) {
+      return 'fa-file-video'
+    } else if (fileType.startsWith('audio/')) {
+      return 'fa-file-audio'
     } else if (fileType === 'application/pdf') {
       return 'fa-file-pdf'
-    } else if (fileType.includes('word') || fileType.includes('document')) {
+    } else if (fileType.includes('word')) {
       return 'fa-file-word'
+    } else if (
+      fileType.includes('powerpoint') ||
+      fileType.includes('presentation')
+    ) {
+      return 'fa-file-powerpoint'
     } else if (fileType.includes('excel') || fileType.includes('spreadsheet')) {
       return 'fa-file-excel'
     } else if (fileType.includes('zip') || fileType.includes('archive')) {
@@ -81,6 +93,39 @@ declare const bulmaJS: BulmaJS
 
   function hasFileChecksum(fileChecksum: string): boolean {
     return fileChecksum.trim() !== ''
+  }
+
+  function setupTranscriptionControls(
+    modalElement: HTMLElement,
+    selectors: {
+      checkboxSelector: string
+      descriptionSelector: string
+      fieldSelector: string
+    }
+  ): void {
+    const descriptionTextarea = modalElement.querySelector(
+      selectors.descriptionSelector
+    ) as HTMLTextAreaElement
+    const transcriptionField = modalElement.querySelector(
+      selectors.fieldSelector
+    ) as HTMLElement
+    const transcriptionCheckbox = modalElement.querySelector(
+      selectors.checkboxSelector
+    ) as HTMLInputElement
+
+    if (exports.transcriptionsEnabled) {
+      transcriptionField.classList.remove('is-hidden')
+      const toggleDescriptionState = (): void => {
+        descriptionTextarea.disabled = transcriptionCheckbox.checked
+      }
+
+      transcriptionCheckbox.addEventListener('change', toggleDescriptionState)
+      toggleDescriptionState()
+    } else {
+      transcriptionField.classList.add('is-hidden')
+      transcriptionCheckbox.checked = false
+      descriptionTextarea.disabled = false
+    }
   }
 
   function renderAttachments(attachments: WorkOrderAttachment[]): void {
@@ -115,10 +160,19 @@ declare const bulmaJS: BulmaJS
 
       const fileIcon = getFileIcon(attachment.attachmentFileType)
       const isImage = attachment.attachmentFileType.startsWith('image/')
+
+      const attachmentDescriptionClassName =
+        'content is-size-7 mt-1 shiftlog-markdown-preview'
+
+      const attachmentDescriptionHTML = attachment.attachmentDescription
+        ? DOMPurify.sanitize(marked.parse(attachment.attachmentDescription))
+        : ''
+
       const hasIgnoredAttachmentNote =
         attachment.ignoredAttachmentNoteText !== undefined &&
         attachment.ignoredAttachmentNoteText !== null &&
         attachment.ignoredAttachmentNoteText !== ''
+
       const hasChecksum = hasFileChecksum(attachment.fileChecksum)
 
       const ignoredAttachmentTagHTML = hasIgnoredAttachmentNote
@@ -126,7 +180,7 @@ declare const bulmaJS: BulmaJS
           <button
             class="tag is-warning is-light ml-1 ignored-attachment-tag"
             data-file-checksum="${cityssm.escapeHTML(attachment.fileChecksum)}"
-            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText)}"
+            data-note-text="${cityssm.escapeHTML(attachment.ignoredAttachmentNoteText ?? '')}"
             type="button"
             title="Attachment is ignored in future imports"
           >
@@ -242,8 +296,8 @@ declare const bulmaJS: BulmaJS
                   )}
                 </small>
                 ${
-                  attachment.attachmentDescription
-                    ? `<br /><span class="is-size-7">${cityssm.escapeHTML(attachment.attachmentDescription)}</span>`
+                  attachmentDescriptionHTML
+                    ? `<div class="${attachmentDescriptionClassName}" style="max-width:40vw">${attachmentDescriptionHTML}</div>`
                     : ''
                 }
               </p>
@@ -412,13 +466,11 @@ declare const bulmaJS: BulmaJS
             '#ignoreWorkOrderAttachment--workOrderAttachmentId'
           ) as HTMLInputElement
         ).value = attachment.workOrderAttachmentId.toString()
-
         ;(
           modalElement.querySelector(
             '#ignoreWorkOrderAttachment--attachmentFileName'
           ) as HTMLParagraphElement
         ).textContent = attachment.attachmentFileName
-
         ;(
           modalElement.querySelector(
             '#ignoreWorkOrderAttachment--fileChecksum'
@@ -441,7 +493,10 @@ declare const bulmaJS: BulmaJS
     })
   }
 
-  function showIgnoredAttachmentModal(noteText: string, fileChecksum: string): void {
+  function showIgnoredAttachmentModal(
+    noteText: string,
+    fileChecksum: string
+  ): void {
     const fileChecksumFieldKey = 'fileChecksum'
     const fileChecksumSelector = `#viewIgnoredWorkOrderAttachment--${fileChecksumFieldKey}`
 
@@ -453,7 +508,6 @@ declare const bulmaJS: BulmaJS
         ;(
           modalElement.querySelector(fileChecksumSelector) as HTMLElement
         ).textContent = fileChecksum
-
         ;(
           modalElement.querySelector(
             '#viewIgnoredWorkOrderAttachment--noteText'
@@ -566,6 +620,13 @@ declare const bulmaJS: BulmaJS
               ? fileInput.files[0].name
               : 'No file selected'
         })
+
+        setupTranscriptionControls(modalElement, {
+          descriptionSelector: '#addWorkOrderAttachment--attachmentDescription',
+          fieldSelector:
+            '#field--addWorkOrderAttachment--generateWithTranscription',
+          checkboxSelector: '#addWorkOrderAttachment--generateWithTranscription'
+        })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -620,8 +681,17 @@ declare const bulmaJS: BulmaJS
         ;(
           modalElement.querySelector(
             '#editWorkOrderAttachment--attachmentDescription'
-          ) as HTMLInputElement
+          ) as HTMLTextAreaElement
         ).value = attachment.attachmentDescription
+
+        setupTranscriptionControls(modalElement, {
+          descriptionSelector:
+            '#editWorkOrderAttachment--attachmentDescription',
+          fieldSelector:
+            '#field--editWorkOrderAttachment--generateWithTranscription',
+          checkboxSelector:
+            '#editWorkOrderAttachment--generateWithTranscription'
+        })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
