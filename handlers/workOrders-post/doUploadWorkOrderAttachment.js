@@ -20,8 +20,7 @@ export default async function handler(request, response) {
         request.body.generateWithTranscription !== undefined;
     const attachmentDescription = generateWithTranscription
         ? TRANSCRIPTION_IN_PROGRESS
-        : (request.body.attachmentDescription ??
-            '');
+        : (request.body.attachmentDescription ?? '');
     const { filePath, fileSystemPath } = getAttachmentStoragePathForFileName(file.originalname);
     try {
         fs.renameSync(file.path, filePath);
