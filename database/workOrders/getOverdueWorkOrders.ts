@@ -41,6 +41,7 @@ export default async function getOverdueWorkOrders(
       SELECT
         TOP (@limit) w.workOrderId,
         w.workOrderNumber,
+        w.workOrderTitle,
         wType.workOrderType,
         wStatus.dataListItem AS workOrderStatusDataListItem,
         w.workOrderOpenDateTime,
