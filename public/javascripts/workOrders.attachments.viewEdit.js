@@ -157,7 +157,7 @@
               ${isImage
                 ? `
                     <img
-                      src="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/inline?maxWidth=96&maxHeight=96"
+                      src="${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/inline?maxWidth=96&maxHeight=96"
                       alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
                       style="object-fit: cover; width: 48px; height: 48px;"
                       loading="lazy"
@@ -177,7 +177,7 @@
               <p>
                 <strong>
                   <a
-                    href="${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/attachments/${attachment.workOrderAttachmentId}/download"
+                    href="${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download"
                     title="Download Attachment"
                     target="_blank"
                   >

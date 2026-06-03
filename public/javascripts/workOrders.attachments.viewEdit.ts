@@ -239,9 +239,9 @@ declare const marked: { parse: (markdownString: string) => string }
                 isImage
                   ? /* html */ `
                     <img
-                      src="${exports.shiftLog.urlPrefix}/${
+                      src="${exports.shiftLog.urlPrefix}/attachments/${
                         exports.shiftLog.workOrdersRouter
-                      }/attachments/${attachment.workOrderAttachmentId}/inline?maxWidth=96&maxHeight=96"
+                      }/${attachment.workOrderAttachmentId}/${attachment.accessKey}/inline?maxWidth=96&maxHeight=96"
                       alt="${cityssm.escapeHTML(attachment.attachmentFileName)}"
                       style="object-fit: cover; width: 48px; height: 48px;"
                       loading="lazy"
@@ -262,9 +262,9 @@ declare const marked: { parse: (markdownString: string) => string }
               <p>
                 <strong>
                   <a
-                    href="${exports.shiftLog.urlPrefix}/${
+                    href="${exports.shiftLog.urlPrefix}/attachments/${
                       exports.shiftLog.workOrdersRouter
-                    }/attachments/${attachment.workOrderAttachmentId}/download"
+                    }/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download"
                     title="Download Attachment"
                     target="_blank"
                   >

@@ -1,10 +1,11 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
-export default async function getWorkOrderAttachment(workOrderAttachmentId) {
+export default async function getWorkOrderAttachment(workOrderAttachmentId, accessKey) {
     const pool = await getShiftLogConnectionPool();
     const result = await pool
         .request()
         .input('workOrderAttachmentId', workOrderAttachmentId)
+        .input('accessKey', accessKey)
         .input('instance', getConfigProperty('application.instance'))
         .query(`
       SELECT
@@ -17,6 +18,7 @@ export default async function getWorkOrderAttachment(workOrderAttachmentId) {
         isWorkOrderThumbnail,
         fileSystemPath,
         fileChecksum,
+        accessKey,
         recordCreate_userName,
         recordCreate_dateTime,
         recordUpdate_userName,
@@ -28,6 +30,7 @@ export default async function getWorkOrderAttachment(workOrderAttachmentId) {
       WHERE
         workOrderAttachmentId = @workOrderAttachmentId
         AND recordDelete_dateTime IS NULL
+        AND accessKey = @accessKey
         AND workOrderId IN (
           SELECT
             workOrderId

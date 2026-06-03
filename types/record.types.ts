@@ -533,6 +533,8 @@ export interface WorkOrderAttachment extends BaseRecord {
   workOrderAttachmentId: number
   workOrderId: number
 
+  accessKey: string
+
   attachmentFileName: string
   attachmentFileType: string
   attachmentFileSizeInBytes: number

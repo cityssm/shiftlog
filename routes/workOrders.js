@@ -3,9 +3,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import handler_accomplishments from '../handlers/workOrders-get/accomplishments.js';
 import handler_calendar from '../handlers/workOrders-get/calendar.js';
-import handler_download from '../handlers/workOrders-get/download.js';
 import handler_edit from '../handlers/workOrders-get/edit.js';
-import handler_inline from '../handlers/workOrders-get/inline.js';
 import handler_map from '../handlers/workOrders-get/map.js';
 import handler_new from '../handlers/workOrders-get/new.js';
 import handler_planner from '../handlers/workOrders-get/planner.js';
@@ -145,9 +143,6 @@ router
     .post('/:workOrderId/doGetSuggestedTags', handler_doGetSuggestedTags)
     .post('/doAddWorkOrderTag', updateHandler, handler_doAddWorkOrderTag)
     .post('/doDeleteWorkOrderTag', updateHandler, handler_doDeleteWorkOrderTag);
-router
-    .get('/attachments/:workOrderAttachmentId/download', handler_download)
-    .get('/attachments/:workOrderAttachmentId/inline', handler_inline);
 router
     .get('/recovery', manageHandler, handler_recovery)
     .post('/doGetDeletedWorkOrders', manageHandler, handler_doGetDeletedWorkOrders)

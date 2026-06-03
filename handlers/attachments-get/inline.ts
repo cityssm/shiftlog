@@ -15,7 +15,7 @@ function encodeFilenameForContentDisposition(filename: string): string {
 
 export default async function handler(
   request: Request<
-    { workOrderAttachmentId: string },
+    { workOrderAttachmentId: string; accessKey: string },
     unknown,
     unknown,
     { maxHeight?: string; maxWidth?: string }
@@ -23,7 +23,8 @@ export default async function handler(
   response: Response
 ): Promise<void> {
   const attachment = await getWorkOrderAttachment(
-    request.params.workOrderAttachmentId
+    request.params.workOrderAttachmentId,
+    request.params.accessKey
   )
 
   if (attachment === undefined) {

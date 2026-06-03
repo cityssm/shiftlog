@@ -21,6 +21,7 @@ import { getCsrfSecret } from '../helpers/settings.helpers.js';
 import packageJson from '../package.json' with { type: 'json' };
 import routerAdmin from '../routes/admin.js';
 import routerApi from '../routes/api.js';
+import routerAttachments from '../routes/attachments.js';
 import routerDashboard from '../routes/dashboard.js';
 import routerLogin from '../routes/login.js';
 import routerShifts from '../routes/shifts.js';
@@ -176,6 +177,7 @@ app.get(`${urlPrefix}/`, sessionCheckHandler, (_request, response) => {
     response.redirect(`${urlPrefix}/dashboard`);
 });
 app.use(`${urlPrefix}/dashboard`, sessionCheckHandler, routerDashboard);
+app.use(`${urlPrefix}/attachments`, routerAttachments);
 if (configFunctions.getConfigProperty('shifts.isEnabled')) {
     app.use(`${urlPrefix}/${configFunctions.getConfigProperty('shifts.router')}`, sessionCheckHandler, (request, response, next) => {
         if (request.session.user?.userProperties.shifts.canView ?? false) {

@@ -23,6 +23,7 @@ export default async function getWorkOrderAttachments(
         isWorkOrderThumbnail,
         fileSystemPath,
         wao.fileChecksum,
+        wao.accessKey,
         iac.noteText AS ignoredAttachmentNoteText,
         wao.recordCreate_userName,
         wao.recordCreate_dateTime,

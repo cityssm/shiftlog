@@ -3,13 +3,15 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrderAttachment } from '../../types/record.types.js'
 
 export default async function getWorkOrderAttachment(
-  workOrderAttachmentId: number | string
+  workOrderAttachmentId: number | string,
+  accessKey: string
 ): Promise<WorkOrderAttachment | undefined> {
   const pool = await getShiftLogConnectionPool()
 
   const result = await pool
     .request()
     .input('workOrderAttachmentId', workOrderAttachmentId)
+    .input('accessKey', accessKey)
     .input('instance', getConfigProperty('application.instance'))
     .query<WorkOrderAttachment>(/* sql */ `
       SELECT
@@ -22,6 +24,7 @@ export default async function getWorkOrderAttachment(
         isWorkOrderThumbnail,
         fileSystemPath,
         fileChecksum,
+        accessKey,
         recordCreate_userName,
         recordCreate_dateTime,
         recordUpdate_userName,
@@ -33,6 +36,7 @@ export default async function getWorkOrderAttachment(
       WHERE
         workOrderAttachmentId = @workOrderAttachmentId
         AND recordDelete_dateTime IS NULL
+        AND accessKey = @accessKey
         AND workOrderId IN (
           SELECT
             workOrderId

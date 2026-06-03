@@ -8,7 +8,7 @@ function encodeFilenameForContentDisposition(filename) {
     return `filename*=UTF-8''${encodedFilename}`;
 }
 export default async function handler(request, response) {
-    const attachment = await getWorkOrderAttachment(request.params.workOrderAttachmentId);
+    const attachment = await getWorkOrderAttachment(request.params.workOrderAttachmentId, request.params.accessKey);
     if (attachment === undefined) {
         response.status(404).send('Attachment not found');
         return;

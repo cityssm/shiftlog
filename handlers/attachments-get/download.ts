@@ -13,11 +13,12 @@ function encodeFilenameForContentDisposition(filename: string): string {
 }
 
 export default async function handler(
-  request: Request<{ workOrderAttachmentId: string }>,
+  request: Request<{ workOrderAttachmentId: string; accessKey: string }>,
   response: Response
 ): Promise<void> {
   const attachment = await getWorkOrderAttachment(
-    request.params.workOrderAttachmentId
+    request.params.workOrderAttachmentId,
+    request.params.accessKey
   )
 
   if (attachment === undefined) {
