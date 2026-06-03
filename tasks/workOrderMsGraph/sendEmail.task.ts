@@ -251,6 +251,7 @@ export async function sendEmail(): Promise<void> {
 
     for (const milestone of workOrderMilestones) {
       if (
+        milestone.milestoneCompleteDateTime !== null &&
         milestone.assignedToEmailAddress !== null &&
         isEmailAddress(milestone.assignedToEmailAddress) &&
         !isNoReplyEmailAddress(milestone.assignedToEmailAddress) &&

@@ -143,7 +143,8 @@ export async function sendEmail() {
         }
         const workOrderMilestones = await getWorkOrderMilestones(workOrderId);
         for (const milestone of workOrderMilestones) {
-            if (milestone.assignedToEmailAddress !== null &&
+            if (milestone.milestoneCompleteDateTime !== null &&
+                milestone.assignedToEmailAddress !== null &&
                 isEmailAddress(milestone.assignedToEmailAddress) &&
                 !isNoReplyEmailAddress(milestone.assignedToEmailAddress) &&
                 !(await isBlockedToEmailAddress(milestone.assignedToEmailAddress)) &&
