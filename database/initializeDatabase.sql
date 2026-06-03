@@ -550,6 +550,7 @@ CREATE TABLE ShiftLog.WorkOrderAttachments (
   isWorkOrderThumbnail BIT NOT NULL DEFAULT 0,
   fileSystemPath VARCHAR(2000) NOT NULL,
   fileChecksum CHAR(64) NOT NULL DEFAULT '',
+  accessKey uniqueidentifier NOT NULL DEFAULT NEWID(),
   recordCreate_userName VARCHAR(30) NOT NULL,
   recordCreate_dateTime datetime NOT NULL DEFAULT getdate(),
   recordUpdate_userName VARCHAR(30) NOT NULL,
