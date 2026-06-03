@@ -15,6 +15,7 @@ import { JSDOM } from 'jsdom'
 import { marked } from 'marked'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
+import getWorkOrderMilestones from '../../database/workOrders/getWorkOrderMilestones.js'
 import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js'
 import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js'
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
@@ -239,6 +240,25 @@ export async function sendEmail(): Promise<void> {
       workOrder.assignedToEmailAddress !== lastUpdateUser
     ) {
       messageToSend.addBccRecipient(workOrder.assignedToEmailAddress)
+    }
+
+    /*
+     * Include any milestone assigned to email address in BCC if it's valid
+     * and the milestone wasn't the last to update the work order.
+     */
+
+    const workOrderMilestones = await getWorkOrderMilestones(workOrderId)
+
+    for (const milestone of workOrderMilestones) {
+      if (
+        milestone.assignedToEmailAddress !== null &&
+        isEmailAddress(milestone.assignedToEmailAddress) &&
+        !isNoReplyEmailAddress(milestone.assignedToEmailAddress) &&
+        !(await isBlockedToEmailAddress(milestone.assignedToEmailAddress)) &&
+        milestone.assignedToEmailAddress !== lastUpdateUser
+      ) {
+        messageToSend.addBccRecipient(milestone.assignedToEmailAddress)
+      }
     }
 
     /*

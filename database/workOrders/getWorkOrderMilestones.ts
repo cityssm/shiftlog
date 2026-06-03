@@ -3,7 +3,8 @@ import { getShiftLogConnectionPool } from '../../helpers/database.helpers.js'
 import type { WorkOrderMilestone } from '../../types/record.types.js'
 
 type WorkOrderMilestoneWithAssignedTo = WorkOrderMilestone & {
-  assignedToName?: string
+  assignedToName: string | null
+  assignedToEmailAddress: string | null
 }
 
 export default async function getWorkOrderMilestones(
@@ -25,6 +26,7 @@ export default async function getWorkOrderMilestones(
         m.milestoneCompleteDateTime,
         m.assignedToId,
         a.assignedToName,
+        a.assignedToEmailAddress,
         m.orderNumber,
         m.recordCreate_userName,
         m.recordCreate_dateTime,

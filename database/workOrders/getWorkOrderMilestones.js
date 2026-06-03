@@ -16,6 +16,7 @@ export default async function getWorkOrderMilestones(workOrderId) {
         m.milestoneCompleteDateTime,
         m.assignedToId,
         a.assignedToName,
+        a.assignedToEmailAddress,
         m.orderNumber,
         m.recordCreate_userName,
         m.recordCreate_dateTime,
