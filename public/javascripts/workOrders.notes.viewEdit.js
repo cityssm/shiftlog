@@ -103,9 +103,12 @@
                 attachmentSelectElement.append(optionElement);
             }
         });
+        const markdownTabsElement = noteTextareaElement.parentElement === null
+            ? null
+            : noteTextareaElement.parentElement.previousElementSibling;
         function isTextareaInPreviewMode() {
-            var _a;
-            return (_a = noteTextareaElement.parentElement) === null || _a === void 0 ? void 0 : _a.classList.contains('is-hidden');
+            const activeTabElement = markdownTabsElement === null || markdownTabsElement === void 0 ? void 0 : markdownTabsElement.querySelector('li.is-active');
+            return (activeTabElement === null || activeTabElement === void 0 ? void 0 : activeTabElement.dataset.panelId) === `${noteTextareaElement.id}--previewPanel`;
         }
         function resetAttachmentSelection() {
             for (const optionElement of attachmentSelectElement.options) {
@@ -120,10 +123,10 @@
             attachmentSelectElement.disabled = isTextareaInPreviewMode();
         }
         updateAttachmentSelectState();
-        modalElement.addEventListener('click', (event) => {
+        markdownTabsElement === null || markdownTabsElement === void 0 ? void 0 : markdownTabsElement.addEventListener('click', (event) => {
             const eventTarget = event.target;
-            if (eventTarget.closest('.tabs li a') !== null) {
-                globalThis.setTimeout(updateAttachmentSelectState, 0);
+            if (eventTarget.closest('a') !== null) {
+                updateAttachmentSelectState();
             }
         });
         attachmentSelectElement.addEventListener('change', () => {
@@ -661,10 +664,6 @@
                 else {
                     fieldsContainer.innerHTML = '';
                 }
-                initializeAttachmentMarkdownInsert(modalElement, {
-                    attachmentSelectSelector: '#editWorkOrderNote--attachmentSelect',
-                    noteTextareaSelector: '#editWorkOrderNote--noteText'
-                });
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -673,6 +672,10 @@
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateNote);
                 exports.shiftLog.initializeMarkdownTextarea(modalElement.querySelector('#editWorkOrderNote--noteText'));
+                initializeAttachmentMarkdownInsert(modalElement, {
+                    attachmentSelectSelector: '#editWorkOrderNote--attachmentSelect',
+                    noteTextareaSelector: '#editWorkOrderNote--noteText'
+                });
             },
             onremoved() {
                 exports.shiftLog.clearUnsavedChanges('modal');
@@ -923,10 +926,6 @@
                 noteTypeSelect.addEventListener('change', () => {
                     renderNoteTypeFields(noteTypeSelect.value);
                 });
-                initializeAttachmentMarkdownInsert(modalElement, {
-                    attachmentSelectSelector: '#addWorkOrderNote--attachmentSelect',
-                    noteTextareaSelector: '#addWorkOrderNote--noteText'
-                });
             },
             onshown(modalElement, _closeModalFunction) {
                 bulmaJS.toggleHtmlClipped();
@@ -936,6 +935,10 @@
                     ?.addEventListener('submit', doAddNote);
                 const addNoteTextareaElement = modalElement.querySelector('#addWorkOrderNote--noteText');
                 exports.shiftLog.initializeMarkdownTextarea(addNoteTextareaElement);
+                initializeAttachmentMarkdownInsert(modalElement, {
+                    attachmentSelectSelector: '#addWorkOrderNote--attachmentSelect',
+                    noteTextareaSelector: '#addWorkOrderNote--noteText'
+                });
                 addNoteTextareaElement.focus();
             },
             onremoved() {

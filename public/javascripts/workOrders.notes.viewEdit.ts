@@ -205,8 +205,18 @@ declare const marked: { parse: (markdownString: string) => string }
       }
     )
 
+    const markdownTabsElement = noteTextareaElement.parentElement
+      ?.previousElementSibling as HTMLElement | null
+
     function isTextareaInPreviewMode(): boolean {
-      return noteTextareaElement.parentElement?.classList.contains('is-hidden') ?? false
+      const activeTabElement = markdownTabsElement?.querySelector(
+        'li.is-active'
+      ) as HTMLLIElement | null
+
+      return (
+        activeTabElement?.dataset.panelId ===
+        `${noteTextareaElement.id}--previewPanel`
+      )
     }
 
     function resetAttachmentSelection(): void {
@@ -227,10 +237,10 @@ declare const marked: { parse: (markdownString: string) => string }
 
     updateAttachmentSelectState()
 
-    modalElement.addEventListener('click', (event) => {
+    markdownTabsElement?.addEventListener('click', (event) => {
       const eventTarget = event.target as HTMLElement
-      if (eventTarget.closest('.tabs li a') !== null) {
-        globalThis.setTimeout(updateAttachmentSelectState, 0)
+      if (eventTarget.closest('a') !== null) {
+        updateAttachmentSelectState()
       }
     })
 
@@ -976,10 +986,6 @@ declare const marked: { parse: (markdownString: string) => string }
           fieldsContainer.innerHTML = ''
         }
 
-        initializeAttachmentMarkdownInsert(modalElement, {
-          attachmentSelectSelector: '#editWorkOrderNote--attachmentSelect',
-          noteTextareaSelector: '#editWorkOrderNote--noteText'
-        })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -992,6 +998,10 @@ declare const marked: { parse: (markdownString: string) => string }
             '#editWorkOrderNote--noteText'
           ) as HTMLTextAreaElement
         )
+        initializeAttachmentMarkdownInsert(modalElement, {
+          attachmentSelectSelector: '#editWorkOrderNote--attachmentSelect',
+          noteTextareaSelector: '#editWorkOrderNote--noteText'
+        })
       },
 
       onremoved() {
@@ -1332,10 +1342,6 @@ declare const marked: { parse: (markdownString: string) => string }
           renderNoteTypeFields(noteTypeSelect.value)
         })
 
-        initializeAttachmentMarkdownInsert(modalElement, {
-          attachmentSelectSelector: '#addWorkOrderNote--attachmentSelect',
-          noteTextareaSelector: '#addWorkOrderNote--noteText'
-        })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -1350,6 +1356,10 @@ declare const marked: { parse: (markdownString: string) => string }
         ) as HTMLTextAreaElement
 
         exports.shiftLog.initializeMarkdownTextarea(addNoteTextareaElement)
+        initializeAttachmentMarkdownInsert(modalElement, {
+          attachmentSelectSelector: '#addWorkOrderNote--attachmentSelect',
+          noteTextareaSelector: '#addWorkOrderNote--noteText'
+        })
         addNoteTextareaElement.focus()
       },
 
