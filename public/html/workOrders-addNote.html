@@ -63,10 +63,14 @@
               </label>
               <div class="control">
                 <div class="select is-fullwidth is-multiple">
-                  <select id="addWorkOrderNote--attachmentSelect" multiple></select>
+                  <select
+                    id="addWorkOrderNote--attachmentSelect"
+                    aria-describedby="addWorkOrderNote--attachmentSelectHelp"
+                    multiple
+                  ></select>
                 </div>
               </div>
-              <p class="help">
+              <p class="help" id="addWorkOrderNote--attachmentSelectHelp">
                 Select an attachment to insert a markdown download link.
               </p>
             </div>
