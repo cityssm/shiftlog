@@ -12,8 +12,10 @@ import type { DoGetDataListItemsResponse } from '../../handlers/dashboard-post/d
 import type { DoCreateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doCreateWorkOrderNote.js'
 import type { DoDeleteWorkOrderNoteResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderNote.js'
 import type { DoGetNoteTypesResponse } from '../../handlers/workOrders-post/doGetNoteTypes.js'
+import type { DoGetWorkOrderAttachmentsResponse } from '../../handlers/workOrders-post/doGetWorkOrderAttachments.js'
 import type { DoGetWorkOrderNotesResponse } from '../../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import type { DoUpdateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderNote.js'
+import type { WorkOrderAttachment } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -41,6 +43,25 @@ declare const marked: { parse: (markdownString: string) => string }
           ) as HTMLInputElement
         ).value
 
+  const markdownSpecialCharacters = [
+    '\\',
+    '`',
+    '*',
+    '_',
+    '{',
+    '}',
+    '[',
+    ']',
+    '(',
+    ')',
+    '#',
+    '+',
+    '-',
+    '.',
+    '!',
+    '|'
+  ]
+
   /*
    * Notes functionality
    */
@@ -64,6 +85,189 @@ declare const marked: { parse: (markdownString: string) => string }
     }
 
     return `${firstParagraph.slice(0, maxLength)}…`
+  }
+
+  function buildAttachmentDownloadMarkdown(
+    attachment: WorkOrderAttachment
+  ): string {
+    let escapedAttachmentFileName = attachment.attachmentFileName
+
+    for (const specialCharacter of markdownSpecialCharacters) {
+      escapedAttachmentFileName = escapedAttachmentFileName.replaceAll(
+        specialCharacter,
+        `\\${specialCharacter}`
+      )
+    }
+
+    return `[${escapedAttachmentFileName}](${buildAttachmentDownloadUrl(attachment)})`
+  }
+
+  function buildAttachmentDownloadUrl(attachment: WorkOrderAttachment): string {
+    return new URL(
+      `${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download`,
+      globalThis.location.origin
+    ).toString()
+  }
+
+  function insertTextIntoTextarea(
+    textareaElement: HTMLTextAreaElement,
+    textToInsert: string
+  ): void {
+    const selectionStart = textareaElement.selectionStart
+    const selectionEnd = textareaElement.selectionEnd
+
+    const existingText = textareaElement.value
+    const beforeText = existingText.slice(0, selectionStart)
+    const afterText = existingText.slice(selectionEnd)
+
+    const shouldAddLeadingLineBreak =
+      beforeText.length > 0 && !beforeText.endsWith('\n')
+
+    let insertText = textToInsert
+
+    if (shouldAddLeadingLineBreak) {
+      insertText = `\n${insertText}`
+    }
+
+    if (!insertText.endsWith('\n')) {
+      insertText = `${insertText}\n`
+    }
+
+    textareaElement.value = `${beforeText}${insertText}${afterText}`
+
+    const cursorPosition = beforeText.length + insertText.length
+    textareaElement.setSelectionRange(cursorPosition, cursorPosition)
+    textareaElement.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+
+  function initializeAttachmentMarkdownInsert(
+    modalElement: HTMLElement,
+    options: {
+      attachmentSelectSelector: string
+      noteTextareaSelector: string
+    }
+  ): void {
+    const attachmentSelectElement = modalElement.querySelector(
+      options.attachmentSelectSelector
+    ) as HTMLSelectElement | null
+
+    const noteTextareaElement = modalElement.querySelector(
+      options.noteTextareaSelector
+    ) as HTMLTextAreaElement | null
+
+    if (attachmentSelectElement === null || noteTextareaElement === null) {
+      return
+    }
+
+    attachmentSelectElement.innerHTML = ''
+
+    const loadingOption = document.createElement('option')
+    loadingOption.value = ''
+    loadingOption.textContent = 'Loading attachments...'
+    loadingOption.disabled = true
+    loadingOption.selected = true
+    attachmentSelectElement.append(loadingOption)
+
+    cityssm.postJSON(
+      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`,
+      {},
+      (rawResponseJSON) => {
+        const responseJSON =
+          rawResponseJSON as Partial<DoGetWorkOrderAttachmentsResponse>
+        attachmentSelectElement.innerHTML = ''
+
+        if (!Array.isArray(responseJSON.attachments)) {
+          const errorOption = document.createElement('option')
+          errorOption.value = ''
+          errorOption.textContent = 'Unable to load attachments.'
+          errorOption.disabled = true
+          errorOption.selected = true
+          attachmentSelectElement.append(errorOption)
+          return
+        }
+
+        const placeholderOption = document.createElement('option')
+        placeholderOption.value = ''
+        placeholderOption.textContent =
+          responseJSON.attachments.length === 0
+            ? 'No attachments available.'
+            : 'Select an attachment to insert...'
+        placeholderOption.disabled = true
+        placeholderOption.selected = true
+        attachmentSelectElement.append(placeholderOption)
+
+        for (const attachment of responseJSON.attachments) {
+          const optionElement = document.createElement('option')
+          optionElement.value = buildAttachmentDownloadMarkdown(attachment)
+          optionElement.textContent = attachment.attachmentFileName
+          attachmentSelectElement.append(optionElement)
+        }
+      }
+    )
+
+    const markdownTabsElement = noteTextareaElement.parentElement
+      ?.previousElementSibling as HTMLElement | null
+
+    function isTextareaInPreviewMode(): boolean {
+      const activeTabElement = markdownTabsElement?.querySelector(
+        'li.is-active'
+      ) as HTMLLIElement | null
+
+      return (
+        activeTabElement?.dataset.panelId ===
+        `${noteTextareaElement?.id}--previewPanel`
+      )
+    }
+
+    function resetAttachmentSelection(): void {
+      for (const optionElement of attachmentSelectElement.options) {
+        optionElement.selected = false
+      }
+
+      const placeholderOptionElement = attachmentSelectElement.options.item(0)
+
+      if (placeholderOptionElement !== null) {
+        placeholderOptionElement.selected = true
+      }
+    }
+
+    function updateAttachmentSelectState(): void {
+      attachmentSelectElement.disabled = isTextareaInPreviewMode()
+    }
+
+    updateAttachmentSelectState()
+
+    markdownTabsElement?.addEventListener('click', (event) => {
+      const eventTarget = event.target as HTMLElement
+      if (eventTarget.closest('a') !== null) {
+        updateAttachmentSelectState()
+      }
+    })
+
+    attachmentSelectElement.addEventListener('change', () => {
+      if (isTextareaInPreviewMode()) {
+        resetAttachmentSelection()
+        return
+      }
+
+      const selectedMarkdownValues = [
+        ...attachmentSelectElement.selectedOptions
+      ]
+        .map((optionElement) => optionElement.value)
+        .filter((optionValue) => optionValue !== '')
+
+      if (selectedMarkdownValues.length === 0) {
+        return
+      }
+
+      for (const selectedMarkdownValue of selectedMarkdownValues) {
+        insertTextIntoTextarea(noteTextareaElement, selectedMarkdownValue)
+      }
+
+      noteTextareaElement.focus()
+
+      resetAttachmentSelection()
+    })
   }
 
   /**
@@ -133,7 +337,9 @@ declare const marked: { parse: (markdownString: string) => string }
           note.recordCreate_userName === exports.shiftLog.userName)
 
       const truncatedText = truncateText(note.noteText.trim(), 200)
-      const markdownPreviewHTML = DOMPurify.sanitize(marked.parse(truncatedText))
+      const markdownPreviewHTML = DOMPurify.sanitize(
+        marked.parse(truncatedText)
+      )
 
       const noteTypeLabel =
         note.noteType !== null && note.noteType !== undefined
@@ -795,6 +1001,10 @@ declare const marked: { parse: (markdownString: string) => string }
             '#editWorkOrderNote--noteText'
           ) as HTMLTextAreaElement
         )
+        initializeAttachmentMarkdownInsert(modalElement, {
+          attachmentSelectSelector: '#editWorkOrderNote--attachmentSelect',
+          noteTextareaSelector: '#editWorkOrderNote--noteText'
+        })
       },
 
       onremoved() {
@@ -1148,6 +1358,10 @@ declare const marked: { parse: (markdownString: string) => string }
         ) as HTMLTextAreaElement
 
         exports.shiftLog.initializeMarkdownTextarea(addNoteTextareaElement)
+        initializeAttachmentMarkdownInsert(modalElement, {
+          attachmentSelectSelector: '#addWorkOrderNote--attachmentSelect',
+          noteTextareaSelector: '#addWorkOrderNote--noteText'
+        })
         addNoteTextareaElement.focus()
       },
 

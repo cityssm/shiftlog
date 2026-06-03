@@ -3,6 +3,24 @@
     const workOrderId = workOrderFormElement === null
         ? ''
         : workOrderFormElement.querySelector('#workOrder--workOrderId').value;
+    const markdownSpecialCharacters = [
+        '\\',
+        '`',
+        '*',
+        '_',
+        '{',
+        '}',
+        '[',
+        ']',
+        '(',
+        ')',
+        '#',
+        '+',
+        '-',
+        '.',
+        '!',
+        '|'
+    ];
     let noteTypes = [];
     const notesContainerElement = document.querySelector('#container--notes');
     if (notesContainerElement === null) {
@@ -14,6 +32,122 @@
             return firstParagraph;
         }
         return `${firstParagraph.slice(0, maxLength)}…`;
+    }
+    function buildAttachmentDownloadMarkdown(attachment) {
+        let escapedAttachmentFileName = attachment.attachmentFileName;
+        for (const specialCharacter of markdownSpecialCharacters) {
+            escapedAttachmentFileName = escapedAttachmentFileName.replaceAll(specialCharacter, `\\${specialCharacter}`);
+        }
+        return `[${escapedAttachmentFileName}](${buildAttachmentDownloadUrl(attachment)})`;
+    }
+    function buildAttachmentDownloadUrl(attachment) {
+        return new URL(`${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download`, globalThis.location.origin).toString();
+    }
+    function insertTextIntoTextarea(textareaElement, textToInsert) {
+        const selectionStart = textareaElement.selectionStart;
+        const selectionEnd = textareaElement.selectionEnd;
+        const existingText = textareaElement.value;
+        const beforeText = existingText.slice(0, selectionStart);
+        const afterText = existingText.slice(selectionEnd);
+        const shouldAddLeadingLineBreak = beforeText.length > 0 && !beforeText.endsWith('\n');
+        let insertText = textToInsert;
+        if (shouldAddLeadingLineBreak) {
+            insertText = `\n${insertText}`;
+        }
+        if (!insertText.endsWith('\n')) {
+            insertText = `${insertText}\n`;
+        }
+        textareaElement.value = `${beforeText}${insertText}${afterText}`;
+        const cursorPosition = beforeText.length + insertText.length;
+        textareaElement.setSelectionRange(cursorPosition, cursorPosition);
+        textareaElement.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    function initializeAttachmentMarkdownInsert(modalElement, options) {
+        const attachmentSelectElement = modalElement.querySelector(options.attachmentSelectSelector);
+        const noteTextareaElement = modalElement.querySelector(options.noteTextareaSelector);
+        if (attachmentSelectElement === null || noteTextareaElement === null) {
+            return;
+        }
+        attachmentSelectElement.innerHTML = '';
+        const loadingOption = document.createElement('option');
+        loadingOption.value = '';
+        loadingOption.textContent = 'Loading attachments...';
+        loadingOption.disabled = true;
+        loadingOption.selected = true;
+        attachmentSelectElement.append(loadingOption);
+        cityssm.postJSON(`${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`, {}, (rawResponseJSON) => {
+            const responseJSON = rawResponseJSON;
+            attachmentSelectElement.innerHTML = '';
+            if (!Array.isArray(responseJSON.attachments)) {
+                const errorOption = document.createElement('option');
+                errorOption.value = '';
+                errorOption.textContent = 'Unable to load attachments.';
+                errorOption.disabled = true;
+                errorOption.selected = true;
+                attachmentSelectElement.append(errorOption);
+                return;
+            }
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent =
+                responseJSON.attachments.length === 0
+                    ? 'No attachments available.'
+                    : 'Select an attachment to insert...';
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            attachmentSelectElement.append(placeholderOption);
+            for (const attachment of responseJSON.attachments) {
+                const optionElement = document.createElement('option');
+                optionElement.value = buildAttachmentDownloadMarkdown(attachment);
+                optionElement.textContent = attachment.attachmentFileName;
+                attachmentSelectElement.append(optionElement);
+            }
+        });
+        const markdownTabsElement = noteTextareaElement.parentElement
+            ?.previousElementSibling;
+        function isTextareaInPreviewMode() {
+            const activeTabElement = markdownTabsElement?.querySelector('li.is-active');
+            return (activeTabElement?.dataset.panelId ===
+                `${noteTextareaElement?.id}--previewPanel`);
+        }
+        function resetAttachmentSelection() {
+            for (const optionElement of attachmentSelectElement.options) {
+                optionElement.selected = false;
+            }
+            const placeholderOptionElement = attachmentSelectElement.options.item(0);
+            if (placeholderOptionElement !== null) {
+                placeholderOptionElement.selected = true;
+            }
+        }
+        function updateAttachmentSelectState() {
+            attachmentSelectElement.disabled = isTextareaInPreviewMode();
+        }
+        updateAttachmentSelectState();
+        markdownTabsElement?.addEventListener('click', (event) => {
+            const eventTarget = event.target;
+            if (eventTarget.closest('a') !== null) {
+                updateAttachmentSelectState();
+            }
+        });
+        attachmentSelectElement.addEventListener('change', () => {
+            if (isTextareaInPreviewMode()) {
+                resetAttachmentSelection();
+                return;
+            }
+            const selectedMarkdownValues = [
+                ...attachmentSelectElement.selectedOptions
+            ]
+                .map((optionElement) => optionElement.value)
+                .filter((optionValue) => optionValue !== '');
+            if (selectedMarkdownValues.length === 0) {
+                return;
+            }
+            for (const selectedMarkdownValue of selectedMarkdownValues) {
+                insertTextIntoTextarea(noteTextareaElement, selectedMarkdownValue);
+            }
+            noteTextareaElement.focus();
+            resetAttachmentSelection();
+        });
     }
     function loadDataLists(dataListKeys, callback) {
         if (dataListKeys.size === 0) {
@@ -540,6 +674,10 @@
                     .querySelector('form')
                     ?.addEventListener('submit', doUpdateNote);
                 exports.shiftLog.initializeMarkdownTextarea(modalElement.querySelector('#editWorkOrderNote--noteText'));
+                initializeAttachmentMarkdownInsert(modalElement, {
+                    attachmentSelectSelector: '#editWorkOrderNote--attachmentSelect',
+                    noteTextareaSelector: '#editWorkOrderNote--noteText'
+                });
             },
             onremoved() {
                 exports.shiftLog.clearUnsavedChanges('modal');
@@ -799,6 +937,10 @@
                     ?.addEventListener('submit', doAddNote);
                 const addNoteTextareaElement = modalElement.querySelector('#addWorkOrderNote--noteText');
                 exports.shiftLog.initializeMarkdownTextarea(addNoteTextareaElement);
+                initializeAttachmentMarkdownInsert(modalElement, {
+                    attachmentSelectSelector: '#addWorkOrderNote--attachmentSelect',
+                    noteTextareaSelector: '#addWorkOrderNote--noteText'
+                });
                 addNoteTextareaElement.focus();
             },
             onremoved() {

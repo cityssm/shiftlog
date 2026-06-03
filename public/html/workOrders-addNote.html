@@ -5,7 +5,7 @@
   aria-label="Add Note"
 >
   <div class="modal-background"></div>
-  <div class="modal-card">
+  <div class="modal-card" style="width:1000px">
     <div class="modal-card-head">
       <p class="modal-card-title">
         Add
@@ -38,19 +38,42 @@
           </p>
         </div>
 
-        <div class="field">
-          <label class="label" for="addWorkOrderNote--noteText">
-            Note Text
-          </label>
-          <div class="control">
-            <textarea
-              class="textarea"
-              id="addWorkOrderNote--noteText"
-              name="noteText"
-              placeholder="Enter note text..."
-              rows="8"
-              required
-            ></textarea>
+        <div class="columns is-variable is-4">
+          <div class="column is-three-quarters">
+            <div class="field">
+              <label class="label" for="addWorkOrderNote--noteText">
+                Note Text
+              </label>
+              <div class="control">
+                <textarea
+                  class="textarea"
+                  id="addWorkOrderNote--noteText"
+                  name="noteText"
+                  placeholder="Enter note text..."
+                  rows="8"
+                  required
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label" for="addWorkOrderNote--attachmentSelect">
+                Attachments
+              </label>
+              <div class="control">
+                <div class="select is-fullwidth is-multiple">
+                  <select
+                    id="addWorkOrderNote--attachmentSelect"
+                    aria-describedby="addWorkOrderNote--attachmentSelectHelp"
+                    multiple
+                  ></select>
+                </div>
+              </div>
+              <p class="help" id="addWorkOrderNote--attachmentSelectHelp">
+                Select an attachment to insert a markdown download link.
+              </p>
+            </div>
           </div>
         </div>
 
