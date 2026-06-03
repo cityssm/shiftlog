@@ -103,7 +103,10 @@ declare const marked: { parse: (markdownString: string) => string }
   }
 
   function buildAttachmentDownloadUrl(attachment: WorkOrderAttachment): string {
-    return `${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download`
+    return new URL(
+      `${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download`,
+      globalThis.location.origin
+    ).toString()
   }
 
   function insertTextIntoTextarea(
@@ -202,7 +205,41 @@ declare const marked: { parse: (markdownString: string) => string }
       }
     )
 
+    function isTextareaInPreviewMode(): boolean {
+      return noteTextareaElement.parentElement?.classList.contains('is-hidden') ?? false
+    }
+
+    function resetAttachmentSelection(): void {
+      for (const optionElement of attachmentSelectElement.options) {
+        optionElement.selected = false
+      }
+
+      const placeholderOptionElement = attachmentSelectElement.options.item(0)
+
+      if (placeholderOptionElement !== null) {
+        placeholderOptionElement.selected = true
+      }
+    }
+
+    function updateAttachmentSelectState(): void {
+      attachmentSelectElement.disabled = isTextareaInPreviewMode()
+    }
+
+    updateAttachmentSelectState()
+
+    modalElement.addEventListener('click', (event) => {
+      const eventTarget = event.target as HTMLElement
+      if (eventTarget.closest('.tabs li a') !== null) {
+        globalThis.setTimeout(updateAttachmentSelectState, 0)
+      }
+    })
+
     attachmentSelectElement.addEventListener('change', () => {
+      if (isTextareaInPreviewMode()) {
+        resetAttachmentSelection()
+        return
+      }
+
       const selectedMarkdownValues = [...attachmentSelectElement.selectedOptions]
         .map((optionElement) => optionElement.value)
         .filter((optionValue) => optionValue !== '')
@@ -217,15 +254,7 @@ declare const marked: { parse: (markdownString: string) => string }
 
       noteTextareaElement.focus()
 
-      for (const optionElement of attachmentSelectElement.options) {
-        optionElement.selected = false
-      }
-
-      const placeholderOptionElement = attachmentSelectElement.options.item(0)
-
-      if (placeholderOptionElement !== null) {
-        placeholderOptionElement.selected = true
-      }
+      resetAttachmentSelection()
     })
   }
 

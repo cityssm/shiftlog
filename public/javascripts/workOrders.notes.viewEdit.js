@@ -41,7 +41,7 @@
         return `[${escapedAttachmentFileName}](${buildAttachmentDownloadUrl(attachment)})`;
     }
     function buildAttachmentDownloadUrl(attachment) {
-        return `${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download`;
+        return new URL(`${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download`, globalThis.location.origin).toString();
     }
     function insertTextIntoTextarea(textareaElement, textToInsert) {
         const selectionStart = textareaElement.selectionStart;
@@ -103,7 +103,34 @@
                 attachmentSelectElement.append(optionElement);
             }
         });
+        function isTextareaInPreviewMode() {
+            var _a;
+            return (_a = noteTextareaElement.parentElement) === null || _a === void 0 ? void 0 : _a.classList.contains('is-hidden');
+        }
+        function resetAttachmentSelection() {
+            for (const optionElement of attachmentSelectElement.options) {
+                optionElement.selected = false;
+            }
+            const placeholderOptionElement = attachmentSelectElement.options.item(0);
+            if (placeholderOptionElement !== null) {
+                placeholderOptionElement.selected = true;
+            }
+        }
+        function updateAttachmentSelectState() {
+            attachmentSelectElement.disabled = isTextareaInPreviewMode();
+        }
+        updateAttachmentSelectState();
+        modalElement.addEventListener('click', (event) => {
+            const eventTarget = event.target;
+            if (eventTarget.closest('.tabs li a') !== null) {
+                globalThis.setTimeout(updateAttachmentSelectState, 0);
+            }
+        });
         attachmentSelectElement.addEventListener('change', () => {
+            if (isTextareaInPreviewMode()) {
+                resetAttachmentSelection();
+                return;
+            }
             const selectedMarkdownValues = [...attachmentSelectElement.selectedOptions]
                 .map((optionElement) => optionElement.value)
                 .filter((optionValue) => optionValue !== '');
@@ -114,13 +141,7 @@
                 insertTextIntoTextarea(noteTextareaElement, selectedMarkdownValue);
             }
             noteTextareaElement.focus();
-            for (const optionElement of attachmentSelectElement.options) {
-                optionElement.selected = false;
-            }
-            const placeholderOptionElement = attachmentSelectElement.options.item(0);
-            if (placeholderOptionElement !== null) {
-                placeholderOptionElement.selected = true;
-            }
+            resetAttachmentSelection();
         });
     }
     function loadDataLists(dataListKeys, callback) {
