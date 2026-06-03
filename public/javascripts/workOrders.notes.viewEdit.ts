@@ -11,9 +11,11 @@ import type {
 import type { DoGetDataListItemsResponse } from '../../handlers/dashboard-post/doGetDataListItems.js'
 import type { DoCreateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doCreateWorkOrderNote.js'
 import type { DoDeleteWorkOrderNoteResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderNote.js'
+import type { DoGetWorkOrderAttachmentsResponse } from '../../handlers/workOrders-post/doGetWorkOrderAttachments.js'
 import type { DoGetNoteTypesResponse } from '../../handlers/workOrders-post/doGetNoteTypes.js'
 import type { DoGetWorkOrderNotesResponse } from '../../handlers/workOrders-post/doGetWorkOrderNotes.js'
 import type { DoUpdateWorkOrderNoteResponse } from '../../handlers/workOrders-post/doUpdateWorkOrderNote.js'
+import type { WorkOrderAttachment } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
@@ -64,6 +66,115 @@ declare const marked: { parse: (markdownString: string) => string }
     }
 
     return `${firstParagraph.slice(0, maxLength)}…`
+  }
+
+  function buildAttachmentDownloadMarkdown(
+    attachment: WorkOrderAttachment
+  ): string {
+    return `[${attachment.attachmentFileName}](${exports.shiftLog.urlPrefix}/attachments/${exports.shiftLog.workOrdersRouter}/${attachment.workOrderAttachmentId}/${attachment.accessKey}/download)`
+  }
+
+  function insertTextIntoTextarea(
+    textareaElement: HTMLTextAreaElement,
+    textToInsert: string
+  ): void {
+    const selectionStart = textareaElement.selectionStart
+    const selectionEnd = textareaElement.selectionEnd
+
+    const existingText = textareaElement.value
+    const beforeText = existingText.slice(0, selectionStart)
+    const afterText = existingText.slice(selectionEnd)
+
+    const shouldAddLeadingLineBreak =
+      beforeText.length > 0 && !beforeText.endsWith('\n')
+
+    const shouldAddTrailingLineBreak =
+      afterText.length > 0 && !afterText.startsWith('\n')
+
+    let insertText = textToInsert
+
+    if (shouldAddLeadingLineBreak) {
+      insertText = `\n${insertText}`
+    }
+
+    if (shouldAddTrailingLineBreak) {
+      insertText = `${insertText}\n`
+    }
+
+    if (!insertText.endsWith('\n')) {
+      insertText = `${insertText}\n`
+    }
+
+    textareaElement.value = `${beforeText}${insertText}${afterText}`
+
+    const cursorPosition = beforeText.length + insertText.length
+    textareaElement.setSelectionRange(cursorPosition, cursorPosition)
+    textareaElement.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+
+  function initializeAttachmentMarkdownInsert(
+    modalElement: HTMLElement,
+    options: {
+      attachmentSelectSelector: string
+      noteTextareaSelector: string
+    }
+  ): void {
+    const attachmentSelectElement = modalElement.querySelector(
+      options.attachmentSelectSelector
+    ) as HTMLSelectElement | null
+
+    const noteTextareaElement = modalElement.querySelector(
+      options.noteTextareaSelector
+    ) as HTMLTextAreaElement | null
+
+    if (attachmentSelectElement === null || noteTextareaElement === null) {
+      return
+    }
+
+    attachmentSelectElement.innerHTML = ''
+
+    const loadingOption = document.createElement('option')
+    loadingOption.value = ''
+    loadingOption.textContent = 'Loading attachments...'
+    loadingOption.disabled = true
+    loadingOption.selected = true
+    attachmentSelectElement.append(loadingOption)
+
+    cityssm.postJSON(
+      `${exports.shiftLog.urlPrefix}/${exports.shiftLog.workOrdersRouter}/${workOrderId}/doGetWorkOrderAttachments`,
+      {},
+      (rawResponseJSON) => {
+        const responseJSON = rawResponseJSON as DoGetWorkOrderAttachmentsResponse
+        attachmentSelectElement.innerHTML = ''
+
+        const placeholderOption = document.createElement('option')
+        placeholderOption.value = ''
+        placeholderOption.textContent =
+          responseJSON.attachments.length === 0
+            ? 'No attachments available.'
+            : 'Select an attachment to insert...'
+        placeholderOption.disabled = true
+        placeholderOption.selected = true
+        attachmentSelectElement.append(placeholderOption)
+
+        for (const attachment of responseJSON.attachments) {
+          const optionElement = document.createElement('option')
+          optionElement.value = buildAttachmentDownloadMarkdown(attachment)
+          optionElement.textContent = attachment.attachmentFileName
+          attachmentSelectElement.append(optionElement)
+        }
+      }
+    )
+
+    attachmentSelectElement.addEventListener('change', () => {
+      if (attachmentSelectElement.value === '') {
+        return
+      }
+
+      insertTextIntoTextarea(noteTextareaElement, attachmentSelectElement.value)
+      noteTextareaElement.focus()
+      attachmentSelectElement.selectedIndex = 0
+    })
   }
 
   /**
@@ -783,6 +894,11 @@ declare const marked: { parse: (markdownString: string) => string }
         } else {
           fieldsContainer.innerHTML = ''
         }
+
+        initializeAttachmentMarkdownInsert(modalElement, {
+          attachmentSelectSelector: '#editWorkOrderNote--attachmentSelect',
+          noteTextareaSelector: '#editWorkOrderNote--noteText'
+        })
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -1133,6 +1249,11 @@ declare const marked: { parse: (markdownString: string) => string }
         // Add event listener for note type change
         noteTypeSelect.addEventListener('change', () => {
           renderNoteTypeFields(noteTypeSelect.value)
+        })
+
+        initializeAttachmentMarkdownInsert(modalElement, {
+          attachmentSelectSelector: '#addWorkOrderNote--attachmentSelect',
+          noteTextareaSelector: '#addWorkOrderNote--noteText'
         })
       },
       onshown(modalElement, _closeModalFunction) {
