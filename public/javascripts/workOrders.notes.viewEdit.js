@@ -103,12 +103,12 @@
                 attachmentSelectElement.append(optionElement);
             }
         });
-        const markdownTabsElement = noteTextareaElement.parentElement === null
-            ? null
-            : noteTextareaElement.parentElement.previousElementSibling;
+        const markdownTabsElement = noteTextareaElement.parentElement
+            ?.previousElementSibling;
         function isTextareaInPreviewMode() {
-            const activeTabElement = markdownTabsElement === null || markdownTabsElement === void 0 ? void 0 : markdownTabsElement.querySelector('li.is-active');
-            return (activeTabElement === null || activeTabElement === void 0 ? void 0 : activeTabElement.dataset.panelId) === `${noteTextareaElement.id}--previewPanel`;
+            const activeTabElement = markdownTabsElement?.querySelector('li.is-active');
+            return (activeTabElement?.dataset.panelId ===
+                `${noteTextareaElement?.id}--previewPanel`);
         }
         function resetAttachmentSelection() {
             for (const optionElement of attachmentSelectElement.options) {
@@ -123,7 +123,7 @@
             attachmentSelectElement.disabled = isTextareaInPreviewMode();
         }
         updateAttachmentSelectState();
-        markdownTabsElement === null || markdownTabsElement === void 0 ? void 0 : markdownTabsElement.addEventListener('click', (event) => {
+        markdownTabsElement?.addEventListener('click', (event) => {
             const eventTarget = event.target;
             if (eventTarget.closest('a') !== null) {
                 updateAttachmentSelectState();
@@ -134,7 +134,9 @@
                 resetAttachmentSelection();
                 return;
             }
-            const selectedMarkdownValues = [...attachmentSelectElement.selectedOptions]
+            const selectedMarkdownValues = [
+                ...attachmentSelectElement.selectedOptions
+            ]
                 .map((optionElement) => optionElement.value)
                 .filter((optionValue) => optionValue !== '');
             if (selectedMarkdownValues.length === 0) {

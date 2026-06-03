@@ -215,7 +215,7 @@ declare const marked: { parse: (markdownString: string) => string }
 
       return (
         activeTabElement?.dataset.panelId ===
-        `${noteTextareaElement.id}--previewPanel`
+        `${noteTextareaElement?.id}--previewPanel`
       )
     }
 
@@ -250,7 +250,9 @@ declare const marked: { parse: (markdownString: string) => string }
         return
       }
 
-      const selectedMarkdownValues = [...attachmentSelectElement.selectedOptions]
+      const selectedMarkdownValues = [
+        ...attachmentSelectElement.selectedOptions
+      ]
         .map((optionElement) => optionElement.value)
         .filter((optionValue) => optionValue !== '')
 
@@ -335,7 +337,9 @@ declare const marked: { parse: (markdownString: string) => string }
           note.recordCreate_userName === exports.shiftLog.userName)
 
       const truncatedText = truncateText(note.noteText.trim(), 200)
-      const markdownPreviewHTML = DOMPurify.sanitize(marked.parse(truncatedText))
+      const markdownPreviewHTML = DOMPurify.sanitize(
+        marked.parse(truncatedText)
+      )
 
       const noteTypeLabel =
         note.noteType !== null && note.noteType !== undefined
@@ -985,7 +989,6 @@ declare const marked: { parse: (markdownString: string) => string }
         } else {
           fieldsContainer.innerHTML = ''
         }
-
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
@@ -1341,7 +1344,6 @@ declare const marked: { parse: (markdownString: string) => string }
         noteTypeSelect.addEventListener('change', () => {
           renderNoteTypeFields(noteTypeSelect.value)
         })
-
       },
       onshown(modalElement, _closeModalFunction) {
         bulmaJS.toggleHtmlClipped()
