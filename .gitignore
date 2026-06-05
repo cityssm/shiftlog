@@ -31,5 +31,6 @@ temp_build/
 .tsbuildinfo
 *.js.map
 *.d.ts.map
+*.traineddata
 compile.log
 test-*.js
