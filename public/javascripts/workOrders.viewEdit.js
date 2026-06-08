@@ -9,14 +9,14 @@
             const activeTabLink = workOrderTabsContainerElement.querySelector('.menu a.is-active');
             if (activeTabLink !== null) {
                 const tabHash = activeTabLink.getAttribute('href') ?? '';
-                const baseHref = editButtonLink.href.split('#')[0];
+                const baseHref = editButtonLink.href.split('#', 1)[0];
                 editButtonLink.href = baseHref + tabHash;
             }
             for (const menuTabLink of menuTabLinks) {
                 menuTabLink.addEventListener('click', (clickEvent) => {
                     const target = clickEvent.currentTarget;
                     const tabHash = target.getAttribute('href') ?? '';
-                    const baseHref = editButtonLink.href.split('#')[0];
+                    const baseHref = editButtonLink.href.split('#', 1)[0];
                     editButtonLink.href = baseHref + tabHash;
                 });
             }

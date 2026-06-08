@@ -261,6 +261,7 @@
           <button
             class="button is-small is-info manage-members"
             data-user-group-id="${userGroup.userGroupId}"
+            type="button"
             title="Manage Members"
           >
             <span class="icon">
@@ -271,6 +272,7 @@
           <button
             class="button is-small is-primary edit-user-group"
             data-user-group-id="${userGroup.userGroupId}"
+            type="button"
             title="Edit User Group"
           >
             <span class="icon">
@@ -281,6 +283,7 @@
           <button
             class="button is-small is-danger delete-user-group"
             data-user-group-id="${userGroup.userGroupId}"
+            type="button"
             title="Delete User Group"
           >
             <span class="icon">

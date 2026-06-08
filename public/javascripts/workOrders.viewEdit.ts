@@ -37,7 +37,7 @@ declare const bulmaJS: BulmaJS
 
       if (activeTabLink !== null) {
         const tabHash = activeTabLink.getAttribute('href') ?? ''
-        const baseHref = editButtonLink.href.split('#')[0]
+        const baseHref = editButtonLink.href.split('#', 1)[0]
         editButtonLink.href = baseHref + tabHash
       }
 
@@ -48,7 +48,7 @@ declare const bulmaJS: BulmaJS
           const tabHash = target.getAttribute('href') ?? ''
 
           // Update the Edit button href to include the selected tab hash
-          const baseHref = editButtonLink.href.split('#')[0]
+          const baseHref = editButtonLink.href.split('#', 1)[0]
           editButtonLink.href = baseHref + tabHash
         })
       }

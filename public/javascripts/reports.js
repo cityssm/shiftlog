@@ -5,7 +5,7 @@
     }
     let initialTabElement = null;
     if (exports.activeTab !== '') {
-        initialTabElement = reportsContainerElement?.querySelector(`.menu-list a[href="#tab--${exports.activeTab}"]`);
+        initialTabElement = reportsContainerElement?.querySelector(`.menu-list a[href="#tab--${CSS.escape(exports.activeTab)}"]`);
     }
     initialTabElement ??= reportsContainerElement?.querySelector('.menu-list a');
     initialTabElement?.click();

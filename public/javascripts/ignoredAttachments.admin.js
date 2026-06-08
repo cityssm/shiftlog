@@ -51,7 +51,7 @@
                         const responseJSON = rawResponseJSON;
                         if (responseJSON.success) {
                             document
-                                .querySelector(`tr[data-file-checksum="${fileChecksum}"]`)
+                                .querySelector(`tr[data-file-checksum="${CSS.escape(fileChecksum)}"]`)
                                 ?.remove();
                             if (document.querySelectorAll('.button--deleteIgnoredAttachment').length === 0) {
                                 const containerElement = document.querySelector('#container--ignoredAttachments');

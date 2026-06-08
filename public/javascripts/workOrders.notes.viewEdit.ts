@@ -78,7 +78,7 @@ declare const marked: { parse: (markdownString: string) => string }
   }
 
   function truncateText(text: string, maxLength: number): string {
-    const firstParagraph = text.split('\n')[0]
+    const firstParagraph = text.split('\n', 1)[0]
 
     if (!text.includes('\n') && firstParagraph.length <= maxLength) {
       return firstParagraph
@@ -220,19 +220,24 @@ declare const marked: { parse: (markdownString: string) => string }
     }
 
     function resetAttachmentSelection(): void {
-      for (const optionElement of attachmentSelectElement.options) {
+      for (const optionElement of attachmentSelectElement?.options ?? []) {
         optionElement.selected = false
       }
 
-      const placeholderOptionElement = attachmentSelectElement.options.item(0)
+      const placeholderOptionElement = attachmentSelectElement?.options.item(0)
 
-      if (placeholderOptionElement !== null) {
+      if (
+        placeholderOptionElement !== null &&
+        placeholderOptionElement !== undefined
+      ) {
         placeholderOptionElement.selected = true
       }
     }
 
     function updateAttachmentSelectState(): void {
-      attachmentSelectElement.disabled = isTextareaInPreviewMode()
+      if (attachmentSelectElement !== null) {
+        attachmentSelectElement.disabled = isTextareaInPreviewMode()
+      }
     }
 
     updateAttachmentSelectState()

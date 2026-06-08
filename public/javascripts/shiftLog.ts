@@ -80,10 +80,8 @@ declare const exports: {
     if (globalThis.location.hash !== '') {
       const targetTabId = globalThis.location.hash.slice(1)
 
-      // Escape the targetTabId for safe use in CSS selector
-      const escapedTargetTabId = CSS.escape(targetTabId)
       const targetTabLink = tabsContainerElement.querySelector(
-        `.menu a[href="#${escapedTargetTabId}"]`
+        `.menu a[href="#${CSS.escape(targetTabId)}"]`
       ) as HTMLAnchorElement | null
 
       if (targetTabLink !== null) {

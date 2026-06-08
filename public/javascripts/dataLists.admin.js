@@ -501,7 +501,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
-                    const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
+                    const detailsElement = document.querySelector(`details[data-data-list-key="${CSS.escape(dataListKey)}"]`);
                     if (detailsElement !== null && !detailsElement.open) {
                         detailsElement.open = true;
                     }
@@ -581,7 +581,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
                 const responseJSON = rawResponseJSON;
                 if (responseJSON.success && responseJSON.items !== undefined) {
                     closeModalFunction();
-                    const detailsElement = document.querySelector(`details[data-data-list-key="${dataListKey}"]`);
+                    const detailsElement = document.querySelector(`details[data-data-list-key="${CSS.escape(dataListKey)}"]`);
                     if (detailsElement !== null && !detailsElement.open) {
                         detailsElement.open = true;
                     }
@@ -793,7 +793,7 @@ function setupIconPreviewListeners(modalElement, modalPrefix) {
         });
     }
     function attachEventListeners(dataListKey) {
-        const section = document.querySelector(`[data-data-list-key="${dataListKey}"]`);
+        const section = document.querySelector(`[data-data-list-key="${CSS.escape(dataListKey)}"]`);
         if (section === null) {
             return;
         }

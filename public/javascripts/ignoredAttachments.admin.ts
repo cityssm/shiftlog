@@ -70,10 +70,12 @@ declare const exports: {
     bulmaJS.confirm({
       contextualColorName: 'danger',
       title: 'Remove Ignored Attachment',
+
       message: `Are you sure you want to remove checksum "${cityssm.escapeHTML(fileChecksum)}" from ignored attachments?`,
       okButton: {
         contextualColorName: 'danger',
         text: 'Remove',
+
         callbackFunction() {
           cityssm.postJSON(
             `${exports.shiftLog.urlPrefix}/admin/doDeleteIgnoredAttachmentChecksum`,
@@ -86,7 +88,7 @@ declare const exports: {
 
               if (responseJSON.success) {
                 document
-                  .querySelector(`tr[data-file-checksum="${fileChecksum}"]`)
+                  .querySelector(`tr[data-file-checksum="${CSS.escape(fileChecksum)}"]`)
                   ?.remove()
 
                 if (

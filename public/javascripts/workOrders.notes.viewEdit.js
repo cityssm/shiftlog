@@ -27,7 +27,7 @@
         return;
     }
     function truncateText(text, maxLength) {
-        const firstParagraph = text.split('\n')[0];
+        const firstParagraph = text.split('\n', 1)[0];
         if (!text.includes('\n') && firstParagraph.length <= maxLength) {
             return firstParagraph;
         }
@@ -111,16 +111,19 @@
                 `${noteTextareaElement?.id}--previewPanel`);
         }
         function resetAttachmentSelection() {
-            for (const optionElement of attachmentSelectElement.options) {
+            for (const optionElement of attachmentSelectElement?.options ?? []) {
                 optionElement.selected = false;
             }
-            const placeholderOptionElement = attachmentSelectElement.options.item(0);
-            if (placeholderOptionElement !== null) {
+            const placeholderOptionElement = attachmentSelectElement?.options.item(0);
+            if (placeholderOptionElement !== null &&
+                placeholderOptionElement !== undefined) {
                 placeholderOptionElement.selected = true;
             }
         }
         function updateAttachmentSelectState() {
-            attachmentSelectElement.disabled = isTextareaInPreviewMode();
+            if (attachmentSelectElement !== null) {
+                attachmentSelectElement.disabled = isTextareaInPreviewMode();
+            }
         }
         updateAttachmentSelectState();
         markdownTabsElement?.addEventListener('click', (event) => {

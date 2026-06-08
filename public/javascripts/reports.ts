@@ -20,7 +20,7 @@ declare const exports: {
 
   if (exports.activeTab !== '') {
     initialTabElement = reportsContainerElement?.querySelector(
-      `.menu-list a[href="#tab--${exports.activeTab}"]`
+      `.menu-list a[href="#tab--${CSS.escape(exports.activeTab)}"]`
     ) as HTMLElement | null
   }
 

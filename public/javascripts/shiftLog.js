@@ -35,8 +35,7 @@
         }
         if (globalThis.location.hash !== '') {
             const targetTabId = globalThis.location.hash.slice(1);
-            const escapedTargetTabId = CSS.escape(targetTabId);
-            const targetTabLink = tabsContainerElement.querySelector(`.menu a[href="#${escapedTargetTabId}"]`);
+            const targetTabLink = tabsContainerElement.querySelector(`.menu a[href="#${CSS.escape(targetTabId)}"]`);
             if (targetTabLink !== null) {
                 for (const menuTabElement of menuTabElements) {
                     menuTabElement.classList.remove('is-active');

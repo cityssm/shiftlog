@@ -765,7 +765,7 @@ function setupIconPreviewListeners(
 
             // Open the details panel if it's closed
             const detailsElement = document.querySelector(
-              `details[data-data-list-key="${dataListKey}"]`
+              `details[data-data-list-key="${CSS.escape(dataListKey)}"]`
             ) as HTMLDetailsElement | null
 
             if (detailsElement !== null && !detailsElement.open) {
@@ -897,7 +897,7 @@ function setupIconPreviewListeners(
 
             // Open the details panel if it's closed
             const detailsElement = document.querySelector(
-              `details[data-data-list-key="${dataListKey}"]`
+              `details[data-data-list-key="${CSS.escape(dataListKey)}"]`
             ) as HTMLDetailsElement | null
 
             if (detailsElement !== null && !detailsElement.open) {
@@ -1225,7 +1225,7 @@ function setupIconPreviewListeners(
 
   function attachEventListeners(dataListKey: string): void {
     const section = document.querySelector(
-      `[data-data-list-key="${dataListKey}"]`
+      `[data-data-list-key="${CSS.escape(dataListKey)}"]`
     )
 
     if (section === null) {
