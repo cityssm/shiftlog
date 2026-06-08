@@ -103,7 +103,8 @@ export async function sendEmail(): Promise<void> {
     if (
       workOrder.requestorIsSubscribed &&
       isEmailAddress(workOrder.requestorContactInfo) &&
-      !isNoReplyEmailAddress(workOrder.requestorContactInfo)
+      !isNoReplyEmailAddress(workOrder.requestorContactInfo) &&
+      !(await isBlockedToEmailAddress(workOrder.requestorContactInfo))
     ) {
       bccEmailAddresses.add(workOrder.requestorContactInfo)
     }

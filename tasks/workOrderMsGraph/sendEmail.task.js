@@ -61,7 +61,8 @@ export async function sendEmail() {
         const bccEmailAddresses = new Set();
         if (workOrder.requestorIsSubscribed &&
             isEmailAddress(workOrder.requestorContactInfo) &&
-            !isNoReplyEmailAddress(workOrder.requestorContactInfo)) {
+            !isNoReplyEmailAddress(workOrder.requestorContactInfo) &&
+            !(await isBlockedToEmailAddress(workOrder.requestorContactInfo))) {
             bccEmailAddresses.add(workOrder.requestorContactInfo);
         }
         const workOrderSubscribers = await getWorkOrderSubscribers(workOrderId);
