@@ -302,7 +302,10 @@ export async function checkEmail(): Promise<void> {
         const subscribersEmailAddresses = getSubscriberEmailAddresses(message)
 
         for (const subscriberEmailAddress of subscribersEmailAddresses) {
-          if (!isNoReplyEmailAddress(subscriberEmailAddress)) {
+          if (
+            !isNoReplyEmailAddress(subscriberEmailAddress) &&
+            subscriberEmailAddress.toLowerCase() !== fromAddressLowerCase
+          ) {
             await addWorkOrderSubscriber(
               workOrderId,
               subscriberEmailAddress,

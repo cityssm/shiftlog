@@ -155,7 +155,8 @@ export async function checkEmail() {
                 workOrder = await getWorkOrder(workOrderId);
                 const subscribersEmailAddresses = getSubscriberEmailAddresses(message);
                 for (const subscriberEmailAddress of subscribersEmailAddresses) {
-                    if (!isNoReplyEmailAddress(subscriberEmailAddress)) {
+                    if (!isNoReplyEmailAddress(subscriberEmailAddress) &&
+                        subscriberEmailAddress.toLowerCase() !== fromAddressLowerCase) {
                         await addWorkOrderSubscriber(workOrderId, subscriberEmailAddress, systemUser.userName);
                     }
                 }
