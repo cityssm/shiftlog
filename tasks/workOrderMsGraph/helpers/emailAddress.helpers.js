@@ -19,6 +19,12 @@ export function getSubscriberEmailAddresses(message) {
             emailAddresses.push(recipient.emailAddress.address);
         }
     }
+    for (const recipient of message.replyTo ?? []) {
+        if (!emailAddresses.includes(recipient.emailAddress.address) &&
+            recipient.emailAddress.address.toLowerCase() !== msGraphEmailAddress) {
+            emailAddresses.push(recipient.emailAddress.address);
+        }
+    }
     return emailAddresses;
 }
 export function isNoReplyEmailAddress(emailAddress, name = '') {

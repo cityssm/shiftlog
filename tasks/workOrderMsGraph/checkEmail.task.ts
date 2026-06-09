@@ -118,7 +118,8 @@ export async function checkEmail(): Promise<void> {
           'from',
           'toRecipients',
           'ccRecipients',
-          'bccRecipients'
+          'bccRecipients',
+          'replyTo'
         ],
 
         orderBy: ['receivedDateTime desc']
@@ -132,6 +133,7 @@ export async function checkEmail(): Promise<void> {
         | 'from'
         | 'id'
         | 'receivedDateTime'
+        | 'replyTo'
         | 'subject'
         | 'toRecipients'
       >
@@ -165,7 +167,7 @@ export async function checkEmail(): Promise<void> {
        * If the message is from a disallowed email address, archive it and skip to the next message.
        */
 
-      const fromAddressLowerCase =
+      let fromAddressLowerCase =
         message.from?.emailAddress.address.toLowerCase() ?? ''
 
       if (
@@ -236,6 +238,19 @@ export async function checkEmail(): Promise<void> {
        * Create record of the message in the database, linked to the work order if applicable.
        */
 
+      let fromName = message.from?.emailAddress.name ?? ''
+
+      if (
+        isNoReplyEmailAddress(fromAddressLowerCase) &&
+        message.replyTo !== undefined &&
+        message.replyTo.length > 0
+      ) {
+        fromAddressLowerCase =
+          message.replyTo[0].emailAddress.address.toLowerCase()
+
+        fromName = message.replyTo[0].emailAddress.name ?? ''
+      }
+
       if (workOrder === undefined) {
         if (workOrderType === undefined) {
           const workOrderTypes = await getWorkOrderTypes()
@@ -263,11 +278,11 @@ export async function checkEmail(): Promise<void> {
             requestorContactInfo: fromAddressLowerCase,
             requestorIsSubscribed: isNoReplyEmailAddress(
               fromAddressLowerCase,
-              message.from?.emailAddress.name
+              fromName
             )
               ? undefined
               : '1',
-            requestorName: message.from?.emailAddress.name ?? '',
+            requestorName: fromName,
 
             locationAddress1: workOrderLocation?.address1 ?? '',
             locationAddress2: workOrderLocation?.address2 ?? '',

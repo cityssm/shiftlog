@@ -73,7 +73,8 @@ export async function checkEmail() {
                 'from',
                 'toRecipients',
                 'ccRecipients',
-                'bccRecipients'
+                'bccRecipients',
+                'replyTo'
             ],
             orderBy: ['receivedDateTime desc']
         }));
@@ -87,7 +88,7 @@ export async function checkEmail() {
                 messageIdCache.take(message.id);
                 continue;
             }
-            const fromAddressLowerCase = message.from?.emailAddress.address.toLowerCase() ?? '';
+            let fromAddressLowerCase = message.from?.emailAddress.address.toLowerCase() ?? '';
             if (fromAddressLowerCase === '' ||
                 !(await fromEmailAddressIsAllowed(fromAddressLowerCase))) {
                 debug(`Archiving message from disallowed address: ${fromAddressLowerCase}`);
@@ -115,6 +116,14 @@ export async function checkEmail() {
             const messageBodyText = messageBodyToText(message.body, workOrder !== undefined);
             const receivedDateTime = new Date(message.receivedDateTime);
             const receivedDateTimeString = `${dateToString(receivedDateTime)} ${dateToTimeString(receivedDateTime)}`;
+            let fromName = message.from?.emailAddress.name ?? '';
+            if (isNoReplyEmailAddress(fromAddressLowerCase) &&
+                message.replyTo !== undefined &&
+                message.replyTo.length > 0) {
+                fromAddressLowerCase =
+                    message.replyTo[0].emailAddress.address.toLowerCase();
+                fromName = message.replyTo[0].emailAddress.name ?? '';
+            }
             if (workOrder === undefined) {
                 if (workOrderType === undefined) {
                     const workOrderTypes = await getWorkOrderTypes();
@@ -131,10 +140,10 @@ export async function checkEmail() {
                     workOrderDetails: messageBodyText,
                     workOrderTitle: message.subject ?? 'No Subject',
                     requestorContactInfo: fromAddressLowerCase,
-                    requestorIsSubscribed: isNoReplyEmailAddress(fromAddressLowerCase, message.from?.emailAddress.name)
+                    requestorIsSubscribed: isNoReplyEmailAddress(fromAddressLowerCase, fromName)
                         ? undefined
                         : '1',
-                    requestorName: message.from?.emailAddress.name ?? '',
+                    requestorName: fromName,
                     locationAddress1: workOrderLocation?.address1 ?? '',
                     locationAddress2: workOrderLocation?.address2 ?? '',
                     locationCityProvince: workOrderLocation?.cityProvince ?? '',

@@ -1,8 +1,6 @@
 import type { MsGraphMailMessage } from '@cityssm/ms-graph-mail'
 
-import {
-  getCachedSettingValue
-} from '../../../helpers/cache/settings.cache.js'
+import { getCachedSettingValue } from '../../../helpers/cache/settings.cache.js'
 import { getConfigProperty } from '../../../helpers/config.helpers.js'
 
 const msGraphEmailAddress = (
@@ -16,7 +14,7 @@ export function isEmailAddress(value: string): boolean {
 }
 
 export function getSubscriberEmailAddresses(
-  message: Pick<MsGraphMailMessage, 'ccRecipients' | 'toRecipients'>
+  message: Pick<MsGraphMailMessage, 'ccRecipients' | 'replyTo' | 'toRecipients'>
 ): string[] {
   const emailAddresses: string[] = []
 
@@ -30,6 +28,15 @@ export function getSubscriberEmailAddresses(
   }
 
   for (const recipient of message.ccRecipients ?? []) {
+    if (
+      !emailAddresses.includes(recipient.emailAddress.address) &&
+      recipient.emailAddress.address.toLowerCase() !== msGraphEmailAddress
+    ) {
+      emailAddresses.push(recipient.emailAddress.address)
+    }
+  }
+
+  for (const recipient of message.replyTo ?? []) {
     if (
       !emailAddresses.includes(recipient.emailAddress.address) &&
       recipient.emailAddress.address.toLowerCase() !== msGraphEmailAddress
