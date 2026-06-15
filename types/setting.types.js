@@ -102,5 +102,13 @@ export const settingProperties = [
         type: 'string',
         defaultValue: '',
         isUserConfigurable: true
+    },
+    {
+        settingKey: 'msGraph.to.blockedEmailAddresses',
+        settingName: 'Microsoft Graph - Blocked To Email Addresses',
+        description: 'Comma-separated list of specific email addresses that are blocked in the "To" field when creating work orders via Microsoft Graph. Helpful for defining "no reply" addresses. If empty, no email addresses are blocked.',
+        type: 'string',
+        defaultValue: '',
+        isUserConfigurable: true
     }
 ];

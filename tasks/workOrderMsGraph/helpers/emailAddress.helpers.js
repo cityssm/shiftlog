@@ -40,13 +40,22 @@ export function isNoReplyEmailAddress(emailAddress, name = '') {
         lowercaseName.includes('donotreply'));
 }
 export async function isBlockedToEmailAddress(emailAddress) {
-    const blockedEmailAddressDomainsSetting = await getCachedSettingValue('msGraph.to.blockedDomains');
-    if (blockedEmailAddressDomainsSetting === '') {
-        return false;
-    }
     const lowercaseEmail = emailAddress.toLowerCase();
-    const blockedEmailAddressDomains = blockedEmailAddressDomainsSetting
-        .split(',')
-        .map((domain) => domain.trim().toLowerCase());
-    return blockedEmailAddressDomains.some((blockedDomain) => lowercaseEmail.endsWith(`@${blockedDomain}`));
+    const blockedEmailAddressesSetting = await getCachedSettingValue('msGraph.to.blockedEmailAddresses');
+    if (blockedEmailAddressesSetting.trim() !== '') {
+        const blockedEmailAddresses = blockedEmailAddressesSetting
+            .split(',')
+            .map((address) => address.trim().toLowerCase());
+        if (blockedEmailAddresses.includes(lowercaseEmail)) {
+            return true;
+        }
+    }
+    const blockedEmailAddressDomainsSetting = await getCachedSettingValue('msGraph.to.blockedDomains');
+    if (blockedEmailAddressDomainsSetting.trim() !== '') {
+        const blockedEmailAddressDomains = blockedEmailAddressDomainsSetting
+            .split(',')
+            .map((domain) => domain.trim().toLowerCase());
+        return blockedEmailAddressDomains.some((blockedDomain) => lowercaseEmail.endsWith(`@${blockedDomain}`));
+    }
+    return false;
 }

@@ -70,20 +70,35 @@ export function isNoReplyEmailAddress(
 export async function isBlockedToEmailAddress(
   emailAddress: string
 ): Promise<boolean> {
+  const lowercaseEmail = emailAddress.toLowerCase()
+
+  const blockedEmailAddressesSetting = await getCachedSettingValue(
+    'msGraph.to.blockedEmailAddresses'
+  )
+
+  if (blockedEmailAddressesSetting.trim() !== '') {
+    const blockedEmailAddresses = blockedEmailAddressesSetting
+      .split(',')
+      .map((address) => address.trim().toLowerCase())
+
+    if (blockedEmailAddresses.includes(lowercaseEmail)) {
+      return true
+    }
+  }
+
   const blockedEmailAddressDomainsSetting = await getCachedSettingValue(
     'msGraph.to.blockedDomains'
   )
 
-  if (blockedEmailAddressDomainsSetting === '') {
-    return false
+  if (blockedEmailAddressDomainsSetting.trim() !== '') {
+    const blockedEmailAddressDomains = blockedEmailAddressDomainsSetting
+      .split(',')
+      .map((domain) => domain.trim().toLowerCase())
+
+    return blockedEmailAddressDomains.some((blockedDomain) =>
+      lowercaseEmail.endsWith(`@${blockedDomain}`)
+    )
   }
 
-  const lowercaseEmail = emailAddress.toLowerCase()
-  const blockedEmailAddressDomains = blockedEmailAddressDomainsSetting
-    .split(',')
-    .map((domain) => domain.trim().toLowerCase())
-
-  return blockedEmailAddressDomains.some((blockedDomain) =>
-    lowercaseEmail.endsWith(`@${blockedDomain}`)
-  )
+  return false
 }
