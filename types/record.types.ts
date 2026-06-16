@@ -455,7 +455,9 @@ export interface WorkOrder extends BaseRecord {
   overdueMilestonesCount?: number
 
   attachmentsCount?: number
+
   thumbnailAttachmentId?: number | null
+  thumbnailAccessKey?: string | null
 
   notesCount?: number
 

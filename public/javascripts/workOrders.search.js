@@ -228,7 +228,7 @@
                 ? `
           <a
             class="icon has-text-info"
-            href="${shiftLog.urlPrefix}/${shiftLog.workOrdersRouter}/attachments/${workOrder.thumbnailAttachmentId}/inline"
+            href="${shiftLog.urlPrefix}/attachments/${shiftLog.workOrdersRouter}/${workOrder.thumbnailAttachmentId}/${workOrder.thumbnailAccessKey}/inline"
             title="View thumbnail image"
             target="_blank"
           >

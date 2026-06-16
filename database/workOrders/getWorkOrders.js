@@ -232,6 +232,7 @@ export default async function getWorkOrders(filters, options, user) {
         milestones.milestonesCompletedCount,
         attachments.attachmentsCount,
         thumbnails.thumbnailAttachmentId,
+        thumbnails.thumbnailAccessKey,
         notes.notesCount,
         equipment.equipmentCount,
         costs.costsCount,
@@ -275,7 +276,8 @@ export default async function getWorkOrders(filters, options, user) {
         LEFT JOIN (
           SELECT
             workOrderId,
-            workOrderAttachmentId AS thumbnailAttachmentId
+            workOrderAttachmentId AS thumbnailAttachmentId,
+            accessKey AS thumbnailAccessKey
           FROM
             ShiftLog.WorkOrderAttachments
           WHERE
