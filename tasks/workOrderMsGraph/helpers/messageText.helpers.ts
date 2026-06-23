@@ -29,7 +29,7 @@ export function messageBodyToText(
   }
 
   if (truncateAfterFromHeader && messageBodyText.includes('\n\n**From:** ')) {
-    messageBodyText = messageBodyText.split('\n\n**From:** ')[0].trim()
+    messageBodyText = messageBodyText.split('\n\n**From:** ', 1)[0].trim()
   }
 
   return messageBodyText
@@ -66,7 +66,7 @@ export function messageSubjectToWorkOrderNumber(
 
   if (workOrderNumber !== undefined) {
     workOrderNumber = `${workOrderNumber.trim()}]`
-    return workOrderNumber.split(']')[0]
+    return workOrderNumber.split(']', 1)[0]
   }
 
   return undefined
