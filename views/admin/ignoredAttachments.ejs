@@ -117,7 +117,7 @@
           <tr data-file-checksum="<%= ignoredAttachment.fileChecksum %>">
             <td>
               <% if (ignoredAttachment.attachment) { %>
-              <a href="<%= urlPrefix %>/<%= configFunctions.getConfigProperty('workOrders.router') %>/attachments/<%= ignoredAttachment.attachment.workOrderAttachmentId %>/download">
+              <a href="<%= urlPrefix %>/attachments/<%= configFunctions.getConfigProperty('workOrders.router') %>/<%= ignoredAttachment.attachment.workOrderAttachmentId %>/<%= ignoredAttachment.attachment.accessKey %>/download">
                 <code><%= ignoredAttachment.fileChecksum %></code>
               </a>
               <% } else { %>

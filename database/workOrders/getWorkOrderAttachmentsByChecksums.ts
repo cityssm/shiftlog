@@ -34,6 +34,7 @@ export default async function getWorkOrderAttachmentsByChecksums(
       isWorkOrderThumbnail,
       fileSystemPath,
       fileChecksum,
+      accessKey,
       recordCreate_userName,
       recordCreate_dateTime,
       recordUpdate_userName,
