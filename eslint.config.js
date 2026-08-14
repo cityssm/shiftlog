@@ -1,7 +1,4 @@
-import eslintCspell from '@cspell/eslint-plugin';
 import configWebApp, { defineConfig } from 'eslint-config-cityssm';
-import { cspellWords } from 'eslint-config-cityssm/exports';
-import eslintPluginNoUnsanitized from 'eslint-plugin-no-unsanitized';
 const escapedMethods = [
     'cityssm.dateToString',
     'cityssm.escapeHTML',
@@ -17,44 +14,7 @@ export const config = defineConfig(configWebApp, {
             projectService: true
         }
     },
-    plugins: {
-        '@cspell': eslintCspell,
-        'no-unsanitized': eslintPluginNoUnsanitized
-    },
     rules: {
-        '@cspell/spellchecker': [
-            'warn',
-            {
-                cspell: {
-                    words: [
-                        ...cspellWords,
-                        'hellip',
-                        'latlng',
-                        'latlngs',
-                        'noopener',
-                        'noreferrer',
-                        'onhidden',
-                        'javascripts',
-                        'radiusless',
-                        'rowspan',
-                        'dateadd',
-                        'datediff',
-                        'datefromparts',
-                        'eomonth',
-                        'ltrim',
-                        'rtrim',
-                        'maint',
-                        'shiftlog',
-                        'timesheet',
-                        'timesheets',
-                        'avanti',
-                        'worktech',
-                        'arcgis',
-                        'ntfy'
-                    ]
-                }
-            }
-        ],
         '@typescript-eslint/no-unsafe-type-assertion': 'off',
         'no-unsanitized/method': [
             'error',
