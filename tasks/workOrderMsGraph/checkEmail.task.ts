@@ -196,6 +196,11 @@ export async function checkEmail(): Promise<void> {
           ? undefined
           : await getWorkOrderByWorkOrderNumber(workOrderNumber)
 
+      const subscribers =
+        workOrder === undefined
+          ? []
+          : await getWorkOrderSubscribers(workOrder.workOrderId)
+
       if (workOrder !== undefined) {
         if (
           workOrder.assignedToEmailAddress?.toLowerCase() ===
@@ -204,10 +209,6 @@ export async function checkEmail(): Promise<void> {
         ) {
           // email accepted, continue processing
         } else {
-          const subscribers = await getWorkOrderSubscribers(
-            workOrder.workOrderId
-          )
-
           const isSubscriber = subscribers.some(
             (subscriber) =>
               subscriber.subscriberEmailAddress.toLowerCase() ===
@@ -216,6 +217,32 @@ export async function checkEmail(): Promise<void> {
 
           if (!isSubscriber) {
             workOrder = undefined
+          }
+        }
+      }
+
+      /*
+       * Add additional recipients to the list of subscribers for the work order if it exists.
+       */
+
+      if (workOrder !== undefined) {
+        const subscribersEmailAddresses = getSubscriberEmailAddresses(message)
+
+        for (const subscriberEmailAddress of subscribersEmailAddresses) {
+          if (
+            !isNoReplyEmailAddress(subscriberEmailAddress) &&
+            subscriberEmailAddress.toLowerCase() !== fromAddressLowerCase &&
+            !subscribers.some(
+              (subscriber) =>
+                subscriber.subscriberEmailAddress.toLowerCase() ===
+                subscriberEmailAddress.toLowerCase()
+            )
+          ) {
+            await addWorkOrderSubscriber(
+              workOrder.workOrderId,
+              subscriberEmailAddress,
+              systemUser.userName
+            )
           }
         }
       }

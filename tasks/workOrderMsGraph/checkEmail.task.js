@@ -99,17 +99,30 @@ export async function checkEmail() {
             let workOrder = workOrderNumber === undefined
                 ? undefined
                 : await getWorkOrderByWorkOrderNumber(workOrderNumber);
+            const subscribers = workOrder === undefined
+                ? []
+                : await getWorkOrderSubscribers(workOrder.workOrderId);
             if (workOrder !== undefined) {
                 if (workOrder.assignedToEmailAddress?.toLowerCase() ===
                     fromAddressLowerCase ||
                     workOrder.requestorContactInfo.toLowerCase() === fromAddressLowerCase) {
                 }
                 else {
-                    const subscribers = await getWorkOrderSubscribers(workOrder.workOrderId);
                     const isSubscriber = subscribers.some((subscriber) => subscriber.subscriberEmailAddress.toLowerCase() ===
                         fromAddressLowerCase);
                     if (!isSubscriber) {
                         workOrder = undefined;
+                    }
+                }
+            }
+            if (workOrder !== undefined) {
+                const subscribersEmailAddresses = getSubscriberEmailAddresses(message);
+                for (const subscriberEmailAddress of subscribersEmailAddresses) {
+                    if (!isNoReplyEmailAddress(subscriberEmailAddress) &&
+                        subscriberEmailAddress.toLowerCase() !== fromAddressLowerCase &&
+                        !subscribers.some((subscriber) => subscriber.subscriberEmailAddress.toLowerCase() ===
+                            subscriberEmailAddress.toLowerCase())) {
+                        await addWorkOrderSubscriber(workOrder.workOrderId, subscriberEmailAddress, systemUser.userName);
                     }
                 }
             }
