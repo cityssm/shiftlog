@@ -4,13 +4,26 @@
   "dictionaryDefinitions": [],
   "dictionaries": [],
   "words": [
+    "avanti",
     "checkperiod",
     "cityssm",
+    "configurator",
+    "fontawesome",
     "Helpdesk",
+    "ical",
+    "javascripts",
+    "jsbarcode",
+    "mapserver",
     "millis",
+    "ntfy",
+    "papaparse",
     "recordset",
+    "sema",
+    "shiftlog",
+    "simpleheat",
     "Timesheet",
-    "timesheets"
+    "timesheets",
+    "worktech"
   ],
   "ignoreWords": [],
   "import": []
