@@ -229,7 +229,10 @@
             <div class="content">
               <p>
                 <strong>${cityssm.escapeHTML(note.recordCreate_userName)}</strong>
-                <small>${cityssm.dateToString(new Date(note.recordCreate_dateTime))}</small>
+                <small>
+                  ${cityssm.dateToString(new Date(note.recordCreate_dateTime))}
+                  ${cityssm.dateToTimeString(new Date(note.recordCreate_dateTime))}
+                </small>
                 ${noteTypeLabel}
                 ${note.recordUpdate_dateTime === note.recordCreate_dateTime
                 ? ''
