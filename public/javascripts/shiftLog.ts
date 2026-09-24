@@ -1,8 +1,8 @@
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 
 declare const DOMPurify: { sanitize: (html: string) => string }
 declare const marked: { parse: (markdownString: string) => string }

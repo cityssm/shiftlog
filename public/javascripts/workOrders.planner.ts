@@ -1,10 +1,10 @@
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoGetWorkOrdersForPlannerResponse } from '../../handlers/workOrders-post/doGetWorkOrdersForPlanner.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 
 declare const exports: {
   shiftLog: ShiftLogGlobal

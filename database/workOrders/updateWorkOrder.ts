@@ -18,18 +18,13 @@ export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
   workOrderTypeId: number | string
 
   workOrderOpenDateTimeString:
-    | `${DateString} ${TimeString}`
-    | `${DateString}T${TimeString}`
+    `${DateString} ${TimeString}` | `${DateString}T${TimeString}`
 
   workOrderDueDateTimeString:
-    | ''
-    | `${DateString} ${TimeString}`
-    | `${DateString}T${TimeString}`
+    '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`
 
   workOrderCloseDateTimeString:
-    | ''
-    | `${DateString} ${TimeString}`
-    | `${DateString}T${TimeString}`
+    '' | `${DateString} ${TimeString}` | `${DateString}T${TimeString}`
 
   requestorContactInfo: string
   requestorName: string
@@ -44,6 +39,8 @@ export type UpdateWorkOrderForm = Record<`moreInfo_${string}`, unknown> & {
   locationCityProvince: string
 
   assignedToId?: number | string
+
+  recordUpdate_timeMillis: number | string
 }
 
 function buildMoreInfoFormDataJson(
@@ -64,13 +61,42 @@ function buildMoreInfoFormDataJson(
   return JSON.stringify(moreInfoFormData)
 }
 
+/**
+ * Updates a work order in the database.
+ * @param updateWorkOrderForm - The form data containing the updated work order information.
+ * @param userName - The name of the user performing the update.
+ * @returns The new update timestamp of the work order as a number.
+ */
 export default async function updateWorkOrder(
   updateWorkOrderForm: UpdateWorkOrderForm,
   userName: string
-): Promise<boolean> {
-  const moreInfoFormDataJson = buildMoreInfoFormDataJson(updateWorkOrderForm)
+): Promise<number> {
+  const lastUpdateDate = new Date(
+    Number(updateWorkOrderForm.recordUpdate_timeMillis)
+  )
 
   const pool = await getShiftLogConnectionPool()
+
+  const canUpdateResult = await pool
+    .request()
+    .input('workOrderId', updateWorkOrderForm.workOrderId)
+    .input('instance', getConfigProperty('application.instance'))
+    .input('recordUpdate_dateTime', lastUpdateDate).query(`
+      SELECT COUNT(*) AS canUpdate
+      FROM ShiftLog.WorkOrders
+      WHERE workOrderId = @workOrderId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
+        AND recordUpdate_dateTime = @recordUpdate_dateTime
+    `)
+
+  if (canUpdateResult.recordset[0].canUpdate === 0) {
+    throw new Error(
+      `Cannot update ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}. It may have been modified or deleted by another user.`
+    )
+  }
+
+  const moreInfoFormDataJson = buildMoreInfoFormDataJson(updateWorkOrderForm)
 
   const result = await pool
     .request()
@@ -149,6 +175,7 @@ export default async function updateWorkOrder(
     .query<{
       deletedAssignedToId: number | null
       insertedAssignedToId: number | null
+      insertedRecordUpdateDateTime: Date
     }>(/* sql */ `
       UPDATE ShiftLog.WorkOrders
       SET
@@ -172,8 +199,9 @@ export default async function updateWorkOrder(
         assignedToId = @assignedToId,
         moreInfoFormDataJson = @moreInfoFormDataJson,
         recordUpdate_userName = @userName,
-        recordUpdate_dateTime = getdate() OUTPUT deleted.assignedToId AS deletedAssignedToId,
-        inserted.assignedToId AS insertedAssignedToId
+        recordUpdate_dateTime = GETDATE() OUTPUT deleted.assignedToId AS deletedAssignedToId,
+        inserted.assignedToId AS insertedAssignedToId,
+        inserted.recordUpdate_dateTime AS insertedRecordUpdateDateTime
       WHERE
         workOrderId = @workOrderId
         AND instance = @instance
@@ -300,5 +328,7 @@ export default async function updateWorkOrder(
     )
   }
 
-  return true
+  return result.rowsAffected[0] === 0
+    ? lastUpdateDate.getTime()
+    : result.recordset[0].insertedRecordUpdateDateTime.getTime()
 }

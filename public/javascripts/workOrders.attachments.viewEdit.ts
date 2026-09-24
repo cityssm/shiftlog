@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoDeleteWorkOrderAttachmentResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderAttachment.js'
 import type { DoGetWorkOrderAttachmentsResponse } from '../../handlers/workOrders-post/doGetWorkOrderAttachments.js'
@@ -21,7 +21,7 @@ declare const exports: {
   transcriptionsEnabled: boolean
 }
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 declare const DOMPurify: { sanitize: (html: string) => string }
 declare const marked: { parse: (markdownString: string) => string }

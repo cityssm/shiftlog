@@ -1,11 +1,11 @@
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type Leaflet from 'leaflet'
 
 import type { DoSearchWorkOrdersResponse } from '../../handlers/workOrders-post/doSearchWorkOrders.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const L: typeof Leaflet
 
 declare const exports: {

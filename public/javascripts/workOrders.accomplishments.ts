@@ -1,11 +1,11 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type { EChartsType } from 'echarts/types/dist/echarts'
 import type Leaflet from 'leaflet'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 declare const L: typeof Leaflet & {
   heatLayer: (

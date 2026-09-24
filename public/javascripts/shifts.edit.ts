@@ -1,5 +1,5 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 
 import type { DoCreateShiftResponse } from '../../handlers/shifts-post/doCreateShift.js'
@@ -8,7 +8,7 @@ import type { DoUpdateShiftResponse } from '../../handlers/shifts-post/doUpdateS
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 declare const flatpickr: typeof FlatPickr
 

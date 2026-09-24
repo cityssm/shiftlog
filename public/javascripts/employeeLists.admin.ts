@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddEmployeeListResponse } from '../../handlers/admin-post/doAddEmployeeList.js'
 import type { DoAddEmployeeListMemberResponse } from '../../handlers/admin-post/doAddEmployeeListMember.js'
@@ -20,7 +20,7 @@ import type {
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 
 interface SortableInstance {

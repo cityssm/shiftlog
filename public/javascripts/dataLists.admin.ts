@@ -1,7 +1,7 @@
 /* eslint-disable max-lines -- Large file */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddDataListResponse } from '../../handlers/admin-post/doAddDataList.js'
 import type { DoAddDataListItemResponse } from '../../handlers/admin-post/doAddDataListItem.js'
@@ -15,7 +15,7 @@ import type { DataList, DataListItem } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 
 interface SortableInstance {
@@ -765,7 +765,7 @@ function setupIconPreviewListeners(
 
             // Open the details panel if it's closed
             const detailsElement = document.querySelector(
-              `details[data-data-list-key="${CSS.escape(dataListKey)}"]`
+              `details[data-data-list-key="${CSS.escape(dataListKey ?? '')}"]`
             ) as HTMLDetailsElement | null
 
             if (detailsElement !== null && !detailsElement.open) {
@@ -897,7 +897,7 @@ function setupIconPreviewListeners(
 
             // Open the details panel if it's closed
             const detailsElement = document.querySelector(
-              `details[data-data-list-key="${CSS.escape(dataListKey)}"]`
+              `details[data-data-list-key="${CSS.escape(dataListKey ?? '')}"]`
             ) as HTMLDetailsElement | null
 
             if (detailsElement !== null && !detailsElement.open) {
@@ -1197,7 +1197,8 @@ function setupIconPreviewListeners(
               dataListKey
             },
             (rawResponseJSON) => {
-              const responseJSON = rawResponseJSON as DoDeleteDataListItemResponse
+              const responseJSON =
+                rawResponseJSON as DoDeleteDataListItemResponse
 
               if (responseJSON.success && responseJSON.items !== undefined) {
                 renderDataListItems(dataListKey, responseJSON.items)
@@ -1303,7 +1304,8 @@ function setupIconPreviewListeners(
             dataListKey
           },
           (rawResponseJSON) => {
-            const responseJSON = rawResponseJSON as DoReorderDataListItemsResponse
+            const responseJSON =
+              rawResponseJSON as DoReorderDataListItemsResponse
 
             if (!responseJSON.success) {
               bulmaJS.alert({

@@ -1,5 +1,5 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoReopenWorkOrderResponse } from '../../handlers/workOrders-post/doReopenWorkOrder.js'
 
@@ -9,7 +9,7 @@ declare const exports: {
   shiftLog: ShiftLogGlobal
 }
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 ;(() => {
   const shiftLog = exports.shiftLog

@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 
 import type { DoCreateWorkOrderMilestoneResponse } from '../../handlers/workOrders-post/doCreateWorkOrderMilestone.js'
@@ -28,7 +28,7 @@ declare const exports: {
   workOrderOpenDateTime: string
 }
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 declare const flatpickr: typeof FlatPickr
 declare const Sortable: {

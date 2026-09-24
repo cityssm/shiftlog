@@ -1,5 +1,5 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddWorkOrderTagResponse } from '../../handlers/workOrders-post/doAddWorkOrderTag.js'
 import type { DoDeleteWorkOrderTagResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderTag.js'
@@ -16,7 +16,7 @@ declare const exports: {
   workOrderTags: WorkOrderTag[]
 }
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 ;(() => {
   const workOrderFormElement = document.querySelector(

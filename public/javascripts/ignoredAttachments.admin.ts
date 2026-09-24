@@ -1,5 +1,5 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddIgnoredAttachmentChecksumResponse } from '../../handlers/admin-post/doAddIgnoredAttachmentChecksum.js'
 import type { DoDeleteIgnoredAttachmentChecksumResponse } from '../../handlers/admin-post/doDeleteIgnoredAttachmentChecksum.js'
@@ -7,7 +7,7 @@ import type { DoDeleteIgnoredAttachmentChecksumResponse } from '../../handlers/a
 import type { ShiftLogGlobal } from './types.js'
 
 declare const bulmaJS: BulmaJS
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 
 declare const exports: {
   shiftLog: ShiftLogGlobal

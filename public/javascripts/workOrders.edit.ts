@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 import type Leaflet from 'leaflet'
 
@@ -14,7 +14,7 @@ import type { Location } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 declare const flatpickr: typeof FlatPickr
 declare const L: typeof Leaflet
@@ -106,6 +106,7 @@ declare const exports: {
     // Check if work order is being closed (close date is being set)
     const currentCloseDateTime =
       workOrderCloseDateTimeStringElement?.value ?? ''
+
     const isBeingClosed =
       !isCreate &&
       originalWorkOrderCloseDateTime === '' &&
@@ -158,8 +159,7 @@ declare const exports: {
       workOrderFormElement,
       (rawResponseJSON) => {
         const responseJSON = rawResponseJSON as
-          | DoCreateWorkOrderResponse
-          | DoUpdateWorkOrderResponse
+          DoCreateWorkOrderResponse | DoUpdateWorkOrderResponse
         if (responseJSON.success) {
           shiftLog.clearUnsavedChanges()
 
@@ -183,11 +183,22 @@ declare const exports: {
                 message: `${shiftLog.workOrdersSectionNameSingular} Updated Successfully`
               })
 
-              document.dispatchEvent(new CustomEvent('workOrderUpdated', {
-                detail: {
-                  workOrderId: Number(workOrderId)
-                }
-              }))
+              ;(
+                document.querySelector(
+                  '#workOrder--recordUpdate_timeMillis'
+                ) as HTMLInputElement
+              ).value =
+                (
+                  responseJSON as DoUpdateWorkOrderResponse
+                ).recordUpdate_timeMillis?.toString() ?? ''
+
+              document.dispatchEvent(
+                new CustomEvent('workOrderUpdated', {
+                  detail: {
+                    workOrderId: Number(workOrderId)
+                  }
+                })
+              )
             }
           } else {
             globalThis.location.href = shiftLog.buildWorkOrderURL(
@@ -195,11 +206,25 @@ declare const exports: {
             )
           }
         } else {
-          bulmaJS.alert({
+          bulmaJS.confirm({
             contextualColorName: 'danger',
             title: 'Update Error',
 
-            message: 'An unknown error occurred.'
+            message: responseJSON.message ?? 'An unknown error occurred.',
+
+            okButton: {
+              text: 'Refresh and Try Again',
+              callbackFunction() {
+                globalThis.location.href = shiftLog.buildWorkOrderURL(
+                  Number(workOrderId),
+                  true
+                )
+              },
+            },
+
+            cancelButton: {
+              text: 'OK'
+            }
           })
         }
       }
@@ -625,10 +650,7 @@ declare const exports: {
 
     const map = new L.Map('map--locationPicker', {
       scrollWheelZoom: false
-    }).setView(
-      [defaultLat, defaultLng],
-      defaultZoom
-    )
+    }).setView([defaultLat, defaultLng], defaultZoom)
 
     new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:

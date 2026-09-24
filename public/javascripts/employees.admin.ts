@@ -1,5 +1,5 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddEmployeeResponse } from '../../handlers/admin-post/doAddEmployee.js'
 import type { DoDeleteEmployeeResponse } from '../../handlers/admin-post/doDeleteEmployee.js'
@@ -8,7 +8,7 @@ import type { Employee, UserGroup } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 
 declare const exports: {

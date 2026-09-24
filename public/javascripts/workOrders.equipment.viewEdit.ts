@@ -1,5 +1,5 @@
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddWorkOrderEquipmentResponse } from '../../handlers/workOrders-post/doAddWorkOrderEquipment.js'
 import type { DoDeleteWorkOrderEquipmentResponse } from '../../handlers/workOrders-post/doDeleteWorkOrderEquipment.js'
@@ -15,7 +15,7 @@ declare const exports: {
   isEdit: boolean
 }
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 ;(() => {
   const workOrderFormElement = document.querySelector(

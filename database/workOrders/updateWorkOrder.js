@@ -17,8 +17,24 @@ function buildMoreInfoFormDataJson(updateWorkOrderForm) {
     return JSON.stringify(moreInfoFormData);
 }
 export default async function updateWorkOrder(updateWorkOrderForm, userName) {
-    const moreInfoFormDataJson = buildMoreInfoFormDataJson(updateWorkOrderForm);
+    const lastUpdateDate = new Date(Number(updateWorkOrderForm.recordUpdate_timeMillis));
     const pool = await getShiftLogConnectionPool();
+    const canUpdateResult = await pool
+        .request()
+        .input('workOrderId', updateWorkOrderForm.workOrderId)
+        .input('instance', getConfigProperty('application.instance'))
+        .input('recordUpdate_dateTime', lastUpdateDate).query(`
+      SELECT COUNT(*) AS canUpdate
+      FROM ShiftLog.WorkOrders
+      WHERE workOrderId = @workOrderId
+        AND instance = @instance
+        AND recordDelete_dateTime IS NULL
+        AND recordUpdate_dateTime = @recordUpdate_dateTime
+    `);
+    if (canUpdateResult.recordset[0].canUpdate === 0) {
+        throw new Error(`Cannot update ${getConfigProperty('workOrders.sectionNameSingular').toLowerCase()}. It may have been modified or deleted by another user.`);
+    }
+    const moreInfoFormDataJson = buildMoreInfoFormDataJson(updateWorkOrderForm);
     const result = await pool
         .request()
         .input('instance', getConfigProperty('application.instance'))
@@ -83,8 +99,9 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
         assignedToId = @assignedToId,
         moreInfoFormDataJson = @moreInfoFormDataJson,
         recordUpdate_userName = @userName,
-        recordUpdate_dateTime = getdate() OUTPUT deleted.assignedToId AS deletedAssignedToId,
-        inserted.assignedToId AS insertedAssignedToId
+        recordUpdate_dateTime = GETDATE() OUTPUT deleted.assignedToId AS deletedAssignedToId,
+        inserted.assignedToId AS insertedAssignedToId,
+        inserted.recordUpdate_dateTime AS insertedRecordUpdateDateTime
       WHERE
         workOrderId = @workOrderId
         AND instance = @instance
@@ -190,5 +207,7 @@ export default async function updateWorkOrder(updateWorkOrderForm, userName) {
             ? Number.parseInt(updateWorkOrderForm.workOrderId, 10)
             : updateWorkOrderForm.workOrderId);
     }
-    return true;
+    return result.rowsAffected[0] === 0
+        ? lastUpdateDate.getTime()
+        : result.recordset[0].insertedRecordUpdateDateTime.getTime();
 }

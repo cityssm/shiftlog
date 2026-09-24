@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 import type Leaflet from 'leaflet'
 
@@ -16,7 +16,7 @@ import type { AdhocTask } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 declare const flatpickr: typeof FlatPickr
 declare const L: typeof Leaflet

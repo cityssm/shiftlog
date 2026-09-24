@@ -1,7 +1,7 @@
 /* eslint-disable max-lines -- Large file */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddTagResponse } from '../../handlers/admin-post/doAddTag.js'
 import type { DoAddTagAliasResponse } from '../../handlers/admin-post/doAddTagAlias.js'
@@ -14,7 +14,7 @@ import type { Tag, TagAlias } from '../../types/record.types.js'
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 
 declare const exports: {

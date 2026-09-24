@@ -1,7 +1,7 @@
 /* eslint-disable max-lines -- complex client-side module with note type field handling */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { NoteTypeWithFields } from '../../database/noteTypes/getNoteTypes.js'
 import type {
@@ -23,7 +23,7 @@ declare const exports: {
   isEdit: boolean
 }
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 ;(() => {
   const shiftFormElement = document.querySelector(

@@ -3,7 +3,7 @@
 /* eslint-disable max-lines */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 import type FlatPickr from 'flatpickr'
 import type Leaflet from 'leaflet'
 
@@ -29,7 +29,7 @@ import type { DoUpdateShiftEquipmentResponse } from '../../handlers/shifts-post/
 import type { ShiftLogGlobal } from './types.js'
 
 declare const bulmaJS: BulmaJS
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const flatpickr: typeof FlatPickr
 declare const L: typeof Leaflet
 

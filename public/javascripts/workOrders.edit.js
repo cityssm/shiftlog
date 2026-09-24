@@ -87,6 +87,8 @@
                             contextualColorName: 'success',
                             message: `${shiftLog.workOrdersSectionNameSingular} Updated Successfully`
                         });
+                        document.querySelector('#workOrder--recordUpdate_timeMillis').value =
+                            responseJSON.recordUpdate_timeMillis?.toString() ?? '';
                         document.dispatchEvent(new CustomEvent('workOrderUpdated', {
                             detail: {
                                 workOrderId: Number(workOrderId)
@@ -99,10 +101,19 @@
                 }
             }
             else {
-                bulmaJS.alert({
+                bulmaJS.confirm({
                     contextualColorName: 'danger',
                     title: 'Update Error',
-                    message: 'An unknown error occurred.'
+                    message: responseJSON.message ?? 'An unknown error occurred.',
+                    okButton: {
+                        text: 'Refresh and Try Again',
+                        callbackFunction() {
+                            globalThis.location.href = shiftLog.buildWorkOrderURL(Number(workOrderId), true);
+                        },
+                    },
+                    cancelButton: {
+                        text: 'OK'
+                    }
                 });
             }
         });

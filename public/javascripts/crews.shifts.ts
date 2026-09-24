@@ -1,7 +1,7 @@
 /* eslint-disable max-lines -- Large file */
 
 import type { BulmaJS } from '@cityssm/bulma-js/types.js'
-import type { cityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
+import type { CityssmGlobal } from '@cityssm/bulma-webapp-js/types.js'
 
 import type { DoAddCrewResponse } from '../../handlers/shifts-post/doAddCrew.js'
 import type { DoAddCrewEquipmentResponse } from '../../handlers/shifts-post/doAddCrewEquipment.js'
@@ -24,7 +24,7 @@ import type {
 
 import type { ShiftLogGlobal } from './types.js'
 
-declare const cityssm: cityssmGlobal
+declare const cityssm: CityssmGlobal
 declare const bulmaJS: BulmaJS
 
 interface CrewWithDetails extends Crew {
@@ -139,7 +139,7 @@ declare const exports: {
 
             cityssm.postJSON(
               `${shiftUrlPrefix}/doUpdateCrew`,
-              formEvent.currentTarget,
+              formEvent.currentTarget as HTMLFormElement,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as DoUpdateCrewResponse
 
@@ -271,7 +271,7 @@ declare const exports: {
 
             cityssm.postJSON(
               `${shiftUrlPrefix}/doAddCrewMember`,
-              formEvent.currentTarget,
+              formEvent.currentTarget as HTMLFormElement,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as DoAddCrewMemberResponse
 
@@ -523,7 +523,7 @@ declare const exports: {
 
             cityssm.postJSON(
               `${shiftUrlPrefix}/doAddCrewEquipment`,
-              formEvent.currentTarget,
+              formEvent.currentTarget as HTMLFormElement,
               (rawResponseJSON) => {
                 const responseJSON =
                   rawResponseJSON as DoAddCrewEquipmentResponse
@@ -955,7 +955,7 @@ declare const exports: {
 
             cityssm.postJSON(
               `${shiftUrlPrefix}/doAddCrew`,
-              formEvent.currentTarget,
+              formEvent.currentTarget as HTMLFormElement,
               (rawResponseJSON) => {
                 const responseJSON = rawResponseJSON as DoAddCrewResponse
 
