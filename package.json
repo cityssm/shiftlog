@@ -140,7 +140,7 @@
     "@types/session-file-store": "^1.2.6",
     "@types/simpleheat": "^0.4.3",
     "axe-core": "^4.13.0",
-    "cypress": "^16.1.0",
+    "cypress": "^16.1.1",
     "cypress-axe": "^1.7.0",
     "editorconfig-checker": "^7.0.0",
     "eslint-config-cityssm": "^54.0.0",
