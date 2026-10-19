@@ -40,9 +40,11 @@ export default async function handler(
   }
 
   const workOrderId = request.body.workOrderId as string
+
   const generateWithTranscription =
     getConfigProperty('transcriptions.isEnabled') &&
     request.body.generateWithTranscription !== undefined
+
   const attachmentDescription = generateWithTranscription
     ? TRANSCRIPTION_IN_PROGRESS
     : ((request.body.attachmentDescription ?? '') as string)
@@ -53,7 +55,8 @@ export default async function handler(
 
   try {
     // Move file from temp location to permanent storage
-    fs.renameSync(file.path, filePath)
+    fs.copyFileSync(file.path, filePath)
+    fs.unlinkSync(file.path)
 
     // Create database record
     const workOrderAttachmentId = await createWorkOrderAttachment(

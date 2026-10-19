@@ -23,7 +23,8 @@ export default async function handler(request, response) {
         : (request.body.attachmentDescription ?? '');
     const { filePath, fileSystemPath } = getAttachmentStoragePathForFileName(file.originalname);
     try {
-        fs.renameSync(file.path, filePath);
+        fs.copyFileSync(file.path, filePath);
+        fs.unlinkSync(file.path);
         const workOrderAttachmentId = await createWorkOrderAttachment({
             workOrderId,
             attachmentFileName: file.originalname,
