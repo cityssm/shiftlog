@@ -1,5 +1,5 @@
 import { getConfigProperty } from '../../helpers/config.helpers.js';
-import { buildGreatestSql, getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
+import { buildGreatestSql, buildMaxRelatedUserName, getShiftLogConnectionPool } from '../../helpers/database.helpers.js';
 import { buildGetWorkOrdersOrderByClause } from './getWorkOrdersOrderBy.helpers.js';
 function buildWhereClause(filters, user) {
     let whereClause = 'where w.instance = @instance and w.recordDelete_dateTime is null';
@@ -70,7 +70,7 @@ function buildWhereClause(filters, user) {
                 whereClause += `
           AND w.workOrderCloseDateTime IS NULL
           AND (
-            w.workOrderDueDateTime < getdate()
+            w.workOrderDueDateTime < GETDATE()
             OR w.workOrderId IN (
               SELECT
                 workOrderId
@@ -78,7 +78,7 @@ function buildWhereClause(filters, user) {
                 ShiftLog.WorkOrderMilestones
               WHERE
                 milestoneCompleteDateTime IS NULL
-                AND milestoneDueDateTime < getdate()
+                AND milestoneDueDateTime < GETDATE()
             )
           )
         `;
@@ -153,6 +153,32 @@ function applyParameters(sqlRequest, filters, user) {
         .input('tagName', filters.tagName ?? null)
         .input('userName', user?.userName);
 }
+const lastUpdateColumns = [
+    {
+        nameColumn: 'recordUpdate_userName',
+        dateColumn: 'recordUpdate_dateTime'
+    },
+    {
+        nameColumn: 'milestonesLastUpdateUserName',
+        dateColumn: 'milestonesLastUpdateDateTime'
+    },
+    {
+        nameColumn: 'attachmentsLastUpdateUserName',
+        dateColumn: 'attachmentsLastUpdateDateTime'
+    },
+    {
+        nameColumn: 'notesLastUpdateUserName',
+        dateColumn: 'notesLastUpdateDateTime'
+    },
+    {
+        nameColumn: 'equipmentLastUpdateUserName',
+        dateColumn: 'equipmentLastUpdateDateTime'
+    },
+    {
+        nameColumn: 'costsLastUpdateUserName',
+        dateColumn: 'costsLastUpdateDateTime'
+    }
+];
 export default async function getWorkOrders(filters, options, user) {
     const pool = await getShiftLogConnectionPool();
     const whereClause = buildWhereClause(filters, user);
@@ -167,7 +193,7 @@ export default async function getWorkOrders(filters, options, user) {
     if (limit !== -1) {
         const countSql = `
       SELECT
-        count(*) AS totalCount
+        COUNT(*) AS totalCount
       FROM
         ShiftLog.WorkOrders w
         LEFT JOIN ShiftLog.WorkOrderTypes wType ON w.workOrderTypeId = wType.workOrderTypeId ${whereClause}
@@ -209,6 +235,8 @@ export default async function getWorkOrders(filters, options, user) {
         w.locationAddress2,
         w.locationCityProvince,
         w.assignedToId,
+        w.recordUpdate_dateTime,
+        w.recordUpdate_userName,
         ${buildGreatestSql([
             'w.recordUpdate_dateTime',
             'milestones.milestonesLastUpdateDateTime',
@@ -217,12 +245,22 @@ export default async function getWorkOrders(filters, options, user) {
             'equipment.equipmentLastUpdateDateTime',
             'costs.costsLastUpdateDateTime'
         ], 'lastUpdate_dateTime')},
+        milestones.milestonesLastUpdateDateTime,
+        milestones.milestonesLastUpdateUserName,
+        attachments.attachmentsLastUpdateDateTime,
+        attachments.attachmentsLastUpdateUserName,
+        notes.notesLastUpdateDateTime,
+        notes.notesLastUpdateUserName,
+        equipment.equipmentLastUpdateDateTime,
+        equipment.equipmentLastUpdateUserName,
+        costs.costsLastUpdateDateTime,
+        costs.costsLastUpdateUserName,
         assignedTo.assignedToName,
         assignedTo.assignedToEmailAddress,
         ${options.includeMoreInfoFormData === true
             ? 'w.moreInfoFormDataJson,'
             :
-                ''} cast(
+                ''} CAST(
           CASE
             WHEN w.recordCreate_dateTime = w.recordUpdate_dateTime THEN 0
             ELSE 1
@@ -246,9 +284,10 @@ export default async function getWorkOrders(filters, options, user) {
         LEFT JOIN (
           SELECT
             workOrderId,
-            count(*) AS milestonesCount,
-            max(recordUpdate_dateTime) AS milestonesLastUpdateDateTime,
-            sum(
+            COUNT(*) AS milestonesCount,
+            MAX(recordUpdate_dateTime) AS milestonesLastUpdateDateTime,
+            ${buildMaxRelatedUserName('recordUpdate_dateTime', 'recordUpdate_userName')} AS milestonesLastUpdateUserName,
+            SUM(
               CASE
                 WHEN milestoneCompleteDateTime IS NULL THEN 0
                 ELSE 1
@@ -264,8 +303,9 @@ export default async function getWorkOrders(filters, options, user) {
         LEFT JOIN (
           SELECT
             workOrderId,
-            count(*) AS attachmentsCount,
-            max(recordUpdate_dateTime) AS attachmentsLastUpdateDateTime
+            COUNT(*) AS attachmentsCount,
+            MAX(recordUpdate_dateTime) AS attachmentsLastUpdateDateTime,
+            ${buildMaxRelatedUserName('recordUpdate_dateTime', 'recordUpdate_userName')} AS attachmentsLastUpdateUserName
           FROM
             ShiftLog.WorkOrderAttachments
           WHERE
@@ -287,8 +327,9 @@ export default async function getWorkOrders(filters, options, user) {
         LEFT JOIN (
           SELECT
             workOrderId,
-            count(*) AS notesCount,
-            max(recordUpdate_dateTime) AS notesLastUpdateDateTime
+            COUNT(*) AS notesCount,
+            MAX(recordUpdate_dateTime) AS notesLastUpdateDateTime,
+            ${buildMaxRelatedUserName('recordUpdate_dateTime', 'recordUpdate_userName')} AS notesLastUpdateUserName
           FROM
             ShiftLog.WorkOrderNotes
           WHERE
@@ -299,8 +340,9 @@ export default async function getWorkOrders(filters, options, user) {
         LEFT JOIN (
           SELECT
             workOrderId,
-            count(*) AS equipmentCount,
-            max(recordUpdate_dateTime) AS equipmentLastUpdateDateTime
+            COUNT(*) AS equipmentCount,
+            MAX(recordUpdate_dateTime) AS equipmentLastUpdateDateTime,
+            ${buildMaxRelatedUserName('recordUpdate_dateTime', 'recordUpdate_userName')} AS equipmentLastUpdateUserName
           FROM
             ShiftLog.WorkOrderEquipment
           WHERE
@@ -311,9 +353,10 @@ export default async function getWorkOrders(filters, options, user) {
         LEFT JOIN (
           SELECT
             workOrderId,
-            count(*) AS costsCount,
-            max(recordUpdate_dateTime) AS costsLastUpdateDateTime,
-            sum(costAmount) AS costsTotal
+            COUNT(*) AS costsCount,
+            MAX(recordUpdate_dateTime) AS costsLastUpdateDateTime,
+            ${buildMaxRelatedUserName('recordUpdate_dateTime', 'recordUpdate_userName')} AS costsLastUpdateUserName,
+            SUM(costAmount) AS costsTotal
           FROM
             ShiftLog.WorkOrderCosts
           WHERE
@@ -333,21 +376,7 @@ export default async function getWorkOrders(filters, options, user) {
         if (limit === -1) {
             totalCount = workOrders.length;
         }
-        if (options.includeMoreInfoFormData === true) {
-            for (const workOrder of workOrders) {
-                if (workOrder.moreInfoFormDataJson === undefined) {
-                    workOrder.moreInfoFormData = {};
-                }
-                else {
-                    try {
-                        workOrder.moreInfoFormData = JSON.parse(workOrder.moreInfoFormDataJson);
-                    }
-                    catch {
-                        workOrder.moreInfoFormData = {};
-                    }
-                }
-            }
-        }
+        const tagsByWorkOrder = new Map();
         if (workOrders.length > 0) {
             const workOrderIds = workOrders.map((wo) => wo.workOrderId);
             const tagsRequest = pool.request();
@@ -377,15 +406,39 @@ export default async function getWorkOrders(filters, options, user) {
           END,
           wot.tagName
       `);
-            const tagsByWorkOrder = new Map();
             for (const tag of tagsResult.recordset) {
                 if (!tagsByWorkOrder.has(tag.workOrderId)) {
                     tagsByWorkOrder.set(tag.workOrderId, []);
                 }
                 tagsByWorkOrder.get(tag.workOrderId)?.push(tag);
             }
-            for (const workOrder of workOrders) {
-                workOrder.tags = tagsByWorkOrder.get(workOrder.workOrderId) ?? [];
+        }
+        for (const workOrder of workOrders) {
+            workOrder.tags = tagsByWorkOrder.get(workOrder.workOrderId) ?? [];
+            delete workOrder.lastUpdate_dateTime;
+            for (const column of lastUpdateColumns) {
+                if (workOrder[column.dateColumn] !== undefined &&
+                    workOrder[column.dateColumn] !== null &&
+                    (workOrder.lastUpdate_dateTime === undefined ||
+                        workOrder[column.dateColumn] > (workOrder.lastUpdate_dateTime ?? 0))) {
+                    workOrder.lastUpdate_dateTime = workOrder[column.dateColumn];
+                    workOrder.lastUpdate_userName = workOrder[column.nameColumn];
+                }
+                delete workOrder[column.dateColumn];
+                delete workOrder[column.nameColumn];
+            }
+            if (options.includeMoreInfoFormData === true) {
+                if (workOrder.moreInfoFormDataJson === undefined) {
+                    workOrder.moreInfoFormData = {};
+                }
+                else {
+                    try {
+                        workOrder.moreInfoFormData = JSON.parse(workOrder.moreInfoFormDataJson);
+                    }
+                    catch {
+                        workOrder.moreInfoFormData = {};
+                    }
+                }
             }
         }
     }

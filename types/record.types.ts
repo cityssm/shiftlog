@@ -470,6 +470,7 @@ export interface WorkOrder extends BaseRecord {
 
   isUpdated?: boolean
   lastUpdate_dateTime?: Date | string
+  lastUpdate_userName?: string
 }
 
 export interface WorkOrderTag {

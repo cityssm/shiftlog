@@ -43,3 +43,32 @@ export function buildGreatestSql(columnNames: string[], alias: string): string {
 
   return `${greatestSql} AS ${alias}`
 }
+
+export function buildMaxRelatedUserName(
+  dateTimeColumn: string,
+  nameColumn: string,
+  nameColumnLength = 30
+): string {
+  return /* sql */ `
+    SUBSTRING(
+      MAX(
+        CONCAT(
+          RIGHT(
+            '000000000000' + CAST(
+              DATEDIFF_BIG(
+                s,
+                '1970-01-01',
+                ${dateTimeColumn}
+              ) AS VARCHAR(12)
+            ),
+            12
+          ),
+          '::',
+          ${nameColumn}
+        )
+      ),
+      15,
+      ${nameColumnLength}
+    )
+  `
+}

@@ -402,9 +402,9 @@ declare const exports: {
         <td class="${currentUserEmailAddress !== '' && workOrder.assignedToEmailAddress?.toLowerCase() === currentUserEmailAddress ? 'has-background-primary-light' : ''}">
           ${cityssm.escapeHTML((workOrder.assignedToName ?? '') === '' ? '-' : (workOrder.assignedToName ?? ''))}
         </td>
-        <td class="is-hidden-mobile">
-          ${cityssm.escapeHTML(cityssm.dateToString(lastUpdateDate))}<br />
-          <span class="is-size-7 has-text-grey">
+        <td class="is-hidden-mobile has-text-grey">
+          ${cityssm.escapeHTML(workOrder.lastUpdate_userName ?? '')}<br />
+          <span class="is-size-7">
             ${cityssm.escapeHTML(relativeTimeString(lastUpdateDate))}
           </span>
         </td>

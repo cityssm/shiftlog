@@ -31,3 +31,27 @@ export function buildGreatestSql(columnNames, alias) {
     }
     return `${greatestSql} AS ${alias}`;
 }
+export function buildMaxRelatedUserName(dateTimeColumn, nameColumn, nameColumnLength = 30) {
+    return `
+    SUBSTRING(
+      MAX(
+        CONCAT(
+          RIGHT(
+            '000000000000' + CAST(
+              DATEDIFF_BIG(
+                s,
+                '1970-01-01',
+                ${dateTimeColumn}
+              ) AS VARCHAR(12)
+            ),
+            12
+          ),
+          '::',
+          ${nameColumn}
+        )
+      ),
+      15,
+      ${nameColumnLength}
+    )
+  `;
+}
