@@ -16,10 +16,15 @@ import { marked } from 'marked'
 
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js'
 import getWorkOrderMilestones from '../../database/workOrders/getWorkOrderMilestones.js'
-import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js'
+import getWorkOrderNotes, {
+  WorkOrderNote
+} from '../../database/workOrders/getWorkOrderNotes.js'
 import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js'
 import { DEBUG_NAMESPACE } from '../../debug.config.js'
-import { getWorkOrderUrl } from '../../helpers/application.helpers.js'
+import {
+  getApplicationUrl,
+  getWorkOrderUrl
+} from '../../helpers/application.helpers.js'
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js'
 import { getConfigProperty } from '../../helpers/config.helpers.js'
 import type {
@@ -35,6 +40,8 @@ import {
   isNoReplyEmailAddress
 } from './helpers/emailAddress.helpers.js'
 import { messageHeaderString } from './helpers/messageText.helpers.js'
+import { getWorkOrderNotesAndAttachments } from './helpers/related.helpers.js'
+import { WorkOrderAttachment } from '../../types/record.types.js'
 
 const msGraphMailConfig = getConfigProperty('connectors.msGraph')
 
@@ -145,7 +152,8 @@ export async function sendEmail(): Promise<void> {
      * Get the work order notes to include in the email
      */
 
-    const workOrderNotes = await getWorkOrderNotes(workOrderId)
+    const workOrderNotesAndAttachments =
+      await getWorkOrderNotesAndAttachments(workOrderId)
 
     /*
      * Build the email
@@ -165,7 +173,7 @@ export async function sendEmail(): Promise<void> {
         'html'
       )
 
-    if (workOrderNotes.length > 0) {
+    if (workOrderNotesAndAttachments.length > 0) {
       messageToSend.appendToBody(
         /* html */ `
           <h2>Notes:</h2>
@@ -173,28 +181,51 @@ export async function sendEmail(): Promise<void> {
         'html'
       )
 
-      for (const [index, note] of workOrderNotes.entries()) {
+      for (const [
+        index,
+        noteOrAttachment
+      ] of workOrderNotesAndAttachments.entries()) {
+        let noteBody: string = ''
+
+        if (noteOrAttachment.hasOwnProperty('noteText')) {
+          noteBody = DOMPurify.sanitize(
+            await marked.parse((noteOrAttachment as WorkOrderNote).noteText)
+          )
+        } else {
+          const attachmentUrl = `${getApplicationUrl()}/attachments/${getConfigProperty('workOrders.router')}/${(noteOrAttachment as WorkOrderAttachment).workOrderAttachmentId}/${(noteOrAttachment as WorkOrderAttachment).accessKey}/download`
+
+          noteBody = /* html */ `
+            📄
+            <a href="${attachmentUrl}" rel="noopener noreferrer" target="_blank">
+              ${DOMPurify.sanitize((noteOrAttachment as WorkOrderAttachment).attachmentFileName)}
+            </a>`
+        }
+
         messageToSend.appendToBody(
           /* html */ `
             <h3>
-              ${note.recordCreate_userName} -
-              ${dateToString(note.recordCreate_dateTime)}
-              ${dateToTimePeriodString(note.recordCreate_dateTime)}:
+              ${noteOrAttachment.recordCreate_userName} -
+              ${dateToString(noteOrAttachment.recordCreate_dateTime as Date)}
+              ${dateToTimePeriodString(noteOrAttachment.recordCreate_dateTime as Date)}:
             </h3>
             <div>
-              ${DOMPurify.sanitize(await marked.parse(note.noteText))}
+            ${noteBody}
             </div>
           `,
           'html'
         )
 
-        if (index < workOrderNotes.length - 1) {
+        if (index < workOrderNotesAndAttachments.length - 1) {
           messageToSend.appendToBody('<hr />', 'html')
         }
 
-        if (note.recordUpdate_dateTime.getTime() > lastUpdateDateTimeMillis) {
-          lastUpdateDateTimeMillis = note.recordUpdate_dateTime.getTime()
-          lastUpdateUser = note.recordUpdate_userName
+        if (
+          noteOrAttachment.recordUpdate_dateTime.getTime() >
+          lastUpdateDateTimeMillis
+        ) {
+          lastUpdateDateTimeMillis =
+            noteOrAttachment.recordUpdate_dateTime.getTime()
+          lastUpdateUser = noteOrAttachment.recordUpdate_userName
         }
       }
     }

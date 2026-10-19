@@ -10,15 +10,15 @@ import { JSDOM } from 'jsdom';
 import { marked } from 'marked';
 import getWorkOrder from '../../database/workOrders/getWorkOrder.js';
 import getWorkOrderMilestones from '../../database/workOrders/getWorkOrderMilestones.js';
-import getWorkOrderNotes from '../../database/workOrders/getWorkOrderNotes.js';
 import getWorkOrderSubscribers from '../../database/workOrders/getWorkOrderSubscribers.js';
 import { DEBUG_NAMESPACE } from '../../debug.config.js';
-import { getWorkOrderUrl } from '../../helpers/application.helpers.js';
+import { getApplicationUrl, getWorkOrderUrl } from '../../helpers/application.helpers.js';
 import { getCachedSettingValue } from '../../helpers/cache/settings.cache.js';
 import { getConfigProperty } from '../../helpers/config.helpers.js';
 import { sendEmailIntervalMillis } from './constants.js';
 import { isBlockedToEmailAddress, isEmailAddress, isNoReplyEmailAddress } from './helpers/emailAddress.helpers.js';
 import { messageHeaderString } from './helpers/messageText.helpers.js';
+import { getWorkOrderNotesAndAttachments } from './helpers/related.helpers.js';
 const msGraphMailConfig = getConfigProperty('connectors.msGraph');
 const DOMPurify = createDOMPurify(new JSDOM('').window);
 const debug = Debug(`${DEBUG_NAMESPACE}:tasks.workOrderMsGraph:sendEmail`);
@@ -79,7 +79,7 @@ export async function sendEmail() {
         }
         let lastUpdateUser = workOrder.recordUpdate_userName;
         let lastUpdateDateTimeMillis = workOrder.recordUpdate_dateTime.getTime();
-        const workOrderNotes = await getWorkOrderNotes(workOrderId);
+        const workOrderNotesAndAttachments = await getWorkOrderNotesAndAttachments(workOrderId);
         const messageToSend = new MsGraphMailMessageBuilder()
             .addBccRecipients([...bccEmailAddresses])
             .withSubject(`[#${workOrder.workOrderNumber}]: ${workOrder.workOrderTitle}`)
@@ -88,27 +88,41 @@ export async function sendEmail() {
             ${messageHeaderString}
           </p>
         `, 'html');
-        if (workOrderNotes.length > 0) {
+        if (workOrderNotesAndAttachments.length > 0) {
             messageToSend.appendToBody(`
           <h2>Notes:</h2>
         `, 'html');
-            for (const [index, note] of workOrderNotes.entries()) {
+            for (const [index, noteOrAttachment] of workOrderNotesAndAttachments.entries()) {
+                let noteBody = '';
+                if (noteOrAttachment.hasOwnProperty('noteText')) {
+                    noteBody = DOMPurify.sanitize(await marked.parse(noteOrAttachment.noteText));
+                }
+                else {
+                    const attachmentUrl = `${getApplicationUrl()}/attachments/${getConfigProperty('workOrders.router')}/${noteOrAttachment.workOrderAttachmentId}/${noteOrAttachment.accessKey}/download`;
+                    noteBody = `
+            📄
+            <a href="${attachmentUrl}" rel="noopener noreferrer" target="_blank">
+              ${DOMPurify.sanitize(noteOrAttachment.attachmentFileName)}
+            </a>`;
+                }
                 messageToSend.appendToBody(`
             <h3>
-              ${note.recordCreate_userName} -
-              ${dateToString(note.recordCreate_dateTime)}
-              ${dateToTimePeriodString(note.recordCreate_dateTime)}:
+              ${noteOrAttachment.recordCreate_userName} -
+              ${dateToString(noteOrAttachment.recordCreate_dateTime)}
+              ${dateToTimePeriodString(noteOrAttachment.recordCreate_dateTime)}:
             </h3>
             <div>
-              ${DOMPurify.sanitize(await marked.parse(note.noteText))}
+            ${noteBody}
             </div>
           `, 'html');
-                if (index < workOrderNotes.length - 1) {
+                if (index < workOrderNotesAndAttachments.length - 1) {
                     messageToSend.appendToBody('<hr />', 'html');
                 }
-                if (note.recordUpdate_dateTime.getTime() > lastUpdateDateTimeMillis) {
-                    lastUpdateDateTimeMillis = note.recordUpdate_dateTime.getTime();
-                    lastUpdateUser = note.recordUpdate_userName;
+                if (noteOrAttachment.recordUpdate_dateTime.getTime() >
+                    lastUpdateDateTimeMillis) {
+                    lastUpdateDateTimeMillis =
+                        noteOrAttachment.recordUpdate_dateTime.getTime();
+                    lastUpdateUser = noteOrAttachment.recordUpdate_userName;
                 }
             }
         }

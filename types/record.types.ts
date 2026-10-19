@@ -550,6 +550,11 @@ export interface WorkOrderAttachment extends BaseRecord {
   fileChecksum: string
 
   ignoredAttachmentNoteText?: string | null
+
+  recordCreate_dateTime: Date
+  recordCreate_userName: string
+  recordUpdate_dateTime: Date
+  recordUpdate_userName: string
 }
 
 export interface IgnoredAttachmentChecksum extends BaseRecord {
