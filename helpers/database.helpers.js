@@ -38,7 +38,7 @@ export function buildMaxRelatedUserName(dateTimeColumn, nameColumn, nameColumnLe
         CONCAT(
           RIGHT(
             '000000000000' + CAST(
-              DATEDIFF_BIG(
+              DATEDIFF(
                 s,
                 '1970-01-01',
                 ${dateTimeColumn}
