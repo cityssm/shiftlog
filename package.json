@@ -64,8 +64,7 @@
   "overrides": {
     "cypress-axe": {
       "cypress": "16.2.0"
-    },
-    "uuid": "14.0.0"
+    }
   },
   "dependencies": {
     "@cacheable/node-cache": "^3.1.1",
@@ -153,7 +152,6 @@
   },
   "allowScripts": {
     "tesseract.js@7.0.0": true,
-    "better-sqlite3@13.0.3": true,
     "cypress@16.2.0": true
   }
 }
